@@ -1,0 +1,324 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;空気浣腸
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+;	■■■注意■■■
+;	かなり過激なことをやっています。
+;	汚物系・排水溝系の耐性がない人は引き返してください。
+;-------------------------------------------------
+;	CFLAG:8175は「調教中に放屁させた回数」で使う
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK未指定（RANK指定がある場合はそちらを優先する）
+;-------------------------------------------------
+@K2008_COM_175
+
+;分岐口上方式を採用
+IF TEQUIP:Ａ系装着器具
+	;取り付け
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_175_SET
+	CATCH
+		CALL K2008_COM_GENERAL
+	ENDCATCH
+ELSE
+	;取り外し
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_175_UNSET
+	CATCH
+		CALL K2008_COM_GENERAL
+	ENDCATCH
+	CFLAG:__K2008N_CFLAG_SELECTCOM__ += 1
+ENDIF
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+;取り付け時
+@K2008_RANK0_COM_175_SET
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「今度はなに……　ポンプ？」
+	PRINTFORMW 「ちょ、ちょっとどこに刺してるのよ！　抜いて、抜いてって！」
+	PRINTFORMW 「あっ、いやっ、止めて！　もれ、漏れるッ　漏れちゃう！」
+	PRINTFORMW 
+	CALL K2008_SE("空気漏れ", 1)
+	PRINTFORMW 「ぐすっ……　も、止めてよぉ、こんなのイヤぁ」
+	PRINTFORMW 「――イタッ、プラグ……　とりあえず収まったけどお腹パンパン……　うぅ」
+;2回目以降
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「ま、またそれ……　そんなに気に入ったの？」
+			PRINTFORMW 「……変態の嗜好はさっぱり理解できないわ」
+			PRINTFORMW 「うんっ、き、気持ち悪い……　ほんと、何がいいのよ……」
+		CASEELSE
+			PRINTFORMW 「も、もうやだ！　そのポンプ嫌ッ！　や、やめっ」
+			PRINTFORMW 「は、入んない、もう入らないってば！」
+	ENDSELECT
+ENDIF
+
+;取り外し時
+@K2008_RANK0_COM_175_UNSET
+;初回
+IF CFLAG:__K2008N_CFLAG_SELECTCOM__ == 0
+	PRINTFORMW 「ね、ねえ、もういいでしょ、プラグ抜きたいんだけど」
+	PRINTFORMW 「え、いいの？　じゃ、じゃあちょっとトイレで……」
+	PRINTFORML 
+	PRINTFORMW 「なんでって、そりゃ恥ずかしいからにきまって――」
+	PRINTFORML 「や、ヤダ！　ここじゃ駄目だって！」
+	PRINTFORMW 「プ、プラグ抜いちゃ駄目！　出ちゃう！　抜いたら出ちゃッ――」
+	PRINTFORML 
+	CALL K2008_SE("強放屁", 2)
+	PRINTFORML
+	PRINTFORMW 「い、イヤァアアア！！　聞いちゃダメェえええ」
+	PRINTFORML
+	CALL K2008_SE("強放屁", 4)
+	PRINTFORML
+	PRINTFORMW 「こんなのっ、こんなのッ、もうやだぁ！」
+	PRINTFORML
+	CALL K2008_SE("空気漏れ", 3)
+	PRINTFORML
+	PRINTFORMW 「も、もうやぁ……　ぐすっ、なんでこんな……」
+;2回目以降
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「お願いだから耳ふさいでてよ……」
+			PRINTFORMW 「もうこんな音聴かれるのイヤァぁああ！！」
+			PRINTFORML
+			CALL K2008_SE("強放屁", 2 + RAND:2)
+			CALL K2008_SE("空気漏れ", 2 + RAND:2)
+			PRINTFORML 
+			PRINTFORMW 「ま、また聴かれた……」
+		CASE 1
+			PRINTFORMW 「こ、今度こそトイレか、せめて一人にさせて」
+			PRINTFORMW 「ダメって、そ、そんな……　いやっ、嫌ッ、イヤッ」
+			PRINTFORML
+			CALL K2008_SE("強放屁", 2 + RAND:2)
+			CALL K2008_SE("空気漏れ", 2 + RAND:2)
+			PRINTFORML
+			PRINTFORMW 「うぅ……　止まんない、止まんないよぉ……」
+		CASEELSE
+			PRINTFORMW 「お腹痛い……　ンぐッ、お、押しちゃ駄、けぷっ！」
+			PRINTFORML
+			CALL K2008_SE("強放屁", 2 + RAND:2)
+			CALL K2008_SE("空気漏れ", 2 + RAND:2)
+			PRINTFORML
+			PRINTFORMW 「うぁ、あぁ……　ぜ、全部でれるぅ……　ひいぃ……」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+;取り付け時
+@K2008_RANK1_COM_175_SET
+CALL K2008_RANK0_COM_175_SET
+
+;取り外し時
+@K2008_RANK1_COM_175_UNSET
+CALL K2008_RANK0_COM_175_UNSET
+
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+;取り付け時
+@K2008_RANK2_COM_175_SET
+CALL K2008_RANK0_COM_175_SET
+
+;取り外し時
+@K2008_RANK2_COM_175_UNSET
+CALL K2008_RANK0_COM_175_UNSET
+
+
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+;取り付け時
+@K2008_RANK3_COM_175_SET
+;初回実行時
+IF TFLAG:95 == 1
+	;排泄中毒持ち
+	IF ABL:排泄中毒 > 0
+		PRINTFORMW 「また新しいお浣腸？　浣腸液は見当たらないようだけど」
+	ELSE
+		PRINTFORMW 「ふ、んぅ……　お尻の穴ピッチリに栓して、何するの？」
+	ENDIF
+	PRINTFORMW 「風船ごっこって、ちょ、ちょっと何それ！」
+	PRINTFORMW 「お腹が、お腹膨らませるのダメェえええ！！」
+;2回目以降
+ELSE
+	;着→脱で１サイクル＝２回のため２で割る
+	SELECTCASE K2008F_HOWTIMES_COM(SELECTCOM) / 2
+		CASE 0
+			SELECTCASE RAND:2
+				CASE 1
+					PRINTFORMW 「また風船ごっこするのね……　あれ、恥ずかしいんだけど」
+					PRINTFORMW 「ま、いいわ、いっぱい膨らませてね」
+				CASEELSE
+					CALL K2008_COM_GENERAL
+			ENDSELECT
+		CASEELSE
+			SELECTCASE RAND:3
+				CASE 2
+					PRINTFORMW 「また私のお……　おなら聞きたいの？」
+				CASE 1
+					PRINTFORMW 「さっきしたばかりなのに、またしたいだなんて」
+					PRINTFORMW 「膨らませるのが好きなの？　それとも……　抜くときが好き？」
+				CASEELSE
+					CALL K2008_COM_GENERAL
+			ENDSELECT
+	ENDSELECT
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「あ、あっ、お腹膨らんで来たっ、ふー、ふー」
+		CASEELSE
+			PRINTFORMW 「ん、この腸が膨らんでいく感覚っ、病み付きになりそう」
+	ENDSELECT
+ENDIF
+
+;取り外し時
+@K2008_RANK3_COM_175_UNSET
+;初回
+IF CFLAG:__K2008N_CFLAG_SELECTCOM__ == 0
+	PRINTFORML 「ちょ、ちょっと！　ちょっとまって！」
+	PRINTFORMW 「今抜かれたら……　そ、その……　音が、ね？」
+	PRINTFORML 
+	PRINTFORML 「……どうしてもやるのね。　仕方ないけど」
+	PRINTFORMW 「汚い音出ちゃうだろうけど、嫌いにならないで……　んっ、んん！」
+	PRINTFORML 
+	CALL K2008_SE("強放屁")
+	PRINTFORML 
+	PRINTFORML プラグを外すと予想通り、けたたましい放屁音が鳴り響いた
+	PRINTFORMW 恥辱と開放感が混ざり合った複雑な表情をしている
+;それ以外
+ELSE
+	SELECTCASE RAND:4
+		CASE 3
+			;ビデオ撮影中
+			IF TEQUIP:ビデオ撮影 > 0
+				PRINTFORMW 空気浣腸でパンパンに膨らんだ腹部をビデオカメラに見せ付けるよう移動させた
+			ELSE
+				PRINTFORMW これから演じさせる内容を耳元でささやき、眺めるため少し離れた
+			ENDIF
+			PRINTFORML 
+			PRINTFORMW 「これから……　このお腹にパンパンに詰まったガ、ガスをぉ」
+			PRINTFORMW 「はしたない音で、　お、オナラしまァす！！」
+			;羞恥プレイ中
+			IF TEQUIP:羞恥プレイ > 0
+				PRINTFORMW 「鏡では、はしたない私の姿がぁ、丸見えです」
+				CALL K2008_SE("空気漏れ", 1)
+			ENDIF
+			;マイク所有
+			IF ITEM:マイク > 0
+				PRINTFORMW 「こ、このマイクで、大音量で響かせます！」
+				CALL K2008_SE("空気漏れ", 1)
+			ENDIF
+			;排卵誘発剤使用中
+			IF TEQUIP:排卵誘発剤 > 0
+				PRINTFORMW 「赤ちゃん孕む準備してるのにッ、下品なラッパごっこします！」
+				CALL K2008_SE("空気漏れ", 1)
+			ENDIF
+			;妊娠中
+			IF TALENT:妊娠 > 0
+				PRINTFORMW 「お腹にいる赤ちゃんにいっぱい聞かせてあげます！」
+				CALL K2008_SE("空気漏れ", 1)
+			ENDIF
+			;媚薬
+			IF TEQUIP:媚薬 > 0
+				PRINTFORMW 「エッチなお薬のおかげで、おっ、おならでも絶頂できちゃいます！」
+				CALL K2008_SE("空気漏れ", 1)
+			ENDIF
+			;利尿剤
+			IF TEQUIP:利尿剤 > 0
+				PRINTFORMW 「お薬効いてるからぁ、おしっこも一緒に出しちゃうかもぉ」
+				CALL K2008_SE("空気漏れ", 1)
+			ENDIF
+			PRINTFORMW 「も、だめっ、いっぱい恥ずかしい音聴いてくださいっ！！」
+			PRINTFORML 
+			CALL K2008_SE("強放屁")
+			
+		CASE 2
+			;緊縛中
+			IF TEQUIP:緊縛関連
+				PRINTFORMW 我慢するように言い聞かせて、アナルプラグをゆっくりと引き抜いた
+			ELSE
+				PRINTFORMW 立ち上がらせてからアナルプラグを引き抜くと、慌てて尻を手で押さえて我慢している
+				PRINTFORMW せっかくなので、そのまま我慢するように命令してみた
+			ENDIF
+			PRINTFORML 
+			CALL K2008_SE("空気漏れ", 2)
+			PRINTFORML 
+			PRINTFORMW 「う、動かなければ何とか……　できる、かな？」
+			PRINTFORML 
+			CALL K2008_SE("空気漏れ", 2)
+			PRINTFORML 
+			PRINTFORMW 「あうっ、また漏らしちゃった。　難しいわね」
+			PRINTFORMW 「あ、こら！　押しちゃだめだって、お腹さすっちゃだ、ダメッ、ぁあああ」
+			PRINTFORML 
+			CALL K2008_SE("強放屁")
+			PRINTFORML 
+			PRINTFORMW 「また失敗させられたぁ……　ひどいじゃない」
+		
+		CASE 1
+			PRINTFORMW プラグを抜く前に、少し注文をつけることにした
+			PRINTFORML 
+			PRINTFORMW 「は、はい。　復唱します……」
+			PRINTFORML 「プラグを抜いてもらったら、お腹に力を入れて」
+			PRINTFORMW 「お、おならの音が途切れないように１回で出しきります」
+			PRINTFORML 
+			PRINTFORMW 数回、深呼吸をして小さく頷くのを確認し、プラグを引き抜いた
+			PRINTFORMW 
+			;淫尻は必ず成功。それ以外は調教ランクと露出癖とRANDで判定
+			IF TALENT:淫尻 || K2008F_RANK() + ABL:露出癖 + RAND:4 > 11
+				PRINTFORMW ぶぅぅブビィィィィィィィイイイイイイイイ！！
+				PRINTFORMW 
+				PRINTFORMW 「ッはぁ、はぁ……　ご主人様、聴いて頂けましたか？」
+				PRINTFORMW 「ありがとうございます。　恥ずかしいけど…… 　嬉しいわ」
+			ELSE
+				CALL K2008_SE("空気漏れ", 1)
+				PRINTFORMW 
+				PRINTFORMW 「ご、ごめんなさい。　やっぱり恥ずかしくって」
+				PRINTFORMW 「まだ出せるけど……　うぅ」
+				PRINTFORML 
+				CALL K2008_SE("空気漏れ")
+				PRINTFORML 
+				PRINTFORMW 「残り、残りで頑張るから許して……　んうっ！　ンッ！」
+				PRINTFORML 
+				CALL K2008_SE("強放屁")
+			ENDIF
+		CASEELSE
+			PRINTFORMW 何の予告もせず、不意打ちでプラグに手をかけて一気に引き抜いた
+			PRINTFORML 
+			PRINTFORML 「えっ、ぁあ！？」
+			PRINTFORML 
+			CALL K2008_SE("強放屁")
+			PRINTFORML 
+			PRINTFORML あっけに取られた表情をした瞬間、けたたましい放屁音が鳴り響く
+			PRINTFORMW 放屁を何とか止めようと試行錯誤する姿は、見ていて飽きないものだ
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+;取り付け時
+@K2008_RANK4_COM_175_SET
+CALL K2008_RANK3_COM_175_SET
+;取り外し時
+@K2008_RANK4_COM_175_UNSET
+CALL K2008_RANK3_COM_175_UNSET
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+;取り付け時
+@K2008_RANK5_COM_175_SET
+CALL K2008_RANK3_COM_175_SET
+;取り外し時
+@K2008_RANK5_COM_175_UNSET
+CALL K2008_RANK3_COM_175_UNSET
+

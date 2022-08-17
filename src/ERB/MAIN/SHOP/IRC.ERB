@@ -1,0 +1,195 @@
+﻿;=============================================================================
+;IRC系列のキャラ関連処理
+;=============================================================================
+;※本ファイルにはIRCネタが多分に含まれています。苦手な方はすぐに閉じてください
+;-------------------------------------------------
+;IRCキャラ購入処理
+;-------------------------------------------------
+;霊夢様のみ特殊な処理を行っているため、仕様上購入額と売却額のベースに差が出ます
+@IRC_CHARA_BUY
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+;霊夢様購入可能判定
+IF ITEM:霊夢 == 0
+	REPEAT CHARANUM
+		SIF (NO:COUNT == 5001 || NO:COUNT == 5002 || NO:COUNT == 5003) && (ISASSI:COUNT == 1 || COUNT == MASTER)
+			LOCAL += 1
+	REND
+ENDIF
+;IRCキャラ購入可能判定
+REPEAT 100
+	CALLF SET_LIST, COUNT, ITEMPRICE:(COUNT + 5000)
+	IF COUNT <= 3
+		SIF (FLAG:570 & 4) == 0
+			CALLF SET_LIST, COUNT + 5000, ITEMPRICE:(COUNT + 5000) * 10
+	ENDIF
+	;霊夢様とスペルカード達は特殊な条件を満たす必要あり
+	SIF COUNT == 0 && LOCAL < 3 || (COUNT >= 23 && COUNT <= 29 && ITEM:パチュリー == 0)
+		CALLF SET_LIST, COUNT + 5000, 0
+REND
+;購入できるキャラの表示
+REPEAT 100
+	SIF GET_LIST(COUNT + 5000) == 0
+		CONTINUE
+	IF COUNT == 0 && ITEM:霊夢 == 0
+		PRINTFORML [{COUNT}] 霊夢様（{GET_LIST(COUNT)}圓）
+	ELSEIF ITEM:(COUNT + 5000) == 0
+		PRINTFORML [{COUNT}] %ITEMNAME:(COUNT+5000)%（{GET_LIST(COUNT)}圓）
+		SIF (FLAG:570 & 6) == 0 && COUNT <= 3
+			PRINTL ※この奴隷を購入後時間が経過します
+		SIF COUNT == 1
+			PRINTFORML ※この奴隷を購入すると、奴隷が助手になるまで%CALLNAME:MASTER%は【触手使役術】を失います
+		SIF COUNT == 2
+			PRINTL ※この奴隷を購入すると、奴隷が助手になるまで奴隷の購入及び売却に制限がつきます
+	ENDIF
+REND
+SIF FLAG:570 & 2
+	PRINTL ※奴隷商人がいないため、奴隷を購入後時間が経過します
+PRINTL [100] キャンセル
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100 || GET_LIST(RESULT + 5000) == 0 || ITEM:(RESULT + 5000) > 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF MONEY < GET_LIST(RESULT + 5000)
+	PRINTW 金額が足りません
+	RETURN 0
+ENDIF
+MONEY -= GET_LIST(RESULT + 5000)
+IF RESULT == 0
+	ITEM:101 += 1
+	LOCAL = 501
+ELSE
+	ITEM:(RESULT + 5000) += 1
+	LOCAL = RESULT + 5000
+ENDIF
+;購入メッセージおよび口上
+PRINTFORML ＜%CSVNAME(LOCAL, 0)%を購入しました＞
+;共通処理(霊夢様処理のためにCHARA_STATE_BASICは利用できない)
+ADDCHARA LOCAL
+TARGET = CHARANUM-1
+;キャラID設定
+CFLAG:3109 = FLAG:998
+FLAG:998 += 1
+;購入人数追加
+FLAG:39 += 1
+;購入された日を記録
+CFLAG:購入された日 = DAY
+;入手方法の記録
+CSTR:3 = 特殊な奴隷商人から購入した。
+;霊夢様の特別処理
+IF RESULT == 0
+	NO:TARGET = 1001
+	CFLAG:0 = 2
+	FOR LOCAL:10, 1, 6
+		REPEAT 120
+			SIF (1000 * LOCAL:10 + COUNT) == 1000 || (1000 * LOCAL:10 + COUNT) == 1001
+				CONTINUE
+			RELATION:(1000 * LOCAL:10 + COUNT) = 10
+		REND
+	NEXT
+;触手娘の特別処理
+ELSEIF RESULT == 1
+	TALENT:MASTER:触手使役術 = 0
+	IF ABL:MASTER:触手使役 > 0
+		ABL:MASTER:触手使役 = 0
+		FLAG:571 = ABL:MASTER:触手使役
+	ENDIF
+;ドリアードの特別処理
+ELSEIF RESULT == 2
+	FLAG:570 |= 2
+ENDIF
+;理性ゲージ設定
+SIF MAXBASE:9 <= 0
+	MAXBASE:9 = 9500 + 25 * RAND:101
+BASE:理性 = MAXBASE:9
+TALENT:理性 = 1
+;発情設定
+SIF TALENT:動物耳 || TALENT:淫魔 || TALENT:悪魔 || TALENT:妖狐 || TALENT:半白澤 || TALENT:鬼 || TALENT:鵺 || TALENT:化け狸 || TALENT:人狼
+	TALENT:発情可 = 1
+;調教度ゲージ設定
+CALL CHECK_ACCEPTANCE,TARGET
+;射精ゲージ設定
+SIF (TALENT:オトコ || TALENT:ふたなり) && MAXBASE:2 <= 0
+	MAXBASE:2 = CALC_GAUGE2_COMMON(TARGET)
+;噴乳ゲージ設定
+SIF TALENT:母乳体質
+	CALL CALC_GAUGE3_SLAVE, TARGET, 1
+;尿意ゲージ設定
+SIF TALENT:おもらし癖 || EXP:放尿経験
+	CALL CALC_GAUGE4_SLAVE, TARGET, 1
+;触手ゲージ設定
+SIF TALENT:寄生
+	CALL CALC_TENTACLE_GAUGE
+;酔いゲージ設定
+CALL CALC_GAUGE8, TARGET, 0
+;外見設定
+CALL SELECT_HAIR_DISPLAY, TARGET
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, TARGET
+;使用する口上の選択
+CALL SELECT_TEXT_DISPLAY, TARGET
+;購入された直後のイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 198
+;ドリアード不在による時間経過
+IF FLAG:570 & 2 || ((FLAG:570 & 6) == 0 && RESULT <= 3)
+	FLAG:0 = 1
+	BEGIN TURNEND
+	RETURN 1
+ENDIF
+RETURN 0
+
+;-------------------------------------------------
+;スペルカードキャラ追加購入処理
+;-------------------------------------------------
+@ROYALFLARE, ARG, ARGS
+;入手可能なキャラとその数をチェック
+CALLF CLEAR_LIST()
+LOCAL = 0
+REPEAT 7
+	IF ITEM:(5023+COUNT) == 0 && MONEY >= ITEMPRICE:(5023+COUNT)
+		CALLF SET_LIST(LOCAL, 5023 + COUNT)
+		LOCAL++
+	ENDIF
+REND
+;購入できないならここで処理を切り上げ
+SIF LOCAL == 0
+	RETURN 0
+
+;その中からランダムで一人拾う
+LOCAL:1 = GET_LIST(RAND:LOCAL)
+;キャラ追加及び初期設定の処理へ
+CALL CHARA_STATE_BASIC, LOCAL:1
+;購入人数追加
+FLAG:39 += 1
+;入手方法の記録
+CSTR:3 = 主人パチュリーの付属品として奴隷商人から購入した。
+;購入された日を記録
+CFLAG:購入された日 = DAY
+
+SIF ARGS == ""
+	ARGS = 購入したため
+
+;追加購入メッセージ
+PRINTFORM ＜パチュリーを%ARGS%、
+IF ARGS == "捕まえたので"
+	PRINTFORML さらに%NAME:TARGET%を手に入れました＞
+ELSE
+	PRINTFORML さらに%NAME:TARGET%を購入しました＞
+ENDIF
+
+;MONEY徴収
+MONEY -= ITEMPRICE:(LOCAL:1)
+
+;購入された直後のイベント口上呼び出し(スペルカードたち、なおパチュリーの当該イベントがその後にあるので注意）
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 198
+
+;キャラの空きを-1し、まだ空いているならもう一度判定
+ARG -= 1
+SIF ARG > 0 && (LOCAL - 1) > 0
+	RESTART
+RETURN 0

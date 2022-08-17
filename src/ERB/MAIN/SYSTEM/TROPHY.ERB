@@ -1,0 +1,403 @@
+﻿;=====================================================================
+;実績表示
+;=====================================================================
+@TROPHY
+LOCAL = 0
+LOCAL:1 = 1 ;4
+$PRINT_LIST
+ライン数:0 = LINECOUNT
+ALIGNMENT CENTER
+PRINTFORML 実績表示   ＜page.{LOCAL+1}/{LOCAL:1+1}＞
+ALIGNMENT LEFT
+DRAWLINE
+; Page.1→Trophy.8
+IF LOCAL == 0
+	CALL TROPHY_DISPLAY, 512, 3, "◆？？？？◆", "◆片道勇者◆", "ローグライクモードクリア"
+	CALL TROPHY_DISPLAY, 1024, 3, "◆？？？？？◆", "◆調教の天才◆", "1周目でLUNATICクリア"
+	CALL TROPHY_DISPLAY, 1, 3, "◆？？？？？？？◆", "◆スーパー調教師◆", "1周目でPHANTASMクリア"
+	CALL TROPHY_DISPLAY, 2, 3, "◆？？？？？？？◆", "◆不可能を可能に◆", "1周目でULTRAクリア"
+	CALL TROPHY_DISPLAY, 4, 3, "◆？？？？◆", "◆神あなた◆", "1、2周目でOVERDRIVEクリア"
+	CALL TROPHY_DISPLAY, 4096, 3, "◆？？？？？？？？？◆", "◆俺は人間をやめるぞ◆", "主人の種族を変更する"
+	CALL TROPHY_DISPLAY, 256, 3, "◆？？？？？？？◆", "◆リア充爆発しろ◆", "調教中に爆発する"
+	CALL TROPHY_DISPLAY, 2048, 3, "◆？？？？◆", "◆女泣かせ◆", "主人が調教師Lv5以上"
+ELSEIF LOCAL == 1
+	CALL TROPHY_DISPLAY, 16, 3, "◆？？？？◆", "◆円環の理◆", "引継ぎ時にノーマルハーレムエンド20達成"
+	CALL TROPHY_DISPLAY, 64, 3, "◆？？？？◆", "◆妖精の心◆", "堕とした妖精の数の累計が50人以上"
+	CALL TROPHY_DISPLAY, 8, 3, "◆？？？？？？？？？◆", "◆ヴァージン・キラー◆", "恋慕処女を頂いた人数の累計が50人以上"
+	CALL TROPHY_DISPLAY, 8192, 3, "◆？？？？？◆", "◆感度3000倍◆", "全ての淫乱系素質を同時に取得する"
+	CALL TROPHY_DISPLAY, 16384, 3, "◆？？？？？◆", "◆ｲｲﾊﾅｼﾀﾞﾅｰ ◆", "[壊造人格]を取得する"
+	CALL TROPHY_DISPLAY, 32768, 3, "◆？？？？？◆", "◆J( 'ー`)し◆", "[大甲斐性]を取得する"
+	CALL TROPHY_DISPLAY, 128, 3, "◆？？？？？◆", "◆地獄の使者◆", "へる子を陥落させた"
+	CALL TROPHY_DISPLAY, 32, 3, "◆？？？？？◆", "◆新しい神様◆", "幻想郷を手に入れる"
+;ELSEIF LOCAL == 2
+;ELSEIF LOCAL == 3
+;ELSEIF LOCAL == 4
+ENDIF
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 18% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 18% # [1009]後ろのページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+GOTO PRINT_LIST
+
+;=====================================================================
+;実績特典
+;ARG:1  ゲーム状態(0=開始時, 1=ゲーム中, 2=クリア時)
+;ARG    所持ポイント(判定用)
+;=====================================================================
+@TROPHY_BONUS, ARG:1 = 1, ARG = 0
+SELECTCASE ARG:1
+	CASE 0
+		FLAG:800 = ALL_TROPHY_CHECK(1)
+		ARG = FLAG:800
+	CASE 2
+		FLAG:800 = ALL_TROPHY_CHECK(1) + MAX(FLAG:6 - 1, 0)
+		ARG = FLAG:800
+ENDSELECT
+SIF ARG <= 0
+	RETURN 0
+LOCAL = 0
+FOR LOCAL:1, 30*ARG:1, 30*(ARG:1+1)
+	SIF NEED_BONUSPOINT(LOCAL:1) <= 0
+		CONTINUE
+	LOCAL ++
+NEXT
+IF LOCAL <= 0
+	PRINTW 未実装……
+	RETURN 0
+ENDIF
+IF ARG:1 == 1
+	PRINTL 恩恵を受け取りますか？
+ELSE
+	PRINTL 特典プレイを開始しますか？
+ENDIF
+PRINTFORML (現在所持しているポイント:{ARG}pt)
+PRINTL [0]はい
+PRINTL [1]いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP
+ENDIF
+CALLFORM TROPHY_BONUS_N, ARG, ARG:1
+
+@TROPHY_BONUS_N, ARG, ARG:1 = 1
+#DIM BONUS, 99
+LOCAL:1 = 0
+;最大
+LOCAL:3 = 30
+BONUS:LOCAL = 0
+FOR LOCAL:2, LOCAL:3*ARG:1, LOCAL:3*(ARG:1+1)
+	BONUS:(LOCAL:2) = 0
+NEXT
+$BACK_LOOP
+ライン数:0 = LINECOUNT
+PRINTL ～～実績特典～～
+PRINTFORML 所持ポイント:{LOCAL:1, 2}/{ARG, 2}pt
+PRINTL どの恩恵を受け取りますか？
+FOR LOCAL:2, LOCAL:3*ARG:1, LOCAL:3*(ARG:1+1)
+	SIF NEED_BONUSPOINT(LOCAL:2) <= 0
+		CONTINUE
+	PRINTFORM [{LOCAL:2, 2}]%BONUS_NAME(LOCAL:2), 40, LEFT%　　必要ポイント:{NEED_BONUSPOINT(LOCAL:2), 2, RIGHT}pt
+	IF BONUS:(LOCAL:2)
+		SETCOLOR COLOR("aqua")
+		PRINTFORML 選択済み
+		RESETCOLOR
+	ELSE
+		PRINTL 
+	ENDIF
+NEXT
+PRINTFORML [99]決定
+$INPUT_LOOP_SELECT
+INPUT
+IF RESULT < LOCAL:3*ARG:1 || (RESULT > LOCAL:3*(ARG:1+1) && RESULT < 99) || RESULT > 99 || (RESULT != 99 && NEED_BONUSPOINT(RESULT) <= 0)
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_SELECT
+ELSEIF RESULT == 99
+	PRINTL 
+	PRINTFORML ○選択した恩恵
+	LOCAL = 0
+	FOR LOCAL:2, LOCAL:3*ARG:1, LOCAL:3*(ARG:1+1)
+		IF BONUS:(LOCAL:2)
+			LOCAL += 1
+			PRINTFORML %BONUS_NAME(LOCAL:2)%
+		ENDIF
+	NEXT
+	;選択した恩恵が無い場合
+	IF !LOCAL
+		PRINTFORML なし
+	ENDIF
+	PRINTL 
+	IF !LOCAL
+		PRINTFORML 恩恵を受け取らず終了してよろしいですか？
+	ELSE
+		PRINTFORML 上記選択を受け取ってよろしいですか？
+	ENDIF
+	PRINTL [0] - はい
+	PRINTL [1] - いいえ
+	$INPUT_LOOP_CHECK
+	INPUT
+	IF RESULT < 0 || RESULT > 1
+		GOTO INPUT_LOOP_CHECK
+	ELSEIF RESULT == 0
+		IF LOCAL
+			FLAG:800 = MAX(FLAG:800 - LOCAL:1, 0)
+			PRINTFORML 恩恵を受け取った！
+			FOR LOCAL:2, LOCAL:3*ARG:1, LOCAL:3*(ARG:1+1)
+				IF BONUS:(LOCAL:2)
+					SELECTCASE LOCAL:2
+						CASE 0, 60
+							FLAG:999 += 2
+							PRINTL 納金の期限は2日延期となった
+						CASE 1, 61
+							FLAG:999 += 3
+							PRINTL 納金の期限は3日延期となった
+						CASE 2, 62
+							FLAG:999 += 4
+							PRINTL 納金の期限は4日延期となった
+						CASE 3, 63
+							FLAG:999 += 5
+							PRINTL 納金の期限は5日延期となった
+						CASE 4, 64
+							FLAG:999 += 6
+							PRINTL 納金の期限は6日延期となった
+						CASE 5, 65
+							MONEY += 5000
+							PRINTL 5000圓を手に入れた
+						CASE 6, 66
+							MONEY += 7500
+							PRINTL 7500圓を手に入れた
+						CASE 7, 67
+							MONEY += 10000
+							PRINTL 10000圓を手に入れた
+						CASE 8, 68
+							MONEY += 12500
+							PRINTL 12500圓を手に入れた
+						CASE 9, 69
+							MONEY += 15000
+							PRINTL 15000圓を手に入れた
+						CASE 30
+							REPEAT CHARANUM
+								IF !TALENT:COUNT:死亡 && CFLAG:COUNT:嫉妬ポイント
+									CFLAG:COUNT:嫉妬ポイント = 0
+									IF TALENT:COUNT:嫉妬 && CFLAG:COUNT:12 & 4096
+										TALENT:COUNT:嫉妬 = 0
+										CFLAG:COUNT:12 -= 4096
+									ENDIF
+									IF TALENT:COUNT:狂気 && CFLAG:COUNT:12 & 1
+										TALENT:COUNT:狂気 = 0
+										CFLAG:COUNT:12 -= 1
+									ENDIF
+								ENDIF
+							REND
+							IF FLAG:16 & 32
+								PRINT 生きているキャラ
+							ELSE
+								PRINT 全員
+							ENDIF
+							PRINTL の嫉妬・狂気を解除しました
+						CASE 35
+							REPEAT CHARANUM
+								IF !TALENT:COUNT:死亡
+									BASE:COUNT:体力 = MAXBASE:COUNT:0
+									BASE:COUNT:気力 = MAXBASE:COUNT:1
+								ENDIF
+							REND
+							IF FLAG:16 & 32
+								PRINT 生きているキャラ
+							ELSE
+								PRINT 全員
+							ENDIF
+							PRINTL の体力・気力が回復しました
+						CASE 50
+							FLAG:999 += 5
+							PRINTL 納金の期限は5日延期となった
+						CASE 55
+							MARK:反発刻印 = 0
+							PRINTFORML %CALLNAME:TARGET%は反発刻印を失いました
+						CASE 56
+							MARK:96 = 0
+							PRINTFORML %CALLNAME:TARGET%は恐怖履歴を失いました
+					ENDSELECT
+				ENDIF
+			NEXT
+			WAIT
+		ELSE
+			PRINTFORML 
+		ENDIF
+	ELSE
+		CALL BACK_LOOP_BEFORE
+		GOTO BACK_LOOP
+	ENDIF
+	
+	RETURN 0
+ELSEIF !BONUS:RESULT && ARG - LOCAL:1 < NEED_BONUSPOINT(RESULT)
+	PRINTFORML ポイントが足りません
+	CALL BACK_LOOP_BEFORE
+	GOTO BACK_LOOP
+ELSE
+	LOCAL = RESULT
+	IF !BONUS:LOCAL
+		BONUS:LOCAL = 1
+		LOCAL:1 += NEED_BONUSPOINT(LOCAL)
+	ELSEIF BONUS:LOCAL
+		BONUS:LOCAL = 0
+		LOCAL:1 -= NEED_BONUSPOINT(LOCAL)
+	ENDIF
+ENDIF
+
+CALL BACK_LOOP_BEFORE
+GOTO BACK_LOOP
+
+;======================================================
+;恩恵名代入
+;======================================================
+@BONUS_NAME, ARG
+#FUNCTIONS
+LOCALS = 
+SELECTCASE ARG
+	CASE 0, 60
+		LOCALS = 2日延期
+	CASE 1, 61
+		LOCALS = 3日延期
+	CASE 2, 62
+		LOCALS = 4日延期
+	CASE 3, 63
+		LOCALS = 5日延期
+	CASE 4, 64
+		LOCALS = 6日延期
+	CASE 5, 65
+		LOCALS = 初期資金+5000
+	CASE 6, 66
+		LOCALS = 初期資金+7500
+	CASE 7, 67
+		LOCALS = 初期資金+10000
+	CASE 8, 68
+		LOCALS = 初期資金+12500
+	CASE 9, 69
+		LOCALS = 初期資金+15000
+	CASE 30
+		LOCALS = ヤンデレリセット
+	CASE 35
+		LOCALS = 全キャラ回復
+	CASE 50
+		LOCALS = 5日延期
+	CASE 55
+		LOCALS = %CALLNAME:TARGET%の反発刻印を0にする
+	CASE 56
+		LOCALS = %CALLNAME:TARGET%の恐怖履歴を0にする
+ENDSELECT
+
+RETURNF LOCALS
+
+;======================================================
+;使用ポイント算出
+;======================================================
+@NEED_BONUSPOINT, ARG
+#FUNCTION
+LOCAL = 0
+SELECTCASE ARG
+	CASE 0, 60
+		SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+			LOCAL = 1
+	CASE 1, 61
+		SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+			LOCAL = 2
+	CASE 2, 62
+		SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+			LOCAL = 3
+	CASE 3, 63
+		SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+			LOCAL = 4
+	CASE 4, 64
+		SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+			LOCAL = 5
+	CASE 5, 65
+		LOCAL = 1
+	CASE 6, 66
+		LOCAL = 2
+	CASE 7, 67
+		LOCAL = 3
+	CASE 8, 68
+		LOCAL = 4
+	CASE 9, 69
+		LOCAL = 5
+	CASE 30
+		SIF FLAG:14 & 4
+			LOCAL = 3
+	CASE 35
+		LOCAL = 1
+	CASE 50
+		SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+			LOCAL = 5
+	CASE 55,56
+		SIF TARGET > 0
+			LOCAL = 5
+ENDSELECT
+RETURNF LOCAL
+
+@BACK_LOOP_BEFORE
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+
+;=====================================================================
+;実績関連処理
+;=====================================================================
+@TROPHY_DISPLAY, ARG = -1, ARG:1 = 0, ARGS = "◆？？？？？◆", ARGS:1 = "◆？？？？？◆", ARGS:2 = "未実装", ARGS:3 = ""
+IF ARG != -1 && GLOBAL:2300 & ARG
+	SETCOLOR COLOR("PINK")
+	PRINTFORM %ARGS:1, 28, LEFT%
+	RESETCOLOR
+	IF ARG:1 > 0
+		PRINT   ポイント:
+		SETCOLOR COLOR("PINK")
+		PRINTFORML {ARG:1, 2}pt
+		RESETCOLOR
+	ELSE
+		PRINTL
+	ENDIF
+	PRINT  獲得済み：
+ELSE
+	SETCOLOR 0x888888
+	PRINTFORML %ARGS, 28, LEFT%
+	RESETCOLOR
+	PRINT  獲得条件：
+ENDIF
+IF ARG != -1 && GLOBAL:2300 & ARG && ARGS:3 != ""
+	PRINTSL ARGS:3
+ELSE
+	PRINTSL ARGS:2
+ENDIF
+
+@TROPHY_CHECK, ARG = -1, ARG:1 = 0
+#FUNCTION
+IF ARG != -1 && GLOBAL:2300 & ARG
+	RETURNF ARG:1
+ELSE
+	RETURNF 0
+ENDIF
+
+@ALL_TROPHY_CHECK, ARG = 1
+#FUNCTION
+LOCAL = 0
+REPEAT 25 * ARG
+	SIF GLOBAL:2300 & (1 * POWER(2,COUNT))
+		LOCAL += 3
+REND
+RETURNF LOCAL

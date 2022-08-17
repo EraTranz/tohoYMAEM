@@ -1,0 +1,360 @@
+﻿;--------------------------------------------------
+;運動による影響（TARGET）
+;--------------------------------------------------
+@ACTION_REACTION, ARG, ARG:1 = 0
+#DIM COMMON_PALAM, 4
+
+;睡眠中、時止め中、失神中は不可
+SIF EQUIP:睡眠薬 || TEQUIP:時間止め || TFLAG:899 >= 1
+	RETURN 0
+
+;運動時にクリトリス/ペニスに快感が走る
+;快C
+IF ABL:Ｃ感覚 <= 1
+	LOCAL = 0
+ELSEIF ABL:Ｃ感覚 <= 2
+	LOCAL = 4
+ELSEIF ABL:Ｃ感覚 <= 3
+	LOCAL = 8
+ELSEIF ABL:Ｃ感覚 <= 4
+	LOCAL = 12
+ELSE
+	LOCAL = 16
+ENDIF
+SIF TALENT:ふたなり || TALENT:オトコ
+	LOCAL += 15
+;直前の行動
+;振り解く、暴れる
+IF ARG == 20 || ARG == 21
+	LOCAL += 20
+;近距離攻撃、近寄る、距離をとる、背後に回る、見切り
+ELSEIF ARG == 0 || ARG == 10 || ARG == 11 || ARG == 12 || ARG == 13
+	LOCAL += 10
+;中距離攻撃、遠距離攻撃
+ELSEIF ARG == 1 || ARG == 2
+	LOCAL += 5
+;何もしない、なすがまま
+ELSEIF ARG == 15 || ARG == 23
+	LOCAL /= 16
+ELSE
+	LOCAL /= 8
+ENDIF
+IF TALENT:ふたなり || TALENT:オトコ
+	;下着がなく、勃起していない
+	IF EQUIP:脱衣 && PALAM:欲情 < PALAMLV:3
+		LOCAL /= 2
+	;下着があり、勃起していない
+	ELSEIF !EQUIP:脱衣 && PALAM:欲情 < PALAMLV:3
+		LOCAL *= 2
+	;フル勃起で丸出し状態だと振動で揺れてつらい
+	ELSEIF EQUIP:脱衣
+		LOCAL *= 8
+	;下着がある状態でフル勃起だと擦れてつらい
+	ELSE
+		LOCAL *= 16
+	ENDIF
+;下着でクリちゃんが擦れてつらい
+ELSEIF !EQUIP:脱衣
+	LOCAL *= 6
+;下着がなければ擦れない
+ELSE
+	LOCAL = 0
+ENDIF
+
+;Ｃ敏感とＣ鈍感はここで処理
+IF TALENT:Ｃ敏感
+	TIMES LOCAL , 2.00
+ELSEIF TALENT:Ｃ鈍感
+	TIMES LOCAL , 0.50
+ENDIF
+;PALAM:欲情をみる
+SELECTCASE PALAM:欲情
+	CASE IS < PALAMLV:1
+		TIMES LOCAL , 0.30
+	CASE IS < PALAMLV:2
+		TIMES LOCAL , 0.60
+	CASE IS < PALAMLV:3
+		TIMES LOCAL , 0.80
+	CASE IS < PALAMLV:4
+		TIMES LOCAL , 1.00
+	CASE IS < PALAMLV:5
+		TIMES LOCAL , 1.20
+	CASE IS < PALAMLV:6
+		TIMES LOCAL , 1.40
+	CASEELSE
+		TIMES LOCAL , 1.50
+ENDSELECT
+;淫核／淫茎
+SIF TALENT:淫核／淫茎
+	TIMES LOCAL , 1.50
+
+SIF LOCAL < 100
+	LOCAL = 0
+COMMON_PALAM:0 += LOCAL
+
+;運動時におっぱいに快感が走る
+;快B
+IF ABL:Ｂ感覚 <= 1
+	LOCAL = 0
+ELSEIF ABL:Ｂ感覚 <= 2
+	LOCAL = 5
+ELSEIF ABL:Ｂ感覚 <= 3
+	LOCAL = 10
+ELSEIF ABL:Ｂ感覚 <= 4
+	LOCAL = 15
+ELSE
+	LOCAL = 20
+ENDIF
+SIF TALENT:母乳体質
+	LOCAL += 5
+;直前の行動
+;振り解く、暴れる
+IF ARG == 20 || ARG == 21
+	LOCAL += 20
+;近距離攻撃、近寄る、距離をとる、背後に回る、見切り
+ELSEIF ARG == 0 || ARG == 10 || ARG == 11 || ARG == 12 || ARG == 13
+	LOCAL += 10
+;中距離攻撃、遠距離攻撃
+ELSEIF ARG == 1 || ARG == 2
+	LOCAL += 5
+;何もしない、なすがまま
+ELSEIF ARG == 15 || ARG == 23
+	LOCAL /= 16
+ELSE
+	LOCAL /= 8
+ENDIF
+;ひんぬーは服を着ていると擦れてつらい
+IF TALENT:貧乳
+	IF !EQUIP:脱衣
+		LOCAL *= 8
+	ELSE
+		LOCAL = 0
+	ENDIF
+;きょぬーは服がなくなると揺れてつらい。女の子的に揺れはＮＧなんですよぉ＞＜
+ELSEIF TALENT:巨乳 || TALENT:爆乳
+	IF !EQUIP:脱衣
+		LOCAL *= 4
+	ELSE
+		LOCAL *= 16
+	ENDIF
+	SIF TALENT:爆乳
+		LOCAL *= 2
+;きょぬーでなくても服がないと揺れてつらい
+ELSE
+	IF !EQUIP:脱衣
+		LOCAL *= 3
+	ELSE
+		LOCAL *= 12
+	ENDIF
+ENDIF
+
+;Ｂ敏感とＢ鈍感はここで処理
+IF TALENT:Ｂ敏感
+	TIMES LOCAL , 2.00
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL , 0.50
+ENDIF
+;PALAM:欲情をみる
+SELECTCASE PALAM:欲情
+	CASE IS < PALAMLV:1
+		TIMES LOCAL , 0.30
+	CASE IS < PALAMLV:2
+		TIMES LOCAL , 0.60
+	CASE IS < PALAMLV:3
+		TIMES LOCAL , 0.80
+	CASE IS < PALAMLV:4
+		TIMES LOCAL , 1.00
+	CASE IS < PALAMLV:5
+		TIMES LOCAL , 1.20
+	CASE IS < PALAMLV:6
+		TIMES LOCAL , 1.40
+	CASEELSE
+		TIMES LOCAL , 1.50
+ENDSELECT
+;淫乳
+SIF TALENT:淫乳
+	TIMES LOCAL , 1.50
+
+SIF LOCAL < 100
+	LOCAL = 0
+COMMON_PALAM:3 += LOCAL
+
+;運動による影響の表示
+IF COMMON_PALAM:0 || (COMMON_PALAM:3 && !TALENT:オトコ)
+	PRINTL 
+ENDIF
+IF COMMON_PALAM:0
+	;振り解く、暴れる
+	IF ARG == 20 || ARG == 21
+		PRINT 抵抗しようともがく
+	;近距離攻撃、中距離攻撃、遠距離攻撃、近寄る、距離をとる、背後に回る、見切り
+	ELSEIF ARG == 0 || ARG == 1 || ARG == 2 || ARG == 10 || ARG == 11 || ARG == 12 || ARG == 13
+		PRINT 激しい運動で
+	ELSE
+		PRINT ちょっとした動きでも
+	ENDIF
+	PRINTFORM %CALLNAME:TARGET%の
+	;淫核／淫茎
+	SIF ABL:Ｃ感覚 == 5 || TALENT:淫核／淫茎
+		PRINT 開発されきった
+	SIF ABL:Ｃ感覚 >= 3 || TALENT:Ｃ敏感
+		PRINT 敏感な
+	IF TALENT:ふたなり || TALENT:オトコ
+		SIF PALAM:欲情 >= PALAMLV:3
+			PRINT 勃起
+		PRINT ペニスが
+	ELSE
+		PRINT クリトリスが
+	ENDIF
+	IF !EQUIP:脱衣
+		PRINTL 下着で擦れてしまい、
+	ELSE
+		PRINTL 揺れてしまい、
+	ENDIF
+
+	IF COMMON_PALAM:0 < 250
+		PRINT 微かに疼いている・・・
+	ELSEIF COMMON_PALAM:0 < 500
+		PRINT 感覚を刺激されて疼いてしまう・・・
+	ELSEIF COMMON_PALAM:0 < 2000
+		PRINT 快楽を感じてしまっている・・・
+	ELSE
+		PRINT 強い快楽を感じてしまっている・・・
+	ENDIF
+	PRINTL 
+ENDIF
+IF COMMON_PALAM:3 && !TALENT:オトコ
+	;振り解く、暴れる
+	IF ARG == 20 || ARG == 21
+		PRINT 抵抗しようともがく
+	;近距離攻撃、中距離攻撃、遠距離攻撃、近寄る、距離をとる、背後に回る、見切り
+	ELSEIF ARG == 0 || ARG == 1 || ARG == 2 || ARG == 10 || ARG == 11 || ARG == 12 || ARG == 13
+		PRINT 激しい運動で
+	ELSE
+		PRINT ちょっとした動きでも
+	ENDIF
+	PRINTFORM %CALLNAME:TARGET%の
+	SIF ABL:Ｂ感覚 == 5 || TALENT:淫乳
+		PRINT 開発されきった
+	IF TALENT:巨乳 || TALENT:爆乳
+		PRINT 豊満
+		IF ABL:Ｂ感覚 >= 3 || TALENT:Ｂ敏感
+			PRINT で
+		ELSE
+			PRINT な
+		ENDIF
+	ENDIF
+	SIF ABL:Ｂ感覚 >= 3 || TALENT:Ｂ敏感
+		PRINT 敏感な
+	PRINT 胸が
+	IF !EQUIP:脱衣
+		PRINTL 服で擦れてしまい、
+	ELSE
+		SIF (TALENT:巨乳 || TALENT:爆乳) && (ARG == 1 || ARG == 2 || ARG == 3 || ARG == 5 || ARG == 6 || ARG == 7 || ARG == 8 || ARG == 9 || ARG == 16 || ARG == 17)
+			PRINT 大きく
+		PRINTL 揺れてしまい、
+	ENDIF
+
+	IF COMMON_PALAM:3 < 250
+		PRINT 微かに疼いている……
+	ELSEIF COMMON_PALAM:3 < 500
+		PRINT 感覚を刺激されて疼いてしまう……
+	ELSEIF COMMON_PALAM:3 < 2000
+		PRINT 快楽を感じてしまっている……
+	ELSE
+		PRINT 強い快楽を感じてしまっている……
+	ENDIF
+	PRINTL 
+ENDIF
+IF COMMON_PALAM:0 || (COMMON_PALAM:3 && !TALENT:オトコ)
+	PRINTL 
+ENDIF
+
+VARSET UP, 0
+VARSET DOWN, 0
+VARSET SOURCE, 0
+
+UP:0 = COMMON_PALAM:0
+SIF !TALENT:オトコ
+	UP:3 = COMMON_PALAM:3
+
+IF UP:0 || UP:3
+	UP:10 = UP:0 + UP:3
+	TIMES UP:10 , 0.85
+	;機械持ちの場合には陥落していなくて快感に素直もないとと分泌しずらい(盛り上がりにくい)
+	SIF TALENT:機械 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0 && TALENT:快感に素直 == 0
+		TIMES UP:10 , 0.2
+	;快Ｃ＋快Ｖ＋快Ａ＋快Ｂが合わせて100以上上昇ならその20%の液体のソースが加わる（オトコはダメ）
+	IF UP:10 > 100 && TALENT:オトコ == 0
+		;濡れやすいと濡れにくいはここで処理
+		IF TALENT:濡れやすい
+			TIMES UP:10 , 2.50
+		ELSEIF TALENT:濡れにくい
+			TIMES UP:10 , 0.40
+		ENDIF
+		UP:10 /= 5
+		;小人体型
+		SIF TALENT:小人体型 && TALENT:PLAYER:小人体型 == 0
+			TIMES UP:10 , 0.40
+	ENDIF
+	
+	PRINTFORM ◇
+	PRINTFORML %SHOW_CALLNAME(TARGET)%◇
+	PRINTFORM 体力 －0  　気力 －0  
+	IF TALENT:理性
+		IF MAXBASE:9 > 0
+			IF (UP:0 + UP:3) / 10 > 0
+				PRINTFORM 　理性 －{(UP:0+UP:3)/10}
+				BASE:理性 = LIMIT(BASE:理性 - (UP:0+UP:3) / 10, 0, MAXBASE:9)
+			ELSE
+				PRINTFORM 　理性 －0
+			ENDIF
+		ENDIF
+	ENDIF
+	IF BASE:体力 < 500
+		PRINTFORM 　★疲労困憊★
+	ELSEIF BASE:気力 <= 0
+		PRINTFORM 　★気力０★
+	ELSE
+		PRINT 
+	ENDIF
+	IF TALENT:理性
+		IF MAXBASE:9 > 0
+			PRINTFORM 　\@(BASE:理性 <= 0) ? ※理性０※ # \@
+		ELSE
+			PRINT 　※理性崩壊※
+		ENDIF
+	ENDIF
+	PRINTL 
+	;調教度変動量表示
+	IF FLAG:12 & 4 && CFLAG:3668 < 1000
+		PRINTL 調教度＋0.1％
+		CFLAG:3668 ++
+	ENDIF
+	;調教ソースの表示
+	SIF UP:0
+		PRINTFORM Ｃ摩擦({UP:0*(2+TALENT:Ｃ鈍感-TALENT:Ｃ敏感)/2}) 
+	SIF UP:3
+		PRINTFORM Ｂ摩擦({UP:3*(2+TALENT:Ｂ鈍感-TALENT:Ｂ敏感)/2}) 
+	IF UP:0 || UP:3 || UP:10
+		IF (UP:0 + UP:3) / (10 - ABL:欲望) > 0
+			PRINTFORM 欲情追加({(UP:0+UP:3)/(10-ABL:欲望)}) 
+			UP:13 = (UP:0 + UP:3) / (10 - ABL:欲望)
+		ENDIF
+		IF UP:10 * ( 5 - (TALENT:小人体型 && TALENT:PLAYER:小人体型 == 0) * 3 ) / 5 > 0
+			PRINTFORM 液体追加({UP:10*(5-(TALENT:小人体型 && TALENT:PLAYER:小人体型 == 0)*3)/5}) 
+		ELSEIF UP:10
+			PRINTFORM 液体追加(1) 
+		ENDIF
+		PRINTL 
+	ENDIF
+	SIF PALAM:快Ｃ + UP:0 > 9999
+		UP:0 = 9999 - PALAM:快Ｃ
+	SIF PALAM:快Ｂ + UP:3 > 9999
+		UP:3 = 9999 - PALAM:快Ｂ
+	CALL SHOW_PARAMETR
+	
+	RETURN 1
+ENDIF
+
+RETURN 0

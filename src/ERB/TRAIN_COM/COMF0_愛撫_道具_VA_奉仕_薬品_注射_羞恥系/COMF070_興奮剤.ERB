@@ -1,0 +1,144 @@
+﻿;=============================================================================
+;興奮剤
+;=============================================================================
+;数コマンドの間、快感と潤滑と酔いが増強される薬を飲ませる。
+;効果が切れた後、しばらく快感や潤滑減退＆トラウマ増強、薬物経験大量増加。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE70
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:70 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:興奮剤 == 0
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;産卵促進剤を使用していたら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;効果発揮中・反動中はダメ
+SIF TEQUIP:興奮剤
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 70) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM70
+PRINTL 興奮剤
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 70
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 興奮剤
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 90
+
+SOURCE:薬物浸潤 = 3800
+SOURCE:逸脱 = 3200
+
+;興奮剤1つ消費
+CALL USE_PLURAL_ITEM, 69, 1
+
+TEQUIP:興奮剤 = 10
+
+;薬物経験
+TCVAR:薬物経験 += 5
+RETURN 1
+
+;--------------------------------------------------
+;興奮剤効果発揮中
+;--------------------------------------------------
+@EQUIP_COM70
+IF TEQUIP:興奮剤 > 4
+	PRINTL ＜興奮剤効果発揮中＞
+	TEQUIP:興奮剤 -= 1
+
+	TIMES SOURCE:快Ｃ , 1.30
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:快Ｂ , 1.30
+	TIMES SOURCE:液体追加 , 1.20
+	TIMES SOURCE:薬物浸潤 , 1.30
+	TIMES SOURCE:酒酔い , 1.30
+	TIMES SOURCE:鬼殺し , 1.30
+
+	;薬物経験
+	TCVAR:薬物経験 += 1
+
+ELSEIF TEQUIP:興奮剤 > 1
+	PRINTL ＜興奮剤反動中＞
+	TEQUIP:興奮剤 -= 1
+	CALL DISPLAY_EQUIP_MESSAGE_COM, 70
+
+	TIMES DOWNBASE:1 , 1.10
+	TIMES SOURCE:快Ｃ , 0.70
+	TIMES SOURCE:快Ｖ , 0.70
+	TIMES SOURCE:快Ａ , 0.70
+	TIMES SOURCE:快Ｂ , 0.70
+	TIMES SOURCE:液体追加 , 0.60
+	TIMES SOURCE:トラウマ , 2.40
+	TIMES SOURCE:薬物浸潤 , 1.20
+	TIMES SOURCE:酒酔い , 1.20
+	TIMES SOURCE:鬼殺し , 1.20
+ELSEIF TEQUIP:興奮剤 == 1
+	PRINTL ＜興奮剤反動終了＞
+	TEQUIP:興奮剤 = 0
+
+	TIMES SOURCE:薬物浸潤 , 1.20
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_70
+PRINTFORM %CALLNAME:MASTER%は%CALLNAME:TARGET%に
+SIF ABL:PLAYER:技巧 >= 3
+	PRINT 口移しで
+SIF ABL:従順 == 0
+	PRINT 無理やり
+PRINTL 興奮剤を飲ませた
+PRINTFORM %CALLNAME:TARGET%は
+IF ABL:従順 > 3 && MARK:反発刻印 < 3
+	PRINTFORML 困惑した表情を浮かべ、ニヤニヤと笑う%CALLNAME:MASTER%を見つめている……
+ELSEIF MARK:反発刻印 >= 3
+	PRINTFORML 警戒心を露わにしてニヤニヤと笑う%CALLNAME:MASTER%を睨んでいる……
+ELSE
+	PRINTFORML 一瞬驚いたような表情をしたがニヤニヤと笑う%CALLNAME:MASTER%を見て探るような眼で睨んでいる……
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_070
+PRINTFORML 興奮剤の効果が切れた%CALLNAME:TARGET%は体を両手で抱えて気持ち悪さに耐えている…

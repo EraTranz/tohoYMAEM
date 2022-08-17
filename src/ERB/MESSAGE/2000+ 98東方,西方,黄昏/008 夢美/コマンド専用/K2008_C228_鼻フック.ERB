@@ -1,0 +1,189 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;鼻フック
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+;	CFLAG:8228は「鼻フックを取り付けた回数」で使う
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK未指定（RANK指定がある場合はそちらを優先する）
+;-------------------------------------------------
+@K2008_COM_228
+;PRINTFORMW 
+
+;分岐口上方式を採用
+IF TEQUIP:鼻装着器具
+	;取り付け
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_228_SET
+	CATCH
+		CALL K2008_COM_GENERAL
+	ENDCATCH
+	CFLAG:__K2008N_CFLAG_SELECTCOM__ += 1
+ELSE
+	;取り外し
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_228_UNSET
+	CATCH
+		CALL K2008_COM_GENERAL
+	ENDCATCH
+ENDIF
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+;初回実行時
+@K2008_RANK0_COM_228_FIRST
+PRINTFORMW 「ちょ、ちょっと何よそれ！　やだっ、やめて！」
+PRINTFORMW 「んギッ、こんな真似させて何が楽しいのよ」
+
+;2回目以降
+@K2008_RANK0_COM_228_SET
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW 「私にこんな無様な顔させて、後が怖いわよ」
+	CASE 1
+		PRINTFORMW 「またそんなもの持ってきて……　随分気に入ったのね」
+		PRINTFORMW 「んぐっ……　これくらいどうでもいいわ」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+
+@K2008_RANK0_COM_228_UNSET
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW 「まったく、こんなのはもうごめんだわ」
+	CASE 1
+		PRINTFORMW 「……ふぅ、ようやく飽きた？」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+;初回実行時
+@K2008_RANK1_COM_228_FIRST
+CALL K2008_RANK0_COM_228_FIRST
+;2回目以降
+@K2008_RANK1_COM_228_SET
+CALL K2008_RANK0_COM_228_SET
+
+@K2008_RANK1_COM_228_UNSET
+CALL K2008_RANK0_COM_228_UNSET
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+;初回実行時
+@K2008_RANK2_COM_228_FIRST
+CALL K2008_RANK0_COM_228_FIRST
+;2回目以降
+@K2008_RANK2_COM_228_SET
+CALL K2008_RANK0_COM_228_SET
+
+@K2008_RANK2_COM_228_UNSET
+CALL K2008_RANK0_COM_228_UNSET
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+;初回実行時
+@K2008_RANK3_COM_228_FIRST
+PRINTFORMW 「は、鼻フック？　そんなものを私に着けるっていうの？」
+PRINTFORMW 「……ほどほどで、よろしくね」
+
+;2回目以降
+@K2008_RANK3_COM_228_SET
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW 「またそんなものを」
+		PRINTFORMW 「不細工なほうが好きなの？　変わってるわね」
+	CASE 1
+		PRINTFORMW 「またそれ？　うーん……」
+		PRINTFORMW 「やっぱり私にはよく分からない趣向だわ」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+@K2008_RANK3_COM_228_UNSET
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW 「はぁ～、ようやく外れた」
+		PRINTFORMW 「こういうのは、ちょっとどうかと思わよ」
+	CASE 1
+		PRINTFORMW 「ん、ふぅ……　酷いことも程々にしてほしいわね」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+;初回実行時
+@K2008_RANK4_COM_228_FIRST
+CALL K2008_RANK3_COM_228_FIRST
+;2回目以降
+@K2008_RANK4_COM_228_SET
+CALL K2008_RANK3_COM_228_SET
+
+@K2008_RANK4_COM_228_UNSET
+CALL K2008_RANK3_COM_228_UNSET
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+;初回実行時
+@K2008_RANK5_COM_228_FIRST
+PRINTFORMW 「鼻フック？　いいわよ、無様な顔になった私も見せてあげる」
+IF ABL:露出癖 >= 3 && ABL:マゾっ気 >= 3
+	PRINTFORML 
+	PRINTFORMW 「ふぎっ、本当にぶたっ鼻にされたぁ！　ブヒィ♪」
+ENDIF
+
+;2回目以降
+@K2008_RANK5_COM_228_SET
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORMW 「あら、また鼻穴までオモチャにされちゃうのね、素敵」
+	CASE 2
+		PRINTFORMW 「そんなに私のブタッ鼻が気に入ったの？」
+	CASE 1
+		PRINTFORMW 「ん～、鼻フック？　はい、可愛く付けてね」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+IF ABL:マゾっ気 >= 3
+	PRINTFORMW 「ふぎっ、んヲォ、引っ張られたら変顔しちゃっ、フゴッ」
+	SIF TEQUIP:ビデオ撮影 > 0
+		PRINTFORMW 「撮っちゃダメぇ、鼻穴ドアップ撮影とか誰も喜ばないって、んブヒィ♪」
+ENDIF
+
+
+@K2008_RANK5_COM_228_UNSET
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW 「ふぅ……　不細工面な私はどうだった、嫌いになっちゃった？」
+	CASE 1
+		PRINTFORMW 「ンゴォッ、は、鼻穴が戻らない……！？」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;-------------------------------------------------
+;絶頂口上
+;	RETURN 1すると、射精させた口上は呼び出されない
+;	絶頂＋射精させた口上を同時に処理したい場合はRETURN 1のこと
+;-------------------------------------------------
+;@K2008_EX_COM_228
+@K2008_RANK5_EX_COM_228
+IF TEQUIP:鼻装着器具 > 0 && RAND:2 == 0
+	;取り付け時
+	PRINTFORMW 「ぶ、ブヒイッ、ブタ鼻で下品アクメ顔イグゥ゛♪」
+	PRINTFORMW 「ブヒッ、ふごぉ、ブヒッ♪　イクの止まんなブヒィー♪」
+ELSE
+	;汎用に飛ばす
+	CALL K2008_ORGASM_GENERAL
+ENDIF
+

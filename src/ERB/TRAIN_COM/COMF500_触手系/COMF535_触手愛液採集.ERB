@@ -1,0 +1,227 @@
+﻿;=============================================================================
+;触手愛液採集
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE535
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:535 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;Ｖ系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;対象のＶ拡張経験が0のとき異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ｖ拡張経験 == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF (TEQUIP:Ｖ系装着器具 == 7 || TEQUIP:Ｖ系装着器具 == 27) && TEQUIP:触手服 & 8
+	RETURN 1
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;処女だとダメ
+SIF TALENT:処女 == 1
+	RETURN 0
+;Ｖ調律経験が10未満だとダメ
+SIF EXP:Ｖ調律経験 < 10
+	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;他のＶ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 && TEQUIP:Ｖ系装着器具 != 7 && TEQUIP:Ｖ系装着器具 != 27
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !TEQUIP:触手調教 && !(TEQUIP:触手服 & 8) && (TEQUIP:Ｖ系装着器具 == 7 || TEQUIP:Ｖ系装着器具 == 27)
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 535) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM535
+PRINTL 触手愛液採集
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 535
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手愛液採集
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+DOWNBASE:0 += 65
+DOWNBASE:1 += 110
+
+SOURCE:露出 = 180
+SOURCE:達成感 = 180
+SOURCE:欲情追加 = 100
+SOURCE:痛み = 250
+SOURCE:屈従 = 80
+SOURCE:中毒充足 = 300
+SOURCE:逸脱 = 350
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	LOCAL:1 = 200
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL:1 = 400
+ELSEIF ABL:Ｖ感覚 == 2
+	LOCAL:1 = 900
+ELSEIF ABL:Ｖ感覚 == 3
+	LOCAL:1 = 1600
+ELSEIF ABL:Ｖ感覚 == 4
+	LOCAL:1 = 2400
+ELSE
+	LOCAL:1 = 3000
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 <= EXPLV:0
+	TIMES LOCAL:1 , 0.20
+	SOURCE:痛み += 5500
+ELSEIF EXP:Ｖ経験 <= EXPLV:1
+	TIMES LOCAL:1 , 0.60
+	SOURCE:痛み += 300
+ELSEIF EXP:Ｖ経験 <= EXPLV:2
+	TIMES LOCAL:1 , 1.00
+	SOURCE:痛み += 50
+ELSEIF EXP:Ｖ経験 <= EXPLV:3
+	TIMES LOCAL:1 , 1.20
+	SOURCE:痛み += 10
+ELSEIF EXP:Ｖ経験 <= EXPLV:4
+	TIMES LOCAL:1 , 1.40
+ELSE
+	TIMES LOCAL:1 , 1.60
+ENDIF
+
+;欲望をみる
+IF ABL:欲望 == 0
+	SOURCE:中毒充足 += 0
+	TIMES LOCAL:1 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+ELSEIF ABL:欲望 == 1
+	SOURCE:中毒充足 += 60
+	TIMES LOCAL:1 , 1.10
+	TIMES SOURCE:逸脱 , 1.10
+ELSEIF ABL:欲望 == 2
+	SOURCE:中毒充足 += 120
+	TIMES LOCAL:1 , 1.15
+	TIMES SOURCE:逸脱 , 1.25
+ELSEIF ABL:欲望 == 3
+	SOURCE:中毒充足 += 240
+	TIMES LOCAL:1 , 1.25
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:欲望 == 4
+	SOURCE:中毒充足 += 480
+	TIMES LOCAL:1 , 1.30
+	TIMES SOURCE:逸脱 , 1.75
+ELSE
+	SOURCE:中毒充足 += 960
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:逸脱 , 2.00
+ENDIF
+
+;Ｖ敏感とＶ鈍感
+IF TALENT:Ｖ敏感
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:Ｖ鈍感
+	TIMES LOCAL:1 , 0.60
+ENDIF
+;淫壷
+SIF TALENT:淫壷
+	TIMES LOCAL:1 , 1.20
+
+SOURCE:快Ｖ += LOCAL:1
+
+;ただし処女には使えないけど
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;愛液採集触手の着脱
+IF (TEQUIP:Ｖ系装着器具 == 7 || TEQUIP:Ｖ系装着器具 == 27)
+	TEQUIP:Ｖ系装着器具 = 0
+	TCVAR:Ｖ経験 += 2
+	TCVAR:Ｖ調律経験 += 2
+	
+	SIF TEQUIP:触手服 & 8
+		TEQUIP:触手服 &= 0b1110111
+ELSE
+	STAIN:ヴァギナ |= 2
+	STAIN:ヴァギナ |= 4
+	STAIN:ヴァギナ |= 64
+
+	TCVAR:Ｖ経験 += 1
+	SIF EXP:Ｖ拡張経験 == 0 
+		TCVAR:異常経験 += 1
+	TCVAR:Ｖ拡張経験 += 1
+	TCVAR:Ｖ調律経験 += 1
+	TEQUIP:Ｖ系装着器具 = 7
+	
+	;触手服への命令として飛んできた場合
+	IF !TEQUIP:触手調教 && (TEQUIP:触手服 && !(TEQUIP:触手服 & 8))
+		TEQUIP:Ｖ系装着器具 = 27
+		TEQUIP:触手服 |= 8
+	ENDIF
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_535
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	IF (TEQUIP:Ｖ系装着器具 == 7 || TEQUIP:Ｖ系装着器具 == 27)
+		PRINTFORML 触手は%CALLNAME:TARGET%のヴァギナから離れた…
+	ELSE
+		PRINTFORML 吸盤状の触手が%CALLNAME:TARGET%のヴァギナに取り付き、愛液を吸いあげはじめた…
+	ENDIF
+ELSE
+	IF (TEQUIP:Ｖ系装着器具 == 7 || TEQUIP:Ｖ系装着器具 == 27)
+		IF ABL:触手中毒 > 2
+			PRINTFORML 触手は%CALLNAME:TARGET%のヴァギナから離れた
+			PRINTFORML %CALLNAME:TARGET%は、物足りなさそうに自らのヴァギナを%CALLNAME:PLAYER%に晒した…
+		ELSEIF MARK:反発刻印 > 1
+			PRINTFORML 触手は%CALLNAME:TARGET%のヴァギナから離れた
+			PRINTFORML %CALLNAME:TARGET%は、触手により汚されたヴァギナを厳しい表情で見つめている…
+		ELSE
+			PRINTFORML 触手は%CALLNAME:TARGET%のヴァギナから離れた…
+		ENDIF
+	ELSE
+		IF ABL:触手中毒 > 2
+			PRINTFORML 吸盤状の触手が%CALLNAME:TARGET%のヴァギナに取り付き、愛液を吸いあげはじめた
+			PRINTFORML %CALLNAME:TARGET%はその人外からの刺激を受けて、いやらしい喘ぎ声を上げている…
+		ELSEIF MARK:反発刻印 > 1
+			PRINTFORML 吸盤状の触手が%CALLNAME:TARGET%のヴァギナに取り付き、愛液を吸いあげはじめた
+			PRINTFORML %CALLNAME:TARGET%は、触手からの刺激を感じないように歯を食いしばって耐えている…
+		ELSE
+			PRINTFORML 吸盤状の触手が%CALLNAME:TARGET%のヴァギナに取り付き、愛液を吸いあげはじめた…
+		ENDIF
+	ENDIF
+ENDIF

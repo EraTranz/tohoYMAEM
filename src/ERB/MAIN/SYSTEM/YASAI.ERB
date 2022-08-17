@@ -1,0 +1,284 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;YASAIモード関連
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;--------------------------------------------------
+;野菜錬成
+;--------------------------------------------------
+@IRC_ANATA_YASAI
+PRINTFORML 野菜数:{FLAG:574}
+PRINTL 野菜を錬成しますか？
+PRINTL [0] はい
+PRINTL [1] いいえ
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	LOCAL = RAND:10000
+	FLAG:574 += LOCAL
+	FLAG:574 = MIN(FLAG:574, 99999999)
+	PRINTFORML {LOCAL}個の野菜を錬成しました
+	PRINTFORMW 野菜数:{FLAG:574}
+	FLAG:0 = 1
+	BEGIN TURNEND
+	RETURN 1
+ELSEIF RESULT == 1
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;IRCあなたEXモード
+;--------------------------------------------------
+@IRC_ANATA_EXMODE
+PRINTFORML 野菜数:{FLAG:574}
+PRINTL 野菜を10000消費することでExモード化できます
+PRINTL Exモード化しますか？
+PRINTL [0] はい
+PRINTL [1] いいえ
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	FLAG:574 -= 10000
+	TEQUIP:YASAIモードで使用 = 1
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;IRCあなたPhモード
+;--------------------------------------------------
+@IRC_ANATA_PHMODE
+PRINTFORML 野菜数:{FLAG:574}
+PRINTL 野菜を1000000消費することでPhモード化できます
+PRINTL Phモード化しますか？
+PRINTL [0] はい
+PRINTL [1] いいえ
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	FLAG:574 -= 1000000
+	TEQUIP:YASAIモードで使用 = 2
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;野菜リザレクション
+;--------------------------------------------------
+@YASAI_REVIVAL
+LOCAL = (FLAG:574 + BASE:体力)
+LOCAL:1 = BASE:体力 + 1
+SIF LOCAL <= 0
+	RETURN 0
+PRINTFORML 野菜数:{FLAG:574}
+PRINTFORML 野菜を消費した数だけ%CALLNAME:TARGET%の体力を回復することができます
+PRINT 体力をいくつまで回復しますか？（
+IF !IF_ALIVE(TARGET)
+	PRINT 1
+ELSE
+	PRINTV LOCAL:1
+ENDIF
+	PRINT -
+PRINTFORML {(MAXBASE:0 <= LOCAL) ? MAXBASE:0 # LOCAL}、0でキャンセル）
+PRINTLC [0]キャンセル
+SIF !IF_ALIVE(TARGET)
+	PRINTLC [1]1まで回復
+IF MAXBASE:0 <= LOCAL
+	PRINTFORMLC [{MAXBASE:0}]最大まで回復
+ELSEIF LOCAL > 1
+	PRINTFORMLC [{LOCAL}]{LOCAL}まで回復
+ENDIF
+PRINTL 
+$INPUT_LOOP
+INPUT
+SIF RESULT == 0
+	RETURN 0
+SIF !IF_ALIVE(TARGET) && RESULT < 1
+	GOTO INPUT_LOOP
+SIF BASE:体力 > 0 && RESULT < LOCAL:1
+	GOTO INPUT_LOOP
+SIF MAXBASE:0 <= LOCAL && RESULT > MAXBASE:0
+	GOTO INPUT_LOOP
+SIF MAXBASE:0 > LOCAL && RESULT > LOCAL
+	GOTO INPUT_LOOP
+
+IF !IF_ALIVE(TARGET)
+	TCVAR:異常経験 += 1
+	;YASAIリザレクション回数フラグ
+	CFLAG:YASAIでの復活回数 += 1
+	IF ABL:従順 > 0 && TALENT:恋慕 == 0
+		ABL:従順 -= 1
+		PRINTFORML %CALLNAME:TARGET%の%ABLNAME:10%が{ABL:従順}に下がった
+	ENDIF
+ENDIF
+
+FLAG:574 += BASE:体力
+FLAG:574 -= RESULT
+BASE:体力 = RESULT
+PRINTFORMW %CALLNAME:TARGET%の体力を{BASE:体力}まで回復しました
+
+;--------------------------------------------------
+;畑拡張
+;--------------------------------------------------
+@YASAI_FARM
+LOCAL = 5000
+IF FLAG:573 <= 15
+	REPEAT FLAG:573
+		LOCAL *= 2
+	REND
+ELSE
+	LOCAL = 200000000
+ENDIF
+
+PRINTFORML 畑拡張Lv:{FLAG:573}
+PRINTFORML {LOCAL}圓消費することで畑を拡張することができます
+PRINTL 畑を拡張しますか？
+PRINTL [0] はい
+PRINTL [1] いいえ
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	IF MONEY >= LOCAL
+		MONEY -= LOCAL
+		FLAG:573 += 1
+		PRINTFORMW 畑拡張Lvが{FLAG:573}になりました
+	ELSE
+		PRINTW 金額が足りません
+		RETURN 0
+	ENDIF
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;ターン終了時の処理
+;--------------------------------------------------
+@EVENTTURNEND_YASAI
+;リリーグレイ関連処理（IRCネタ注意）
+REPEAT CHARANUM
+	SIF !TALENT:COUNT:死亡 && TALENT:COUNT:変遷
+		CALL GRAY_TALENT, COUNT
+REND
+CALL YASAI_HARVEST
+
+;--------------------------------------------------
+;畑での野菜取得処理
+;--------------------------------------------------
+@YASAI_HARVEST
+SIF TALENT:MASTER:野菜の錬金術師 == 0
+	RETURN 0
+;畑拡張Lv0のときは野菜を収穫できない
+SIF FLAG:573 < 1
+	RETURN 0
+;主人が酔っ払っているときは収穫できない
+SIF BASE:MASTER:酔い > MAXBASE:MASTER:8
+	RETURN 0
+
+LOCAL = 100
+REPEAT FLAG:573
+	LOCAL *= 2
+REND
+
+LOCAL:1 = RAND:LOCAL
+FLAG:574 = MIN(FLAG:574 + LOCAL:1, 99999999)
+PRINTFORML \@(LOCAL:1 > 0) ? 畑から{LOCAL:1}個の野菜を収穫しました # 畑からは野菜の収穫ができませんでした\@
+PRINTFORMW 野菜数:{FLAG:574}
+
+RETURN 0
+
+;--------------------------------------------------
+;リリーグレイ用の処理
+;--------------------------------------------------
+@GRAY_TALENT, ARG
+;[臆病]：[気丈]
+CALL TALENT_RAND_CHANGE_2, ARG, 10, 12
+;[反抗的]：[素直]
+CALL TALENT_RAND_CHANGE_2, ARG, 11, 13
+;[プライド高い]：[プライド低い]
+CALL TALENT_RAND_CHANGE_2, ARG, 16, 17
+;[無関心]：[好奇心]
+CALL TALENT_RAND_CHANGE_2, ARG, 21, 23
+;[楽観的]：[悲観的]
+CALL TALENT_RAND_CHANGE_2, ARG, 25, 26
+;[貞操観念]：[貞操無頓着]
+CALL TALENT_RAND_CHANGE_2, ARG, 30, 31
+;[抑圧]：[解放]
+CALL TALENT_RAND_CHANGE_2, ARG, 32, 33
+;[恥じらい]：[恥薄い]
+CALL TALENT_RAND_CHANGE_2, ARG, 35, 36
+;[男嫌い]：[女嫌い]
+CALL TALENT_RAND_CHANGE_2, ARG, 37, 38
+;[痛みに弱い]：[痛みに強い]
+CALL TALENT_RAND_CHANGE_2, ARG, 40, 41
+;[濡れやすい]：[濡れにくい]
+CALL TALENT_RAND_CHANGE_2, ARG, 42, 43
+;[習得早い]：[習得遅い]
+CALL TALENT_RAND_CHANGE_2, ARG, 50, 51
+;[汚臭鈍感]：[汚臭敏感]
+CALL TALENT_RAND_CHANGE_2, ARG, 61, 62
+;[快感に素直]：[快感の否定]
+CALL TALENT_RAND_CHANGE_2, ARG, 70, 71
+;[サド]：[マゾ]・[ドＳ]：[ドＭ]
+IF TALENT:ARG:ドＳ && TALENT:ARG:ドＭ
+	TALENT:ARG:サド = 1
+	TALENT:ARG:マゾ = 1
+ELSEIF TALENT:ARG:ドＳ || TALENT:ARG:ドＭ
+	IF RAND:2 == 1
+		TALENT:ARG:サド = 1
+		TALENT:ARG:ドＳ = 1
+		TALENT:ARG:マゾ = 0
+		TALENT:ARG:ドＭ = 0
+	ELSE
+		TALENT:ARG:サド = 0
+		TALENT:ARG:ドＳ = 0
+		TALENT:ARG:マゾ = 1
+		TALENT:ARG:ドＭ = 1
+	ENDIF
+ELSE
+	CALL TALENT_RAND_CHANGE_2, ARG, 81, 82
+ENDIF
+;[Ｃ敏感]：[Ｃ鈍感]
+CALL TALENT_RAND_CHANGE_2, ARG, 100, 101
+;[Ｖ敏感]：[Ｖ鈍感]
+CALL TALENT_RAND_CHANGE_2, ARG, 102, 103
+;[Ａ敏感]：[Ａ鈍感]
+CALL TALENT_RAND_CHANGE_2, ARG, 104, 105
+;[Ｂ敏感]：[Ｂ鈍感]
+CALL TALENT_RAND_CHANGE_2, ARG, 106, 107
+;[絶壁]：[爆乳]
+IF TALENT:ARG:絶壁 || TALENT:ARG:爆乳
+	CALL TALENT_RAND_CHANGE_2, ARG, 110, 113
+;[貧乳]：[巨乳]
+ELSEIF TALENT:ARG:貧乳 || TALENT:ARG:巨乳
+	CALL TALENT_RAND_CHANGE_2, ARG, 111, 112
+ENDIF
+;[回復早い]：[回復遅い]
+CALL TALENT_RAND_CHANGE_2, ARG, 137, 138
+;[早漏]：[遅漏]
+IF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+	CALL TALENT_RAND_CHANGE_2, ARG, 132, 133
+ELSE
+	TALENT:ARG:早漏 = 0
+	TALENT:ARG:遅漏 = 0
+ENDIF
+
+;--------------------------------------------------
+;YASAIモードキャラの消去処理
+;--------------------------------------------------
+@IRC_CHARA_GONE, ARG
+IF NO:ARG == 5001
+	IF FLAG:570 & 16
+		TALENT:MASTER:触手使役術 = 0
+		ABL:MASTER:触手使役 = 0
+	ELSEIF FLAG:570 & 32
+		ABL:MASTER:触手使役 = FLAG:572
+	ENDIF
+	FLAG:570 &= 15
+ELSEIF NO:MASTER == 5000 && NO:ARG == 5002 && FLAG:570 & 4
+	FLAG:570 |= 2
+	FLAG:570 &= 59
+ENDIF

@@ -1,0 +1,441 @@
+﻿;=============================================================================
+;娼館機能関連のサブイベント
+;=============================================================================
+;-------------------------------------------------
+;売春素質取得関連イベント
+;-------------------------------------------------
+@PROSTITUTION_SUBEVENT, ARG
+#LOCALSIZE 4
+;常連客ゲットフラグが立っていた場合
+IF TFLAG:403 & 512
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 810
+
+	PRINTFORML %CALLNAME:ARG%\@(TALENT:ARG:常連客 == 0) ? は[常連客]を得た # に付いた常連客は{TALENT:ARG:常連客 + 1}人になった\@
+	TALENT:ARG:常連客 += 1
+ENDIF
+
+LOCAL = MAX(105 - CFLAG:ARG:66 / 200 - TALENT:ARG:常連客 + RAND:25, 1)
+
+
+;人気、看板娘、特殊プレイへの道の取得
+;娼婦人気が、1000以上
+IF CFLAG:ARG:66 >= 1000 && TALENT:ARG:看板娘 == 0 && RAND:(MAX(105 - CFLAG:ARG:66 / 200 - TALENT:ARG:常連客 + RAND:25, 1)) == 0
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 811
+
+	PRINTFORML %CALLNAME:ARG%は[看板娘]になった
+	TALENT:ARG:看板娘 = 1
+;
+ELSEIF CFLAG:ARG:66 < 1000 && TALENT:ARG:看板娘
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 812
+
+	PRINTFORML %CALLNAME:ARG%は[看板娘]を失った
+	TALENT:ARG:看板娘 = 0
+ENDIF
+
+;娼婦の条件：売春経験500以上、反発刻印なし、屈服刻印3LV、人気100以上
+IF EXP:ARG:売春経験 >= 500 && MARK:ARG:反発刻印 == 0 && MARK:ARG:屈服刻印 == 3 && TALENT:ARG:娼婦 == 0 && CFLAG:ARG:66 >= 100
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 813
+
+	PRINTFORMW %CALLNAME:ARG%は[娼婦]を得た
+	TALENT:ARG:娼婦 = 1
+ENDIF
+;求愛依存の条件：売春経験1000以上、反発刻印なし、恋慕未取得、人気250以上
+IF EXP:ARG:売春経験 >= 1000 && MARK:ARG:反発刻印 == 0 && TALENT:ARG:恋慕 == 0 && TALENT:ARG:求愛依存 == 0 && CFLAG:ARG:66 >= 250
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 814
+
+	PRINTFORMW %CALLNAME:ARG%は[求愛依存]を得た
+	TALENT:ARG:求愛依存 = 1
+ENDIF
+;売春中毒の条件１：売春中毒度80以上、看板娘、求愛依存所持
+IF CFLAG:ARG:402 >= 80 && TALENT:ARG:求愛依存 == 1 && TALENT:ARG:売春中毒 == 0 && TALENT:ARG:看板娘 == 1
+;	IF (FLAG:1000 & 2) == 0
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 815
+		PRINTFORMW %CALLNAME:ARG%は[売春中毒]を得た
+;	ENDIF
+	TALENT:ARG:売春中毒 = 1
+ENDIF
+
+;売春中毒の条件２：売春中毒度75以上
+IF CFLAG:ARG:402 >= 75 && TALENT:ARG:売春中毒 == 0
+	;娼婦関連素質所持数と勤務日数だけ確率上昇
+	IF RAND:100 < TALENT:ARG:娼婦 + TALENT:ARG:求愛依存 + TALENT:ARG:看板娘 + TALENT:ARG:常連客 + CFLAG:ARG:403
+;		IF (FLAG:1000 & 2) == 0
+			;口上・地の文の表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 815
+			PRINTFORMW %CALLNAME:ARG%は[売春中毒]を得た
+;		ENDIF
+		TALENT:ARG:売春中毒 = 1
+	ENDIF
+ENDIF
+
+IF (FLAG:1000 & 2) == 0 && CFLAG:ARG:402 >= 50 && TALENT:ARG:売春中毒 == 0
+	SELECTCASE CFLAG:ARG:402
+		CASE IS >= 75
+			PRINTW このまま売春を続けると危険です。
+		CASEELSE
+			PRINTW このまま売春を続けると大変なことになるかもしれません。
+	ENDSELECT
+ENDIF
+;夜のパーティは実装中
+;IF FLAG:3005 >= 100 && (FLAG:3000 & 16) == 0
+;	PRINTFORML 娼館の人気が最高潮に達した。
+;	PRINTFORML これによって、%CALLNAME:MASTER%の名前は大富豪や貴族にまで知れ渡ったようだ。
+;	PRINTFORML 日曜夜のパーティーのメニューが増えました。
+;	FLAG:3000 |= 16
+;ENDIF
+
+;=============================================================================
+;売春時におけるキャラの妊娠判定処理
+;=============================================================================
+;通常の６売春では妊娠の危険性があります
+;セット売春、イベント売春では処理が難解になりすぎるためにスルーします
+;-------------------------------------------------
+;売春時におけるキャラの妊娠判定処理
+;-------------------------------------------------
+@PROSTITUTION_PREGNANCY_CHECK, ARG
+#LOCALSIZE 4
+;妊娠判定が付いていないとダメ(念のための処理)
+SIF TFLAG:416 == 0
+	RETURN 0
+;妊娠出産育児機能が無効ならダメ
+SIF (FLAG:11 & 2) == 0
+	RETURN 0
+;[オトコ][卵生][産卵体質][妊娠][死亡]持ちは妊娠しない
+SIF TALENT:ARG:オトコ || TALENT:ARG:卵生 || TALENT:ARG:産卵体質 || TALENT:ARG:妊娠 || TALENT:ARG:死亡
+	RETURN 0
+;主人は妊娠しない
+SIF ARG == MASTER
+	RETURN 0
+;2％の確率で妊娠。でも、十分高い
+IF TALENT:ARG:排卵
+	LOCAL:0 = 30
+ELSE
+	LOCAL:0 = 90 + (TALENT:ARG:生理 - TALENT:ARG:危険日) * 40
+ENDIF
+SIF RAND:(LOCAL:0) > 1
+	RETURN 0
+
+TCVAR:ARG:異常経験 += 1
+LOCAL:3 = BASE:ARG:体力
+
+;妊娠処理はTARGETかASSI固定イベントが多いので変更する
+LOCAL:1 = TARGET
+LOCAL:2 = ASSI
+TARGET = ARG
+
+;主人との子供を身篭った処理。現在、見せつけプレイのみ
+IF TFLAG:416 == 2
+	PRINTFORML %CALLNAME:TARGET%の様子がおかしい…
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の子供を身篭った様だ
+	PRINTFORMW %CALLNAME:TARGET%は[妊娠]した
+	TALENT:妊娠 = 1
+	CFLAG:70 = 1
+	CALL CHANGE_N_STATUS, TARGET
+
+	;妊娠時の口上をイベント口上でやってみるのはいいとして分岐どうしよう…
+	;基本的には口上側で分岐してもらう方向で
+	;TFLAG:222 を口上分岐用父親関連＋グッドバッド判定用に使用
+	;TFLAG:222 = NO:MASTER + 10000
+	;CFLAG:TARGET:76で分岐されるので、それで管理するべき、また主人による妊娠なので、恋慕などを持ってなければ基本バッド
+
+	;口上を表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 819
+	CALL CLEAR_FLAG
+;顧客との子供を身篭った処理([卵生]、[産卵体質])、
+;上記分岐で既にオミットしているため実質死に分岐だが、
+;実装しても悪くはなさげなので残骸だけでも残すマン
+ELSEIF TFLAG:416 == 1 && (TALENT:卵生 || TALENT:産卵体質)
+	;顧客を一旦ASSIとして追加
+	ADDCHARA 2046
+	ASSI = CHARANUM - 1
+	CALL EVENT_LAY_EGG
+	CALL CLEAR_FLAG
+	ASSI = LOCAL:2
+	CALL SPRING_CHARA_GONE, CHARANUM-1, TARGET, ASSI
+	;追加したASSI（顧客）を削除
+	DELCHARA CHARANUM - 1
+;顧客との子供を身篭った処理
+ELSEIF TFLAG:416 == 1
+	;顧客を一旦ASSIとして追加
+	ADDCHARA 2046
+	ASSI = CHARANUM - 1
+	CFLAG:ASSI:3109 = FLAG:998
+	CFLAG:ASSI:購入された日 = DAY
+	FLAG:998 += 1
+	PRINTFORML %CALLNAME:TARGET%の様子がおかしい…
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ASSI%の子供を身篭った様だ
+	PRINTFORMW %CALLNAME:TARGET%は[妊娠]した
+	
+	
+	TALENT:妊娠 = 1
+	CFLAG:70 = 2
+	;[求愛依存]
+	IF TALENT:求愛依存
+		;地の文・口上を表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 816
+		;妊娠に伴うステータスの変動
+		CALL PROSTITUTION_CHANGE_PREGNANCY_STATUS, TARGET, 1
+	;[娼婦]
+	ELSEIF TALENT:娼婦
+		;地の文・口上を表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 817
+		;妊娠に伴うステータスの変動
+		CALL PROSTITUTION_CHANGE_PREGNANCY_STATUS, TARGET, 0
+		;[求愛依存]取得
+		SIF TALENT:恋慕 && TALENT:相愛 == 0 && TALENT:求愛依存 == 0
+			CALL PROSTITUTION_EVENT_ROMANCE_ADDICTION, TARGET
+	ELSE
+		;口上を表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 818
+		;妊娠に伴うステータスの変動
+		CALL CHANGE_N_STATUS, TARGET
+	ENDIF
+
+	CALL CLEAR_FLAG
+	ASSI = LOCAL:2
+
+	CALL SPRING_CHARA_GONE, CHARANUM - 1, TARGET, ASSI
+	;追加したASSI（顧客）を削除
+	DELCHARA CHARANUM - 1
+ENDIF
+
+TARGET = LOCAL:1
+ASSI = LOCAL:2
+BASE:ARG:体力 = LOCAL:3
+RETURN 0
+
+;-------------------------------------------------
+;売春時におけるキャラの妊娠判定処理の2
+;-------------------------------------------------
+@PROSTITUTION_PREGNANCY_CHECK2, ARG
+#LOCALSIZE 4
+;妊娠判定が付いていないとダメ(念のための処理)
+SIF TFLAG:416 == 0
+	RETURN 0
+;妊娠出産育児機能が無効ならダメ
+SIF (FLAG:11 & 2) == 0
+	RETURN 0
+;[オトコ][卵生][産卵体質][妊娠][死亡]持ちは妊娠しない
+SIF TALENT:ARG:オトコ || TALENT:ARG:卵生 || TALENT:ARG:産卵体質 || TALENT:ARG:妊娠 || TALENT:ARG:死亡
+	RETURN 0
+;主人は妊娠しない
+SIF ARG == MASTER
+	RETURN 0
+;2％の確率で妊娠。でも、十分高い
+IF TALENT:ARG:排卵
+	LOCAL:0 = 30
+ELSE
+	LOCAL:0 = 90 + (TALENT:ARG:生理 - TALENT:ARG:危険日) * 40
+ENDIF
+SIF RAND:(LOCAL:0) > 1
+	RETURN 0
+
+TCVAR:ARG:異常経験 += 1
+LOCAL:3 = BASE:ARG:体力
+
+;妊娠処理はTARGETかASSI固定イベントが多いので変更する
+LOCAL:1 = TARGET
+LOCAL:2 = ASSI
+TARGET = ARG
+
+;主人との子供を身篭った処理。現在、見せつけプレイのみ
+IF TFLAG:416 == 2
+	PRINTFORML %CALLNAME:TARGET%の様子がおかしい…
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の子供を身篭った様だ
+	PRINTFORMW %CALLNAME:TARGET%は[妊娠]した
+	TALENT:妊娠 = 1
+	CFLAG:70 = 1
+	CALL CHANGE_N_STATUS, TARGET
+
+	;妊娠時の口上をイベント口上でやってみるのはいいとして分岐どうしよう…
+	;基本的には口上側で分岐してもらう方向で
+	;TFLAG:222 を口上分岐用父親関連＋グッドバッド判定用に使用
+	;TFLAG:222 = NO:MASTER + 10000
+	;CFLAG:TARGET:76で分岐されるので、それで管理するべき、また主人による妊娠なので、恋慕などを持ってなければ基本バッド
+
+	;口上を表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 819
+	CALL CLEAR_FLAG
+;顧客との子供を身篭った処理([卵生]、[産卵体質])、
+;上記分岐で既にオミットしているため実質死に分岐だが、
+;実装しても悪くはなさげなので残骸だけでも残すマン
+ELSEIF TFLAG:416 == 1 && (TALENT:卵生 || TALENT:産卵体質)
+	;顧客を一旦ASSIとして追加
+	ADDCHARA 2047
+	ASSI = CHARANUM - 1
+	CALL EVENT_LAY_EGG
+	CALL CLEAR_FLAG
+	ASSI = LOCAL:2
+	CALL SPRING_CHARA_GONE, CHARANUM-1, TARGET, ASSI
+	;追加したASSI（顧客）を削除
+	DELCHARA CHARANUM - 1
+;顧客との子供を身篭った処理
+ELSEIF TFLAG:416 == 1
+	;顧客を一旦ASSIとして追加
+	ADDCHARA 2047
+	ASSI = CHARANUM - 1
+	CFLAG:ASSI:3109 = FLAG:998
+	CFLAG:ASSI:購入された日 = DAY
+	FLAG:998 += 1
+	PRINTFORML %CALLNAME:TARGET%の様子がおかしい…
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ASSI%の子供を身篭った様だ
+	PRINTFORMW %CALLNAME:TARGET%は[妊娠]した
+	
+	
+	TALENT:妊娠 = 1
+	CFLAG:70 = 2
+	;[求愛依存]
+	IF TALENT:求愛依存
+		;地の文・口上を表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 816
+		;妊娠に伴うステータスの変動
+		CALL PROSTITUTION_CHANGE_PREGNANCY_STATUS, TARGET, 1
+	;[娼婦]
+	ELSEIF TALENT:娼婦
+		;地の文・口上を表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 817
+		;妊娠に伴うステータスの変動
+		CALL PROSTITUTION_CHANGE_PREGNANCY_STATUS, TARGET, 0
+		;[求愛依存]取得
+		SIF TALENT:恋慕 && TALENT:相愛 == 0 && TALENT:求愛依存 == 0
+			CALL PROSTITUTION_EVENT_ROMANCE_ADDICTION, TARGET
+	ELSE
+		;口上を表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 818
+		;妊娠に伴うステータスの変動
+		CALL CHANGE_N_STATUS, TARGET
+	ENDIF
+
+	CALL CLEAR_FLAG
+	ASSI = LOCAL:2
+
+	CALL SPRING_CHARA_GONE, CHARANUM - 1, TARGET, ASSI
+	;追加したASSI（顧客）を削除
+	DELCHARA CHARANUM - 1
+ENDIF
+
+TARGET = LOCAL:1
+ASSI = LOCAL:2
+BASE:ARG:体力 = LOCAL:3
+RETURN 0
+
+;-------------------------------------------------
+;売春時におけるキャラの妊娠変化処理
+;-------------------------------------------------
+;基本的に対象が変わるだけで同じなので関数にくくりだした
+@PROSTITUTION_CHANGE_PREGNANCY_STATUS, ARG, ARG:1
+#LOCALSIZE 2
+CSTR:ARG:8 = 
+CSTR:ARG:9 = 
+CSTR:ARG:10 = 
+
+
+;体力上限を減らす
+MAXBASE:ARG:0 -= 500
+
+;体力が上限超えることもあるので、体力501以上なら500にする
+BASE:ARG:体力 = MIN(BASE:ARG:体力, MAXBASE:ARG:0)
+
+;出産系のフラグ設定
+CFLAG:ARG:77 = DAY + FLAG:600
+LOCAL = ASSI
+
+CFLAG:ARG:78 = NO:LOCAL
+CFLAG:ARG:3004 = CFLAG:LOCAL:3109
+;身体測定フラグを寝せる(次回身体測定を行うため)
+CFLAG:ARG:508 = 0
+
+;父親の名前を母親で仮保存
+CSTR:ARG:8 = %CALLNAME:LOCAL%
+;母親の名前を母親で仮保存
+CSTR:ARG:9 = %CALLNAME:ARG%
+
+;こちらに来た以上、娼婦か求愛依存。そのため、問答無用でグッド妊娠となる。
+;ただし、娼婦であればグッド妊娠でもマイナス素質が付く。
+
+;妊娠（グッド）フラグ
+CFLAG:ARG:76 = 1
+
+;妊婦の胸の大きさをフラグに代入する処理
+CFLAG:ARG:3006 = 0
+;絶壁
+IF TALENT:ARG:絶壁 
+	CFLAG:ARG:3006 = 1
+;貧乳
+ELSEIF TALENT:ARG:貧乳
+	CFLAG:ARG:3006 = 2
+;巨乳
+ELSEIF TALENT:ARG:巨乳
+	CFLAG:ARG:3006 = 4
+;爆乳
+ELSEIF TALENT:ARG:爆乳
+	CFLAG:ARG:3006 = 5
+;普通
+ELSE
+	CFLAG:ARG:3006 = 3
+ENDIF
+
+;乳がワンランクパワーアップする
+;絶→貧　貧→普　普→巨　巨・爆→そのまま
+IF TALENT:ARG:巨乳 == 0 && TALENT:ARG:爆乳 == 0
+	PRINTFORM %CALLNAME:ARG%の胸が
+	IF TALENT:ARG:絶壁 == 1
+		PRINTFORMW [%TALENTNAME:110%]から[%TALENTNAME:111%]ぐらいにはなった
+		TALENT:ARG:絶壁 = 0
+		TALENT:ARG:貧乳 = 1
+	ELSEIF TALENT:ARG:貧乳 == 1
+		PRINTFORMW [%TALENTNAME:111%]から普通のサイズになった
+		TALENT:ARG:貧乳 = 0
+	ELSE
+		PRINTFORMW [%TALENTNAME:112%]になった
+		TALENT:ARG:巨乳 = 1
+	ENDIF
+	PRINTL 
+ENDIF
+
+;母乳出るようになる
+IF TALENT:ARG:母乳体質 == 0
+	PRINTFORMW %CALLNAME:ARG%は母乳が出るようになった
+	PRINTL 
+	TALENT:ARG:母乳体質 = 1
+ELSE
+	;すでに母乳体質の場合はそのフラグを持っておく
+	MARK:ARG:89 = 1
+ENDIF
+
+;素質変動処理の呼び出し
+CALL LOST_TALENTS, ARG, 11, 0
+CALL LOST_TALENTS, ARG, 20, RESULT
+CALL LOST_TALENTS, ARG, 21, RESULT
+CALL LOST_TALENTS, ARG, 22, RESULT
+CALL LOST_TALENTS, ARG, 27, RESULT
+CALL LOST_TALENTS, ARG, 32, RESULT
+CALL LOST_TALENTS, ARG, 34, RESULT
+CALL LOST_TALENTS, ARG, 38 - TALENT:LOCAL:オトコ, RESULT
+CALL LOST_TALENTS, ARG, 39, RESULT
+
+SIF RESULT != 0
+	PRINTFORMW を\@(RESULT == 2) ? 得た # 失った\@
+
+DRAWLINE
+
+;-------------------------------------------------
+;[求愛依存]取得イベント
+;-------------------------------------------------
+@PROSTITUTION_EVENT_ROMANCE_ADDICTION, ARG
+;地の文・口上を表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 820
+IF TALENT:ARG:親愛
+	PRINTFORMW %CALLNAME:ARG%は[親愛][恋慕]を失い、[求愛依存]を得た
+ELSE
+	PRINTFORMW %CALLNAME:ARG%は[恋慕]を失い、[求愛依存]を得た
+ENDIF
+TALENT:ARG:恋慕 = 0
+TALENT:ARG:親愛 = 0
+TALENT:ARG:求愛依存 = 1

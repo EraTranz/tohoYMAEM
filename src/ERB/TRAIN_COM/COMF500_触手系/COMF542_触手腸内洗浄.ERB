@@ -1,0 +1,263 @@
+﻿;=============================================================================
+;触手腸内洗浄
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE542
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:542 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;触手が[特殊ホルモン分泌]を得ていないとダメ
+SIF (FLAG:75 & 1024) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;アナル触手中じゃないとダメ
+SIF TEQUIP:Ａ系装着器具 == 0
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 > 2 && TEQUIP:Ａ系装着器具 != 21 && TEQUIP:Ａ系装着器具 != 22
+	RETURN 0
+;卵が邪魔で腸内洗浄できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 542) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM542
+PRINTL 触手腸内洗浄
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 542
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手腸内洗浄
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+LOCAL:1 = 100
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 1.00
+	LOCAL:2 = 80
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 0.90
+	LOCAL:2 = 110
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 220
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 0.70
+	LOCAL:2 = 350
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 600
+ELSE
+	TIMES LOCAL:1 , 0.50
+	LOCAL:2 = 1000
+ENDIF
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1 *3
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+
+LOCAL:3 = 0
+SIF STAIN:アナル & 1
+	LOCAL:3 += 1
+SIF STAIN:アナル & 2
+	LOCAL:3 += 1
+SIF STAIN:アナル & 4
+	LOCAL:3 += 1
+SIF STAIN:アナル & 8
+	LOCAL:3 += 1
+SIF STAIN:アナル & 16
+	LOCAL:3 += 1
+
+SOURCE:達成感 = LOCAL:2
+SOURCE:不潔 = 5000-(600*LOCAL:3)
+SOURCE:液体追加 = 1500
+SOURCE:逸脱 = 6000
+SOURCE:支配 = 3500
+
+;ABL:Ａ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ａ = 60
+	SOURCE:性行動 = 150
+	SOURCE:屈従 = 150
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ａ = 180
+	SOURCE:性行動 = 250
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ａ = 420
+	SOURCE:性行動 = 350
+	SOURCE:屈従 = 600
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ａ = 900
+	SOURCE:性行動 = 500
+	SOURCE:屈従 = 1000
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ａ = 1600
+	SOURCE:性行動 = 700
+	SOURCE:屈従 = 1800
+ELSE
+	SOURCE:快Ａ = 2000
+	SOURCE:性行動 = 1000
+	SOURCE:屈従 = 2300
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.60
+	SOURCE:痛み = 400
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み = 60
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み = 12
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.30
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 300
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;貞操観念
+IF TALENT:貞操観念
+	TIMES SOURCE:性行動 , 0.60
+	SOURCE:反感追加 = 1000
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:性行動 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:性行動 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:性行動 , 1.50
+ELSE
+	TIMES SOURCE:快Ａ , 1.50
+	TIMES SOURCE:性行動 , 1.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:性行動 , 0.60
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:反感追加 , 1.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:反感追加 , 0.80
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:性行動 , 1.40
+	TIMES SOURCE:反感追加 , 0.60
+ELSE
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:性行動 , 1.60
+	TIMES SOURCE:反感追加 , 0.30
+ENDIF
+
+SOURCE:中毒充足 = LOCAL:2
+
+TCVAR:Ａ経験 += 1
+
+;腸内(アナル)の汚れがリセット
+STAIN:アナル = 8
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_542
+PRINTFORML %CALLNAME:TARGET%のアナルへと滑り込んでいた触手は軽く身震いすると、先端から大量の洗浄液が吐き出された
+PRINTFORM 勢いよく発射された洗浄液は%CALLNAME:TARGET%の腸内に溜まっていた
+SIF STAIN:アナル & 4
+	PRINT 精液と
+PRINTL 汚物を掻きとり、腸内の汚れを一掃していった
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM 大量の洗浄液で腸内を漱がれる感触に%CALLNAME:TARGET%は
+	IF TALENT:淫尻 && ABL:Ａ感覚 >= 5
+		PRINTL 快楽の余り思わず嬌声をあげてしまったようだ…
+	ELSEIF ABL:Ａ感覚 >= 5
+		PRINTL 快楽に満ちた笑顔を浮かべている…
+	ELSEIF ABL:Ａ感覚 >= 3
+		PRINTL 気持ち良さそうに身震いを一つした…
+	ELSEIF ABL:Ａ感覚 >= 1
+		PRINTL 僅かに快楽を感じていることに困惑しているようだ…
+	ELSE
+		PRINTL 嫌悪感に満ちた表情でそっぽを向いた…
+	ENDIF
+ENDIF

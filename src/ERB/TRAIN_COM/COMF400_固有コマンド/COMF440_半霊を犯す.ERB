@@ -1,0 +1,478 @@
+﻿;=============================================================================
+;半霊を犯す
+;=============================================================================
+;ベースは正常位
+;処女のまま快Ｖ稼ぐとか反則だろ常考…
+;妖忌でも可能にしてみた。ベースは正常位アナル
+;濡れてなくても可能とか反則……かなあ？　ま、反発は覚悟しとけ
+;なおここで、TARGET:1=半霊or半霊(忌)の登録キャラ番号である＝このコマンド専用
+;そして、本体とその半霊に共にＶがあるときのみ前を犯す。それ以外は後ろの穴を犯す。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+;半霊そのものと普通に性交したいなら正常位とかを使おう
+@COM_ABLE440
+;半霊の性別が重要なのでここでそのためのフラグクリアを実施する
+TARGET:1 = -1
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:440 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教対象が妖夢・妖忌でないとダメ
+SIF NO:TARGET != 1019 && NO:TARGET != 1070
+	RETURN 0
+;調教対象が妖夢の場合は半霊が調教可能キャラとして存在し、主人や助手以外でないとダメ
+IF NO:TARGET == 1019
+	;半霊が現在調教可能
+	LOCAL = GETCHARA(1065)
+	;半霊がいなければダメ
+	SIF LOCAL == -1
+		RETURN 0
+	;半霊が主人か助手の場合はだめ
+	SIF LOCAL == MASTER || LOCAL == ASSI
+		RETURN 0
+	;妊娠していたら除外
+	SIF TALENT:LOCAL:妊娠 == 1
+		RETURN 0
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:LOCAL:4
+		RETURN 0
+	;反発刻印もしくは恐怖刻印３がある場合は除外（拒絶する）
+	SIF MARK:LOCAL:恐怖刻印 > 2 || MARK:LOCAL:反発刻印
+		RETURN 0
+	;半霊の体力と気力が一定以下だとダメ
+	SIF BASE:LOCAL:体力 < 500 || BASE:LOCAL:気力 < 200
+		RETURN 0
+	;妖夢がオトコではなくて、半霊もオトコではない場合
+	IF TALENT:オトコ == 0 && TALENT:LOCAL:オトコ == 0
+		;Ｖ調教フィルタがオフになってないとダメ
+		SIF FLAG:2 & 1
+			RETURN 0
+		;半霊が処女ならダメ
+		SIF TALENT:LOCAL:処女
+			RETURN 0
+		;半霊に一定のＶ経験が必要
+		SIF EXP:LOCAL:Ｖ経験 < EXPLV:2
+			RETURN 0
+	;それ以外の場合
+	ELSE
+		;Ａ調教フィルタがオフになってないとダメ
+		SIF FLAG:2 & 2
+			RETURN 0
+		;半霊に一定のＡ経験が必要
+		SIF EXP:LOCAL:Ａ経験 < EXPLV:3
+			RETURN 0
+	ENDIF
+;調教対象が妖忌の場合は半霊(忌)が調教可能キャラとして存在し、主人や助手以外でないとダメ
+ELSEIF NO:TARGET == 1070
+	;半霊(忌)が現在調教可能
+	LOCAL = GETCHARA(1091)
+	;半霊(忌)がいなければダメ
+	SIF LOCAL == -1
+		RETURN 0
+	;半霊(忌)が主人か助手の場合はだめ
+	SIF LOCAL == MASTER || LOCAL == ASSI
+		RETURN 0
+	;妊娠していたら除外
+	SIF TALENT:LOCAL:妊娠 == 1
+		RETURN 0
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:LOCAL:4
+		RETURN 0
+	;反発刻印もしくは恐怖刻印３がある場合は除外（拒絶する）
+	SIF MARK:LOCAL:恐怖刻印 > 2 || MARK:LOCAL:反発刻印
+		RETURN 0
+	;半霊の体力と気力が一定以下だとダメ
+	SIF BASE:LOCAL:体力 < 500 || BASE:LOCAL:気力 < 200
+		RETURN 0
+	;妖忌がオトコではなくて、半霊(忌)もオトコではない場合
+	IF TALENT:オトコ == 0 && TALENT:LOCAL:オトコ == 0
+		;Ｖ調教フィルタがオフになってないとダメ
+		SIF FLAG:2 & 1
+			RETURN 0
+		;半霊が処女ならダメ
+		SIF TALENT:LOCAL:処女
+			RETURN 0
+		;半霊に一定のＶ経験が必要
+		SIF EXP:LOCAL:Ｖ経験 < EXPLV:2
+			RETURN 0
+	;それ以外の場合
+	ELSE
+		;Ａ調教フィルタがオフになってないとダメ
+		SIF FLAG:2 & 2
+			RETURN 0
+		;半霊に一定のＡ経験が必要
+		SIF EXP:LOCAL:Ａ経験 < EXPLV:3
+			RETURN 0
+	ENDIF
+ENDIF
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 440) == 0
+	RETURN 0
+;調教者にペニスがない、かつペニスバンドもないとダメ
+SIF EXIST_BAR(PLAYER) == 0 && ITEM:ペニスバンド == 0
+	RETURN 0
+;半霊の登録キャラ番号をTARGET:1に代入しておく
+TARGET:1 = LOCAL
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM440
+PRINTL 半霊を犯す
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 440
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 半霊を犯す
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL = 1500
+ELSEIF ABL:技巧 == 1
+	LOCAL = 1600
+ELSEIF ABL:技巧 == 2
+	LOCAL = 1800
+ELSEIF ABL:技巧 == 3
+	LOCAL = 2000
+ELSEIF ABL:技巧 == 4
+	LOCAL = 2400
+ELSE
+	LOCAL = 3000
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+;欲望をみる
+LOCAL = EJACULATIONCHECK_ABL_11_1(TARGET, LOCAL)
+
+;調教者のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+SIF EXIST_PENIS(PLAYER)
+	BASE:PLAYER:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;能力や経験の一部については半霊のを見るが、ソースそのものは本体に入る。
+;本体と半霊がいずれもオトコでない場合
+IF TALENT:オトコ == 0 && TALENT:(TARGET:1):120 == 0
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 200
+	;半霊の体力気力消耗をここでやってしまう
+	BASE:(TARGET:1):0 = LIMIT(BASE:(TARGET:1):0 - 50, 0, MAXBASE:(TARGET:1):0)
+	BASE:(TARGET:1):1 = LIMIT(BASE:(TARGET:1):1 - 100, 0, MAXBASE:(TARGET:1):1)
+	PRINTFORML %CALLNAME:(TARGET:1)%の体力が50減少した。
+	PRINTFORML %CALLNAME:(TARGET:1)%の気力が100減少した。
+
+	SOURCE:露出 = 800
+
+	;半霊のABL:Ｖ感覚をみる
+	IF ABL:(TARGET:1):1 == 0
+		SOURCE:快Ｖ = 800
+		SOURCE:情愛 = 150
+	ELSEIF ABL:(TARGET:1):1 == 1
+		SOURCE:快Ｖ = 1000
+		SOURCE:情愛 = 250
+	ELSEIF ABL:(TARGET:1):1 == 2
+		SOURCE:快Ｖ = 1200
+		SOURCE:情愛 = 350
+	ELSEIF ABL:(TARGET:1):1 == 3
+		SOURCE:快Ｖ = 1400
+		SOURCE:情愛 = 500
+	ELSEIF ABL:(TARGET:1):1 == 4
+		SOURCE:快Ｖ = 1600
+		SOURCE:情愛 = 700
+	ELSE
+		SOURCE:快Ｖ = 1800
+		SOURCE:情愛 = 1000
+	ENDIF
+
+	;半霊のEXP:Ｖ経験をみる
+	IF EXP:(TARGET:1):0 < EXPLV:1
+		TIMES SOURCE:快Ｖ , 0.80
+	ELSEIF EXP:(TARGET:1):0 < EXPLV:2
+		TIMES SOURCE:快Ｖ , 0.90
+	ELSEIF EXP:(TARGET:1):0 < EXPLV:3
+		TIMES SOURCE:快Ｖ , 1.00
+	ELSEIF EXP:(TARGET:1):0 < EXPLV:4
+		TIMES SOURCE:快Ｖ , 1.10
+	ELSEIF EXP:(TARGET:1):0 < EXPLV:5
+		TIMES SOURCE:快Ｖ , 1.20
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.30
+	ENDIF
+
+	;調教者がふたなり
+	IF ASSIPLAY
+		SIF TALENT:ASSI:ふたなり
+			TIMES SOURCE:快Ｖ , 2.50
+	ENDIF
+
+	;PALAM:欲情をみる(これは本体のをみる)
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES SOURCE:快Ｖ , 0.60
+		TIMES SOURCE:情愛 , 0.30
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES SOURCE:快Ｖ , 0.80
+		TIMES SOURCE:情愛 , 0.60
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES SOURCE:快Ｖ , 1.00
+		TIMES SOURCE:情愛 , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES SOURCE:快Ｖ , 1.20
+		TIMES SOURCE:情愛 , 1.50
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.50
+		TIMES SOURCE:情愛 , 1.80
+	ENDIF
+
+	;ABL:従順をみる(これも本体のをみる)
+	IF ABL:従順 == 0
+		TIMES SOURCE:快Ｖ , 0.50
+		TIMES SOURCE:情愛 , 0.60
+		TIMES SOURCE:反感追加 , 2.00
+	ELSEIF ABL:従順 == 1
+		TIMES SOURCE:快Ｖ , 0.80
+		TIMES SOURCE:情愛 , 0.80
+		TIMES SOURCE:反感追加 , 1.50
+	ELSEIF ABL:従順 == 2
+		TIMES SOURCE:快Ｖ , 1.00
+		TIMES SOURCE:情愛 , 1.00
+		TIMES SOURCE:反感追加 , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES SOURCE:快Ｖ , 1.30
+		TIMES SOURCE:情愛 , 1.20
+		TIMES SOURCE:反感追加 , 0.80
+	ELSEIF ABL:従順 == 4
+		TIMES SOURCE:快Ｖ , 1.60
+		TIMES SOURCE:情愛 , 1.40
+		TIMES SOURCE:反感追加 , 0.60
+	ELSE
+		TIMES SOURCE:快Ｖ , 2.00
+		TIMES SOURCE:情愛 , 1.60
+		TIMES SOURCE:反感追加 , 0.30
+	ENDIF
+
+	;半霊のＶ経験増加(半霊に関しては後の経験加算処理が発動しない可能性があるので)
+	CFLAG:(TARGET:1):11 |= 1
+	EXP:(TARGET:1):0 += 1
+	PRINTFORML Ｖ経験(%CALLNAME:(TARGET:1)%)＋1
+	SIF ASSIPLAY == 0 && EXIST_BAR(MASTER)
+		CFLAG:(TARGET:1):173 += 1
+;それ以外の場合
+ELSE
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 240
+	;半霊の体力気力消耗をここでやってしまう
+	BASE:(TARGET:1):0 = LIMIT(BASE:(TARGET:1):0 - 100, 0, MAXBASE:(TARGET:1):0)
+	BASE:(TARGET:1):1 = LIMIT(BASE:(TARGET:1):1 - 150, 0, MAXBASE:(TARGET:1):1)
+	PRINTFORML %CALLNAME:(TARGET:1)%の体力が100減少した。
+	PRINTFORML %CALLNAME:(TARGET:1)%の気力が150減少した。
+
+	SOURCE:露出 = 400
+
+	;半霊のABL:Ａ感覚をみる
+	IF ABL:(TARGET:1):2 == 0
+		SOURCE:快Ａ = 200
+		SOURCE:情愛 = 10
+		SOURCE:屈従 = 100
+	ELSEIF ABL:(TARGET:1):2 == 1
+		SOURCE:快Ａ = 500
+		SOURCE:情愛 = 30
+		SOURCE:屈従 = 500
+	ELSEIF ABL:(TARGET:1):2 == 2
+		SOURCE:快Ａ = 800
+		SOURCE:情愛 = 150
+		SOURCE:屈従 = 1200
+	ELSEIF ABL:(TARGET:1):2 == 3
+		SOURCE:快Ａ = 1100
+		SOURCE:情愛 = 300
+		SOURCE:屈従 = 2400
+	ELSEIF ABL:(TARGET:1):2 == 4
+		SOURCE:快Ａ = 1400
+		SOURCE:情愛 = 500
+		SOURCE:屈従 = 3600
+	ELSE
+		SOURCE:快Ａ = 1700
+		SOURCE:情愛 = 900
+		SOURCE:屈従 = 5000
+	ENDIF
+
+	;半霊のEXP:Ａ経験をみる
+	IF EXP:(TARGET:1):1 < EXPLV:1
+		TIMES SOURCE:快Ａ , 0.50
+		SOURCE:痛み = 2500
+		DOWNBASE:1 += 50
+	ELSEIF EXP:(TARGET:1):1 < EXPLV:2
+		TIMES SOURCE:快Ａ , 0.60
+		SOURCE:痛み = 2000
+		DOWNBASE:1 += 40
+	ELSEIF EXP:(TARGET:1):1 < EXPLV:3
+		TIMES SOURCE:快Ａ , 0.70
+		SOURCE:痛み = 1500
+		DOWNBASE:1 += 30
+	ELSEIF EXP:(TARGET:1):1 < EXPLV:4
+		TIMES SOURCE:快Ａ , 0.80
+		SOURCE:痛み = 1000
+		DOWNBASE:1 += 20
+	ELSEIF EXP:(TARGET:1):1 < EXPLV:5
+		TIMES SOURCE:快Ａ , 0.90
+		SOURCE:痛み = 500
+		DOWNBASE:1 += 10
+	ELSE
+		TIMES SOURCE:快Ａ , 1.00
+		SOURCE:痛み = 0
+		DOWNBASE:1 += 0
+	ENDIF
+
+	;調教者がふたなり
+	IF ASSIPLAY
+		SIF TALENT:ASSI:ふたなり
+			TIMES SOURCE:快Ｖ , 2.50
+	ENDIF
+
+	;PALAM:欲情をみる(これは本体のをみる)
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES SOURCE:快Ａ , 0.60
+		TIMES SOURCE:屈従 , 0.60
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES SOURCE:快Ａ , 0.80
+		TIMES SOURCE:屈従 , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES SOURCE:快Ａ , 1.00
+		TIMES SOURCE:屈従 , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES SOURCE:快Ａ , 1.20
+		TIMES SOURCE:屈従 , 1.20
+	ELSE
+		TIMES SOURCE:快Ａ , 1.40
+		TIMES SOURCE:屈従 , 1.40
+	ENDIF
+
+	;ABL:従順をみる(これも本体のをみる)
+	IF ABL:従順 == 0
+		TIMES SOURCE:情愛 , 0.60
+		TIMES SOURCE:反感追加 , 2.00
+	ELSEIF ABL:従順 == 1
+		TIMES SOURCE:情愛 , 0.80
+		TIMES SOURCE:反感追加 , 1.50
+	ELSEIF ABL:従順 == 2
+		TIMES SOURCE:情愛 , 1.00
+		TIMES SOURCE:反感追加 , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES SOURCE:情愛 , 1.20
+		TIMES SOURCE:反感追加 , 0.80
+	ELSEIF ABL:従順 == 4
+		TIMES SOURCE:情愛 , 1.40
+		TIMES SOURCE:反感追加 , 0.60
+	ELSE
+		TIMES SOURCE:情愛 , 1.60
+		TIMES SOURCE:反感追加 , 0.30
+	ENDIF
+
+	;半霊のＡ経験追加(半霊に関しては後の経験加算処理が発動しない可能性があるので)
+	CFLAG:(TARGET:1):11 |= 2
+	EXP:(TARGET:1):1 += 2
+	PRINTFORML Ａ経験(%CALLNAME:(TARGET:1)%)＋2
+	SIF ASSIPLAY == 0 && EXIST_BAR(MASTER)
+		CFLAG:(TARGET:1):174 += 2
+ENDIF
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	IF ABL:従順 >= 3 && ABL:欲望 >= 3 && CFLAG:9 & 2 && FLAG:10 & 1
+		PRINTFORML %CALLNAME:TARGET%の半霊は%CALLNAME:PLAYER%に絡みついてきた…
+		PRINTFORML 
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = PLAYER
+	;射精時の共通処理を呼ぶ
+	CALL SAMEN_SHOOT_COMMON
+	;大量射精
+	IF TFLAG:91 == 2
+		PRINTFORML 精液経験(%CALLNAME:(TARGET:1)%)＋1
+		EXP:(TARGET:1):4 += 1
+	ENDIF
+	;コンドーム射精の場合、;コンドームに主人／助手の精液溜まる。コンドーム精飲に使用
+	IF TEQUIP:MASTER:コンドーム == 1
+		CFLAG:75 |= 1
+	ELSEIF ASSI >= 0 && TEQUIP:ASSI:コンドーム == 1
+		CFLAG:75 |= 2
+	ENDIF
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 4
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 4
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0
+	TFLAG:50 += (ABL:欲望 >= 3) ? 2 # 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_440
+;本体と半霊がいずれもオトコでない場合
+IF TALENT:オトコ == 0 && TALENT:(TARGET:1):120 == 0
+	IF PREVCOM != 440 && PREVCOM != 441 && PREVCOM != 442 && PREVCOM != 443
+		IF NO:TARGET == 1070 
+			PRINTFORML %CALLNAME:MASTER%は半霊(忌)を調教の場所まで呼び出した。
+		ELSE
+			PRINTFORML %CALLNAME:MASTER%は半霊を調教の場所まで呼び出した。
+		ENDIF
+	ENDIF
+	;調教者がペニスあり
+	IF EXIST_PENIS(PLAYER)
+		PRINTFORML %CALLNAME:PLAYER%はそのいきり立った怒張を%CALLNAME:TARGET%の半霊の穴（？）らしきところに挿入し、腰を振りはじめた。
+		SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+			PRINTFORML その傍らで%CALLNAME:TARGET%自身も沸きあがってくる快感に悶えている…
+	;その他
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は装着したペニスバンドで%CALLNAME:TARGET%の半霊の穴（？）らしきところに挿入し、出し入れをはじめた。
+		SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+			PRINTFORML その傍らで%CALLNAME:TARGET%自身も沸きあがってくる快感に悶えている…
+	ENDIF
+;それ以外の場合
+ELSE
+	IF PREVCOM != 440 && PREVCOM != 441 && PREVCOM != 442 && PREVCOM != 443 && PREVCOM != 444
+		IF NO:TARGET == 1070 
+			PRINTFORML %CALLNAME:MASTER%は半霊(忌)を調教の場所まで呼び出した。
+		ELSE
+			PRINTFORML %CALLNAME:MASTER%は半霊を調教の場所まで呼び出した。
+		ENDIF
+	ENDIF
+	;調教者がペニスあり
+	IF EXIST_PENIS(PLAYER)
+		PRINTFORML %CALLNAME:PLAYER%はそのいきり立った怒張を%CALLNAME:TARGET%の半霊の後ろの穴（？）らしきところに挿入し、腰を振りはじめた。
+		SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+			PRINTFORML その傍らで%CALLNAME:TARGET%自身も沸きあがってくる快感に悶えている…
+	;その他
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は装着したペニスバンドで%CALLNAME:TARGET%の半霊の後ろの穴（？）らしきところに挿入し、出し入れをはじめた。
+		SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+			PRINTFORML その傍らで%CALLNAME:TARGET%自身も沸きあがってくる快感に悶えている…
+	ENDIF
+ENDIF

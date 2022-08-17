@@ -1,0 +1,229 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;プロローグ関係の処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;eratohoYM用のプロローグ
+;=============================================================================
+;--------------------------------------------------
+;プロローグを見るかの選択
+;--------------------------------------------------
+@PROLOGUE_SELECT_YM
+DRAWLINE
+PRINTL 期日とかの説明が付く(かは微妙な)eratohoYMのプロローグを見ますか？
+PRINTL [0]自分で妄想したいから結構
+PRINTL [1]しかたがない、見てやるか
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL PROLOGUE_MENU_YM
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;見るプロローグの選択
+;--------------------------------------------------
+@PROLOGUE_MENU_YM
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT 1000
+	TRYCCALLFORM EXIST_PROLOGUE_YM_{COUNT}
+		IF RESULT == 1
+			CALLF SET_LIST, COUNT, 1
+			LOCAL:3 += 1
+			SIF (LOCAL:3%20) == 1 && LOCAL:3 > 20
+				LOCAL:1 += 1
+		ENDIF
+	CATCH
+	ENDCATCH
+REND
+SIF LOCAL:1 < 0
+	LOCAL:1 = 0
+
+;ページをめくったときなどはここから
+$PRINT_LIST_PAGE
+DRAWLINE
+PRINTFORML プロローグを選択して下さい\@(LOCAL:1 == 0) ? 。 # 。 ＜page.{LOCAL+1}/{LOCAL:1+1}＞\@
+DRAWLINE
+LOCAL:2 = 0
+REPEAT 1000
+	;表示否の場合は除外
+	SIF GET_LIST(COUNT) == 0
+		CONTINUE
+	;どこからどこまでを陳列するか
+	LOCAL:2 += 1
+	SIF LOCAL:2 > (LOCAL * 20) && LOCAL:2 <= ((LOCAL + 1) * 20)
+		TRYCALLFORM SHOW_PROLOGUE_YM_{COUNT}
+REND
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]やめる
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST_PAGE
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST_PAGE
+ELSEIF RESULT < 0 || RESULT > 1000 || GET_LIST(RESULT) == 0
+	CLEARLINE 1
+	REUSELASTLINE 
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	TRYCALLFORM EXE_PROLOGUE_YM_{LOCAL}
+	FLAG:994 |= 1
+	FLAG:995 = LOCAL
+ENDIF
+
+;=============================================================================
+;プロローグNo.0 -東方調教典-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.0の存在判定
+;--------------------------------------------------
+@EXIST_PROLOGUE_YM_0
+RETURN 1
+
+;--------------------------------------------------
+;プロローグNo.0の表示
+;--------------------------------------------------
+@SHOW_PROLOGUE_YM_0
+PRINTL [000] プロローグNo.000 -東方調教典-
+
+;--------------------------------------------------
+;プロローグNo.0 -東方調教典-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_YM_0
+DRAWLINE
+DRAWLINE
+DRAWLINE
+PRINTW ―――プロローグ―――
+PRINTW ……
+PRINTW …………
+PRINTW ………………
+PRINTW ……………………
+PRINTW いつからここにいたのか分からない
+PRINTW どうやってここにたどり着いたのかも分からない
+PRINTW 気が付けば持っていたのは1冊の怪しげな書物
+PRINTW 元は美しい黒だったかもしれない装訂はボロボロになり、
+PRINTW 中の紙も端は黄ばみ、書かれている文字もところどころ擦れているが、
+PRINTW ずっしりと重いそれはまるで邪悪な意思を宿しているように感じられる
+PRINTW 文字の金箔は剥がれていたが、辛うじてタイトルだけは読み取ることができた
+PRINTL 
+PRINTW ――――《東方調教典》と
+PRINTL 
+PRINTW …………今、目の前には古びた館が姿を現している
+PRINTW 何かに誘われる様に中に入ってみたが、廃屋らしく人の気配はまるで感じられない
+PRINTW だけどつい先程まで人がいたようにも思えるほど館全体は小奇麗だった
+PRINTW とりあえずしばらくの間生活する位はできそうだ
+PRINTW ……と少し安堵し、何気なく手にした書物を開いてみる
+PRINTW ………………
+PRINTW …………
+PRINTW ……分かったことは2つ
+PRINTL ・この《東方調教典》は何らかの力(おそらくは魔術的なもの)を以って、
+PRINTW 　『持ち主』が『奴隷』を『調教』しやすい環境を作り出すことが可能である
+PRINTL ・代償として『持ち主』は何らかの呪いを受け、一定の期限までに解呪する必要がある
+PRINTW 　もっとも確実な方法は期日までに『所持金が100万圓以上になること』らしい
+PRINTW ……得体の知れない本から得た知識で不安はあるが、ひとまず行動を起こすことにしよう
+PRINTL  
+CALL SCROLLTEXTL("　　　　　　　　―― Prologue No.000 -東方調教典-", 0, 18)
+PRINTW 
+DRAWLINE
+PRINTL 
+ALIGNMENT CENTER
+;------------------------------------- ------------------------------------
+PRINTL GOOD LUCK
+ALIGNMENT LEFT
+PRINTL 
+DRAWLINE
+PRINTW  
+
+;=============================================================================
+;EXTRA用のプロローグ
+;=============================================================================
+;将来的には口上(EXTRA用主人口上あたり)から読み込まれる選択肢も付加したいところ
+;--------------------------------------------------
+;プロローグを見るかの選択
+;--------------------------------------------------
+@PROLOGUE_SELECT_EXTRA
+#LOCALSSIZE 3
+DRAWLINE
+PRINTL なぜこうなったかとかの説明が付く(かは微妙な)EXTRAのプロローグを見ますか？
+PRINTL [0]自分で妄想したいから結構
+PRINTL [1]しかたがない、見てやるか
+TRYCALLFORM EXIST_PROLOGUE_EXTRA_{NO:MASTER}
+IF RESULT == 1
+	PRINTFORML [2]%CALLNAME:MASTER%が調教師となった経緯を知る
+	LOCAL:2 = 1
+ENDIF
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	RETURN 0
+ELSEIF RESULT == 1
+	CALL EXE_PROLOGUE_EXTRA_0
+ELSEIF RESULT == 2 && LOCAL:2 == 1
+	CALLFORM EXE_PROLOGUE_EXTRA_{NO:MASTER}
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+FLAG:994 |= 2
+FLAG:995 = NO:MASTER
+
+;--------------------------------------------------
+;EXTRA用プロローグ(通常)
+;--------------------------------------------------
+@EXE_PROLOGUE_EXTRA_0
+#LOCALSSIZE 1
+LOCALS = \@(STRLENS(CSTR:MASTER:1) > 0) ? %CSTR:MASTER:1% # 自分の家\@
+DRAWLINE
+DRAWLINE
+DRAWLINE
+PRINTW ―――プロローグ―――
+PRINTW ……
+PRINTW …………
+PRINTW ………………
+PRINTW ……………………
+PRINTFORMW %CALLNAME:MASTER%は退屈な日々に心底うんざりしながら生きていた…
+PRINTFORMW そんな\@(TALENT:MASTER:オトコ) ? 彼 # 彼女\@の前に突然大きな書物が落ちてきたのである
+PRINTW 元は美しい黒だったかもしれない装訂はボロボロになり、
+PRINTW 中の紙も端は黄ばみ、書かれている文字もところどころ擦れているが、
+PRINTW ずっしりと重いそれはまるで邪悪な意思を宿しているように感じられる
+PRINTW 文字の金箔は剥がれていたが、辛うじてタイトルだけは読み取ることができた
+PRINTL 
+PRINTW ――――《東方調教典》と
+PRINTL 
+PRINTFORMW …………本から目を離した%CALLNAME:MASTER%はなんだか軽い眩暈をしつつも、%LOCALS%に入っていった。
+PRINTFORMW そして、そこが今までの%LOCALS%などではないということをすぐに思い知ることになるのであった
+PRINTW なんだこれは？　と思いつつもいつの間にか手に取っていたその書物を何気なく開いてみる
+PRINTW ………………
+PRINTW …………
+PRINTW ……分かったことは2つ
+PRINTL ・この《東方調教典》は何らかの力(おそらくは魔術的なもの)を以って、
+PRINTW 　『持ち主』が『奴隷』を『調教』しやすい環境を作り出すことが可能である
+PRINTL ・代償として『持ち主』は何らかの呪いを受け、もはや今までの自分でいられなくなると
+PRINTW 　そしてその呪いは永久に解けないという…
+PRINTW ……得体の知れない本から得た知識で不安はあるが、なんとなく『調教』というものに
+PRINTFORMW 興味を抱いていた%CALLNAME:MASTER%は、とりあえず『調教師』としての生活を始めることにした
+PRINTL  
+CALL SCROLLTEXTL("　　　　　　　　―― EXTRA Prologue No.000", 0, 18)
+PRINTW 
+DRAWLINE
+PRINTL 
+ALIGNMENT CENTER
+;------------------------------------ ----------------------------------
+PRINTL LET’S ENJOY
+ALIGNMENT LEFT
+PRINTL 
+DRAWLINE
+PRINTW  

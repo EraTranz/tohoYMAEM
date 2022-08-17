@@ -1,0 +1,176 @@
+﻿;=============================================================================
+;産卵促進剤
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE68
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:68 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:産卵促進剤 == 0
+	RETURN 0
+;薬毒耐性の場合ダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;調教者がオトコかふたなりでないとだめ
+SIF EXIST_PENIS(PLAYER) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;対象が[卵生]か[産卵体質]でないとだめ
+SIF TALENT:卵生 == 0 && TALENT:産卵体質 == 0
+	RETURN 0
+;妊娠中なら不可
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;すでに使用中なら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;賢者の血を使用していたら使えない
+SIF TEQUIP:賢者の血
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 68) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM68
+PRINTL 産卵促進剤
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 68
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 産卵促進剤
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 60
+ELSE
+	DOWNBASE:0 += 100
+	DOWNBASE:1 += 120
+ENDIF
+
+SOURCE:欲情追加 = 250
+SOURCE:中毒充足 = 500
+SOURCE:薬物浸潤 = 1000
+SOURCE:逸脱 = 1500
+
+;産卵促進剤1つ消費
+CALL USE_PLURAL_ITEM, 67, 1
+TEQUIP:産卵促進剤 = 1
+TFLAG:128 = 0
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;薬物経験
+TCVAR:薬物経験 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_68
+PRINTFORM %CALLNAME:TARGET%に
+SIF ABL:PLAYER:技巧 >= 3
+	PRINT 口移しで
+SIF ABL:従順 == 0
+	PRINT 無理やり
+PRINTL 産卵促進剤を飲ませた
+IF TALENT:恋慕 || TALENT:親愛 || TALENT:相愛
+	PRINTFORML %CALLNAME:TARGET%は怪訝な表情を浮かべ、こちらを見ている……
+ELSEIF TALENT:服従 || TALENT:烙印 || TALENT:淫乱
+	PRINTFORML %CALLNAME:TARGET%不思議そうな表情を浮かべつつも%CALLNAME:PLAYER%に犯されるのを待っている……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は得体の知れない薬を飲まされたことに恐怖心を感じているようだ……
+ENDIF
+
+;-------------------------------------------------
+;産卵判定
+;-------------------------------------------------
+;絶頂の強度によって調教終了後に産卵回数を設定
+;LOCALは1回の調教での最大産卵回数、LOCAL:1は今回の産卵回数の判定用
+@EQUIP_COM68
+;EXP:産卵経験をみる
+IF EXP:産卵経験 < EXPLV:1
+	LOCAL = 2
+ELSEIF EXP:産卵経験 < EXPLV:2
+	LOCAL = 4
+ELSEIF EXP:産卵経験 < EXPLV:3
+	LOCAL = 6
+ELSEIF EXP:産卵経験 < EXPLV:4
+	LOCAL = 10
+ELSEIF EXP:産卵経験 < EXPLV:5
+	LOCAL = 15
+ELSE
+	LOCAL = 20
+ENDIF
+
+LOCAL:1 = 0
+;最強絶頂Ｖ
+IF TFLAG:181 >= 9
+	LOCAL:1 += 4
+;超強絶頂Ｖ
+ELSEIF TFLAG:181 >= 4
+	LOCAL:1 += 2
+;強絶頂Ｖ
+ELSE
+	LOCAL:1 += 1
+ENDIF
+
+;中毒しやすい
+SIF TALENT:中毒しやすい
+	LOCAL += 1
+;卵生
+IF TALENT:卵生
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;淫壷
+IF TALENT:淫壷
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.50
+ENDIF
+
+;排卵誘発剤
+IF TEQUIP:排卵誘発剤
+	TIMES LOCAL:1 , 2.00
+;媚薬
+ELSEIF TEQUIP:媚薬
+	TIMES LOCAL:1 , 1.50
+ENDIF
+
+;キャップ処理
+TFLAG:128 = MIN(TFLAG:128 + LOCAL:1, LOCAL)

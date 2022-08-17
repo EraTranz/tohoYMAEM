@@ -1,0 +1,284 @@
+﻿;=============================================================================
+;賢者の血
+;=============================================================================
+;数コマンドの間、絶頂が発生しなくなる薬を飲ませる。
+;効果が切れた後、反動で絶頂が止められてしまった部位の快ソースが数回にわたって大きく上昇します。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE65
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:65 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;賢者の血を持っていないとダメ
+SIF ITEM:賢者の血 == 0
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;産卵促進剤を使用していたら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;効果発揮中・反動中はダメ
+SIF TEQUIP:賢者の血
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 65) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM65
+PRINTL 賢者の血
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 65
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 賢者の血
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 100
+
+SOURCE:薬物浸潤 = 2500
+SOURCE:逸脱 = 3000
+
+;賢者の血1つ消費
+CALL USE_PLURAL_ITEM, 66, 1
+
+TEQUIP:賢者の血 = 8
+
+;薬物経験
+TCVAR:薬物経験 += 3
+RETURN 1
+
+;--------------------------------------------------
+;賢者の血効果発揮中
+;--------------------------------------------------
+@EQUIP_COM65
+IF TEQUIP:賢者の血 > 2
+	PRINTL ＜賢者の血効果発揮中＞
+	TEQUIP:賢者の血 -= 1
+ELSEIF TEQUIP:賢者の血 == 2
+	PRINTL ＜賢者の血反動中＞
+	TEQUIP:賢者の血 = 1
+	CALL DISPLAY_EQUIP_MESSAGE_COM, 65
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 2
+ELSEIF TEQUIP:賢者の血 == 1
+	PRINTL ＜賢者の血反動中＞
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;絶頂のキャンセル処理
+;-------------------------------------------------
+;SOURCE.ERBの絶頂処理を流用
+@ECST_CANCEL
+VARSET LOCAL, 0
+
+;絶頂Ｃ
+IF UP:0 + PALAM:快Ｃ >= PALAMLV:7 * 2
+	LOCAL:0 = 4
+	DOWN:0 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:0 + PALAM:快Ｃ >= PALAMLV:4 * 2
+	LOCAL:0 = 2
+	DOWN:0 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:0 + PALAM:快Ｃ >= PALAMLV:4
+	LOCAL:0 = 1
+	PALAM:快Ｃ = 5000
+	UP:0 = 0
+ENDIF
+;DOWN:1で下げても絶頂以上なら
+;その値-1になるように調整（10000で絶頂なら9999）
+SIF UP:0 + PALAM:快Ｃ - DOWN:0 >= PALAMLV:4
+	DOWN:0 = UP:0 + PALAM:快Ｃ - PALAMLV:4 + 1
+
+;絶頂Ｖ
+IF UP:1 + PALAM:快Ｖ >= PALAMLV:7 * 2
+	LOCAL:1 = 4
+	DOWN:1 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:1 + PALAM:快Ｖ >= PALAMLV:4 * 2
+	LOCAL:1 = 2
+	DOWN:1 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:1 + PALAM:快Ｖ >= PALAMLV:4
+	LOCAL:1 = 1
+	DOWN:1 = (PALAMLV:4 - 1000)
+ENDIF
+;DOWN:1で下げても絶頂以上なら
+;その値-1になるように調整（10000で絶頂なら9999）
+SIF UP:1 + PALAM:快Ｖ - DOWN:1 >= PALAMLV:4
+	DOWN:1 = UP:1 + PALAM:快Ｖ - PALAMLV:4 + 1
+
+;絶頂Ａ
+IF UP:2 + PALAM:快Ａ >= PALAMLV:7 * 2
+	LOCAL:2 = 4
+	DOWN:2 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:2 + PALAM:快Ａ >= PALAMLV:4 * 2
+	LOCAL:2 = 2
+	DOWN:2 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:2 + PALAM:快Ａ >= PALAMLV:4
+	LOCAL:2 = 1
+	DOWN:2 = (PALAMLV:4 - 1000)
+ENDIF
+;DOWN:2で下げても絶頂以上なら
+;その値-1になるように調整（10000で絶頂なら9999）
+SIF UP:2 + PALAM:快Ａ - DOWN:2 >= PALAMLV:4
+	DOWN:2 = UP:2 + PALAM:快Ａ - PALAMLV:4 + 1
+
+;絶頂Ｂ
+IF UP:3 + PALAM:快Ｂ >= PALAMLV:7 * 2
+	LOCAL:3 = 4
+	DOWN:3 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:3 + PALAM:快Ｂ >= PALAMLV:4 * 2
+	LOCAL:3 = 2
+	DOWN:3 = (PALAMLV:4 * 2 - 1000)
+ELSEIF UP:3 + PALAM:快Ｂ >= PALAMLV:4
+	LOCAL:3 = 1
+	DOWN:3 = (PALAMLV:4 - 1000)
+ENDIF
+;DOWN:3で下げても絶頂以上なら
+;その値-1になるように調整（10000で絶頂なら9999）
+SIF UP:3 + PALAM:快Ｂ - DOWN:3 >= PALAMLV:4
+	DOWN:3 = UP:3 + PALAM:快Ｂ - PALAMLV:4 + 1
+	
+;止められた絶頂回数をTFLAG:110～TFLAG:113に記録
+TFLAG:110 += LOCAL:0
+TFLAG:111 += LOCAL:1
+TFLAG:112 += LOCAL:2
+TFLAG:113 += LOCAL:3
+
+TFLAG:961 = 0
+
+RETURN 1
+
+;-------------------------------------------------
+;賢者の血の副作用(調教中)
+;-------------------------------------------------
+;＊仕様説明
+;@ECST_CANCELでTFLAG:110～TFLAG:113に記録してきた絶頂回数を解放します。内訳は
+;TFLAG:110 = Ｃ絶頂処理)の代わり、TFLAG:111 = Ｖ絶頂処理)の代わり、
+;TFLAG:112 = Ａ絶頂処理)の代わり、TFLAG:113 = Ｂ絶頂処理)の代わり
+;記録してきた絶頂回数１回につき、該当する部位の快ソース（UP:0,1,2,14）を２倍にします。
+;１回のコマンドでひとつの部位につき１回ずつこの倍化処理を行い、
+;TFLAG:110～TFLAG:113の合計が０になったとき、反動が解除されます。
+@REACT_DRUG
+;快Ｃの処理
+IF TFLAG:110 > 0 && UP:0 > 0
+	UP:0 *= 2
+	TFLAG:110 -= 1
+ENDIF
+;快Ｖの処理
+IF TFLAG:111 > 0 && UP:1 > 0
+	UP:1 *= 2
+	TFLAG:111 -= 1
+ENDIF
+;快Ａの処理
+IF TFLAG:112 > 0 && UP:2 > 0
+	UP:2 *= 2
+	TFLAG:112 -= 1
+ENDIF
+;快Ｂの処理
+IF TFLAG:113 > 0 && UP:3 > 0
+	UP:3 *= 2
+	TFLAG:113 -= 1
+ENDIF
+;反動の終了チェック
+SIF TFLAG:110 + TFLAG:111 + TFLAG:112 + TFLAG:113 == 0
+	TEQUIP:賢者の血 = 0
+RETURN 1
+
+;-------------------------------------------------
+;賢者の血の副作用(調教終了後時)
+;-------------------------------------------------
+@REACT_DRUG_SELF
+;賢者の血の効果が残ったまま調教を終了した場合の処理
+;通常時の効果が再現できそうにないので同時多重絶頂した……という処理に変更
+;LOCAL:99は多重絶頂の種類を示す(1の場合は○絶頂、2の場合は○＋△絶頂、4の場合は四重絶頂……となっている)
+VARSET LOCAL, 0
+
+SIF TFLAG:110
+	LOCAL:99 += 1
+SIF TFLAG:111
+	LOCAL:99 += 1
+SIF TFLAG:112
+	LOCAL:99 += 1
+SIF TFLAG:113
+	LOCAL:99 += 1
+
+FOR PC_VAR1, 0, 4
+	LOCAL:PC_VAR1 = LOCAL:99 * TFLAG:(110 + PC_VAR1)
+NEXT
+
+;絶頂経験
+CALL COMMON_UP_EXP, TARGET, 2, (TFLAG:110 + TFLAG:111 + TFLAG:112 + TFLAG:113), 0, 1
+;快Ｃの珠
+CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:0*1000), 0, 1
+;快Ｖの珠
+CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:1*1000), 0, 1
+;快Ａの珠
+CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:2*1000), 0, 1
+;快Ｂの珠
+CALL COMMON_UP_JUEL, TARGET, 3, (LOCAL:3*1000), 0, 1
+WAIT
+
+;リセット
+TFLAG:110 = 0
+TFLAG:111 = 0
+TFLAG:112 = 0
+TFLAG:113 = 0
+TEQUIP:賢者の血 = 0
+VARSET LOCAL, 0
+
+;副作用で体力が1に
+BASE:体力 = LIMIT(BASE:体力, 0, 1)
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_65
+PRINTFORM %CALLNAME:MASTER%は%CALLNAME:TARGET%に
+SIF ABL:PLAYER:技巧 >= 3
+	PRINT 口移しで
+SIF ABL:従順 == 0
+	PRINT 無理やり
+PRINTL 強精神剤を飲ませた
+PRINTFORM %CALLNAME:TARGET%は
+IF ABL:従順 > 3 && MARK:反発刻印 < 3
+	PRINTFORML 困惑した表情を浮かべ、ニヤニヤと笑う%CALLNAME:MASTER%を見つめている……
+ELSEIF MARK:反発刻印 >= 3
+	PRINTFORML 警戒心を露わにしてニヤニヤと笑う%CALLNAME:MASTER%を睨んでいる……
+ELSE
+	PRINTFORML 一瞬驚いたような表情をしたがニヤニヤと笑う%CALLNAME:MASTER%を見て探るような眼で睨んでいる……
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_065
+PRINTFORML %CALLNAME:TARGET%の強精神剤の効果が切れたようだ
+PRINTFORML それまでに溜まっていた快感が一気に押し寄せ、%CALLNAME:TARGET%は体を仰け反らせて身悶えている

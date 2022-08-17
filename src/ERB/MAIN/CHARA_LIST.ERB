@@ -1,0 +1,122 @@
+﻿;=============================================================================
+;キャラリスト表示用の命令実装群
+;=============================================================================
+;-------------------------------------------------
+;リストのキャラデータをセットする関数
+;-------------------------------------------------
+;CALLF SET_LIST, [リスト位置], [キャラ番号]
+@SET_LIST(ARG, ARG:1)
+#FUNCTION
+RETURNF LIST_DATA("SET", ARG, ARG:1)
+
+;-------------------------------------------------
+;リストのキャラデータをセットする関数
+;-------------------------------------------------
+;[変数等] = GET_LIST([リスト位置])
+@GET_LIST(ARG)
+#FUNCTION
+RETURNF LIST_DATA("GET", ARG)
+
+;-------------------------------------------------
+;内部で使用される関数
+;-------------------------------------------------
+;直接これを呼び出す必要はない
+@LIST_DATA(ARGS, ARG, ARG:1)
+#FUNCTION
+#LOCALSIZE 10000
+IF ARGS == "SET"
+	LOCAL:ARG = ARG:1
+	RETURNF ARG:1
+ELSEIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+ELSEIF ARGS == "CLEAR"
+	VARSET LOCAL, 0
+	RETURNF -1
+ELSE
+	RETURNF -1
+ENDIF
+
+;-------------------------------------------------
+;リストをクリアする関数
+;-------------------------------------------------
+;CALLF CLEAR_LIST
+@CLEAR_LIST
+#FUNCTION
+RETURNF LIST_DATA("CLEAR")
+
+;=============================================================================
+;GLOBALS化キャラに関する変換処理
+;=============================================================================
+;-------------------------------------------------
+;GLOBALS変数→CHARA追加（解凍）
+;-------------------------------------------------
+@CHARA_EXTRACTION, ARG
+#DIM check
+#DIMS number, 10
+SPLIT GLOBALS:ARG, "_", LOCALS
+ADDVOIDCHARA
+check = CHARANUM-1
+
+CALLNAME:check = %LOCALS:0%
+NO:check = TOINT(LOCALS:1)
+
+;MAXBASE
+SPLIT LOCALS:4, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	MAXBASE:check:TOINT(number) = TOINT(number:1)
+NEXT
+;BASE
+SPLIT LOCALS:3, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	BASE:check:TOINT(number) = TOINT(number:1)
+NEXT
+;CSTR
+SPLIT LOCALS:5, "//", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	CSTR:check:TOINT(number) = %number:1%
+NEXT
+;ABL
+SPLIT LOCALS:6, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	ABL:check:TOINT(number) = TOINT(number:1)
+NEXT
+;CFLAG
+SPLIT LOCALS:7, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	CFLAG:check:TOINT(number) = TOINT(number:1)
+NEXT
+;TALENT
+SPLIT LOCALS:8, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	TALENT:check:TOINT(number) = TOINT(number:1)
+NEXT
+;EQUIP
+SPLIT LOCALS:9, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	EQUIP:check:TOINT(number) = TOINT(number:1)
+NEXT
+;EXP
+SPLIT LOCALS:10, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	EXP:check:TOINT(number) = TOINT(number:1)
+NEXT
+;MARK
+SPLIT LOCALS:11, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	MARK:check:TOINT(number) = TOINT(number:1)
+NEXT
+;JUEL
+SPLIT LOCALS:12, "/", RESULTS
+FOR LOCAL, 0, RESULT-1
+	SPLIT RESULTS:LOCAL, ",", number
+	JUEL:check:TOINT(number) = TOINT(number:1)
+NEXT

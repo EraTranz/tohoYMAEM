@@ -1,0 +1,492 @@
+﻿;=============================================================================
+;日常エロイベント関連
+;=============================================================================
+;0……休ませる
+;1……路地裏で割れ目責め(女性専用)
+;2……バイブを入れさせて通りを歩く(女性専用)
+;3……アナルバイブを入れさせて通りを歩く
+;4……街頭自慰強制(女性専用)
+;-----------------------------------------------
+;日常エロイベント分岐判定
+;-----------------------------------------------
+;純愛モード時は上限を落として、30～50％に頻度を落して発生させる
+@DAILY_EVENT_JUDGMENT
+
+;ローカル変数初期化
+VARSET LOCAL
+;対象退避のためのローカル関数設定
+LOCAL:1 = TARGET
+;対象のイベント積極性をLOCAL:2に
+LOCAL:2 = DAILY_EVENT_PLAY_CHECK(TARGET)
+;助手がいる場合は助手のイベント積極性をLOCAL:3
+SIF ASSI >= 0
+	LOCAL:3 = DAILY_EVENT_PLAY_CHECK(ASSI)
+;イベントの種類は4種類
+LOCAL = RAND:5
+
+;実行判定処理
+;不可能な日常エロイベントが呼ばれたら0が返ってくる
+$JUDGMENT
+TRYCALLFORM DAILY_EVENT_JUDGMENT_{LOCAL}
+
+IF RESULT != 0
+	;イベント積極性の値以下ならイベント実行
+	IF LOCAL:2 >= RAND:100
+		;対象に関する日常エロイベント個別呼び出し
+		TRYCALLFORM DAILY_EVENT_{LOCAL}
+	ELSE
+		RETURN 0
+	ENDIF
+;不可能な場合は次に助手についてイベントチェックをする
+ELSEIF ASSI >= 0
+	;一時的に助手を対象にした上でイベントチェックを行う
+	TARGET = ASSI
+	TRYCALLFORM DAILY_EVENT_JUDGMENT_{LOCAL}
+	IF RESULT == 0
+		;一時的に助手を対象にしたので、戻す ※この処理が無かった為、ここを通過直後に調教開始をすると調教対象と助手が同一人物になる不具合が発生した模様
+		TARGET = LOCAL:1
+		RETURN 0
+	ELSE
+		;イベント積極性の値以下ならイベント実行
+		IF LOCAL:3 >= RAND:100
+			;助手に関する日常エロイベント個別呼び出し
+			TRYCALLFORM DAILY_EVENT_{LOCAL}
+			;退避してあった対象を戻す
+			TARGET = LOCAL:1
+		ELSE
+			;退避してあった対象を戻す
+			TARGET = LOCAL:1
+			RETURN 0
+		ENDIF
+	ENDIF
+;調教対象が不可で、助手もいないなら0で戻し
+ELSE
+	RETURN 0
+ENDIF
+RETURN 1
+
+;-----------------------------------------------
+;日常エロイベントの汎用実行判定
+;-----------------------------------------------
+;実行可能なら1/不可なら0
+;ARG:0……対象が女であるか判定（0なら女でなくてOK、0以外なら女限定）
+@DAILY_EVENT_COMMON_JUDGMENT(ARG)
+#FUNCTION
+;対象の主人調教経験が10未満
+SIF EXP:主人調教経験 < 10
+	RETURNF 0
+;対象が女ではない
+SIF ARG != 0 && TALENT:オトコ
+	RETURNF 0
+;対象がその場にいないとダメ
+SIF CFLAG:4
+	RETURNF 0
+;対象か主人が睡眠薬で眠っていたらダメ
+SIF EQUIP:睡眠薬 || EQUIP:MASTER:睡眠薬
+	RETURNF 0
+;体力や気力が消耗しすぎているとダメ、また酔いつぶれていてもダメ
+SIF BASE:体力 < 500 || BASE:気力 < 1 || BASE:酔い > MAXBASE:8
+	RETURNF 0
+;主人の体力気力および酔いも見る
+SIF BASE:MASTER:体力 < 500 || BASE:MASTER:気力 < 1 || BASE:MASTER:酔い > MAXBASE:MASTER:8
+	RETURNF 0
+;欲望が1未満、従順1未満、恐怖刻印3以上、反発刻印3以上、いずれか一つを満たす場合は0を返す
+SIF ABL:欲望 < 1 || ABL:従順 < 4 || MARK:恐怖刻印 > 2 || MARK:反発刻印 > 2
+	RETURNF 0
+;調教したことがないか好感度0だとダメ
+SIF CFLAG:1610 == 0 || CFLAG:好感度 <= 0
+	RETURNF 0
+;対象か主人が媚薬中毒中、抱卵中はダメ
+SIF TALENT:MASTER:媚薬中毒 || TALENT:MASTER:抱卵中 || TALENT:媚薬中毒 || TALENT:抱卵中
+	RETURNF 0
+;精神崩壊してる対象がやる意味はない。
+SIF TALENT:壊造人格
+	RETURNF 0
+;昼間の吸血鬼は日傘ないとダメ
+SIF TIME == 0 && (TALENT:MASTER:吸血鬼 || TALENT:吸血鬼) && ITEM:特注日傘 == 0
+	RETURNF 0
+RETURNF 1
+
+;-----------------------------------------------
+;日常エロイベントの実行積極性計算処理
+;-----------------------------------------------
+;実行可能なら1/不可なら0
+;ARG:0……だれについて判定するか？を登録キャラ番号で。ただし、主人を入れると意味不明に。
+@DAILY_EVENT_PLAY_CHECK(ARG)
+
+;比較対象が常にTARGETではないので(実際にASSIがある)、ARGで判定
+#FUNCTION
+;基本は20%
+LOCAL = 0
+;処女
+SIF TALENT:ARG:処女
+	LOCAL -= 5
+;恋慕
+SIF TALENT:ARG:恋慕
+	LOCAL += 10
+;服従
+SIF TALENT:ARG:服従
+	LOCAL += 10
+;淫乱
+SIF TALENT:ARG:淫乱
+	LOCAL += 10
+;従順
+	LOCAL += (ABL:ARG:従順 * ABL:ARG:従順)
+;;従順3以上でボーナス
+;SIF ABL:ARG:従順 >= 3
+;	LOCAL += 15
+;;従順4以上でボーナス
+;SIF ABL:ARG:従順 >= 4
+;	LOCAL += 5
+;;従順5以上でボーナス
+;SIF ABL:ARG:従順 >= 5
+;	LOCAL += 10
+;欲望
+	LOCAL += (ABL:ARG:欲望 * ABL:ARG:欲望)
+;;欲望3以上でボーナス
+;SIF ABL:ARG:欲望 >= 3
+;	LOCAL += 15
+;;欲望4以上でボーナス
+;SIF ABL:ARG:欲望 >= 4
+;	LOCAL += 10
+;;欲望5以上でボーナス
+;SIF ABL:ARG:欲望 >= 5
+;	LOCAL += 15
+;理性
+SIF !TALENT:ARG:理性
+	TIMES LOCAL, 1.10
+;発情中
+SIF TALENT:ARG:常時発情 || (TALENT:ARG:発情可 && (TALENT:ARG:危険日 || TALENT:ARG:排卵))
+	TIMES LOCAL, 1.20
+;調教度
+IF CFLAG:ARG:3668 <= -700
+	TIMES LOCAL , 0.80
+ELSEIF CFLAG:ARG:3668 <= -350
+	TIMES LOCAL , 0.90
+ENDIF
+;臆病
+SIF TALENT:ARG:臆病
+	TIMES LOCAL , 0.85
+;反抗的
+SIF TALENT:ARG:反抗的
+	TIMES LOCAL , 0.85
+;素直
+SIF TALENT:ARG:素直
+	TIMES LOCAL , 1.10
+;大人しい
+SIF TALENT:ARG:大人しい
+	TIMES LOCAL , 0.85
+;感情乏しい
+SIF TALENT:ARG:感情乏しい
+	TIMES LOCAL , 0.70
+;好奇心
+SIF TALENT:ARG:好奇心
+	TIMES LOCAL , 1.20
+;保守的
+SIF TALENT:ARG:保守的
+	TIMES LOCAL , 0.80
+;楽観的
+SIF TALENT:ARG:楽観的
+	TIMES LOCAL , 1.20
+;一線超えない
+SIF TALENT:ARG:一線越えない
+	TIMES LOCAL , 0.75
+;抑圧
+SIF TALENT:ARG:抑圧
+	TIMES LOCAL , 0.60
+;解放
+SIF TALENT:ARG:解放
+	TIMES LOCAL , 1.25
+;抵抗
+SIF TALENT:ARG:抵抗
+	TIMES LOCAL , 0.75
+;恥じらい
+IF TALENT:ARG:恥じらい
+	TIMES LOCAL , 0.85
+;恥薄い
+ELSEIF TALENT:ARG:恥薄い
+	TIMES LOCAL , 1.10
+ENDIF
+;快感に素直
+IF TALENT:ARG:快感に素直
+	TIMES LOCAL , 1.20
+;快感の否定
+ELSEIF TALENT:ARG:快感の否定
+	TIMES LOCAL , 0.60
+ENDIF
+;;恋慕
+;SIF TALENT:ARG:恋慕
+;	TIMES LOCAL , 1.30
+;;淫乱
+;SIF TALENT:ARG:淫乱
+;	TIMES LOCAL , 1.20
+;男嫌い(主人がオトコの場合のみ)
+IF TALENT:ARG:男嫌い && TALENT:MASTER:オトコ
+	TIMES LOCAL , 0.75
+;女嫌い(主人がオトコじゃないの場合のみ)
+ELSEIF TALENT:ARG:女嫌い && TALENT:MASTER:オトコ == 0
+	TIMES LOCAL , 0.75
+ENDIF
+;反発刻印2以上
+SIF MARK:ARG:反発刻印 >= 1
+	TIMES LOCAL , 0.50
+;恐怖刻印2以上
+SIF MARK:ARG:恐怖刻印 >= 1
+	TIMES LOCAL , 0.75
+;相性
+SIF RELATION:ARG:(NO:MASTER) != 0
+	LOCAL = LOCAL + (LOCAL * RELATION:ARG:(NO:MASTER) )/1000
+
+;下限は0、上限は純愛モード有効時は25,そうでなければ85とする
+;※現状5種類なので25％と低めに設定しますが、15種類以上とかイベント数が増えれば40～50％まで引き上げることも視野に入れる
+RETURNF (FLAG:12 & 32) ? LIMIT(LOCAL, 0, 25) # LIMIT(LOCAL, 0, 85)
+
+;=============================================================================
+;日常エロイベントその0～休養
+;=============================================================================
+;-----------------------------------------------
+;イベント休養実行判定
+;-----------------------------------------------
+@DAILY_EVENT_JUDGMENT_0
+;日常エロイベント汎用実行判定
+SIF DAILY_EVENT_COMMON_JUDGMENT(0) == 0
+	RETURN 0
+RETURN 1
+
+;-----------------------------------------------
+;イベント休養
+;-----------------------------------------------
+@DAILY_EVENT_0
+DRAWLINE
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 600
+
+;=============================================================================
+;日常エロイベントその1～路地裏で割れ目責め
+;=============================================================================
+;-----------------------------------------------
+;割れ目責め実行判定(女性専用)
+;-----------------------------------------------
+@DAILY_EVENT_JUDGMENT_1
+;日常エロイベント汎用実行判定
+SIF DAILY_EVENT_COMMON_JUDGMENT(1) == 0
+	RETURN 0
+;従順3以上、欲望2以上,Ｃ感覚1以上、露出癖1以上ないとダメ
+SIF ABL:従順 < 3 || ABL:欲望 < 2 || ABL:Ｃ感覚 < 1 || ABL:露出癖 < 1
+	RETURN 0
+RETURN 1
+
+;-----------------------------------------------
+;割れ目責めイベント
+;-----------------------------------------------
+@DAILY_EVENT_1
+#LOCALSIZE 1
+SELECTCASE (ABL:Ｃ感覚 * 3 + ABL:欲望 + ABL:露出癖)
+	CASE IS <= 7
+		LOCAL = 0
+	CASE IS <= 14
+		LOCAL = 1
+	CASE IS <= 22
+		LOCAL = 2
+	CASEELSE
+		LOCAL = 3
+ENDSELECT
+DRAWLINE
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 601, LOCAL
+
+SELECTCASE LOCAL
+	CASE 0
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 5, 0, 1
+	CASE 1
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 1, 0, 1
+	CASE 2
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 2, 0, 1
+		;Ｃ調律経験
+		CALL COMMON_UP_EXP, TARGET, 41, 1, 0, 1
+	CASEELSE
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 2, 0, 1
+		;Ｃ調律経験
+		CALL COMMON_UP_EXP, TARGET, 41, 1, 0, 1
+ENDSELECT
+WAIT
+
+;=============================================================================
+;日常エロイベントその2～バイブを入れさせて通りを歩かせる(女性専用)
+;=============================================================================
+;-----------------------------------------------
+;バイブを入れさせて通りを歩かせる実行判定
+;-----------------------------------------------
+@DAILY_EVENT_JUDGMENT_2
+;日常エロイベント汎用実行判定
+SIF DAILY_EVENT_COMMON_JUDGMENT(1) == 0
+	RETURN 0
+;[処女]またはＶ経験0だとダメ
+SIF TALENT:処女 || EXP:Ｖ経験 < 1
+	RETURN 0
+;従順3以上、欲望2以上,Ｖ感覚1以上、露出癖1以上でないとダメ
+SIF ABL:従順 < 3 || ABL:欲望 < 2 || ABL:Ｖ感覚 < 1 || ABL:露出癖 < 1
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;バイブがないとダメ
+SIF ITEM:バイブ == 0
+	RETURN 0
+RETURN 1
+
+;-----------------------------------------------
+;バイブを入れさせて通りを歩かせるイベント
+;-----------------------------------------------
+@DAILY_EVENT_2
+#LOCALSIZE 1
+SELECTCASE (ABL:Ｖ感覚 * 2 + ABL:欲望 + ABL:露出癖 * 2)
+	CASE IS <= 7
+		LOCAL = 0
+	CASE IS <= 14
+		LOCAL = 1
+	CASE IS <= 21
+		LOCAL = 2
+	CASEELSE
+		LOCAL = 3
+ENDSELECT
+DRAWLINE
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 602, LOCAL
+
+;Ｖ経験
+CALL COMMON_UP_EXP, TARGET, 0, 1, 0, 1
+SELECTCASE LOCAL
+	CASE 0
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 5, 0, 1
+	CASE 1
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 1, 0, 1
+	CASE 2
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 2, 0, 1
+	CASEELSE
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 4, 0, 1
+ENDSELECT
+WAIT
+
+;=============================================================================
+;日常エロイベントその3～アナルバイブを入れさせて通りを歩かせる
+;=============================================================================
+;-----------------------------------------------
+;アナルバイブを入れさせて通りを歩かせる実行判定
+;-----------------------------------------------
+@DAILY_EVENT_JUDGMENT_3
+;日常エロイベント汎用実行判定
+SIF DAILY_EVENT_COMMON_JUDGMENT(0) == 0
+	RETURN 0
+;従順3以上、欲望2以上,Ａ感覚1以上、露出癖1以上ないとダメ
+SIF ABL:従順 < 3 || ABL:欲望 < 2 || ABL:Ａ感覚 < 1 || ABL:露出癖 < 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;アナルバイブがないとダメ
+SIF ITEM:アナルバイブ == 0
+	RETURN 0
+RETURN 1
+
+;-----------------------------------------------
+;アナルバイブを入れさせて通りを歩かせるイベント
+;-----------------------------------------------
+@DAILY_EVENT_3
+#LOCALSIZE 1
+SELECTCASE (ABL:Ａ感覚 * 2 + ABL:欲望 + ABL:露出癖 * 2)
+	CASE IS <= 10
+		LOCAL = 0
+	CASE IS <= 16
+		LOCAL = 1
+	CASE IS <= 20
+		LOCAL = 2
+	CASEELSE
+		LOCAL = 3
+ENDSELECT
+DRAWLINE
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 603, LOCAL
+
+;Ａ経験
+CALL COMMON_UP_EXP, TARGET, 1, 1, 0, 1
+SELECTCASE LOCAL
+	CASE 0
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 5, 0, 1
+	CASE 1
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 1, 0, 1
+	CASE 2
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 2, 0, 1
+		;Ａ快楽経験
+		CALL COMMON_UP_EXP, TARGET, 43, 1, 0, 1
+	CASEELSE
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 4, 0, 1
+		;Ａ快楽経験
+		CALL COMMON_UP_EXP, TARGET, 43, 2, 0, 1
+ENDSELECT
+WAIT
+
+;=============================================================================
+;日常エロイベントその4～街頭自慰強制(女性専用)
+;=============================================================================
+;-----------------------------------------------
+;街頭自慰強制実行判定
+;-----------------------------------------------
+@DAILY_EVENT_JUDGMENT_4
+;日常エロイベント汎用実行判定
+SIF DAILY_EVENT_COMMON_JUDGMENT(1) == 0
+	RETURN 0
+;従順4以上、欲望3以上,Ｃ感覚3以上、露出癖3以上ないとダメ
+SIF ABL:従順 < 4 || ABL:欲望 < 3 || ABL:Ｖ感覚 < 3 || ABL:露出癖 < 3
+	RETURN 0
+RETURN 1
+
+;-----------------------------------------------
+;街頭自慰強制イベント
+;-----------------------------------------------
+@DAILY_EVENT_4
+#LOCALSIZE 1
+SELECTCASE (ABL:Ｃ感覚 * 2 + ABL:従順 + ABL:欲望 + ABL:露出癖 * 3)
+	CASE IS <= 9
+		LOCAL = 0
+	CASE IS <= 29
+		LOCAL = 1
+	CASEELSE
+		LOCAL = 2
+ENDSELECT
+DRAWLINE
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 604, LOCAL
+
+;自慰経験 ※ 調教自慰経験に関しては、調教限定との事なので無しでよいのではと思い追加していません
+CALL COMMON_UP_EXP, TARGET, 10, 1, 0, 1
+SELECTCASE LOCAL
+	CASE 0
+		;否定の珠
+		CALL COMMON_UP_JUEL, TARGET, 100, 1, 0, 1
+	CASE 1
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 1, 0, 1
+		;Ｃ調律経験
+		CALL COMMON_UP_EXP, TARGET, 41, 1, 0, 1
+	CASEELSE
+		;絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 2, 0, 1
+		;Ｃ調律経験
+		CALL COMMON_UP_EXP, TARGET, 41, 2, 0, 1
+		;露出快楽経験
+		CALL COMMON_UP_EXP, TARGET, 14, 2, 0, 1
+ENDSELECT
+WAIT

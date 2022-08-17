@@ -1,0 +1,339 @@
+﻿;=============================================================================
+;犬を犯させる
+;=============================================================================
+;後背位させるより作成。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE382
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:382 > 0
+	RETURN 0
+;獣姦系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8192) == 0
+	RETURN 0
+;初体験のときは異常系調教フィルタがオフになってないとダメ
+SIF (FLAG:25 & 2) == 0 && FLAG:2 & 4
+	RETURN 0
+;動物小屋と犬が必要
+SIF (FLAG:72 & 1) == 0 || (FLAG:72 & 2) == 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;主人に禁断の知識か狂気がないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && TALENT:MASTER:狂気 == 0
+	RETURN 0
+;小人体型だとダメ
+SIF TALENT:小人体型
+	RETURN 0
+;オナホール・電極オナホール使用中はダメ
+SIF TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中はダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 382) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM382
+PRINTL 犬を犯させる
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 382
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 犬を犯させる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL = 50
+ELSEIF ABL:技巧 == 1
+	LOCAL = 300
+ELSEIF ABL:技巧 == 2
+	LOCAL = 800
+ELSEIF ABL:技巧 == 3
+	LOCAL = 1500
+ELSEIF ABL:技巧 == 4
+	LOCAL = 2000
+ELSE
+	LOCAL = 3200
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+;奉仕精神をみる
+LOCAL = EJACULATIONCHECK_ABL_13_1(TARGET, LOCAL)
+
+;調教対象のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL)
+
+SIF EXIST_PENIS(TARGET)
+	BASE:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 50
+DOWNBASE:1 += 230
+
+SOURCE:欲情追加 = 750
+SOURCE:屈従 = 4000
+SOURCE:中毒充足 += 500
+SOURCE:不潔 = 12500
+SOURCE:逸脱 = 50000
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 700
+	SOURCE:性行動 = 1200
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 900
+	SOURCE:性行動 = 1500
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 1400
+	SOURCE:性行動 = 1800
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1800
+	SOURCE:性行動 = 2300
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2300
+	SOURCE:性行動 = 2700
+ELSE
+	SOURCE:快Ｃ = 3000
+	SOURCE:性行動 = 3500
+ENDIF
+
+;ABL:獣姦中毒をみる
+IF ABL:獣姦中毒 == 0
+	SOURCE:中毒充足 = 1500
+ELSEIF ABL:獣姦中毒 == 1
+	TIMES DOWNBASE:1 , 0.90
+	SOURCE:中毒充足 = 1700
+	TIMES SOURCE:不潔 , 0.90
+ELSEIF ABL:獣姦中毒 == 2
+	TIMES DOWNBASE:1 , 0.80
+	SOURCE:中毒充足 = 2000
+	TIMES SOURCE:不潔 , 0.80
+ELSEIF ABL:獣姦中毒 == 3
+	TIMES DOWNBASE:1 , 0.70
+	SOURCE:中毒充足 = 2500
+	TIMES SOURCE:不潔 , 0.70
+ELSEIF ABL:獣姦中毒 == 4
+	TIMES DOWNBASE:1 , 0.60
+	SOURCE:中毒充足 = 3300
+	TIMES SOURCE:不潔 , 0.60
+ELSE
+	TIMES DOWNBASE:1 , 0.50
+	SOURCE:中毒充足 = 4200
+	TIMES SOURCE:不潔 , 0.50
+ENDIF
+
+;猫舌持ちはトラウマと逸脱増加
+IF TALENT:猫舌
+	TIMES SOURCE:逸脱 , 2.0
+	SOURCE:トラウマ = 800
+ENDIF
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(TARGET)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	TIMES SOURCE:性行動 , 3.00
+
+	;ABL:射精中毒をみる
+	IF ABL:射精中毒 == 0
+		SOURCE:中毒充足 += 0
+		TIMES SOURCE:快Ｃ , 2.00
+		TIMES SOURCE:屈従, 2.00
+	ELSEIF ABL:射精中毒 == 1
+		SOURCE:中毒充足 += 50
+		TIMES SOURCE:快Ｃ , 2.50
+		TIMES SOURCE:屈従, 1.60
+	ELSEIF ABL:射精中毒 == 2
+		SOURCE:中毒充足 += 150
+		TIMES SOURCE:快Ｃ , 3.00
+		TIMES SOURCE:屈従, 1.00
+	ELSEIF ABL:射精中毒 == 3
+		SOURCE:中毒充足 += 300
+		TIMES SOURCE:快Ｃ , 4.50
+		TIMES SOURCE:屈従, 0.70
+	ELSEIF ABL:射精中毒 == 4
+		SOURCE:中毒充足 += 600
+		TIMES SOURCE:快Ｃ , 6.00
+		TIMES SOURCE:屈従, 0.40
+	ELSE
+		SOURCE:中毒充足 += 1200
+		TIMES SOURCE:快Ｃ , 8.00
+		TIMES SOURCE:屈従, 0.10
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = TARGET
+	;射精時の共通処理を呼ぶ
+	CALL SAMEN_SHOOT_COMMON
+	;大量射精
+	IF TFLAG:91 == 2
+		TIMES SOURCE:快Ｃ , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;コンドーム射精の場合、;コンドームに調教対象の精液溜まる。コンドーム精飲に使用
+	SIF TEQUIP:コンドーム == 1
+		CFLAG:75 |= 4
+ENDIF
+
+;奴隷のＰに愛液の汚れがつく
+SIF EXIST_BAR(TARGET)
+	STAIN:ペニス |= 1
+
+IF (CFLAG:25 & 2) == 0
+	CFLAG:25 |= 2
+	TCVAR:異常経験 += 1
+ENDIF
+TCVAR:動物性愛経験 += 2
+
+;コマンド属性：獣姦
+TFLAG:98 = 9
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_382
+PRINTFORML %CALLNAME:MASTER%は雌犬の陰部を%CALLNAME:TARGET%の方に向けさせ、%CALLNAME:TARGET%に犯すように命じた
+PRINTFORML %CALLNAME:TARGET%はペニスを雌犬に挿入した…
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_382, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:11%LV({LOCAL:99})({LOCAL:99 * 2})
+ENDIF
+
+;ABL:獣姦中毒
+IF ABL:獣姦中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:獣姦中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:38%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %MARKNAME:1%LV({LOCAL:99})({LOCAL:99 * 2})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 2
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+
+;猫舌
+IF TALENT:猫舌
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:54%({LOCAL:99})
+ENDIF
+
+;実行値は84
+TFLAG:241 = 84

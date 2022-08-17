@@ -1,0 +1,73 @@
+﻿;YM→YMAEコンバータによって作成されました
+;----------------------------------------------------------
+;刻印取得時の口上
+;----------------------------------------------------------
+@K2008_MARKCNG
+#DIM _MARK, 10
+#DIM _GETMARK
+#DIM _GETMARKLV
+#DIM _COUNT
+#DIM _55XX
+
+;念のため初期化
+VARSET _MARK, 0
+
+;TFLAGとMARKの番号が順当ではないので読み替え変数にする
+;薬物刻印は調教中に取得するものじゃないけど、まあ入れておく
+_MARK:0 = TFLAG:40 ;MARK:苦痛刻印 苦痛刻印
+_MARK:1 = TFLAG:41 ;MARK:快楽刻印 快楽刻印
+_MARK:2 = TFLAG:42 ;MARK:屈服刻印 屈服刻印
+_MARK:3 = TFLAG:45 ;MARK:薬物刻印 薬物刻印
+_MARK:4 = TFLAG:46 ;MARK:恥辱刻印 恥辱刻印
+;_MARK:5 未定義
+;_MARK:6 未定義
+;_MARK:7 未定義
+_MARK:8 = TFLAG:43 ;MARK:恐怖刻印 恐怖刻印
+_MARK:9 = TFLAG:44 ;MARK:反発刻印 反発刻印
+
+;■複数同時取得時は最高Lvを優先。同Lvが複数ある場合はSELECTCOMの優先順位で対応
+_GETMARKLV = MAX(_MARK:0, _MARK:1, _MARK:2, _MARK:3, _MARK:4, _MARK:5, _MARK:6, _MARK:7, _MARK:8, _MARK:9)
+
+SIF _GETMARKLV == 0
+	RETURN 1
+
+;_GETMARKLVが同Lvタイで複数ある場合、SELECTCOMの上にある方が優先される
+;例　反発Lv2と恐怖Lv3　→　恐怖Lv3
+;　　反発Lv2と恐怖Lv2　→　反発Lv2
+SELECTCASE _GETMARKLV
+	CASE TFLAG:44 ;反発刻印
+		_GETMARK = 9
+	CASE TFLAG:43 ;恐怖刻印
+		_GETMARK = 8
+	CASE TFLAG:40 ;苦痛刻印
+		_GETMARK = 0
+	CASE TFLAG:41 ;快楽刻印
+		_GETMARK = 1
+	CASE TFLAG:46 ;恥辱刻印
+		_GETMARK = 4
+	CASE TFLAG:42 ;屈服刻印
+		_GETMARK = 2
+	CASE TFLAG:45 ;薬物刻印、ここでは呼ばれないはずだが一応
+		_GETMARK = 3
+	CASEELSE
+		;ここには来ないが念のため
+		RETURN 1
+ENDSELECT
+
+_55XX = 5500 + _GETMARK
+
+;ランク指定の絶頂口上があればそちらを優先
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_MARK{_GETMARK}_LV{_GETMARKLV}, CFLAG:_55XX
+CATCH
+	;ない場合は未指定に飛ばす
+	TRYCALLFORM K2008_MARK{_GETMARK}_LV{_GETMARKLV}, CFLAG:_55XX
+ENDCATCH
+
+;刻印取得のCFLAG処理
+FOR _COUNT, 0, 9+1, 1
+	;刻印を取得していないなら次に飛ばす
+	SIF _MARK:_COUNT == 0
+		CONTINUE
+	CFLAG:(5500 + _COUNT) = _MARK:_COUNT
+NEXT
+

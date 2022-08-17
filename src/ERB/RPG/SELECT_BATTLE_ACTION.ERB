@@ -1,0 +1,1318 @@
+﻿;--------------------------------------------------
+;TARGETのカウンター　＞　PLAYERの対応
+;
+;ARG＝調教対象
+;ARG:1＝調教者
+;
+;宣言（対象）
+;1：近寄る　2：距離をとる　3：背後に回る　4：見切り　5：防御　6：チャージ　7：移動不可　8：筒抜け　9：受け入れる　10：奉仕する　11：Ｖ挿入防御
+;--------------------------------------------------
+@SELECT_BATTLE_ACTION, ARG, ARG:1
+
+;距離のチェック
+LOCAL = 距離:ARG - 距離:(ARG:1)
+SIF LOCAL < 0
+	LOCAL *= -1
+
+LOCAL:1 = 0
+LOCAL:2 = 0
+
+;通常状態　！睡眠・拘束・三角木馬・時止め・失神
+IF !(EQUIP:睡眠薬 || TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中 || TEQUIP:時間止め || TFLAG:899 >= 1)
+	$SELECT_ACTION_LOOP
+	;触手催眠
+	IF TEQUIP:触手調教 && TEQUIP:触手催眠 && RAND:3
+		SELECTCASE RAND:1 ;RAND:6
+		CASE 0
+			LOCAL:1 = 15
+			LOCAL:2 = 1
+		CASE 1
+			LOCAL:1 = 40
+		CASE 2
+			LOCAL:1 = 41
+		CASE 3
+			LOCAL:1 = 42
+		CASE 4
+			LOCAL:1 = 43
+		CASE 5
+			LOCAL:1 = 44
+		ENDSELECT
+	;操りの糸
+	ELSEIF TEQUIP:精神制御系 && !RAND:4
+		IF RAND:2
+			LOCAL:1 = 15
+			LOCAL:2 = 2
+		ELSEIF RAND:2
+			LOCAL:1 = 10
+			LOCAL:2 = 2
+		ELSE
+			LOCAL:1 = 12
+			LOCAL:2 = 2
+		ENDIF
+	;極近距離
+	ELSEIF LOCAL == 0
+		;臆病、大人しい、恐怖刻印
+		IF (TALENT:ARG:臆病 || TALENT:ARG:大人しい) && !RAND:(10 - MARK:恐怖刻印 * 2)
+			LOCAL:1 = 14
+			LOCAL:2 = 1
+		ELSE
+			LOCAL:1 = 0
+		ENDIF
+	;近距離
+	ELSEIF LOCAL == 1
+		LOCAL:1 = 0
+	;中距離
+	;ELSEIF LOCAL == 2
+	;	LOCAL:1 = 1
+	;遠距離
+	;ELSEIF LOCAL == 3
+	;	LOCAL:1 = 2
+	;極遠距離
+	ELSE
+		SELECTCASE RAND:4
+		CASE 0
+			LOCAL:1 = 3
+		CASE 1
+			LOCAL:1 = 11
+		CASE 2
+			LOCAL:1 = 13
+		CASE 3
+			LOCAL:1 = 14
+		ENDSELECT
+		;説得する(プライド低い、プライド高い)
+		SIF BASE:気力 >= 500 && MARK:反発刻印 < 3 && !RAND:(15 - TALENT:プライド低い * 5 + TALENT:プライド高い * 5)
+			LOCAL:1 = 33
+	ENDIF
+	
+	;勝手にやる
+	SIF TFLAG:699 > 0
+		LOCAL:1 = 24
+	
+	SIF LOCAL:1 == 15 && LOCAL:2 && RAND:2
+		GOTO SKIP_TRAUMA
+	
+	;快ＣＶＡＢ、媚薬、鈴蘭の毒(快感に素直、快感の否定)
+	IF (PALAM:快Ｃ > 5000 || PALAM:快Ｖ > 5000 || PALAM:快Ａ > 5000 || PALAM:快Ｂ > 5000 || TEQUIP:媚薬 || TEQUIP:鈴蘭の毒) && !RAND:(15 - TALENT:快感に素直 * 5 + TALENT:快感の否定 * 5)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 3
+	;脱衣中(恥じらい、恥薄い)
+	ELSEIF EQUIP:脱衣 && !RAND:(15 - TALENT:恥じらい * 5 + TALENT:恥薄い * 5)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 4
+	;パニック中(臆病、気丈)
+	ELSEIF TFLAG:108 > 0 && !RAND:(15 - TALENT:臆病 * 5 + TALENT:気丈 * 5)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 5
+	;苦痛刻印(痛みに弱い、痛みに強い)
+	ELSEIF MARK:苦痛刻印 && !RAND:(20 - MARK:苦痛刻印 * 3 - TALENT:痛みに弱い * 3 + TALENT:痛みに強い * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 6
+	;快楽刻印(快感に素直、快感の否定)
+	ELSEIF MARK:快楽刻印 && !RAND:(20 - MARK:快楽刻印 * 3 - TALENT:快感に素直 * 3 + TALENT:快感の否定 * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 7
+	;屈服刻印(大人しい、反抗的)
+	ELSEIF MARK:屈服刻印 && !RAND:(20 - MARK:屈服刻印 * 3 - TALENT:大人しい * 3 + TALENT:反抗的 * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 8
+	;恥辱刻印(恥じらい、恥薄い)
+	ELSEIF MARK:恥辱刻印 && !RAND:(20 - MARK:恥辱刻印 * 3 - TALENT:恥じらい * 3 + TALENT:恥薄い * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 9
+	;恐怖刻印(臆病、気丈)
+	ELSEIF MARK:恐怖刻印 && !RAND:(20 - MARK:恐怖刻印 * 3 - TALENT:臆病 * 3 + TALENT:気丈 * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 10
+	ENDIF
+	$SKIP_TRAUMA
+	
+	;少女の負け
+	IF BASE:体力 < 1
+		LOCAL:1 = 23
+		LOCAL:2 = 15
+	ENDIF
+	
+	;カウンター
+	;RESULT:0＝0　再選択　RESULT:1＝1　大成功　RESULT:2＝1　大失敗
+	TFLAG:553 = LOCAL:2
+	CALLFORM BATTLE_ACTION_{LOCAL:1}, ARG, ARG:1, LOCAL:2
+	SIF RESULT:0 == 0
+		GOTO SELECT_ACTION_LOOP
+	;運動による影響
+	CALL ACTION_REACTION, LOCAL:1, LOCAL:2
+;蹂躙されている少女
+ELSE
+	$SELECT_ACTION_LOOP_2
+	;時止め
+	IF TEQUIP:時間止め
+		LOCAL:1 = 15
+		LOCAL:2 = 11
+	;失神
+	ELSEIF TFLAG:899 >= 1
+		LOCAL:1 = 15
+		LOCAL:2 = 12
+	;睡眠
+	;今のところ発生しない
+	ELSEIF EQUIP:睡眠薬
+		LOCAL:1 = 15
+		LOCAL:2 = 13
+	;拘束、三角木馬
+	ELSEIF TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中
+		SELECTCASE RAND:9
+		CASE 0, 1, 2
+			LOCAL:1 = 20
+		CASE 3
+			LOCAL:1 = 21
+		CASE 4
+			LOCAL:1 = 22
+		CASE 5
+			LOCAL:1 = 26
+		CASE 6
+			LOCAL:1 = 30
+		CASE 7
+			LOCAL:1 = 31
+		CASE 8
+			LOCAL:1 = 32
+		ENDSELECT
+		;三角木馬
+		SIF TEQUIP:三角木馬乗馬中 && !RAND:7
+			LOCAL:1 = 23
+		;気力切れ
+		SIF BASE:気力 < 1 && !RAND:5
+			LOCAL:1 = 23
+		;触手催眠
+		IF TEQUIP:触手催眠 && !RAND:3
+			LOCAL:1 = 23 + RAND:3
+			LOCAL:2 = 14
+		;操りの糸
+		ELSEIF TEQUIP:精神制御系 && !RAND:5
+			LOCAL:1 = 23
+			LOCAL:2 = 2
+		ENDIF
+	;エラー
+	ELSE
+		LOCAL:1 = 15
+	ENDIF
+	
+	;勝手にやる
+	SIF LOCAL:1 != 15 && TFLAG:699 > 0
+		LOCAL:1 = 24
+	
+	SIF LOCAL:1 == 15 && LOCAL:2
+		GOTO SKIP_TRAUMA_2
+	
+	;苦痛刻印(痛みに弱い、痛みに強い)
+	IF MARK:苦痛刻印 && !RAND:(20 - MARK:苦痛刻印 * 4 - TALENT:痛みに弱い * 3 + TALENT:痛みに強い * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 6
+	;快楽刻印(快感に素直、快感の否定)
+	ELSEIF MARK:快楽刻印 && !RAND:(20 - MARK:快楽刻印 * 4 - TALENT:快感に素直 * 3 + TALENT:快感の否定 * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 7
+	;屈服刻印(大人しい、反抗的)
+	ELSEIF MARK:屈服刻印 && !RAND:(20 - MARK:屈服刻印 * 4 - TALENT:大人しい * 3 + TALENT:反抗的 * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 8
+	;恥辱刻印(恥じらい、恥薄い)
+	ELSEIF MARK:恥辱刻印 && !RAND:(20 - MARK:恥辱刻印 * 4 - TALENT:恥じらい * 3 + TALENT:恥薄い * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 9
+	;恐怖刻印(臆病、気丈)
+	ELSEIF MARK:恐怖刻印 && !RAND:(20 - MARK:恐怖刻印 * 4 - TALENT:臆病 * 3 + TALENT:気丈 * 3)
+		SIF !GROUPMATCH(LOCAL:1, 23, 24, 25, 31, 32, 40, 41, 42, 43, 44) || !RAND:3
+			LOCAL:1 = 15
+		LOCAL:2 = 10
+	ENDIF
+	;少女の負け
+	IF BASE:体力 < 1
+		LOCAL:1 = 23
+		LOCAL:2 = 15
+	ENDIF
+	$SKIP_TRAUMA_2
+	
+	;カウンター
+	;RESULT:0＝0　再選択　RESULT:1＝1　大成功　RESULT:2＝1　大失敗
+	TFLAG:553 = LOCAL:2
+	CALLFORM BATTLE_ACTION_{LOCAL:1}, ARG, ARG:1, LOCAL:2
+	SIF RESULT:0 == 0
+		GOTO SELECT_ACTION_LOOP_2
+	;運動による影響
+	CALL ACTION_REACTION, LOCAL:1, LOCAL:2
+ENDIF
+PRINTL 
+
+;--------------------------------------------------
+;近距離攻撃（見切り　＞　拘束のチャンス？）
+;--------------------------------------------------
+@BATTLE_ACTION_0, ARG, ARG:1, ARG:2 = 0
+PRINTL 近距離攻撃
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, -1
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:(ARG:1)%は%CALLNAME:ARG%の攻撃を回避した！
+	IF TEQUIP:(ARG:1):戦闘状態 == 4
+		SETCOLOR 0xFFA500
+		PRINTFORMW さらに、%CALLNAME:ARG%の次の行動を見抜いた！
+		RESETCOLOR
+		TEQUIP:ARG:戦闘状態 = 8
+	ENDIF
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+SELECTCASE RAND:4
+CASE 0
+	PRINTFORMW %CALLNAME:ARG%は足を上げて%CALLNAME:(ARG:1)%を蹴った！
+CASE 1
+	PRINTFORMW %CALLNAME:ARG%はパンチで%CALLNAME:(ARG:1)%を殴った！
+CASE 2
+	PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%に肘打ちをした！
+CASE 3
+	PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%に膝蹴りを叩き込む！
+ENDSELECT
+
+SELECTCOM = 720
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+IF TEQUIP:ARG:戦闘状態 == 6 || RESULT:1
+	IF TEQUIP:(ARG:1):戦闘状態 == 5
+		BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 250, 0)
+		BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 250, 0)
+	ELSE
+		BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 500, 0)
+		BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 500, 0)
+	ENDIF
+ELSE
+	IF TEQUIP:(ARG:1):戦闘状態 == 5
+		BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 125, 0)
+		BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 125, 0)
+	ELSE
+		BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 250, 0)
+		BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 250, 0)
+	ENDIF
+ENDIF
+
+PRINTL 
+PRINTFORM ◇
+PRINTFORML %SHOW_CALLNAME(ARG:1)%◇
+IF TEQUIP:ARG:戦闘状態 == 6 || RESULT:1
+	IF TEQUIP:(ARG:1):戦闘状態 == 5
+		PRINTFORM 体力 －250　気力 －250
+	ELSE
+		PRINTFORM 体力 －500　気力 －500
+	ENDIF
+ELSE
+	IF TEQUIP:(ARG:1):戦闘状態 == 5
+		PRINTFORM 体力 －125　気力 －125
+	ELSE
+		PRINTFORM 体力 －250　気力 －250
+	ENDIF
+ENDIF
+IF BASE:(ARG:1):0 < 500
+	PRINTFORM 　★瀕死★
+ELSEIF BASE:(ARG:1):1 <= 0
+	PRINTFORM 　★気力０★
+ELSE
+	PRINT 
+ENDIF
+PRINTL 
+
+RETURN 1
+
+;--------------------------------------------------
+;中距離攻撃（現在利用できないの攻撃タイプ）
+;--------------------------------------------------
+@BATTLE_ACTION_1, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1
+
+;--------------------------------------------------
+;遠距離攻撃（現在利用できないの攻撃タイプ）
+;--------------------------------------------------
+@BATTLE_ACTION_2, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1
+
+;--------------------------------------------------
+;チャージ攻撃
+;--------------------------------------------------
+@BATTLE_ACTION_3, ARG, ARG:1, ARG:2 = 0
+SIF TEQUIP:ARG:戦闘状態 == 106 || TEQUIP:ARG:戦闘状態 == 6
+	RETURN 0
+
+PRINTL チャージ
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, -1
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 106
+
+PRINTFORMW %CALLNAME:ARG%は力を溜めている…
+
+SELECTCOM = 723
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;近寄る（特別な状況でなければ使用しない）
+;--------------------------------------------------
+@BATTLE_ACTION_10, ARG, ARG:1, ARG:2 = 0
+PRINTL 近寄る
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+TEQUIP:ARG:戦闘状態 = 1
+
+;操りの糸
+SIF ARG:2 == 2
+	PRINTFORM なぜか
+
+PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%に近づこうとする…
+
+SELECTCOM = 710
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;距離をとる
+;--------------------------------------------------
+@BATTLE_ACTION_11, ARG, ARG:1, ARG:2 = 0
+PRINTL 距離をとる
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 701
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+TEQUIP:ARG:戦闘状態 = 2
+
+PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%と距離を保とうとする…
+
+SELECTCOM = 711
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;背後に回る（特別な状況でなければ使用しない）
+;--------------------------------------------------
+@BATTLE_ACTION_12, ARG, ARG:1, ARG:2 = 0
+PRINTL 背後に回る
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+TEQUIP:ARG:戦闘状態 = 3
+
+;操りの糸
+SIF ARG:2 == 2
+	PRINTFORM なぜか
+
+PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%の背後に回り込む機会を狙っている…
+
+SELECTCOM = 712
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;見切り
+;--------------------------------------------------
+@BATTLE_ACTION_13, ARG, ARG:1, ARG:2 = 0
+PRINTL 見切り
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 703
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 104
+
+PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%の動きを見切ろうとしている…
+
+SELECTCOM = 713
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;防御
+;ARG:2　行為の根拠
+;--------------------------------------------------
+@BATTLE_ACTION_14, ARG, ARG:1, ARG:2 = 0
+PRINTL 防御
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 704
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 105
+
+;臆病、大人しい、恐怖刻印
+IF ARG:2 == 1
+	PRINTFORMW %CALLNAME:ARG%は怯えながらも自分の身を守っている…
+ELSE
+	PRINTFORMW %CALLNAME:ARG%は身を守っている…
+ENDIF
+
+SELECTCOM = 714
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;何もしない
+;ARG:2　行為の根拠
+;--------------------------------------------------
+@BATTLE_ACTION_15, ARG, ARG:1, ARG:2 = 0
+IF ARG:2 >= 11 && ARG:2 <= 13 && (TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中 || TEQUIP:触手調教)
+	PRINTL なすがまま
+ELSE
+	PRINTL 何もしない
+ENDIF
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+;睡眠
+IF ARG:2 == 13
+	PRINTFORM 眠っている%CALLNAME:ARG%
+	;拘束、三角木馬、触手調教
+	IF TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中 || TEQUIP:触手調教
+		IF TEQUIP:触手調教
+			PRINTFORMW は触手の陵辱になすがままにされている…
+		ELSE
+			PRINTFORMW は%CALLNAME:(ARG:1)%の陵辱になすがままにされている…
+		ENDIF
+	ELSE
+		PRINTFORMW は床に横たわっている…
+	ENDIF
+;失神
+ELSEIF ARG:2 == 12
+	PRINTFORM 意識を失った%CALLNAME:ARG%
+	;拘束、三角木馬、触手調教
+	IF TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中 || TEQUIP:触手調教
+		IF TEQUIP:触手調教
+			PRINTFORMW は触手の陵辱になすがままにされている…
+		ELSE
+			PRINTFORMW は%CALLNAME:(ARG:1)%の陵辱になすがままにされている…
+		ENDIF
+	ELSE
+		PRINTFORMW は床に横たわっている…
+	ENDIF
+;時止め
+ELSEIF ARG:2 == 11
+	PRINTFORM 時間の止まった%CALLNAME:ARG%
+	;拘束、三角木馬、触手調教
+	IF TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中 || TEQUIP:触手調教
+		IF TEQUIP:触手調教
+			PRINTFORMW は触手の陵辱になすがままにされている…
+		ELSE
+			PRINTFORMW は%CALLNAME:(ARG:1)%の陵辱になすがままにされている…
+		ENDIF
+	ELSE
+		PRINTFORMW は立ち尽くしている…
+	ENDIF
+;恐怖刻印
+ELSEIF ARG:2 == 10
+	PRINTFORML %CALLNAME:ARG%は不意にこれまでに与えられた恐怖を思い出してしまい
+	PRINTFORMW 体が竦んでしまった…
+	TEQUIP:ARG:戦闘状態 = 7
+;恥辱刻印
+ELSEIF ARG:2 == 9
+	PRINTFORML %CALLNAME:ARG%は不意にこれまでに与えられた恥辱を思い出してしまい
+	PRINTFORMW 体が竦んでしまった…
+	TEQUIP:ARG:戦闘状態 = 7
+;屈服刻印
+ELSEIF ARG:2 == 8
+	PRINTFORML %CALLNAME:ARG%は不意にこれまでに与えられた屈辱を思い出してしまい
+	PRINTFORMW 体が竦んでしまった…
+	TEQUIP:ARG:戦闘状態 = 7
+;快楽刻印
+ELSEIF ARG:2 == 7
+	PRINTFORML %CALLNAME:ARG%は不意にこれまでに与えられた快楽を思い出してしまい
+	PRINTFORMW 体が竦んでしまった…
+	TEQUIP:ARG:戦闘状態 = 7
+;苦痛刻印
+ELSEIF ARG:2 == 6
+	PRINTFORML %CALLNAME:ARG%は不意にこれまでに与えられた苦痛を思い出してしまい
+	PRINTFORMW 体が竦んでしまった…
+	TEQUIP:ARG:戦闘状態 = 7
+;パニック中
+ELSEIF ARG:2 == 5
+	PRINTFORMW パニックに陥った%CALLNAME:ARG%は床に崩れ落ちた…
+	TEQUIP:ARG:戦闘状態 = 7
+;脱衣中
+ELSEIF ARG:2 == 4
+	IF PREVCOM == 730
+		PRINTFORMW %CALLNAME:ARG%は急に全裸になったので恥ずかしくて動けなかった…
+	ELSE
+		PRINTFORML 自分が全裸であることを改めて認識した%CALLNAME:ARG%は
+		PRINTFORMW 思わず手で胸や秘所を隠してしまった…
+	ENDIF
+;快ＣＶＡＢ
+ELSEIF ARG:2 == 3
+	IF PALAM:快Ｃ > 5000 || PALAM:快Ｖ > 5000 || PALAM:快Ａ > 5000 || PALAM:快Ｂ > 5000
+		PRINTFORMW 強烈な快感に耐えきれず、%CALLNAME:ARG%は床に崩れ落ちた…
+	ELSE
+		PRINTFORMW 強烈な媚毒に耐えきれず、%CALLNAME:ARG%は床に崩れ落ちた…
+	ENDIF
+	TEQUIP:ARG:戦闘状態 = 7
+;操りの糸
+ELSEIF ARG:2 == 2
+	PRINTFORMW %CALLNAME:ARG%は行動を起こそうとしていたが、結局何もしなかった…
+;触手催眠
+ELSEIF ARG:2 == 1
+	SELECTCASE RAND:3
+	CASE 0
+		PRINTFORMW %CALLNAME:ARG%は脱力したかのような虚ろな目でどこかを見ている…
+	CASE 1
+		PRINTFORMW %CALLNAME:ARG%は愛おしそうに触手を撫でている…
+	CASE 2
+		PRINTFORMW %CALLNAME:ARG%は秘部から体液を漏らしながら立ち尽くしている…
+	ENDSELECT
+	TEQUIP:ARG:戦闘状態 = 7
+ELSE
+	PRINTFORMW %CALLNAME:ARG%は何もしなかった…
+ENDIF
+
+SELECTCOM = 715
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;振り解く／引き剥がす
+;TEQUIP:緊縛関連 = 緊縛(1:縄で緊縛, 2:四肢緊縛, 3:亀甲縛り, 4:吊り下げ, 5:荊, 6:蜘蛛の糸, 7:蜘蛛の巣, 8:拘束, 9:瞬間拘束)
+;--------------------------------------------------
+@BATTLE_ACTION_20, ARG, ARG:1, ARG:2 = 0
+SIF !TEQUIP:緊縛関連 && !TEQUIP:三角木馬乗馬中
+	RETURN 0
+
+IF TEQUIP:緊縛関連 == 7
+	PRINTL 引き剥がす
+ELSE
+	PRINTL 振り解く
+ENDIF
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, -1
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は拘束されて身動きが取れない…
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+;三角木馬
+IF TEQUIP:三角木馬乗馬中
+	PRINTFORMW %CALLNAME:ARG%は三角木馬から降りようと全力で暴れた…
+	PRINTL 
+	IF (!RAND:4 || RESULT:1) && !RESULT:2
+		PRINTFORMW 悪戦苦闘の末、%CALLNAME:ARG%は三角木馬から降りた！
+		TEQUIP:三角木馬乗馬中 = 0
+	ELSE
+		PRINTFORML しかし、激痛で一瞬%CALLNAME:ARG%の動きが鈍り、
+		PRINTFORMW 股の肉に鋭利な角が食い込んだ…
+	ENDIF
+ELSE
+	SELECTCASE TEQUIP:緊縛関連
+		CASE 1, 2, 3, 4
+			IF TEQUIP:触手調教
+				PRINTFORMW %CALLNAME:ARG%は手足に絡みついた触手を振り解こうと全力で暴れた…
+			ELSE
+				PRINTFORMW %CALLNAME:ARG%は縄を振り解こうと全力で暴れた…
+			ENDIF
+			PRINTL 
+			IF (!RAND:3 || RESULT:1) && !RESULT:2
+				IF TEQUIP:触手調教
+					PRINTFORML すると一瞬触手の拘束が緩み、
+				ELSE
+					PRINTFORML すると一瞬縄の拘束が緩み、
+				ENDIF
+				PRINTFORMW その隙を突いた%CALLNAME:ARG%は辛くも窮地を脱することに成功した！
+				TEQUIP:緊縛関連 = 0
+			ELSE
+				;感情乏しい
+				IF TALENT:ARG:感情乏しい
+					IF TEQUIP:触手調教
+						PRINTFORMW しかし触手の拘束はびくともしなかった…
+					ELSE
+						PRINTFORMW しかし縄の拘束はびくともしなかった…
+					ENDIF
+				ELSE
+					IF TEQUIP:触手調教
+						PRINTFORML しかし触手の拘束はびくともせず、
+					ELSE
+						PRINTFORML しかし縄の拘束はびくともせず、
+					ENDIF
+					PRINTFORMW %CALLNAME:ARG%は苦渋に眉を顰めた…
+				ENDIF
+			ENDIF
+		CASE 5
+			PRINTFORMW %CALLNAME:ARG%は荊を振り解こうと全力で暴れた…
+			PRINTL 
+			IF (!RAND:3 || RESULT:1) && !RESULT:2
+				PRINTFORML すると一瞬荊の拘束が緩み、
+				PRINTFORMW その隙を突いた%CALLNAME:ARG%は辛くも窮地を脱することに成功した！
+				TEQUIP:緊縛関連 = 0
+			ELSE
+				;感情乏しい
+				IF TALENT:ARG:感情乏しい
+					PRINTFORMW しかし荊の拘束はびくともしなかった…
+				ELSE
+					PRINTFORML しかし荊の拘束はびくともせず、
+					PRINTFORMW %CALLNAME:ARG%は苦渋に眉を顰めた…
+				ENDIF
+			ENDIF
+		CASE 6, 7
+			PRINTFORMW %CALLNAME:ARG%は蜘蛛の糸を振り解こうと全力で暴れた…
+			TFLAG:142 -= 15 * (1 + RAND:3) * (1 + RESULT:1 - RESULT:2)
+			IF TFLAG:142 <= 0
+				PRINTL 
+				CALL SPIDER_SILK_TEAR
+			ELSE
+				;感情乏しい
+				IF TALENT:ARG:感情乏しい
+					PRINTFORMW しかし糸の拘束はびくともしなかった…
+				ELSE
+					PRINTFORML しかし糸の拘束はびくともせず、
+					PRINTFORMW %CALLNAME:ARG%は苦渋に眉を顰めた…
+				ENDIF
+			ENDIF
+		CASE 8, 9
+			IF TEQUIP:触手調教 && TEQUIP:緊縛関連 == 9
+				PRINTFORMW %CALLNAME:ARG%は手足に絡みついた触手を振り解こうと全力で暴れた…
+			ELSE
+				PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%の拘束を振り解こうと全力で暴れた…
+			ENDIF
+			PRINTL 
+			IF (!RAND:3 || RESULT:1 || TEQUIP:緊縛関連 == 9) && !RESULT:2
+				IF TEQUIP:触手調教 && TEQUIP:緊縛関連 == 9
+					PRINTFORML すると一瞬触手の拘束が緩み、
+				ELSE
+					PRINTFORML すると一瞬%CALLNAME:(ARG:1)%の拘束が緩み、
+				ENDIF
+				PRINTFORMW その隙を突いた%CALLNAME:ARG%は辛くも窮地を脱することに成功した！
+				TEQUIP:緊縛関連 = 0
+			ELSE
+				;感情乏しい
+				IF TALENT:ARG:感情乏しい
+					IF TEQUIP:触手調教 && TEQUIP:緊縛関連 == 9
+						PRINTFORMW しかし触手の拘束はびくともしなかった…
+					ELSE
+						PRINTFORMW しかし%CALLNAME:(ARG:1)%の拘束はびくともしなかった…
+					ENDIF
+				ELSE
+					IF TEQUIP:触手調教 && TEQUIP:緊縛関連 == 9
+						PRINTFORML しかし触手の拘束はびくともせず、
+					ELSE
+						PRINTFORML しかし%CALLNAME:(ARG:1)%の拘束はびくともせず、
+					ENDIF
+					PRINTFORMW %CALLNAME:ARG%は苦渋に眉を顰めた…
+				ENDIF
+			ENDIF
+	ENDSELECT
+ENDIF
+
+SELECTCOM = 740
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;暴れる
+;--------------------------------------------------
+@BATTLE_ACTION_21, ARG, ARG:1, ARG:2 = 0
+SIF BASE:体力 < 500 || (!TEQUIP:緊縛関連 && !TEQUIP:三角木馬乗馬中)
+	RETURN 0
+
+PRINTL 暴れる
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, -1
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は拘束されて身動きが取れない…
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+;三角木馬
+IF TEQUIP:三角木馬乗馬中
+	PRINTFORMW %CALLNAME:ARG%は三角木馬から降りようと全力で暴れた…
+	PRINTL 
+	IF (!RAND:3 || RESULT:1) && !RESULT:2
+		PRINTFORMW 悪戦苦闘の末、%CALLNAME:ARG%は三角木馬から降りた！
+		TEQUIP:三角木馬乗馬中 = 0
+	ELSE
+		PRINTFORML しかし、激痛で一瞬%CALLNAME:ARG%の動きが鈍り、
+		PRINTFORMW 股の肉に鋭利な角が食い込んだ…
+	ENDIF
+	
+	SELECTCOM = 741
+	;調教対象の口上表示
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+	;調教者側の口上表示
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+	SELECTCOM = -1
+ELSE
+	SELECTCASE TEQUIP:緊縛関連
+		CASE 1, 2, 3, 4
+			IF TEQUIP:触手調教
+				PRINTFORML %CALLNAME:ARG%は触手に絡まれた状態からでも
+			ELSE
+				PRINTFORML %CALLNAME:ARG%は縄に拘束された状態からでも
+			ENDIF
+			PRINTFORMW なんとかダメージを与えようと苦し紛れにもがいた…
+		CASE 5
+			PRINTFORML %CALLNAME:ARG%は荊に拘束された状態からでも
+			PRINTFORMW なんとかダメージを与えようと苦し紛れにもがいた…
+		CASE 6, 7
+			PRINTFORML %CALLNAME:ARG%は蜘蛛の糸に拘束された状態からでも
+			PRINTFORMW なんとかダメージを与えようと苦し紛れにもがいた…
+			TFLAG:142 -= 10 * (1 + RAND:2) * (1 + RESULT:1 - RESULT:2)
+			IF TFLAG:142 <= 0
+				PRINTL 
+				CALL SPIDER_SILK_TEAR
+			ENDIF
+		CASE 8, 9
+			IF TEQUIP:触手調教 && TEQUIP:緊縛関連 == 9
+				PRINTFORML %CALLNAME:ARG%は触手に絡まれた状態からでも
+			ELSE
+				PRINTFORML %CALLNAME:ARG%は%CALLNAME:(ARG:1)%に拘束された状態からでも
+			ENDIF
+			PRINTFORMW なんとかダメージを与えようと苦し紛れにもがいた…
+	ENDSELECT
+
+	SELECTCOM = 741
+	;調教対象の口上表示
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+	;調教者側の口上表示
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+	SELECTCOM = -1
+
+	IF RESULT:1
+		IF TEQUIP:(ARG:1):戦闘状態 == 5
+			BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 100, 0)
+			BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 100, 0)
+		ELSE
+			BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 200, 0)
+			BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 200, 0)
+		ENDIF
+	ELSE
+		IF TEQUIP:(ARG:1):戦闘状態 == 5
+			BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 50, 0)
+			BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 50, 0)
+		ELSE
+			BASE:(ARG:1):0 = MAX(BASE:(ARG:1):0 - 100, 0)
+			BASE:(ARG:1):1 = MAX(BASE:(ARG:1):1 - 100, 0)
+		ENDIF
+	ENDIF
+
+	PRINTL 
+	PRINTFORM ◇
+	PRINTFORML %SHOW_CALLNAME(ARG:1)%◇
+	IF RESULT:1
+		IF TEQUIP:(ARG:1):戦闘状態 == 5
+			PRINTFORM 体力 －100　気力 －100
+		ELSE
+			PRINTFORM 体力 －200　気力 －200
+		ENDIF
+	ELSE
+		IF TEQUIP:(ARG:1):戦闘状態 == 5
+			PRINTFORM 体力 －50 　気力 －50
+		ELSE
+			PRINTFORM 体力 －100　気力 －100
+		ENDIF
+	ENDIF
+	IF BASE:(ARG:1):0 < 500
+		PRINTFORM 　★瀕死★
+	ELSEIF BASE:(ARG:1):1 <= 0
+		PRINTFORM 　★気力０★
+	ELSE
+		PRINT 
+	ENDIF
+	PRINTL 
+ENDIF
+
+RETURN 1
+
+;--------------------------------------------------
+;耐える
+;--------------------------------------------------
+@BATTLE_ACTION_22, ARG, ARG:1, ARG:2 = 0
+SIF !TEQUIP:緊縛関連 && !TEQUIP:三角木馬乗馬中
+	RETURN 0
+
+PRINTL 耐える
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 704
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は拘束されて身動きが取れない…
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+PRINTFORM %CALLNAME:ARG%はぐっと唇を噛んで
+SELECTCASE TEQUIP:緊縛関連
+	CASE 1, 2, 3, 4
+		IF TEQUIP:触手調教
+			PRINTFORMW 触手の陵辱に耐えている…
+		ELSE
+			PRINTFORMW 縄に拘束されることで感じる嫌悪感に耐えている…
+		ENDIF
+	CASE 5
+		PRINTFORMW 荊に拘束されることで感じる嫌悪感に耐えている…
+	CASE 6, 7
+		PRINTFORMW 蜘蛛の糸に拘束されることで感じる嫌悪感に耐えている…
+	CASE 8, 9
+		IF TEQUIP:触手調教 && TEQUIP:緊縛関連 == 9
+			PRINTFORMW 触手の陵辱に耐えている…
+		ELSE
+			PRINTFORMW %CALLNAME:(ARG:1)%の陵辱に耐えている…
+		ENDIF
+ENDSELECT
+
+SELECTCOM = 742
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 105
+
+RETURN 1
+
+;--------------------------------------------------
+;なすがまま
+;--------------------------------------------------
+@BATTLE_ACTION_23, ARG, ARG:1, ARG:2 = 0
+IF ARG:2 == 15
+	PRINTL ギブアップ
+ELSE
+	PRINTL なすがまま
+ENDIF
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+;少女の負け
+IF ARG:2 == 15
+	PRINTFORM %CALLNAME:ARG%は精根尽き果てて動けなくなった…
+;触手催眠
+ELSEIF ARG:2 == 14
+	PRINTFORM %CALLNAME:ARG%は
+	IF TEQUIP:触手調教
+		PRINTFORMW 愛おしそうに触手を撫でている…
+	ELSE
+		PRINTFORMW 脱力したかのような虚ろな目でどこかを見ているだけだ…
+	ENDIF
+;操りの糸
+ELSEIF ARG:2 == 2
+	PRINTFORM %CALLNAME:ARG%は
+	IF TEQUIP:触手調教
+		PRINTFORMW 触手の陵辱になすがままにされている…
+	ELSE
+		PRINTFORMW %CALLNAME:(ARG:1)%の陵辱になすがままにされている…
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:ARG%は身を竦ませ
+	IF TEQUIP:触手調教
+		PRINTFORMW 触手の陵辱になすがままにされている…
+	ELSE
+		PRINTFORMW %CALLNAME:(ARG:1)%の陵辱になすがままにされている…
+	ENDIF
+ENDIF
+
+SELECTCOM = 743
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;受け入れる
+;--------------------------------------------------
+@BATTLE_ACTION_24, ARG, ARG:1, ARG:2 = 0
+PRINTL 受け入れる
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+PRINTFORM %CALLNAME:ARG%は
+IF TEQUIP:触手調教
+	PRINTFORMW 触手の与える快楽をすすんで受け入れた…
+ELSE
+	PRINTFORMW %CALLNAME:(ARG:1)%の与える快楽をすすんで受け入れた…
+ENDIF
+
+SELECTCOM = 744
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 109
+
+RETURN 1
+
+;--------------------------------------------------
+;奉仕する
+;--------------------------------------------------
+@BATTLE_ACTION_25, ARG, ARG:1, ARG:2 = 0
+PRINTL 奉仕する
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+PRINTFORM %CALLNAME:ARG%は
+IF TEQUIP:触手調教
+	PRINTFORMW 近くにあった触手を手に取り熱心な奉仕を始めた…
+ELSE
+	PRINTFORMW 自分から%CALLNAME:(ARG:1)%への熱心な奉仕を始めた…
+ENDIF
+
+SELECTCOM = 745
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 110
+
+RETURN 1
+
+;--------------------------------------------------
+;Ｖ挿入防御
+;--------------------------------------------------
+@BATTLE_ACTION_26, ARG, ARG:1, ARG:2 = 0
+SIF BASE:気力 < 1 || TEQUIP:Ｖ系装着器具 || TEQUIP:三角木馬乗馬中 || !TEQUIP:緊縛関連 || (!TALENT:処女 && RAND:3)
+	RETURN 0
+
+PRINTL Ｖ挿入防御
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, -1
+;実行できない
+IF RESULT:0 == 1
+	PRINTFORMW %CALLNAME:ARG%は拘束されて身動きが取れない…
+	RETURN RESULT:0, RESULT:1, RESULT:2
+ENDIF
+
+PRINTFORMW %CALLNAME:ARG%はせめて膣への挿入だけでも防ごうと身構えた…
+
+SELECTCOM = 746
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 111
+
+RETURN 1
+
+;--------------------------------------------------
+;睨みつける
+;--------------------------------------------------
+@BATTLE_ACTION_30, ARG, ARG:1, ARG:2 = 0
+PRINTL 睨みつける
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+IF TALENT:臆病 || TALENT:悲観的 || TALENT:恥じらい
+	LOCALS = 涙目で
+	LOCALS:1 = 勇気を振り絞り
+ELSE
+	LOCALS = キッと
+	LOCALS:1 = 好きにさせまいと
+ENDIF
+PRINTFORM %CALLNAME:ARG%は
+;全身精液汚れ(ペニスは除く)
+IF RAND:5 && (STAIN:口 & 4 && STAIN:手 & 4 && STAIN:ヴァギナ & 4 && STAIN:アナル & 4 && STAIN:胸 & 4 && STAIN:足 & 4 && STAIN:髪 & 4)
+	PRINTFORM 精液で全身を汚されながらも%LOCALS%
+;口辱系
+ELSEIF (RAND:5 && GROUPMATCH(PREVCOM, 41, 54, 209, 230, 303, 304, 601, 604, 652)) || (!RAND:10 && STAIN:口 & 4)
+	IF GROUPMATCH(PREVCOM, 41, 54, 209, 230, 303, 304, 601, 604, 652)
+		PRINTFORM 口を犯されながらも%LOCALS:1%
+	ELSE
+		PRINTFORM 口元から精液と唾液の混合物を垂れ流しながらも%LOCALS%
+	ENDIF
+;本番系
+ELSEIF (RAND:5 && GROUPMATCH(PREVCOM, 20, 21, 22, 23, 24, 27, 28, 30, 31, 32, 33, 34, 37, 38, 146, 381, 383, 386, 389, 390, 391, 431, 612, 614, 615, 616, 617, 632)) || (!RAND:10 && STAIN:ヴァギナ & 4) || (!RAND:10 && STAIN:アナル & 4)
+	IF GROUPMATCH(PREVCOM, 20, 21, 22, 23, 24, 27, 28, 30, 31, 32, 33, 34, 37, 38, 146, 381, 383, 386, 389, 390, 391, 431, 612, 614, 615, 616, 617, 632)
+		PRINTFORM 為すすべなく犯されながらも戦意を失わずに%LOCALS%
+	ELSEIF STAIN:ヴァギナ & 4 && STAIN:アナル & 4
+		PRINTFORM 前後の穴に精液を注ぎこまれながらも%LOCALS%
+	ELSEIF STAIN:ヴァギナ & 4
+		PRINTFORM 無残に中出しされ精液を垂れ流しながらも%LOCALS%
+	ELSEIF STAIN:アナル & 4
+		PRINTFORM アナルに精液を注ぎこまれながらも%LOCALS%
+	ENDIF
+;屈服刻印、恥辱刻印
+ELSEIF ARG:2 == 8 || ARG:2 == 9
+	PRINTFORM 手も足も出ない悔しさを堪えながら%LOCALS%
+;苦痛刻印、恐怖刻印
+ELSEIF ARG:2 == 6 || ARG:2 == 10
+	PRINTFORM 苦痛を伴う責めに息を荒げながらも%LOCALS%
+;快楽刻印、快ＣＶＡＢ、媚薬、鈴蘭の毒(快感に素直、快感の否定)
+ELSEIF ARG:2 == 7 || ((PALAM:快Ｃ > 5000 || PALAM:快Ｖ > 5000 || PALAM:快Ａ > 5000 || PALAM:快Ｂ > 5000 || TEQUIP:媚薬 || TEQUIP:鈴蘭の毒) && RAND:5)
+	PRINTFORM 激しい凌辱に悶え乱れながらも%LOCALS%
+ELSE
+	PRINTFORM 自分を鼓舞し奮い立たせるかのように
+ENDIF
+PRINTFORMW %CALLNAME:(ARG:1)%を睨みつけた！
+
+SELECTCOM = 750
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+;ターン終了時に-100
+TEQUIP:ARG:戦闘状態 = 106
+
+RETURN 1
+
+;--------------------------------------------------
+;罵倒する
+;--------------------------------------------------
+@BATTLE_ACTION_31, ARG, ARG:1, ARG:2 = 0
+SIF (RAND:30 && BASE:気力 < 500) || (RAND:20 && (TALENT:臆病 || TALENT:大人しい)) || (RAND:10 && !TALENT:反抗的 && !TALENT:気丈 && !TALENT:生意気 && !TALENT:プライド高い)
+	RETURN 0
+
+PRINTL 罵倒する
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+;苦痛刻印、屈服刻印、恥辱刻印、恐怖刻印
+IF ARG:2 == 6 || ARG:2 == 8 || ARG:2 == 9 || ARG:2 == 10
+	PRINTFORML %CALLNAME:ARG%は%CALLNAME:(ARG:1)%を罵ったが言葉に勢いがなく
+	PRINTFORMW 虚勢を張っているだけなのは誰の目にも明らかだ…
+;快楽刻印、快ＣＶＡＢ、媚薬、鈴蘭の毒(快感に素直、快感の否定)
+ELSEIF ARG:2 == 7 || ((PALAM:快Ｃ > 5000 || PALAM:快Ｖ > 5000 || PALAM:快Ａ > 5000 || PALAM:快Ｂ > 5000 || TEQUIP:媚薬 || TEQUIP:鈴蘭の毒) && RAND:5)
+	PRINTFORML %CALLNAME:ARG%は%CALLNAME:(ARG:1)%を口汚く罵倒したが
+	PRINTFORMW 快楽に蕩けさせられ呂律が回っていないため強がりが筒抜けだ…
+ELSE
+	IF RAND:3
+		PRINTFORMW %CALLNAME:ARG%は負けないという意志を込めて%CALLNAME:(ARG:1)%を口汚く罵った！
+	ELSE
+		PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%を口汚く罵り何とか戦意を奮い起した！
+	ENDIF
+	;ターン終了時に-100
+	TEQUIP:ARG:戦闘状態 = 105
+ENDIF
+
+SELECTCOM = 751
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;反抗する
+;--------------------------------------------------
+@BATTLE_ACTION_32, ARG, ARG:1, ARG:2 = 0
+SIF (RAND:10 && (TALENT:臆病 || TALENT:大人しい)) || (RAND:5 && !TALENT:反抗的 && !TALENT:気丈 && !TALENT:生意気 && !TALENT:プライド高い)
+	RETURN 0
+
+PRINTL 反抗する
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+;苦痛刻印、屈服刻印、恥辱刻印、恐怖刻印
+IF ARG:2 == 6 || ARG:2 == 8 || ARG:2 == 9 || ARG:2 == 10
+	PRINTFORMW 心を折られた%CALLNAME:ARG%はもはや形だけの抵抗をしている…
+;快楽刻印、快ＣＶＡＢ、媚薬、鈴蘭の毒(快感に素直、快感の否定)
+ELSEIF ARG:2 == 7 || ((PALAM:快Ｃ > 5000 || PALAM:快Ｖ > 5000 || PALAM:快Ａ > 5000 || PALAM:快Ｂ > 5000 || TEQUIP:媚薬 || TEQUIP:鈴蘭の毒) && RAND:5)
+	PRINTFORMW 快楽漬けにされた%CALLNAME:ARG%はもはや形だけの抵抗をしている…
+ELSE
+	IF RAND:3
+		PRINTFORMW %CALLNAME:ARG%はまだ諦めていないことを態度で示した！
+	ELSE
+		PRINTFORMW %CALLNAME:ARG%はまだ凌辱に屈していないことを態度で示した！
+	ENDIF
+	;ターン終了時に-100
+	TEQUIP:ARG:戦闘状態 = 104
+ENDIF
+
+SELECTCOM = 752
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;説得する
+;--------------------------------------------------
+@BATTLE_ACTION_33, ARG, ARG:1, ARG:2 = 0
+PRINTL 説得する
+
+;戦闘判定
+CALL COM_TRY_BATTLE_TARGET, 9
+;実行できない
+SIF RESULT:0 == 1
+	RETURN RESULT:0, RESULT:1, RESULT:2
+
+PRINTFORML %CALLNAME:ARG%はこんなことを止めるように説得しようとしている…
+
+SELECTCOM = 753
+;調教対象の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;調教者側の口上表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+SELECTCOM = -1
+
+RETURN 1
+
+;--------------------------------------------------
+;手淫攻撃
+;--------------------------------------------------
+@BATTLE_ACTION_40, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1
+
+;--------------------------------------------------
+;フェラ攻撃
+;--------------------------------------------------
+@BATTLE_ACTION_41, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1
+
+;--------------------------------------------------
+;足コキ攻撃
+;--------------------------------------------------
+@BATTLE_ACTION_42, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1
+
+;--------------------------------------------------
+;素股焦らし
+;--------------------------------------------------
+@BATTLE_ACTION_43, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1
+
+;--------------------------------------------------
+;搾り取る
+;--------------------------------------------------
+@BATTLE_ACTION_44, ARG, ARG:1, ARG:2 = 0
+
+RETURN 1

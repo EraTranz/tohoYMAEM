@@ -1,0 +1,163 @@
+﻿;=============================================================================
+;アナルの皺を数え上げる
+;=============================================================================
+;奴隷のアナルの皺を数え上げるというカオスなプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE188
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:188 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;アナルが汚れており、調教者が[汚れ無視]でない場合(愛液、アナル、母乳の汚れは条件対象外)
+IF COM_ABLE_STAIN(TARGET, 4, 25) == 0 && TALENT:PLAYER:汚れ無視 == 0
+	;調教者が助手で[汚臭敏感]を持ち、《従順》5未満の場合はダメ
+	SIF ASSIPLAY && TALENT:PLAYER:汚臭敏感 && ABL:PLAYER:従順 < 5
+		RETURN 0
+ENDIF
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURN 0
+ENDIF
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 188) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM188
+PRINTL アナルの皺数え
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 188
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アナルの皺数え
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 180
+
+SOURCE:露出 = 800
+SOURCE:屈従 = 100
+SOURCE:逸脱 = 1500
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 += 1500
+	SOURCE:逸脱 += 3000
+ELSEIF ABL:露出癖 == 1
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 10
+	SOURCE:露出 += 1250
+	SOURCE:逸脱 += 1500
+ELSEIF ABL:露出癖 == 2
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 20
+	SOURCE:露出 += 1000
+	SOURCE:逸脱 += 800
+ELSEIF ABL:露出癖 == 3
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 40
+	SOURCE:露出 += 750
+	SOURCE:逸脱 += 400
+ELSEIF ABL:露出癖 == 4
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 80
+	SOURCE:露出 += 500
+	SOURCE:逸脱 += 200
+ELSE
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 140
+	SOURCE:露出 += 250
+	SOURCE:逸脱 += 100
+ENDIF
+
+;恥じらい・恥薄い
+IF TALENT:恥じらい
+	TIMES SOURCE:露出 , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSEIF TALENT:恥薄い
+	TIMES SOURCE:露出 , 0.80
+	TIMES SOURCE:屈従 , 0.80
+ENDIF
+
+;奴隷のＡ⇔調教者の手の汚れが移動
+STAIN:アナル |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:アナル
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_188
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	SIF EXP:Ａ経験 <= 10
+		PRINT 硬く閉ざされた
+	PRINT アヌスを
+	SIF TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0)
+		PRINT 鏡に映るように
+	PRINTL 手で広げ、
+	PRINTFORML しっかりと注視しながら皺の数を声を上げて数え始めた
+	IF TALENT:恥じらい
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしさのあまり顔を真っ赤にしてしまっている…
+	ELSEIF TALENT:淫乱 || TALENT:淫尻 || TALENT:淫魔
+		PRINTFORML %CALLNAME:TARGET%はそれに激しく快感を感じているようだ…
+	ELSEIF MARK:反発刻印 >= 2  && TALENT:恋慕 == 0 && TALENT:服従 == 0
+		PRINTFORML %CALLNAME:TARGET%は屈辱と怒りに打ち震えながら耐えている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしくてうつむいてしまっている…
+	ENDIF
+;睡眠中
+ELSEIF EQUIP:睡眠薬
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%が睡眠中なのをいいことに、
+	SIF TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0)
+		PRINT 鏡に映るように
+	SIF EXP:Ａ経験 <= 10
+		PRINT 硬く閉ざされた
+	PRINTFORML %CALLNAME:TARGET%のアヌスを手で広げ、
+	PRINTL しっかりと注視しながら皺の数を声を上げて数え始めた…
+;失神中
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%が気絶しているのをいいことに、
+	SIF TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0)
+		PRINT 鏡に映るように
+	SIF EXP:Ａ経験 <= 10
+		PRINT 硬く閉ざされた
+	PRINTFORML %CALLNAME:TARGET%のアヌスを手で広げ、
+	PRINTL しっかりと注視しながら皺の数を声を上げて数え始めた…
+ENDIF

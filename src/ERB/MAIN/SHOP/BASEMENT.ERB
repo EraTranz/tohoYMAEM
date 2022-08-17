@@ -1,0 +1,1216 @@
+﻿;=============================================================================
+;秘密の地下室の処理
+;=============================================================================
+;種族改造や拷問・猟奇系の処理をここで行う
+;-----------------------------------------------
+;秘密の地下室メインメニュー
+;-----------------------------------------------
+;種族改造はキャラ専用コマンドを有効にしてないとダメ
+@HIDDEN_BASEMENT_MENU
+DRAWLINE
+PRINTL どの部屋に行きますか？
+DRAWLINE
+SIF FLAG:15 & 16 && (TALENT:MASTER:狂気 || TALENT:MASTER:禁断の知識 || TALENT:MASTER:サド || TALENT:MASTER:ドＭ || TALENT:MASTER:淫魔 || (TALENT:MASTER:倒錯的 && TALENT:MASTER:小悪魔))
+	PRINTLC [0] 拷問矯正施設
+SIF FLAG:15 & 16384
+	PRINTLC [1] 種族改造施設
+SIF TALENT:MASTER:魔術技能 && TALENT:MASTER:育児中 == 0 && ABL:MASTER:技巧 >= 3
+	PRINTLC [2] 魔術儀式用地下室
+PRINTL 
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && FLAG:15 & 16 && (TALENT:MASTER:狂気 || TALENT:MASTER:禁断の知識 || TALENT:MASTER:サド || TALENT:MASTER:ドＭ || TALENT:MASTER:淫魔 || (TALENT:MASTER:倒錯的 && TALENT:MASTER:小悪魔))
+	PRINTW 拷問矯正施設に足を運びました
+	CALL TORTURE_FACILITIES_MENU
+ELSEIF RESULT == 1 && FLAG:15 & 16384
+	PRINTW 種族改造施設に足を運びました
+	CALL CONVERT_RACE_MENU
+ELSEIF RESULT == 2 && TALENT:MASTER:魔術技能 && TALENT:MASTER:育児中 == 0 && ABL:MASTER:技巧 >= 3
+	PRINTW 魔術儀式用地下室に足を運びました
+	CALL CREATE_SLAVE_MENU
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;-----------------------------------------------
+;拷問矯正施設メインメニュー
+;-----------------------------------------------
+@TORTURE_FACILITIES_MENU
+DRAWLINE
+PRINTL 何をしますか？
+DRAWLINE
+PRINTLC [0] 収監する
+PRINTLC [1] 解放する
+PRINTLC [2] 矯正する
+PRINTL 
+DRAWLINE
+PRINTL [100]やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 2
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+CALL TORTURE_FACILITIES_LIST, RESULT
+RESTART
+
+;-----------------------------------------------
+;拷問矯正コマンドキャラ一覧表示処理
+;-----------------------------------------------
+@TORTURE_FACILITIES_LIST, ARG
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	SIF COUNT == MASTER
+		CONTINUE
+	;その場にいないキャラは除外(収監中を除く)
+	SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 16
+		CONTINUE
+
+	;収監実行判定
+	IF ARG == 0
+		;対象が既に収監中ならダメ
+		SIF CFLAG:COUNT:4 == 16
+			CONTINUE
+		;対象が現在助手ならダメ
+		SIF COUNT == ASSI
+			CONTINUE
+		;対象が[素直][解放][妄信][親愛][相愛][幼児退行][服従][烙印][隷属][使い魔][精神崩壊][傀儡][壊造人格]ならダメ
+		SIF TALENT:COUNT:素直 || TALENT:COUNT:解放 || TALENT:COUNT:妄信 || TALENT:COUNT:親愛 || TALENT:COUNT:相愛 || TALENT:COUNT:幼児退行 || TALENT:COUNT:服従 || TALENT:COUNT:烙印 || TALENT:COUNT:隷属 || TALENT:COUNT:使い魔 || TALENT:COUNT:精神崩壊 || TALENT:COUNT:傀儡 || TALENT:COUNT:壊造人格
+			CONTINUE
+		;対象が[妊娠][抱卵中][懐卵][寄生]持ちもダメ
+		SIF TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵 || TALENT:COUNT:寄生
+			CONTINUE
+		;対象が[死亡]持ちもダメ
+		SIF TALENT:COUNT:死亡
+			CONTINUE
+		;対象が反発刻印がないとダメ
+		SIF MARK:COUNT:反発刻印 == 0
+			CONTINUE
+		;対象がこのターンに解放されたばかりならダメ
+		SIF CFLAG:COUNT:180 & 4
+			CONTINUE
+	;解放実行判定
+	ELSEIF ARG == 1
+		;対象が収監されていないとダメ
+		SIF CFLAG:COUNT:4 != 16
+			CONTINUE
+		;対象が収監されたばかりもしくはこのターンに拷問してたらダメ
+		SIF CFLAG:COUNT:180 & 1 || CFLAG:COUNT:180 & 2
+			CONTINUE
+	;矯正実行判定
+	ELSEIF ARG == 2
+		;対象が収監されていないとダメ
+		SIF CFLAG:COUNT:4 != 16
+			CONTINUE
+		;対象の体力と気力が500以上でないとダメ
+		SIF BASE:COUNT:体力 < 500 || BASE:COUNT:気力 < 500
+			CONTINUE
+		;この収監されたばかりもしくはこのターンに拷問してたらダメ
+		SIF CFLAG:COUNT:180 & 1 || CFLAG:COUNT:180 & 2
+			CONTINUE
+
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+PRINTFORML 誰に対して実行しますか？ ＜page.{LOCAL+1}＞
+CALL USE_ITEM_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_0
+ENDIF
+LOCAL:3 = TARGET
+TARGET = RESULT
+PRINTFORM ＜
+PRINTFORM %SHOW_CALLNAME(TARGET)%
+IF ARG == 0
+	PRINTL を地下牢に閉じ込めて反省させますか？＞
+ELSEIF ARG == 1
+	PRINTL を地下牢から解放しますか？＞
+ELSEIF ARG == 2
+	PRINTL に矯正のための特別指導を実施しますか？＞
+ENDIF
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1
+	TARGET = LOCAL:3
+	RETURN 0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+IF ARG == 0
+	;収監
+	CALL TORTURE_FACILITIES_INN
+ELSEIF ARG == 1
+	;解放
+	CALL TORTURE_FACILITIES_OUT
+ELSEIF ARG == 2
+	;矯正
+	CALL TORTURE_FACILITIES_TRAINNING
+ENDIF
+
+TARGET = LOCAL:3
+;収監があったとき
+SIF TARGET >= 0 && ARG == 0 && CFLAG:180 & 1
+	TARGET = -1
+
+;-----------------------------------------------
+;収監
+;-----------------------------------------------
+;地下牢に閉じ込める。攻略に使うにはネガティブすぎるかもしれない。
+@TORTURE_FACILITIES_INN
+;収監されたイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 290
+PRINTL 
+PRINTFORM ―――
+PRINTFORMW %SHOW_CALLNAME(TARGET)%は地下牢に収監された―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+
+;収監フラグON
+CFLAG:4 = 16
+CFLAG:180 |= 1
+
+;初体験時は異常経験が入る
+IF (CFLAG:20 & 16384) == 0
+	CALL COMMON_UP_EXP,TARGET, 50, 1, 0
+	CFLAG:20 |= 16384
+ENDIF
+LOCAL = 0
+;好感度ダウン
+IF CFLAG:好感度 > 0
+	CFLAG:好感度 /= 2
+	LOCAL |= 1
+ENDIF
+IF LOCAL & 1
+	PRINTFORM ＜収監されたことにより
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%の好感度がさがった＞
+ENDIF
+PRINTL 
+
+;-----------------------------------------------
+;解放
+;-----------------------------------------------
+;地下牢から解放してやる。攻略に使うにはネガティブすぎるかもしれない。
+@TORTURE_FACILITIES_OUT
+;解放されたイベント口上呼び出し(上で体力/気力的に動けないケースと分岐してあるが、その辺の処理は口上に任せる)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 291
+PRINTL 
+PRINTFORM ―――
+PRINTFORMW %SHOW_CALLNAME(TARGET)%は地下牢から解放された―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+
+;収監フラグOFF
+CFLAG:4 = 0
+CFLAG:180 |= 4
+
+;-----------------------------------------------
+;矯正指導(特別教育)という名の拷問
+;-----------------------------------------------
+;お待ちかねの拷問だけどあっさり風味。
+@TORTURE_FACILITIES_TRAINNING
+;矯正されたイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 292
+PRINTL 
+PRINTFORM ―――
+PRINTFORM %SHOW_CALLNAME(TARGET)%は地下牢で
+PRINTFORMW %SHOW_CALLNAME(MASTER)%に拷問を受けた―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+
+;主人にSM教育経験は入れない。これはSMプレイでなく「矯正」それにこの経験は元来助手用。
+;初体験時は異常経験が入る
+IF (CFLAG:20 & 32768) == 0
+	CALL COMMON_UP_EXP,TARGET, 50, 1, 0
+	CFLAG:20 |= 32768
+ENDIF
+;珠入手関連(基本的に主人のサドっ気Lvと対象の従順Lvが関係する)
+;拷問対象の否定の珠(EASYでは入れない)
+SIF FLAG:3 > 1
+	CALL COMMON_UP_JUEL, TARGET, 100, (20 + ABL:MASTER:サドっ気*20 + ABL:従順*50), 0
+
+;拷問対象のストレスUP(主人のサドっ気Lvが関係する)
+CFLAG:ストレス += 50 + ABL:MASTER:サドっ気*100
+;体力減少基礎(主人の技巧Lvとサドっ気Lvが関係する)
+LOCAL = ((200 - ABL:MASTER:技巧*20) + (ABL:MASTER:サドっ気 *40) + RAND:21) * 3
+;気力減少基礎(基本的に体力減少基礎と同じ)
+LOCAL:1 = LOCAL
+;理性減少基礎
+LOCAL:9 = LOCAL
+TIMES LOCAL:9 , 1.15
+;[気丈]で[臆病]ないとき
+IF TALENT:気丈 && TALENT:臆病 == 0
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:9 , 1.00
+;[臆病]
+ELSEIF TALENT:臆病
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:9 , 1.50
+;その他
+ELSE
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:9 , 1.20
+ENDIF
+
+;拷問対象の体力減少
+BASE:体力 -= LOCAL
+;拷問対象の気力減少
+BASE:気力 -= LOCAL:1
+;拷問対象の理性減少
+IF TALENT:理性
+	SIF (BASE:理性 - LOCAL:9) < 0
+		MAXBASE:9 += (BASE:理性 - LOCAL:9) / 4
+	MAXBASE:9 = MAX(MAXBASE:9, 0)
+	BASE:理性 = LIMIT(BASE:理性-LOCAL:9, 0, MAXBASE:9)
+ENDIF
+
+PRINTFORM %SHOW_CALLNAME(TARGET)%の体力が{LOCAL}、気力が{LOCAL:1}
+SIF TALENT:理性
+	PRINTFORM 、理性が{LOCAL:9}
+PRINTL 減少した。
+
+;今回拷問したフラグ
+CFLAG:180 |= 2
+
+LOCAL = 0
+;好感度ダウン
+IF CFLAG:好感度 > 0
+	TIMES CFLAG:好感度 , 0.80
+	LOCAL |= 1
+ENDIF
+IF LOCAL & 1
+	PRINTFORM ＜矯正指導されたことにより
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%の好感度がさがった＞
+ENDIF
+
+;殺害チェック基礎(主人のサドっ気Lvと調教師Lvと技巧Lvが関係する)
+LOCAL:2 = 13 + ABL:MASTER:サドっ気 - (ABL:MASTER:調教師Lv + ABL:MASTER:技巧) 
+;殺害チェック(体力と気力のいずれかが0以下であるとき、ただし蓬莱人と呪精ならば回避)
+IF (BASE:体力 < 0 || BASE:気力 < 0) && TALENT:蓬莱人 == 0 && TALENT:呪精 == 0
+	IF RAND:100 < LOCAL:2
+		PRINTFORMW 矯正指導後の%CALLNAME:TARGET%の様子がおかしい…
+		PRINTW どうやら、やりすぎてしまったようだ…
+		IF FLAG:16 & 32
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 98
+			;地の文章カット
+			IF CFLAG:TARGET:99 == 0
+				PRINTFORMW %CALLNAME:TARGET%の虚ろな視線は天上を見たまま、微動だにしていない。
+				PRINTW あなたは得難い原石が輝く前に、その光を吹き消してしまったのだ。
+				PRINTL 
+				PRINTFORMW %CALLNAME:TARGET%は逝ってしまった……
+				PRINTL 
+				ENDIF
+			PRINTFORM ―――
+			PRINTFORMW %SHOW_CALLNAME(TARGET)%は地下牢から解放された―――
+			PRINTW ………………
+			PRINTW …………
+			PRINTW ……
+			;収監フラグOFF
+			CFLAG:4 = 0
+			CFLAG:180 |= 4
+			  
+			BASE:理性 = 0
+			MAXBASE:9 = 0
+			TALENT:理性 = 0
+			PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:500%]を失った
+			TALENT:死亡 = 1
+			;リザレクション共通処理
+			CALL COMMON_REVIVAL, TARGET
+			BASE:体力 = 0
+		ELSE
+			CALL BADEND_12
+		ENDIF
+	ENDIF
+ENDIF
+PRINTL 
+
+;-----------------------------------------------
+;地下牢収監中のターン処理(EVENT.ERBより)
+;-----------------------------------------------
+;ここのみARG対象なのに注意
+;収監し続けると少しずつ頑なな部分がなくなっていくはず
+;ただし、好感度も下がるし、発狂チェックや病死チェックもあるのだが…
+@TORTURE_FACILITIES_EFFECT, ARG
+;表示フラグ
+LOCAL:1 = 2
+;デバグモードなら珠変動を表示する
+SIF TALENT:MASTER:998
+	LOCAL:1 = 0
+;珠変動にはすべて対象の従順Lvが関係する
+;収監対象の否定の珠
+CALL COMMON_UP_JUEL, ARG, 100, (MAX(5 - ABL:ARG:従順, 0) * 5), LOCAL:1
+
+;好感度ダウン
+SIF CFLAG:ARG:好感度 > 0
+	CFLAG:ARG:好感度 -= RAND:3
+;発狂チェック(完全ランダム)ただし、既に狂気持ちorストレスフリーor気力0なら発狂しない
+IF TALENT:ARG:狂気 == 0 && CFLAG:ARG:ストレス && BASE:ARG:気力
+	IF RAND:100 < 4
+		;発狂したイベント口上呼び出し
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 197
+		PRINTFORMW %CALLNAME:ARG%は[狂気]を得た
+		TALENT:ARG:狂気 = 1
+		CFLAG:ARG:12 |= 1
+		CFLAG:ARG:17 |= 2
+	ENDIF
+ENDIF
+;病死チェック(体力と気力が500以下であるとき、ただし蓬莱人と呪精ならば回避)
+IF BASE:ARG:体力 < 500 & BASE:ARG:気力 < 500 && TALENT:ARG:蓬莱人 == 0 && TALENT:ARG:呪精 == 0
+	IF RAND:100 < 3
+		PRINTFORM 地下牢に収監されている
+		PRINTFORMW %SHOW_CALLNAME(ARG)%の様子がおかしい…
+		PRINTW どうやら、病気に掛かってしまっていて、どうも手遅れのようだ。
+		CALL BADEND_12
+	ENDIF
+ENDIF
+;各種地下牢フラグ消去
+CFLAG:ARG:180 = 0
+PRINTL 
+
+;-----------------------------------------------
+;種族改造施設メインメニュー
+;-----------------------------------------------
+@CONVERT_RACE_MENU
+VARSET LOCAL, 0
+LOCALS:0 = 呪精転生
+LOCALS:1 = 眷属化　
+LOCALS:2 = 改造手術
+LOCALS:3 = 魂魄昇華
+LOCALS:4 = 生命封入
+LOCALS:5 = 僵尸入魄
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTL 何をしますか？
+DRAWLINE
+LOCAL = CONVERT_RACE_CHECK()
+FOR PC_VAR1, 0, 6
+	IF LOCAL & POWER(2, (PC_VAR1 + 1))
+		REPEAT CHARANUM
+			LOCAL:1 |= CONVERT_RACE_OPERATOR_CHECK(PC_VAR1, COUNT)
+			LOCAL:2 |= CONVERT_RACE_RESIPIENT_CHECK(PC_VAR1, COUNT)
+		REND
+		SIF LOCAL:1 == 1 && LOCAL:2 == 1
+			PRINTFORMLC [{PC_VAR1}] %LOCALS:(PC_VAR1)%
+		LOCAL:1 = 0
+		LOCAL:2 = 0
+	ENDIF
+NEXT
+SIF LINEISEMPTY()
+	PRINT 現在使用できるコマンドはありません
+PRINTL 
+PRINTL [100]やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 5 || !GETBIT(LOCAL, RESULT + 1)
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;実行者の選択
+LOCAL = RESULT
+CALL CONVERT_RACE_LIST(LOCAL, -1)
+IF RESULT == 1 || RESULT == 3
+	SIF RESULT == 1
+		PRINTW 実行可能な者がいません。
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	RESTART
+ENDIF
+LOCAL:1 = RESULT
+;対象の選択
+LOCAL:2 = TARGET
+CALL CONVERT_RACE_LIST(LOCAL, LOCAL:1)
+IF RESULT == 2 || RESULT == 3
+	SIF RESULT == 2
+		PRINTW 対象にできる者がいません。
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	RESTART
+ENDIF
+TARGET = RESULT
+
+;最終確認
+PRINTFORM ＜本当に、
+PRINTFORM %SHOW_CALLNAME(TARGET)%
+IF LOCAL == 0
+	PRINTL に暗示をかけてゾンビフェアリーに転生させますか？＞
+ELSEIF LOCAL == 1
+	PRINTL を吸血鬼にして眷族の一員に加えますか？＞
+ELSEIF LOCAL == 2
+	PRINTL に改造手術をほどこし機械の身体にしますか？＞
+ELSEIF LOCAL == 3
+	PRINTL の魂魄を昇華させ肉体から解き放ちますか？＞
+ELSEIF LOCAL == 4
+	PRINTL の生命を人形に吹き込んで人形の身体にしますか？＞
+ELSEIF LOCAL == 5
+	PRINTL から魂のみを取り去りキョンシーにしますか？＞
+ENDIF
+PRINTL ※一度実行すると元に戻せません
+PRINTL ※強い副作用を示すことがあります
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1
+	TARGET = LOCAL:2
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	RESTART
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+CALL CONVERT_RACE_OPERATION, LOCAL, LOCAL:1
+RESTART
+
+;-----------------------------------------------
+;種族改造コマンドキャラ選択一覧表示処理
+;-----------------------------------------------
+@CONVERT_RACE_LIST, ARG, ARG:1
+;ARGは儀式の種類。 0 = 呪精転生、1 = 眷属化、2 = 改造手術、3 = 魂魄昇華、4 = 生命封入、5 = 僵尸入魄
+;ARG:1は実行者のID。-1の場合は実行者の選定、でなければ対象の選定だと判断する
+;LOCAL:0はリスト表示の現在ページ番号
+;LOCAL:1はリスト表示用、現在処理中のID
+;LOCAL:2は候補者の人数、汎用LISTは候補者のID
+CALLF CLEAR_LIST
+VARSET LOCAL, 0
+
+;候補者の抽出
+REPEAT CHARANUM
+	;実行者候補の選定
+	IF ARG:1 == -1
+		IF COUNT != MASTER
+			SIF CONVERT_RACE_OPERATOR_CHECK(ARG, COUNT) == 0
+				CONTINUE
+		ELSE
+			CONTINUE
+		ENDIF
+	;対象候補の選定。実行者本人は除外
+	ELSE
+		SIF ARG:1 == COUNT
+			CONTINUE
+		SIF CONVERT_RACE_RESIPIENT_CHECK(ARG, COUNT) == 0
+			CONTINUE
+	ENDIF
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+REND
+;候補者０人の場合
+SIF LOCAL:2 == 0
+	RETURN (ARG:1 == -1) ? 1 # 2
+
+$LIST_DRAW
+DRAWLINE
+PRINTFORML \@(ARG:1 == -1) ? 実行するのは誰ですか # 誰に処置しますか\@？ ＜page.{LOCAL+1}＞
+REPEAT 20
+	SIF ((LOCAL * 20) + COUNT) >= LOCAL:2
+		CONTINUE
+	LOCAL:1 = GET_LIST((LOCAL * 20) + COUNT)
+	PRINTFORM [{LOCAL:1}]
+	;その種の種族改造を経験済みか否かを表示(実行者なら省略)
+	IF ARG:1 != -1
+		IF (CFLAG:(LOCAL:1):29 & POWER(2, (ARG + 1))) == 0
+			PRINT 　(未経験)
+		ELSE
+			PRINT 　(経験済)
+		ENDIF
+	ENDIF
+	PRINTFORML 　%NAME:(LOCAL:1)%
+REND
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL< ((LOCAL:2 / 20) + 1)) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	RETURN 3
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO LIST_DRAW
+ELSEIF RESULT == 1009 && (LOCAL < (LOCAL:2 / 20))
+	LOCAL += 1
+	GOTO LIST_DRAW
+ELSE
+	REPEAT LOCAL:2
+		SIF GET_LIST(COUNT) == RESULT
+			RETURN RESULT
+	REND
+ENDIF
+REUSELASTLINE
+GOTO INPUT_LOOP_0
+
+;-----------------------------------------------
+;種族改造コマンド実行可能かの判定（主人側の条件判定を兼ねる）
+;-----------------------------------------------
+@CONVERT_RACE_CHECK
+#FUNCTION
+VARSET LOCAL, 0
+
+;[禁断の知識]がない場合は論外
+SIF TALENT:MASTER:禁断の知識 == 0
+	RETURNF 0
+
+;呪精転生の条件	：	主人が[妖精知識][魔術技能][超常目算]のいずれか
+LOCAL:0 = MAX(TALENT:MASTER:妖精知識, TALENT:MASTER:魔術技能, TALENT:MASTER:超常目算)
+
+;眷属化の条件	：	主人が[治療][サド][魔術技能]のいずれかで、鉈を所持している
+LOCAL:1 = MAX(TALENT:MASTER:治療, TALENT:MASTER:サド, TALENT:MASTER:魔術技能) && (FLAG:73 & 16)
+
+;改造手術の条件	：	主人が[家電使役知識]か[超常目算]を持ち、技巧Lv5
+LOCAL:2 = MAX(TALENT:MASTER:家電使役知識, TALENT:MASTER:超常目算) && (ABL:MASTER:技巧 >= 5)
+
+;魂魄昇華の条件	：	主人が[狂気][魔術技能][超常目算]のいずれか
+LOCAL:3 = MAX(TALENT:MASTER:魔術技能, TALENT:MASTER:超常目算);TALENT:MASTER:狂気,
+
+;生命封入の条件	：	主人が[工作名人][魔術技能]のいずれか
+LOCAL:4 = MAX(TALENT:MASTER:工作名人, TALENT:MASTER:魔術技能)
+
+;僵尸入魄の条件	：	主人が[調合知識][魔術技能]のいずれか
+LOCAL:5 = MAX(TALENT:MASTER:調合知識, TALENT:MASTER:魔術技能)
+
+;デバッグ用
+IF TALENT:MASTER:998
+	LOCAL:0 = 1
+	LOCAL:1 = 1
+	LOCAL:2 = 1
+	LOCAL:3 = 1
+	LOCAL:4 = 1
+	LOCAL:5 = 1
+ENDIF
+RETURNF ((LOCAL:0 * 2) + (LOCAL:1 * 4) + (LOCAL:2 * 8) + (LOCAL:3 * 16) + (LOCAL:4 * 32) + (LOCAL:5  * 64))
+
+;-----------------------------------------------
+;種族改造コマンド実行者か否かの判定
+;-----------------------------------------------
+@CONVERT_RACE_OPERATOR_CHECK, ARG, ARG:1
+;ARGは儀式の種類。 0 = 呪精転生、1 = 眷属化、2 = 改造手術、3 = 魂魄昇華、4 = 生命封入、5 = 僵尸入魄
+;ARG:1は判定対象キャラのID
+;LOCAL:*に儀式の実行者条件を代入
+#FUNCTION
+VARSET LOCAL, 0
+
+;その場にいない、抱卵中、助手可能でない奴隷は除外
+SIF CFLAG:(ARG:1):4 || TALENT:(ARG:1):143 || (ARG:1 != MASTER && CFLAG:(ARG:1):1 < 2)
+	RETURNF 0
+
+;呪精転生の実行資格	：	お燐、[覚]、または[鼓舞]を持つ[呪精]
+LOCAL:0 = MAX(NO:(ARG:1) == 1062, TALENT:(ARG:1):213, (TALENT:(ARG:1):95 && TALENT:(ARG:1):48))
+
+;眷属化の実行資格	：	[吸血鬼]
+LOCAL:1 = TALENT:(ARG:1):205
+
+;改造手術の実行資格	：	にとり、理香子、夢美、る～こと
+LOCAL:2 = MAX(NO:(ARG:1) == 1040, NO:(ARG:1) == 2006, NO:(ARG:1) == 2008, NO:(ARG:1) == 2027)
+	;ただし技巧Lv5の場合のみ
+LOCAL:2 = LOCAL:2 && (ABL:(ARG:1):72 >= 5)
+
+;魂魄昇華の実行資格	：	ゆゆ様(EX可)、[死神]
+LOCAL:3 = MAX(NO:(ARG:1) == 1020, TALENT:(ARG:1):224)
+
+;生命封入の実行資格	:	アリス(EX不可)、または[魔術技能]を持つ[工作名人]
+LOCAL:4 = MAX(NO:(ARG:1) == 1014 && CFLAG:(ARG:1):0 == 0, (TALENT:(ARG:1):195 && TALENT:(ARG:1):197))
+	;ただし技巧Lv5かつ工作技能Lv5の場合のみ
+LOCAL:4 = MIN(LOCAL:4, ABL:(ARG:1):12 >= 5, ABL:(ARG:1):73 >= 5)
+
+;僵尸入魄の実行資格	:	青蛾
+LOCAL:5 = MAX(NO:(ARG:1) == 1083)
+	;ただし技巧Lv5の場合のみ
+LOCAL:5 = MIN(LOCAL:5, ABL:(ARG:1):12 >= 5)
+
+;デバッグ用
+SIF TALENT:(ARG:1):998
+	RETURNF 1
+RETURNF LOCAL:ARG
+
+;-----------------------------------------------
+;種族改造コマンド被験者か否かの判定
+;-----------------------------------------------
+@CONVERT_RACE_RESIPIENT_CHECK, ARG, ARG:1
+;ARGは儀式の種類。 0 = 呪精転生、1 = 眷属化、2 = 改造手術、3 = 魂魄昇華、4 = 生命封入、5 = 僵尸入魄
+;ARG:1は判定対象キャラのID
+;LOCAL:*に儀式の被験者条件を代入
+#FUNCTION
+VARSET LOCAL, 0
+
+;主人、その場にいない者、抱卵中の者は除外
+SIF MAX(ARG:1 == MASTER, CFLAG:(ARG:1):4, TALENT:(ARG:1):143)
+	RETURNF 0
+;[親愛][烙印][傀儡][壊造人格]のいずれかでなければ除外
+SIF MAX(TALENT:(ARG:1):152, TALENT:(ARG:1):161, TALENT:(ARG:1):168, TALENT:(ARG:1):169) == 0
+	RETURNF 0
+;対象の体力・気力が1点でも消耗していると除外
+SIF BASE:(ARG:1):0 < MAXBASE:(ARG:1):0 || BASE:(ARG:1):1 < MAXBASE:(ARG:1):1 || TALENT:(ARG:1):800
+	RETURNF 0
+
+;[妊娠][懐卵][寄生]に対して改造手術・魂魄昇華・生命封入は不可
+SIF MIN(ARG:1 >= 2, TALENT:(ARG:1):140, TALENT:(ARG:1):145, TALENT:(ARG:1):146)
+	RETURNF 0
+
+;呪精転生の被験資格	：	[呪精]でない[妖精]
+LOCAL:0 = TALENT:(ARG:1):48 == 0 && TALENT:(ARG:1):200
+
+;眷属化の被験資格	：	[吸血鬼][機械][霊体][人形][キョンシー]以外
+LOCAL:1 = MAX(TALENT:(ARG:1):205, TALENT:(ARG:1):206, TALENT:(ARG:1):207, TALENT:(ARG:1):208, TALENT:(ARG:1):226) == 0
+
+;改造手術の被験資格	：	[霊体][機械][人形]以外
+LOCAL:2 = MAX(TALENT:(ARG:1):206, TALENT:(ARG:1):207, TALENT:(ARG:1):208) == 0
+
+;魂魄昇華の被験資格	：	[蓬莱人][霊体]以外で、同化刻印がない
+LOCAL:3 = MAX(TALENT:(ARG:1):49, TALENT:(ARG:1):207, MARK:(ARG:1):10) == 0
+
+;生命封入の被験資格	：	[人形][機械]以外
+LOCAL:4 = MAX(TALENT:(ARG:1):208, TALENT:(ARG:1):206) == 0
+
+;僵尸入魄の被験資格	：	[[蓬莱人]吸血鬼][機械][霊体][人形][神霊][仙人][キョンシー]以外で、同化刻印がない
+LOCAL:5 = MAX(TALENT:(ARG:1):49, TALENT:(ARG:1):205, TALENT:(ARG:1):206, TALENT:(ARG:1):207, TALENT:(ARG:1):208, TALENT:(ARG:1):222, TALENT:(ARG:1):225, TALENT:(ARG:1):226) == 0
+
+RETURNF LOCAL:ARG
+
+;-----------------------------------------------
+;種族改造コマンド実行処理
+;-----------------------------------------------
+;各種キャラの能力を使ってTARGETに種族系素質を付与する
+;呪精転生コマンドをベースに勝手にアレンジ、各種派生コマンドと統合。以下元のファイルの文章
+;
+;ゾンビフェアリーが増やせたら幸せだなあ……妖精になるキャンディはあるのにゾンビフェアリーになるのはないんだよなあ
+;ああ、そっか。だったら妖精をゾンビフェアリーにしちゃえばいいのか
+;とかそんな経緯で作ったコマンドです。作ったやつ以外誰が喜ぶのか……
+
+;ARG = 実行する儀式の種類。0 = 呪精転生、1 = 眷属化、2 = 改造手術、3 = 魂魄昇華、4 = 生命封入、5 = 僵尸入魄
+;ARG:1は実行者の登録番号
+@CONVERT_RACE_OPERATION, ARG, ARG:1
+VARSET LOCAL, 0
+
+;実行者の登録番号をTFLAG:201に移動
+TFLAG:201 = ARG:1
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 280, ARG
+PRINTL 
+;呪精転生
+IF ARG == 0
+	PRINTFORM ―――
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%はゾンビフェアリーになった―――
+;眷属化
+ELSEIF ARG == 1
+	PRINTFORM ―――
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%は吸血鬼になった―――
+;改造手術
+ELSEIF ARG == 2
+	PRINTFORM ―――
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%はロボットになった―――
+;魂魄昇華
+ELSEIF ARG == 3
+	PRINTFORM ―――
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%は肉体から解き放たれ幽霊になった―――
+;生命封入
+ELSEIF ARG == 4
+	PRINTFORM ―――
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%は人形になった―――
+;僵尸入魄
+ELSEIF ARG == 5
+	PRINTFORM ―――
+	PRINTFORMW %SHOW_CALLNAME(TARGET)%はキョンシーになった―――
+ENDIF
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+
+;素質変動処理
+
+;呪精転生
+IF ARG == 0
+	;[妖精]を失う
+	CALL LOST_TALENTS, TARGET, 200, 0
+	SIF RESULT == 1
+		PRINT を失い、
+	;[呪精]を得る
+	CALL GET_TALENTS, TARGET, 48, RESULT
+;眷属化
+ELSEIF ARG == 1
+	;[日光浴]を失う
+	CALL LOST_TALENTS, TARGET, 114, 0
+	SIF RESULT == 1
+		PRINT を失い、
+	;[吸血鬼]を得る
+	CALL GET_TALENTS, TARGET, 205, RESULT
+	;[神霊][半神]であれば[悪魔]を得る
+	SIF TALENT:神霊 || TALENT:半神
+		CALL GET_TALENTS, TARGET, 209, RESULT
+;改造手術
+ELSEIF ARG == 2
+	;[呪精]を失う
+	CALL LOST_TALENTS, TARGET, 205, 0
+	SIF RESULT == 1
+		PRINT を失い、
+	;[機械]を得る
+	CALL GET_TALENTS, TARGET, 206, RESULT
+	;[魔術技能]持ちで[神霊]でなければ[半神]を取得
+	SIF TALENT:魔術技能 && TALENT:神霊 == 0
+		CALL GET_TALENTS, TARGET, 223, RESULT
+	;[神霊][半神]であれば[魔術技能]を取得
+	SIF TALENT:神霊 || TALENT:半神
+		CALL GET_TALENTS, TARGET, 197, RESULT
+;魂魄昇華
+ELSEIF ARG == 3
+	;[薬毒耐性]を失う
+	CALL LOST_TALENTS, TARGET, 44, 0
+	SIF RESULT == 1
+		PRINT を失い、
+	;[霊体]を得る
+	CALL GET_TALENTS, TARGET, 207, RESULT
+	;[機械]であれば[家電使役知識]を取得
+	SIF TALENT:機械
+		CALL GET_TALENTS, TARGET, 189, RESULT
+	;[魔術技能]持ちであれば[呪精]を取得
+	SIF TALENT:魔術技能
+		CALL GET_TALENTS, TARGET, 48, RESULT
+;生命封入
+ELSEIF ARG == 4
+	;[オトコ][ふたなり]を失う
+	CALL LOST_TALENTS, TARGET, 120, 0
+	CALL LOST_TALENTS, TARGET, 121, RESULT
+	;体格変更処理があるため、[小柄体型]を消失
+	CALL LOST_TALENTS, TARGET, 128, RESULT
+	;[神霊][半神]であれば[小人体型]を、でなければ[巨躯]を失う
+	SIF TALENT:神霊 || TALENT:半神
+		CALL LOST_TALENTS, TARGET, 127, RESULT
+	SIF MAX(TALENT:神霊, TALENT:半神) == 0
+		CALL LOST_TALENTS, TARGET, 129, RESULT
+	SIF RESULT == 1
+		PRINT を失い、
+	;[人形]を得る
+	CALL GET_TALENTS, TARGET, 208, RESULT
+	;[神霊][半神]であれば[巨躯]に、でなければ[小人体型]になる
+	SIF TALENT:神霊 || TALENT:半神
+		CALL GET_TALENTS, TARGET, 129, RESULT
+	SIF MAX(TALENT:神霊, TALENT:半神) == 0
+		CALL GET_TALENTS, TARGET, 127, RESULT
+;僵尸入魄
+ELSEIF ARG == 5
+	;[日光浴]を失う
+	CALL LOST_TALENTS, TARGET, 114, 0
+	;[習得早い]を失う
+	CALL LOST_TALENTS, TARGET, 50, RESULT
+	SIF RESULT == 1
+		PRINT を失い、
+	;[習得遅い]を得る
+	CALL GET_TALENTS, TARGET, 51, RESULT
+	;[キョンシー]を得る
+	CALL GET_TALENTS, TARGET, 226, RESULT
+ENDIF
+PRINTL を得た
+
+;[半神]が魂魄昇華／生命封入を受けると[半神]を失い[神霊]を得る
+IF TALENT:半神 && MAX(ARG == 3, ARG == 4)
+	PRINT 加えて、肉体から解き放たれて
+	CALL LOST_TALENTS, TARGET, 223, 0
+	PRINT を失い、
+	CALL GET_TALENTS, TARGET, 222, RESULT
+	PRINTL を得た
+ENDIF
+;[機械][人形]が魂魄昇華を受けると[機械][人形]を失う
+IF (TALENT:機械 || TALENT:人形) && ARG == 3
+	PRINT 加えて、肉体から解き放たれたことで
+	CALL LOST_TALENTS, TARGET, 206, 0
+	CALL LOST_TALENTS, TARGET, 208, RESULT
+	PRINTL を失った
+ENDIF
+
+;[蓬莱人]はこの処理をスキップ
+IF TALENT:蓬莱人 == 0
+	;[痛みに弱い][濡れやすい][おもらし癖][媚薬中毒][喘息][卵生][産卵体質][変幻自在]が消失
+	CALL LOST_TALENTS, TARGET, 40, 0
+	CALL LOST_TALENTS, TARGET, 42, RESULT
+	CALL LOST_TALENTS, TARGET, 45, RESULT
+	CALL LOST_TALENTS, TARGET, 46, RESULT
+	CALL LOST_TALENTS, TARGET, 47, RESULT
+	CALL LOST_TALENTS, TARGET, 135, RESULT
+	CALL LOST_TALENTS, TARGET, 136, RESULT
+	CALL LOST_TALENTS, TARGET, 139, RESULT
+	;[○敏感]を全て喪失
+	REPEAT 4
+		CALL LOST_TALENTS, TARGET, 100 + COUNT * 2, RESULT
+	REND
+	SIF RESULT == 1
+		PRINT を失い、
+	;[○鈍感]を全種取得
+	REPEAT 4
+		CALL GET_TALENTS, TARGET, 101 + COUNT * 2, RESULT
+	REND
+	;[痛みに強い]を取得
+	CALL GET_TALENTS, TARGET, 41, RESULT
+	SIF RESULT != 0
+		PRINTL を得た
+	PRINTW 
+	;初体験時ペナルティ
+	LOCAL = 0
+	IF ARG == 0 && (CFLAG:29 & 2) == 0
+		LOCAL = 2
+		DRAWLINE
+		PRINTFORML ……暗示が解けた後、%CALLNAME:TARGET%の心には明白な欠落が生じていた
+	ELSEIF ARG == 1 && (CFLAG:29 & 4) == 0
+		LOCAL = 4
+		DRAWLINE
+		PRINTFORML ……直後、%CALLNAME:TARGET%は絶叫をあげて暴れ始めた
+	ELSEIF ARG == 2 && (CFLAG:29 & 8) == 0
+		LOCAL = 8
+		DRAWLINE
+		PRINTFORML ……まぁ、些細な失敗はあったが気にする事もない
+	ELSEIF ARG == 3 && (CFLAG:29 & 16) == 0
+		LOCAL = 16
+		DRAWLINE
+		PRINTFORML ……だが、%CALLNAME:TARGET%の表情からは生気が失われていた
+	ELSEIF ARG == 4 && (CFLAG:29 & 32) == 0
+		LOCAL = 32
+		DRAWLINE
+		PRINTFORML ……だが、“これ”は本当に%CALLNAME:TARGET%なのか？
+	ELSEIF ARG == 5 && (CFLAG:29 & 64) == 0
+		LOCAL = 64
+		DRAWLINE
+		PRINTFORML ……だが、儀式が不完全だったのか%CALLNAME:TARGET%の反応が薄い
+	ENDIF
+	IF LOCAL != 0 && TALENT:蓬莱人 == 0
+		PRINTL 
+		CFLAG:29 |= LOCAL
+		;異常経験＋１
+		CALL COMMON_UP_EXP,TARGET, 50, 1, 0
+		;ストレスを好感度分増加
+		CALL COMMON_MOVE_CFLAG, TARGET, 65, CFLAG:好感度, 0
+		;好感度が20分の１に減少
+		CALL COMMON_MOVE_CFLAG, TARGET, 2, (CFLAG:好感度 / 20 * -19), 0
+		;全種の宝珠を半減させ、減少したのと同じ数だけ否定の珠が増加
+		LOCAL = 0
+		REPEAT 32
+			CALL COMMON_DOWN_JUEL, TARGET, COUNT, (JUEL:TARGET:COUNT / 2), 0
+			LOCAL += JUEL:TARGET:COUNT
+		REND
+		CALL COMMON_UP_JUEL, TARGET, 100, LOCAL, 0
+	ENDIF
+ENDIF
+WAIT
+
+;身体測定フラグを寝せる(次回身体測定を行うため)
+CFLAG:8 = 0
+
+;種族遺伝子変化
+LOCAL = 0
+FOR PC_VAR1 , 3200 , 3400
+	;（[呪精][吸血鬼][キョンシー]は既存の遺伝子を半減、その他は既存の遺伝子を消去）
+	IF ARG == 0 || ARG == 1 || ARG == 5
+		LOCAL += CFLAG:PC_VAR1 / 2
+		CFLAG:PC_VAR1 /= 2
+	ELSEIF ARG == 2 || ARG == 3 || ARG == 4
+		CFLAG:PC_VAR1 = 0
+	ENDIF
+NEXT
+;（[呪精][吸血鬼][キョンシー]は減少させた分を当該種族に上積み、その他は100％当該種族に）
+SELECTCASE ARG
+	CASE 0
+		CFLAG:3245 += LOCAL
+		CFLAG:5 = 10
+	CASE 1
+		CFLAG:3206 += LOCAL
+		CFLAG:5 = 2
+	CASE 2
+		CFLAG:3246 = 100
+		CFLAG:5 = 3
+	CASE 3
+		CFLAG:3211 = 100
+		CFLAG:5 = 4
+	CASE 4
+		CFLAG:3221 = 100
+		CFLAG:5 = 5
+	CASE 5
+		CFLAG:3261 += LOCAL
+		CFLAG:5 = 11
+ENDSELECT
+
+;実行履歴の記録と、主人の種族変化解禁ダイアログ
+LOCAL = 0
+SELECTCASE ARG
+	CASE 0
+		FLAG:410 += 1
+	CASE 1
+		FLAG:402 += 1
+		IF MIN(FLAG:402 >= 50, CHECK_GAMEMODE_ENDING_EXIST() == 1, (FLAG:70 & 2) == 0)
+			PRINTFORML %SHOW_CALLNAME(MASTER)%は吸血鬼の詳しい生態を理解した…
+			FLAG:70 |= 2
+			LOCAL = 205
+		ENDIF
+	CASE 2
+		FLAG:403 += 1
+		IF MIN(FLAG:403 >= 50, CHECK_GAMEMODE_ENDING_EXIST() == 1, (FLAG:70 & 4) == 0)
+			PRINTFORML %SHOW_CALLNAME(MASTER)%は機械化の手法を直感的に理解した…
+			FLAG:70 |= 4
+			LOCAL = 206
+		ENDIF
+	CASE 3
+		FLAG:404 += 1
+		IF MIN(FLAG:404 >= 50, CHECK_GAMEMODE_ENDING_EXIST() == 1, (FLAG:70 & 8) == 0)
+			PRINTFORML %SHOW_CALLNAME(MASTER)%は亡霊となる方法を直感的に理解した…
+			FLAG:70 |= 8
+			LOCAL = 207
+		ENDIF
+	CASE 4
+		FLAG:401 += 1
+		IF MIN(FLAG:401 >= 50, CHECK_GAMEMODE_ENDING_EXIST() == 1, (FLAG:70 & 16) == 0)
+			PRINTFORML %SHOW_CALLNAME(MASTER)%は人形製作の手法を直感的に理解した…
+			FLAG:70 |= 16
+			LOCAL = 208
+		ENDIF
+	CASE 5
+		FLAG:411 += 1
+		IF MIN(FLAG:411 >= 50, CHECK_GAMEMODE_ENDING_EXIST() == 1, (FLAG:70 & 1024) == 0)
+			PRINTFORML %SHOW_CALLNAME(MASTER)%はキョンシーとなる手法を直感的に理解した…
+			FLAG:70 |= 1024
+			LOCAL = 226
+		ENDIF
+ENDSELECT
+IF LOCAL != 0
+	PRINTFORM ※強くてニューゲーム開始時に
+	PRINTFORMW %SHOW_CALLNAME(MASTER)%の種族を[%TALENTNAME:(LOCAL)%]に変更できます
+ENDIF
+LOCAL = 0
+
+;-----------------------------------------------
+;魔術儀式用地下室メインメニュー
+;-----------------------------------------------
+@CREATE_SLAVE_MENU
+LOCAL = 0
+LOCAL = CREATE_SLAVE_CHECK()
+SIF LOCAL & 2
+	PRINTLC [1] 人形製作
+SIF LOCAL & 4
+	PRINTLC [2] 小悪魔召喚
+SIF LOCAL & 8
+	PRINTLC [3] 身体強化
+PRINTL 
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 1 && LOCAL & 2
+	CALL CREATE_SLAVE_1
+ELSEIF RESULT == 2 && LOCAL & 4
+	CALL CREATE_SLAVE_2
+ELSEIF RESULT == 3 && LOCAL & 8
+	CALL STRENGTHEN_SELF_BODY
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;-----------------------------------------------
+;魔術儀式コマンド実行可能かの判定
+;-----------------------------------------------
+@CREATE_SLAVE_CHECK
+#FUNCTION
+;購入可能な奴隷の人数の算出
+LOCAL = CALC_SLAVE_CAPACITY()
+LOCAL:1 = 0
+
+;主人用に汎用の何かを
+;	LOCAL:1 |= 1
+;人数に余裕があり、アリス(ちびアリス除く)が主人の時は人形制作を実行可能
+SIF CHARANUM < LOCAL && NO:MASTER == 1014 && CFLAG:MASTER:0 == 0 && MONEY >= 100
+	LOCAL:1 |= 2
+;パチュリーが主人の時は小悪魔召喚を実行可能
+SIF CHARANUM < LOCAL && NO:MASTER == 1008 && MONEY >= 100
+	LOCAL:1 |= 4
+;白蓮さんが主人の時には身体強化を実行可能
+SIF NO:MASTER == 1077 && MONEY >= 100
+	LOCAL:1 |= 8
+RETURNF LOCAL:1
+
+;-----------------------------------------------
+;アリスの人形制作
+;-----------------------------------------------
+@CREATE_SLAVE_1
+DRAWLINE
+PRINTL 人形を1体製作します。(必要経費：100圓)
+PRINTL よろしいですか？
+PRINTL [ 0] - はい
+PRINTL [ 1] - いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORMW ＜%CSVNAME(3016, 0)%を作成しました＞
+CALL CHARA_STATE_BASIC, 3016
+;誕生した日を記録
+CFLAG:誕生日 = DAY
+;入手方法の記録
+CSTR:3 = %CALLNAME:MASTER%の手によって製作された。
+;必要経費100圓
+MONEY -= 100
+FLAG:420 |= 1
+
+;-----------------------------------------------
+;パチュリーの小悪魔召喚
+;-----------------------------------------------
+@CREATE_SLAVE_2
+DRAWLINE
+PRINTL 小悪魔を1体召喚します。(必要経費：100圓)
+PRINTL よろしいですか？
+PRINTL [ 0] - はい
+PRINTL [ 1] - いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORMW ＜%CSVNAME(1007, 0)%を召喚しました＞
+CALL CHARA_STATE_BASIC, 1007
+;誕生した日を記録
+CFLAG:誕生日 = DAY
+;キャラ番号の変更と素質付与
+NO:TARGET = 3020
+CALL CHARA_RANDOM_STATE
+;追加処理で増えた小悪魔のキャラカードを削除
+ITEM:小悪魔 = MAX(ITEM:小悪魔 - 1, 0)
+;入手方法の記録
+CSTR:3 = %CALLNAME:MASTER%の手によって召喚された。
+;必要経費100圓
+MONEY -= 100
+FLAG:420 |= 2
+
+;-----------------------------------------------
+;白蓮さんの身体強化
+;-----------------------------------------------
+;果たして強化と言えるのか？でもかわいいよね？
+@STRENGTHEN_SELF_BODY
+DRAWLINE
+PRINTL 自分自身の身体を強化します。(必要経費：100圓)
+PRINTL どうしますか？
+PRINTFORML [ 0] - 日光浴\@(TALENT:MASTER:日光浴) ? 削除 # 付与\@
+PRINTFORML [ 1] - 月光浴\@(TALENT:MASTER:月光浴) ? 削除 # 付与\@
+PRINTFORML [ 2] - \@(TALENT:MASTER:動物耳) ? 動物耳削除 # かわいい(重要!)動物耳付与\@
+PRINTFORML [ 3] - \@(TALENT:MASTER:猫舌) ? 猫舌削除 # かわいい(重要!)猫舌付与\@
+PRINTL [100] - なんとなくやめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 3
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+PRINTFORMW %SHOW_CALLNAME(MASTER)%は得意の身体強化呪文を使いました
+IF RESULT == 0
+	IF TALENT:MASTER:日光浴 == 0
+		PRINTW ＜お日様が似合う素敵な身体になりました＞
+		PRINTW [日光浴]を取得した。
+		TALENT:MASTER:日光浴 = 1
+		FLAG:421 |= 1
+	ELSE
+		PRINTW ＜お日様に頼らない強靭な身体になりました＞
+		PRINTW [日光浴]を失った。
+		TALENT:MASTER:日光浴 = 0
+		FLAG:421 -= 1
+	ENDIF
+ELSEIF RESULT == 1
+	IF TALENT:MASTER:月光浴 == 0
+		PRINTW ＜月の光が似合う素敵な身体になりました＞
+		PRINTW [月光浴]を取得した。
+		TALENT:MASTER:月光浴 = 1
+		FLAG:421 |= 2
+	ELSE
+		PRINTW ＜月の光を浴びなくて済むような強靭な身体になりました＞
+		PRINTW [月光浴]を失った。
+		TALENT:MASTER:月光浴 = 0
+		FLAG:421 -= 2
+	ENDIF
+ELSEIF RESULT == 2
+	IF TALENT:MASTER:動物耳 == 0
+		PRINTW ＜とてもかわいくみえる素敵な動物耳がつきました＞
+		PRINTW [動物耳]を取得した。
+		TALENT:MASTER:動物耳 = 1
+		FLAG:421 |= 4
+	ELSE
+		PRINTW ＜へんてこな動物耳を外しました＞
+		PRINTW [動物耳]を失った。
+		TALENT:MASTER:動物耳 = 0
+		FLAG:421 -= 4
+	ENDIF
+ELSEIF RESULT == 3
+	IF TALENT:MASTER:猫舌 == 0
+		PRINTW ＜ちょっとお茶目だけど素敵な猫舌になりました＞
+		PRINTW [猫舌]を取得した。
+		TALENT:MASTER:猫舌 = 1
+		FLAG:421 |= 8
+	ELSE
+		PRINTW ＜なんだか不便な猫舌を外しました＞
+		PRINTW [猫舌]を失った。
+		TALENT:MASTER:猫舌 = 0
+		FLAG:421 -= 8
+	ENDIF
+ENDIF
+;必要経費100圓
+MONEY -= 100
+;身体測定フラグを寝せる(次回身体測定を行うため)
+CFLAG:MASTER:8 = 0

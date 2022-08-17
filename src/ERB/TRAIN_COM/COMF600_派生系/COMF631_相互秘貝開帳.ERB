@@ -1,0 +1,510 @@
+﻿;=============================================================================
+;相互秘貝開帳
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE631
+#FUNCTION
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURNF 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURNF 0
+;調教者の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(PLAYER) == 0
+	RETURNF 0
+;従順が2未満だとダメ
+SIF ABL:従順 < 2
+	RETURNF 0
+;処女の場合、従順3以上または露出癖3以上または淫乱がないとダメ
+SIF TALENT:処女 && ABL:従順 < 3 && ABL:露出癖 < 3 && TALENT:淫乱 == 0
+	RETURNF 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURNF 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURNF 0
+;眼隠しと耳栓両方つけていた場合は意味がないので実行できない
+SIF TEQUIP:目装着器具 && TEQUIP:耳装着器具
+	RETURNF 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURNF 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURNF 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURNF 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURNF 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURNF 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURNF 0
+;助手が褌着用中の場合はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17
+	RETURNF 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURNF 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 631) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM631
+PRINTL 相互秘貝開帳
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 631
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER,631
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 相互秘貝開帳
+SELECTCOM = 631
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 55
+DOWNBASE:1 += 105
+
+SOURCE:液体追加 = 10
+SOURCE:露出 = 370
+SOURCE:屈従 = 260
+SOURCE:逸脱 = 750
+SOURCE:性行動 = 15
+SOURCE:不潔 = 100
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 100
+	SOURCE:屈従 += 200
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 200
+	SOURCE:屈従 += 300
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 350
+	SOURCE:屈従 += 600
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 700
+	SOURCE:屈従 += 900
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1400
+	SOURCE:屈従 += 1300
+ELSE
+	SOURCE:快Ｃ = 1800
+	SOURCE:屈従 += 1700
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:不潔 += 2000
+	SOURCE:露出 += 1500
+ELSEIF ABL:露出癖 == 1
+	SOURCE:不潔 += 1000
+	SOURCE:露出 += 1250
+	SOURCE:液体追加 *= 5
+ELSEIF ABL:露出癖 == 2
+	SOURCE:不潔 += 500
+	SOURCE:露出 += 750
+	SOURCE:液体追加 *= 10
+ELSEIF ABL:露出癖 == 3
+	SOURCE:不潔 += 200
+	SOURCE:露出 += 500
+	SOURCE:液体追加 *= 50
+ELSEIF ABL:露出癖 == 4
+	SOURCE:不潔 += 100
+	SOURCE:露出 += 250
+	SOURCE:液体追加 *= 100
+ELSE
+	SOURCE:不潔 += 50
+	SOURCE:液体追加 *= 200
+ENDIF
+
+;EXP:自慰経験をみる
+IF EXP:自慰経験 < EXPLV:1
+	TIMES SOURCE:不潔, 1.50
+	TIMES SOURCE:屈従, 0.20
+ELSEIF EXP:自慰経験 < EXPLV:2
+	TIMES SOURCE:不潔, 1.20
+	TIMES SOURCE:屈従, 0.50
+ELSEIF EXP:自慰経験 < EXPLV:3
+	TIMES SOURCE:不潔, 1.00
+	TIMES SOURCE:屈従, 0.80
+ELSEIF EXP:自慰経験 < EXPLV:4
+	TIMES SOURCE:不潔, 0.80
+	TIMES SOURCE:屈従, 1.00
+ELSEIF EXP:自慰経験 < EXPLV:5
+	TIMES SOURCE:不潔, 0.50
+	TIMES SOURCE:屈従, 1.20
+ELSE
+	TIMES SOURCE:不潔, 0.20
+	TIMES SOURCE:屈従, 1.50
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:欲情追加 = 10
+	TIMES SOURCE:不潔 , 1.80
+	TIMES SOURCE:液体追加 , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:欲情追加 = 20
+	TIMES SOURCE:不潔 , 1.50
+	TIMES SOURCE:液体追加 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:欲情追加 = 40
+	TIMES SOURCE:不潔 , 1.20
+	TIMES SOURCE:液体追加 , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:欲情追加 = 80
+	TIMES SOURCE:不潔 , 0.80
+	TIMES SOURCE:液体追加 , 1.50
+ELSE
+	SOURCE:欲情追加 = 160
+	TIMES SOURCE:不潔 , 0.50
+	TIMES SOURCE:液体追加 , 1.80
+ENDIF
+
+;恥じらい・恥薄い
+IF TALENT:恥じらい
+	TIMES SOURCE:不潔 , 1.20
+ELSEIF TALENT:恥薄い
+	TIMES SOURCE:不潔 , 0.50
+ENDIF
+
+;Ｃ敏感、鈍感をみる
+;快Ｃ自体のチェックは後でまとめてやる
+IF TALENT:Ｃ敏感
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｃ鈍感
+	TIMES SOURCE:快Ｃ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 1.50
+ENDIF
+
+;処女、貞操観念
+IF TALENT:処女
+	TIMES SOURCE:不潔 , 1.20
+	IF TALENT:処女 == 1
+		TIMES SOURCE:不潔 , 2.00
+		TIMES SOURCE:屈従 , 2.00
+		SOURCE:露出 += 2000
+		SIF TALENT:貞操観念
+			TIMES SOURCE:露出 , 2.00
+	ENDIF
+ENDIF
+
+SIF ABL:露出癖 >= 3
+	TCVAR:自慰経験 += 1
+SIF ABL:PLAYER:露出癖 >= 3
+	TCVAR:PLAYER:自慰経験 += 1
+
+;奴隷のＶ⇔指の汚れが移動
+STAIN:ヴァギナ |= STAIN:手
+STAIN:手 |= STAIN:ヴァギナ
+;調教者のＶ⇔指の汚れが移動
+STAIN:PLAYER:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:PLAYER:ヴァギナ
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_631
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_631
+IF ASSIPLAY
+	PRINTFORM %CALLNAME:MASTER%に命令され、%CALLNAME:ASSI%は
+	IF ABL:ASSI:露出癖 == 0
+		PRINTFORML 泣きそうな顔をしつつ%CALLNAME:MASTER%を睨んだが、
+		PRINTFORM 再度命令されるとしぶしぶといった様子で自分の
+		IF TALENT:ASSI:小柄体型
+			PRINT 幼いワレメに
+		ELSE
+			PRINT 縦筋に
+		ENDIF
+		PRINTL 指を突きいれ、左右に広げて見せた
+	ELSEIF ABL:ASSI:露出癖 == 1
+		PRINTFORML 顔を真っ赤にしながらもおずおずと自分の陰唇を拡げて見せた
+	ELSEIF ABL:ASSI:露出癖 == 2
+		PRINTFORML 下腹部に手を置き、人差し指と中指でチョキを作るようにして%CALLNAME:TARGET%に自分の秘所を曝した
+		SIF STAIN:ASSI:ヴァギナ & 6 == 0
+			PRINTFORML 広がりきった陰門からこちらを覗く膣口はまるで何かを待っているかのように怪しげに蠢いている……
+	ELSEIF ABL:ASSI:露出癖 == 3
+		PRINTFORML 慣れた様子で片手で陰唇を開き、空いた手で陰核を弄り始めた
+		PRINTFORML %CALLNAME:ASSI%の手が陰核に触れるたびに膣口から愛液を滴らせている……
+	ELSEIF ABL:ASSI:露出癖 == 4
+		PRINTFORML 両手の指を使って陰唇だけでなく、膣口も同時に拡げた
+		PRINTFORML 膣の中を見られていることに感じているのか%CALLNAME:ASSI%の頬は仄かに紅く染まっている
+	ELSE
+		PRINTFORML 両手の指を陰唇にひっかけ、膣口ごと%CALLNAME:TARGET%に見せつけるように大きく拡げた
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:MASTER%はみずから自分の
+	IF TALENT:MASTER:小柄体型
+		PRINT 幼いワレメに
+	ELSE
+		PRINT 縦筋に
+	ENDIF
+	PRINTFORML 指を突きいれ、左右に広げて%CALLNAME:TARGET%に見せた
+	SIF STAIN:MASTER:ヴァギナ & 6 == 0
+		PRINTFORML 広がりきった陰門からこちらを覗く膣口はまるで何かを待っているかのように怪しげに蠢いている……
+ENDIF
+PRINTFORM それと同時に、%CALLNAME:PLAYER%に命令され、%CALLNAME:TARGET%は
+IF ABL:露出癖 == 0
+	PRINTFORML 涙を浮かべてこちらを睨んだが、
+	PRINTFORM 再度命令されるとしぶしぶといった様子で自分の
+	IF TALENT:小柄体型
+		PRINT 幼いワレメに
+	ELSE
+		PRINT 縦筋に
+	ENDIF
+	PRINTL 指を突きいれ、左右に広げて見せた
+ELSEIF ABL:露出癖 == 1
+	PRINTFORML 顔を真っ赤にしながらもおずおずと自分の陰唇を拡げて見せた
+ELSEIF ABL:露出癖 == 2
+	PRINTFORML 下腹部に手を置き、人差し指と中指でチョキを作るようにして%CALLNAME:PLAYER%に自分の秘所を曝した
+	SIF STAIN:ヴァギナ & 6 == 0
+		PRINTFORML 広がりきった陰門からこちらを覗く膣口はまるで何かを待っているかのように怪しげに蠢いている……
+ELSEIF ABL:露出癖 == 3
+	PRINTFORML 慣れた様子で片手で陰唇を開き、空いた手で陰核を弄り始めた
+	PRINTFORML %CALLNAME:TARGET%の手が陰核に触れるたびに膣口から愛液を滴らせている……
+ELSEIF ABL:露出癖 == 4
+	PRINTFORML 両手の指を使って陰唇だけでなく、膣口も同時に拡げた
+	PRINTFORML 膣の中を見られていることに感じているのか%CALLNAME:TARGET%の頬は仄かに紅く染まっている
+ELSE
+	PRINTFORML 両手の指を陰唇にひっかけ、膣口ごと%CALLNAME:PLAYER%に見せつけるように大きく拡げた
+ENDIF
+
+IF STAIN:ヴァギナ & 4 && STAIN:ヴァギナ & 64 && TFLAG:103 > 0
+	PRINTFORM %CALLNAME:TARGET%の膣口から
+	SIF STAIN:ヴァギナ & 32
+		PRINT 破瓜の血と
+	SIF STAIN:ヴァギナ & 128
+		PRINT 経血と
+	PRINTL 精液と触手の体液が混ざり合ってできた濁った液体がどろりと滝のように溢れ出てきた……
+ELSEIF STAIN:ヴァギナ & 64
+	PRINTFORM %CALLNAME:TARGET%の陰部からは
+	SIF STAIN:ヴァギナ & 32
+		PRINT 処女膜が食い破られた痕と共に
+	PRINTL てかてかと光る触手の体液が滴り落ちた……
+ELSEIF STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+	PRINTFORM %CALLNAME:TARGET%の陰部から先ほど膣内にたっぷりと注ぎ込んだ精液が
+	IF STAIN:ヴァギナ & 32 && STAIN:ヴァギナ & 128
+		PRINT 血と入り混じって生々しいピンク色の液体となり、
+	ELSEIF STAIN:ヴァギナ & 128
+		PRINT 経血と入り混じって生々しいピンク色の液体となり、
+	ELSEIF STAIN:ヴァギナ & 32
+		PRINT 破瓜の血と入り混じって生々しいピンク色の液体となり、
+	ENDIF
+	PRINTL よだれのように零れ出ている……
+ELSEIF STAIN:ヴァギナ & 32
+	PRINTFORML %CALLNAME:TARGET%の膣口から先ほど処女膜を貫かれた証が股の上を一筋の鮮やかな赤い線を引いて床に零れ落ちた……
+ELSEIF ABL:露出癖 >= 5 && TALENT:処女 && TALENT:淫乱
+	PRINTFORML %CALLNAME:TARGET%の呼吸に合わせてひくついている膣壁は愛液でまんべんなく濡れており、
+	PRINTL その奥で立ちはだかっている純潔の証はまるで貫かれるのを待っているかのように時折淫らな姿を曝している……
+ELSEIF ABL:露出癖 >= 5 && TALENT:淫乱
+	PRINTFORML 大きく開いた膣口の中はたっぷりと粘液で濡れたひだをひくついており、まるでこちらを誘う様な仕草をしている……
+ELSEIF ABL:露出癖 >= 5
+	PRINTFORML 広がりきった下の口からは愛液がとめどなく溢れ出ている……
+ENDIF
+IF (TALENT:MASTER:恥じらい || TALENT:MASTER:オトコ) && CFLAG:好感度 < 20
+	PRINTL 
+	PRINTFORML 自分で命令を出しておきながらいざ%CALLNAME:TARGET%の痴態を目の当たりにした%CALLNAME:PLAYER%は
+	PRINTL 微かな罪悪感と羞恥心を煽られ、朱に染まった顔を僅かにそむけてしまった
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_631, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+;ABL:Ｖ感覚
+IF ABL:Ｖ感覚
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:Ｖ感覚
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:奉仕精神
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+;ABL:精液中毒
+IF ABL:精液中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:精液中毒
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:31%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;PALAM:潤滑（の不足）
+IF PALAM:潤滑 < PALAMLV:3
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 潤滑不足({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 2
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+ENDIF
+;男嫌い
+IF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
+;女嫌い
+ELSEIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
+ENDIF
+;快感の否定
+IF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+;処女
+IF TALENT:処女 == 1
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 20
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:0%({LOCAL:99})
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %EXPNAME:0%不足({LOCAL:99})
+ENDIF
+;ふたなり
+IF TALENT:ふたなり
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 4
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:121%({LOCAL:99})
+ENDIF
+
+;調教者がふたなり
+IF TALENT:PLAYER:ふたなり
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 4
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:PLAYER%が%TALENTNAME:121%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 6
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+TFLAG:241 = 18

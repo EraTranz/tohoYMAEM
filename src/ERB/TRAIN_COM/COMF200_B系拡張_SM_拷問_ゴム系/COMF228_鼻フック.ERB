@@ -1,0 +1,374 @@
+﻿;=============================================================================
+;鼻フック
+;=============================================================================
+;	勝手に使った変数
+;		TEQUIP:鼻装着器具 = 鼻フック (1:鼻フック装着, 2:触手鼻穴挿入)
+;								……として使えるといいな、と。
+;
+;……え？　首輪もなしにどうやって鼻フックだけで固定してるのかって？
+;それはきっと魔法の力ですよ。だから、首輪が既に野外プレイ用として
+;使われてるから仕方なかったとかそんなことは関係ないのですよ。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE228
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:228 > 0
+	RETURN 0
+;触手鼻穴挿入中だとダメ
+SIF TEQUIP:鼻装着器具 == 2
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:鼻装着器具 == 1
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:鼻フック == 0
+	RETURN 0
+;助手調教の場合、技巧3以上じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 228) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM228
+PRINTL 鼻フック
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 228
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 鼻フック
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 80
+	DOWNBASE:1 += 150
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 100
+ELSE
+	DOWNBASE:0 += 40
+	DOWNBASE:1 += 50
+ENDIF
+
+SOURCE:露出 = 150
+SOURCE:恭順追加 = 80
+SOURCE:痛み = 80
+SOURCE:屈従 = 250
+SOURCE:支配 = 100
+SOURCE:逸脱 = 400
+SOURCE:反感追加 = 50
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 50
+	LOCAL:2 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 150
+	LOCAL:2 = 100
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 300
+	LOCAL:2 = 150
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 500
+	LOCAL:2 = 200
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 750
+	LOCAL:2 = 300
+ELSE
+	LOCAL:1 = 1000
+	LOCAL:2 = 450
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 0.70
+ELSEIF ABL:露出癖 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.80
+ELSEIF ABL:露出癖 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 0.90
+ELSEIF ABL:露出癖 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:露出癖 == 4
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.70
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.00
+ELSE
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.10
+ENDIF
+
+;TALENT:感情乏しいをみる
+IF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+;TALENT:抑圧をみる
+IF TALENT:抑圧
+	TIMES LOCAL:1 , 0.20
+	TIMES LOCAL:2 , 0.10
+ENDIF
+;TALENT:解放をみる
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.10
+;TALENT:恥じらいをみる
+IF TALENT:恥じらい
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 0.80
+;TALENT:恥薄いをみる
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ENDIF
+;TALENT:倒錯的をみる
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.40
+ENDIF
+;TALENT:狂気をみる
+IF TALENT:狂気
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 0.50
+ENDIF
+;TALENT:精神崩壊をみる
+IF TALENT:精神崩壊
+	TIMES LOCAL:1 , 0.10
+	TIMES LOCAL:2 , 0.10
+ENDIF
+;TALENT:ドＭをみる
+IF TALENT:ドＭ
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 1.80
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:恭順追加 += LOCAL:1
+SOURCE:屈従 += LOCAL:1
+SOURCE:支配 += LOCAL:1 / 4
+SOURCE:中毒充足 += LOCAL:2
+SOURCE:逸脱 += LOCAL:1
+SOURCE:反感追加 += LOCAL:1 / 3
+
+TCVAR:緊縛経験 += 2
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 1
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+
+;鼻フックの着脱
+IF TEQUIP:鼻装着器具
+	TEQUIP:鼻装着器具 = 0
+ELSE
+	TEQUIP:鼻装着器具 = 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;鼻フック装備中
+;-------------------------------------------------
+@EQUIP_COM228
+PRINTL ＜鼻フック装備中＞
+
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 140
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 40
+	DOWNBASE:1 += 90
+ELSE
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 40
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL = 30
+	LOCAL:1 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL = 80
+	LOCAL:1 = 60
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL = 150
+	LOCAL:1 = 100
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL = 300
+	LOCAL:1 = 150
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL = 500
+	LOCAL:1 = 250
+ELSE
+	LOCAL = 750
+	LOCAL:1 = 400
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:露出癖 == 1
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 0.70
+ELSEIF ABL:露出癖 == 2
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:露出癖 == 3
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:露出癖 == 4
+	TIMES LOCAL , 1.30
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 0.70
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.90
+ELSE
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.00
+ENDIF
+
+;TALENT:感情乏しいをみる
+IF TALENT:感情乏しい
+	TIMES LOCAL , 0.50
+	TIMES LOCAL:1 , 0.50
+ENDIF
+;TALENT:抑圧をみる
+IF TALENT:抑圧
+	TIMES LOCAL , 0.20
+	TIMES LOCAL:1 , 0.10
+ENDIF
+;TALENT:解放をみる
+SIF TALENT:解放
+	TIMES LOCAL , 1.10
+;TALENT:恥じらいをみる
+IF TALENT:恥じらい
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 0.70
+;TALENT:恥薄いをみる
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 0.70
+ENDIF
+;TALENT:倒錯的をみる
+IF TALENT:倒錯的
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;TALENT:狂気をみる
+IF TALENT:狂気
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 0.40
+ENDIF
+;TALENT:精神崩壊をみる
+IF TALENT:精神崩壊
+	TIMES LOCAL , 0.10
+	TIMES LOCAL:1 , 0.10
+ENDIF
+;TALENT:ドＭをみる
+IF TALENT:ドＭ
+	TIMES LOCAL , 2.00
+	TIMES LOCAL:1 , 1.50
+ENDIF
+
+SOURCE:露出 += LOCAL
+SOURCE:恭順追加 += LOCAL
+SOURCE:屈従 += LOCAL
+SOURCE:支配 += LOCAL / 5
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:逸脱 += LOCAL
+SOURCE:反感追加 += LOCAL / 4
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+TCVAR:緊縛経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_228
+PRINTFORM %CALLNAME:PLAYER%は、
+IF TEQUIP:鼻装着器具
+	PRINTFORML %CALLNAME:TARGET%から鼻フックを取ってやった…
+ELSE
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:TARGET%に鼻フックを嵌めさせた…
+	ELSE
+		;倒錯的で恐怖刻印が1以下で反発刻印がない場合
+		IF TALENT:倒錯的 && MARK:恐怖刻印 < 2 && MARK:反発刻印 < 1
+			PRINTFORML %CALLNAME:TARGET%に鼻フックを嵌めさせた。
+			PRINTFORML %CALLNAME:TARGET%は鼻フックによる刺激を受けて、快感を感じているようだ…
+		;反抗的か抵抗を持ち陥落してない場合
+		ELSEIF (TALENT:反抗的 || TALENT:抵抗) && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML 激しく嫌がる%CALLNAME:TARGET%に強引に鼻フックを嵌めさせた…
+		;臆病持ちか恐怖刻印2以上で気丈と感情乏しいを持たず、陥落していない場合
+		ELSEIF (TALENT:臆病 || MARK:恐怖刻印 >= 2) && TALENT:気丈 == 0 && TALENT:感情乏しい == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML 恐怖に怯える%CALLNAME:TARGET%に鼻フックを丁寧に嵌めてあげた…
+		;プライド高いか神霊でなおかつ、屈服刻印と恥辱刻印が1以下で、陥落していない場合
+		ELSEIF (TALENT:プライド高い || TALENT:神霊) && MARK:屈服刻印 < 2 && MARK:恥辱刻印 < 2 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML %CALLNAME:TARGET%に鼻フックを嵌めさせた。
+			PRINTFORML %CALLNAME:TARGET%は屈辱に震えながらも、そのプライドだけは折れてはいないように見えた…
+		;解放か快感に素直か春の人で痛みに弱いがなく、反発刻印がない場合
+		ELSEIF (TALENT:解放 || TALENT:快感に素直 || TALENT:春の人) && TALENT:痛みに弱い == 0 && MARK:反発刻印 <= 0
+			PRINTFORML なんだか楽しそうな%CALLNAME:TARGET%に鼻フックを丁寧に嵌めてあげた…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%に鼻フックを嵌めさせた…
+		ENDIF
+	ENDIF
+ENDIF

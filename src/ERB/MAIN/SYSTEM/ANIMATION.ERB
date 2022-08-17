@@ -1,0 +1,66 @@
+﻿;=============================================================================
+;簡易アニメーション表示関連
+;=============================================================================
+;--------------------------------------------------
+;ローディング
+;--------------------------------------------------
+@ANIMATION_LOAD_SHORT, LOCALS:1
+LOCALS = 
+LOCAL:1 = 0
+
+	REDRAW 0
+	FOR LOCAL, 0, 26
+		CLEARLINE 1
+		SETCOLOR 0x444444 + (65536*16*LOCAL + 256*16*LOCAL + 16*LOCAL)
+		SIF LOCAL > 11
+			SETCOLOR 0xFFFFFF - (65536*16*(LOCAL-11) + 256*16*(LOCAL-11) + 16*(LOCAL-11))
+		PRINTFORM %LOCALS:1%
+		SIF LOCAL:1 == 4
+			LOCAL:1 = 0
+			LOCALS = %"."*(LOCAL:1)%
+		SETCOLOR 0x888888 + (65536*10*(LOCAL:1) + 256*20*(LOCAL:1) + 30*(LOCAL:1))
+		PRINTFORM %LOCALS%
+			
+		IF LOCAL % 3 == 2
+			TWAIT 50, 1
+			LOCAL:1 += 1
+		ELSE
+			TWAIT 50, 1
+		ENDIF
+	NEXT
+	REDRAW 1
+RESETCOLOR
+CLEARLINE 1
+PRINTL 
+
+
+@ANIMATION_LOAD_MIDDLE, LOCALS:1
+LOCALS = 
+LOCAL:1 = 0
+
+	REDRAW 0
+	FOR LOCAL, 0, 32
+		CLEARLINE 1
+		SETCOLOR 0x444444 + (65536*16*LOCAL + 256*16*LOCAL + 16*LOCAL)
+		SIF LOCAL > 11 && LOCAL < 26
+			SETCOLOR 0xFFFFFF - (65536*16*(LOCAL-11) + 256*16*(LOCAL-11) + 16*(LOCAL-11))
+		SIF LOCAL > 25
+			SETCOLOR 0x111111 + (65536*16*(LOCAL-25) + 256*16*(LOCAL-25) + 16*(LOCAL-25))
+		PRINTFORM %LOCALS:1%
+		SIF LOCAL:1 == 4
+			LOCAL:1 = 0
+			LOCALS = %"."*(LOCAL:1)%
+		SETCOLOR 0x888888 + (65536*10*(LOCAL:1) + 256*20*(LOCAL:1) + 30*(LOCAL:1))
+		PRINTFORM %LOCALS%
+			
+		IF LOCAL % 3 == 2
+			TWAIT 50, 1
+			LOCAL:1 += 1
+		ELSE
+			TWAIT 50, 1
+		ENDIF
+	NEXT
+	REDRAW 1
+RESETCOLOR
+CLEARLINE 1
+PRINTL 

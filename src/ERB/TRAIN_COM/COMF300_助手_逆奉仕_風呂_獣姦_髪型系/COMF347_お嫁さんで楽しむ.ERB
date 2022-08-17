@@ -1,0 +1,213 @@
+﻿;=============================================================================
+;お嫁さんで楽しむ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE347
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:347 > 0
+	RETURN 0
+;オトコだけど嫁ってありだよね？
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;主人でないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン中かウェディングドレス着用中でないとダメ
+SIF TEQUIP:コスチュームプレイ != 1 && TEQUIP:コスチュームプレイ != 19
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 347) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM347
+PRINTL お嫁さんで楽しむ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 347
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = お嫁さんで楽しむ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 30
+
+SOURCE:中毒充足 = 50
+SOURCE:恭順追加 = 120
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:情愛 = 10
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:情愛 = 40
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:情愛 = 80
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:情愛 = 140
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:情愛 = 200
+ELSE
+	SOURCE:情愛 = 200 + (ABL:奉仕精神 * 20)
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:恭順追加 , 0.80
+	SOURCE:液体追加 = 10
+	SOURCE:欲情追加 = 10
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:恭順追加 , 1.00
+	SOURCE:液体追加 = 40
+	SOURCE:欲情追加 = 60
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:情愛 , 1.30
+	TIMES SOURCE:恭順追加 , 1.20
+	SOURCE:液体追加 = 80
+	SOURCE:欲情追加 = 120
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:恭順追加 , 1.40
+	SOURCE:液体追加 = 140
+	SOURCE:欲情追加 = 240
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:情愛 , 1.70
+	TIMES SOURCE:恭順追加 , 1.50
+	SOURCE:液体追加 = 220
+	SOURCE:欲情追加 = 360
+ELSE
+	SOURCE:情愛 = SOURCE:情愛 * (ABL:マゾっ気 * 15 + 125) / 100
+	SOURCE:恭順追加 = SOURCE:恭順追加 * (ABL:マゾっ気 * 10 + 120) / 100
+	SOURCE:液体追加 = 100 + (ABL:マゾっ気 * 20)
+	SOURCE:欲情追加 = 150 + (ABL:マゾっ気 * 35)
+ENDIF
+
+;[傀儡]と[精神崩壊]と[壊造人格]を持っておらず、[恋慕]持ちだと愛情経験が加算
+SIF TALENT:恋慕 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0
+	TCVAR:愛情経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_347
+PRINTFORM %CALLNAME:PLAYER%は
+IF RAND:5 == 0
+	PRINTFORML %CALLNAME:TARGET%をお姫様だっこしてあげた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の首に手をまわし、じっと見上げてくる…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしそうにしながらも、黙って%CALLNAME:PLAYER%に抱かれていた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は暴れこそしないが、体を硬直させている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%が激しく暴れたため、危うく落としてしまうところだった…
+	ENDIF
+ELSEIF RAND:4 == 0
+	IF TEQUIP:コスチュームプレイ == 1
+		PRINTFORML エプロンの紐を引っ張った…
+		IF TALENT:恋慕 && RAND:3 >= 1
+			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の悪戯に、いやんいやんと身をくねらせている…
+		ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+			PRINTFORML %CALLNAME:TARGET%はそっと離れた。どうやらエプロンを脱ぐのが嫌なようだ…
+		ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+			PRINTFORML %CALLNAME:TARGET%がエプロンを脱ごうとしたので、%CALLNAME:PLAYER%は悪戯を断念した…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%がそのままエプロンを脱いでしまったので、つけ直す羽目になった…
+		ENDIF
+	ELSE
+		PRINTFORML ドレスの袖を引っ張った…
+		IF TALENT:恋慕 && RAND:3 >= 1
+			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の悪戯に、いやんいやんと身をくねらせている…
+		ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+			PRINTFORML %CALLNAME:TARGET%はそっと離れた。どうやらドレスを引っ張られるのが嫌なようだ…
+		ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+			PRINTFORML %CALLNAME:TARGET%がドレスを脱ごうとしたので、%CALLNAME:PLAYER%は悪戯を断念した…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%がそのままドレスを脱いでしまったので、つけ直す羽目になった…
+		ENDIF
+	ENDIF
+ELSEIF RAND:3 == 0
+	PRINTFORML %CALLNAME:TARGET%をぎゅっと抱きしめた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%もしっかりと%CALLNAME:PLAYER%の体を抱きしめた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしそうにしながらも、そっと%CALLNAME:PLAYER%の頭を撫でた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は弱々しいながらも抵抗している…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は腕を突っ張っている…
+	ENDIF
+ELSEIF RAND:2 == 0 && TEQUIP:口装着器具 == 0
+	PRINTFORML %CALLNAME:TARGET%の名前を呼んだ…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は満面の笑みで、返事の代わりに%CALLNAME:PLAYER%の名前を呼んだ…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%はわずかに顔を紅潮させ、しっかりと返事をしてきた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は消え入りそうなほど小声で返事をした…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を無視した…
+	ENDIF
+ELSE
+	IF TEQUIP:コスチュームプレイ == 1
+		PRINTFORML %CALLNAME:TARGET%の新妻姿をじっと見つめた…
+		IF TALENT:恋慕 && RAND:3 >= 1
+			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を挑発するようにポーズをとっている…
+		ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+			PRINTFORML %CALLNAME:TARGET%は恥ずかしそうに%CALLNAME:PLAYER%を見つめている…
+		ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+			PRINTFORML %CALLNAME:TARGET%は部屋の隅っこに逃げてしまった…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%がエプロンを脱ごうとしたので、%CALLNAME:PLAYER%はあわてて押さえつけた…
+		ENDIF
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の新妻姿をじっと見つめた…
+		IF TALENT:恋慕 && RAND:3 >= 1
+			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を挑発するようにポーズをとっている…
+		ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+			PRINTFORML %CALLNAME:TARGET%は恥ずかしそうに%CALLNAME:PLAYER%を見つめている…
+		ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+			PRINTFORML %CALLNAME:TARGET%は部屋の隅っこに逃げてしまった…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%がドレスを脱ごうとしたので、%CALLNAME:PLAYER%はあわてて押さえつけた…
+		ENDIF
+	ENDIF
+ENDIF

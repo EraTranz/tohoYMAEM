@@ -1,0 +1,188 @@
+﻿;=============================================================================
+;調教中でのキャラの情報
+;=============================================================================
+;カスタムメニュー・能力表示で表示される情報をここに
+;-------------------------------------------------
+;調教中でのキャラの情報表示処理(メインページ)
+;-------------------------------------------------
+@SHOW_INFO_TRAIN_MAIN, ARG
+LOCAL = 0
+LOCAL:1 = (ARG == TARGET) ? 2 # 0
+LOCAL:2 = (ARG != TARGET && ASSI >= 0) ? 1 # 0
+
+$PRINT_LIST
+CALL NEW_DRAWLINE
+PRINTFORML %SHOW_CALLNAME(ARG)%\@(NO:ARG >= 3000 && NO:ARG < 4000 && CALLNAME:ARG != NAME:ARG) ? (%ITEMNAME:(NO:ARG)%) # \@
+CALLFORM SHOW_INFO_TRAIN_{LOCAL}, ARG
+CALL NEW_DRAWLINE
+IF LOCAL:2 == 1
+	PRINTFORMLC [1001]\@(ARG == MASTER) ? 助手 # 主人 \@を表示
+ELSE
+	PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+ENDIF
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL:2 == 1
+	ARG = (ARG == MASTER) ? ASSI # MASTER
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+;=============================================================================
+;調教中でのキャラの情報表示処理(0ページ目)
+;=============================================================================
+@SHOW_INFO_TRAIN_0, ARG
+;
+CALL SHOW_INFO_PAGE_1, ARG
+
+IF ARG != MASTER
+	IF FLAG:12 & 2
+		CALL NEW_PRINT_JUEL, ARG
+	ELSE
+		CALL SHOW_INFO_JUEL, ARG
+	ENDIF
+	SIF FLAG:500 > 0 && FLAG:12 & 8
+		CALL PRINT_COLLECTION_YN, ARG
+ENDIF
+IF ARG == TARGET
+	IF (EX:0 || EX:1 || EX:2 || EX:3 || EX:10 || EX:11 || EX:12 || EX:13)
+		SIF FLAG:12 & 2
+			PRINTL □ 絶頂
+		CALL SHOW_ORGASM
+		CALL NEW_DRAWLINE
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;絶頂回数表示
+;--------------------------------------------------
+@SHOW_ORGASM
+FOR LOCAL, 0, 14
+	SIF STRLENS(EXNAME:LOCAL) && EX:LOCAL
+			PRINTFORM %EXNAME:LOCAL, 6%:{EX:LOCAL}回　
+NEXT
+PRINTL 
+IF TFLAG:180 + TFLAG:181 + TFLAG:182 + TFLAG:183
+	PRINTL 
+	PRINTL 前回の絶頂回数
+	REPEAT 4
+		SIF TFLAG:(180 + COUNT) > 0
+			PRINTFORM %EXNAME:COUNT%:{TFLAG:(180+COUNT)}回　
+	REND
+	PRINTL 
+ENDIF
+
+;=============================================================================
+;調教中でのキャラの情報表示処理(1ページ目)
+;=============================================================================
+@SHOW_INFO_TRAIN_1, ARG
+;現在の宝珠取得予定数表示処理(奴隷専用情報)
+IF ARG == TARGET
+	CALL SHOW_WILLGET_JUEL
+ENDIF
+
+;--------------------------------------------------
+;現在の宝珠取得予定数表示処理(奴隷専用情報)
+;--------------------------------------------------
+;eraSQの同機能を移植
+@SHOW_WILLGET_JUEL
+CALL NEW_DRAWLINE
+PRINTL 現在の宝珠取得予定数
+PRINTL 
+PRINTL 対象パラメータ             現在の宝珠  取得予定     調教後宝珠
+VARSET LOCAL , 0
+REPEAT 33
+	;パラメータレベルによる取得数
+	IF COUNT == 20 || COUNT == 21 || COUNT == 22
+		LOCAL:100 += CALC_JUEL(COUNT)
+	ELSE
+		LOCAL:COUNT = CALC_JUEL(COUNT)
+	ENDIF
+REND
+	
+LOCAL:101 = 0
+VARSET LOCALS,""
+SPLIT "0,1,2,3,11,12,13,14,15,16,17,30,31,32,100",",",LOCALS
+REPEAT 15
+	LOCAL:101 = TOINT(LOCALS:COUNT)
+
+	;注意、実際にJUELの数値そのものは動かさない
+	IF JUEL:(LOCAL:101) >= 9999999
+		LOCAL:(LOCAL:101) = 0
+	ELSEIF (JUEL:(LOCAL:101) + LOCAL:(LOCAL:101)) >= 9999999
+		LOCAL:(LOCAL:101) = MAX(9999999 - JUEL:(LOCAL:101), 0)
+	ENDIF
+
+	;パラメータ名・桁数を揃えつつパラメータ、現在の宝珠＋予定＝合計を表示
+	LOCAL:102 = (LOCAL:101 == 100) ? PALAM:反感 + PALAM:不快 + PALAM:抑鬱 # PALAM:(LOCAL:101)
+	LOCAL:103 = JUEL:(LOCAL:101)+LOCAL:(LOCAL:101)
+	PRINTFORML %PALAMNAME:(LOCAL:101)% {LOCAL:102, 10} %PALAMNAME:(LOCAL:101)%の珠×({JUEL:(LOCAL:101), 10}＋{LOCAL:(LOCAL:101), 10})＝{LOCAL:103, 10}
+REND
+PRINTL 
+PRINTL ※否定の珠は欲情・恭順・屈服の珠を優先的に相殺します。
+PRINTL ※否定の珠が残った場合、恥情・苦痛・恐怖の珠を相殺します。
+
+;=============================================================================
+;調教中でのキャラの情報表示処理(2ページ目)
+;=============================================================================
+@SHOW_INFO_TRAIN_2, ARG
+;その他の細かい情報表示処理(奴隷専用情報)
+IF ARG == TARGET
+	CALL SHOW_OTHER_STATUS
+ENDIF
+
+;--------------------------------------------------
+;その他の細かい情報表示処理(奴隷専用情報)
+;--------------------------------------------------
+@SHOW_OTHER_STATUS
+CALL NEW_DRAWLINE
+PRINTFORML この調教中における%CALLNAME:TARGET%の細かい状況を表示します
+PRINTL 
+SIF TFLAG:101
+	PRINTFORML この調教中に%CALLNAME:TARGET%の処女を頂きました。
+SIF TFLAG:102
+	PRINTFORML 挿しっぱなしのまま次の調教が実行される可能性があります。
+SIF TFLAG:103
+	PRINTFORML この調教中に%CALLNAME:TARGET%の膣内に主人\@(ASSI >= 0) ? か助手 # \@が射精しました。
+SIF TFLAG:140 & 1
+	PRINTFORML この調教中にはもう「何もしない」は実行できません。
+SIF TFLAG:140 & 2
+	PRINTFORML 
+SIF TFLAG:140 & 4
+	PRINTFORML この調教中にはもう「吸血」は実行できません。
+SIF TFLAG:140 & 8
+	PRINTFORML この調教中にはもう「尻子玉抜き」は実行できません。
+SIF TFLAG:140 & 16
+	PRINTFORML この調教中にはもう「時間停止」は実行できません。
+SIF TFLAG:140 & 32
+	PRINTFORML 
+SIF TFLAG:140 & 64
+	PRINTFORML この調教中にはもう「触手吸血」は実行できません。
+SIF TFLAG:141
+	PRINTFORML この調教中の人形愛撫使用回数：{TFLAG:141}回
+SIF TFLAG:142
+	PRINTFORML 現在の蜘蛛の糸の強度(0になると破れます)：{TFLAG:142}
+SIF TFLAG:143
+	PRINTFORML この調教中のふぉーゅーっ！・フィーバー使用回数：{TFLAG:143}回
+SIF TFLAG:166
+	PRINTFORML %CALLNAME:TARGET%の膣を鰻が堪能しています。
+SIF TFLAG:167
+	PRINTFORML %CALLNAME:TARGET%のあなうを鰻が堪能しています。
+SIF TFLAG:168
+	PRINTFORML %CALLNAME:TARGET%の尿道を鰻が堪能しています。
+SIF TFLAG:171
+	PRINTFORML %CALLNAME:TARGET%のこの調教中の氷柱挿入回数：{TFLAG:171}回

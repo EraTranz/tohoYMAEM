@@ -1,0 +1,416 @@
+﻿;=============================================================================
+;両穴フィスト
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE233
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:233 > 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教対象のＶ拡張経験もしくはＡ拡張経験がない場合には、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (EXP:Ｖ拡張経験 <= 1 || EXP:Ａ拡張経験 <= 1)
+	RETURN 0
+;Ｖ経験LVが1未満で、調教者がオトコではない場合
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ｖ経験 < EXPLV:1 && TALENT:PLAYER:オトコ == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;小柄体型なら従順が4以上かつマゾっ気が4以上かつ拡張経験10以上じゃないと実行できない
+IF TALENT:小柄体型
+	SIF ABL:従順 < 4 || ABL:マゾっ気 < 4 || EXP:Ｖ拡張経験 < 10 || EXP:Ａ拡張経験 < 10
+		RETURN 0
+ENDIF
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 1) == 0
+	RETURN 0
+;一定のＶ・Ａ経験が必要([巨躯]の場合は軽減)
+LOCAL = (TALENT:巨躯) ? 150 # 300
+SIF EXP:Ｖ経験 < LOCAL || EXP:Ａ経験 < LOCAL
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 233) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM233
+PRINTL 両穴フィスト
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 233
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 両穴フィスト
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 800
+DOWNBASE:1 += 500
+
+SOURCE:痛み = 1800
+SOURCE:液体追加 = 2800
+SOURCE:欲情追加 = 1500
+SOURCE:露出 = 2500
+SOURCE:屈従 = 2500
+SOURCE:逸脱 = 2500
+SOURCE:恭順追加 = 2500
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 40
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 150
+	SOURCE:情愛 = 150
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 400
+	SOURCE:情愛 = 250
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 1000
+	SOURCE:情愛 = 350
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1700
+	SOURCE:情愛 = 600
+ELSE
+	SOURCE:快Ｖ = 2200
+	SOURCE:情愛 = 850
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 10
+	SOURCE:情愛 += 10
+	SOURCE:屈従 += 100
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 30
+	SOURCE:情愛 += 30
+	SOURCE:屈従 += 700
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 500
+	SOURCE:情愛 += 100
+	SOURCE:屈従 += 1500
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 1000
+	SOURCE:情愛 += 200
+	SOURCE:屈従 += 3000
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1700
+	SOURCE:情愛 += 450
+	SOURCE:屈従 += 5000
+ELSE
+	SOURCE:快Ａ = 2200
+	SOURCE:情愛 += 750
+	SOURCE:屈従 += 8000
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み += 20000
+	SOURCE:欲情追加 += 2000
+	SIF TALENT:PLAYER:オトコ == 0
+		TCVAR:異常経験 += 1
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み += 300
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み += 50
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:痛み += 10
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.40
+	SOURCE:痛み += 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	SOURCE:痛み += 0
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み += 5000
+	SOURCE:欲情追加 += 1000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.30
+	SOURCE:痛み += 2000
+	SOURCE:欲情追加 += 1000
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み += 2000
+	SOURCE:欲情追加 += 1000
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 2000
+	SOURCE:欲情追加 += 1000
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 1000
+	SOURCE:欲情追加 += 200
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	SOURCE:痛み += 600
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	TIMES SOURCE:快Ａ , 0.20
+	SOURCE:欲情追加 += 1000
+	SOURCE:痛み += 1900
+	TIMES SOURCE:痛み , 9.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:欲情追加 += 800
+	SOURCE:痛み += 1250
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:快Ａ , 0.60
+	SOURCE:欲情追加 += 600
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 1.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:欲情追加 += 200
+	SOURCE:痛み += 200
+	TIMES SOURCE:痛み , 0.30
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:屈従 , 1.40
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:快Ａ , 0.70
+	TIMES SOURCE:情愛 , 0.60
+	TIMES SOURCE:欲情追加, 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:快Ａ , 0.90
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:欲情追加, 1.20
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:欲情追加, 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:快Ａ , 1.10
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:欲情追加, 0.60
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:欲情追加, 0.30
+ELSE
+	TIMES SOURCE:快Ｖ , 1.70
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:欲情追加, 0.10
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 3.00
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:欲情追加 , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;貞操観念
+IF TALENT:貞操観念
+	IF TALENT:処女 == 1
+		TIMES SOURCE:情愛 , 0.60
+		TIMES SOURCE:欲情追加, 5.00
+	ELSE
+		TIMES SOURCE:情愛 , 0.60
+		TIMES SOURCE:欲情追加, 1.80
+	ENDIF
+;貞操無頓着
+ELSEIF TALENT:貞操無頓着
+	IF TALENT:処女 == 1
+		TIMES SOURCE:欲情追加, 0.50
+	ELSE
+		TIMES SOURCE:欲情追加, 0.30
+	ENDIF
+ENDIF
+
+IF EXP:Ｖ拡張経験 == 0 && EXP:Ａ拡張経験 == 0
+	TCVAR:異常経験 += 2
+ELSEIF EXP:Ｖ拡張経験 == 0 || EXP:Ａ拡張経験 == 0
+	TCVAR:異常経験 += 1
+ENDIF
+TCVAR:Ｖ経験 += 25
+TCVAR:Ａ経験 += 25
+TCVAR:Ｖ拡張経験 += 2
+TCVAR:Ａ拡張経験 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+;LOCAL   = 対象のＶ感覚とＡ感覚の高い方
+;LOCAL:1 = 対象のＶ感覚とＡ感覚の合計Lv
+@SYSTXT_TRAIN_MESSAGE_F_COM_233
+PRINTFORML %CALLNAME:TARGET%の膣と肛門は%CALLNAME:PLAYER%の拳でかき回された
+
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	SELECTCASE ABL:Ｖ感覚
+		CASE 0, 1
+			PRINTFORML %CALLNAME:TARGET%の膣は痙攣しているかのようにヒクついている
+		CASE 2
+			PRINTFORML %CALLNAME:TARGET%の膣はぽっかり口を開いている
+		CASE 3
+			PRINTFORML %CALLNAME:TARGET%の膣は拡がったままなかなか戻らない
+		CASE 4
+			PRINTFORML %CALLNAME:TARGET%の性器からは肉ビラがはみ出し、ぽっかり開いた膣口のおくには子宮口が見えている
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%の膣は妖しく開ききってまるで%CALLNAME:PLAYER%を誘い込むかのような姿を見せている
+	ENDSELECT
+	PRINT 一方、
+	SELECTCASE ABL:Ａ感覚
+		CASE 0, 1
+			PRINTFORML 肛門\@(ABL:Ｖ感覚 > 1) ? は # も\@痙攣しているかのようにヒクついている…
+		CASE 2
+			PRINTFORML 肛門\@(ABL:Ｖ感覚 != 2) ? は # も\@ぽっかり口を開いている…
+		CASE 3
+			PRINTFORML 肛門\@(ABL:Ｖ感覚 != 3) ? は # も\@拡がったままなかなか戻らない…
+		CASE 4
+			PRINTFORML 肛門から\@(ABL:Ｖ感覚 != 4) ? は # も\@肉ビラがはみ出し、腸の中が丸見えになっている…
+		CASEELSE
+			PRINTFORML 肛門\@(ABL:Ｖ感覚 < 5) ? は # も\@開ききってヒクヒクと快感の余韻に浸っている…
+	ENDSELECT
+ELSE
+	LOCAL = MAX(ABL:Ｖ感覚 , ABL:Ａ感覚)
+	LOCAL:1 = ABL:Ｖ感覚 + ABL:Ａ感覚
+	IF LOCAL >= 5 && LOCAL:1 >= 10
+		PRINTFORML %CALLNAME:TARGET%は拳で２箇所から体内を蹂躙されたことで、激しく感じさせられてしまった
+	ELSEIF LOCAL > 4
+		PRINTFORML %CALLNAME:TARGET%は激しく息を乱しながらも、気持ちよさも確かに感じさせられていた
+	ELSEIF LOCAL > 2
+		PRINTFORML %CALLNAME:TARGET%は両足を広げ、ぐったりとしていた
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は苦しそうな表情をしていた
+	ENDIF
+	IF LOCAL >= 5 && LOCAL:1 >= 10
+		PRINTFORML %CALLNAME:TARGET%自らの両手の指が、すっかり拡がって中身を曝している、膣口と肛門の周りを撫で回している…
+	ELSE
+		SELECTCASE ABL:Ｖ感覚
+			CASE 0, 1
+				PRINTFORML %CALLNAME:TARGET%の膣は痙攣しているかのようにヒクついている
+			CASE 2
+				PRINTFORML %CALLNAME:TARGET%の膣はぽっかり口を開いている
+			CASE 3
+				PRINTFORML %CALLNAME:TARGET%の膣は拡がったままなかなか戻らない
+			CASE 4
+				PRINTFORML %CALLNAME:TARGET%の性器からは肉ビラがはみ出し、ぽっかり開いた膣口のおくには子宮口が見えている
+			CASEELSE
+				PRINTFORML %CALLNAME:TARGET%の膣は妖しく開ききってまるで%CALLNAME:PLAYER%を誘い込むかのような姿を見せている
+		ENDSELECT
+		PRINT 一方、
+		SELECTCASE ABL:Ａ感覚
+			CASE 0, 1
+				PRINTFORML 肛門\@(ABL:Ｖ感覚 > 1) ? は # も\@痙攣しているかのようにヒクついている…
+			CASE 2
+				PRINTFORML 肛門\@(ABL:Ｖ感覚 != 2) ? は # も\@ぽっかり口を開いている…
+			CASE 3
+				PRINTFORML 肛門\@(ABL:Ｖ感覚 != 3) ? は # も\@拡がったままなかなか戻らない…
+			CASE 4
+				PRINTFORML 肛門から\@(ABL:Ｖ感覚 != 4) ? は # も\@肉ビラがはみ出し、腸の中が丸見えになっている…
+			CASEELSE
+				PRINTFORML 肛門\@(ABL:Ｖ感覚 < 5) ? は # も\@開ききっており、%CALLNAME:TARGET%も指でそこを撫で回して快感の余韻に浸っている…
+		ENDSELECT
+	ENDIF
+ENDIF

@@ -1,0 +1,135 @@
+﻿;=============================================================================
+;触手寄生
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE510
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:510 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;一度も触手寄生をしたことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:24 & 1) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;対象が既に触手に寄生されているとダメ
+SIF TALENT:寄生
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;死亡中は不可
+SIF TALENT:死亡
+	RETURN 0
+;触手強制回復中(口内)はダメ
+SIF TEQUIP:触手強制回復 == 1
+	RETURN 0
+;触手貫通中はダメ
+SIF TEQUIP:Ａ系装着器具 == 3
+	RETURN 0
+;触手口辱中はダメ
+SIF TEQUIP:口装着器具 == 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 510) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM510
+PRINTL 触手寄生
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 510
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手寄生
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 500
+DOWNBASE:1 += 1500
+
+SOURCE:痛み += 500
+SOURCE:中毒充足 = 5000
+SOURCE:不潔 = 10000
+SOURCE:逸脱 = 105000
+SOURCE:反感追加 = 5000
+SOURCE:支配 = 5000
+
+;毒人形、厄神様、蓬莱人は[体内適応力強化]がないと寄生不可
+IF (TALENT:蓬莱人 || NO:TARGET == 1033 || NO:TARGET == 1039) && (FLAG:75 & 8192) == 0
+	SOURCE:反感追加 += 50000
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は触手に【寄生】された
+	SOURCE:痛み += 5000
+	SOURCE:トラウマ += 5000
+	;初体験のとき異常経験+1
+	IF (CFLAG:24 & 1) == 0
+		TCVAR:異常経験 += 1
+		CFLAG:24 |= 1
+	ENDIF
+	TALENT:寄生 = 1
+	CALL CALC_TENTACLE_GAUGE
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_510
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	PRINTFORML %CALLNAME:TARGET%の顔に近づいた触手は、白い触手の欠片を口腔内へと滑り込ませた
+	PRINTFORML 触手の欠片は一気に食道を駆け下り、体の奥へと姿を消した
+	PRINTL 
+	;毒人形、厄神様、蓬莱人は[体内適応力強化]がないと寄生不可
+	IF (TALENT:蓬莱人 || NO:TARGET == 1033 || NO:TARGET == 1039) && (FLAG:75 & 8192) == 0
+		PRINTFORM 触手の欠片は%CALLNAME:TARGET%に寄生しようと試みていたが、
+		IF NO:TARGET == 1033
+			PRINTFORM %CALLNAME:TARGET%が持つ毒に耐え切れなくなったのか、体内で溶解してしまったようだ…
+		ELSEIF NO:TARGET == 1039
+			PRINTFORML %CALLNAME:TARGET%が集めた厄によって、寄生する環境を整えることはできなかったようだ…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%の体の驚異の再生能力によって阻まれていてる…
+		ENDIF
+		PRINTFORML どうやら今の状態で%CALLNAME:TARGET%に触手を寄生させることは絶望的かもしれない……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は無意識に欠片を吐き出そうと咳き込んだが、体内の深奥に入り込んで出る様子は無い
+		PRINTFORML どうやら触手の欠片らしき物は%CALLNAME:TARGET%に寄生することに成功したようだ……
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の顔に近づいた触手は一瞬の隙を突き、白い触手の一部を口腔内へと滑り込ませた
+	PRINTFORML %CALLNAME:TARGET%が抵抗する間もなく、触手の欠片は一気に食道を駆け下り、体の奥へと姿を消した
+	PRINTL 
+	;毒人形、厄神様、蓬莱人は[体内適応力強化]がないと寄生不可
+	IF (TALENT:蓬莱人 || NO:TARGET == 1033 || NO:TARGET == 1039) && (FLAG:75 & 8192) == 0
+		PRINTFORM 触手の欠片は%CALLNAME:TARGET%に寄生しようと試みていたが、
+		IF NO:TARGET == 1033
+			PRINTFORM %CALLNAME:TARGET%が持つ毒に耐え切れなくなったのか、体内で溶解してしまったようだ…
+		ELSEIF NO:TARGET == 1039
+			PRINTFORML %CALLNAME:TARGET%が集めた厄によって、寄生する環境を整えることはできなかったようだ…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%の体の驚異の再生能力によって阻まれていてる…
+		ENDIF
+		PRINTFORML どうやら今の状態で%CALLNAME:TARGET%に触手を寄生させることは絶望的かもしれない……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は得たいの知れない物体を飲み込んでしまったことに恐怖を感じているようだ…
+		PRINTFORML %CALLNAME:TARGET%は青ざめた顔で必死に飲み込んだ物を吐き出そうと試みるが、努力の甲斐もむなしく触手の欠片らしき物は%CALLNAME:TARGET%に寄生することに成功したようだ……
+	ENDIF
+ENDIF

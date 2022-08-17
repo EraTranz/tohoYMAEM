@@ -1,0 +1,360 @@
+﻿;=============================================================================
+;三角木馬
+;=============================================================================
+;eraDDSのものをベースに作成
+;技師パッチの三角木馬に『⊿ホース』や『トロいの木馬』って名前を付けるのもありか?
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE242
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:242 > 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;三角木馬を購入していないとダメ
+SIF (FLAG:73 & 2) == 0
+	RETURN 0
+;下馬はいつでも可能
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 1
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;体力が1000未満では装着不可能
+SIF BASE:体力 < 1000 && !(FLAG:16 & 32)
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 1) == 0
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;浣腸中は原則不可
+SIF TEQUIP:Ａ系装着器具 == 7 && TALENT:PLAYER:狂気 == 0 && TALENT:PLAYER:傀儡 == 0 && TALENT:PLAYER:壊造人格 == 0 && TALENT:PLAYER:ドＳ == 0 && ABL:PLAYER:サドっ気 < 3
+	RETURN 0
+;氷柱挿入中は不可
+SIF TEQUIP:氷柱
+	RETURN 0
+;緊縛中じゃないとダメ
+SIF TEQUIP:緊縛関連 == 0
+	RETURN 0
+;蜘蛛の巣にかけているときは移動できない
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;野外調教中はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 242) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM242
+PRINTL 三角木馬
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 242
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 三角木馬
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:三角木馬乗馬中
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 80
+	TEQUIP:三角木馬乗馬中 = 0
+	RETURN 1
+ENDIF
+
+;生娘なら処女を失う
+SIF TALENT:処女 == 1
+	TFLAG:1 = 1
+
+DOWNBASE:0 += 70
+DOWNBASE:1 += 100
+
+SOURCE:逸脱 = 3000
+SOURCE:反感追加 = 1000
+
+LOCAL:1 = 200
+
+;ABL:マゾっ気をみる
+;オトコの場合,痛み倍増
+IF TALENT:オトコ
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL:1 , 3.50
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL:1 , 3.00
+		SOURCE:中毒充足 = 50
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL:1 , 2.50
+		SOURCE:中毒充足 = 150
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL:1 , 2.00
+		SOURCE:中毒充足 = 300
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL:1 , 1.00
+		SOURCE:中毒充足 = 700
+	ELSE
+		TIMES LOCAL:1 , 0.60
+		SOURCE:中毒充足 = 1400
+	ENDIF
+ELSE
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL:1 , 3.00
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL:1 , 2.50
+		SOURCE:中毒充足 = 25
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL:1 , 2.00
+		SOURCE:中毒充足 = 100
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL:1 , 1.00
+		SOURCE:中毒充足 = 200
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL:1 , 0.80
+		SOURCE:中毒充足 = 500
+	ELSE
+		TIMES LOCAL:1 , 0.60
+		SOURCE:中毒充足 = 800
+	ENDIF
+ENDIF
+
+;破瓜
+IF TFLAG:1
+	TIMES LOCAL:1 , 2.00
+
+	;貞操観念
+	IF TALENT:貞操観念
+		TIMES SOURCE:逸脱, 15.00
+		SOURCE:反感追加 += 10000
+	;貞操無頓着
+	ELSEIF TALENT:貞操無頓着
+		TIMES SOURCE:逸脱, 0.50
+		SOURCE:反感追加 += 300
+	ELSE
+		SOURCE:反感追加 += 3000
+	ENDIF
+ENDIF
+
+;臆病(マゾっ気Lv3以上は計算に含まない)
+IF TALENT:臆病 && ABL:マゾっ気 < 3
+	TIMES LOCAL:1 , 2.00
+	TIMES SOURCE:反感追加, 0.50
+ENDIF
+
+;痛みに弱い
+IF TALENT:痛みに弱い
+	IF ABL:マゾっ気 > 2
+		TIMES LOCAL:1 , 1.20
+		TIMES SOURCE:反感追加, 0.30
+	ELSE
+		TIMES LOCAL:1 , 2.00
+		TIMES SOURCE:反感追加, 0.50
+	ENDIF
+;痛みに強い
+ELSEIF TALENT:痛みに強い
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+SOURCE:痛み += LOCAL:1 * 15
+
+IF TALENT:オトコ
+	SOURCE:痛み += 3000
+	SOURCE:液体追加 = LOCAL:1 * 10
+	SOURCE:逸脱 = LOCAL:1 * 10
+ELSE
+	SOURCE:液体追加 = LOCAL:1 * 5
+	SOURCE:逸脱 = LOCAL:1 * 5
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+SOURCE:屈従 += LOCAL:1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 3
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+
+TEQUIP:三角木馬乗馬中 = 1
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;三角木馬乗馬中
+;-------------------------------------------------
+@EQUIP_COM242
+PRINTL ＜木馬乗馬中＞
+DOWNBASE:0 += 50
+DOWNBASE:1 += 80
+
+LOCAL = 50
+;ABL:マゾっ気をみる
+;オトコの場合,痛み倍増
+IF TALENT:オトコ
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL , 4.00
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL , 3.00
+		SOURCE:中毒充足 += 25
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL , 2.50
+		SOURCE:中毒充足 += 75
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL , 2.00
+		SOURCE:中毒充足 += 150
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL , 1.00
+		SOURCE:中毒充足 += 300
+	ELSE
+		TIMES LOCAL , 0.60
+		SOURCE:中毒充足 += 700
+	ENDIF
+ELSE
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL , 3.00
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL , 2.50
+		SOURCE:中毒充足 += 10
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL , 2.00
+		SOURCE:中毒充足 += 50
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL , 1.00
+		SOURCE:中毒充足 += 100
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL , 0.80
+		SOURCE:中毒充足 += 250
+	ELSE
+		TIMES LOCAL , 0.60
+		SOURCE:中毒充足 += 400
+	ENDIF
+ENDIF
+
+;臆病
+SIF TALENT:臆病 && ABL:マゾっ気 <= 2
+	TIMES LOCAL , 2.00
+
+;痛みに弱い
+IF TALENT:痛みに弱い && ABL:マゾっ気 >= 3
+	TIMES LOCAL , 1.20
+ELSEIF TALENT:痛みに弱い
+	TIMES LOCAL , 2.00
+;痛みに強い
+ELSEIF TALENT:痛みに強い
+	TIMES LOCAL , 0.60
+ENDIF
+
+DOWNBASE:0 += LOCAL / 8
+DOWNBASE:1 += LOCAL / 2
+
+SOURCE:痛み += LOCAL * 15
+
+IF TALENT:オトコ
+	SOURCE:痛み += 2000
+	SOURCE:接触 += 3000
+	SOURCE:液体追加 += LOCAL * 10
+	SOURCE:逸脱 += LOCAL * 10
+ELSE
+	SOURCE:接触 += 2000
+	SOURCE:液体追加 += LOCAL * 5
+	SOURCE:逸脱 += LOCAL * 5
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+SOURCE:屈従 += LOCAL
+
+TIMES SOURCE:快Ｃ , 2.00
+SIF TALENT:オトコ == 0
+	TIMES SOURCE:快Ｖ , 2.00
+TIMES SOURCE:快Ａ , 2.00
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_242
+IF TEQUIP:三角木馬乗馬中
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORM 意識を失っている%CALLNAME:TARGET%を木馬から降ろした……
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%を木馬から降ろしてやると、
+		IF ABL:マゾっ気 >= 5 || TALENT:マゾ || TALENT:ドＭ && !TALENT:死亡
+			PRINTL 少し残念そうな顔をしていた……
+		ELSE
+			PRINTL ほっとしたような顔をしていた……
+		ENDIF
+	ENDIF
+ELSE
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORM 意識を失っている%CALLNAME:TARGET%を木馬に乗せると、股の肉に鋭利な角が食い込んだ……
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%を木馬に乗せると、
+		IF ABL:マゾっ気 >= 5 || TALENT:マゾ || TALENT:ドＭ && !TALENT:死亡
+			PRINTL 悲鳴とも嬌声ともとれぬ声をあげていた……
+		ELSE
+			PRINTL 激しい苦痛から声にならない声をあげていた……
+		ENDIF
+	ENDIF
+ENDIF

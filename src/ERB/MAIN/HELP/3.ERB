@@ -1,0 +1,6707 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;東方調教典
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;--------------------------------------------------------------------------------------------
+;このファイル内では調教コマンドについての記述があります。
+;--------------------------------------------------------------------------------------------
+;=============================================================================
+;調教コマンドにおける解説
+;=============================================================================
+;調教コマンドに解説を入れる
+@DICTIONARY_TRAIN_COMMAND
+VARSET LOCAL, 0
+;最大ページ数を示す
+LOCAL:1 = 12
+$TRAIN_HELP
+DRAWLINE
+PRINTL 調教コマンドの説明である。なお、調教対象は以下のコマンドにおいて、
+PRINTL 射精をすると明記されなくても、パラメータにより射精することがある。
+PRINTFORML 説明を知りたいコマンドの番号を入力してほしい。 ＜page.{LOCAL + 1}/{LOCAL:1 + 1}＞
+DRAWLINE
+IF LOCAL >= 0 && LOCAL < LOCAL:1
+	FOR LOCAL:3, 0, 60
+		LOCAL:2 = LOCAL:3 + LOCAL * 60
+		SIF STRLENS(TRAINNAME:(LOCAL:2)) > 0
+			PRINTFORMLC [{LOCAL:2, 3}]%TRAINNAME:(LOCAL:2)%
+	NEXT
+ELSEIF LOCAL == LOCAL:1
+	PRINTLC [800]能力表示(奴隷)
+	PRINTLC [801]能力表示(調教者)
+	PRINTLC [802]能力表示(触手)
+	PRINTLC [810]主人と交代/助手と交代
+	PRINTLC [811]汚れ表示
+	PRINTLC [820]具現化(主人)/具現化解除(主人)
+	PRINTLC [821]具現化(助手)/具現化解除(助手)
+	IF TALENT:MASTER:野菜の錬金術師
+		PRINTLC [830]Exモード化
+		PRINTLC [831]Phモード化
+	ENDIF
+;	PRINTLC [850]お香を焚く
+	PRINTLC [876]表示形式変更
+	PRINTLC [888]コマンド拡張
+	PRINTLC [889]コマンドフィルタ
+	PRINTLC [890]Ｖ系調教フィルタ
+	PRINTLC [891]Ａ系調教フィルタ
+	PRINTLC [892]異常調教フィルタ
+	PRINTLC [893]自動射精箇所変更
+	PRINTLC [900]寄生触手栄養放出
+	PRINTLC [901]巨大/縮小化(奴隷)
+	PRINTLC [902]巨大/縮小化(主人)
+	PRINTLC [903]巨大/縮小化(助手)
+	PRINTLC [911]性別変更(奴隷)
+	PRINTLC [912]性別変更(主人)
+	PRINTLC [913]性別変更(助手)
+	PRINTLC [990]調教メニュー登録
+	PRINTLC [991]調教メニュー表示
+	PRINTLC [992]調教メニュー実行
+	PRINTLC [994]助手に選ばせる
+	PRINTLC [997]東方調教典
+	SIF TALENT:MASTER:998
+		PRINTLC [998]デバッグメニュー
+	PRINTLC [999]調教終了
+ENDIF
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 18% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 18% # [1009]後ろのページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO TRAIN_HELP
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO TRAIN_HELP
+ELSEIF RESULT < 0 || RESULT > 999
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSE
+	TRYCALLFORM DICTIONARY_TRAIN_COMMAND_{RESULT}
+ENDIF
+GOTO TRAIN_HELP
+
+;--------------------------------------------------
+;調教コマンド解説
+;--------------------------------------------------
+;愛撫
+@DICTIONARY_TRAIN_COMMAND_0
+PRINTL 【愛撫】
+PRINTL 奴隷の胸と性器を愛撫する。
+PRINTL 条件を満たせば[606]ペッティングに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、不潔、快Ｃ、情愛、快Ｂ、接触
+
+;クンニ
+@DICTIONARY_TRAIN_COMMAND_1
+PRINTL 【クンニ】
+PRINTL 奴隷の性器に舌で刺激を与える。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[602]シックスナインおよび
+PRINTL [603]６９パイズリに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、液体追加、逸脱、快Ｃ、恭順追加
+
+;アナル愛撫
+@DICTIONARY_TRAIN_COMMAND_2
+PRINTL 【アナル愛撫】
+PRINTL 奴隷のアヌスに指で刺激を与える。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ａ、屈従、痛み
+
+;胸愛撫
+@DICTIONARY_TRAIN_COMMAND_3
+PRINTL 【胸愛撫】
+PRINTL 奴隷の胸に手で愛撫する。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 条件を満たせば[616]後背位胸愛撫、[617]対面胸愛撫、
+PRINTL [618]後背位アナル胸愛撫、[619]対面アナル胸愛撫に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、不潔、快Ｂ、情愛、恭順追加
+
+;指挿入れ
+@DICTIONARY_TRAIN_COMMAND_4
+PRINTL 【指挿入れ】
+PRINTL 奴隷のヴァギナに指を入れる。
+PRINTL 対象の[処女]を破る。ただし、
+PRINTL [605]指でＶを撫でるに派生すれば[処女]は守られる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[600]Ｇスポット刺激、
+PRINTL [605]指でＶを撫でるに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、快Ｖ、屈従、痛み
+
+;フェラする
+@DICTIONARY_TRAIN_COMMAND_5
+PRINTL 【フェラする】
+PRINTL 調教者が唇で奴隷のペニスをしごいたり舌でなめ回したりする。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[602]シックスナインに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ、恭順追加
+
+;キスする
+@DICTIONARY_TRAIN_COMMAND_6
+PRINTL 【キスする】
+PRINTL 奴隷にキスをする。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[621]口移しに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;自慰
+@DICTIONARY_TRAIN_COMMAND_7
+PRINTL 【自慰】
+PRINTL 奴隷に自慰させる。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じて公開オナニーやシャワーオナニーや
+PRINTL 読心オナニーやバイブオナニーなどに変化する。
+PRINTL 条件を満たせば[628]相互自慰に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　逸脱、欲情追加、液体追加、快Ｃ、露出、屈従、快Ｂ、快Ｖ、
+PRINTW 快Ａ、痛み、性行動、中毒充足
+
+;何もしない
+@DICTIONARY_TRAIN_COMMAND_9
+PRINTL 【何もしない】
+PRINTL 一旦調教の手を緩める。
+PRINTL 連続実行に制限がある。また、PHANTASMではその調教中に一度しか使えない。
+PRINTL 犯されパッチがＯＮならば奴隷が勝手に何かを実行する場合がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(奴隷が勝手に実行しない場合のみ)
+PRINTW 　露出、欲情追加、液体追加
+
+;ローター
+@DICTIONARY_TRAIN_COMMAND_10
+PRINTL 【ローター】
+PRINTL 奴隷のクリトリスをローターの振動で刺激する。
+PRINTL 触手調教中は実行できない。
+PRINTL ローターを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ
+
+;電気按摩
+@DICTIONARY_TRAIN_COMMAND_11
+PRINTL 【電気按摩】
+PRINTL 奴隷の股間に肩こり用のマッサージ器を押し当てて刺激する。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 電気按摩を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ
+
+;バイブ
+@DICTIONARY_TRAIN_COMMAND_12
+PRINTL 【バイブ】
+PRINTL 男根を模した装着型の張り型を奴隷のヴァギナに挿入する。
+PRINTL 装着された状態でもう一度選ぶと取り外すことができる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL バイブを持っていないと実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 条件を満たせば[660]性感槍ぐんぐにるに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、痛み
+PRINTL ・入る可能性のあるソース（装着中）
+PRINTW 　快Ｖ、痛み、屈従
+
+;アナルバイブ
+@DICTIONARY_TRAIN_COMMAND_13
+PRINTL 【アナルバイブ】
+PRINTL 男根を模した装着型の張り型を奴隷のアナルに挿入する。
+PRINTL 装着された状態でもう一度選ぶと取り外すことができる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL アナルバイブを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース（装着中）
+PRINTW 　快Ａ、痛み、屈従
+
+;クリキャップ
+@DICTIONARY_TRAIN_COMMAND_14
+PRINTL 【クリキャップ】
+PRINTL 装着型の吸引キャップを奴隷のクリトリスに取り付ける。
+PRINTL 装着された状態でもう一度選ぶと取り外すことができる。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL クリキャップを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　露出、逸脱、快Ｃ
+PRINTL ・入る可能性のあるソース（装着中）
+PRINTW 　快Ｃ、露出、欲情追加
+
+;ニプルキャップ
+@DICTIONARY_TRAIN_COMMAND_15
+PRINTL 【ニプルキャップ】
+PRINTL 奴隷の乳首に振動と締め付けによる刺激を与える装着型の器具を取り付ける。
+PRINTL 装着された状態でもう一度選ぶと取り外すことができる。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ニプルキャップを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　露出、逸脱、快Ｂ、中毒充足
+PRINTL ・入る可能性のあるソース（装着中）
+PRINTW 　快Ｂ、露出、欲情追加
+
+;オナホール
+@DICTIONARY_TRAIN_COMMAND_16
+PRINTL 【オナホール】
+PRINTL 奴隷のペニスを装着型のオナホールに挿入させる。
+PRINTL 装着された状態でもう一度選ぶと取り外すことができる。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL オナホールを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　露出、逸脱、快Ｃ
+PRINTL ・入る可能性のあるソース（装着中）
+PRINTW 　快Ｃ、露出、欲情追加
+
+;電極オナホール
+@DICTIONARY_TRAIN_COMMAND_17
+PRINTL 【電極オナホール】
+PRINTL 奴隷のペニスを装着型で電極の付いたオナホールに挿入させる。
+PRINTL 装着された状態でもう一度選ぶと取り外すことができる。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 電極オナホールを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　露出、逸脱、快Ｃ、痛み
+PRINTL ・入る可能性のあるソース（装着中）
+PRINTW 　快Ｃ、痛み、露出、欲情追加
+
+;正常位
+@DICTIONARY_TRAIN_COMMAND_20
+PRINTL 【正常位】
+PRINTL 仰向けの奴隷のヴァギナにペニスを挿入する。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 条件を満たせば[610]二人で犯すおよび[614]挿入Ｇスポ責めおよび
+PRINTL [615]挿入子宮口責めに派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、快Ｖ、情愛、痛み、反感追加
+
+;後背位
+@DICTIONARY_TRAIN_COMMAND_21
+PRINTL 【後背位】
+PRINTL 四つんばいの奴隷のヴァギナを後ろからペニスで貫く体位である。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 条件を満たせば[610]二人で犯すおよび[614]挿入Ｇスポ責めおよび
+PRINTL [615]挿入子宮口責めおよび[616]後背位胸愛撫に派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース 
+PRINTW 　露出、快Ｖ、情愛、痛み、反感追加
+
+;対面座位
+@DICTIONARY_TRAIN_COMMAND_22
+PRINTL 【対面座位】
+PRINTL 奴隷を座らせそのヴァギナを前からペニスで貫く体位である。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 条件を満たせば[614]挿入Ｇスポ責めおよび
+PRINTL [615]挿入子宮口責めおよび[617]対面胸愛撫に派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　露出、中毒充足、不潔、快Ｖ、情愛、性行動、達成感、
+PRINTW 　恭順追加、痛み、反感追加、液体追加
+
+;背面座位
+@DICTIONARY_TRAIN_COMMAND_23
+PRINTL 【背面座位】
+PRINTL 奴隷を座らせそのヴァギナを後ろからペニスで貫く体位である。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 条件を満たせば[612]乱れ牡丹および[614]挿入Ｇスポ責めおよび
+PRINTL [615]挿入子宮口責めに派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　露出、快Ｖ、情愛、痛み、快Ｂ、快Ｃ、反感追加、液体追加
+
+;騎乗位
+@DICTIONARY_TRAIN_COMMAND_24
+PRINTL 【騎乗位】
+PRINTL 奴隷を上に乗せヴァギナにペニスを入れさせて腰を振らせる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 条件を満たせば[430]御所車に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　露出、主導権、不潔、性行動、達成感、逸脱、快Ｖ、情愛、
+PRINTW 　痛み、反感追加、屈従、(中毒充足)
+
+;逆レイプ
+@DICTIONARY_TRAIN_COMMAND_25
+PRINTL 【逆レイプ】
+PRINTL ペニスのある奴隷に自分のヴァギナを犯させる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 条件を満たせば[655]蜘蛛の巣姦および[656]蜘蛛の巣肛門姦に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、快Ｃ、性行動、(中毒充足)
+
+;助手を犯す
+@DICTIONARY_TRAIN_COMMAND_26
+PRINTL 【助手を犯す】
+PRINTL 奴隷の目の前で助手のヴァギナにペニスを挿入する。助手がいないとだめ。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 主人にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 助手がオトコだと実行できない。
+PRINTL 対象と助手の相性が良くないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 助手の[処女]を破る。
+PRINTL 条件を満たせば[657]蓑虫プレイに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者(=主人)が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース 
+PRINTW 　情愛、逸脱、液体追加、屈従
+
+;対面立位
+@DICTIONARY_TRAIN_COMMAND_27
+PRINTL 【対面立位】
+PRINTL 奴隷を立たせそのヴァギナを前からペニスで貫く体位である。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、中毒充足、不潔、快Ｖ、情愛、性行動、達成感、
+PRINTW 　恭順追加、痛み、反感追加、快Ｃ
+
+;背面立位
+@DICTIONARY_TRAIN_COMMAND_28
+PRINTL 【背面立位】
+PRINTL 奴隷を立たせそのヴァギナを後ろからペニスで貫く体位である。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、快Ｖ、情愛、痛み、逸脱、快Ｂ、快Ｃ、反感追加、
+PRINTW 　液体追加、欲情追加
+
+;正常位アナル
+@DICTIONARY_TRAIN_COMMAND_30
+PRINTL 【正常位アナル】
+PRINTL 仰向けの奴隷のアヌスにペニスを挿入する。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[610]二人で犯すに派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、快Ａ、情愛、屈従、痛み、反感追加
+
+;後背位アナル
+@DICTIONARY_TRAIN_COMMAND_31
+PRINTL 【後背位アナル】
+PRINTL 四つんばいの奴隷のアヌスを後ろからペニスで貫く体位である。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[610]二人で犯すおよび[618]後背位アナル胸愛撫に派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、快Ａ、情愛、屈従、痛み、反感追加
+
+;対面座位アナル
+@DICTIONARY_TRAIN_COMMAND_32
+PRINTL 【対面座位アナル】
+PRINTL 奴隷を座らせそのアヌスを前からペニスで貫く体位である。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[619]対面アナル胸愛撫に派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　情愛、中毒充足、露出、快Ａ、屈従、痛み、性行動、達成感
+PRINTW 　恭順追加、反感追加、液体追加
+
+;背面座位アナル
+@DICTIONARY_TRAIN_COMMAND_33
+PRINTL 【背面座位アナル】
+PRINTL 奴隷を座らせそのアヌスを後ろからペニスで貫く体位である。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、快Ａ、情愛、屈従、痛み、快Ｂ、快Ｃ、反感追加、液体追加
+
+;騎乗位アナル
+@DICTIONARY_TRAIN_COMMAND_34
+PRINTL 【騎乗位アナル】
+PRINTL 奴隷を上に乗せアヌスにペニスを入れさせて腰を振らせる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　露出、主導権、不潔、性行動、達成感、逸脱、快Ａ、情愛、屈従、
+PRINTW 　痛み、反感追加、(中毒充足)
+
+;逆アナルレイプ
+@DICTIONARY_TRAIN_COMMAND_35
+PRINTL 【逆アナルレイプ】
+PRINTL ペニスのある奴隷に自分のアナルを犯させる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[656]蜘蛛の巣肛門姦に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、快Ｃ、性行動、(中毒充足)
+
+;助手のＡを犯す
+@DICTIONARY_TRAIN_COMMAND_36
+PRINTL 【助手のＡを犯す】
+PRINTL 奴隷の目の前で助手のアナルにペニスを挿入する。助手がいないとだめ。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 主人にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象と助手の相性が良くないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者(=主人)が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、逸脱、液体追加、屈従
+
+;対面立位アナル
+@DICTIONARY_TRAIN_COMMAND_37
+PRINTL 【対面立位アナル】
+PRINTL 奴隷を立たせそのアヌスを前からペニスで貫く体位である。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、中毒充足、不潔、情愛、快Ａ、屈従、性行動、達成感、
+PRINTW 　恭順追加、痛み、反感追加、液体追加、快Ｃ
+
+;背面立位アナル
+@DICTIONARY_TRAIN_COMMAND_38
+PRINTL 【背面立位アナル】
+PRINTL 奴隷を立たせそのアヌスを後ろからペニスで貫く体位である。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、情愛、快Ａ、屈従、痛み、快Ｂ、快Ｃ、反感追加、液体追加
+
+;手淫
+@DICTIONARY_TRAIN_COMMAND_40
+PRINTL 【手淫】
+PRINTL 奴隷に手を使って調教者のペニスに奉仕をさせる。 
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じて読心手淫に変化する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;フェラチオ
+@DICTIONARY_TRAIN_COMMAND_41
+PRINTL 【フェラチオ】
+PRINTL 奴隷に唇で調教者のペニスをしごいたり舌でなめ回したりして奉仕させる。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じて読心フェラなどに変化する。 
+PRINTL 条件を満たせば[601]潜望鏡および[610]二人で犯す、[304]二本フェラチオ、
+PRINTL [602]シックスナイン、[606]雁が首に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;パイズリ
+@DICTIONARY_TRAIN_COMMAND_42
+PRINTL 【パイズリ】
+PRINTL 奴隷に胸でペニスを挟み込みさすることにより奉仕させる。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じて椛合わせに変化する。
+PRINTL 条件を満たせば[603]６９パイズリに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、性行動、達成感、不潔、快Ｂ、(中毒充足)
+
+;素股
+@DICTIONARY_TRAIN_COMMAND_43
+PRINTL 【素股】
+PRINTL 奴隷に股でペニスを挟み、擬似的なセックスをして奉仕させる。 
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[306]二人で素股や[629]サンドイッチに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、不潔、性行動、達成感、快Ｃ、(中毒充足)
+
+;アナル舐め強制
+@DICTIONARY_TRAIN_COMMAND_44
+PRINTL 【アナル舐め強制】
+PRINTL 奴隷に主人のアヌスを舌で舐めさせる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、情愛、(中毒充足)
+
+;アナルおねだり
+@DICTIONARY_TRAIN_COMMAND_45
+PRINTL 【アナルおねだり】
+PRINTL 奴隷にアヌスを広げさせ調教者に貫いてもらうようにおねだりさせる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、屈従、逸脱、欲情追加、液体追加
+
+;足舐め強制
+@DICTIONARY_TRAIN_COMMAND_46
+PRINTL 【足舐め強制】
+PRINTL 奴隷に調教者の足を舐めることを強制する。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、主導権、情愛
+
+;足扱き
+@DICTIONARY_TRAIN_COMMAND_47
+PRINTL 【足扱き】
+PRINTL 奴隷にペニスを奴隷の足裏で擦りあげさせる。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、主導権、性行動、達成感、(中毒充足)
+
+;髪扱き
+@DICTIONARY_TRAIN_COMMAND_48
+PRINTL 【髪扱き】
+PRINTL 奴隷の髪の毛にペニスを絡ませて擦する。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、反感追加、(中毒充足)
+
+;腋扱き
+@DICTIONARY_TRAIN_COMMAND_49
+PRINTL 【腋扱き】
+PRINTL 奴隷の腋を使ってペニスを擦する。 
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、羞恥扇情、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;全身扱き
+@DICTIONARY_TRAIN_COMMAND_50
+PRINTL 【全身扱き】
+PRINTL 奴隷の体全体を使ってペニスを擦るなどして奉仕させる。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　逸脱、不潔、快Ｃ、快Ｂ、性行動、達成感、屈従、(中毒充足)
+
+;尻扱き
+@DICTIONARY_TRAIN_COMMAND_51
+PRINTL 【尻扱き】
+PRINTL 奴隷の尻でペニスを挟んで擦する。 
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　逸脱、不潔、性行動、達成感、快Ａ、屈従、情愛、(中毒充足)
+
+;竿扱き
+@DICTIONARY_TRAIN_COMMAND_52
+PRINTL 【竿扱き】
+PRINTL 奴隷のペニスの竿の部分で調教者がペニスを擦する。 
+PRINTL 調教者と対象の双方にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　逸脱、不潔、性行動、達成感、快Ｃ、情愛、(中毒充足)
+
+;玉揉み強制
+@DICTIONARY_TRAIN_COMMAND_53
+PRINTL 【玉揉み強制】
+PRINTL 奴隷に調教者のペニスの袋を揉ませる。
+PRINTL 調教者がオトコか玉ありふたなりでないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;玉舐め強制
+@DICTIONARY_TRAIN_COMMAND_54
+PRINTL 【玉舐め強制】
+PRINTL 奴隷に調教者のペニスの玉を舐めさせる。
+PRINTL 調教者がオトコか玉ありふたなりでないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、情愛、(中毒充足)
+
+;アナル愛撫強制
+@DICTIONARY_TRAIN_COMMAND_55
+PRINTL 【アナル愛撫強制】
+PRINTL 奴隷に主人のアヌスを手で愛撫させる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　露出、屈従、逸脱、不潔、性行動、達成感、欲情追加、
+PRINTW 　情愛、(中毒充足)
+
+;ナイズリ
+@DICTIONARY_TRAIN_COMMAND_56
+PRINTL 【ナイズリ】
+PRINTL 奴隷に胸でペニスを擦らせることにより奉仕させる。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が絶壁かオトコでないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、性行動、達成感、不潔、快Ｂ、(中毒充足)
+
+;ローション
+@DICTIONARY_TRAIN_COMMAND_60
+PRINTL 【ローション】
+PRINTL 奴隷にローションを塗る。潤滑が増える。
+PRINTL 触手調教中は実行できない。
+PRINTL ローションを持っていないと実行できない。
+PRINTL ローションを1つ消費する。
+PRINTL 条件を満たせば[625]ローションプレイに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　液体追加、露出、反感追加
+
+;媚薬
+@DICTIONARY_TRAIN_COMMAND_61
+PRINTL 【媚薬】
+PRINTL 奴隷に媚薬を飲ませる。性的に興奮しやすくなる。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 媚薬を持っていないと実行できない。
+PRINTL 媚薬を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加、薬物浸潤、逸脱
+
+;利尿剤
+@DICTIONARY_TRAIN_COMMAND_62
+PRINTL 【利尿剤】
+PRINTL 奴隷に利尿剤を飲ませる。尿意を感じるようになる。
+PRINTL 対象が機械だと実行できない。
+PRINTL 利尿剤を持っていないと実行できない。
+PRINTL 利尿剤を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　薬物浸潤、逸脱、反感追加
+
+;座薬
+@DICTIONARY_TRAIN_COMMAND_63
+PRINTL 【座薬】
+PRINTL 奴隷のアヌスに座薬をねじ込む。Ａ快感を与える。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 坐剤を持っていないと実行できない。
+PRINTL 坐剤を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース（効果中）
+PRINTW 　快Ａ、屈従、逸脱
+
+;座薬(膣)
+@DICTIONARY_TRAIN_COMMAND_64
+PRINTL 【座薬(膣)】
+PRINTL 奴隷の膣に座薬をねじ込む。Ｖ快感を与える。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 処女には実行できない。
+PRINTL 坐剤を持っていないと実行できない。
+PRINTL 坐剤を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ｖ、屈従、痛み
+PRINTL ・入る可能性のあるソース（効果中）
+PRINTW 　快Ｖ、屈従、逸脱
+
+;賢者の血
+@DICTIONARY_TRAIN_COMMAND_65
+PRINTL 【賢者の血】
+PRINTL 奴隷に賢者の血を飲ませる。
+PRINTL 絶頂の発生を抑え、その後反動により急激な快感を与える。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 産卵促進剤の影響があるときは使えない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 賢者の血を持っていないと実行できない。
+PRINTL 賢者の血を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTW 　薬物浸潤、逸脱
+
+;排卵誘発剤
+@DICTIONARY_TRAIN_COMMAND_66
+PRINTL 【排卵誘発剤】
+PRINTL 奴隷に排卵誘発剤を飲ませる。
+PRINTL 精液を中出ししたときに妊娠させやすくなる。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 産卵促進剤および緊急避妊薬の影響があるときは使えない。
+PRINTL 調教者がオトコかふたなりでないと実行できない。
+PRINTL 主人から実行するコマンドである。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が妊娠中か懐卵中だと実行できない。
+PRINTL 対象が薬毒耐性持ちだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 排卵誘発剤を持っていないと実行できない。
+PRINTL 排卵誘発剤を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　情愛、恭順追加、欲情追加、液体追加、屈従、反発追加、
+PRINTW 　トラウマ、薬物浸潤
+
+;緊急避妊薬
+@DICTIONARY_TRAIN_COMMAND_67
+PRINTL 【緊急避妊薬】
+PRINTL 奴隷に緊急避妊薬を飲ませる。
+PRINTL 精液を中出ししたときに妊娠させにくくなる。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 産卵促進剤および排卵誘発剤の影響があるときは使えない。
+PRINTL 調教者がオトコかふたなりでないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が妊娠中か懐卵中だと実行できない。
+PRINTL 対象が薬毒耐性持ちだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 緊急避妊薬を持っていないと実行できない。
+PRINTL 緊急避妊薬を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　薬物浸潤
+
+;産卵促進剤
+@DICTIONARY_TRAIN_COMMAND_68
+PRINTL 【産卵促進剤】
+PRINTL 奴隷に産卵促進剤を飲ませる。
+PRINTL [卵生]もしくは[産卵体質]持ち奴隷の産卵を促進させる。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者がオトコかふたなりでないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が卵生か産卵体質でないと実行できない。
+PRINTL 対象が妊娠中か懐卵中だと実行できない。
+PRINTL 対象が薬毒耐性持ちだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 賢者の血および排卵誘発剤および緊急避妊薬の影響があるときは使えない。
+PRINTL 産卵促進剤を持っていないと実行できない。
+PRINTL 産卵促進剤を1つ消費する。 
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加、中毒充足、薬物浸潤、逸脱
+
+;陰核成長剤
+@DICTIONARY_TRAIN_COMMAND_69
+PRINTL 【陰核成長剤】
+PRINTL 奴隷に陰核成長剤を飲ませる。奴隷の陰核が成長する。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 陰核成長剤を持っていないと実行できない。
+PRINTL 陰核成長剤を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、薬物浸潤
+
+;興奮剤
+@DICTIONARY_TRAIN_COMMAND_70
+PRINTL 【興奮剤】
+PRINTL 奴隷に興奮剤を飲ませる。
+PRINTL 快感と潤滑と酔いを増強するが、薬剤依存の度合いを強める。
+PRINTL また、反動中は逆に快感と潤滑を減退させ、トラウマを増強する。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 産卵促進剤の影響があるときは使えない。
+PRINTL 興奮剤を持っていないと実行できない。
+PRINTL 興奮剤を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTW 　薬物浸潤、逸脱
+
+;助手避妊薬
+@DICTIONARY_TRAIN_COMMAND_71
+PRINTL 【助手避妊薬】
+PRINTL 助手に緊急避妊薬を飲ませる。
+PRINTL 精液を中出ししたときに妊娠させにくくなる。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 主人から実行するコマンドである。
+PRINTL 主人か対象のいずれかがオトコかふたなりでないと実行できない。
+PRINTL 助手がオトコだと実行できない。
+PRINTL 助手が妊娠中か懐卵中だと実行できない。
+PRINTL 助手が薬毒耐性持ちだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 緊急避妊薬を持っていないと実行できない。
+PRINTL 緊急避妊薬を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　反感追加
+
+;感覚増幅薬
+@DICTIONARY_TRAIN_COMMAND_72
+PRINTL 【感覚増幅薬】
+PRINTL 奴隷に感覚増幅薬を飲ませる。
+PRINTL 不快感を増幅し、薬剤依存の度合いを強める。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 産卵促進剤の影響があるときは使えない。
+PRINTL 対象の薬物経験が低いうちは危険なので投与できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 感覚増幅薬を持っていないと実行できない。
+PRINTL 感覚増幅薬を1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTW 　薬物浸潤、逸脱
+
+;お香を焚く
+@DICTIONARY_TRAIN_COMMAND_79
+PRINTL 【お香を焚く】
+PRINTL お香を所持している場合にそれを焚くコマンドである。
+PRINTL お香なその調教中効果が継続するが、一旦焚いたら
+PRINTL 止めることもできないし、別のに切り替えることもできない。
+PRINTL また、野外プレイやお風呂場プレイや特殊風呂入浴中の場合には
+PRINTW 効果はないが、それらを終了すればまた効果は表れる。
+
+;クリトリス注射
+@DICTIONARY_TRAIN_COMMAND_80
+PRINTL 【クリトリス注射】
+PRINTL 奴隷のクリトリス／ペニスに媚薬を注射する。
+PRINTL 性的に興奮しやすくなる（媚薬の効果）
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットと媚薬を持っていないと実行できない。
+PRINTL 媚薬を1個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｃ、中毒充足、薬物浸潤、逸脱、痛み
+
+;ヴァギナ注射
+@DICTIONARY_TRAIN_COMMAND_81
+PRINTL 【ヴァギナ注射】
+PRINTL 奴隷のヴァギナに媚薬を注射する。
+PRINTL 性的に興奮しやすくなる（媚薬の効果）
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットと媚薬を持っていないと実行できない。
+PRINTL 媚薬を1個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｖ、中毒充足、薬物浸潤、逸脱、痛み
+
+;アナル注射
+@DICTIONARY_TRAIN_COMMAND_82
+PRINTL 【アナル注射】
+PRINTL 奴隷のアナルに媚薬を注射する。
+PRINTL 性的に興奮しやすくなる（媚薬の効果）
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットと媚薬を持っていないと実行できない。
+PRINTL 媚薬を1個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ａ、中毒充足、薬物浸潤、逸脱、痛み
+
+;バスト注射
+@DICTIONARY_TRAIN_COMMAND_83
+PRINTL 【バスト注射】
+PRINTL 奴隷の胸に媚薬を注射する。
+PRINTL 性的に興奮しやすくなる（媚薬の効果）
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットと媚薬を持っていないと実行できない。
+PRINTL 媚薬を1個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｂ、中毒充足、薬物浸潤、逸脱、痛み
+
+;尿道注射
+@DICTIONARY_TRAIN_COMMAND_84
+PRINTL 【尿道注射】
+PRINTL 奴隷の尿道近くの筋肉に媚薬を注射する。
+PRINTL 性的に興奮しやすくなる（媚薬の効果）
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットと媚薬を持っていないと実行できない。
+PRINTL 媚薬を1個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｃ、中毒充足、薬物浸潤、逸脱、痛み
+
+;Ｃ肥大注射
+@DICTIONARY_TRAIN_COMMAND_85
+PRINTL 【Ｃ肥大注射】
+PRINTL 奴隷のクリトリスに大きくなる薬を注射する。
+PRINTL ふたなりサイズにクリトリスを拡大させ性交を可能にする。
+PRINTL 大きくなったクリトリスでの射精はできない。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｃ、中毒充足、薬物浸潤、逸脱、痛み
+
+;Ｃ賢者の血
+@DICTIONARY_TRAIN_COMMAND_86
+PRINTL 【Ｃ賢者の血注射】
+PRINTL 奴隷のクリトリスに賢者の血を注射する。
+PRINTL 絶頂の発生を抑え、その後反動により急激な快感を与える（薬の効果）
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 産卵促進剤の影響があるときは使えない。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットと賢者の血を持っていないと実行できない。
+PRINTL 賢者の血を1個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｃ、中毒充足、薬物浸潤、逸脱、痛み
+
+;採血注射
+@DICTIONARY_TRAIN_COMMAND_88
+PRINTL 【採血注射】
+PRINTL 奴隷の腕から注射を使って採血する。
+PRINTL 産卵促進剤の影響があるときは使えない。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 対象が機械か人形だと実行できない。
+PRINTL 媚薬の影響があるときは使えない。
+PRINTL 利尿剤の影響があるときは使えない。
+PRINTL 排卵誘発剤の影響があるときは使えない。
+PRINTL 緊急避妊薬の影響があるときは使えない。
+PRINTL 賢者の血の影響があるときは使えない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL 注射セットを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、反感追加
+
+;裸エプロン
+@DICTIONARY_TRAIN_COMMAND_90
+PRINTL 【裸エプロン】
+PRINTL 奴隷に裸体の上からエプロンを着せる。
+PRINTL 装着された状態でもう一度選ぶと脱がせる。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 装着するときには、主人から実行するコマンドである。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 野外プレイ中は実行できない。
+PRINTL 羞恥プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL エプロンを持っていないと実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　液体追加、反感追加、露出、欲情追加、逸脱、情愛、恭順追加
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　液体追加、反感追加、露出、欲情追加、逸脱、情愛、恭順追加
+
+;スク水プレイ
+@DICTIONARY_TRAIN_COMMAND_91
+PRINTL 【スク水プレイ】
+PRINTL 奴隷にスクール水着を着るように命じる。
+PRINTL 装着された状態でもう一度選ぶと脱ぐように命じる。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL スクール水着を持っていないと実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、痛み、露出、屈従、逸脱、羞恥扇情、トラウマ
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　中毒充足、液体追加、痛み、露出、屈従、逸脱、羞恥扇情、トラウマ
+
+;お医者プレイ
+@DICTIONARY_TRAIN_COMMAND_92
+PRINTL 【お医者プレイ】
+PRINTL 奴隷の体に聴診器を当てるなどしてお医者さんごっこを行う。
+PRINTL もう一度選ぶまではお医者プレイの影響を受ける。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 野外プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 聴診器を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、情愛、露出
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　中毒充足、液体追加、情愛、露出
+
+;コスプレ
+@DICTIONARY_TRAIN_COMMAND_93
+PRINTL 【コスプレ】
+PRINTL 奴隷にコスプレをさせる。
+PRINTL 装着された状態でもう一度選ぶと脱ぐように命じる。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 仮装衣装一式を持っていないと実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、欲情追加、逸脱、中毒充足、液体追加、反感追加、情愛、
+PRINTL 　恭順追加、主導権、痛み、屈従、羞恥扇情、トラウマ
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTL 　露出、欲情追加、逸脱、中毒充足、液体追加、反感追加、情愛、
+PRINTW 　恭順追加、主導権、痛み、屈従、羞恥扇情、トラウマ
+
+;助手にコスプレ
+@DICTIONARY_TRAIN_COMMAND_94
+PRINTL 【助手コスプレ】
+PRINTL 助手にスク水を着せるかコスプレをさせる。
+PRINTL 装着された状態でもう一度選ぶと脱ぐように命じる。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL スク水着用の時にはスクール水着、その他のときは仮装衣装一式を
+PRINTL 持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　屈従、逸脱、性行動、欲情追加、液体追加、情愛
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　屈従、逸脱、性行動、欲情追加、液体追加、情愛
+
+;ビデオ撮影
+@DICTIONARY_TRAIN_COMMAND_100
+PRINTL 【ビデオ撮影】
+PRINTL ビデオ撮影を開始する。
+PRINTL なお既に撮影中の場合は撮影を終了する。
+PRINTL 撮影開始時にビデオテープを1本消費する。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL ビデオカメラとビデオテープを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　なし
+PRINTL ・入る可能性のあるソース(撮影中)
+PRINTW 　トラウマ、欲情追加、液体追加、露出、逸脱
+
+;ビデオ鑑賞
+@DICTIONARY_TRAIN_COMMAND_101
+PRINTL 【ビデオ鑑賞】
+PRINTL 既に録画してあるビデオを奴隷と一緒に鑑賞する。
+PRINTL 撮影コマンド拡張の設定がオフの時は実行できない。
+PRINTL 既に録画ビデオを持っていないと実行できない。
+PRINTL 野外プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　なし
+PRINTL ・入る可能性のあるソース(鑑賞中)
+PRINTW 　露出
+
+;写真撮影
+@DICTIONARY_TRAIN_COMMAND_102
+PRINTL 【写真撮影】
+PRINTL 奴隷の姿をカメラで撮影する。
+PRINTL 撮影コマンド拡張の設定がオフの時は実行できない。
+PRINTL 調教者に個別条件があるので注意すること。
+PRINTL 展示室の設定がオフの時は実行できない。
+PRINTL カメラとフィルムを持っていないと実行できない。
+PRINTL フィルムを1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、逸脱、反感追加、露出、屈従
+
+;羞恥プレイ
+@DICTIONARY_TRAIN_COMMAND_103
+PRINTL 【羞恥プレイ】
+PRINTL 奴隷を鏡の前に連れてくる。
+PRINTL 鏡の前にいる状態で選ぶと鏡の前から離れる。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中は風呂場用大鏡、そうでなければ大鏡を使用する。
+PRINTL なお、羞恥プレイ中はお風呂場プレイの切替ができない。
+PRINTL 野外プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 大鏡/風呂場用大鏡を持っていないと実行できない。
+PRINTL 条件を満たせば[650]浄玻璃の鏡に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、屈従、逸脱、反感追加、情愛、
+PRINTL 　恭順追加、露出、トラウマ、羞恥扇情
+PRINTL ・入る可能性のあるソース(羞恥プレイ中)
+PRINTL 　中毒充足、液体追加、屈従、逸脱、反感追加、情愛、
+PRINTW 　恭順追加、露出、トラウマ
+
+;野外プレイ
+@DICTIONARY_TRAIN_COMMAND_104
+PRINTL 【野外プレイ】
+PRINTL 奴隷を野外に連れ出す。
+PRINTL 野外にいる状態で選ぶと家に帰る。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 羞恥プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL リード付き首輪を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、トラウマ、羞恥扇情、逸脱、露出、恭順追加
+PRINTL ・入る可能性のあるソース(野外プレイ中)
+PRINTW 　中毒充足、液体追加、トラウマ、羞恥扇情、露出、逸脱、恭順追加
+
+;公開露出ライブ
+@DICTIONARY_TRAIN_COMMAND_105
+PRINTL 【公開露出ライブ】
+PRINTL 野外プレイ中に奴隷に扇情的な服装で歌を歌うように命じる。
+PRINTL その調教中に一度しか実行できない。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL マイクを持っているかアイテムなし設定でないと実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、露出、屈従、トラウマ、羞恥扇情、
+PRINTL 　性技学習、逸脱
+PRINTL ・入る可能性のあるソース(乱交イベント発生時)
+PRINTL 　痛み、逸脱、恭順追加、性行動、達成感、快Ｃ、快Ｖ、
+PRINTW 　快Ａ、快Ｂ、屈従、トラウマ
+
+;(公衆)肉便器プレイ
+@DICTIONARY_TRAIN_COMMAND_106
+PRINTL 【(公衆)肉便器プレイ】
+PRINTL 奴隷のヴァギナとアヌスに尿をする。
+PRINTL 野外に連れ出すと公衆が頭に付き金を稼ぐことができる。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 主人から実行するコマンドである。
+PRINTL 野外で、素質に[烙印]、[壊造人格]がないと、
+PRINTL 公衆肉便器プレイは実行できない。
+PRINTL 室内で、対象に「首輪」を与えていなくて、
+PRINTL 素質に[烙印]、[壊造人格]がないと、公衆肉便器プレイは実行できない。
+PRINTL ただし、主人が[狂気]持ち、か、
+PRINTL 対象が反発刻印Lv3、[精神崩壊]、[妄信]、[傀儡]のいずれかを所持していれば実行可能。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 公衆のときはプラカードを持っているかアイテムなし設定でないと実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　快Ｖ、快Ａ、性行動、中毒充足、不潔、液体追加、欲情追加、
+PRINTW 　露出、屈従、逸脱、支配
+
+;裸体盛り
+@DICTIONARY_TRAIN_COMMAND_107
+PRINTL 【裸体盛り】
+PRINTL 奴隷の裸体に料理を盛り付けて食する。
+PRINTL 裸体盛り中にもう一度選ぶと終了する。
+PRINTL 助手がいないと選択できない。
+PRINTL その調教中に既に酒恥肉倫を起こしたときは実行できない。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 具材セットを持っているかアイテムなし設定でないと実行できない。
+PRINTL 開始時に具材セットを1つ消費する。
+PRINTL 奴隷が女性で縄で緊縛され野外プレイのときには酒恥肉倫が発生する。
+PRINTL その場合お金を稼ぐことができるが、対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　欲情追加、露出、中毒充足、液体追加、逸脱、恭順追加、不潔、
+PRINTL 　トラウマ、羞恥扇情
+PRINTL ・入る可能性のあるソース(裸体盛り中)
+PRINTL 　中毒充足、液体追加、露出、逸脱、恭順追加、不潔、トラウマ、
+PRINTL 　羞恥扇情
+PRINTL ・入る可能性のあるソース(酒恥肉倫)
+PRINTL 　快Ｃ、快Ｖ、快Ａ、快Ｂ、露出、性行動、液体追加、痛み、
+PRINTW 　トラウマ、不潔、逸脱、屈従、欲情追加、中毒充足
+
+;ベビープレイ
+@DICTIONARY_TRAIN_COMMAND_108
+PRINTL 【ベビープレイ】
+PRINTL 奴隷にオムツを付ける。
+PRINTL 装着中に選択するとオムツを脱がす。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL オムツを持っていないと実行できない。
+PRINTL 開始時にオムツを1枚消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、欲情追加、液体追加、トラウマ、反感追加
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　トラウマ、反感追加、露出、欲情追加、液体追加、逸脱
+
+;秘貝開帳
+@DICTIONARY_TRAIN_COMMAND_110
+PRINTL 【秘貝開帳】
+PRINTL 奴隷の秘部（陰唇）を広げて見せるように命じる。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[631]相互秘貝開帳に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　液体追加、露出、屈従、逸脱、快Ｃ、不潔
+
+;放尿
+@DICTIONARY_TRAIN_COMMAND_111
+PRINTL 【放尿】
+PRINTL 奴隷に放尿させる。
+PRINTL 対象が機械だと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　逸脱、達成感、露出、屈従、液体追加、欲情追加、
+PRINTW 　トラウマ、反感追加
+
+;剃毛
+@DICTIONARY_TRAIN_COMMAND_112
+PRINTL 【剃毛】
+PRINTL 奴隷の陰毛を剃り落とす。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　達成感、中毒充足、接触、露出、逸脱、痛み、欲情追加
+
+;毛抜き
+@DICTIONARY_TRAIN_COMMAND_113
+PRINTL 【毛抜き】
+PRINTL 奴隷の陰毛を手でつまんで引き抜く。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　達成感、中毒充足、接触、露出、逸脱、痛み、欲情追加
+
+;毛を抜かせる
+@DICTIONARY_TRAIN_COMMAND_114
+PRINTL 【毛を抜かせる】
+PRINTL 奴隷に自身の陰毛を手で引き抜かせる。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　達成感、中毒充足、接触、露出、逸脱、痛み、欲情追加
+
+;自慰見せつけ
+@DICTIONARY_TRAIN_COMMAND_115
+PRINTL 【自慰見せつけ】
+PRINTL 奴隷に調教者が自慰するところを見せつける。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 条件を満たせば[628]相互自慰に派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　露出、不潔、逸脱、性行動、屈従、欲情追加、(中毒充足)
+
+;二人自慰見せつけ
+@DICTIONARY_TRAIN_COMMAND_116
+PRINTL 【二人自慰見せつけ】
+PRINTL 奴隷に主人と助手が自慰するところを見せつける。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 主人から実行するコマンドである。
+PRINTL 
+FONTBOLD
+PRINTL 主人と助手がそれぞれ射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　露出、不潔、逸脱、性行動、屈従、欲情追加、(中毒充足)
+
+;秘貝開帳見せつけ
+@DICTIONARY_TRAIN_COMMAND_117
+PRINTL 【秘貝開帳見せつけ】
+PRINTL 調教者が自らの秘部（陰唇）を広げて奴隷に見せつける。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[631]相互秘貝開帳に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、屈従、不潔、逸脱、欲情追加
+
+;二人秘貝見せつけ
+@DICTIONARY_TRAIN_COMMAND_118
+PRINTL 【二人秘貝見せつけ】
+PRINTL 主人と助手が自らの秘部（陰唇）をそれぞれ広げて奴隷に見せつける。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 主人と助手のいずれかがオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 主人から実行するコマンドである。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、屈従、不潔、逸脱、欲情追加
+
+;焦らしプレイ
+@DICTIONARY_TRAIN_COMMAND_120
+PRINTL 【焦らしプレイ】
+PRINTL 奴隷を焦らす。
+PRINTL もう一度選択すると焦らしプレイを中止する。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　欲情追加、屈従、逸脱
+PRINTL ・入る可能性のあるソース(焦らし中）
+PRINTW 　欲情追加、屈従、逸脱
+
+;射精止め
+@DICTIONARY_TRAIN_COMMAND_121
+PRINTL 【射精止め】
+PRINTL 奴隷のペニスの根元にリボンをきつく結んで射精をせき止める。
+PRINTL もう一度選ぶとリボンを解いてやる。
+PRINTL なお、オトコの対象の場合には放尿もせき止める。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL リボンを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、露出、痛み、屈従、逸脱、欲情追加
+PRINTL ・入る可能性のあるソース(射精止め中)
+PRINTW 　痛み
+
+;豆責め
+@DICTIONARY_TRAIN_COMMAND_122
+PRINTL 【豆責め】
+PRINTL 奴隷の陰核の豆を調教者がつまみあげる。
+PRINTL 対象がオトコだけでなくふたなりのときも実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、液体追加、屈従、逸脱、快Ｃ、痛み
+
+;豆絞り
+@DICTIONARY_TRAIN_COMMAND_123
+PRINTL 【豆絞り】
+PRINTL 奴隷の陰核の豆を調教者がつまんで絞る。大きな苦痛を伴う。
+PRINTL 対象がオトコだけでなくふたなりのときも実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、屈従、逸脱、快Ｃ、痛み、反感追加
+
+;ローター自慰
+@DICTIONARY_TRAIN_COMMAND_124
+PRINTL 【ローター自慰】
+PRINTL 奴隷にローターを使っての自慰をさせる。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ローターを持っていないと実行できない。
+PRINTL このコマンドは状況に応じて公開ローターオナニーやシャワー
+PRINTL ローターオナニーや読心ローターオナニーやバイブローター
+PRINTL オナニーなどに変化する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　逸脱、露出、欲情追加、液体追加、快Ｃ、屈従、快Ｂ、
+PRINTW 　快Ｖ、快Ａ、痛み、性行動、中毒充足
+
+;電マ自慰
+@DICTIONARY_TRAIN_COMMAND_125
+PRINTL 【電マ自慰】
+PRINTL 奴隷に電動按摩を使っての自慰をさせる。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 電気按摩を持っていないと実行できない。
+PRINTL このコマンドは状況に応じて公開電マオナニーやシャワー電マオナニーや
+PRINTL 読心電マオナニーやバイブオナニー電マなどに変化する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、逸脱、欲情追加、液体追加、快Ｃ、屈従、快Ｂ、
+PRINTW 　快Ｖ、快Ａ、痛み、性行動、中毒充足
+
+;顔面騎乗
+@DICTIONARY_TRAIN_COMMAND_126
+PRINTL 【顔面騎乗】
+PRINTL 調教者が奴隷の性器に舌で刺激を与え、奴隷はクリトリスを
+PRINTL 調教者の顔面に押し付ける。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、欲情追加、液体追加、逸脱、快Ｃ、恭順追加
+
+;亀頭責め
+@DICTIONARY_TRAIN_COMMAND_128
+PRINTL 【亀頭責め】
+PRINTL 奴隷のペニスの亀頭部分に集中的に刺激を与える。
+PRINTL 奴隷はその間は射精がせき止められる。
+PRINTL なお、オトコの対象の場合には放尿もせき止められる。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、主導権、痛み、屈従、逸脱、快Ｃ、欲情追加
+
+;陰核クリップ
+@DICTIONARY_TRAIN_COMMAND_130
+PRINTL 【陰核クリップ】
+PRINTL 奴隷のクリトリスを洗濯バサミで挟む。
+PRINTL もう一度選ぶと洗濯バサミを外す。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 豆つまみを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、逸脱
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｃ、欲情追加、痛み、屈従、逸脱
+
+;陰核電極
+@DICTIONARY_TRAIN_COMMAND_131
+PRINTL 【陰核電極】
+PRINTL 奴隷のクリトリスに電極を装着して電気を流す。
+PRINTL 装着状態で選択すると抜く。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 陰核電極を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、快Ｃ、痛み、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｃ、屈従、痛み
+
+;ペニスローター
+@DICTIONARY_TRAIN_COMMAND_132
+PRINTL 【ペニスローター】
+PRINTL 奴隷のペニスをローターの振動で刺激する。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりでないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ローターを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ
+
+;電マペニス責め
+@DICTIONARY_TRAIN_COMMAND_133
+PRINTL 【電マペニス責め】
+PRINTL 奴隷のペニスに肩こり用のマッサージ器を押し当てて刺激する。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりでないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 電気按摩を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ
+
+;陰核測定
+@DICTIONARY_TRAIN_COMMAND_135
+PRINTL 【陰核測定】
+PRINTL 奴隷の陰核をノギスで測定する。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、露出、屈従、逸脱、快Ｃ、不潔
+
+;割礼
+@DICTIONARY_TRAIN_COMMAND_136
+PRINTL 【割礼】
+PRINTL 奴隷のクリトリスの皮を切除する。
+PRINTL ふたなっていない女性対象にしか実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、逸脱、痛み、トラウマ、達成感
+
+;射精機能開発
+@DICTIONARY_TRAIN_COMMAND_137
+PRINTL 【射精機能開発】
+PRINTL 奴隷のクリトリスに射精機能を付加する薬品を注射する。
+PRINTL 薬品系拡張コマンドがオフの時は実行できない。
+PRINTL 注射系コマンドがオフの時は実行できない。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 対象がオトコかふたなりだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 注射セットを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、不潔、逸脱、快Ｃ、欲情追加
+
+;尿道綿棒
+@DICTIONARY_TRAIN_COMMAND_140
+PRINTL 【尿道綿棒】
+PRINTL 奴隷の尿道に綿棒を捩じ込む。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 抗菌綿棒を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ、屈従、痛み
+
+;カテーテル
+@DICTIONARY_TRAIN_COMMAND_141
+PRINTL 【カテーテル】
+PRINTL 奴隷の尿道にカテーテルを挿入する。
+PRINTL 装着状態で選択するとカテーテルを引き抜く。
+PRINTL カテーテルとは、医療用に用いられる中空の
+PRINTL 柔らかい管のことである。
+PRINTL 装着者の尿意を増す効果がある。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL カテーテルを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、屈従、痛み、不潔、逸脱、反感追加
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｃ、屈従、痛み、逸脱
+
+;採尿器
+@DICTIONARY_TRAIN_COMMAND_142
+PRINTL 【採尿器】
+PRINTL 奴隷の尿道にカテーテルを通して採尿器を取り付ける。
+PRINTL 装着状態で選択すると取り外す。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 採尿器を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、達成感、欲情追加、痛み、屈従、中毒充足、逸脱、快Ｃ
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　快Ｃ、露出、達成感、欲情追加、痛み、屈従、中毒充足、逸脱
+
+;バルーンカテーテル
+@DICTIONARY_TRAIN_COMMAND_143
+PRINTL 【バルーンカテーテル】
+PRINTL 奴隷の尿道に風船付きカテーテルを挿入する。
+PRINTL 装着状態で選択すると風船付きカテーテルを引き抜く。
+PRINTL 普通のカテーテルから転用できないので注意すること。
+PRINTL 装着者の尿道拡張と尿意を増す効果がある。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 風船カテーテルを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、痛み、中毒充足、逸脱、快Ｃ、屈従、不潔、反感追加
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｃ、屈従、痛み、逸脱
+
+;電極カテーテル
+@DICTIONARY_TRAIN_COMMAND_144
+PRINTL 【電極カテーテル】
+PRINTL 奴隷の尿道に電極付きカテーテルを挿入する。
+PRINTL 装着状態で選択すると電極付きカテーテルを引き抜く。
+PRINTL 普通のカテーテルから転用できないので注意すること。
+PRINTL 装着者の尿意を増す効果がある。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 電極カテーテルを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、痛み、屈従、不潔、逸脱、反感追加
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｃ、屈従、痛み、逸脱
+
+;飲尿する
+@DICTIONARY_TRAIN_COMMAND_145
+PRINTL 【飲尿する】
+PRINTL 奴隷に放尿させ、それを調教者が飲む。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　逸脱、反感追加、達成感、不潔、露出、屈従、
+PRINTW 液体追加、欲情追加、情愛、トラウマ、反感追加
+
+;尿道挿入
+@DICTIONARY_TRAIN_COMMAND_146
+PRINTL 【尿道挿入】
+PRINTL 奴隷の尿道に調教者のペニスもしくはペニスバンドを挿入する。
+PRINTL 装着者の尿道拡張と尿意を増す効果もある。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、情愛、屈従、快Ｃ
+
+;クスコ
+@DICTIONARY_TRAIN_COMMAND_150
+PRINTL 【クスコ】
+PRINTL 奴隷の膣にクスコを挿入して割り開く。
+PRINTL 装着状態で選択すると引き抜く。
+PRINTL クスコとは膣鏡の一種で、女性の膣腔内に挿入し、
+PRINTL 開大して膣腔を検診するためのものである。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL クスコを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、露出、液体追加、屈従、中毒充足、逸脱、痛み
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　屈従、中毒充足、快Ｖ、露出、痛み、逸脱
+
+;ローター挿入
+@DICTIONARY_TRAIN_COMMAND_151
+PRINTL 【ローター挿入】
+PRINTL 奴隷のヴァギナに高速振動するローターを挿入する。
+PRINTL 装着状態で選択すると抜く。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ローターを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、痛み
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｖ、痛み、接触
+
+;小陰唇指愛撫
+@DICTIONARY_TRAIN_COMMAND_152
+PRINTL 【小陰唇指愛撫】
+PRINTL 奴隷の小陰唇を指で優しく刺激してあげる。
+PRINTL 一定以上に欲情しなおかつ濡れていないと、小陰唇が開かないので
+PRINTL 実行できないが、実行できる場合はＶ経験を増やさないで、
+PRINTL Ｖに刺激を与えられる上に、クリトリスにも刺激を与えられる。
+PRINTL Ｃ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、性行動、液体追加、不潔、逸脱、快Ｃ、情愛、
+PRINTW 　快Ｖ、屈従、痛み
+
+;愛液採集器
+@DICTIONARY_TRAIN_COMMAND_153
+PRINTL 【愛液採集器】
+PRINTL 奴隷のヴァギナに愛液を採集する器具を取り付ける。
+PRINTL 装着状態で選択すると取り外す。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 愛液採集器を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時）
+PRINTL 　露出、達成感、欲情追加、痛み、屈従、中毒充足、逸脱、快Ｖ
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　痛み、快Ｖ、露出、達成感、欲情追加、屈従、中毒充足、逸脱
+
+;ヴァギナ電極
+@DICTIONARY_TRAIN_COMMAND_155
+PRINTL 【ヴァギナ電極】
+PRINTL 奴隷のヴァギナに電極を挿入して電気を流す。
+PRINTL 装着状態で選択すると抜く。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ヴァギナ電極を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、快Ｖ、痛み、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｖ、屈従、痛み、逸脱
+
+;ヴァギナバーベル
+@DICTIONARY_TRAIN_COMMAND_156
+PRINTL 【ヴァギナバーベル】
+PRINTL 奴隷の膣からバーベルを挿入する。
+PRINTL 装着状態で選択するとバーベルを抜く。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ヴァギナバーベルを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、痛み、中毒充足、逸脱、快Ｖ、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　情愛、快Ｖ、屈従、痛み、逸脱
+
+;ヴァギナバルーン
+@DICTIONARY_TRAIN_COMMAND_157
+PRINTL 【ヴァギナバルーン】
+PRINTL 奴隷の膣から風船を挿入し、空気を送り込む。
+PRINTL 装着状態で選択するとバルーンを抜く。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ヴァギナバルーンを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、痛み、中毒充足、逸脱、快Ｖ、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　情愛、快Ｖ、屈従、痛み、逸脱
+
+;ローターＡ挿入
+@DICTIONARY_TRAIN_COMMAND_170
+PRINTL 【ローターＡ挿入】
+PRINTL 奴隷のアナルに高速振動するローターを挿入する。
+PRINTL 装着状態で選択すると抜く。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ローターを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ａ、痛み、屈従
+
+;アナル電極
+@DICTIONARY_TRAIN_COMMAND_171
+PRINTL 【アナル電極】
+PRINTL 奴隷のアナルに電極を挿入して電気を流す。
+PRINTL 装着状態で選択すると抜く。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 電極プラグを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、快Ａ、痛み、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ａ、屈従、痛み、逸脱
+
+;アナルビーズ
+@DICTIONARY_TRAIN_COMMAND_172
+PRINTL 【アナルビーズ】
+PRINTL 奴隷のアナルにアナルビーズを挿入する。
+PRINTL 装着状態で選択するとアナルビーズを引き抜く。
+PRINTL アナルビーズとは複数の玉が1つにつながった形をした性具で、
+PRINTL 肛門から直腸に差し込み、出す早さを変化させて使い快感を得る。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL アナルビーズを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ａ、痛み、屈従
+
+;拡張バルーン
+@DICTIONARY_TRAIN_COMMAND_173
+PRINTL 【拡張バルーン】
+PRINTL 奴隷の肛門に風船を挿入し、空気を送り込む。
+PRINTL 装着状態で選択するとバルーンを抜く。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 拡張バルーンを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、痛み、中毒充足、逸脱、快Ａ、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　情愛、快Ａ、屈従、痛み、逸脱
+
+;浣腸プレイ
+@DICTIONARY_TRAIN_COMMAND_174
+PRINTL 【浣腸プレイ】
+PRINTL 奴隷に浣腸をおこない栓をする。
+PRINTL 条件を満たせば各種薬品(媚薬、利尿剤、興奮剤など)をブレンドできる。
+PRINTL 栓をした状態で選択すると栓を抜く。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 浣腸器具一式を持っていないと実行できない。
+PRINTL 薬品をブレンドした場合はその薬品を1消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、快Ａ、屈従、痛み、不潔、逸脱、反感追加、
+PRINTL 　欲情追加、薬物浸潤
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ａ、屈従、痛み、逸脱
+
+;空気浣腸
+@DICTIONARY_TRAIN_COMMAND_175
+PRINTL 【空気浣腸】
+PRINTL 奴隷の肛門にポンプで空気を送り込み栓をする。
+PRINTL 栓をした状態で選択すると栓を抜く。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 空気ポンプを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、屈従、痛み、トラウマ、不潔、逸脱、反感追加、羞恥扇情
+PRINTL ・入る可能性のあるソース(装着時)
+PRINTW 　痛み、屈従、快Ａ、逸脱
+
+;アナルバーベル
+@DICTIONARY_TRAIN_COMMAND_179
+PRINTL 【アナルバーベル】
+PRINTL 奴隷の肛門からバーベルを挿入する。
+PRINTL バーベルはヴァギナバーベルを転用して使っている。
+PRINTL 装着状態で選択するとバーベルを抜く。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ヴァギナバーベルを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、痛み、中毒充足、逸脱、快Ａ、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　情愛、痒み、屈従、痛み、逸脱
+
+;アナル舐め
+@DICTIONARY_TRAIN_COMMAND_180
+PRINTL 【アナル舐め】
+PRINTL 奴隷のアヌスを調教者が舌で舐める。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、液体追加、逸脱、快Ａ
+
+;アナル綿棒
+@DICTIONARY_TRAIN_COMMAND_181
+PRINTL 【アナル綿棒】
+PRINTL 奴隷のアナルに綿棒を捩じ込む。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 抗菌綿棒を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ａ、屈従、痛み
+
+;アナニー
+@DICTIONARY_TRAIN_COMMAND_182
+PRINTL 【アナニー】
+PRINTL 奴隷にアナルを使った自慰をさせる。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じて公開アナニーやバイブ
+PRINTL アナニーやビーズアナニーに変化する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　逸脱、欲情追加、液体追加、快Ａ、露出、屈従、痛み、
+PRINTW 　性行動、中毒充足
+
+;尻素股
+@DICTIONARY_TRAIN_COMMAND_183
+PRINTL 【尻素股】
+PRINTL 奴隷に騎乗位のように跨り、尻のワレメでペニスを挟み、
+PRINTL 擬似的なセックスをして奉仕させる。 
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　露出、主導権、屈従、逸脱、不潔、性行動、達成感、
+PRINTW 　快Ａ、(中毒充足)
+
+;フリスク挿入
+@DICTIONARY_TRAIN_COMMAND_184
+PRINTL 【フリスク挿入】
+PRINTL 奴隷の肛門にフリスクという菓子を挿入する。
+PRINTL 肛門の中でシュワーと弾けて刺激を与える。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL フリスクを持っていないと実行できない。
+PRINTL フリスクを1つ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ａ、欲情追加、液体追加、屈従、逸脱、中毒充足
+
+;尻愛撫
+@DICTIONARY_TRAIN_COMMAND_186
+PRINTL 【尻愛撫】
+PRINTL 奴隷のお尻を調教者が手で愛撫する。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、逸脱、接触、快Ｃ、情愛、快Ａ、屈従
+
+;顔面騎乗アナル
+@DICTIONARY_TRAIN_COMMAND_187
+PRINTL 【顔面騎乗アナル】
+PRINTL 奴隷のアヌスを調教者が舌で舐め、奴隷は
+PRINTL アヌスを調教者の顔面に押し付ける。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、欲情追加、液体追加、逸脱、快Ａ、恭順追加
+
+;アナルの皺数え
+@DICTIONARY_TRAIN_COMMAND_188
+PRINTL 【アナルの皺数え】
+PRINTL 奴隷のアナルの皺を調教者が数え上げる。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、屈従、逸脱、液体追加
+
+;乳首ローター
+@DICTIONARY_TRAIN_COMMAND_190
+PRINTL 【乳首ローター】
+PRINTL 奴隷の乳首にローターを押し当てたりなぞったりする。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL ローターを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｂ
+
+;搾乳機
+@DICTIONARY_TRAIN_COMMAND_191
+PRINTL 【搾乳機】
+PRINTL 奴隷の胸に搾乳機を取り付ける。
+PRINTL 装着状態で選択すると搾乳機を取り外す。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 搾乳機を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、性行動、達成感、恭順追加、痛み、屈従、中毒充足、
+PRINTL 　逸脱、快Ｂ
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTL 　快Ｂ、露出、性行動、恭順追加、欲情追加、痛み、屈従、
+PRINTW 　中毒充足、逸脱
+
+;乳腺開発
+@DICTIONARY_TRAIN_COMMAND_192
+PRINTL 【乳腺開発】
+PRINTL 奴隷のツボを突き乳腺を開発し母乳が出るようにする。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、逸脱、欲情追加
+
+;乳房電極
+@DICTIONARY_TRAIN_COMMAND_193
+PRINTL 【乳房電極】
+PRINTL 奴隷の乳房に電極を貼り付けて電気を流す。
+PRINTL 装着状態で選択すると外す。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL テープ付き電極を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、快Ｂ、痛み、屈従
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｂ、屈従、痛み
+
+;サラシ
+@DICTIONARY_TRAIN_COMMAND_194
+PRINTL 【サラシ】
+PRINTL 奴隷の胸にサラシを巻く。
+PRINTL 装着状態で選択するとサラシを外す。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL サラシを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、露出、痛み、快Ｂ
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　露出、痛み、快Ｂ、欲情追加
+
+;乳首クリップ
+@DICTIONARY_TRAIN_COMMAND_195
+PRINTL 【乳首クリップ】
+PRINTL 奴隷の乳首を洗濯バサミで挟む。
+PRINTL 装着状態で選択すると洗濯バサミを外す。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 豆つまみを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、逸脱
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　快Ｂ、欲情追加、痛み、屈従、逸脱
+
+;胸揉み
+@DICTIONARY_TRAIN_COMMAND_200
+PRINTL 【胸揉み】
+PRINTL 奴隷の胸を揉みしだく。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 条件を満たせば[626]搾乳に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、不潔、露出、快Ｂ、情愛
+
+;乳首責め
+@DICTIONARY_TRAIN_COMMAND_201
+PRINTL 【乳首責め】
+PRINTL 奴隷の乳首をつまみあげたりくすぐったりする。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、不潔、露出、快Ｂ、情愛
+
+;乳首舐め
+@DICTIONARY_TRAIN_COMMAND_202
+PRINTL 【乳首舐め】
+PRINTL 奴隷の乳首を舐め上げる。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 条件を満たせば[627]乳首甘噛みに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、達成感、不潔、快Ｂ、情愛
+
+;乳首吸い
+@DICTIONARY_TRAIN_COMMAND_203
+PRINTL 【乳首吸い】
+PRINTL 奴隷の乳首を吸い上げる。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、達成感、不潔、快Ｂ、情愛
+
+;母乳飲み
+@DICTIONARY_TRAIN_COMMAND_204
+PRINTL 【母乳飲み】
+PRINTL 奴隷の乳首から母乳を吸い上げて飲む。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、達成感、不潔、快Ｂ、情愛
+
+;胸自慰
+@DICTIONARY_TRAIN_COMMAND_205
+PRINTL 【胸自慰】
+PRINTL 奴隷に胸を使った自慰をさせる。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じて公開オナニーに変化する。
+PRINTL 条件を満たせば[613]騎乗乳房自慰に派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　逸脱、液体追加、欲情追加、露出、屈従、快Ｂ、
+PRINTW 　性行動、中毒充足
+
+;乳スパンキング
+@DICTIONARY_TRAIN_COMMAND_206
+PRINTL 【乳スパンキング】
+PRINTL 奴隷の胸を手で叩く。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｂ、中毒充足、痛み
+
+;乳ファック
+@DICTIONARY_TRAIN_COMMAND_207
+PRINTL 【乳ファック】
+PRINTL 奴隷の胸に擦り付けるようにペニスを扱う。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　不潔、露出、逸脱、快Ｂ、痛み、中毒充足
+
+;縦パイズリ
+@DICTIONARY_TRAIN_COMMAND_208
+PRINTL 【縦パイズリ】
+PRINTL 奴隷の胸でペニスを包み込んで胸全体で揉み込む。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、性行動、達成感、不潔、快Ｂ、(中毒充足)
+
+;パイズリフェラ
+@DICTIONARY_TRAIN_COMMAND_209
+PRINTL 【パイズリフェラ】
+PRINTL 奴隷に胸でペニスを挟み込みさすりながら口で
+PRINTL ペニスに刺激を与えて奉仕させる。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、性行動、達成感、不潔、快Ｂ、(中毒充足)
+
+;乳合わせ
+@DICTIONARY_TRAIN_COMMAND_210
+PRINTL 【乳合わせ】
+PRINTL 調教者と奴隷が互いの乳首を合わせる。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかがオトコだと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、不潔、露出、快Ｂ、情愛
+
+;乳合わせ見せつけ
+@DICTIONARY_TRAIN_COMMAND_211
+PRINTL 【乳合わせ見せつけ】
+PRINTL 主人と助手が互いの乳首を合わせ、奴隷に見せつける。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 主人か助手のいずれかがオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、性行動、不潔、露出、欲情追加
+
+;スパンキング
+@DICTIONARY_TRAIN_COMMAND_220
+PRINTL 【スパンキング】
+PRINTL 奴隷の尻を手で叩く。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、痛み
+
+;鞭
+@DICTIONARY_TRAIN_COMMAND_221
+PRINTL 【鞭】
+PRINTL 奴隷を鞭で打ち据える。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 鞭を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み
+
+;針
+@DICTIONARY_TRAIN_COMMAND_222
+PRINTL 【針】
+PRINTL 奴隷の乳首やペニスやクリトリスに針を突き立てる。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 針を持っていないと実行できない。
+PRINTL 拷問系、精神操作系コマンドがオンの時は針加減を選ぶことができる。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み
+
+;蝋燭
+@DICTIONARY_TRAIN_COMMAND_223
+PRINTL 【蝋燭】
+PRINTL 奴隷の体に火をつけた蝋燭から落ちたロウを垂らす。
+PRINTL 連続して使うと効果が高まる珍しいコマンドである。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 低温蝋燭を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、中毒充足
+
+;縄
+@DICTIONARY_TRAIN_COMMAND_224
+PRINTL 【縄】
+PRINTL 奴隷を縄で縛る。縛り方は拷問系拡張コマンドがオンのときは、
+PRINTL ４種類から選択することができる。オフの場合は普通に縛る。
+PRINTL 縛られた状態で選択すると解放する。
+PRINTL 触手調教中は実行できない。
+PRINTL 縄を持っていないと実行できない。
+PRINTL 縛り方により[622]四肢緊縛、[623]亀甲縛り、
+PRINTL [624]吊り下げに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、露出、屈従、逸脱、
+PRINTL ・入る可能性のあるソース(緊縛中)
+PRINTW 　痛み、露出、屈従、逸脱
+
+;アイマスク
+@DICTIONARY_TRAIN_COMMAND_225
+PRINTL 【アイマスク】
+PRINTL 奴隷にアイマスクをつける。
+PRINTL 装着状態で選択するとアイマスクを外す。
+PRINTL アイマスクを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、液体追加、欲情追加、トラウマ
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　液体追加、露出、逸脱、トラウマ、欲情追加
+
+;ボールギャグ
+@DICTIONARY_TRAIN_COMMAND_226
+PRINTL 【ボールギャグ】
+PRINTL 奴隷の口にボールギャグを嵌めさせる。
+PRINTL 装着状態で選択するとボールギャグを取る。
+PRINTL ボールギャグとは口枷の一種で口を使って喋ったり
+PRINTL することはできなくなるが呼吸のための穴はある。
+PRINTL ボールギャグを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、中毒充足、露出、屈従、逸脱、恭順追加
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　露出、屈従、逸脱、恭順追加
+
+;罵倒
+@DICTIONARY_TRAIN_COMMAND_227
+PRINTL 【罵倒】
+PRINTL 奴隷に罵詈雑言を浴びせる。
+PRINTL 場合によっては反発を覚悟すること。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、反感追加、達成感、支配、欲情追加
+
+;鼻フック
+@DICTIONARY_TRAIN_COMMAND_228
+PRINTL 【鼻フック】
+PRINTL 奴隷に鼻フックを嵌める。
+PRINTL 装着状態で選択すると鼻フックを外す。
+PRINTL 鼻フックとは鼻にひっかけて、ブタのような鼻にする道具である。
+PRINTL 鼻フックを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、恭順追加、痛み、屈従、支配、逸脱、反感追加、中毒充足
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　露出、恭順追加、屈従、支配、中毒充足、逸脱、反感追加
+
+;強制開口器
+@DICTIONARY_TRAIN_COMMAND_229
+PRINTL 【強制開口器】
+PRINTL 奴隷の口に強制開口器を嵌める。
+PRINTL 装着状態で選択すると強制開口器を取る。
+PRINTL 強制開口器を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　恭順追加、痛み、屈従、支配、逸脱、露出、中毒充足
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　露出、恭順追加、痛み、屈従、支配、中毒充足、逸脱
+
+;イラマチオ
+@DICTIONARY_TRAIN_COMMAND_230
+PRINTL 【イラマチオ】
+PRINTL 奴隷の喉まで無理やりペニスを突き入れる。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況に応じてディープスロートに変化する。 
+PRINTL 条件を満たせば[610]二人で犯すに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　痛み、屈従、逸脱、恭順追加、不潔、性行動、達成感、(中毒充足)
+
+;フィストファック
+@DICTIONARY_TRAIN_COMMAND_231
+PRINTL 【フィストファック】
+PRINTL 奴隷の膣を拳でかき回す。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、屈従、逸脱、恭順追加、快Ｖ、欲情追加
+
+;アナルフィスト
+@DICTIONARY_TRAIN_COMMAND_232
+PRINTL 【アナルフィスト】
+PRINTL 奴隷の肛門を拳でかき回す。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、屈従、逸脱、恭順追加、快Ａ、情愛
+
+;両穴フィスト
+@DICTIONARY_TRAIN_COMMAND_233
+PRINTL 【両穴フィスト】
+PRINTL 奴隷の膣と肛門を拳でかき回す。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　痛み、液体追加、欲情追加、露出、屈従、逸脱、
+PRINTW 　恭順追加、快Ｖ、情愛、快Ａ
+
+;ヴァギナダイビング
+@DICTIONARY_TRAIN_COMMAND_234
+PRINTL 【ヴァギナダイビング】
+PRINTL 奴隷のヴァギナに全身で入り込む。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 調教者が小人体型でないと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、恭順追加、痛み、屈従、逸脱、快Ｖ
+
+;アナルダイビング
+@DICTIONARY_TRAIN_COMMAND_235
+PRINTL 【アナルダイビング】
+PRINTL 奴隷のアナルに全身で入り込む。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者が小人体型でないと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、恭順追加、痛み、屈従、逸脱、快Ａ
+
+;ツボを突く
+@DICTIONARY_TRAIN_COMMAND_236
+PRINTL 【ツボを突く】
+PRINTL 奴隷のツボを針で刺激する。
+PRINTL 針を持っていないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み
+
+;鼻クリップ
+@DICTIONARY_TRAIN_COMMAND_237
+PRINTL 【鼻クリップ】
+PRINTL 奴隷の鼻を洗濯バサミで挟む。
+PRINTL 装着状態で選択すると洗濯バサミを外す。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 豆つまみを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、逸脱
+PRINTL ・入る可能性のあるソース(装着中)
+PRINTW 　欲情追加、痛み、屈従、逸脱
+
+;スタンガン
+@DICTIONARY_TRAIN_COMMAND_238
+PRINTL 【スタンガン】
+PRINTL 奴隷にスタンガンを使って気絶させる。成功するとは限らない。
+PRINTL 失神パッチがオフの時は実行できない。
+PRINTL 強力アイテム・コマンド無効時は実行できない。
+PRINTL スタンガンを持っていないと実行できない。
+PRINTL 機械の相手や既に気絶か睡眠している相手には使えない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、逸脱
+
+;足で踏む
+@DICTIONARY_TRAIN_COMMAND_240
+PRINTL 【足で踏む】
+PRINTL 奴隷の腹を足で踏みつける。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、欲情追加
+
+;腹パン
+@DICTIONARY_TRAIN_COMMAND_241
+PRINTL 【腹パン】
+PRINTL 腹パンチの略。その名の通り奴隷の腹に強烈なパンチをお見舞いする。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み
+
+;三角木馬
+@DICTIONARY_TRAIN_COMMAND_242
+PRINTL 【三角木馬】
+PRINTL 奴隷を三角木馬に乗馬させる。
+PRINTL 乗馬状態で選択すると三角木馬から降ろしてやる。
+PRINTL 三角木馬とは木馬型で背の尖った拷問具で、
+PRINTL 跨らせると本人の体重で股間に苦痛を与えるものである。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL また設置のための地下室も必須である。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 対象が蜘蛛の巣以外で緊縛されていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、反感追加、中毒充足、痛み、液体追加、屈従
+PRINTL ・入る可能性のあるソース(乗馬中)
+PRINTW 　中毒充足、痛み、接触、液体追加、逸脱、屈従
+
+;杭
+@DICTIONARY_TRAIN_COMMAND_243
+PRINTL 【杭】
+PRINTL 奴隷を杭で何回も突き刺し貫く。
+PRINTL 吸血鬼にはすごくよく効く。
+PRINTL 現状ではそれにより手足不自由になるという判定はない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 杭を持っていないと実行できない。
+PRINTL また設置・開発のための地下室も必須である。
+PRINTL 調教者がサドか狂気を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、トラウマ
+
+;ナイフ
+@DICTIONARY_TRAIN_COMMAND_244
+PRINTL 【ナイフ】
+PRINTL 奴隷をナイフで切り刻む。
+PRINTL 現状ではそれにより手足不自由になるという判定はない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL ナイフを持っていないと実行できない。
+PRINTL また設置・開発のための地下室も必須である。
+PRINTL 調教者がサドか狂気を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み
+
+;鉈
+@DICTIONARY_TRAIN_COMMAND_245
+PRINTL 【鉈】
+PRINTL 奴隷を鉈で切り刻む。
+PRINTL 現状ではそれにより手足不自由になるという判定はない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 鉈を持っていないと実行できない。
+PRINTL また設置・開発のための地下室も必須である。
+PRINTL 調教者がサドか狂気を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み
+
+;ビンタを張る
+@DICTIONARY_TRAIN_COMMAND_251
+PRINTL 【ビンタを張る】
+PRINTL 奴隷の頬を手で叩く。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、痛み
+
+;アイアンメイデン
+@DICTIONARY_TRAIN_COMMAND_252
+PRINTL 【アイアンメイデン】
+PRINTL 奴隷をアイアンメイデンの中に閉じ込める。
+PRINTL 調教はこれで終了である。生きていれば……。
+PRINTL 主人から実行するコマンドである。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL アイアンメイデンを設置していないと実行できない。
+PRINTL また設置のための地下室も必須である。
+PRINTL 調教者がサドと狂気を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、トラウマ、痛み
+
+;水を飲ませる
+@DICTIONARY_TRAIN_COMMAND_253
+PRINTL 【水を飲ませる】
+PRINTL じょうごで奴隷の口をこじ開け、強制的に水を飲ませる。
+PRINTL 水を飲ませれば飲ませるほど苦痛は大きくなる他、尿意を催すこともある。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL じょうごを持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、屈従、痛み
+PRINTL ・入る可能性のあるソース(飲水中)
+PRINTW 　逸脱、屈従、痛み
+
+;罵ってもらう
+@DICTIONARY_TRAIN_COMMAND_270
+PRINTL 【罵ってもらう】
+PRINTL 奴隷に調教者を罵ってもらう。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、達成感、恭順追加、欲情追加
+
+;足を舐める
+@DICTIONARY_TRAIN_COMMAND_271
+PRINTL 【足を舐める】
+PRINTL 奴隷の足を調教者が舌で舐める。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、達成感、恭順追加、逸脱、痛み、痒み、欲情追加、情愛
+
+;叩いてもらう
+@DICTIONARY_TRAIN_COMMAND_272
+PRINTL 【叩いてもらう】
+PRINTL 奴隷に調教者の尻を平手で叩いてもらう。
+PRINTL 調教者の消耗もあるので注意のこと。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、達成感、恭順追加、逸脱、欲情追加、反感追加
+
+;鞭で打ってもらう
+@DICTIONARY_TRAIN_COMMAND_273
+PRINTL 【鞭で打ってもらう】
+PRINTL 奴隷に調教者を鞭で打ってもらう。
+PRINTL 調教者の消耗もあるので注意のこと。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 鞭を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、達成感、恭順追加、中毒充足、逸脱、欲情追加、反感追加
+
+;コンドーム
+@DICTIONARY_TRAIN_COMMAND_290
+PRINTL 【コンドーム】
+PRINTL 調教者もしくは奴隷のペニスにコンドームを装着する。
+PRINTL 装着時に選択するとコンドームを外す。
+PRINTL 調教者と対象のいずれかにペニスがないと実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL コンドームを持っていないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTW 　情愛、接触、欲情追加、屈従
+
+;コンドーム精飲(奴)
+@DICTIONARY_TRAIN_COMMAND_291
+PRINTL 【コンドーム精飲(奴)】
+PRINTL 奴隷にコンドームの中の精液を飲ませる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 中に精子の詰まったコンドームがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、不潔、性行動、達成感
+
+;コンドーム精飲(助)
+@DICTIONARY_TRAIN_COMMAND_292
+PRINTL 【コンドーム精飲(助)】
+PRINTL 奴隷の目の前で助手にコンドームの中の精液を飲ませる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 助手がいないと選択できない。
+PRINTL 中に精子の詰まったコンドームがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加
+
+;ザーメンキス
+@DICTIONARY_TRAIN_COMMAND_293
+PRINTL 【ザーメンキス】
+PRINTL 調教者が口に含んだ精液をキスで奴隷に口移しする。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 直前に口に精子を入れていないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、不潔、性行動、達成感
+
+;クンニ強制
+@DICTIONARY_TRAIN_COMMAND_300
+PRINTL 【クンニ強制】
+PRINTL 奴隷に調教者の陰唇を舐めさせる。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[602]シックスナインに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;貝あわせ
+@DICTIONARY_TRAIN_COMMAND_301
+PRINTL 【貝あわせ】
+PRINTL 調教者と奴隷がお互いの性器を擦りあわせる。
+PRINTL 調教者と対象のいずれかにペニスがあると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[629]サンドイッチに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、露出、屈従、逸脱、欲情追加、快Ｃ、性行動、達成感
+
+;足コキする
+@DICTIONARY_TRAIN_COMMAND_302
+PRINTL 【足コキする】
+PRINTL 奴隷のペニスを足でシゴく。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、快Ｃ、屈従、達成感
+
+;二人フェラチオ
+@DICTIONARY_TRAIN_COMMAND_303
+PRINTL 【二人フェラチオ】
+PRINTL 主人のペニスを奴隷と助手の二人に舐めさせて奉仕させる。
+PRINTL 助手がいないと選択できない。
+PRINTL 主人にペニスがないと実行できない。
+PRINTL 主人が魅惑か謎の魅力を持っていないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 主人が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、不潔、情愛、性行動、達成感、(中毒充足)
+
+;二本フェラチオ
+@DICTIONARY_TRAIN_COMMAND_304
+PRINTL 【二本フェラチオ】
+PRINTL 主人と助手のペニスを奴隷に舐めさせて奉仕させる。
+PRINTL 助手がいないと選択できない。派生してくるか助手で選択する。
+PRINTL 主人と助手の両方にペニスがないと実行できない。
+PRINTL 主人が魅惑か謎の魅力を持っていないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 主人と助手がそれぞれ射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　主導権、屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;二人でパイズリ
+@DICTIONARY_TRAIN_COMMAND_305
+PRINTL 【二人でパイズリ】
+PRINTL 奴隷と助手が胸で調教者のペニスを扱きあげて奉仕させる。
+PRINTL 助手がいないと選択できない。助手から選択するコマンドである。
+PRINTL 主人にペニスがないと実行できない。
+PRINTL 主人が魅惑か謎の魅力を持っていないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 助手と対象のいずれかがオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 主人が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、情愛、性行動、達成感、快Ｂ、(中毒充足)
+
+;二人で素股
+@DICTIONARY_TRAIN_COMMAND_306
+PRINTL 【二人で素股】
+PRINTL 奴隷と助手の性器で調教者のペニスを挟み扱きあげる。
+PRINTL 助手がいないと選択できない。主人から選択するコマンドである。
+PRINTL 主人にペニスがないと実行できない。
+PRINTL 主人が魅惑か謎の魅力を持っていないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 助手と対象のいずれかにペニスがあると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[629]サンドイッチに派生する。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者(=主人)が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　接触、露出、屈従、逸脱、不潔、性行動、達成感、
+PRINTW 　快Ｃ、(中毒充足)
+
+;助手を犯させる
+@DICTIONARY_TRAIN_COMMAND_307
+PRINTL 【助手を犯させる】
+PRINTL 奴隷に助手を犯させる。体位は想像に任せる。
+PRINTL 助手がいないと選択できない。助手から選択するコマンドである。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 助手がオトコだと実行できない。
+PRINTL 対象にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 助手の[処女]を破る。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、快Ｃ、性行動、達成感、(中毒充足)
+
+;助手のＡを犯させる
+@DICTIONARY_TRAIN_COMMAND_308
+PRINTL 【助手のＡを犯させる】
+PRINTL 奴隷に助手のアナルを犯させる。体位は想像に任せる。
+PRINTL 助手がいないと選択できない。助手から選択するコマンドである。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、快Ｃ、性行動、達成感、(中毒充足)
+
+;助手とキスする
+@DICTIONARY_TRAIN_COMMAND_309
+PRINTL 【助手とキスする】
+PRINTL 奴隷の前で主人が助手とキスをする。
+PRINTL 助手がいないと選択できない。主人から選択するコマンドである。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者(=主人)が射精する可能性がある。射精箇所が固定である。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、性行動、欲情追加、情愛、液体追加、(中毒充足)
+
+;二人の尻を叩く
+@DICTIONARY_TRAIN_COMMAND_310
+PRINTL 【二人の尻を叩く】
+PRINTL 奴隷と助手の両方の尻を主人が手で叩く。
+PRINTL 助手がいないと選択できない。主人から選択するコマンドである。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、痛み
+
+;尻を二人で叩く
+@DICTIONARY_TRAIN_COMMAND_311
+PRINTL 【尻を二人で叩く】
+PRINTL 奴隷の尻を主人と助手がそれぞれ手で叩く。
+PRINTL 助手がいないと選択できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、痛み
+
+;二人のＶをフィスト
+@DICTIONARY_TRAIN_COMMAND_312
+PRINTL 【二人のＶをフィスト】
+PRINTL 奴隷と助手の膣をそれぞれ主人が拳でかき回す。
+PRINTL 助手がいないと選択できない。主人から選択するコマンドである。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象もしくは助手のいずれかがオトコだと実行できない。
+PRINTL 主人がサドか狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象もしくは助手のいずれかが[処女]の時には実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、屈従、逸脱、恭順追加、快Ｖ、欲情追加、液体追加
+
+;二人のＡをフィスト
+@DICTIONARY_TRAIN_COMMAND_313
+PRINTL 【二人のＡをフィスト】
+PRINTL 奴隷と助手の肛門をそれぞれ主人が拳でかき回す。
+PRINTL 助手がいないと選択できない。主人から選択するコマンドである。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 主人がサドか狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、屈従、逸脱、恭順追加、快Ａ、情愛、液体追加
+
+;優しくする
+@DICTIONARY_TRAIN_COMMAND_320
+PRINTL 【優しくする】
+PRINTL 調教者に優しくしてやる。方法は様々。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、接触、情愛、欲情追加、液体追加
+
+;手淫する
+@DICTIONARY_TRAIN_COMMAND_321
+PRINTL 【手淫する】
+PRINTL 奴隷のペニスを調教者が手で扱いてやる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 条件を満たすと[630]後背位手淫に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、露出、主導権、欲情追加、快Ｃ、性行動、達成感
+
+;パイズリする
+@DICTIONARY_TRAIN_COMMAND_322
+PRINTL 【パイズリする】
+PRINTL 奴隷のペニスを調教者が胸で擦りあげる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、露出、主導権、達成感、逸脱、快Ｃ、中毒充足
+
+;正常位させる
+@DICTIONARY_TRAIN_COMMAND_323
+PRINTL 【正常位させる】
+PRINTL 調教者が仰向けになって奴隷のペニスをヴァギナに挿入させてやる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、情愛、主導権、欲情追加、中毒充足、快Ｃ、性行動
+
+;後背位させる
+@DICTIONARY_TRAIN_COMMAND_324
+PRINTL 【後背位させる】
+PRINTL 調教者が四つんばいになって奴隷のペニスをヴァギナに挿入
+PRINTL させてやる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、情愛、主導権、欲情追加、中毒充足、逸脱、快Ｃ、性行動
+
+;騎乗位する
+@DICTIONARY_TRAIN_COMMAND_325
+PRINTL 【騎乗位する】
+PRINTL 奴隷の上に調教者が乗ってヴァギナを奴隷のペニスを入れて腰を振る。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　接触、情愛、主導権、達成感、欲情追加、屈従、逸脱、
+PRINTW 　快Ｃ、性行動、(中毒充足)
+
+;ペニバン挿入
+@DICTIONARY_TRAIN_COMMAND_326
+PRINTL 【ペニバン挿入】
+PRINTL 調教者がペニスバンドを口に装着して奴隷のヴァギナに挿入する。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL ペニスバンドがないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教対象の[処女]を破る。
+PRINTL 条件を満たすと[600]Ｇスポット刺激に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、露出、逸脱、快Ｖ、屈従、痛み
+
+;指チュパ
+@DICTIONARY_TRAIN_COMMAND_327
+PRINTL 【指チュパ】
+PRINTL 奴隷に調教者の指を咥えさせる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、屈従、逸脱、不潔、性行動、達成感
+
+;首筋耳裏責め
+@DICTIONARY_TRAIN_COMMAND_328
+PRINTL 【首筋耳裏責め】
+PRINTL 奴隷の首筋を舐め上げて耳たぶを噛む。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 条件を満たせば正常位首筋耳裏責めおよび対面座位首筋耳裏責め
+PRINTL および背面座位首筋耳裏責めおよび
+PRINTL [337]二人で首筋耳裏責めに派生する。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　情愛、性行動、接触、液体追加、欲情追加、恭順追加、逸脱、
+PRINTW 　快Ｖ、痛み、快Ｃ、快Ｂ
+
+;玉愛撫
+@DICTIONARY_TRAIN_COMMAND_329
+PRINTL 【玉愛撫】
+PRINTL 奴隷のペニスの袋をやわやわと揉む。
+PRINTL ふたたまコマンドがオフの時は実行できない。
+PRINTL 対象がオトコか玉ありふたなりでないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、屈従、不潔
+
+;玉を舐める
+@DICTIONARY_TRAIN_COMMAND_330
+PRINTL 【玉を舐める】
+PRINTL 奴隷のペニスの玉に舌を這わせてやる。
+PRINTL ふたたまコマンドがオフの時は実行できない。
+PRINTL 対象がオトコか玉ありふたなりでないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、屈従、不潔
+
+;二人でフェラする
+@DICTIONARY_TRAIN_COMMAND_331
+PRINTL 【二人でフェラする】
+PRINTL 主人と助手が唇で奴隷のペニスをしごいたり舌でなめ回したりする。
+PRINTL 助手がいないと実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ｃ、恭順追加
+
+;Ａ正常位させる
+@DICTIONARY_TRAIN_COMMAND_332
+PRINTL 【Ａ正常位させる】
+PRINTL 調教者が仰向けになって奴隷のペニスをアナルに挿入させてやる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、情愛、主導権、欲情追加、中毒充足、快Ｃ、性行動
+
+;Ａ後背位させる
+@DICTIONARY_TRAIN_COMMAND_333
+PRINTL 【Ａ後背位させる】
+PRINTL 調教者が四つんばいになって奴隷のペニスをアナルに挿入
+PRINTL させてやる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、情愛、主導権、欲情追加、中毒充足、逸脱、快Ｃ、性行動
+
+;Ａ騎乗位させる
+@DICTIONARY_TRAIN_COMMAND_334
+PRINTL 【Ａ騎乗位させる】
+PRINTL 奴隷の上に調教者が乗ってアナルを奴隷のペニスを入れて腰を振る。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　接触、情愛、主導権、達成感、欲情追加、屈従、逸脱、
+PRINTW 　快Ｃ、性行動(、中毒充足)
+
+;パイズリフェラする
+@DICTIONARY_TRAIN_COMMAND_335
+PRINTL 【パイズリフェラする】
+PRINTL 奴隷のペニスを調教者が胸で擦りあげながら、口でペニスに刺激を与える。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、露出、主導権、達成感、逸脱、快Ｃ、中毒充足、恭順追加
+
+;ヴァギナを拭く
+@DICTIONARY_TRAIN_COMMAND_336
+PRINTL 【ヴァギナを拭く】
+PRINTL 奴隷中出しした後、ヴァギナ周りの精液を拭く。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　接触、情愛、露出、性行動、屈従、逸脱、
+PRINTW 　快Ｃ、快Ｖ、羞恥扇情、欲情追加
+
+;二人で首筋耳裏責め
+@DICTIONARY_TRAIN_COMMAND_337
+PRINTL 【二人で首筋耳裏責め】
+PRINTL 奴隷の首筋を主人と助手が舐め上げて耳たぶを噛む。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、性行動、接触、液体追加、欲情追加、恭順追加、逸脱
+
+;二人に犯させる
+@DICTIONARY_TRAIN_COMMAND_338
+PRINTL 【二人に犯させる】
+PRINTL 調教者が助手と奴隷のペニスをそれぞれヴァギナとアナルに挿入させてやる。
+PRINTL いずれがどっちの穴に挿入するかは、助手が決める。
+PRINTL 体位は想像に任せる。また、挿しっぱなし状態は継続しない。
+PRINTL 助手がいないと実行できない。主人から実行するコマンドである。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 助手および対象の両方にペニスがないと実行できない。
+PRINTL 調教者がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 助手と調教対象がいずれも射精する可能性がある。
+PRINTL 射精箇所がいずれも固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　接触、情愛、主導権、欲情追加、中毒充足、逸脱、快Ｃ、
+PRINTW 　性行動、液体追加、屈従
+
+;ぱふぱふ
+@DICTIONARY_TRAIN_COMMAND_340
+PRINTL 【ぱふぱふ】
+PRINTL 奴隷の胸で調教者の顔を包ませる。
+PRINTL 主人から実行するコマンドである。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況によってぱるぱるに変化する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、恭順追加、中毒充足、反感追加
+
+;胸枕
+@DICTIONARY_TRAIN_COMMAND_341
+PRINTL 【胸枕】
+PRINTL 奴隷の胸を枕にして寝転ぶ。
+PRINTL 主人から実行するコマンドである。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、恭順追加
+
+;乳繰り合う
+@DICTIONARY_TRAIN_COMMAND_342
+PRINTL 【乳繰り合う】
+PRINTL 調教者と奴隷が互いの乳を乳繰り合う。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象が恋慕でないと実行できない。
+PRINTL また助手調教のときは助手にも恋慕がないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　恭順追加、欲情追加、情愛
+
+;乳ビンタ
+@DICTIONARY_TRAIN_COMMAND_343
+PRINTL 【乳ビンタ】
+PRINTL 奴隷の胸で調教者の顔を思いっきり叩いてもらう。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 対象が恋慕でないと実行できない。
+PRINTL また助手調教のときは助手にも恋慕がないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　主導権、達成感、恭順追加
+
+;乳のもみ合い
+@DICTIONARY_TRAIN_COMMAND_344
+PRINTL 【乳のもみ合い】
+PRINTL 調教者と奴隷が互いの胸を揉みあう。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかがオトコだと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、不潔、快Ｂ、情愛、主導権
+
+;お風呂を楽しむ
+@DICTIONARY_TRAIN_COMMAND_345
+PRINTL 【お風呂を楽しむ】
+PRINTL 奴隷と一緒の和気藹々とお風呂に入る。
+PRINTL 主人から実行するコマンドである。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　接触、欲情追加、露出、情愛
+
+;お外を楽しむ
+@DICTIONARY_TRAIN_COMMAND_346
+PRINTL 【お外を楽しむ】
+PRINTL 奴隷と一緒に屋外デートを楽しむ。
+PRINTL 主人から実行するコマンドである。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 野外調教コマンド拡張がオンの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、露出、情愛、液体追加、欲情追加
+
+;お嫁さんで楽しむ
+@DICTIONARY_TRAIN_COMMAND_347
+PRINTL 【お嫁さんで楽しむ】
+PRINTL 奴隷とお嫁さんごっこをして楽しむ。
+PRINTL 主人から実行するコマンドである。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、恭順追加、情愛、液体追加、欲情追加
+
+;お酒を飲ませる
+@DICTIONARY_TRAIN_COMMAND_348
+PRINTL 【お酒を飲ませる】
+PRINTL 奴隷に酒を飲ませる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL お酒がないと実行できない。
+PRINTL 対象が反発刻印を持っていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たせば[649]イきつけ三杯に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　酒酔い、鬼殺し
+
+;ふぉーゆーっ！
+@DICTIONARY_TRAIN_COMMAND_349
+PRINTL 【ふぉーゆ－っ！】
+PRINTL 調教者が奴隷に「ふぉーゆーっ！」と叫び、ポーズを決める。
+PRINTL 意味不明だと思ったら実行しなくていい。
+PRINTL しつこくすると嫌われるがカウントは[449]フィーバー！と共用である。
+PRINTL 対象が勝手に実行する場合もあるかもしれないが、
+PRINTL そのときはカウントは増えないので安心してほしい。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 調教者が精神崩壊か傀儡を持っていると実行できない。
+PRINTL 対象が精神崩壊か傀儡を持っていると実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、中毒充足、露出、トラウマ、反感追加、情愛、羞恥扇情
+
+;お風呂場プレイ
+@DICTIONARY_TRAIN_COMMAND_350
+PRINTL 【お風呂場プレイ】
+PRINTL お風呂場プレイに移行する。
+PRINTL 既にお風呂場プレイの時に選択するとお風呂場プレイをやめる。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、露出、逸脱、恭順追加、羞恥扇情、トラウマ
+PRINTL ・入る可能性のあるソース(お風呂中)
+PRINTW 　中毒充足、液体追加、露出、逸脱、恭順追加、羞恥扇情、トラウマ
+
+;シャワー
+@DICTIONARY_TRAIN_COMMAND_351
+PRINTL 【シャワー】
+PRINTL 奴隷にシャワーを浴びせる。温度は選べる。
+PRINTL 既にシャワー中の時に選択するとシャワーを止める。
+PRINTL シャワーをすると汚れがリセットされる。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 出しっぱなしのままお風呂プレイを終了するとシャワーも止まる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、達成感、恭順追加、痛み、情愛、痒み
+PRINTL ・入る可能性のあるソース(シャワー中)
+PRINTW 　恭順追加、痛み、逸脱、達成感、露出、情愛、欲情追加
+
+;泡踊り
+@DICTIONARY_TRAIN_COMMAND_352
+PRINTL 【泡踊り】
+PRINTL 奴隷がソープを泡立たせ自分に塗りたくったあと、
+PRINTL その体を使って調教者に擦りつけて愛撫させる。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL プレイマットがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、性行動、達成感、不潔、快Ｃ、快Ｂ、(中毒充足)
+
+;泡踊りする
+@DICTIONARY_TRAIN_COMMAND_353
+PRINTL 【泡踊りする】
+PRINTL 調教者がソープを泡立たせ自分に塗りたくったあと、
+PRINTL その体を使って奴隷に擦りつけるて愛撫する。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL プレイマットがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　接触、情愛、露出、主導権、欲情追加、中毒充足、快Ｃ、
+PRINTW 　性行動、快Ｂ
+
+;たわし洗い
+@DICTIONARY_TRAIN_COMMAND_354
+PRINTL 【たわし洗い】
+PRINTL 奴隷がソープを自分の陰毛に塗りたくったあと、
+PRINTL 調教者の足に跨って擦りつける。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL プレイマットがないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、性行動、達成感、不潔、快Ｃ
+
+;蟲風呂
+@DICTIONARY_TRAIN_COMMAND_360
+PRINTL 【蟲風呂】
+PRINTL 無数の蟲達がうごめく風呂桶に奴隷を突き落とす。
+PRINTL 蟲風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 蟲風呂機能に改装していないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 対象が蜘蛛の巣以外で緊縛されていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 入浴中に蟲が射精することがある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、反感追加、トラウマ
+PRINTL ・入る可能性のあるソース(入浴中) ()内のは射精を伴うときのみ
+PRINTW 　不潔、逸脱、反感追加、液体追加、トラウマ、(欲情追加)
+
+;鰻風呂
+@DICTIONARY_TRAIN_COMMAND_361
+PRINTL 【鰻風呂】
+PRINTL 無数のうなぎたちがうごめく風呂桶に奴隷を突き落とす。
+PRINTL 鰻風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 鰻風呂機能に改装していないと実行できない。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 調教者が禁断の知識を持つかミスティアか衣玖でないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 対象が蜘蛛の巣以外で緊縛されていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL このコマンドは状況によって八目鰻風呂や
+PRINTL 電気鰻風呂に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、痛み、快Ａ、屈従、快Ｃ、快Ｂ、逸脱、液体追加、欲情追加、
+PRINTL 　トラウマ
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTL 　快Ｖ、快Ａ、屈従、快Ｃ、快Ｂ、不潔、液体追加、
+PRINTW 　逸脱、痛み、露出、中毒充足、トラウマ
+
+;ローション風呂
+@DICTIONARY_TRAIN_COMMAND_362
+PRINTL 【ローション風呂】
+PRINTL ローションで満たされた風呂桶に奴隷を浸からせる。
+PRINTL ローション風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL ローション風呂機能に改装していないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL ローションを持っていないと実行できない。
+PRINTL ローションを30個消費する。
+PRINTL 奴隷がクスコを装着していると効果が上がる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　達成感、液体追加、露出、快Ｃ、快Ｖ
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　液体追加、露出、快Ｃ、快Ｖ
+
+;スライム風呂
+@DICTIONARY_TRAIN_COMMAND_363
+PRINTL 【スライム風呂】
+PRINTL スライムたちで満たされた風呂桶に奴隷を突き落とす。
+PRINTL スライム風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL スライム風呂機能に改装していないと実行できない。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　不潔、液体追加、逸脱、快Ｖ、痛み、快Ａ、屈従、快Ｃ、快Ｂ、トラウマ
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　痛み、快Ｖ、快Ａ、屈従、快Ｃ、快Ｂ、不潔、液体追加、逸脱、トラウマ
+
+;媚薬風呂
+@DICTIONARY_TRAIN_COMMAND_364
+PRINTL 【媚薬風呂】
+PRINTL 媚薬で満たされた風呂桶に奴隷を突き落とす。
+PRINTL 媚薬風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 媚薬風呂機能に改装していないと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 対象が蜘蛛の巣以外で緊縛されていないと実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 媚薬を持っていないと実行できない。
+PRINTL 媚薬を5個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　欲情追加、痛み、薬物浸潤、逸脱、中毒充足
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　欲情追加、痛み、屈従、中毒充足、薬物浸潤、不潔、逸脱
+
+;水牢
+@DICTIONARY_TRAIN_COMMAND_365
+PRINTL 【水牢】
+PRINTL 水牢に放り込み、水責めをはじめる。
+PRINTL 水牢中に選択すると解放する。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 水牢機能に改装していないと実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 縄で緊縛中でないと実行できない。(荊や蜘蛛の糸はだめ)
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　反感追加、屈従
+PRINTL ・入る可能性のあるソース(入牢中)
+PRINTW 　痛み、屈従、反感追加、支配
+
+;精液風呂
+@DICTIONARY_TRAIN_COMMAND_366
+PRINTL 【精液風呂】
+PRINTL 触手からの精液で満たされた風呂桶に奴隷を突き落とす。
+PRINTL 精液風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 精液風呂機能に改装していないと実行できない。
+PRINTL 主人か助手のいずれかが禁断の知識を持っていないと実行できない。
+PRINTL 調教者が触手使役術を持っていないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、不潔、屈従、逸脱
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　中毒充足、不潔、屈従、逸脱
+
+;酒風呂
+@DICTIONARY_TRAIN_COMMAND_367
+PRINTL 【酒風呂】
+PRINTL 酒で満たされた風呂桶に奴隷を浸からせる。
+PRINTL 酒風呂中に選択すると引き上げる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 酒風呂機能に改装していないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 最初に資金150000が必要で実行中にもターンごとに資金1000が必要である。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　反感追加、中毒充足、液体追加、恭順追加、露出、欲情追加、酒酔い
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　中毒充足、液体追加、反感追加、恭順追加、露出、欲情追加、酒酔い
+
+;トロロ風呂
+@DICTIONARY_TRAIN_COMMAND_368
+PRINTL 【トロロ風呂】
+PRINTL 山芋を使ったトロロで満たされた風呂桶に奴隷を浸からせた。
+PRINTL トロロ風呂中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL トロロ風呂機能に改装していないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 資金1500が必要となる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　反感追加
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　快Ｃ、快Ｖ、快Ａ、快Ｂ、露出、痒み、反感追加
+
+;毛玉風呂
+@DICTIONARY_TRAIN_COMMAND_369
+PRINTL 【毛玉風呂】
+PRINTL 毛玉たちがひしめいている風呂桶に奴隷を突き落とす。
+PRINTL 毛玉風呂中に選択すると引き上げる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 毛玉風呂機能に改装していないと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　達成感、露出、逸脱、快Ｃ、痒み、快Ｂ
+
+;蒸し風呂
+@DICTIONARY_TRAIN_COMMAND_370
+PRINTL 【蒸し風呂】
+PRINTL 蒸気が満ちた部屋へ奴隷を連れ込む。サウナ。
+PRINTL 蒸し風呂中に選択すると連れ出す。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 蒸し風呂機能に改装していないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況によって鳥の風呂蒸しや芋の風呂蒸しに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　情愛、液体追加、露出
+PRINTL ・入る可能性のあるソース(入室中)
+PRINTW 　情愛、液体追加、欲情追加、露出
+
+;国士無双の薬風呂
+@DICTIONARY_TRAIN_COMMAND_371
+PRINTL 【国士無双の薬風呂】
+PRINTL 得体のしれない液体の入った風呂桶に奴隷を浸からせた。
+PRINTL 国士無双の薬風呂中に選択すると引き上げる。
+PRINTL 浸かったら爆発するかもしれない。異常経験が増えたり、
+PRINTL 体力が減ったり苦痛が増えたり薬効果がリセットされたり。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 国士無双の薬風呂機能に改装していないと実行できない。
+PRINTL 主人か助手のいずれかが調合知識を持っていないと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行中)
+PRINTL 　欲情追加、液体追加、中毒充足、薬物浸潤、逸脱
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTL 　液体追加、欲情追加、中毒充足、薬物浸潤、逸脱
+PRINTL ・入る可能性のあるソース(爆発時、対象奴隷にのみ)
+PRINTW 　痛み、中毒充足、逸脱
+
+;厄毒風呂
+@DICTIONARY_TRAIN_COMMAND_372
+PRINTL 【厄毒風呂】
+PRINTL 得体のしれない液体の入った風呂桶に奴隷を突き落とす。
+PRINTL 厄毒風呂中に選択すると引き上げる。
+PRINTL 不快が大量に入る。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 厄毒風呂機能に改装していないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、液体追加、痒み、中毒充足、不潔、支配
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　痛み、液体追加、痒み、中毒充足、不潔、支配
+
+;岩盤浴
+@DICTIONARY_TRAIN_COMMAND_373
+PRINTL 【岩盤浴】
+PRINTL 熱せられた岩盤からの赤外線を当てられる仕組みの
+PRINTL 部屋へ奴隷を連れ込む。岩盤浴中に選択すると連れ出す。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 岩盤浴機能に改装していないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況によって鳥の岩盤蒸しや芋の岩盤蒸しに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　情愛、液体追加、露出
+PRINTL ・入る可能性のあるソース(入室中)
+PRINTW 　情愛、液体追加、欲情追加、露出
+
+;札束風呂
+@DICTIONARY_TRAIN_COMMAND_374
+PRINTL 【札束風呂】
+PRINTL 札束で満たされた風呂桶に奴隷を浸からせる。
+PRINTL 札束風呂中に選択すると引き上げる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL 札束風呂機能に改装していないと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中でないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 最初に資金150000が必要で実行中にもターンごとに資金2000が必要である。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、達成感、反感追加、恭順追加、逸脱、屈従
+PRINTL ・入る可能性のあるソース(入浴中)
+PRINTW 　中毒充足、達成感、反感追加、恭順追加、逸脱、屈従
+
+;バター犬プレイ
+@DICTIONARY_TRAIN_COMMAND_380
+PRINTL 【バター犬プレイ】
+PRINTL 奴隷の股間にバターを塗り、それを犬に舐めさせる。
+PRINTL 動物小屋があり、犬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、液体追加、逸脱、屈従、痒み、不潔、快Ｃ、トラウマ
+
+;犬に犯させる
+@DICTIONARY_TRAIN_COMMAND_381
+PRINTL 【犬に犯させる】
+PRINTL 雄犬をけしかけて奴隷のヴァギナを犯させる。
+PRINTL 動物小屋があり、犬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL 犬は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、液体追加、痒み、不潔、逸脱、快Ｖ、屈従、
+PRINTW 　痛み、反感追加、トラウマ
+
+;犬を犯させる
+@DICTIONARY_TRAIN_COMMAND_382
+PRINTL 【犬を犯させる】
+PRINTL 雌犬のヴァギナを奴隷のペニスで犯させる。
+PRINTL 動物小屋があり、犬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　欲情追加、屈従、中毒充足、不潔、逸脱、快Ｃ、
+PRINTW 　性行動、トラウマ
+
+;豚に犯させる
+@DICTIONARY_TRAIN_COMMAND_383
+PRINTL 【豚に犯させる】
+PRINTL 雄豚をけしかけて奴隷のヴァギナを犯させる。
+PRINTL 動物小屋があり、豚がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL 豚は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、液体追加、痒み、不潔、逸脱、快Ｖ、屈従、
+PRINTW 　痛み、反感追加
+
+;豚を犯させる
+@DICTIONARY_TRAIN_COMMAND_384
+PRINTL 【豚を犯させる】
+PRINTL 雌豚のヴァギナを奴隷のペニスで犯させる。
+PRINTL 動物小屋があり、豚がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象にペニスがないと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加、中毒充足、屈従、不潔、逸脱、快Ｃ、性行動
+
+;馬のをフェラさせる
+@DICTIONARY_TRAIN_COMMAND_385
+PRINTL 【馬のをフェラさせる】
+PRINTL 雄馬のペニスを奴隷に口と手を使って奉仕させる。
+PRINTL 動物小屋があり、馬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 馬は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　不潔、屈従、逸脱、性行動、達成感、中毒充足
+
+;馬に犯させる
+@DICTIONARY_TRAIN_COMMAND_386
+PRINTL 【馬に犯させる】
+PRINTL 雄馬をけしかけて奴隷のヴァギナを犯させる。
+PRINTL 動物小屋があり、馬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 非常に危険なコマンドでゲームオーバーを覚悟のこと。
+PRINTL 
+PRINTL 馬は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、液体追加、不潔、逸脱、快Ｖ、屈従、痛み、反感追加
+
+;犬とキスさせる
+@DICTIONARY_TRAIN_COMMAND_387
+PRINTL 【犬とキスさせる】
+PRINTL 奴隷に犬とキスさせる。
+PRINTL 動物小屋があり、犬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　不潔、屈従、逸脱、性行動、達成感、トラウマ
+
+;豚とキスさせる
+@DICTIONARY_TRAIN_COMMAND_388
+PRINTL 【豚とキスさせる】
+PRINTL 奴隷に豚とキスさせる。
+PRINTL 動物小屋があり、豚がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　不潔、屈従、逸脱、性行動、達成感
+
+;犬にＡ犯させる
+@DICTIONARY_TRAIN_COMMAND_389
+PRINTL 【犬にＡ犯させる】
+PRINTL 雄犬をけしかけて奴隷のアナルを犯させる。
+PRINTL 動物小屋があり、犬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 犬は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、液体追加、痒み、不潔、逸脱、快Ａ、屈従、
+PRINTW 　痛み、反感追加、トラウマ
+
+;豚にＡ犯させる
+@DICTIONARY_TRAIN_COMMAND_390
+PRINTL 【豚にＡ犯させる】
+PRINTL 雄豚をけしかけて奴隷のアナルを犯させる。
+PRINTL 動物小屋があり、豚がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 豚は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、液体追加、痒み、不潔、逸脱、快Ａ、屈従、
+PRINTW 　痛み、反感追加
+
+;馬にＡ犯させる
+@DICTIONARY_TRAIN_COMMAND_391
+PRINTL 【馬にＡ犯させる】
+PRINTL 雄馬をけしかけて奴隷のアナルを犯させる。
+PRINTL 動物小屋があり、馬がいないと実行できない。
+PRINTL 獣姦系コマンドがオフの時は実行できない。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 調教者が助手のときは実行できない。
+PRINTL 対象が小人体型だと実行できない。
+PRINTL 主人が禁断の知識か狂気を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 非常に危険なコマンドでゲームオーバーを覚悟のこと。
+PRINTL 
+PRINTL 馬は必ず射精する。よってゲージ管理はしていない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、液体追加、不潔、逸脱、快Ａ、屈従、痛み、反感追加
+
+;吸血
+@DICTIONARY_TRAIN_COMMAND_400
+PRINTL 【吸血】
+PRINTL 吸血鬼の調教者が奴隷の血を吸う。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL その調教中に一度しか実行できない。
+PRINTL 調教者が吸血鬼でないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL 媚薬の影響があるときは使えない。
+PRINTL 利尿剤の影響があるときは使えない。
+PRINTL 排卵誘発剤の影響があるときは使えない。
+PRINTL 緊急避妊薬の影響があるときは使えない。
+PRINTL 賢者の血の影響があるときは使えない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、欲情追加、恭順追加、痛み
+
+;暗闇
+@DICTIONARY_TRAIN_COMMAND_401
+PRINTL 【暗闇】
+PRINTL 暗闇を作り出し奴隷の視界を遮る。
+PRINTL 暗闇状態で選択すると暗闇を解除する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がルーミアでないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、液体追加、欲情追加
+PRINTL ・入る可能性のあるソース(展開中)
+PRINTW 　トラウマ、液体追加、露出、逸脱、欲情追加
+
+;尻子玉抜き
+@DICTIONARY_TRAIN_COMMAND_402
+PRINTL 【尻子玉抜き】
+PRINTL 奴隷の尻子玉を抜く。尻子玉は収集品でもある。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL その調教中に一度しか実行できない。
+PRINTL 調教者がにとりか河童でないと実行できない。
+PRINTL 対象が機械だと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、逸脱、快Ａ、屈従、不潔、痛み、中毒充足、トラウマ
+
+;焼芋責め
+@DICTIONARY_TRAIN_COMMAND_403
+PRINTL 【焼芋責め】
+PRINTL 奴隷の陰唇に大きな焼芋を挿入する。
+PRINTL 焼芋が入った状態で選択すると焼芋を引き抜く。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ｖ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者が穣子か静葉か野菜の錬金術師でないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL このコマンドは状況によって焼紫芋責めや
+PRINTL 石焼芋責めに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、恭順追加、屈従、逸脱、快Ｖ、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ｖ、痛み、屈従
+
+;巨峰責め
+@DICTIONARY_TRAIN_COMMAND_404
+PRINTL 【巨峰責め】
+PRINTL 奴隷のアヌスに巨峰を挿入する。
+PRINTL 巨峰が入った状態で選択すると巨峰を引き抜く。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ系拡張コマンドがオフの時は実行できない。
+PRINTL 調教者が穣子か静葉か野菜の錬金術師でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ａ、屈従、痛み
+
+;石勺柏責め
+@DICTIONARY_TRAIN_COMMAND_405
+PRINTL 【石勺柏責め】
+PRINTL 奴隷の尿道にアスパラガスを挿入する。
+PRINTL 石勺柏が入った状態で選択すると石勺柏を引き抜く。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 調教者が穣子か静葉か野菜の錬金術師でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況によって白石勺柏責めに
+PRINTL 派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、恭順追加、痒み、屈従、逸脱、快Ｃ、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ｃ、痛み
+
+;荊で緊縛
+@DICTIONARY_TRAIN_COMMAND_406
+PRINTL 【荊で緊縛】
+PRINTL 奴隷を荊（いばら）で緊縛する。
+PRINTL 緊縛された状態で選択すると荊は崩れ落ちる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者が幽香でないと実行できない。
+PRINTL 対象が縄か蜘蛛の糸で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、屈従、逸脱、痛み
+PRINTL ・入る可能性のあるソース(緊縛中)
+PRINTW 　痛み、露出、屈従、逸脱
+
+;荊の鞭
+@DICTIONARY_TRAIN_COMMAND_407
+PRINTL 【荊の鞭】
+PRINTL 奴隷を荊で作った鞭で打ち据える。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者が幽香でないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、支配
+
+;蜘蛛の糸
+@DICTIONARY_TRAIN_COMMAND_408
+PRINTL 【蜘蛛の糸】
+PRINTL 奴隷を糸疣から出した糸で緊縛する。
+PRINTL 蜘蛛の糸はしばらくすると糸が切れる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がヤマメでないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象が別の方法で緊縛されていると実行できない。
+PRINTL 条件を満たすと[653]蜘蛛の巣に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、屈従、逸脱、トラウマ、痛み、液体追加、
+PRINTL 恭順追加、欲情追加
+PRINTL ・入る可能性のあるソース(緊縛中)
+PRINTL 　痛み、液体追加、露出、屈従、逸脱、恭順追加、
+PRINTW 　欲情追加、トラウマ
+
+;独楽回し
+@DICTIONARY_TRAIN_COMMAND_409
+PRINTL 【独楽回し】
+PRINTL 奴隷の体に絡み付いている糸を掴み思いっきり引っ張る
+PRINTL ことにより、奴隷の目を回す。糸は切れる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がヤマメでないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象を蜘蛛の糸でぐるぐる巻きにしていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、中毒充足、痛み
+
+;蜘蛛脚愛撫
+@DICTIONARY_TRAIN_COMMAND_410
+PRINTL 【蜘蛛脚愛撫】
+PRINTL 奴隷を無数の脚で撫で回す。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がヤマメでないと実行できない。
+PRINTL 調教者が[蜘蛛の脚]でないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象を蜘蛛の糸で緊縛していないと実行できない。
+PRINTL 条件を満たすと[654]蜘蛛脚六点責めに派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　性行動、不潔、露出、逸脱、快Ｃ、情愛、快Ｂ、快Ａ、
+PRINTW 　屈従、痛み、トラウマ
+
+;人形愛撫
+@DICTIONARY_TRAIN_COMMAND_411
+PRINTL 【人形愛撫】
+PRINTL 人形を大量に呼び出し、奴隷を人形たちに愛撫させる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教中の使用回数に制限がある。
+PRINTL 調教者がEX化していないアリスでないと実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 条件を満たすと[658]拘束∇に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　性行動、露出、逸脱、痛み、屈従、快Ｃ、情愛、
+PRINTW 　快Ｖ、快Ａ、快Ｂ
+
+;操りの糸
+@DICTIONARY_TRAIN_COMMAND_412
+PRINTL 【操りの糸】
+PRINTL 奴隷を魔力の糸により操る。
+PRINTL 操られた状態で選択すると解除する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がEX化していないアリスでないと実行できない。
+PRINTL 対象が緊縛されていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　屈従、トラウマ、反感追加、支配
+PRINTL ・入る可能性のあるソース(発動中)
+PRINTW 　逸脱
+
+;豆炙り
+@DICTIONARY_TRAIN_COMMAND_413
+PRINTL 【豆炙り】
+PRINTL 奴隷の陰核を調教者の起こした火で炙る。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がEX化していない妹紅でないと実行できない。
+PRINTL 対象にペニスがあると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、屈従、逸脱、快Ｃ、痛み、トラウマ
+
+;乳豆炙り
+@DICTIONARY_TRAIN_COMMAND_414
+PRINTL 【乳豆炙り】
+PRINTL 奴隷の乳首を調教者の起こした火で炙る。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がEX化していない妹紅でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、屈従、逸脱、快Ｂ、痛み、トラウマ
+
+;読心
+@DICTIONARY_TRAIN_COMMAND_415
+PRINTL 【読心】
+PRINTL 奴隷の心を覗き込む。
+PRINTL 読心中に選択すると読心をやめる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者が心の目を閉ざしていない[覚]でないと実行できない。
+PRINTL 対象が心の目を閉ざしている[覚]だと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、屈従、逸脱、反感追加、情愛、
+PRINTL 　恭順追加、露出、羞恥扇情、トラウマ
+PRINTL ・入る可能性のあるソース(読心中)
+PRINTL 　中毒充足、液体追加、屈従、逸脱、反感追加、情愛、
+PRINTW 　恭順追加、露出、トラウマ
+
+;思姦
+@DICTIONARY_TRAIN_COMMAND_416
+PRINTL 【思姦】
+PRINTL 奴隷を心で犯す。
+PRINTL 調教者が心の目を閉ざしている[覚]のときは実行できない。
+PRINTL 対象が心の目を閉ざしていない[覚]でないと実行できない。
+PRINTL 対象が精神崩壊か傀儡だと実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、液体追加、欲情追加、露出、逸脱、反感追加
+
+;筆責め
+@DICTIONARY_TRAIN_COMMAND_417
+PRINTL 【筆責め】
+PRINTL 奴隷の微妙な場所を筆で責める。場所は選択できる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者が阿求でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　性行動、露出、屈従、逸脱、中毒充足、快Ｃ、情愛、
+PRINTW 　快Ｂ、快Ａ
+
+;時間停止
+@DICTIONARY_TRAIN_COMMAND_418
+PRINTL 【時間停止】
+PRINTL 奴隷の時間を止める。
+PRINTL 時間停止状態で選択すると時間は動きだす。
+PRINTL その調教中に一度しか実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者が咲夜か輝夜か野菜の錬金術師でないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時＆停止中)
+PRINTL 　なし
+PRINTL ・入る可能性のあるソース(終了時)
+PRINTW 　停止中に入る予定だった全てのソース
+
+;狂気の目
+@DICTIONARY_TRAIN_COMMAND_419
+PRINTL 【狂気の目】
+PRINTL 奴隷の瞳を覗き込み狂気の目の効果を与える。
+PRINTL 効果中に選択すると効果を止める。
+PRINTL パラメータの変化やCVABの快感値のランダムによる入れ替えなどが起きる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL なお、調教防衛用の「狂気の目」とは別物なので混同しないように。
+PRINTL 調教者が狂気の目を持っていないと実行できない。
+PRINTL 対象が狂気を持っていると実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、逸脱、支配
+PRINTL ・入る可能性のあるソース(発動中)
+PRINTL 　快Ｃと快Ｖ（女性のみ）と快Ａと快Ｂの入手ソースが入れ替わるかもしれない。
+PRINTW 　欲情追加（痛みのソースがある場合）、痛み（欲情追加のソースがある場合）
+
+;鈴蘭の毒
+@DICTIONARY_TRAIN_COMMAND_420
+PRINTL 【鈴蘭の毒】
+PRINTL 奴隷に鈴蘭の毒を浴びせる。
+PRINTL 毒により様々な変化が起こる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がメディスンでないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、薬物浸潤、逸脱
+PRINTL ・入る可能性のあるソース(発揮中)
+PRINTW 　痛み、薬物浸潤
+
+;昆虫採集セットの薬
+@DICTIONARY_TRAIN_COMMAND_421
+PRINTL 【昆虫採集セットの薬】
+PRINTL 奴隷に怪しげな液体を注入する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 媚薬と利尿剤と排卵誘発剤と賢者の血を全て持っていないと実行できない。
+PRINTL 調教者が永琳でないと実行できない。
+PRINTL 対象が薬毒耐性持ちだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 媚薬と利尿剤と排卵誘発剤と賢者の血を1ずつ消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　薬物浸潤、逸脱、反感追加、快Ｃ、快Ｖ、快Ａ、欲情追加
+PRINTW 　露出、快Ｂ
+
+;媚薬漬け
+@DICTIONARY_TRAIN_COMMAND_422
+PRINTL 【媚薬漬け】
+PRINTL 媚薬で満たされた桶に奴隷を入れる。
+PRINTL 媚薬漬け中に選択すると出してやる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかがキスメでないと漬けるのは実行できない。
+PRINTL 対象が小柄体型か小人体型でないと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 対象が蜘蛛の巣以外で緊縛されていないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 媚薬を持っていないと実行できない。
+PRINTL 媚薬を5個消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　欲情追加、痛み、薬物浸潤、逸脱、中毒充足
+PRINTL ・入る可能性のあるソース(媚薬漬け中)
+PRINTW 　欲情追加、痛み、屈従、中毒充足、薬物浸潤、不潔、逸脱
+
+;酒漬け
+@DICTIONARY_TRAIN_COMMAND_423
+PRINTL 【酒漬け】
+PRINTL 酒で満たされた桶に奴隷を浸からせる。
+PRINTL 酒漬け中に選択すると引き上げる。
+PRINTL 特殊風呂系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかがキスメでないと漬けるのは実行できない。
+PRINTL 対象が小柄体型か小人体型でないと実行できない。
+PRINTL 対象が薬毒耐性持ちか機械だと実行できない。
+PRINTL 対象が蜘蛛の巣以外で緊縛されていないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 最初に資金1500が必要で実行中にもターンごとに資金10が必要である。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　反感追加、中毒充足、液体追加、恭順追加、露出、欲情追加、酒酔い
+PRINTL ・入る可能性のあるソース(酒漬け中)
+PRINTW 　中毒充足、液体追加、反感追加、恭順追加、露出、欲情追加、酒酔い
+
+;わかめ酒
+@DICTIONARY_TRAIN_COMMAND_424
+PRINTL 【わかめ酒】
+PRINTL 奴隷を杯に見立てて酒を注ぎこみそれを飲む。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 酒がないと実行できない。
+PRINTL 調教者か対象のいずれかが萃香か勇儀のいずれかでないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 対象が蜘蛛の巣で緊縛されていると実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL このコマンドは状況によって芋焼酎に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　液体追加、欲情追加、露出、屈従、逸脱、痛み、
+PRINTW 　快Ｂ、快Ｃ、酒酔い
+
+;かりちゅまがーど
+@DICTIONARY_TRAIN_COMMAND_425
+PRINTL 【かりちゅまがーど】
+PRINTL 調教者がかわいらしく独特なしゃがみガードの体勢を取る。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 調教者がレミリアでないと実行できない。
+PRINTL 調教者と対象のいずれかが精神崩壊か傀儡だと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　達成感、中毒充足、情愛
+
+;陰毛炙り
+@DICTIONARY_TRAIN_COMMAND_427
+PRINTL 【陰毛炙り】
+PRINTL 奴隷の陰毛を調教者の起こした火で炙る。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がEX化していない妹紅でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 対象が亀甲縛りされているときは実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　達成感、中毒充足、屈従、逸脱、痛み、
+PRINTW 　欲情追加、露出、トラウマ
+
+;御所車
+@DICTIONARY_TRAIN_COMMAND_430
+PRINTL 【御所車】
+PRINTL 調教者のペニスを奴隷のヴァギナに挿入し、
+PRINTL 奴隷に体を回るようにさせる。体位により多少違う。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 対象が雛でないと実行できないが、
+PRINTL 調教者が雛の時は[651]御所車(逆レイプ)に派生する。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 調教者にペニスがないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　露出、不潔、性行動、達成感、逸脱、快Ｖ、情愛、
+PRINTW 　痛み、反感追加、屈従、(中毒充足)
+
+;フォーオブアカインド
+@DICTIONARY_TRAIN_COMMAND_431
+PRINTL 【フォーオブアカインド】
+PRINTL 調教者が４人に分身して、奴隷を抱え上げＭ字開脚させて、
+PRINTL アナルと胸を愛撫し、キスをしながら指をヴァギナに挿入する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者がフランでないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL なお調教者が[ふたなり]の時は[652]フォーオブアカインド
+PRINTL (ふたなり)に派生する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　不潔、接触、欲情追加、露出、逸脱、屈従、快Ｖ、
+PRINTW 　痛み、快Ａ、快Ｂ、情愛、性行動、達成感
+
+;氷柱責め
+@DICTIONARY_TRAIN_COMMAND_432
+PRINTL 【氷柱責め】
+PRINTL 奴隷のアヌスに氷柱を捻り込む。
+PRINTL 氷柱が刺さった状態で選択すると氷柱を引き抜く。
+PRINTL なお氷柱は刺さっている間でもだんだん溶けていく。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者がチルノでないと装着を実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　液体追加、快Ａ、屈従、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ａ、屈従、痛み
+
+;アナル卒塔婆
+@DICTIONARY_TRAIN_COMMAND_433
+PRINTL 【アナル卒塔婆】
+PRINTL 奴隷のアナルに卒塔婆を押し込んで説教しつつ
+PRINTL 悔悟の棒でお尻をたたく。最後に卒塔婆を抜く。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者が映姫でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、屈従、逸脱、痛み、中毒充足、恭順追加、
+PRINTW 　快Ａ、情愛、反感追加
+
+;角愛撫
+@DICTIONARY_TRAIN_COMMAND_434
+PRINTL 【角愛撫】
+PRINTL 奴隷の角にキスしたり撫でまわしたりする。
+PRINTL 対象が反発刻印3の慧音で緊縛されていない場合、
+PRINTL 逆襲イベントが起きることがある。
+PRINTL 逆襲イベントが起きた後は実行できない。
+PRINTL 逆襲イベントを経験した助手は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 対象が鬼かハクタク化している半白澤でないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(逆襲イベントがない場合)
+PRINTW 　逸脱、中毒充足、屈従、露出、不潔
+
+;角挿入
+@DICTIONARY_TRAIN_COMMAND_435
+PRINTL 【角挿入】
+PRINTL 調教者の角を奴隷のヴァギナに挿入する。
+PRINTL 対象が反発刻印3の慧音で緊縛されていない場合、
+PRINTL 逆襲イベントが起きることがある。
+PRINTL 逆襲イベントが起きた後は実行できない。
+PRINTL 逆襲イベントを経験した助手は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者が鬼かハクタク化している半白澤でないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(逆襲イベントがない場合)
+PRINTW 　情愛、痛み、露出、屈従、逸脱、快Ｖ、反感追加
+
+;角アナル挿入
+@DICTIONARY_TRAIN_COMMAND_436
+PRINTL 【角アナル挿入】
+PRINTL 調教者の角を奴隷のアナルに挿入する。
+PRINTL 対象が反発刻印3の慧音で緊縛されていない場合、
+PRINTL 逆襲イベントが起きることがある。
+PRINTL 逆襲イベントが起きた後は実行できない。
+PRINTL 逆襲イベントを経験した助手は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者が鬼かハクタク化している半白澤でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(逆襲イベントがない場合)
+PRINTW 　情愛、痛み、露出、屈従、逸脱、快Ａ
+
+;ヴァギナ要石
+@DICTIONARY_TRAIN_COMMAND_437
+PRINTL 【ヴァギナ要石】
+PRINTL 奴隷のヴァギナに要石を挿入する。
+PRINTL 装着状態で選択すると引き抜くが、そのときに強烈な刺激を奴隷に与える。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者か対象のいずれかが天子でないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、痛み、露出、逸脱
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ｖ、痛み、逸脱、屈従
+
+;アナル要石
+@DICTIONARY_TRAIN_COMMAND_438
+PRINTL 【アナル要石】
+PRINTL 奴隷のアナルに要石を挿入する。
+PRINTL 装着状態で選択すると引き抜くが、そのときに強烈な刺激を奴隷に与える。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者か対象のいずれかが天子でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、情愛、屈従、露出、逸脱
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ａ、屈従、痛み
+
+;両穴要石
+@DICTIONARY_TRAIN_COMMAND_439
+PRINTL 【両穴要石】
+PRINTL 奴隷のヴァギナとアナルに要石を挿入する。
+PRINTL 装着状態で選択すると引き抜くが、そのときに強烈な刺激を奴隷に与える。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 拷問系、精神操作系コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 調教者か対象のいずれかが天子でないと実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、液体追加、欲情追加、露出、逸脱、恭順追加、快Ｖ、
+PRINTL 　快Ａ、情愛、屈従
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ｖ、痛み、逸脱、快Ａ
+
+;半霊を犯す
+@DICTIONARY_TRAIN_COMMAND_440
+PRINTL 【半霊を犯す】
+PRINTL 奴隷の半霊を犯す。
+PRINTL 半霊の性別によりヴァギナかアナルのいずれかに挿入する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 対象が妖夢か妖忌でないと実行できない。
+PRINTL 対象が妖夢のときは半霊が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 対象が妖忌のときは半霊(忌)が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 調教者にペニスがあるか、ペニスバンドがないと実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、快Ｖ、情愛、快Ａ、屈従、痛み
+
+;半霊を挿入(前)
+@DICTIONARY_TRAIN_COMMAND_441
+PRINTL 【半霊を挿入(前)】
+PRINTL 奴隷の半霊を調教者のヴァギナに挿入する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 調教者が妖夢か妖忌でないと実行できない。
+PRINTL 調教者が妖夢のときは半霊が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 調教者が妖忌のときは半霊(忌)が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、快Ｖ、痛み、反感追加
+
+;半霊を挿入(後)
+@DICTIONARY_TRAIN_COMMAND_442
+PRINTL 【半霊を挿入(後)】
+PRINTL 奴隷の半霊を調教者のアナルに挿入する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 調教者が妖夢か妖忌でないと実行できない。
+PRINTL 調教者が妖夢のときは半霊が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 調教者が妖忌のときは半霊(忌)が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、快Ａ、屈従、痛み
+
+;幽明の苦輪
+@DICTIONARY_TRAIN_COMMAND_443
+PRINTL 【幽明の苦輪】
+PRINTL 奴隷の幽明の苦輪を使わせる。
+PRINTL 効果中に選択すると幽明の苦輪をやめる。
+PRINTL 半霊と一緒に奉仕する。
+PRINTL 奉仕系調教の効果は増えるが体力減少も増える。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 対象が妖夢か妖忌でないと実行できない。
+PRINTL 対象が妖夢のときは半霊が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 対象が妖忌のときは半霊(忌)が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　なし
+PRINTL ・入る可能性のあるソース(発動中)
+PRINTW 　性行動
+
+;半霊再構成
+@DICTIONARY_TRAIN_COMMAND_444
+PRINTL 【半霊再構成】
+PRINTL 半霊の姿や素質を変えることができる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかが妖忌でないと実行できない。
+PRINTL 半霊(忌)が主人や助手や妊娠でなく
+PRINTL 調教可能な奴隷として存在しなければ実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　なし
+
+;薀蓄語り
+@DICTIONARY_TRAIN_COMMAND_445
+PRINTL 【薀蓄語り】
+PRINTL 調教者が薀蓄を語るか、奴隷に好き放題語らせる。
+PRINTL 調教開始時にしか選択できない。
+PRINTL これを選択すると調教終了する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかが霖之助でないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　達成感、トラウマ
+
+;説教を受ける
+@DICTIONARY_TRAIN_COMMAND_446
+PRINTL 【説教を受ける】
+PRINTL 調教者が説教をするか、奴隷に説教させる。
+PRINTL 調教開始時にしか選択できない。
+PRINTL これを選択すると調教終了する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者か対象のいずれかが映姫でないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、達成感、恭順追加、屈従
+
+;傘を愛撫する
+@DICTIONARY_TRAIN_COMMAND_447
+PRINTL 【傘を愛撫する】
+PRINTL 奴隷の本体の傘を愛撫する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 対象が小傘でないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、不潔、快Ｃ、情愛、液体追加
+
+;房中術
+@DICTIONARY_TRAIN_COMMAND_448
+PRINTL 【房中術】
+PRINTL 気の力により性交渉（Ｖ性交・Ａ性交）のときに気力の消費を
+PRINTL 抑え、ネガティブな影響を軽減する術を発現させる。
+PRINTL 効果中に選択するとそこで中断する。
+PRINTL なお、性交系以外のコマンドにおいては気力を余計に消耗する。
+PRINTL また、助手がいるときには実行できないので注意のこと。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者か対象が美鈴でないと実行できない。
+PRINTL お風呂場プレイ中はプレイマットがないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　なし
+PRINTL ・入る可能性のあるソース(発動中)
+PRINTW 　情愛
+
+;フィーバー！
+@DICTIONARY_TRAIN_COMMAND_449
+PRINTL 【フィーバー！】
+PRINTL 調教者が奴隷に「フィーバー！」と叫び、ポーズを決める。
+PRINTL 意味不明だと思ったら実行しなくていい。
+PRINTL 土曜日の午後の調教では効果が増強される。
+PRINTL しつこくすると嫌われるがカウントは[349]ふぉーゆーっ！と共用である。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL 調教者か対象が衣玖でないと実行できない。
+PRINTL 調教者か対象のいずれかが精神崩壊か傀儡だと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、中毒充足、露出、トラウマ、反感追加、情愛、達成感
+
+;儀式「とりあえずピッチャー二つで」
+@DICTIONARY_TRAIN_COMMAND_450
+PRINTL 【儀式「とりあえずピッチャー二つで」】
+PRINTL 奴隷にビールを飲ませる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL ビールが2本以上ないと実行できない。
+PRINTL 調教者が天治でないと実行できない。
+PRINTL 対象が反発刻印を持っていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　酒酔い
+
+;酔生夢死「空飛ぶ呑んべぇのレムリア」
+@DICTIONARY_TRAIN_COMMAND_451
+PRINTL 【酔生夢死「空飛ぶ呑んべぇのレムリア」】
+PRINTL 奴隷を酒の弾幕の中に沈める。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL お酒が6種類すべてないと実行できない。
+PRINTL 他にも実行に際して厳しい条件があるが、一部のキャラは条件が緩和される。
+PRINTL 調教者が天治でないと実行できない。
+PRINTL 対象が反発刻印を持っていると実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　酒酔い、鬼殺し
+
+;超凝視
+@DICTIONARY_TRAIN_COMMAND_452
+PRINTL 【超凝視】
+PRINTL 奴隷を覗き込み特殊な効果を与える。
+PRINTL 効果中に選択すると効果を止める。
+PRINTL 入手ソースのランダムによる入れ替えなどが起きる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者がユウゲンマガンでないと実行できない。
+PRINTL 対象が狂気を持っていると実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　羞恥扇情、逸脱、支配
+PRINTL ・入る可能性のあるソース(発動中)
+PRINTL 　情愛と主導権と達成感と屈従と中毒充足とトラウマと羞恥扇情と
+PRINTL 性技学習の入手ソースが入れ替わるかもしれない。
+PRINTL 　欲情追加（不潔のソースがある場合）、恭順追加（逸脱のソースがある場合）、
+PRINTL 　液体追加（反感追加のソースがある場合）、
+PRINTW 　支配（快Ｃか快Ｖか快Ａか快Ｂのいずれかのソースがある場合）
+
+;傘に舐めさせる
+@DICTIONARY_TRAIN_COMMAND_453
+PRINTL 【傘に舐めさせる】
+PRINTL からかさお化けの血の入ってる主人か助手か奴隷の傘の舌を使って、
+PRINTL 奴隷の身体を舐めさせ続ける。
+PRINTL もう一度選択すれば舐めるのを止める。
+PRINTL からかさお化けが複数いる場合は誰の傘を使うかを選択できる。
+PRINTL また、奴隷自身の傘を使用すれば、自慰となる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 主人か助手か対象がからかさお化け（混血可）でないと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL 自慰のときには、実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ｃ、性行動、中毒充足、恭順追加、液体追加
+PRINTL ・入る可能性のあるソース(発動中)
+PRINTW 　快Ｃ、露出、欲情追加、液体追加
+
+;触手召喚
+@DICTIONARY_TRAIN_COMMAND_500
+PRINTL 【触手召喚】
+PRINTL 触手を召喚する。
+PRINTL 召喚された状態で選択すると触手を送還する。
+PRINTL 触手プレイの基本である。
+PRINTL 調教者が禁断の知識と触手使役術を持っていないと実行できない。
+PRINTL お風呂場プレイ中は実行できない。
+PRINTL 
+PRINTL 召喚中に触手が射精することがある。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(触手調教中)
+PRINTW 　トラウマ、液体追加、触手汚染、不潔、逸脱
+
+;触手挿入
+@DICTIONARY_TRAIN_COMMAND_501
+PRINTL 【触手挿入】
+PRINTL 触手を奴隷のヴァギナに挿入する。
+PRINTL もう一度実行すると触手は離れる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ｖ、痛み
+
+;触手アナル挿入
+@DICTIONARY_TRAIN_COMMAND_502
+PRINTL 【触手アナル挿入】
+PRINTL 触手を奴隷のアナルに挿入する。
+PRINTL もう一度実行すると触手は離れる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、屈従、痛み、中毒充足
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ａ、痛み、屈従
+
+;触手クリ責め
+@DICTIONARY_TRAIN_COMMAND_503
+PRINTL 【触手クリ責め】
+PRINTL 触手で奴隷のクリトリスを責めはじめる。
+PRINTL その状態で選択すると責めをやめる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ｃ
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　快Ｃ、露出、欲情追加
+
+;触手乳首責め
+@DICTIONARY_TRAIN_COMMAND_504
+PRINTL 【触手乳首責め】
+PRINTL 触手で奴隷の乳首を弄りはじめる。
+PRINTL その状態で選択すると弄るのをやめる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ｂ、中毒充足
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　快Ｂ、露出、欲情追加
+
+;触手ペニス責め
+@DICTIONARY_TRAIN_COMMAND_505
+PRINTL 【触手ペニス責め】
+PRINTL 触手で奴隷のペニスに巻き付いてしごく。
+PRINTL その状態で選択するとペニスを解放する。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ｃ
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　快Ｃ、露出、欲情追加
+
+;触手口辱
+@DICTIONARY_TRAIN_COMMAND_506
+PRINTL 【触手口辱】
+PRINTL 触手を奴隷の口に侵入させる。
+PRINTL その状態で選択すると触手を口から引き抜く。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　性行動、屈従、恭順追加
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　性行動、屈従、恭順追加
+
+;触手緊縛
+@DICTIONARY_TRAIN_COMMAND_507
+PRINTL 【触手緊縛】
+PRINTL 無数の触手で奴隷の体を縛りあげる。
+PRINTL その状態で選択すると奴隷の拘束を解く。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、露出、屈従、逸脱
+PRINTL ・入る可能性のあるソース(緊縛中)
+PRINTW 　痛み、露出、屈従、逸脱
+
+;触手鼻穴挿入
+@DICTIONARY_TRAIN_COMMAND_508
+PRINTL 【触手鼻穴挿入】
+PRINTL 細めの触手を奴隷の鼻の穴に突っ込ませて責める。
+PRINTL その状態で選択すると触手を奴隷の鼻の穴から引き抜く。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、痛み、屈従、中毒充足、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　露出、痛み、屈従、中毒充足、トラウマ、逸脱
+
+;触手メイデン
+@DICTIONARY_TRAIN_COMMAND_509
+PRINTL 【触手メイデン】
+PRINTL 奴隷の四肢を触手で絡めとり、奴隷の穴という穴を犯しつくす。
+PRINTL 可能ならば、触手はヴァギナとアヌスとペニスとクリトリスと
+PRINTL 尿管と乳首と口と鼻と耳を責めるとともに緊縛を行う。
+PRINTL それらの解除は個別の当該コマンドで行う。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTW 　トラウマ、逸脱
+
+;触手寄生
+@DICTIONARY_TRAIN_COMMAND_510
+PRINTL 【触手寄生】
+PRINTL 召喚した触手を奴隷の体に寄生させる。
+PRINTL ただし、触手に[体内適応力強化]能力がなければ、
+PRINTL [蓬莱人]もしくはメディスンや雛に[寄生]することはできない。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、不潔、逸脱、反感追加、支配、痛み、トラウマ
+
+;触手くすぐり
+@DICTIONARY_TRAIN_COMMAND_511
+PRINTL 【触手くすぐり】
+PRINTL 奴隷の微妙な場所を触手で責める。場所は選択できる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[磯巾着型触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　性行動、不潔、露出、屈従、逸脱、中毒充足、支配、快Ｃ、
+PRINTW 　情愛、快Ｂ、快Ａ
+
+;触手秘貝開き
+@DICTIONARY_TRAIN_COMMAND_512
+PRINTL 【触手秘貝開き】
+PRINTL 奴隷を触手でＭ字開脚させて秘部を晒させる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加、液体追加、露出、屈従、逸脱、快Ｃ、不潔
+
+;触手パイズリ
+@DICTIONARY_TRAIN_COMMAND_513
+PRINTL 【触手パイズリ】
+PRINTL 奴隷の胸を触手で抱き寄せできたトンネルに別の触手
+PRINTL が潜り抜けピストン運動を行う。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　屈従、逸脱、性行動、達成感、不潔、快Ｂ、支配
+
+;触手素股
+@DICTIONARY_TRAIN_COMMAND_514
+PRINTL 【触手素股】
+PRINTL 奴隷の脚を触手で閉じさせ股にはさまれるように、
+PRINTL 別の触手で陰唇を擦る。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　不潔、屈従、逸脱、性行動、達成感、快Ｃ
+
+;触手放電ペニス責め
+@DICTIONARY_TRAIN_COMMAND_515
+PRINTL 【触手放電ペニス責め】
+PRINTL 触手で奴隷のペニスに巻き付いて放電しながらしごく。
+PRINTL その状態で選択するとペニスを解放する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[放電触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、逸脱、快Ｃ、痛み
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　快Ｃ、痛み、露出、欲情追加
+
+;触手Ｇスポ責め
+@DICTIONARY_TRAIN_COMMAND_520
+PRINTL 【触手Ｇスポ責め】
+PRINTL 奴隷に潜り込ませた触手でＧスポットを責めさせる。
+PRINTL 既に触手をＶに挿入させていないと実行できない。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 対象の[処女]はたぶん既に破れてる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、逸脱、快Ｖ、屈従、痛み、反感追加、
+PRINTL 　性行動、不潔、支配
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　快Ｖ、性行動、痛み、不潔、逸脱、反感追加
+
+;触手子宮責め
+@DICTIONARY_TRAIN_COMMAND_521
+PRINTL 【触手子宮責め】
+PRINTL 奴隷に潜り込ませた触手で子宮を責めさせる。
+PRINTL 既に触手をＶに挿入させていないと実行できない。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 対象の[処女]はたぶん既に破れてる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、逸脱、反感追加、快Ｖ、屈従、痛み、
+PRINTL 　性行動、不潔、支配
+PRINTL ・入る可能性のあるソース(攻略中)
+PRINTW 　快Ｖ、中毒充足、痛み、不潔、逸脱、反感追加
+
+;触手浣腸
+@DICTIONARY_TRAIN_COMMAND_522
+PRINTL 【触手浣腸】
+PRINTL 奴隷の肛門で触手を使って浣腸しつつ触手で穴をふさぐ。
+PRINTL その状態で選択すると触手を引き抜く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、快Ａ、屈従、痛み、不潔、逸脱、反感追加
+PRINTL ・入る可能性のあるソース(浣腸中)
+PRINTW 　快Ａ、屈従、痛み、逸脱
+
+;触手小腸責め
+@DICTIONARY_TRAIN_COMMAND_523
+PRINTL 【触手小腸責め】
+PRINTL 触手を奴隷の肛門から挿入し、小腸まで到達させて刺激を与える。
+PRINTL その状態で選択すると触手を引き抜く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[遠隔精密制御]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、支配、痛み、屈従、中毒充足、逸脱、トラウマ
+PRINTL ・入る可能性のあるソース(堪能中)
+PRINTW 　快Ａ、支配、痛み、屈従、中毒充足、逸脱、トラウマ
+
+;触手貫通
+@DICTIONARY_TRAIN_COMMAND_524
+PRINTL 【触手貫通】
+PRINTL 触手を奴隷の肛門から挿入し、消化器を口まで貫通させる。
+PRINTL その状態で選択すると触手を引き抜く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[遠隔精密制御]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、痛み、中毒充足、不潔、屈従、逸脱、支配、トラウマ
+PRINTL ・入る可能性のあるソース(貫通中)
+PRINTW 　快Ａ、痛み、屈従、支配、中毒充足、逸脱、不潔、トラウマ
+
+;触手搾乳
+@DICTIONARY_TRAIN_COMMAND_525
+PRINTL 【触手搾乳】
+PRINTL 吸盤状の触手で奴隷の乳首を吸い上げる。
+PRINTL その状態で選択すると乳首を解放する。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、性行動、達成感、恭順追加、痛み、屈従、中毒充足、
+PRINTL 　逸脱、快Ｂ
+PRINTL ・入る可能性のあるソース(搾乳中)
+PRINTL 　快Ｂ、露出、性行動、恭順追加、欲情追加、痛み、服従、
+PRINTW 　中毒充足、逸脱
+
+;触手乳腺挿入
+@DICTIONARY_TRAIN_COMMAND_526
+PRINTL 【触手乳腺挿入】
+PRINTL 極細の触手を奴隷の乳首から乳腺に侵入させる。
+PRINTL その状態で選択すると触手を引き抜く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[極細触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｂ、痛み、不潔、逸脱、欲情追加、トラウマ
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　中毒充足、逸脱、屈従、痛み、快Ｂ
+
+;触手カテーテル
+@DICTIONARY_TRAIN_COMMAND_527
+PRINTL 【触手カテーテル】
+PRINTL 触手を奴隷の尿道に侵入させる。
+PRINTL その状態で選択すると触手を引き抜く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[抗菌触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、屈従、痛み、不潔、逸脱、反感追加
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　快Ｃ、屈従、痛み、逸脱
+
+;触手採尿
+@DICTIONARY_TRAIN_COMMAND_528
+PRINTL 【触手採尿】
+PRINTL 触手を奴隷の尿道口に取り付かせ、尿を吸い上げる。
+PRINTL その状態で選択すると尿道を解放する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[抗菌触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、達成感、欲情追加、痛み、屈従、中毒充足、逸脱、快Ｃ
+PRINTL ・入る可能性のあるソース(採尿中)
+PRINTW 　快Ｃ、露出、達成感、欲情追加、痛み、屈従、中毒充足、逸脱
+
+;触手耳穴挿入
+@DICTIONARY_TRAIN_COMMAND_529
+PRINTL 【触手耳穴挿入】
+PRINTL 触手を奴隷の耳の穴に侵入させる。
+PRINTL その状態で選択すると触手を奴隷の耳の穴から引き抜く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　屈従、中毒充足、不潔、トラウマ
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　屈従、中毒充足、不潔、トラウマ
+
+;触手ヴァギナ拡張
+@DICTIONARY_TRAIN_COMMAND_530
+PRINTL 【触手ヴァギナ拡張】
+PRINTL 奴隷の膣をゴーヤの様な極太の触手でかきまわす。
+PRINTL ゴーヤとはツルレイシとも言うウリ科の植物である。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[ゴーヤ型触手]を得ていないと実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、屈従、逸脱、支配、快Ｖ、欲情追加、中毒充足
+
+;触手アナル拡張
+@DICTIONARY_TRAIN_COMMAND_531
+PRINTL 【触手アナル拡張】
+PRINTL 奴隷の肛門をゴーヤの様な極太の触手でかきまわす。
+PRINTL ゴーヤとはツルレイシとも言うウリ科の植物である。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[ゴーヤ型触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、露出、屈従、逸脱、支配、快Ａ、情愛、中毒充足
+
+;触手両穴拡張
+@DICTIONARY_TRAIN_COMMAND_532
+PRINTL 【触手両穴拡張】
+PRINTL 奴隷の膣と肛門をゴーヤの様な極太の触手でかきまわす。
+PRINTL ゴーヤとはツルレイシとも言うウリ科の植物である。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[ゴーヤ型触手]を得ていないと実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　痛み、液体追加、欲情追加、露出、屈従、逸脱、支配、快Ｖ、
+PRINTW 　情愛、快Ａ、中毒充足
+
+;触手産卵
+@DICTIONARY_TRAIN_COMMAND_533
+PRINTL 【触手産卵】
+PRINTL 奴隷の子宮に触手で卵を産み付ける。
+PRINTL 産卵された状態で選択すると追加して卵を産み付ける。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 対象の[処女]はたぶん既に破れてる。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、不潔、快Ｖ、痛み、屈従、逸脱、反感追加
+PRINTL ・入る可能性のあるソース(産卵中)
+PRINTW 　快Ｖ、屈従、痛み、逸脱、支配
+
+;触手アナル産卵
+@DICTIONARY_TRAIN_COMMAND_534
+PRINTL 【触手アナル産卵】
+PRINTL 奴隷の腸内に触手で卵を産み付ける。
+PRINTL 産卵された状態で選択すると追加して卵を産み付ける。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　不潔、快Ａ、屈従、痛み、逸脱、反感追加、支配
+PRINTL ・入る可能性のあるソース(産卵中)
+PRINTW 　快Ａ、屈従、痛み、逸脱、支配
+
+;触手愛液採集
+@DICTIONARY_TRAIN_COMMAND_535
+PRINTL 【触手愛液採集】
+PRINTL 奴隷のヴァギナに触手を取り付かせ愛液を採集する。
+PRINTL 取り付かせた状態で選択すると解除する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、達成感、欲情追加、痛み、屈従、中毒充足、逸脱、快Ｖ
+PRINTL ・入る可能性のあるソース(採集中)
+PRINTW 　痛み、快Ｖ、露出、達成感、欲情追加、屈従、中毒充足、逸脱
+
+;触手口内洗浄
+@DICTIONARY_TRAIN_COMMAND_540
+PRINTL 【触手口内洗浄】
+PRINTL 奴隷の口内に触手から液体を出して濯がせる。
+PRINTL 奴隷の口内の汚れがリセットされる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、達成感、不潔、液体追加、逸脱、支配、屈従、恭順追加
+
+;触手膣内洗浄
+@DICTIONARY_TRAIN_COMMAND_541
+PRINTL 【触手膣内洗浄】
+PRINTL 奴隷の膣内を触手からの液体により洗浄する。
+PRINTL 奴隷の膣内の汚れがリセットされる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　達成感、不潔、液体追加、逸脱、支配、快Ｖ、性行動、
+PRINTW 　痛み、反感追加、屈従、恭順追加
+
+;触手腸内洗浄
+@DICTIONARY_TRAIN_COMMAND_542
+PRINTL 【触手腸内洗浄】
+PRINTL 奴隷の腸内を触手からの液体により洗浄する。
+PRINTL 奴隷の腸内（アナル）の汚れがリセットされる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　達成感、不潔、液体追加、逸脱、支配、快Ａ、性行動、
+PRINTW 　屈従、痛み、反感追加、中毒充足
+
+;触手膀胱洗浄
+@DICTIONARY_TRAIN_COMMAND_543
+PRINTL 【触手膀胱洗浄】
+PRINTL 奴隷の膀胱に触手からの液体を注ぎ込む。
+PRINTL 奴隷は急激に尿意を催す。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　達成感、不潔、液体追加、逸脱、支配、快Ｃ、中毒充足、
+PRINTW 　屈従、痛み、反感追加
+
+;触手鼻腔洗浄
+@DICTIONARY_TRAIN_COMMAND_544
+PRINTL 【触手鼻腔洗浄】
+PRINTL 奴隷の鼻の内部を触手からの液体により洗浄する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、達成感、不潔、液体追加、逸脱、支配、屈従、恭順追加
+
+;触手耳穴洗浄
+@DICTIONARY_TRAIN_COMMAND_545
+PRINTL 【触手耳穴洗浄】
+PRINTL 奴隷の耳の内部を触手からの液体により洗浄する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、達成感、不潔、液体追加、逸脱、支配、屈従、恭順追加
+
+;触手全穴洗浄
+@DICTIONARY_TRAIN_COMMAND_546
+PRINTL 【触手全穴洗浄】
+PRINTL 奴隷の口内、膣内、腸内、膀胱内、鼻内、耳内を全て触手からの液体により洗浄する。
+PRINTL 奴隷の膣内の汚れがリセットされる。
+PRINTL 奴隷の腸内（アナル）の汚れがリセットされる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 調教対象が[オトコ]だと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　達成感、不潔、液体追加、逸脱、支配、快Ｃ、中毒充足、屈従、
+PRINTW 　快Ｖ、性行動、快Ａ、反感追加、恭順追加
+
+;触手催眠
+@DICTIONARY_TRAIN_COMMAND_550
+PRINTL 【触手催眠】
+PRINTL 触手の魔力により奴隷を催眠状態に導く。
+PRINTL 催眠状態で選択すると催眠をかけることをやめる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[催眠触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、不潔、逸脱
+PRINTL ・入る可能性のあるソース(催眠中)
+PRINTL 　性行動、屈従、逸脱、支配、快Ｖ、痛み、快Ａ、中毒充足、達成感、
+PRINTW 　情愛、快Ｃ、液体追加、欲情追加、露出、支配
+
+;触手鞭打ち
+@DICTIONARY_TRAIN_COMMAND_551
+PRINTL 【触手鞭打ち】
+PRINTL 鞭のようにしなる触手で奴隷を打ち据える。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[鞭触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、支配
+
+;触手針責め
+@DICTIONARY_TRAIN_COMMAND_552
+PRINTL 【触手針責め】
+PRINTL 先端を針のように鋭く硬質にした触手を奴隷の乳首や性器に突きたてる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[針状触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　逸脱、痛み、支配
+
+;触手放電
+@DICTIONARY_TRAIN_COMMAND_553
+PRINTL 【触手放電】
+PRINTL 奴隷に触手を巻きつかせ放電させる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 異常経験フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[放電触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　痛み、中毒充足、トラウマ、逸脱
+
+;触手吸血
+@DICTIONARY_TRAIN_COMMAND_554
+PRINTL 【触手吸血】
+PRINTL 先端にヤツメウナギのような口のついた触手を奴隷の
+PRINTL 首筋に取り付かせ、吸血させる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[吸血触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、不潔、逸脱、支配、痛み、トラウマ
+
+;触手チキチキ
+@DICTIONARY_TRAIN_COMMAND_556
+PRINTL 【触手チキチキ】
+PRINTL 機械に接続できるような特殊な触手を機械の奴隷の身体に接続し、
+PRINTL 電流を流すとともに、内部プログラムに干渉（ハッキング）を行う。
+PRINTL チキチキ状態で選択するとチキチキを中止する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[放電触手][極細触手][遠隔精密制御]を得ていないと実行できない。
+PRINTL 対象が[機械]でないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、中毒充足、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(チキチキ実行中)
+PRINTL 　達成感、恭順追加、欲情追加、中毒充足、快Ｃ、快Ｖ、快Ａ、
+PRINTL 　快Ｂ、痛み、屈従、支配
+PRINTW 　また、不潔と逸脱と反感追加のソースを軽減する。
+
+;触手強制回復
+@DICTIONARY_TRAIN_COMMAND_560
+PRINTL 【触手強制回復】
+PRINTL 奴隷の体内に触手から強制的に栄養剤を注入する。
+PRINTL 調教者の体力が減少する（回復中も）ので注意のこと。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[養分注入触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　トラウマ、中毒充足、不潔、逸脱、反感追加、支配
+PRINTL ・入る可能性のあるソース(回復中)
+PRINTW 　トラウマ、支配、中毒充足、薬物浸潤、不潔、逸脱、反感追加
+
+;触手排卵誘発
+@DICTIONARY_TRAIN_COMMAND_561
+PRINTL 【触手排卵誘発】
+PRINTL 極細の二本の触手を奴隷の卵巣に侵入させ、
+PRINTL 排卵を促す分泌物を流し込ませる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　中毒充足、液体追加、欲情追加、逸脱、快Ｖ、屈従、痛み、
+PRINTW 　不潔、支配、薬物浸潤
+
+;触手避妊膜塗布
+@DICTIONARY_TRAIN_COMMAND_562
+PRINTL 【触手避妊膜塗布】
+PRINTL 先端が磯巾着のように無数に分かれている触手を奴隷の
+PRINTL 子宮に侵入させ卵子の着床を妨害する特殊な粘液を塗りつけさせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　中毒充足、逸脱、支配、快Ｖ、屈従、痛み、不潔
+
+;触手発毛剤
+@DICTIONARY_TRAIN_COMMAND_563
+PRINTL 【触手発毛剤】
+PRINTL 触手に分泌された発毛剤を奴隷の陰部に擦りつけさせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加、液体追加、中毒充足、薬物浸潤、逸脱
+
+;触手脱毛剤
+@DICTIONARY_TRAIN_COMMAND_564
+PRINTL 【触手脱毛剤】
+PRINTL 触手に分泌された脱毛剤を奴隷の陰部に擦りつけさせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[特殊ホルモン分泌]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　欲情追加、液体追加、中毒充足、薬物浸潤滑、逸脱
+
+;触手読心責め
+@DICTIONARY_TRAIN_COMMAND_580
+PRINTL 【触手読心責め】
+PRINTL 下半身が触手と一体化したさとりを召喚し、奴隷を愛撫しながら
+PRINTL 心を読み、耳元で囁かせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 調教対象が心の目を閉ざしている[覚]だと実行できない。
+PRINTL 触手が[SATORI触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(読心中)
+PRINTW 　露出、トラウマ、逸脱
+
+;触手潮干狩り
+@DICTIONARY_TRAIN_COMMAND_581
+PRINTL 【触手潮干狩り】
+PRINTL 下半身が触手と一体化したにとりを召喚し、機械タイプの触手を駆使して
+PRINTL 奴隷に電気責めを行っていく。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[NITORI触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、中毒充足、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(潮干狩り中)
+PRINTW 　痛み、中毒充足、トラウマ、逸脱
+
+;触手幽霊膣鏡
+@DICTIONARY_TRAIN_COMMAND_582
+PRINTL 【触手幽霊膣鏡】
+PRINTL 下半身が触手と一体化した幽々子を召喚し、奴隷を抱きしめながら
+PRINTL 幽霊体質の透明な触手を奴隷に挿入して膣内を観察する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[YUYUKO触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｖ、液体追加、露出、屈従、トラウマ、逸脱、痛み
+PRINTL ・入る可能性のあるソース(挿入中)
+PRINTW 　屈従、逸脱、快Ｖ、露出、痛み、トラウマ
+
+;触手強制飲酒
+@DICTIONARY_TRAIN_COMMAND_583
+PRINTL 【触手強制飲酒】
+PRINTL 触手と一体化した萃香を召喚し、触手が分泌した
+PRINTL 鬼にも効くような特殊なお酒を口移しさせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[SUIKA触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　酒酔い、鬼殺し、性行動、達成感、屈従、逸脱
+PRINTL ・入る可能性のあるソース(飲酒中)
+PRINTW 　酒酔い、鬼殺し
+
+;触手精神制御
+@DICTIONARY_TRAIN_COMMAND_584
+PRINTL 【触手精神制御】
+PRINTL 触手と一体化したアリスを召喚し、アリスの手や触手から伸ばした
+PRINTL 魔力の糸を奴隷に絡ませ、心を操って反抗心を押さえ込ませる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[ALICE触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　逸脱、屈従、支配
+PRINTL ・入る可能性のあるソース(制御中)
+PRINTW 　なし
+
+;触手厄落とし
+@DICTIONARY_TRAIN_COMMAND_585
+PRINTL 【触手厄落とし】
+PRINTL 下半身が触手と一体化した雛を召喚し、熱い吐息を素肌にかけながら
+PRINTL 奴隷の全身についた汚れを舌で舐めとってキレイにする。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[HINA触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、快Ｖ、快Ａ、快Ｂ、液体追加、中毒充足、不潔、逸脱
+PRINTL ・入る可能性のあるソース(厄落とし中)
+PRINTW 　快Ｃ、快Ｖ、快Ａ、快Ｂ、液体追加、中毒充足、不潔、逸脱
+
+;触手腸内撮影
+@DICTIONARY_TRAIN_COMMAND_586
+PRINTL 【触手腸内撮影】
+PRINTL 下半身が触手と一体化した文を召喚し、カメラタイプの触手を肛門に挿入、
+PRINTL 手に持ったディスプレイで奴隷に腸内の様子を見せつけ、実況する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[AYA触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ａ、露出、痛み、屈従、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(上映中)
+PRINTW 　快Ａ、露出、痛み、屈従、トラウマ、逸脱
+
+;触手言葉責め
+@DICTIONARY_TRAIN_COMMAND_587
+PRINTL 【触手言葉責め】
+PRINTL 触手と一体化したパルスィを召喚し、奴隷を言葉により責めさせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[PARSEE触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、屈従、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(言葉責め中)
+PRINTW 　露出、屈従、トラウマ、逸脱
+
+;触手鈴蘭媚薬
+@DICTIONARY_TRAIN_COMMAND_588
+PRINTL 【触手鈴蘭媚薬】
+PRINTL 触手と一体化したメディスンを召喚し、鈴蘭型触手から分泌される
+PRINTL 媚薬効果のある液体を塗ったり口移しさせる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[MEDICINE触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　欲情追加、薬物浸潤、逸脱、中毒充足
+PRINTL ・入る可能性のあるソース(注入中)
+PRINTW 　液体追加、中毒充足、トラウマ、薬物浸潤、逸脱、露出
+
+;触手官能図書
+@DICTIONARY_TRAIN_COMMAND_589
+PRINTL 【触手官能図書】
+PRINTL 触手と一体化したパチュリーを召喚し、
+PRINTL 図書館秘蔵の官能小説を朗読させて奴隷の羞恥心を煽る。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[PATCHOULI触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、屈従、中毒充足、逸脱
+PRINTL ・入る可能性のあるソース(朗読中)
+PRINTW 　露出、屈従、中毒充足、逸脱
+
+;触手妖精按摩
+@DICTIONARY_TRAIN_COMMAND_590
+PRINTL 【触手妖精按摩】
+PRINTL 触手と一体化した大妖精を召喚し、奴隷を継続的にクンニさせる。
+PRINTL もう一度命令すると、解除する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[HIGH-FAIRY触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、露出、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(按摩中)
+PRINTW 　快Ｃ、露出、欲情追加、トラウマ、逸脱
+
+;触手氷精手淫
+@DICTIONARY_TRAIN_COMMAND_591
+PRINTL 【触手氷精手淫】
+PRINTL 触手と一体化したチルノを召喚し、冷たい手のまま奴隷に手淫を施す。
+PRINTL もう一度命令すると、解除する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[CIRNO触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　快Ｃ、露出、性行動、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(手淫中)
+PRINTW 　快Ｃ、露出、性行動、欲情追加、トラウマ、逸脱
+
+;触手淫脈探査
+@DICTIONARY_TRAIN_COMMAND_592
+PRINTL 【触手淫脈探査】
+PRINTL 触手と一体化したナズーリンを召喚し、
+PRINTL ダウジングで奴隷の敏感な部分を感知することでより効率よく快楽を与えさせる。
+PRINTL もう一度命令すると、解除する。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[NAZRIN触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　露出、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(探査中)
+PRINTW 　露出、トラウマ、逸脱、(快Ｃ、快Ｖ、快Ａ、快Ｂが増強)
+
+;触手最終審判
+@DICTIONARY_TRAIN_COMMAND_593
+PRINTL 【触手最終審判】
+PRINTL 触手と一体化した映姫を召喚し、
+PRINTL 奴隷の過去の罪状をあげてそれを断罪し奴隷を屈服させる。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[EIKI触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、反感追加、恭順追加、屈従、トラウマ、逸脱
+PRINTL ・入る可能性のあるソース(開廷中)
+PRINTW 　痛み、反感追加、恭順追加、屈従、トラウマ、逸脱
+
+;触手百裂紅葉
+@DICTIONARY_TRAIN_COMMAND_594
+PRINTL 【触手百裂紅葉】
+PRINTL 下半身が触手と一体化した静葉を召喚し、たおやかな手の平で
+PRINTL 奴隷のお尻に綺麗な紅葉を付けていく。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[SHIZUHA触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　痛み、トラウマ、羞恥扇情、逸脱
+PRINTL ・入る可能性のあるソース(円舞中)
+PRINTW 　痛み、トラウマ、羞恥扇情、逸脱
+
+;触手豊穣淫香
+@DICTIONARY_TRAIN_COMMAND_595
+PRINTL 【触手豊穣淫香】
+PRINTL 下半身が触手と一体化した穣子を召喚し、熱い吐息を奴隷に吹きかけて
+PRINTL 判断能力を鈍らせ、淫らな行為への順応させて行く。
+PRINTL 紳士的な触手系コマンドがオフの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 進化の秘法を持っていないと実行できない。
+PRINTL 触手が[MINORIKO触手]を得ていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　達成感、屈従、支配、中毒充足、トラウマ、薬物浸潤、触手汚染、性技学習、逸脱
+PRINTL ・入る可能性のあるソース(淫香中)
+PRINTW 　中毒充足、トラウマ、薬物浸潤、触手汚染、性技学習、逸脱
+
+;Ｇスポット刺激
+@DICTIONARY_TRAIN_COMMAND_600
+PRINTL 【Ｇスポット刺激】
+PRINTL 奴隷のＧスポットを指で刺激する。
+PRINTL Ｇスポットとは、女性の尿道海綿体のことで性感帯でもある。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　情愛、中毒充足、液体追加、露出、逸脱、反感増加、
+PRINTW 　快Ｖ、屈従、痛み
+
+;潜望鏡
+@DICTIONARY_TRAIN_COMMAND_601
+PRINTL 【潜望鏡】
+PRINTL 浴槽に入っている調教者の水面もしくは湯面に顔を出している
+PRINTL ペニスを奴隷が口で咥えたり舌を使ったりして奉仕させる。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、不潔、性行動、達成感、(中毒充足)
+
+;シックスナイン
+@DICTIONARY_TRAIN_COMMAND_602
+PRINTL 【シックスナイン】
+PRINTL 調教者と奴隷がお互いの性器を舌で舐めあう。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　液体追加、露出、屈従、逸脱、不潔、快Ｃ、恭順追加、
+PRINTW 　性行動、達成感、快Ａ、(中毒充足)
+
+;６９パイズリ
+@DICTIONARY_TRAIN_COMMAND_603
+PRINTL 【６９パイズリ】
+PRINTL 奴隷が胸で調教者のペニスを挟んで奉仕すると同時に、
+PRINTL 調教者が奴隷の性器を舌で舐める。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、性行動、達成感、不潔、快Ｂ、快Ｃ、(中毒充足)
+
+;雁が首
+@DICTIONARY_TRAIN_COMMAND_604
+PRINTL 【雁が首】
+PRINTL 奴隷に唇で調教者のペニスをしごいたり舌でなめ回したりしながら、
+PRINTL 調教者の足を股ではさんで奴隷のクリトリスも刺激する。
+PRINTL このコマンドは状況に応じて読心雁が首に変化する。 
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　主導権、屈従、逸脱、不潔、性行動、達成感、快Ｃ、
+PRINTW 　情愛、(中毒充足)
+
+;指でＶを撫でる
+@DICTIONARY_TRAIN_COMMAND_605
+PRINTL 【指でＶを撫でる】
+PRINTL 奴隷のヴァギナを指で撫でほぐす。
+PRINTL 主人から実行するコマンドである。
+PRINTL 対象の[処女]は破らない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、露出、性行動、快Ｖ、屈従、痛み、液体追加
+
+;ペッティング
+@DICTIONARY_TRAIN_COMMAND_606
+PRINTL 【ペッティング】
+PRINTL 奴隷の胸と性器を愛撫し、キスも行う。
+PRINTL 触手調教中は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、不潔、快Ｃ、情愛、快Ｂ、接触
+
+;二人で犯す
+@DICTIONARY_TRAIN_COMMAND_610
+PRINTL 【二人で犯す】
+PRINTL 調教師と助手がそれぞれのペニスを奴隷のヴァギナかアナルか
+PRINTL 口に挿入する。誰がどこの穴に入れるかはその状況による。
+PRINTL 助手がいないと選択できない。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL 対象の[処女]を破るかもしれない。
+PRINTL 
+FONTBOLD
+PRINTL 主人と助手がいずれも射精する可能性がある。いずれも射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　接触、欲情追加、露出、逸脱、快Ｖ、情愛、痛み、快Ａ、屈従、
+PRINTW 　性行動、達成感
+
+;岩清水
+@DICTIONARY_TRAIN_COMMAND_611
+PRINTL 【岩清水】
+PRINTL 奴隷を調教師の顔の上に跨らせ、わざと音を立てながら
+PRINTL 秘唇をすすり上げる。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　液体追加、露出、逸脱、快Ｃ、屈従、恭順追加、羞恥扇情
+
+;乱れ牡丹
+@DICTIONARY_TRAIN_COMMAND_612
+PRINTL 【乱れ牡丹】
+PRINTL 調教師が座ったその上に奴隷が後ろ向きに座り足を大きく広げ、
+PRINTL ペニスを奴隷のヴァギナに挿入し、結合部を鏡に映しながら楽しむ。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 条件を満たせば[610]二人で犯すおよび[614]挿入Ｇスポット責め
+PRINTL および[615]挿入子宮口責めに派生する。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、快Ｖ、情愛、痛み、快Ｂ、性行動、快Ｃ、反感追加、
+PRINTW 　欲情追加、中毒充足
+
+;騎乗乳房自慰
+@DICTIONARY_TRAIN_COMMAND_613
+PRINTL 【騎乗乳房自慰】
+PRINTL 調教師が奴隷を騎乗位で貫いている状態で
+PRINTL 奴隷に乳房で自慰をさせると同時に腰も動かさせる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL Ｂ系拡張コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、逸脱、液体追加、欲情追加、不潔、性行動、達成感、快Ｖ、
+PRINTW 　情愛、痛み、反感追加、屈従、快Ｂ、中毒充足
+
+;挿入Ｇスポ責め
+@DICTIONARY_TRAIN_COMMAND_614
+PRINTL 【挿入Ｇスポ責め】
+PRINTL 奴隷の膣内のＧスポットを調教師のペニスで刺激する。
+PRINTL 状況により多少名称や効果が異なる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、快Ｖ、情愛、痛み、反感追加、性行動、達成感、逸脱、
+PRINTW 　快Ｂ、快Ｃ、液体追加、欲情追加、中毒充足
+
+;挿入子宮口責め
+@DICTIONARY_TRAIN_COMMAND_615
+PRINTL 【挿入子宮口責め】
+PRINTL 奴隷の子宮口を調教師のペニスで刺激する。
+PRINTL 状況により多少名称や効果が異なる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、快Ｃ、快Ｖ、情愛、痛み、反感追加、性行動、達成感、
+PRINTW 　逸脱、快Ｂ、液体追加、欲情追加、中毒充足
+
+;後背位胸愛撫
+@DICTIONARY_TRAIN_COMMAND_616
+PRINTL 【後背位胸愛撫】
+PRINTL 奴隷のヴァギナを調教師が後ろからペニスで挿入しながら、胸を揉みしだく。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、不潔、露出、快Ｖ、情愛、快Ｂ、痛み、反感追加
+
+;対面胸愛撫
+@DICTIONARY_TRAIN_COMMAND_617
+PRINTL 【対面胸愛撫】
+PRINTL 奴隷のヴァギナを調教師が対面して座りながらペニスで挿入し、
+PRINTL その状態で胸を揉みしだく。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　中毒充足、不潔、露出、快Ｖ、情愛、快Ｂ、性行動、達成感、
+PRINTW 　恭順追加、痛み、反感追加、液体追加、快Ｃ
+
+;後背位アナル胸愛撫
+@DICTIONARY_TRAIN_COMMAND_618
+PRINTL 【後背位アナル胸愛撫】
+PRINTL 奴隷のアヌスを調教師が後ろからペニスで挿入しながら、胸を揉みしだく。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース 
+PRINTW 　性行動、不潔、露出、快Ａ、情愛、屈従、快Ｂ、痛み、反感追加
+
+;対面アナル胸愛撫
+@DICTIONARY_TRAIN_COMMAND_619
+PRINTL 【対面アナル胸愛撫】
+PRINTL 奴隷のアヌスを調教師が対面して座りながらペニスで挿入し、
+PRINTL その状態で胸を揉みしだく。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　中毒充足、情愛、露出、快Ａ、屈従、快Ｂ、性行動、達成感、
+PRINTW 　恭順追加、痛み、反感追加、液体追加、快Ｃ
+
+;強制放尿
+@DICTIONARY_TRAIN_COMMAND_620
+PRINTL 【強制放尿】
+PRINTL 奴隷に無理やり放尿させる。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　逸脱、反感追加、快Ｃ、達成感、露出、屈従、不潔、
+PRINTW 　欲情追加、液体追加、トラウマ
+
+;口移し
+@DICTIONARY_TRAIN_COMMAND_621
+PRINTL 【口移し】
+PRINTL 奴隷が特定の風呂の成分を口に含ませた後、調教師の口に流し込む。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　性行動、露出、逸脱、欲情追加、逸脱、中毒充足、屈従、反感追加、
+PRINTW 　恭順追加、痒み、液体追加、支配、不潔、達成感
+
+;四肢緊縛
+@DICTIONARY_TRAIN_COMMAND_622
+PRINTL 【四肢緊縛】
+PRINTL 奴隷の四肢を縄で拘束する。
+PRINTL 縛られた状態で選択すると解放する。
+PRINTL 縄を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　痛み、露出、屈従、逸脱、支配
+PRINTL ・入る可能性のあるソース（緊縛中）
+PRINTW 　痛み、露出、屈従、逸脱
+
+;亀甲縛り
+@DICTIONARY_TRAIN_COMMAND_623
+PRINTL 【亀甲縛り】
+PRINTL 奴隷を亀甲縛りにして拘束する。
+PRINTL 縛られた状態で選択すると解放する。
+PRINTL 縄を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　痛み、露出、屈従、逸脱、支配
+PRINTL ・入る可能性のあるソース（緊縛中）
+PRINTW 　痛み、露出、屈従、逸脱
+
+;吊り下げ
+@DICTIONARY_TRAIN_COMMAND_624
+PRINTL 【吊り下げ】
+PRINTL 奴隷を縄で縛って吊るし上げる。
+PRINTL 縛られた状態で選択すると解放する。
+PRINTL 縄を持っていないと実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　痛み、露出、屈従、逸脱、支配
+PRINTL ・入る可能性のあるソース（吊り下げ中）
+PRINTW 　痛み、露出、屈従、逸脱
+
+;ローションプレイ
+@DICTIONARY_TRAIN_COMMAND_625
+PRINTL 【ローションプレイ】
+PRINTL 奴隷にローションを塗りながら刺激を加える。
+PRINTL ローションを持っていないと実行できない。
+PRINTL ローションを1消費する。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、不潔、液体追加、露出、快Ｃ、情愛、快Ｂ、接触、痛み
+
+;搾乳
+@DICTIONARY_TRAIN_COMMAND_626
+PRINTL 【搾乳】
+PRINTL 奴隷の胸を搾る。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　性行動、不潔、露出、快Ｂ、情愛
+
+;乳首甘噛み
+@DICTIONARY_TRAIN_COMMAND_627
+PRINTL 【乳首甘噛み】
+PRINTL 奴隷の乳首を調教師が歯で甘噛みする。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　露出、性行動、不潔、快Ｂ、情愛、痛み
+
+;相互自慰
+@DICTIONARY_TRAIN_COMMAND_628
+PRINTL 【相互自慰】
+PRINTL 奴隷と調教師が互いに自慰をする。
+PRINTL このコマンドは状況に応じて公開オナニーやシャワーオナニーや
+PRINTL 読心オナニーやバイブオナニーなどに変化する。
+PRINTL 羞恥プレイ系拡張コマンドがオフだと実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　不潔、逸脱、欲情追加、液体追加、快Ｃ、露出、屈従、快Ｂ、
+PRINTW 　快Ｖ、快Ａ、痛み、性行動、中毒充足
+
+;サンドイッチ
+@DICTIONARY_TRAIN_COMMAND_629
+PRINTL 【サンドイッチ】
+PRINTL 奴隷と助手の性器で調教者のペニスを挟み扱きあげる。
+PRINTL 助手がいないと選択できない。主人から選択するコマンドである。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　接触、露出、屈従、逸脱、不潔、性行動、達成感、快Ｃ、(中毒充足)
+
+;後背位手淫
+@DICTIONARY_TRAIN_COMMAND_630
+PRINTL 【後背位手淫】
+PRINTL 奴隷のヴァギナを調教者が後ろからペニスで挿入しながら、
+PRINTL 奴隷のペニスを調教者が手で擦ってやる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　露出、主導権、欲情追加、快Ｖ、情愛、痛み、反感追加、
+PRINTW 　快Ｃ、性行動、達成感
+
+;相互秘貝開帳
+@DICTIONARY_TRAIN_COMMAND_631
+PRINTL 【相互秘貝開帳】
+PRINTL 奴隷と調教者がお互いに自らの秘部（陰唇）を広げて見せつけあう。
+PRINTL 羞恥プレイ系拡張コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　液体追加、露出、屈従、逸脱、性行動、不潔、快Ｃ、欲情追加
+
+;背面座位胸愛撫
+@DICTIONARY_TRAIN_COMMAND_632
+PRINTL 【背面座位胸愛撫】
+PRINTL 奴隷のヴァギナを調教師が背後から座りながらペニスで挿入し、
+PRINTL その状態で胸を揉みしだく。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象が[処女]の時には実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　中毒充足、不潔、露出、快Ｖ、情愛、快Ｂ、性行動、達成感、
+PRINTW 　露出、痛み、反感追加、液体追加、快Ｃ
+
+;背面座位アナル胸愛撫
+@DICTIONARY_TRAIN_COMMAND_633
+PRINTL 【背面座位アナル胸愛撫】
+PRINTL 奴隷のアヌスを調教師が背後から座りながらペニスで挿入し、
+PRINTL その状態で胸を揉みしだく。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 
+PRINTL 調教者が射精する可能性がある。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　中毒充足、情愛、露出、快Ａ、屈従、快Ｂ、性行動、達成感、
+PRINTW 　露出、痛み、反感追加、液体追加、快Ｃ
+
+;イきつけ三杯
+@DICTIONARY_TRAIN_COMMAND_649
+PRINTL 【イきつけ三杯】
+PRINTL イっちゃった奴隷に酒を３瓶飲ませる。
+PRINTL 調教者奉仕・ウフフ系コマンドがオフの時は実行できない。
+PRINTL お酒がないと実行できない。
+PRINTL ちなみに名前の由来は『駆け付け三杯』から来ている。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　酒酔い、鬼殺し
+
+;浄瑠璃の鏡
+@DICTIONARY_TRAIN_COMMAND_650
+PRINTL 【浄玻璃の鏡】
+PRINTL 奴隷を浄玻璃の鏡の前に連れてくる。
+PRINTL その状態でもう一度選択すると浄玻璃の鏡の前から離れる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTL 　中毒充足、液体追加、屈従、逸脱、反感追加、情愛、
+PRINTL 　恭順追加、露出、トラウマ、羞恥扇情
+PRINTL ・入る可能性のあるソース(羞恥プレイ中)
+PRINTL 　中毒充足、液体追加、屈従、逸脱、反感追加、情愛、
+PRINTW 　恭順追加、露出、トラウマ
+
+;御所車(逆レイプ)
+@DICTIONARY_TRAIN_COMMAND_651
+PRINTL 【御所車(逆レイプ)】
+PRINTL 調教者が奴隷のペニスを自身のヴァギナで咥え込んで、体を回す。
+PRINTL 体位により多少違う。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL 実行できるかの判定がある。
+FONTBOLD
+PRINTL 対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　屈従、逸脱、快Ｃ、性行動、痛み、露出、(中毒充足)
+
+;フォーオブアカインド(ふたなり)
+@DICTIONARY_TRAIN_COMMAND_652
+PRINTL 【フォーオブアカインド(ふたなり)】
+PRINTL 調教者が４人に分身して、奴隷の背面からペニスをアナルに入れつつ腕を
+PRINTL 斜め後ろ下に引っ張る。さらに胸を愛撫し、奴隷の秘部を舌で舐め、
+PRINTL 調教者のペニスを奴隷に口で咥えさせて奉仕させる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL 
+FONTBOLD
+PRINTL 調教者が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTL 　不潔、接触、欲情追加、露出、逸脱、屈従、快Ｃ、快Ａ、情愛、
+PRINTW 　痛み、快Ｂ、性行動、達成感、(中毒充足)
+
+;蜘蛛の巣
+@DICTIONARY_TRAIN_COMMAND_653
+PRINTL 【蜘蛛の巣】
+PRINTL 調教者が奴隷を蜘蛛の巣で吊るし上げる。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 
+PRINTL ・入る可能性のあるソース（実行時）
+PRINTL 　露出、屈従、逸脱、痛み、液体追加、恭順追加、支配
+PRINTL ・入る可能性のあるソース（拘束中）
+PRINTW 　痛み、液体追加、露出、屈従、逸脱、恭順追加、支配、トラウマ
+
+;蜘蛛脚六点責め
+@DICTIONARY_TRAIN_COMMAND_654
+PRINTL 【蜘蛛脚六点責め】
+PRINTL 調教者が六本の脚で奴隷の穴を蹂躙する。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者が[蜘蛛の脚]でないと実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTL 　情愛、接触、恭順追加、欲情追加、痛み、不潔、逸脱、快Ｃ、
+PRINTW 　快Ｖ、快Ａ、屈従、快Ｂ、性行動、達成感、反感追加
+
+;蜘蛛の巣姦
+@DICTIONARY_TRAIN_COMMAND_655
+PRINTL 【蜘蛛の巣姦】
+PRINTL 蜘蛛の巣に拘束された奴隷のペニスを調教者のヴァギナに入れる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+FONTBOLD
+PRINTL 対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　不潔、屈従、逸脱、支配、快Ｃ、性行動、(中毒充足)
+
+;蜘蛛の巣肛門姦
+@DICTIONARY_TRAIN_COMMAND_656
+PRINTL 【蜘蛛の巣肛門姦】
+PRINTL 蜘蛛の巣に拘束された奴隷のペニスを調教者のアヌスに入れる。
+PRINTL Ａ調教フィルタがオンの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 
+FONTBOLD
+PRINTL 対象が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース ()内のは射精を伴うときのみ
+PRINTW 　不潔、屈従、逸脱、支配、快Ｃ、性行動、(中毒充足)
+
+;蓑虫プレイ
+@DICTIONARY_TRAIN_COMMAND_657
+PRINTL 【蓑虫プレイ】
+PRINTL 奴隷を蜘蛛の巣で拘束し、その目前で調教者が助手を犯す。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 助手がいないと実行できない。主人から選択するコマンドである。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 助手が[蜘蛛の脚]でないと実行できない。
+PRINTL 助手の[処女]を破る。
+PRINTL 
+FONTBOLD
+PRINTL 主人が射精する可能性がある。射精箇所が固定である。
+FONTREGULAR
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　情愛、逸脱、液体追加、屈従、トラウマ
+
+;拘束∇
+@DICTIONARY_TRAIN_COMMAND_658
+PRINTL 【拘束∇】
+PRINTL 奴隷が完全に拘束されている状態で、調教者が人形たちに命令し、
+PRINTL バイブとアナルバイブを同時に突っ込ませる。
+PRINTL Ｖ調教フィルタかＡ調教フィルタのどちらかがオンの時は実行できない。
+PRINTL キャラ専用コマンドがオフの時は実行できない。
+PRINTL 縄とボールギャグとアイマスクとバイブとアナルバイブを全て持っていないと実行できない。
+PRINTL 調教者の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース
+PRINTW 　快Ｖ、快Ａ、屈従、痛み
+
+;暗黒潮干狩り
+;@DICTIONARY_TRAIN_COMMAND_659
+
+;性感槍ぐんぐにる
+@DICTIONARY_TRAIN_COMMAND_660
+PRINTL 【性感槍ぐんぐにる】
+PRINTL 男根を模した装着型の張り型を奴隷のヴァギナに勢いを付けて挿入する。
+PRINTL 挿入後はバイブを装着した状態として扱われる。
+PRINTL Ｖ調教フィルタがオンの時は実行できない。
+PRINTL 対象がオトコだと実行できない。
+PRINTL 触手調教中は実行できない。
+PRINTL バイブを持っていないと実行できない。
+PRINTL 対象の[処女]を破る。
+PRINTL 
+PRINTL ・入る可能性のあるソース(実行時)
+PRINTW 　快Ｖ、痛み
+
+;触手撫で回し
+@DICTIONARY_TRAIN_COMMAND_680
+PRINTL 【触手撫で回し】
+PRINTL 
+PRINTW 
+
+;触手アナル愛撫
+@DICTIONARY_TRAIN_COMMAND_682
+PRINTL 【触手アナル愛撫】
+PRINTL 
+PRINTW 
+
+;触手胸愛撫
+@DICTIONARY_TRAIN_COMMAND_683
+PRINTL 【触手胸愛撫】
+PRINTL 
+PRINTW 
+
+;能力表示(奴隷)
+@DICTIONARY_TRAIN_COMMAND_800
+PRINTL 【能力表示(奴隷)】
+PRINTL 奴隷の能力を表示する。
+PRINTL 現在の状況で、調教終了後に対象が取得できる宝珠の数や、
+PRINTL その調教中での細かい各種状況を表示する。
+PRINTL なお、状況表示は何も表示するものがなければ何も表示されない。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;能力表示(調教者)
+@DICTIONARY_TRAIN_COMMAND_801
+PRINTL 【能力表示(調教者)】
+PRINTL 調教者の能力を表示する。
+PRINTL 助手がいる場合、表示を切り替えることで調教していない側の
+PRINTL 能力を見ることもできる。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;能力表示(触手)
+@DICTIONARY_TRAIN_COMMAND_802
+PRINTL 【能力表示(触手)】
+PRINTL 触手の能力を表示する。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;主人と交代/助手と交代
+@DICTIONARY_TRAIN_COMMAND_810
+PRINTL 【主人と交代/助手と交代】
+PRINTL 調教者を交代する。
+PRINTL 助手がいないと選べない。
+PRINTW 調教コマンドそのものではないが、時間は進む。
+
+;汚れ表示
+@DICTIONARY_TRAIN_COMMAND_811
+PRINTL 【汚れ表示】
+PRINTL 主人と助手と奴隷のそれぞれの部位の汚れを表示する。
+PRINTL なお、髪と足は汚れていない場合には部位の名前も表示されない。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;具現化(主人)/具現化解除(主人)
+@DICTIONARY_TRAIN_COMMAND_820
+PRINTL 【具現化(主人)/具現化解除(主人)】
+PRINTL 具現の力で主人のペニスを顕在化（ふたなり）させたり、
+PRINTL 解除したりする。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;具現化(助手)/具現化解除(助手)
+@DICTIONARY_TRAIN_COMMAND_821
+PRINTL 【具現化(助手)/具現化解除(助手)】
+PRINTL 具現の力で助手のペニスを顕在化（ふたなり）させたり、
+PRINTL 解除したりする。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;Exモード化
+@DICTIONARY_TRAIN_COMMAND_830
+IF TALENT:MASTER:野菜の錬金術師
+	PRINTL 【Exモード化】
+	PRINTL YASAIモードにおいて野菜を消費してExモード化する。
+	PRINTW 調教コマンドそのものではないので、時間は進まない。
+ENDIF
+
+;Phモード化
+@DICTIONARY_TRAIN_COMMAND_831
+IF TALENT:MASTER:野菜の錬金術師
+	PRINTL 【Phモード化】
+	PRINTL YASAIモードのおいて野菜を消費してPhモード化する。
+	PRINTW 調教コマンドそのものではないので、時間は進まない。
+ENDIF
+
+;表示形式変更
+@DICTIONARY_TRAIN_COMMAND_876
+PRINTL 【表示形式変更】
+PRINTL パラメータの表示形式を壱型と弐型で切り替える。
+PRINTL SHOP画面からコンフィグで該当項目を選ぶことでも切り替え可能。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;コマンド拡張
+@DICTIONARY_TRAIN_COMMAND_888
+PRINTL 【コマンド拡張】
+PRINTL SHOP画面からコンフィグで選べるコマンド拡張関連を
+PRINTL ここからも選ぶことができる。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;コマンドフィルタ
+@DICTIONARY_TRAIN_COMMAND_889
+PRINTL 【コマンドフィルタ】
+PRINTL 派生コマンド以外の調教コマンドの各個ごとのフィルタの
+PRINTL オン・オフを切り替える。カスタムコマンドフィルタである。
+PRINTL コンフィグからでも同様機能が選べる。
+PRINTL それぞれのコマンドごとのフィルタがオンの状態であれば、
+PRINTL 当該コマンドは選べないようにできる。
+PRINTL ただし、基本コマンドからの派生による実行および[9]何もしないの
+PRINTL ときに奴隷が勝手に実行することを抑止することはできない。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;Ｖ系調教フィルタ
+@DICTIONARY_TRAIN_COMMAND_890
+PRINTL 【Ｖ系調教フィルタ】
+PRINTL Ｖ系調教フィルタのオン・オフを切り替える。
+PRINTL コンフィグであらかじめＶ系調教フィルタを使用可能にしておく
+PRINTL 必要がある。
+PRINTL Ｖ経験するような調教をオンの状態なら選べないようにできる。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;Ａ系調教フィルタ
+@DICTIONARY_TRAIN_COMMAND_891
+PRINTL 【Ａ系調教フィルタ】
+PRINTL Ａ系調教フィルタのオン・オフを切り替える。
+PRINTL コンフィグであらかじめＡ系調教フィルタを使用可能にしておく必要がある。
+PRINTL Ａ経験するような調教をオンの状態なら選べないようにできる。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;異常調教フィルタ
+@DICTIONARY_TRAIN_COMMAND_892
+PRINTL 【異常調教フィルタ】
+PRINTL 異常調教フィルタのオン・オフを切り替える。
+PRINTL コンフィグであらかじめ異常調教フィルタを使用可能にしておく必要がある。
+PRINTL 異常経験が増えるような調教をオンの状態なら選べないようにできる。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;自動射精箇所変更
+@DICTIONARY_TRAIN_COMMAND_893
+PRINTL 【自動射精箇所変更】
+PRINTL 射精するときに自動で選択される射精箇所を選ぶ。
+PRINTL 当該項目をコンフィグで使用可能にしておく必要がある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;寄生触手栄養放出
+@DICTIONARY_TRAIN_COMMAND_900
+PRINTL 【寄生触手栄養放出】
+PRINTL 奴隷に寄生させた触手に栄養を放出させ、奴隷を回復させる。
+PRINTL 使用には条件が色々とある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;巨大/縮小化(奴隷)
+@DICTIONARY_TRAIN_COMMAND_901
+PRINTL 【巨大/縮小化(奴隷)】
+PRINTL 奴隷を一時的に巨大化もしくは縮小化させる。
+PRINTL 元に戻す場合もこれを選ぶ。
+PRINTL 使用には条件が色々とある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;巨大/縮小化(主人)
+@DICTIONARY_TRAIN_COMMAND_902
+PRINTL 【巨大/縮小化(主人)】
+PRINTL 主人が一時的に巨大化もしくは縮小化する。
+PRINTL 元に戻す場合もこれを選ぶ。
+PRINTL 使用には条件が色々とある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;巨大/縮小化(助手)
+@DICTIONARY_TRAIN_COMMAND_903
+PRINTL 【巨大/縮小化(助手)】
+PRINTL 助手を一時的に巨大化もしくは縮小化させる。
+PRINTL 元に戻す場合もこれを選ぶ。
+PRINTL 使用には条件が色々とある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;性別変更(奴隷)
+@DICTIONARY_TRAIN_COMMAND_911
+PRINTL 【性別変更(奴隷)】
+PRINTL [雌雄可変]を持つ奴隷の性別を変更させる。
+PRINTL 使用には条件が色々とある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;性別変更(主人)
+@DICTIONARY_TRAIN_COMMAND_912
+PRINTL 【性別変更(主人)】
+PRINTL [雌雄可変]を持つ主人の性別を変更する。
+PRINTL 主人は素質さえあれば自在に変更できる。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;性別変更(助手)
+@DICTIONARY_TRAIN_COMMAND_913
+PRINTL 【性別変更(助手)】
+PRINTL [雌雄可変]を持つ助手の性別を変更する。
+PRINTL 使用には条件が色々とある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;調教メニュー登録
+@DICTIONARY_TRAIN_COMMAND_990
+PRINTL 【調教メニュー登録】
+PRINTL 調教メニューを登録する。既にされている場合は変更する。
+PRINTL 当該項目をコンフィグで使用可能にしておく必要がある。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;調教メニュー表示
+@DICTIONARY_TRAIN_COMMAND_991
+PRINTL 【調教メニュー表示】
+PRINTL 登録されている調教メニューを表示する。
+PRINTL 調教メニューが登録されてないと選べない。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;調教メニュー実行
+@DICTIONARY_TRAIN_COMMAND_992
+PRINTL 【調教メニュー実行】
+PRINTL 登録されている調教メニューを実行する。
+PRINTL 調教メニューが登録されてないと選べない。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;助手に選ばせる
+@DICTIONARY_TRAIN_COMMAND_994
+PRINTL 【助手に選ばせる】
+PRINTL 助手に次の調教コマンドを選ばせて実行する。
+PRINTL 助手調教でないとだめで、触手関連は選ばない。]
+PRINTL またカスタムコマンドフィルタの状態によっては、
+PRINTW 何も選べないこともありうることに注意のこと。
+
+;東方調教典
+@DICTIONARY_TRAIN_COMMAND_997
+PRINTL 【東方調教典】
+PRINTL 困った時のための調教典。eratohoYMに内蔵されているヘルプを呼び出す。
+PRINTL 当然ながらネタばれには注意。
+PRINTW 調教コマンドそのものではないので、時間は進まない。
+
+;デバッグメニュー
+@DICTIONARY_TRAIN_COMMAND_998
+IF TALENT:MASTER:998
+	PRINTL 【デバッグメニュー】
+	PRINTL デバッグモードでのみ選択できる。
+	PRINTL デバッグ頑張れ。
+	PRINTL 調教コマンドそのものではないので、時間は進まないが、
+	PRINTW 操作によっては、色々と変わるので注意してほしい。
+ENDIF
+
+;調教終了
+@DICTIONARY_TRAIN_COMMAND_999
+PRINTL 【調教終了】
+PRINTW 今回の調教を終了する。調教後イベントがあったりする。

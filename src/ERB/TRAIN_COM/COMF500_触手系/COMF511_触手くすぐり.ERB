@@ -1,0 +1,378 @@
+﻿;=============================================================================
+;触手くすぐり
+;=============================================================================
+;あっきゅんの専用技を使い回してみる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE511
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:511 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;触手が[磯巾着型触手]を得ていないとダメ
+SIF (FLAG:75 & 256) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 511) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM511
+PRINTL 触手くすぐり
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 511
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手くすぐり
+;口上用にTFLAG:201を使用。(0=ヘソくすぐり, 1=ペニス/クリトリスくすぐり, 2=バストくすぐり, 3=アナルくすぐり)
+TFLAG:201 = 0
+
+IF FLAG:14 & 8
+	PRINTL 触手でどこを責める？
+	PRINTL [0] - ヘソ
+	IF EXIST_PENIS(TARGET)
+		PRINTL [1] - ペニス
+	ELSE
+		PRINTL [1] - クリ
+	ENDIF
+	PRINTL [2] - バスト
+	PRINTL [3] - アナル
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		LOCAL:2 = 0
+	ELSEIF RESULT == 1
+		LOCAL:2 = 1
+	ELSEIF RESULT == 2
+		LOCAL:2 = 3
+	ELSEIF RESULT == 3
+		LOCAL:2 = 5
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+ELSE
+	LOCAL:2 = RAND:7
+ENDIF
+;口上用
+IF LOCAL:2 == 0
+	TFLAG:201 = 0
+ELSEIF LOCAL:2 == 1 || LOCAL:2 == 2
+	TFLAG:201 = 1
+ELSEIF LOCAL:2 == 3 || LOCAL:2 == 4
+	TFLAG:201 = 2
+ELSE
+	TFLAG:201 = 3
+ENDIF
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 70
+
+SOURCE:性行動 = 120
+SOURCE:不潔 = 2000
+SOURCE:露出 = 200
+SOURCE:屈従 = 200
+SOURCE:逸脱 = 2000
+
+IF LOCAL:2 == 0
+	;ヘソ責め
+	LOCAL:1 = 500
+	;MARK:反発刻印をみる
+	IF MARK:反発刻印 < 2
+		TIMES LOCAL:1, 1.25
+	ELSEIF MARK:反発刻印 == 2
+		TIMES LOCAL:1, 1.00
+	ELSE
+		TIMES LOCAL:1, 0.75
+	ENDIF
+
+	;MARK:屈服刻印をみる
+	IF MARK:屈服刻印 > 2
+		TIMES LOCAL:1, 1.25
+	ELSEIF MARK:屈服刻印 == 2
+		TIMES LOCAL:1, 1.00
+	ELSEIF MARK:屈服刻印 == 1
+		TIMES LOCAL:1, 0.75
+	ELSE
+		TIMES LOCAL:1, 0.50
+	ENDIF
+
+	;MARK:快楽刻印をみる
+	IF MARK:快楽刻印 > 2
+		TIMES LOCAL:1, 1.50
+	ELSEIF MARK:快楽刻印 == 2
+		TIMES LOCAL:1, 1.25
+	ELSEIF MARK:快楽刻印 == 1
+		TIMES LOCAL:1, 1.00
+	ELSE
+		TIMES LOCAL:1, 0.75
+	ENDIF
+
+	;MARK:苦痛刻印をみる
+	IF MARK:苦痛刻印 > 2
+		TIMES LOCAL:1, 1.30
+	ELSEIF MARK:苦痛刻印 == 2
+		TIMES LOCAL:1, 1.00
+	ELSEIF MARK:苦痛刻印 == 1
+		TIMES LOCAL:1, 0.70
+	ELSE
+		TIMES LOCAL:1, 0.30
+	ENDIF
+
+	;ABL:マゾっ気をみる
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL:1, 0.50
+		SOURCE:中毒充足 = 40
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL:1, 0.75
+		SOURCE:中毒充足 = 80
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL:1, 1.00
+		SOURCE:中毒充足 = 160
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL:1, 1.20
+		SOURCE:中毒充足 = 320
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL:1, 1.50
+		SOURCE:中毒充足 = 650
+	ELSE
+		TIMES LOCAL:1, 2.00
+		SOURCE:中毒充足 = 1500
+	ENDIF
+
+	;プライド高い
+	IF TALENT:プライド高い
+		TIMES LOCAL:1, 0.75
+	;プライド低い
+	ELSEIF TALENT:プライド低い
+		TIMES LOCAL:1, 1.50
+	ENDIF
+	;自制心
+	SIF TALENT:自制心
+		TIMES LOCAL:1, 0.50
+	;抵抗
+	SIF TALENT:抵抗
+		TIMES LOCAL:1, 0.75
+	;弱味
+	SIF TALENT:弱味
+		TIMES LOCAL:1, 2.00
+	;倒錯的
+	SIF TALENT:倒錯的
+		TIMES LOCAL:1, 2.00
+	;中毒しやすい
+	SIF TALENT:中毒しやすい
+		TIMES LOCAL:1, 1.50
+	SOURCE:支配 += LOCAL:1
+
+	IF LOCAL:1 > 0
+		FOR PC_VAR1, 20, 23
+			IF PALAM:PC_VAR1
+				PRINTFORML %CALLNAME:TARGET%の%PALAMNAME:PC_VAR1%が下がった
+				PALAM:PC_VAR1 = MAX(PALAM:PC_VAR1 - LOCAL:1, 0)
+			ENDIF
+		NEXT
+	ENDIF
+ELSEIF LOCAL:2 == 1 || LOCAL:2 == 2
+	;クリ責め
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		SOURCE:快Ｃ = 50
+		SOURCE:情愛 = 50
+	ELSEIF ABL:Ｃ感覚 == 1
+		SOURCE:快Ｃ = 100
+		SOURCE:情愛 = 100
+	ELSEIF ABL:Ｃ感覚 == 2
+		SOURCE:快Ｃ = 500
+		SOURCE:情愛 = 150
+	ELSEIF ABL:Ｃ感覚 == 3
+		SOURCE:快Ｃ = 1500
+		SOURCE:情愛 = 250
+	ELSEIF ABL:Ｃ感覚 == 4
+		SOURCE:快Ｃ = 2500
+		SOURCE:情愛 = 400
+	ELSE
+		SOURCE:快Ｃ = 3000
+		SOURCE:情愛 = 600
+	ENDIF
+
+	;Ｃ敏感
+	IF TALENT:Ｃ敏感
+		TIMES SOURCE:快Ｃ, 1.50
+	;Ｃ鈍感
+	ELSEIF TALENT:Ｃ鈍感
+		TIMES SOURCE:快Ｃ, 0.75
+	ENDIF
+	;淫核／淫茎
+	SIF TALENT:淫核／淫茎
+		TIMES SOURCE:快Ｃ, 2.00
+
+	LOCAL:1 = SOURCE:情愛
+	SOURCE:不潔 += LOCAL:1 / 2
+	SOURCE:逸脱 += LOCAL:1
+	LOCAL:1 = SOURCE:快Ｃ
+	SOURCE:支配 += LOCAL:1 / 2
+
+ELSEIF LOCAL:2 == 3 || LOCAL:2 == 4
+	;バスト責め
+	;ABL:Ｂ感覚をみる
+	IF ABL:Ｂ感覚 == 0
+		SOURCE:情愛 = 50
+		SOURCE:快Ｂ = 50
+	ELSEIF ABL:Ｂ感覚 == 1
+		SOURCE:情愛 = 100
+		SOURCE:快Ｂ = 100
+	ELSEIF ABL:Ｂ感覚 == 2
+		SOURCE:情愛 = 150
+		SOURCE:快Ｂ = 200
+	ELSEIF ABL:Ｂ感覚 == 3
+		SOURCE:情愛 = 250
+		SOURCE:快Ｂ = 600
+	ELSEIF ABL:Ｂ感覚 == 4
+		SOURCE:情愛 = 400
+		SOURCE:快Ｂ = 1500
+	ELSE
+		SOURCE:情愛 = 600
+		SOURCE:快Ｂ = 2100
+	ENDIF
+
+	;Ｂ敏感
+	IF TALENT:Ｂ敏感
+		TIMES SOURCE:快Ｂ, 1.50
+	;Ｂ鈍感
+	ELSEIF TALENT:Ｂ鈍感
+		TIMES SOURCE:快Ｂ, 0.75
+	ENDIF
+	;絶壁
+	IF TALENT:絶壁
+		TIMES SOURCE:快Ｂ, 2.00
+	;貧乳
+	ELSEIF TALENT:貧乳
+		TIMES SOURCE:快Ｂ, 2.00
+	;巨乳
+	ELSEIF TALENT:巨乳
+		TIMES SOURCE:快Ｂ, 0.75
+	;爆乳
+	ELSEIF TALENT:爆乳
+		TIMES SOURCE:快Ｂ, 0.75
+	ENDIF
+	;淫乳
+	SIF TALENT:淫乳
+		TIMES SOURCE:快Ｂ, 2.00
+
+	LOCAL:1 = SOURCE:情愛
+	SOURCE:不潔 += LOCAL:1 / 2
+	SOURCE:逸脱 += LOCAL:1
+	LOCAL:1 = SOURCE:快Ｂ
+	SOURCE:支配 += LOCAL:1 / 2
+	STAIN:胸 |= 64
+ELSE
+	;アナル責め
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		SOURCE:快Ａ = 20
+		LOCAL:1 = 150
+	ELSEIF ABL:Ａ感覚 == 1
+		SOURCE:快Ａ = 80
+		LOCAL:1 = 250
+	ELSEIF ABL:Ａ感覚 == 2
+		SOURCE:快Ａ = 240
+		LOCAL:1 = 400
+	ELSEIF ABL:Ａ感覚 == 3
+		SOURCE:快Ａ = 500
+		LOCAL:1 = 650
+	ELSEIF ABL:Ａ感覚 == 4
+		SOURCE:快Ａ = 1400
+		LOCAL:1 = 1000
+	ELSE
+		SOURCE:快Ａ = 2100
+		LOCAL:1 = 1500
+	ENDIF
+
+	;Ａ敏感
+	IF TALENT:Ａ敏感
+		TIMES SOURCE:快Ａ, 1.50
+	;Ａ鈍感
+	ELSEIF TALENT:Ａ鈍感
+		TIMES SOURCE:快Ａ, 0.75
+	ENDIF
+	;淫尻
+	SIF TALENT:淫尻
+		TIMES SOURCE:快Ａ, 2.00
+
+	SOURCE:不潔 += LOCAL:1 /2
+	SOURCE:屈従 += LOCAL:1
+	SOURCE:逸脱 += LOCAL:1
+	SOURCE:支配 += LOCAL:1 /2
+	STAIN:アナル |= 64
+
+	TCVAR:Ａ経験 += 1
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_511
+IF !TEQUIP:触手服
+	PRINT 先端が無数に枝分かれした触手が
+	SIF TEQUIP:鼻装着器具
+		PRINT 四肢を緊縛されて動けない
+	PRINTFORM %CALLNAME:TARGET%に近づくと、
+	IF TFLAG:201 == 0
+		PRINTFORML まるでヘソゴマを残らず取り除くかの様に%CALLNAME:TARGET%のヘソを責め立てた…
+	ELSEIF TFLAG:201 == 1
+		PRINTFORM %CALLNAME:TARGET%の
+		SIF PALAM:欲情 >= PALAMLV:3 || TALENT:肥大陰核
+			PRINT 肥大した
+		IF EXIST_PENIS(TARGET)
+			PRINTL 陰茎を撫でまわし、その先に開いた小さな穴に自身をねじこむようにあてがった…
+		ELSE
+			PRINTL 陰核を撫でまわし、その裏のスジの隙間に先端をねじこむようにあてがった…
+		ENDIF
+	ELSEIF TFLAG:201 == 2
+		PRINTFORML 乳輪を撫でまわしたり、先端を%CALLNAME:TARGET%の乳腺に捻じ込むような動作を始めた…
+	ELSE
+		PRINTFORML まるで焦らす様に、ほじる様に、%CALLNAME:TARGET%の菊門を撫でまわし始めた…
+	ENDIF
+ELSE
+	PRINTFORM 触手服内部の微細な触手が突如蠢きだし
+	IF TFLAG:201 == 0
+		PRINTFORML まるでヘソゴマを残らず取り除くかの様に%CALLNAME:TARGET%のヘソを責め立てた…
+	ELSEIF TFLAG:201 == 1
+		PRINTFORM %CALLNAME:TARGET%の
+		SIF PALAM:欲情 >= PALAMLV:3 || TALENT:肥大陰核
+			PRINT 肥大した
+		IF EXIST_PENIS(TARGET)
+			PRINTL 陰茎を撫でまわし、その先に開いた小さな穴に自身をねじこむようにあてがった…
+		ELSE
+			PRINTL 陰核を撫でまわし、その裏のスジの隙間に先端をねじこむようにあてがった…
+		ENDIF
+	ELSEIF TFLAG:201 == 2
+		PRINTFORML 乳輪を撫でまわしたり、先端を%CALLNAME:TARGET%の乳腺に捻じ込むような動作を始めた…
+	ELSE
+		PRINTFORML まるで焦らす様に、ほじる様に、%CALLNAME:TARGET%の菊門を撫でまわし始めた…
+	ENDIF
+ENDIF

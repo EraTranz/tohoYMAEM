@@ -1,0 +1,175 @@
+﻿;=============================================================================
+;毛玉風呂
+;=============================================================================
+;毛玉達にもふもふされます
+;入浴中は常時弱めの愛撫をされている感じに
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE369
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:369 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 512) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 11
+	RETURN 1
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中じゃ無いとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 11
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 369) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM369
+PRINTL 毛玉風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 369
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 毛玉風呂
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 11
+	DOWNBASE:0 += 5
+	DOWNBASE:1 += 50
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 75
+
+SOURCE:露出 += 100
+SOURCE:逸脱 += 270
+
+TEQUIP:特殊風呂入浴中 = 11
+
+RETURN 1
+
+;--------------------------------------------------
+;毛玉風呂入浴中
+;--------------------------------------------------
+;我ら、毛玉にもふり隊！
+@EQUIP_COM369
+PRINTDATAL
+	DATA ＜毛玉風呂入浴中＞
+	DATA ＜もふもふ中＞
+	DATA ＜もっふる！もっふる！＞
+ENDDATA
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 75
+
+SOURCE:達成感 += 30
+SOURCE:露出 += 150
+SOURCE:逸脱 += 80
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ += 10
+	SOURCE:痒み += 25
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ += 50
+	SOURCE:痒み += 50
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ += 200
+	SOURCE:痒み += 80
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ += 400
+	SOURCE:痒み += 100
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ += 650
+	SOURCE:痒み += 140
+ELSE
+	SOURCE:快Ｃ += 1000
+	SOURCE:痒み += 200
+ENDIF
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ += 5
+	SOURCE:痒み += 5
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ += 25
+	SOURCE:痒み += 25
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ += 80
+	SOURCE:痒み += 50
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ += 160
+	SOURCE:痒み += 80
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ += 380
+	SOURCE:痒み += 100
+ELSE
+	SOURCE:快Ｂ += 600
+	SOURCE:痒み += 150
+ENDIF
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_369
+IF TEQUIP:特殊風呂入浴中 == 11
+	PRINTFORML 毛玉に埋もれている%CALLNAME:TARGET%を引き揚げた
+ELSE
+	PRINTFORML 毛玉達がひしめいている中へ%CALLNAME:TARGET%を突き落とした
+	PRINTFORML 好奇心を焚きつけられた毛玉達は我先にと%CALLNAME:TARGET%の体へ殺到した
+ENDIF

@@ -1,0 +1,168 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;胸の大きさの名称を返す関数
+;------------------------------------------------
+;■引数
+;ARG
+;	0（省略）: CSV名
+;	1: 口上システム側の名義
+;================================================
+@K2008FS_BSIZE(ARG = 0)
+#FUNCTIONS
+#DIMS _NAME
+SELECTCASE ARG
+	CASE 0
+		SELECTCASE K2008F_BSIZE()
+			CASE -2
+				_NAME = 絶壁
+			CASE -1
+				_NAME = 貧乳
+			CASE 0
+				_NAME = 並乳
+			CASE 1
+				_NAME = 巨乳
+			CASE 2
+				_NAME = 爆乳
+		ENDSELECT
+	CASE 1
+		SELECTCASE K2008F_BSIZE()
+			CASE -2
+				_NAME = スリムすぎる胸
+			CASE -1
+				_NAME = ささやかな膨らみ
+			CASE 0
+				_NAME = 整った胸
+			CASE 1
+				_NAME = たわわに実った胸
+			CASE 2
+				_NAME = 自己主張の激しすぎる胸
+		ENDSELECT
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 {ARG} が使用されました
+ENDSELECT
+
+RETURNF _NAME
+
+;================================================
+;陰毛の濃さ（名称）を返す関数
+;================================================
+@K2008FS_PUBIC_HAIR_DENSITY()
+#FUNCTIONS
+#DIMS _NAME
+
+SELECTCASE K2008F_PUBIC_HAIR_DENSITY()
+	CASE 0
+		_NAME = 産毛一つないワレメ
+	CASE 1
+		_NAME = 綺麗に処理されたワレメ
+	CASE 2
+		_NAME = 生えかけの恥毛
+	CASE 3
+		_NAME = 綺麗に生えそろった陰毛
+	CASE 4
+		_NAME = 鬱葱と生い繁った陰毛
+	CASE 5
+		_NAME = 無様な密林と化した陰毛
+	CASEELSE
+		THROW 【K2008エラー】未定義の陰毛の濃さが使用されました
+ENDSELECT
+RETURNF _NAME
+
+;================================================
+;引数をランダムに選択して返す関数　その１
+;	引数乱立型（最大20個）
+;------------------------------------------------
+;■引数
+;	空文字列は返せない（初期値として使用しているため）
+;------------------------------------------------
+;	１と２、どちらでも好きな方を
+;================================================
+@K2008FS_RANDS(ARGS:0 = "", ARGS:1 = "", ARGS:2 = "", ARGS:3 = "", ARGS:4 = "", ARGS:5 = "", ARGS:6 = "", ARGS:7 = "", ARGS:8 = "", ARGS:9 = "", ARGS:10 = "", ARGS:11 = "", ARGS:12 = "", ARGS:13 = "", ARGS:14 = "", ARGS:15 = "", ARGS:16 = "", ARGS:17 = "", ARGS:18 = "", ARGS:19 = "", ARGS:20 = "")
+#FUNCTIONS
+#DIM _COUNT
+#DIM _INDEX
+#DIM _RANDSLIST, 21
+
+VARSET _RANDSLIST, 0
+_INDEX = 0
+
+FOR _COUNT, 0, VARSIZE("ARGS")
+	IF ARGS:_COUNT != ""
+		_RANDSLIST:_INDEX = _COUNT
+		_INDEX += 1
+	ENDIF
+NEXT
+
+SIF _INDEX == 0
+	THROW 【K2008エラー】空文字列のRANDSはできません
+
+RETURNF ARGS:RAND(_INDEX)
+
+
+;================================================
+;引数をランダムに選択して返す関数　その２
+;	コンマ区切り版（最大100個）
+;------------------------------------------------
+;■引数
+;	空文字列は返さない
+;------------------------------------------------
+;	１と２、どちらでも好きな方を
+;================================================
+@K2008FS_SPLITRANDS(_TEXT = "", _DELIMITER = ",")
+#FUNCTIONS
+#DIM _VARSIZE
+#DIMS _RANDSLIST, 100
+#DIMS _TEXT
+#DIMS _DELIMITER
+
+SIF _DELIMITER == ""
+	THROW 【K2008エラー】空文字列での区切りはできません
+
+_VARSIZE = STRCOUNT(_TEXT, _DELIMITER)
+SELECTCASE _VARSIZE
+	CASE 0
+		THROW 【K2008エラー】空文字列のみのSPLITRANDSはできません
+	CASE IS >= 100
+		THROW 【K2008エラー】引数が多すぎます。　（執筆者へ）_RANDSLISTの上限見直しをしてください。
+	CASE STRLENSU(_TEXT)
+		THROW 【K2008エラー】区切り文字だけのSPLITRANDSはできません
+ENDSELECT
+
+;連続する区切り文字は1個にまとめる
+_TEXT = %REPLACE(_TEXT, "(" + _DELIMITER + "){2,}", _DELIMITER)%
+;末尾に区切り文字がある場合は削除（空文字列が選択されるのを回避）
+_TEXT = %REPLACE(_TEXT, _DELIMITER + "$", "")%
+
+SPLIT _TEXT, _DELIMITER, _RANDSLIST
+
+RETURNF _RANDSLIST:RAND(_VARSIZE)
+
+
+;================================================
+;引数の文字列に叫び（拗音）をそれっぽく追加する
+;================================================
+@K2008FS_ADD_SHOUT(ARGS)
+#FUNCTIONS
+SELECTCASE SUBSTRINGU(ARGS, STRLENSU(ARGS) - 1, 1)
+	CASE "あ", "か", "さ", "た", "な", "は", "ま", "や", "ら", "わ", "が", "ざ", "だ", "ば", "ぱ", "ゃ"
+		ARGS += "ぁ"
+	CASE "ア", "カ", "サ", "タ", "ナ", "ハ", "マ", "ヤ", "ラ", "ワ", "ガ", "ザ", "ダ", "バ", "パ", "ャ"
+		ARGS += "ァ"
+	CASE "い", "き", "し", "ち", "に", "ひ", "み",       "り",       "ぎ", "じ", "ぢ", "び", "ぴ"
+		ARGS += "ぃ"
+	CASE "イ", "キ", "シ", "チ", "ニ", "ヒ", "ミ",       "リ",       "ギ", "ジ", "ヂ", "ビ", "ピ"
+		ARGS += "ィ"
+	CASE "う", "く", "す", "つ", "ぬ", "ふ", "む", "ゆ", "る",       "ぐ", "ず", "づ", "ぶ", "ぷ", "ゅ"
+		ARGS += "ぅ"
+	CASE "ウ", "ク", "ス", "ツ", "ヌ", "フ", "ム", "ユ", "ル",       "グ", "ズ", "ヅ", "ブ", "プ", "ュ"
+		ARGS += "ゥ"
+	CASE "え", "け", "せ", "て", "ね", "へ", "め",       "れ",       "げ", "ぜ", "で", "べ", "ぺ"
+		ARGS += "ぇ"
+	CASE "エ", "ケ", "セ", "テ", "ネ", "ヘ", "メ",       "レ",       "ゲ", "ゼ", "デ", "ベ", "ペ"
+		ARGS += "ェ"
+	CASE "お", "こ", "そ", "と", "の", "ほ", "も", "よ", "ろ", "を", "ご", "ぞ", "ど", "ぼ", "ぽ", "ょ"
+		ARGS += "ぉ"
+	CASE "オ", "コ", "ソ", "ト", "ノ", "ホ", "モ", "ヨ", "ロ", "ヲ", "ゴ", "ゾ", "ド", "ボ", "ポ", "ョ"
+		ARGS += "ォ"
+ENDSELECT
+RETURNF ARGS

@@ -1,0 +1,352 @@
+﻿;=============================================================================
+;馬のをフェラさせる
+;=============================================================================
+;フェラチオから作成。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE385
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:385 > 0
+	RETURN 0
+;獣姦系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8192) == 0
+	RETURN 0
+;初体験のときは異常系調教フィルタがオフになってないとダメ
+SIF (FLAG:25 & 16) == 0 && FLAG:2 & 4
+	RETURN 0
+;動物小屋と馬が必要
+SIF (FLAG:72 & 1) == 0 || (FLAG:72 & 8) == 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;主人に禁断の知識か狂気がないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && TALENT:MASTER:狂気 == 0
+	RETURN 0
+;小人体型だとダメ
+SIF TALENT:小人体型
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;対象が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;対象が[猫舌]だと技巧5・奉仕精神4・従順3が必要
+SIF TALENT:猫舌 && (ABL:技巧 < 5 || ABL:奉仕精神 < 4 || ABL:従順 < 3)
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 385) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM385
+PRINTL 馬のをフェラさせる
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 385
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 馬のをフェラさせる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 10
+DOWNBASE:1 += 150
+
+SOURCE:不潔 = 2500
+SOURCE:屈従 = 6500
+SOURCE:逸脱 = 45000
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 = 420
+	SOURCE:達成感 = 150
+	TIMES SOURCE:不潔 , 4.00
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 = 500
+	SOURCE:達成感 = 300
+	TIMES SOURCE:不潔 , 2.50
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:性行動 = 580
+	SOURCE:達成感 = 600
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:性行動 = 660
+	SOURCE:達成感 = 900
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:性行動 = 740
+	SOURCE:達成感 = 1500
+	TIMES SOURCE:不潔 , 0.80
+ELSE
+	SOURCE:性行動 = 820
+	SOURCE:達成感 = 2200
+	TIMES SOURCE:不潔 , 0.50
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.50
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:達成感 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:達成感 , 2.00
+ENDIF
+
+;ABL:精液中毒をみる
+IF ABL:精液中毒 == 0
+	SOURCE:中毒充足 = 0
+	TIMES SOURCE:達成感 , 2.00
+	TIMES SOURCE:屈従, 4.00
+ELSEIF ABL:精液中毒 == 1
+	SOURCE:中毒充足 = 500
+	TIMES SOURCE:達成感 , 3.00
+	TIMES SOURCE:屈従, 3.00
+ELSEIF ABL:精液中毒 == 2
+	SOURCE:中毒充足 = 1200
+	TIMES SOURCE:達成感 , 4.00
+	TIMES SOURCE:屈従, 2.50
+ELSEIF ABL:精液中毒 == 3
+	SOURCE:中毒充足 = 3000
+	TIMES SOURCE:達成感 , 6.00
+	TIMES SOURCE:屈従, 2.00
+ELSEIF ABL:精液中毒 == 4
+	SOURCE:中毒充足 = 6000
+	TIMES SOURCE:達成感 , 9.00
+	TIMES SOURCE:屈従, 1.50
+ELSE
+	SOURCE:中毒充足 = 12000
+	TIMES SOURCE:達成感 , 15.00
+	TIMES SOURCE:屈従, 1.00
+ENDIF
+;ABL:獣姦中毒をみる
+IF ABL:獣姦中毒 == 0
+	SOURCE:中毒充足 = 1500
+ELSEIF ABL:獣姦中毒 == 1
+	TIMES DOWNBASE:1 , 0.90
+	SOURCE:中毒充足 = 1700
+	TIMES SOURCE:不潔 , 0.90
+ELSEIF ABL:獣姦中毒 == 2
+	TIMES DOWNBASE:1 , 0.80
+	SOURCE:中毒充足 = 2000
+	TIMES SOURCE:不潔 , 0.80
+ELSEIF ABL:獣姦中毒 == 3
+	TIMES DOWNBASE:1 , 0.70
+	SOURCE:中毒充足 = 2500
+	TIMES SOURCE:不潔 , 0.70
+ELSEIF ABL:獣姦中毒 == 4
+	TIMES DOWNBASE:1 , 0.60
+	SOURCE:中毒充足 = 3300
+	TIMES SOURCE:不潔 , 0.60
+ELSE
+	TIMES DOWNBASE:1 , 0.50
+	SOURCE:中毒充足 = 4200
+	TIMES SOURCE:不潔 , 0.50
+ENDIF
+;奴隷の口と手にＰ汚れがつく、また口と手と胸と髪に精液汚れがつく
+STAIN:口 |= 2
+STAIN:手 |= 2
+STAIN:口 |= 4
+STAIN:手 |= 4
+STAIN:胸 |= 4
+STAIN:髪 |= 4
+
+TCVAR:フェラ経験 += 1
+IF (CFLAG:25 & 16) == 0
+	CFLAG:25 |= 16
+	TCVAR:異常経験 += 1
+ENDIF
+TCVAR:動物性愛経験 += 1
+
+;コマンド属性：獣姦
+TFLAG:98 = 9
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_385
+PRINTFORML %CALLNAME:TARGET%に馬のペニスをしゃぶるように命令してみたが拒否された。
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_385
+PRINTFORM %CALLNAME:TARGET%は
+SIF TALENT:淫乱
+	PRINT 自ら
+PRINT 雄馬の巨大なペニス
+;猫舌フェラ
+IF TALENT:猫舌
+	PRINTL を咥え、舌先と顎の裏、時にはざらつく表面を巧みに用いて刺激している…
+;フェラチオ
+ELSE
+	PRINTL に舌を這わせて舐めまわしている…
+ENDIF
+PRINTFORML そうするうちに絶頂に達した馬からの射精を%CALLNAME:TARGET%は全身に浴びた…
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_385, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:奉仕精神
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+;ABL:精液中毒
+IF ABL:精液中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:精液中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:31%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;ABL:獣姦中毒
+IF ABL:獣姦中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:獣姦中毒
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:38%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+ENDIF
+
+;汚臭鈍感
+IF TALENT:汚臭鈍感
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 1
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
+;汚臭敏感
+ELSEIF TALENT:汚臭敏感
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
+ENDIF
+;献身的
+IF TALENT:献身的
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 6
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
+ENDIF
+;快感の否定
+IF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+
+;実行値は84
+TFLAG:241 = 84

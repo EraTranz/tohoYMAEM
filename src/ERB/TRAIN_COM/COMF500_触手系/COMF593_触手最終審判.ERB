@@ -1,0 +1,218 @@
+﻿;=============================================================================
+;触手最終審判
+;=============================================================================
+;触手生贄を通じて触手と一体化した映姫様を召喚し、
+;一方的に罪を上げてひたすら糾弾してもらう……という超カオスなプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE593
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:593 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:キャラ触手 & 64
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[EIKI触手]を得ていないとダメ
+SIF (FLAG:98 & 8192) == 0
+	RETURN 0
+;映姫様を触手生贄に捧げていない(=映姫様が何らかの形で存在している)とダメ
+SIF (FLAG:97 & 8192) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 593) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM593
+PRINTL 触手最終審判
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 593
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手最終審判
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 66
+
+;耳栓を着けていると弾き飛ばされるw
+IF TEQUIP:耳装着器具
+	PRINTFORML 触手と一体化した映姫様から放たれた悔悟の棒型の触手弾が%CALLNAME:TARGET%の耳栓を弾き飛ばした…
+	TEQUIP:耳装着器具 = 0
+	SOURCE:痛み = 200
+	SOURCE:反感追加 = 100
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	LOCAL:1 = 600
+	LOCAL:2 = 200
+	LOCAL:3 = 300
+ELSEIF ABL:従順 == 1
+	LOCAL:1 = 300
+	LOCAL:2 = 200
+	LOCAL:3 = 150
+ELSEIF ABL:従順 == 2
+	LOCAL:1 = 240
+	LOCAL:2 = 200
+	LOCAL:3 = 120
+ELSEIF ABL:従順 == 3
+	LOCAL:1 = 180
+	LOCAL:2 = 200
+	LOCAL:3 = 90
+ELSEIF ABL:従順 == 4
+	LOCAL:1 = 120
+	LOCAL:2 = 200
+	LOCAL:3 = 60
+ELSE
+	LOCAL:1 = 60
+	LOCAL:2 = 200
+	LOCAL:3 = 30
+ENDIF
+
+;ABL:触手中毒をみる
+LOCAL:4 = 200 * (6 - ABL:触手中毒)
+
+;映姫様との相性あるなしで補正が上下
+LOCAL:5 = 36
+IF RELATION:(LOCAL:5) > 0 && RELATION:(LOCAL:5) != 100
+	LOCAL:1 *= RELATION:(LOCAL:5)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:5)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:5)
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:(LOCAL:5)
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:恭順追加 += LOCAL:1
+SOURCE:屈従 += LOCAL:2
+SOURCE:トラウマ += LOCAL:3
+SOURCE:逸脱 += LOCAL:4
+
+IF TEQUIP:キャラ触手 & 64
+	TEQUIP:キャラ触手 -= 64
+ELSE
+	TEQUIP:キャラ触手 |= 64
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手最終審判開廷中
+;-------------------------------------------------
+@EQUIP_COM593
+PRINTL ＜触手最終審判開廷中＞
+
+;耳栓を着けていると弾き飛ばされるw
+IF TEQUIP:耳装着器具
+	PRINTFORML 触手と一体化した映姫様から放たれた悔悟の棒型の触手弾が%CALLNAME:TARGET%の耳栓を弾き飛ばした…
+	TEQUIP:耳装着器具 = 0
+	SOURCE:痛み += 200
+	SOURCE:反感追加 += 100
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 66
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	LOCAL:1 = 600
+	LOCAL:2 = 200
+	LOCAL:3 = 300
+ELSEIF ABL:従順 == 1
+	LOCAL:1 = 300
+	LOCAL:2 = 200
+	LOCAL:3 = 150
+ELSEIF ABL:従順 == 2
+	LOCAL:1 = 240
+	LOCAL:2 = 200
+	LOCAL:3 = 120
+ELSEIF ABL:従順 == 3
+	LOCAL:1 = 180
+	LOCAL:2 = 200
+	LOCAL:3 = 90
+ELSEIF ABL:従順 == 4
+	LOCAL:1 = 120
+	LOCAL:2 = 200
+	LOCAL:3 = 60
+ELSE
+	LOCAL:1 = 60
+	LOCAL:2 = 200
+	LOCAL:3 = 30
+ENDIF
+
+;ABL:触手中毒をみる
+LOCAL:4 = 200 * (6 - ABL:触手中毒)
+
+;映姫様との相性あるなしで補正が上下
+LOCAL = 36
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:LOCAL
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:恭順追加 += LOCAL:1
+SOURCE:屈従 += LOCAL:2
+SOURCE:トラウマ += LOCAL:3
+SOURCE:逸脱 += LOCAL:4
+
+;映姫様の性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_593
+IF TEQUIP:キャラ触手 & 64
+	PRINTFORML 裁判の中断を指示された映姫は多少不満そうだが、それでも%CALLNAME:PLAYER%に一礼したあとに、%CALLNAME:TARGET%に向き直り「休憩」を宣告した
+	PRINTFORML そして、映姫が触手の海の中に身体を隠していくとともに、数多くの触手が法廷のような形からシンプルな触手の形へと戻っていった…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は命令を下すと、数多くの触手がまるで法廷を形作るかのごとく複雑な変化をし、そのまるで裁判長席のような壇上に綺麗な裸身をさらして映姫が登場した
+	PRINTFORML 映姫は%CALLNAME:MASTER%に軽くお辞儀をすると異様な光景に呆然としている%CALLNAME:TARGET%に対して開廷を宣告した
+	PRINTFORML 映姫の%CALLNAME:TARGET%の生涯の罪に対する容赦のない断罪に%CALLNAME:TARGET%は恐怖を感じている…
+ENDIF

@@ -1,0 +1,130 @@
+﻿;=============================================================================
+;尻を二人で叩く(Ｗスパンキング)
+;=============================================================================
+;奴隷のお尻を主人と助手が二人でペンペンします
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE311
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:311 > 0
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 311) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM311
+;特定の主人と助手の組み合わせを調べる
+CALL JUDGE_TRAIN_PAIR, MASTER, ASSI
+IF TFLAG:175 == 1
+	LOCALS = 紅魔姉妹が一緒に
+ELSEIF TFLAG:175 == 2
+	LOCALS = 腋巫女二人が一緒に
+ELSEIF TFLAG:175 == 3
+	LOCALS = 秋の実りを祝う二柱が一緒に
+ELSEIF TFLAG:175 == 4
+	LOCALS = 月の姉妹が一緒に
+ELSEIF TFLAG:175 == 5
+	LOCALS = 秘封倶楽部の二人が一緒に
+ELSEIF TFLAG:175 == 6
+	LOCALS = 春告精、Ｗリリーが一緒に
+ELSEIF TFLAG:175 == 7
+	LOCALS = 覚り姉妹が一緒に
+ELSEIF TFLAG:175 == 8
+	LOCALS = 夢幻姉妹が一緒に
+ELSEIF TFLAG:175 == 9
+	LOCALS = ゆゆさまとゆかりんが一緒に
+ELSEIF TFLAG:175 == 10 || TFLAG:175 == 11 || TFLAG:175 == 12
+	LOCALS = 騒霊姉妹が一緒に
+ELSE
+	LOCALS = 
+ENDIF
+IF NO:TARGET == 1011
+	PRINTFORML %LOCALS%お尻をふたりでペンペン
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 311
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = %LOCALS%お尻をふたりでペンペン
+ELSE
+	PRINTFORML %LOCALS%お尻を二人で叩く
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 311
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = %LOCALS%お尻を二人で叩く
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 140
+DOWNBASE:1 += 70
+
+SOURCE:露出 = 200
+SOURCE:逸脱 = 900
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 600
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 1000
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 1600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 2400
+ELSE
+	SOURCE:痛み = 3600
+ENDIF
+
+;マスターと奴隷のレズorBL
+IF TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ == 1 && TALENT:MASTER:オトコ == 1
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+;助手と奴隷のレズorBL
+IF TALENT:オトコ == 0 && TALENT:ASSI:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ == 1 && TALENT:ASSI:オトコ == 1
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 1
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+TFLAG:55 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_311
+PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%はそれぞれ、%CALLNAME:TARGET%の尻を平手で強く叩いた
+PRINTFORM 何度も何度も叩かれている内に、%CALLNAME:TARGET%の
+IF ABL:マゾっ気 >= 2 && TALENT:オトコ == 0
+	PRINTL 股間は自身の愛液で濡れはじめていた…
+ELSE
+	PRINTL 尻は真っ赤に腫れていった…
+ENDIF

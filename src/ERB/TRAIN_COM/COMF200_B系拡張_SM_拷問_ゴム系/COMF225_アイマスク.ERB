@@ -1,0 +1,248 @@
+﻿;=============================================================================
+;アイマスク
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE225
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:225 > 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:目装着器具 == 1
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:アイマスク == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 225) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM225
+PRINTL アイマスク
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 225
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アイマスク
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:1 += 150
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:1 += 120
+ELSE
+	DOWNBASE:1 += 90
+ENDIF
+
+LOCAL:1 = 250
+SOURCE:露出 = 1000
+SOURCE:逸脱 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.40
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:液体追加 += LOCAL:1
+SOURCE:トラウマ += SOURCE:逸脱
+
+;臆病
+SIF TALENT:臆病
+	TIMES SOURCE:逸脱 , 2.00
+
+TCVAR:緊縛経験 += 2
+
+;アイマスクの着脱
+IF TEQUIP:目装着器具
+	TEQUIP:目装着器具 = 0
+ELSE
+	TEQUIP:目装着器具 = 1
+ENDIF
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 1
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;アイマスク装着中
+;-------------------------------------------------
+@EQUIP_COM225
+PRINTL ＜アイマスク装着中＞
+
+DOWNBASE:0 += 0
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:1 += 100
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:1 += 80
+ELSE
+	DOWNBASE:1 += 60
+ENDIF
+
+LOCAL = 250
+LOCAL:1 = 1000
+LOCAL:2 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.40
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.60
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL , 2.00
+ELSE
+	TIMES LOCAL , 3.00
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL , 2.00
+
+SOURCE:トラウマ += LOCAL:2
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 2.00
+
+SOURCE:欲情追加 += LOCAL
+SOURCE:液体追加 += LOCAL
+SOURCE:露出 += LOCAL:1
+SOURCE:逸脱 += LOCAL:2
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+TCVAR:緊縛経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_225
+PRINTFORM %CALLNAME:PLAYER%は、
+IF TEQUIP:目装着器具
+	PRINTFORML %CALLNAME:TARGET%からアイマスクを外した
+ELSE
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		;暗闇展開中の場合
+		SIF TEQUIP:暗闇
+			PRINTFORML 暗闇の中で
+		PRINTFORML %CALLNAME:TARGET%にアイマスクを着けさせた	
+	ELSE
+		;暗闇展開中の場合
+		IF TEQUIP:暗闇
+			PRINTFORML 暗闇の中で%CALLNAME:TARGET%にアイマスクを着けさせた
+		;倒錯的で恐怖刻印が1以下で反発刻印がない場合
+		ELSEIF TALENT:倒錯的 && MARK:恐怖刻印 < 2 && MARK:反発刻印 < 1
+			PRINTFORML %CALLNAME:TARGET%にアイマスクを着けさせた。
+			PRINTFORML %CALLNAME:TARGET%は視界を遮られたことで、より深い快感を感じているようだ…
+		;反抗的か抵抗を持ち陥落してない場合
+		ELSEIF (TALENT:反抗的 || TALENT:抵抗) && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML 激しく嫌がる%CALLNAME:TARGET%に強引にアイマスクを着けさせた…
+		;臆病持ちか恐怖刻印2以上で気丈と感情乏しいを持たず、陥落していない場合
+		ELSEIF (TALENT:臆病 || MARK:恐怖刻印 >= 2) && TALENT:気丈 == 0 && TALENT:感情乏しい == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML 恐怖に怯える%CALLNAME:TARGET%にアイマスクを丁寧に着けてあげた…
+		;プライド高いか神霊でなおかつ、屈服刻印と恥辱刻印が1以下で、陥落していない場合
+		ELSEIF (TALENT:プライド高い || TALENT:神霊) && MARK:屈服刻印 < 2 && MARK:恥辱刻印 < 2 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML %CALLNAME:TARGET%にアイマスクを着けさせた。
+			PRINTFORML %CALLNAME:TARGET%は屈辱と視界を奪われた恐怖に震えながらも、そのプライドだけは折れてはいないように見えた…
+		;解放か快感に素直か春の人で痛みに弱いがなく、反発刻印がない場合
+		ELSEIF (TALENT:解放 || TALENT:快感に素直 || TALENT:春の人) && TALENT:痛みに弱い == 0 && MARK:反発刻印 <= 0
+			PRINTFORML なんだか楽しそうな%CALLNAME:TARGET%にアイマスクを丁寧に着けてあげた…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%にアイマスクを着けさせた
+		ENDIF
+	ENDIF
+ENDIF

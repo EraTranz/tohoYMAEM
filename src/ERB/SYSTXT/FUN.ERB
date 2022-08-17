@@ -1,0 +1,323 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お遊び系地の文関係
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;文字通りお遊びで作ったテキスト群。主に[Debug]時にて見ることが出来る(ような気がする)
+;元ネタ知ってニヤリとするのもよし、分からずに悶絶するのもよし
+;=============================================================================
+;調教中のゲームオーバー時でのリトライ地の文
+;=============================================================================
+@SYSTXT_FUN_EVENT_RETRY_SCENE0
+PRINTL もう一度チャレンジする？
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]はい
+PRINTL [1]いいえ
+PRINTL [2]諦める
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE1
+PRINTL …まさか過去からやり直すつもりか？
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]はい、全力でお相手します。
+PRINTL [1]いいえ、とんでもない。お疲れ様でした。
+PRINTL [2]それなくね？
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE2
+PRINTL あの頃に戻りたい？
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]はい
+PRINTL [1]いいえ
+PRINTL [2]不貞寝する
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE3
+PRINTL 血と汗と…
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]涙を流せ！
+PRINTL [1]涙も無い！
+PRINTL [2]涙は尽きた
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE4
+PRINTL もしかしてオラオラですかーッ！？
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]YES！　YES！　YES！　YES！　Y E S ！
+PRINTL [1]NO！　NO！　NO！　NO！　NO！
+PRINTL [2]E x a c t l y(そのとおりでございます！！)
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE5
+PRINTL エロ卿「にとり博士、事情を説明してもらおうか」
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]いま少し時間と予算を頂ければ…
+PRINTL [1]弁解は罪悪と知りたまえ！
+PRINTL [2]私のせいだよ
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE6
+PRINTL 今のは無かったことにしたい？
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]助けて、慧音先生！
+PRINTL [1]caved！！！
+PRINTL [2]現実に戻りたいです
+
+@SYSTXT_FUN_EVENT_RETRY_SCENE7
+PRINTL そんな調教で大丈夫か？
+SIF !(FLAG:8669 & 2)
+	PRINTL [0]大丈夫だ、問題ない
+PRINTL [1]一番いい調教を頼む
+PRINTL [2]神は言っている、ここで遊ぶ運命ではないと……
+
+;=============================================================================
+;デバッグモード選択時での地の文
+;=============================================================================
+@SYSTXT_FUN_EVENT_DEBUGMODE_HEAD
+DRAWLINE
+TRYCCALLFORM SYSTXT_FUN_EVENT_DEBUGMODE_SCENE{RAND:12}
+	DRAWLINE
+	WAIT
+CATCH
+	RESTART
+ENDCATCH
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE0
+ALIGNMENT CENTER
+PRINTL Approach your target and attack!
+PRINTL Your Debug starts now!
+PRINTL Are you ready!?
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE1
+ALIGNMENT CENTER
+PRINTL WARNING!
+PRINTL A HUGE BUGPROGRAM
+PRINTL “eratoho YM”
+PRINTL IS APPROACHING FAST!
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE2
+ALIGNMENT CENTER
+PRINTL How are you gentlemen !!
+PRINTL All your bride are belong to us.
+PRINTL You are on the way to debug.
+PRINTL You have no chance to erection make your time.
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE3
+ALIGNMENT CENTER
+PRINTL WARNING
+DRAWLINE
+PRINTL 
+PRINTL The R-18 variant is approaching
+PRINTL at full throttle.
+PRINTL According to the data. It is
+PRINTL identified as“eratohoYM”
+PRINTL 
+DRAWLINE
+PRINTL NO REFUGE
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE4
+ALIGNMENT CENTER
+PRINTL Received telegram from HYPERION.
+PRINTL Enemy threat removed by your erotic train.
+PRINTL The training pattern of the latest ERO unmaned macro
+PRINTL has been completed according to the data.
+PRINTL From your train record.
+PRINTL 
+PRINTL For your meritorious deed,
+PRINTL You `re honored to be selected as the debugger of the last YM test.
+PRINTL Congratulations.
+PRINTL After you debug, you will advanced two classes
+PRINTL and the awarded the sage decoration.
+PRINTL 
+PRINTL Glory with the eramaker. Mercy on the gentleman.
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE5
+ALIGNMENT CENTER
+PRINTL 
+PRINTL STAY COOL!
+PRINTL 
+PRINTL -SOMEONE TAKES THE BUG OUT!-
+PRINTL 
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE6
+PRINTL ENCOUNTRED AN VARIANT
+PRINTL eratohoYM
+PRINTL ￣￣￣￣￣￣
+PRINTL BE ATTITUDE FOR GAINS...
+PRINTL 1:REINFORCED ERRORS
+PRINTL 2:DEBUG FOR OTHERS
+PRINTL 3:BACKUP YOURFILES
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE7
+ALIGNMENT CENTER
+PRINTL 
+PRINTL ＷARNING　　　　　　　　　RADAR EHT NO　　　　
+PRINTL 　CONFIRMED 　　　　―Φ― MARGORP KRAD EGUH　
+PRINTL 　HUGE DARK PROGRAM 　　　　　　　 DEMRIFNOC　
+PRINTL 　ON THE RADAR　　　　　　　　　　　　GNINRAＷ
+PRINTW 
+PRINTL 
+PRINTL 
+PRINTL VARIANT IS APPROACHING
+PRINTL CODE NAME
+PRINTL 
+PRINTL eratohoYM
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE8
+PRINTL DESTROY ALL BUGS
+PRINTL AND PICK UP LOGS
+PRINTL TO MAKE THE VARIANT MORE BETTER■
+PRINTL 
+PRINTW 
+PRINTL WARNING
+PRINTL APPROACHING A HUGE ERROR■
+PRINTL 
+PRINTL 
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE9
+DRAWLINEFORM ＿
+DRAWLINEFORM WARNING:
+DRAWLINEFORM ￣
+ALIGNMENT RIGHT
+PRINTL NAME　　　　　　　　　　　
+PRINTL ジ　eratohoYM 　　　　　
+PRINTL ＿＿＿＿＿＿＿＿＿＿＿＿＿
+PRINTL 　／　　　　　STAGE INFINITY
+PRINTL ／
+PRINTL 
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE10
+ALIGNMENT CENTER
+PRINTL 
+PRINTL ＷＡＲＭＩＮＧ　ＵＰ　ＮＯＷ
+PRINTL 
+PRINTL ■■■■■■■　　　■■■■■■■　
+PRINTL ■□□□□□■□　　■□□□□□■□
+PRINTL ■□　　　　■□　　■□　　　　■□
+PRINTL ■■■■■■■□　　■■■■■■■□
+PRINTL 　□□□□□■□　　　□□□□□■□
+PRINTL 　　　　　　■□　　　　　　　　■□
+PRINTL ■■■■■■■□　　■■■■■■■□
+PRINTL 　□□□□□□□　　　□□□□□□□
+PRINTL 
+PRINTL ＰＲＥＳＥＮＴＥＤ　ＢＹ　芋
+PRINTL 
+ALIGNMENT LEFT
+
+@SYSTXT_FUN_EVENT_DEBUGMODE_SCENE11
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL 
+ALIGNMENT CENTER
+PRINTL ────────────
+PRINTL |そろそろ、バリアントの|
+PRINTL |　eratohoYM　　　　が |
+PRINTL |見えてきやしたぜっ！　|
+PRINTL ─────　　─────
+PRINTL 　　　　　＼／　　　　　
+PRINTL 　　　　　　　　　　　　
+PRINTL 　　　　(・・ω)　　　　
+ALIGNMENT LEFT
+
+;=============================================================================
+;没にしたアホモード：DEADorALIVE用に作った地の文
+;=============================================================================
+;ブ○ースクリーンみたいなのが出来ないかと怪しい電波を受けて作成
+@SYSTXT_FUN_ERATOHOYM_CRASH_BLUE
+REPEAT 100
+	PRINTL 
+REND
+WAIT
+SETBGCOLOR 0x0000FF
+SETCOLOR 0xFFFFFF
+PRINTL 
+PRINTL A problem has been detected and eratohoYM has been shut down to prevent damage
+PRINTL from your Emuera.
+PRINTL The problem seems to be caused by the following file: eratohoYM.exe.exe
+PRINTL 
+PRINTL GENTLEMAN_HAS_FAILED_DAYDREAMING
+PRINTL 
+PRINTL If this is the first time you have seen this Stop error screen,
+PRINTL restart your masturbation. If this screen appears again, follow
+PRINTL these steps:
+PRINTL 
+PRINTL Check to make sure your clothes are properly taken off.
+PRINTL If you have a tie, wear it. Make sure that it is clean.
+PRINTL 
+PRINTL If problems continue, remove your tie and clean it, or buy a new one.
+PRINTL If you need to use Kenjya Mode to calm down, find any "OKAZU" from your room,
+PRINTL and look until you are satisfied.
+PRINTL 
+PRINTL Nutrient information:
+PRINTL 
+PRINTL *** Stock: 0xeratohoYM (0xABNORMAL,0xREVERSAL,0x0YOU-SAY,0x00XEXTRA)
+PRINTL 
+PRINTL 
+PRINTL *** UFUFU.SYS - ADRESS GENTLEMAN base at UFUFU, DateStamp BC.65000
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL 
+TWAIT 5000, 1
+WAIT
+PRINTFORML Now cleaning your tie...
+TWAIT 5000, 1
+WAIT
+CLEARLINE 30
+PRINTL ...痴命的なヨゴレによりネクタイの洗濯に失敗しました。eratohoYMを終了します。
+WAIT
+CLEARLINE 101
+RESETCOLOR
+RESETBGCOLOR
+
+@SYSTXT_FUN_ERATOHOYM_CRASH_RED
+REPEAT 100
+	PRINTL 
+REND
+WAIT
+SETBGCOLOR 0xFF0000
+SETCOLOR 0xFFFFFF
+DRAWLINEFORM ＿
+ALIGNMENT CENTER
+PRINTL eratohoYM Boot Error
+ALIGNMENT LEFT
+DRAWLINEFORM ￣
+PRINTL 
+PRINTL eratohoYM Boot Manager has discovered a bad tentacle.
+PRINTL 
+PRINTL 
+PRINTL      Status: 0x0721eros
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL      Info: An error objected tentacle extacy.
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL You can try to resummon the tentacle by the Gentelmen Syokusyu Recovery 
+PRINTL Tools. (You might need to buy a new Ona-Hole.)
+PRINTL 
+PRINTL If the problem continues, please contact your slave master in your eratohoYM 
+PRINTL savedata.
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL 
+PRINTL 
+DRAWLINEFORM ＿
+PRINTL SPERMA=CONTINUE
+DRAWLINEFORM ￣
+TWAIT 5000, 1
+WAIT
+PRINTFORML Begining to execute bad tentacles...
+TWAIT 5000, 1
+WAIT
+CLEARLINE 30
+PRINTL ...媚薬体液が強過ぎて悪い触手の駆除に失敗しました。eratohoYMを終了します。
+WAIT
+CLEARLINE 101
+RESETCOLOR
+RESETBGCOLOR

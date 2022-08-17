@@ -1,0 +1,27 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;汎用拒否
+;	_DIST	= 実行可能までの距離（拒否時は常に0より大きい）
+;	_DENIED	= 今回の調教中で既に、この命令を拒否したなら1、してないなら0
+;	_DONE	= 今回の調教中に、この命令が実行できた回数。一度もできていないなら0
+;================================================
+@K2008_DENY_GENERAL(_DIST = -1, _DENIED = -1, _DONE = -1)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+;システム以外で飛んできたときは再計算
+IF _DIST <= 0
+	;実行可能までの距離？を取得（正値が大きいほど遠い。0以下で実行可能）
+	_DIST = TFLAG:241 - TFLAG:240
+	ASSERT _DIST > 0
+	;今回の調教中に、この命令を拒否したなら1、してないなら0
+	_DENIED = K2008F_WAS_DENIED("GET", _DIST)
+	;今回の調教中に、この命令が実行できた回数。一度もできていないなら0
+	_DONE = K2008F_HOWTIMES_COM(_DIST)
+ENDIF
+;ランク指定の拒否口上があればそちらを優先
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_DENY_GENERAL, _DIST, _DENIED, _DONE
+CATCH
+	;ない場合は、汎用拒否口上に飛ばす
+	TRYCALL K2008_DENY_GENERAL, _DIST, _DENIED, _DONE
+ENDCATCH

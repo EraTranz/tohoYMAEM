@@ -1,0 +1,3133 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;50をキャラ番号に置換して使用してください(霊夢なら1、蓮子なら49、魅魔なら100)。
+;
+;このファイルでは0～99番のコマンドの口上用関数が置いてあります。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;○○口上
+;==============================================================
+;========================================================
+;コマンド口上前の共通関数
+;特定の条件下でコマンド口上を表示させないようにする場合はRETURN 1
+;1以外を返した場合はコマンド口上は表示される
+;========================================================
+@KOJO_1050_TRAIN_MESSAGE_S_BEFORE
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 1
+;口枷がある場合は戻る
+SIF TEQUIP:口装着器具 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SELECTCOM != 583)
+	RETURN 1
+;時止め中は戻る
+SIF TEQUIP:時間止め && SELECTCOM != 418
+	RETURN 1
+;失神回復時は戻る
+SIF TFLAG:898 == 1
+	RETURN 1
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 1
+
+;========================================================
+;コマンド口上
+;CFLAG:9000～9099までの100個を使用して、
+;選んだコマンドを対象に初めて使ったかどうかを判別できる
+;「IF TFLAG:95 == 1」で初回か2回目以降なのかで表示内容を変えることが出来る
+;========================================================
+;-------------------------------------------------
+;愛撫
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_0
+;初回実行時
+IF TFLAG:95 == 1
+	;助手蓮子
+	IF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv2以上
+			IF MARK:屈服刻印 >= 2
+				PRINTFORMW 『メリー……んっ……』
+				PRINTFORMW 「れ、蓮子……んっ、んんんっ！ ……ぷはっ、ぁ、はぁ……」
+			;それ以外
+			ELSE
+				PRINTFORMW 『メリー……んっ……』
+				PRINTFORMW 「んっ、んーっ！ ……ぷはっ、そんな、蓮子、やめて……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv2以上
+		IF MARK:屈服刻印 >= 2
+			PRINTFORMW 「んっ、ぁ、はぁ……」
+			PRINTFORMW メリーは為すがままにされている……
+		;それ以外
+		ELSE
+			PRINTFORMW 「んっ、んーっ！ いきなり、何をするのよ！」
+			PRINTFORMW 「い、嫌、触らないで！」
+		ENDIF
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「んっ、蓮子、ご主人様に悪いわ……」
+			PRINTFORMW 『駄目よメリー、今は私だけを見て……』
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「ああっ、ご主人様……んんっ、ちゅっ……」
+		PRINTFORMW 「もっと、もっと触って……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「んっ、あぁ……蓮子……」
+			PRINTFORMW 「もっと、もっとしていいから……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW メリーは%CALLNAME:MASTER%の為すがままにされている……
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3
+			IF MARK:屈服刻印 == 3
+				PRINTFORMW 「んっ、ぷはっ……」
+				PRINTFORMW 『まだよ、もっとしてあげるわ……』
+			;屈服刻印Lv2
+			ELSEIF MARK:屈服刻印 == 2
+				PRINTFORMW 「んんっ、お願い、もう……」
+				PRINTFORMW 『駄目、まだまだこれからじゃない』
+			;それ以外
+			ELSE
+				PRINTFORMW 「もうやめて、いくら蓮子でも……」
+				PRINTFORMW 『あらら、私でも嫌なの？ つれないわねぇ』
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW 「んっ、あぁ……そんな……」
+			PRINTFORMW 「私……どうして……」
+		;屈服刻印Lv2
+		ELSEIF MARK:屈服刻印 == 2
+			PRINTFORMW 「んん……嫌、嫌なのに……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌っ、やめてってば！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;クンニ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_1
+;初めて
+IF TFLAG:95 == 1
+	;助手蓮子
+	IF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv2以上
+			IF MARK:屈服刻印 >= 2
+				PRINTFORMW 「そ、そんな、蓮子、そんなところ舐めないで……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「れ、蓮子っ、駄目よっ、そんなとこ舐めちゃだめぇ！」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv2以上
+		IF MARK:屈服刻印 >= 2
+			PRINTFORMW 「そ、そんなとこ舐めないで……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌っ、まって、変なとこ舐めないでよ！」
+			PRINTFORMW 「やめてってば、離して！」
+		ENDIF
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「あっ、ああっ……気持ちいい……」
+			PRINTFORMW 「で、でも、駄目よ蓮子……ご主人様が……」
+			PRINTFORMW 『もう……蓮子ってばご主人様の前だといまいちノリが悪いわよね……』
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「あっ、はぁっ……気持ちいい……」
+		PRINTFORMW 「もっと、もっとして……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『んっ、んんっ、どう、メリー？』
+			PRINTFORMW 「あっ、あぁ……蓮子、いいよ、気持ちいい……もっと……していいから……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW メリーは%CALLNAME:MASTER%の為すがままにされている
+		PRINTFORMW ただひたすら耐えているようだ……
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3
+			IF MARK:屈服刻印 == 3
+				PRINTFORMW 「駄目っ、そんなとこ汚いわよメリー……」
+				PRINTFORMW 『メリーのならそんな事ないわよ。もっともっとしてあげるからね』
+				PRINTFORMW 「そんな、あっ、ああっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「蓮子、お願い、もう嫌……」
+				PRINTFORMW 『んー？ 駄目よ、まだまだ』
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW 「くっ、うぅっ……」
+			PRINTFORMW 「嫌、嫌なのに……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌っ、気持ち悪い、もうやめてっ！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナル愛撫
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_2
+IF TFLAG:95 == 1
+	;恋慕+助手なし
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「えっ、こっちを？ え、えっと……ちょっと待って、心の準備が」
+		PRINTFORMW 「……いいわ、きて」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 「えっ、こっちを？ え、えっと……ちょっと待って蓮子、心の準備が」
+				PRINTFORMW 『だーめ、待ったなしね』
+				PRINTFORMW 「あっ、ちょっと、待ってってば、あぁっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「い、嫌、蓮子、そっちはだめぇっ！」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「い、嫌、そこはっ、やめて……！」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「あ、ああ……気持ちいい……」
+				PRINTFORMW 『お尻で気持ちよくなっちゃうなんて、もうメリーも充分変態さんなのかもね～』
+				PRINTFORMW 「やだ、そんなこと言わないでよ……」
+			;潤滑Lv2以上
+			ELSEIF (PALAM:潤滑+UP:潤滑) >= PALAMLV:2
+				PRINTFORMW 「あぁ……蓮子の指が中に……」
+				PRINTFORMW 『どう？ 痛かったら言ってよ』
+				PRINTFORMW 「うん、大丈夫……あっ、ふぁ……」
+			;潤滑Lv2未満
+			ELSEIF (PALAM:潤滑+UP:潤滑) < PALAMLV:2
+				PRINTFORMW 「痛っ……」
+				PRINTFORMW 『あ、痛かった？ ごめん』
+				PRINTFORMW 「くぅっ……もう少し、優しくしてよ……」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:5 >= 3
+			PRINTFORMW 「あっ、ああっ、お尻なのに、感じちゃう……！」
+		;潤滑Lv2以上
+		ELSEIF (PALAM:潤滑+UP:潤滑) >= PALAMLV:2
+			PRINTFORMW 「やっぱり、こっちは恥ずかしい……」
+			PRINTFORMW 「ふぁっ、んっ、あぁ、駄目、駄目なのに……」
+		;潤滑Lv2未満
+		ELSEIF (PALAM:潤滑+UP:潤滑) < PALAMLV:2
+			PRINTFORMW 「あっ、痛っ、ご主人様、うぅっ……」
+			PRINTFORMW 「んっ……大丈夫、我慢するから……」
+		ENDIF
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;潤滑Lv2以上＋A感覚Lv3以上
+			IF (PALAM:潤滑+UP:潤滑) >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+				PRINTFORMW 「あぁ……蓮子の指が中に……」
+				PRINTFORMW 『どう？ 痛かったら言ってよ』
+				PRINTFORMW 「うん、大丈夫……あっ、ふぁ……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「痛っ……」
+				PRINTFORMW 『あ、痛かった？ ごめん』
+				PRINTFORMW 「うん……、大丈夫、我慢するから……」
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;潤滑Lv2以上＋A感覚Lv3以上
+		IF (PALAM:潤滑+UP:潤滑) >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「くっ……そんな、私……」
+			PRINTFORMW （感じたくないのに……気持ちよくなってる？ そんな……）
+		;それ以外
+		ELSE
+			PRINTFORMW 「くっ……痛っ……」
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;潤滑Lv2以上＋A感覚Lv3以上
+			IF (PALAM:潤滑+UP:潤滑) >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+				PRINTFORMW 「こんなの嫌、嫌なのに……どうして……」
+				PRINTFORMW 『ふふっ、もう慣れたものね……。しっかり感じちゃって……』
+			;それ以外
+			ELSE
+				PRINTFORMW 「嫌っ、痛い、痛いの蓮子、もう、やめてってば！」
+				PRINTFORMW 『うーん、まだまだね……もっとじっくりやらないと駄目かしら？』
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;潤滑Lv2以上＋A感覚Lv3以上
+		IF (PALAM:潤滑+UP:潤滑) >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「あっ、やっ、いやぁ……良くなんて……良くなんてないのに……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ま、またそっちを……やめて、痛いだけだから！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;胸愛撫
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_3
+;初めて
+IF TFLAG:95 == 1
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『はぁ……』
+			PRINTFORMW 「……？ どうかしたの？」
+			PRINTFORMW 『……なんでもないわよ、全く、もう、このっ！』
+			PRINTFORMW 「えっ、あっ、な、何、いきなりそんな強く……っ！」
+		ENDIF
+	;恋慕+助手なし
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「私、この胸が大きいばかりで邪魔だって思っていたの、男からも女からも変な目で見られるし」
+		PRINTFORMW 「でも、ご主人様に気に入って貰えるのなら、これでいいのかなって……」
+		PRINTFORMW 「ええ、いいわよ……、いっぱい揉んで……」
+	;恋慕なし+助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『はぁ……』
+			PRINTFORMW 「……何よ」
+			PRINTFORMW 『……んー、なんでもないわよ、全く、もう、このっ！』
+			PRINTFORMW 「えっ、ちょっと待ってよ蓮子、あっ、痛っ……そんな強く揉まないでっ！」
+		ENDIF
+	;恋慕なし+助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「あっ！ 嫌っ、やめてっ、触らないで！」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『むー……どうしたらこうなるのよ』
+			PRINTFORMW 『羨ましいったらありゃしないわもう、全く、この胸がぁ！』
+			PRINTFORMW 「あっ、もう、だからって、そんなに強くはだめぇっ！」
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「んっ、ああ……気持ちいい……」
+		PRINTFORMW 「もっと、もっと触って……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「……蓮子、いくらでも揉んでいいからね」
+			PRINTFORMW 「んっ、ああ……いいよ……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「くっ……ううっ……」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;B感覚Lv3以上
+			IF ABL:Ｂ感覚 >= 3
+				PRINTFORMW 『あー、もう、どこをどうすればこんなに大きくなるってのよ、もうっ！』
+				PRINTFORMW 「あぅっ、だからってそんな強く……駄目っ、ああっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 『あー、もう、どこをどうすればこんなに大きくなるってのよ、もうっ！』
+				PRINTFORMW 「あっ、もう、蓮子、もうやめてってば！」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;B感覚Lv3以上
+		IF ABL:Ｂ感覚 >= 3
+			PRINTFORMW 「んっ、そんな……胸ばかり……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「んんっ、嫌だってば、やめて！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;指挿入れ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_4
+;初めて
+IF TFLAG:95 == 1
+	;処女（処女でないキャラの場合は無記入でよい）
+	IF TALENT:処女
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上
+				IF ABL:レズ中毒 >= 5
+					PRINTFORMW 「んっ、あぁっ……え？ 蓮子、どうかした？」
+					PRINTFORMW 『メリー……。……お願い、あなたの初めて、私が貰っていい？』
+					PRINTFORMW 「え、蓮子……。……、……うん、蓮子なら、いいわ。そのまま、奥まで……」
+					PRINTFORMW （ご主人様、ごめんなさい、でも、私……）
+				;それ以外
+				ELSE
+					PRINTFORMW 「んっ、あぁっ……え？ 蓮子、どうかした？」
+					PRINTFORMW 『……メリー、ごめん』
+					PRINTFORMW 「痛っ……え？ 蓮子、な、何を……！？」
+					PRINTFORMW 「う、嘘……ど、どうして、蓮子……！」
+				ENDIF
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「痛っ、……え？ ……ご主人様……？」
+			PRINTFORMW 「ど、どうして……」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「んっ……蓮子、どうかした？」
+				PRINTFORMW 『メリー……いい？ このまま、奥まで……』
+				PRINTFORMW 「え、蓮子……。それって、…………」
+				PRINTFORMW 「……うん、蓮子になら、いいわ……」
+				PRINTFORMW 「蓮子、私の初めて、貰ってください……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「そのまま……私の初めてを奪うのね……」
+			PRINTFORMW 「勝手にすればいいわ……勝手に……」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「んっ、そんなに指入れちゃ……え？ 蓮子、どうかした？」
+				PRINTFORMW 『……ちょっと、我慢して、メリー』
+				PRINTFORMW 「痛っ……え？ 蓮子、な、何を……！？」
+				PRINTFORMW 「う、嘘……ど、どうして、蓮子……！」
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			 PRINTFORMW 「そんなに奥まで指入れないで！ 私、まだ、……痛っ！！」
+			 PRINTFORMW 「え……そ、そんな……う……嘘……」
+		ENDIF
+	;非処女
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;V感覚Lv3以上
+				IF ABL:Ｖ感覚 >= 3
+					PRINTFORMW 『どう、メリー、この辺りがいいのかしら？』
+					PRINTFORMW 「う、うん……いいよ、気持ちいいわ……そのまま、動いて……」
+				;それ以外
+				ELSE
+					PRINTFORMW 『メリー、どうかしら？ この辺りとか……気持ちいい？』
+					PRINTFORMW 「ん……少しだけ……」
+					PRINTFORMW 『まだあまり慣れてないからよ、少しずつ慣らしてあげるからね』
+				ENDIF
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「ん……指、気持ちいい……ご主人様……そのまま、動いて……」
+		;?助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;V感覚Lv3以上
+				IF ABL:Ｖ感覚 >= 3
+					PRINTFORMW 『どう、メリー、この辺りがいいのかしら？』
+					PRINTFORMW 「う、うん……いいよ、気持ちいいわ……そのまま、動いて……」
+				;それ以外
+				ELSE
+					PRINTFORMW 『メリー、どうかしら？ この辺りとか……気持ちいい？』
+					PRINTFORMW 「ん……少しだけ……」
+					PRINTFORMW 『まだあまり慣れてないからよ、少しずつ慣らしてあげるからね』
+				ENDIF
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW （今更指でなんて……何の意味があるのかしら……）
+			PRINTFORMW （今になって優しくするとかいうわけでもないでしょうし）
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;V感覚Lv3以上
+				IF ABL:Ｖ感覚 >= 3
+					PRINTFORMW 『どう、メリー、この辺りがいいのかしら？』
+					PRINTFORMW 「ひっ……蓮子、そんなに動かしちゃ、あっ、んんっ！」
+				;それ以外
+				ELSE
+					PRINTFORMW 『メリー、どうかしら？ この辺りとか……気持ちいい？』
+					PRINTFORMW 「んっ、そ、そんなとこ……そんな、動かさないで、蓮子……」
+				ENDIF
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			;V感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あぁっ、だ、だめっ、そんな、中で動かさないで……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「いや……そんなとこに指入れないで……」
+			ENDIF
+		ENDIF
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「うっ、んんっ……蓮子の指、気持ちいい……」
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「気持ちいいけど……私ばかりっていうのも……」
+		PRINTFORMW 「ご主人様のも欲しいな……」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「指……だけでいいの？」
+			PRINTFORMW 『メリーに直接触れられるから……』
+			PRINTFORMW 「蓮子……それなら、もっと動いて、いいから……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「指だけで満足？」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;V感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「うっ、んんっ……蓮子の指が……あぁ……」
+				PRINTFORMW 『気持ちいいでしょ？ ちょっと、激しくいくわよ……』
+				PRINTFORMW 「んっ！ れ、蓮子、そんな、激しすぎ……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 『まだあまり慣れてないでしょ、指でゆっくり慣らしてあげるからね』
+				PRINTFORMW 「く、ぅ……っ、蓮子、そんなとこ、やめて……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;V感覚Lv3以上
+		IF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「あ、あぅっ、そ、そんなにしたら、私……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「くぅ……んっ、気持ち悪い……何であんたなんかに……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フェラする
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_5
+;PRINTFORMW 
+
+;-------------------------------------------------
+;キスする
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_6
+;助手が蓮子で、PLAYERが助手の場合
+IF ASSI > 0 && NO:ASSI == 1049 && ASSIPLAY
+	;初回
+	IF TFLAG:95 == 1
+		;恋慕
+		IF TALENT:恋慕
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 「んっ……ぷはっ……蓮子……」
+				PRINTFORMW 『ここに来てキスだけなんて初めてだっけ？ もっとしよ、ご主人様に見せ付けるように……』
+			;それ以外
+			ELSE
+				PRINTFORMW 「んっ、蓮子、ご主人様に悪いわよ……」
+				PRINTFORMW 『今回は私に任されてるからあまり気にしなくてもいいわよ』
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW 「んっ……ぷはっ……蓮子、もっと……」
+			PRINTFORMW 『いくらでもしてあげるからね……ほら、舌を出して……絡めるように……』
+		;恋慕なし
+		ELSE
+			PRINTFORMW 「んっ、駄目っ、蓮子、やめてっ、こんなところで……！」
+			PRINTFORMW 蓮子はメリーの言葉を無視してキスを続けている……
+		ENDIF
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:技巧 >= 5 && MARK:薬物刻印 == 0
+				PRINTFORMW 『んっ、あまりやりすぎるとご主人様が嫉妬しちゃうかしらねー』
+				PRINTFORMW 「んっ、はぁっ……、あまり意地悪な事言わないで……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「んっ、やっぱ、駄目よ、んんっ……」
+				PRINTFORMW 『いいからいいから、ちゅ……』
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW 「んっ、はぁっ、蓮子……好きぃ……」
+			PRINTFORMW 『んー、あまりやりすぎるとご主人様に悪いかなー……私としてはいいんだけど』
+		;恋慕なし
+		ELSE
+			PRINTFORMW 「蓮子、もうやめてよ、んんっ……」
+			PRINTFORMW 『何言ってるののメリー？ まだまだこれからなのに、ん、ちゅ……』
+		ENDIF
+	ENDIF
+;蓮子以外
+ELSE
+	;初めて
+	IF TFLAG:95 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んっ……キスしてるときが一番幸せかも……」
+			PRINTFORMW 「本当に愛されているんだなって感じがして……」
+		;恋慕なし
+		ELSE
+			PRINTFORMW 「嫌、何であなたなんかと、やめ……んっ、やめてっ！」
+		ENDIF
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んっ……ちゅ……」
+			PRINTFORMW 「ご主人様、嬉しい……大好き……」
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW 「んっ……んんっ……」
+			PRINTFORMW メリーは抵抗しないが目をそらしている
+		;従順Lv３以上
+		ELSEIF ABL:従順 >= 3
+			PRINTFORMW 「んっ……んんっ……」
+			PRINTFORMW メリーは抵抗せず舌を受け入れている
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌っ、んっ、やめてってば！」
+			PRINTFORMW メリーは必死に離そうともがいている
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;自慰
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_7
+;シャワーオナニー
+IF TEQUIP:シャワープレイ
+	;初めて
+	IF TFLAG:95 == 1
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「シャワーでしろ？ よく思いつくわねそんなの」
+				PRINTFORMW 『いやせっかくお風呂場に来たことだしね？』
+				PRINTFORMW 「何がせっかくよ、もう……まぁいいけど」
+			ENDIF
+		;恋慕+助手なし
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「シャワーで？ ここに来たからにはやらせるだろうとは思ったけど……」
+			PRINTFORMW 「……ううん、嫌じゃないわ、ただ、ちょっと恥ずかしいだけ……」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「シャワーでしろ？ よく思いつくわねそういうの……」
+				PRINTFORMW 『せっかくお風呂場に来たことだしね』
+				PRINTFORMW 「何がせっかくだかわからないわ……まあいいわ、やるわよ」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「……これで、いいのかしら？」
+		;恋慕なし+助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「シャワーでしろって……何考えてるのよ」
+				PRINTFORMW 『いやせっかくお風呂場に来たことだしね？』
+				PRINTFORMW 「せめてお風呂ぐらいゆっくり入らせてくれてもいいのに……」
+			ENDIF
+		;恋慕なし+助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「シャワーでしろって……」
+			PRINTFORMW 「ただお風呂に入るだけじゃないとは思っていたけど……」
+		ENDIF 
+	;二回目以降
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上
+				IF ABL:レズ中毒 >= 5
+					;自慰中毒Lv3以上
+					IF ABL:自慰中毒 >= 3
+						PRINTFORMW 「あっ、ああ……蓮子も、一緒にすればいいのにぃ……！」
+						PRINTFORMW 『今はご主人様の助手だから……我慢してるだけ……よ』
+					;それ以外
+					ELSE
+						PRINTFORMW 「あっ、恥ずかしいのに、シャワーが気持ちいい……！」
+						PRINTFORMW 『メリー、シャワーでするのも気持ちいいでしょ？ 恥ずかしがらずイっていいわよ』
+						PRINTFORMW 「あぁぁ……蓮子、もう、私……」
+					ENDIF
+				;それ以外
+				ELSE
+					;自慰中毒Lv3以上
+					IF ABL:自慰中毒 >= 3
+						PRINTFORMW 「あっ、駄目……やだっ、シャワーでも気持ちいいけど……」
+						PRINTFORMW 『私に見られてるのが気になるの？ いいからイっちゃいなよ』
+						PRINTFORMW 「んっ、そんな……でも……あぁぁっ！」
+					;それ以外
+					ELSE
+						PRINTFORMW 「ふぁっ、あぁっ……んっ、だめぇ……」
+						PRINTFORMW 『メリー、シャワーでするのも気持ちいいでしょ？ 恥ずかしがらずイっていいわよ』
+						PRINTFORMW 「んっ、そんな、恥ずかしい……」
+					ENDIF
+				ENDIF
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				PRINTFORMW 「あっ、凄い……水の刺激が……気持ちいい……！」
+				PRINTFORMW 「ご主人様、もっと、シャワーで感じてる私を見て……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あっ、んんっ……ああ……ご主人様に見られてるのに……」
+				PRINTFORMW 「水の刺激が、あっ、はぁっ……」
+			ENDIF
+		;?助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;自慰中毒Lv3以上
+				IF ABL:自慰中毒 >= 3
+					PRINTFORMW 「ああ……蓮子、気持ちいい、気持ちいいよぉ……」
+					PRINTFORMW 『はまると病み付きになるのよねー、遠慮せずにイっちゃっていいわよ』
+				;それ以外
+				ELSE
+					PRINTFORMW 「い、いくら蓮子の命令でも、恥ずかしい……」
+					PRINTFORMW 『はまると病み付きになるわ、もっとしてなれればいいのよ』
+					PRINTFORMW 「そんな、あっ、はぁっ……！」
+				ENDIF
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				PRINTFORMW メリーは言われるがままに黙々とシャワーで自慰をしている
+				PRINTFORMW 気持ちよくなってきているのか時々声を洩らしそうになるのを必死に我慢しているようだ
+			;それ以外
+			ELSE
+				PRINTFORMW メリーは言われるがままにシャワーで自慰をしている
+				PRINTFORMW 声は上げずただ作業をするかのようだ……
+			ENDIF
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;自慰中毒Lv3以上
+				IF ABL:自慰中毒 >= 3
+					PRINTFORMW 「ふぁっ、あぁっ……んっ、だめぇ……」
+					PRINTFORMW 『メリー、シャワーでするのも気持ちいいでしょ？ 恥ずかしがらずイっていいわよ』
+					PRINTFORMW 「んっ、そんな、恥ずかしい……」
+				;それ以外
+				ELSE
+					PRINTFORMW 「ううっ、お風呂場で何でこんな事……」
+				ENDIF
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				PRINTFORMW 「あっ、凄い……水の刺激が……気持ちよすぎて、止まらない……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ううっ、お風呂場で何でこんな事……」
+			ENDIF
+		ENDIF
+	ENDIF
+ELSE
+	;初めて
+	IF TFLAG:95 == 1
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「自分でしろ？ ……え？」
+				PRINTFORMW 『わからないのなら具体的に言う？』
+				PRINTFORMW 「い、いいわよ……見られながらなんて恥ずかしいのに……」
+			ENDIF
+		;恋慕+助手なし
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「自分で……？ うん、恥ずかしいけど、いいわよ」
+			PRINTFORMW 「……でも、見てるだけでいいの？」
+		;恋慕なし+助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「自分でしろ？ ……何言ってるのよ」
+				PRINTFORMW 『わからないのなら具体的に言う？』
+				PRINTFORMW 「嘘でしょ、ねぇ……わかった、わかったわよ……うぅっ」
+			ENDIF
+		;恋慕なし+助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「自分でしろ？ ……何言ってるのよ」
+			PRINTFORMW 「うぅ……、わかったわよ……やればいいんでしょ、やれば……」
+		ENDIF 
+	;二回目以降
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上+反発刻印Lv0
+				IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+					;自慰中毒Lv3以上
+					IF ABL:自慰中毒 >= 3
+						PRINTFORMW 「あっ、ああ……ご主人様、蓮子、もっと、もっと見てぇ！」
+					;それ以外
+					ELSE
+						PRINTFORMW 「んんっ、はぁっ、い、いくら蓮子でも……恥ずかしいよ……」
+					ENDIF
+				;それ以外
+				ELSE
+					;自慰中毒Lv3以上
+					IF ABL:自慰中毒 >= 3
+						PRINTFORMW 「あっ、駄目……やだっ、蓮子に見られてるのに、私、感じすぎちゃって……！」
+					;それ以外
+					ELSE
+						PRINTFORMW 「あぁ、蓮子……あまり、見ないで……」
+						PRINTFORMW 『もしかして、ご主人様にならいいとか……』
+						PRINTFORMW 「そ、そんなこと言わないで……」
+					ENDIF
+				ENDIF
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				PRINTFORMW 「ご、ご主人様っ、私の感じてる姿、もっと見て……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ご主人様、あっ、本当に、はぁっ、見てるだけでいいの？」
+				PRINTFORMW 「……ううん、見られるのが嫌ってわけじゃないの、ご主人様になら別に……」
+			ENDIF
+		;?助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;自慰中毒Lv3以上
+				IF ABL:自慰中毒 >= 3
+					PRINTFORMW 「うっ、くっ……蓮子、私……」
+					PRINTFORMW 「蓮子に見られて、感じてる……ああ……」
+				;それ以外
+				ELSE
+					PRINTFORMW 「んっ、ああ……あまり、見ないで……」
+				ENDIF
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				PRINTFORMW メリーは言われるがままに黙々と自慰をしている
+				PRINTFORMW 気持ちよくなってきているのか時々声を洩らしそうになるのを必死に我慢しているようだ
+			;それ以外
+			ELSE
+				PRINTFORMW メリーは言われるがままに自慰をしている
+				PRINTFORMW 声は上げずただ作業をするかのようだ……
+			ENDIF
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;自慰中毒Lv3以上
+				IF ABL:自慰中毒 >= 3
+					PRINTFORMW 「あっ、蓮子に見られてるのに、私っ、駄目っ、やめられない……！」
+				;それ以外
+				ELSE
+					PRINTFORMW 「うぅっ、酷いよ蓮子……こんな、恥ずかしい……」
+				ENDIF
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				PRINTFORMW 「あっ、駄目っ、見られてるのに、やめられない……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「うぅっ、どうしてこんな事……み、見ないで……」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;何もしない
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_9
+;初めて
+IF TFLAG:95 == 1
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「えっと、蓮子、何もしないのならご主人様と替わって欲しいなー、とか、駄目？」
+		ENDIF
+	;恋慕+助手なし
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「あ、あの、ご主人様……？」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『どうかしたの？』
+			PRINTFORMW 「……ん、何でもないわよ。蓮子こそ、何もしないの？」
+			PRINTFORMW 「蓮子になら……何されたって……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「どうかしたの……？」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「……蓮子？」
+			PRINTFORMW 『あら、もしかしてこれから何されるのか期待していたりとか？』
+			PRINTFORMW 「そんなことないわ、何もしないのならそれで終わりにしてよ」
+		ENDIF
+	;恋慕なし+助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「何する気……？」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW （ああもう、なんか落ち着かない……）
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		;欲情Lv3以上
+		IF PALAM:欲情 >= 3
+			PRINTFORMW 「あまり焦らさないで……ご主人様……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「我慢する、我慢するけど……でも……」
+		ENDIF
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「さっきから私の顔じろじろ見てどうかしたの？」
+			PRINTFORMW 『えっ……いえ、何でもないわよ』
+			PRINTFORMW 「そう……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「何もしないのなら……ちょっとだけ、そのままにしてくれるかしら……」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「終わりなの？ ちょっと1人になりたいんだけど」
+			PRINTFORMW 『いいえまだよ。これからいい事するんだから』
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「何もしないのならこれで終わりにしてどこかにいって」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ローター
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_10
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「あ、それって、もしかして……」
+		PRINTFORMW 「やっぱり。ここにもこんな物が存在するなんて……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『ここって色々とエッチな道具があるのよね。さ、これでするわよ』
+			PRINTFORMW 「これって……ここはこんなものまで存在するのね……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「こんなものまで……」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『ここって色々とエッチな道具があるのよね。さ、これでするわよ』
+			PRINTFORMW 「これって……ちょっと待って、嫌、そんなとこに押し付けないで！」
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「え、それって……」
+		PRINTFORMW 「いやっ、そんなとこに押し付けないでっ！」
+	ENDIF 
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「蓮子、もっと、もっとして……」
+			PRINTFORMW 『ん？ ここ？ ここがいいのかしら？』
+			PRINTFORMW 「あっ、す、凄い……あっ、はぁっ……」
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「振動が……んっ、凄くて……ああっ、気持ち、いい……」
+		PRINTFORMW 「もっと、して、ご主人様……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「蓮子、もっと、もっとしていいから……」
+			PRINTFORMW 『ん？ ここ？ ここがいいのかしら？』
+			PRINTFORMW 「あっ、んっ、そこっ、あぁっ、凄い、気持ちいい……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		PRINTFORMW 「うっ……んん……！」
+		PRINTFORMW メリーは身体を震わせ堪えている……
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3
+			IF MARK:屈服刻印 == 3
+				PRINTFORMW 「あっ、あぁ……蓮子、も、もう、やめっ……」
+				PRINTFORMW 『そんなに感じてるのに止めて欲しいの？ まだするわよ』
+				PRINTFORMW 「そ、そんな、だめぇっ……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あぁ、もう、嫌、やめて、やめてよ、蓮子……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW 「あ、あぁ……駄目、私、おかしくなっちゃう……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぅ……もう押し付けないで……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;電気按摩
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_11
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「これってマッサージ器、よね」
+		PRINTFORMW 「それで何をするのかしら、ご主人様？ え、そっちに？」
+		PRINTFORMW 「ぅ……んっ、あっ、はぁぁぁ！ す、凄い、な、何これ……！」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「これって……マッサージ器？」
+			PRINTFORMW 『うん、まぁ、その通りだけど、これはね、こう使うの』
+			PRINTFORMW 「え、ここに当てるの？ 何か嫌な予感しかしないけど、蓮子にならいいよ……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「マッサージ器……ただマッサージするわけがないわよね……」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「これってマッサージ器、よね」
+			PRINTFORMW 『うん、まぁ、その通りだけど、これはね、こう使うの』
+			PRINTFORMW 「え、どこに……いっ、いやっ、ひぃっ、やめて、やめてぇ！！」
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「これってマッサージ器、よね」
+		PRINTFORMW 「それで何をする気？ ただマッサージしてくれるわけ……ないわよね」
+		PRINTFORMW 「え、何を……いっ、ひぃっ！ あぁぁぁぁぁ！ いやぁっ、止めて！ 止めてぇ！！」
+	ENDIF 
+;二回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「ご主人様……また、これなの？ これ、ちょっと苦手……」
+		PRINTFORMW 「ひっ、あぁぁぁぁぁっ！ は、激し、すぎ、だめっ、変になっちゃう！」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「またするの、これで？」
+			PRINTFORMW 『ええ。メリー凄く乱れて可愛かったもの』
+			PRINTFORMW 「いいわよ、蓮子になら……んっ、あぁぁぁぁぁっ！ は、激し、んんっ！」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「くっ……ぁ……っ……！」
+		PRINTFORMW メリーは必死に耐えている……
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv3以上
+			IF ABL:レズ中毒 >= 3
+				PRINTFORMW 「またするの、これで？」
+				PRINTFORMW 『ええ。メリー凄く乱れて可愛かったもの』
+				PRINTFORMW 「いいわよ、蓮子になら……んっ、あぁぁぁぁぁっ！ は、激し、んんっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「も、もうやめてよ蓮子……」
+				PRINTFORMW 『あんなに乱れまくって何言ってるのよ。さ、始めるわよ』
+				PRINTFORMW 「や、やめて、蓮子、蓮子ってば、いやっ、いやぁぁぁ！」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「も、もうそれはやめてっ！ 壊れる、私、壊れちゃう！」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;バイブ
+;TEQUIP:Ｖ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_12
+;解除時
+IF TEQUIP:Ｖ系装着器具 == 0
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「う……んっ！ はぁっ……」
+			PRINTFORMW 「気持ちいいのは確かだけど、やっぱりこういうのは……」
+		ENDIF
+	;恋慕+助手なし
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「次は、ご主人様ので……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『メリー、抜くわよ？』
+			PRINTFORMW 「う……んっ！ あ……はぁっ……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「う……くっ……はぁっ……」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「あっ……はぁっ……もう、そんなのやめてよ……」
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「あっ……はぁっ……も、もうそんなの入れないで……」
+	ENDIF
+;装着時
+ELSE
+	;初めて
+	IF TFLAG:95 == 1
+		;処女
+		IF TALENT:処女 && EXP:Ｖ経験 == 0
+			;恋慕+助手蓮子
+			IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+				IF NO:ASSI == 1049
+					;レズ中毒Lv5以上+従順Lv5以上+反発刻印Lv0
+					IF ABL:レズ中毒 >= 5 && ABL:従順 >= 5 && MARK:反発刻印 == 0
+						PRINTFORMW 『ねぇメリー……これ……なんだけど……』
+						PRINTFORMW 「これって……ここってこんなものまであるの……。……蓮子？」
+						PRINTFORMW 『……メリー、お願いがあるの。あなたの初めて、私が貰ってもいい？』
+						PRINTFORMW 「え……。……、……うん、蓮子なら、いいわ。きて……」
+						PRINTFORMW （ご主人様、ごめんなさい、でも、私……）
+					;それ以外
+					ELSE
+						PRINTFORMW 「これって……ちょっと待って、蓮子、まさか」
+						PRINTFORMW 『その通りよメリー、あなたの初めて、私が貰うわ』
+						PRINTFORMW 「う、嘘でしょ蓮子、私、初めては、ご主人様に……」
+						PRINTFORMW 『ご主人様には許可を貰ってるわ……さぁ、いくわよ』
+						PRINTFORMW 「そんな、う、嘘よ……ご主人様、どうして……」
+					ENDIF
+				ENDIF
+			;恋慕
+			ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+				;従順Lv5以上
+				IF ABL:従順 >= 5
+					PRINTFORMW 「えっ、それってまさか……！」
+					PRINTFORMW 「……いえ、いいんです、ご主人様がそれを望むなら」
+					PRINTFORMW メリーの中にバイブを入れる直前、メリーから一筋の涙が流れていった……
+				;それ以外
+				ELSE
+					PRINTFORMW 「えっ、それってまさか……！」
+					PRINTFORMW 「ご、ご主人様、私まだしたことがないんです、初めては、ご主人様にあげたいのに……！」
+				ENDIF
+			;?助手蓮子
+			ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+				IF NO:ASSI == 1049
+					PRINTFORMW 『ねぇメリー……これ……なんだけど……』
+					PRINTFORMW 「それ……は……、…………」
+					PRINTFORMW 「ねえ蓮子、あいつの命令でしょ？ ……躊躇わなくていいわよ」
+					PRINTFORMW 「お願い、私の初めてを奪って、蓮子にならいいの……」
+					PRINTFORMW 『メリー……。……わかったわ。……ごめんね、いくわよ』
+				ENDIF
+			;?
+			ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+				PRINTFORMW 「……それは……」
+				PRINTFORMW 「私の初めてを、それで奪うのね……いいわ、もう何されたって……」
+				PRINTFORMW 「……今更……躊躇う人じゃないでしょ、あなたは……。するなら早くして……」
+				PRINTFORMW 「…………」
+			;助手蓮子
+			ELSEIF ASSI > 0 && ASSIPLAY
+				IF NO:ASSI == 1049
+					PRINTFORMW 「これって……蓮子、まさか」
+					PRINTFORMW 『そのまさかよ。メリーの初めて、私が貰うのよ』
+					PRINTFORMW 「い、嫌……やめて、蓮子、そんな……そんなのいやぁっ！！」
+				ENDIF
+			;助手なし
+			ELSEIF ASSIPLAY == 0
+				 PRINTFORMW 「えっ、それってまさか……！」
+				 PRINTFORMW 「お願い、やめて、やめてっ！！ 私、まだなのに……！」
+			ENDIF
+		;非処女
+		ELSE
+			;恋慕+助手蓮子
+			IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+				IF NO:ASSI == 1049
+					PRINTFORMW 「蓮子、これって……ここってこんなものまであるのね……」
+				ENDIF
+			;恋慕+助手なし
+			ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+				PRINTFORMW 「こんなものまであるなんて……」
+			;?
+			ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+				PRINTFORMW メリーは冷めた目でバイブを見ている
+			;助手蓮子
+			ELSEIF ASSI > 0 && ASSIPLAY
+				IF NO:ASSI == 1049
+					PRINTFORMW 「蓮子、これって……ここってこんなものまであるのね……」
+				ENDIF
+			;助手なし
+			ELSEIF ASSIPLAY == 0
+				PRINTFORMW 「これは……お願い、やだ、やめて……！」
+			ENDIF
+		ENDIF
+	;二回目以降
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「……またこれ？」
+				PRINTFORMW 『嫌じゃないでしょ？ これ嵌めてる時のメリーって気持ちよさそうだし』
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「またこれ？ できれば、ご主人様のを……」
+		;?助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「これよりも私……蓮子とただ抱き合っていたいわ……」
+				PRINTFORMW 『嬉しいこといってくれるわね、でも今回はこれよ』
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「また……するの……」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「も、もうやめようよ蓮子……」
+				PRINTFORMW 『せっかくあるものだから有効に活用しないと』
+				PRINTFORMW 「やめてよ蓮子……、もういやぁ……」
+			ENDIF
+		;それ以外
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「お願い、もう、嫌……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナルバイブ
+;TEQUIP:Ａ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_13
+;解除時
+IF TEQUIP:Ａ系装着器具 == 0
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「っ、……はぁっ、はぁ……」
+				PRINTFORMW 「気持ちよかった、けど……でも、私……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「くぅっ……はぁっ、はぁ……蓮子……」
+				PRINTFORMW 『まだ慣れないみたいわね……もう少しやってみないと駄目かしら』
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「っ、……はぁっ……」
+			PRINTFORMW 「できれば次はご主人様のをお願い……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「くぅっ……はぁっ、いくらご主人様の命令とはいえ……」
+			PRINTFORMW 「いえ、その、ご主人様……慣れるまで頑張るから……」
+		ENDIF
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「っ、……はぁっ……」
+				PRINTFORMW 『大分慣れた？ もっと激しいのでもいいかしらね』
+				PRINTFORMW 「れ、蓮子……いいの、私、何されても……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「くぅっ……はぁっ、はぁ……蓮子……」
+				PRINTFORMW 『まだ慣れないみたいわね……もう少しやってみないと駄目かしら』
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「っ、……はぁっ、はぁ……」
+			PRINTFORMW 「……終わったの？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「くぅっ……はぁっ、はぁ……終わりなのね……」
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「っ、……はぁっ、はぁ……」
+				PRINTFORMW 「気持ちよかった、けど……でも、私……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「くぅっ……はぁっ、はぁ……蓮子……」
+				PRINTFORMW 『まだ慣れないみたいわね……もう少しやってみないと駄目かしら』
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「……っ！ はぁっ、もう……やめて……」
+			PRINTFORMW （気持ち良かったことが知られたら何されるか……）
+		;それ以外
+		ELSE
+			PRINTFORMW 「はぁっ、はぁっ、はぁ……やっと、終わったわ……よね」
+		ENDIF
+	ENDIF
+;装着時
+ELSE
+	;初めて
+	IF TFLAG:95 == 1
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「蓮子、これってまさか……」
+				PRINTFORMW 『多分予想とは少し外れてると思うわ、これはね、こっちに入れるものなのよ』
+				PRINTFORMW 「こっち！？ ちょ、ちょっと待って、それは……まだ心の準備が……あっ！ はぁっ……」
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「それってまさか……え？ 後ろ？」
+			PRINTFORMW 「ちょ、ちょっと待って……あっ、そ、そんな！」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「これを、後ろに？ ……そう」
+				PRINTFORMW 『大丈夫？ 慣れないとかなり辛いわよ』
+				PRINTFORMW 「そんなこといわれても……嫌でも入れるのに……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「こっちに……そう……」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「これってまさか……」
+				PRINTFORMW 『多分予想とは少し外れてると思うわ。これはね、こっちに入れるものなのよ』
+				PRINTFORMW 「こっち！？ ちょ、ちょっと待って、嘘でしょ、嫌、だ、だめだってばぁ！」
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「それってまさか……え？ 後ろ？」
+			PRINTFORMW 「嘘でしょ、そんな……あっ、い、嫌、いやぁーーー！」
+		ENDIF
+	;二回目以降
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;A感覚Lv3以上
+				IF ABL:Ａ感覚 >= 3
+					PRINTFORMW 「また、後ろなの？」
+					PRINTFORMW 『もしかして期待しちゃってる？』
+					PRINTFORMW 「う……あ……えっと……その……」
+				;それ以外
+				ELSE
+					PRINTFORMW 「また、後ろなの？ あまりそっちはしたくないのに……」
+					PRINTFORMW 『もっとして慣れればいいだけよ』
+				ENDIF
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「またこれ……できれば、ご主人様のが……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「入れるの？ ……うん、いいわ」
+				PRINTFORMW 「まだ痛いけど、我慢するから……」
+			ENDIF
+		;?助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;A感覚Lv3以上
+				IF ABL:Ａ感覚 >= 3
+					PRINTFORMW 「入れるの？ ……うん、いいわ」
+					PRINTFORMW 『もう慣れたものよねー。 メリーも自分は変態さんだって認めちゃったら？』
+					PRINTFORMW 「そんな……私……」
+					PRINTFORMW 『ごめんごめん、じゃ、入れるわよ』
+				;それ以外
+				ELSE
+					PRINTFORMW 「入れるの？ うん、まだ、ちょっと苦手だけど、いいよ……」
+					PRINTFORMW 『もっとして慣れればいいだけよ』
+				ENDIF
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「またこれを入れるの……？」
+				PRINTFORMW （お尻の方が気持ち良くなってきてるなんて……私……）
+			;それ以外
+			ELSE
+				PRINTFORMW 「また、するの……」
+			ENDIF
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;A感覚Lv3以上
+				IF ABL:Ａ感覚 >= 3
+					PRINTFORMW 『後ろのほうももう慣れたものよねー。 ほら、入れるわよ』
+					PRINTFORMW 「いやっ、嫌なのに……！」
+				;それ以外
+				ELSE
+					PRINTFORMW 「蓮子、もう、やめてってば……痛いだけだから……」
+				ENDIF
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「また後ろにそんなの……」
+				PRINTFORMW （嫌なはずなのに、私、期待しちゃってる？ そんな……）
+			;それ以外
+			ELSE
+				PRINTFORMW 「やめてってば、痛いだけだから……」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;クリキャップ
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_14
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;ニプルキャップ
+;TEQUIP:Ｂ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_15
+;解除時
+IF TEQUIP:Ｂ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;オナホール
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_16
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;電極オナホール
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_17
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;正常位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_20
+;初めて
+IF TFLAG:95 == 1
+	;処女
+	IF TALENT:処女
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上+反発刻印Lv0
+				IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+					PRINTFORMW 「れ、蓮子……それは……？」
+					PRINTFORMW 『メリーの初めて……私が貰うわ。覚悟はいい？』
+					PRINTFORMW 「え……蓮子……、う……うん、いいよ……蓮子なら……」
+					PRINTFORMW （ご主人様、ごめんなさい、でも、私……）
+				;それ以外
+				ELSE
+					PRINTFORMW 「め、メリー？ え、えっと……」
+					PRINTFORMW 『ご主人様じゃなくて残念？ でもね、私だってメリーの初めてを貰いたいのよ』
+					PRINTFORMW 『お願い、いいでしょ？ ……じゃ、挿入れるわね』
+					PRINTFORMW 「で、でも、私、ご主人様に……い、嫌……いくら蓮子でもそれだけは……！」
+				ENDIF
+			ENDIF
+		;恋慕+助手なし
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「あ……やっとご主人様とひとつになれるのね……」
+			PRINTFORMW 「お願いします、早く私を貰って……」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 『メリーの初めてを……私で、本当にいいの？』
+				PRINTFORMW 「あいつに命令されているんでしょ？ あいつに奪われるぐらいなら……それに、蓮子にならいいの」
+				PRINTFORMW 「お願い、私の初めて、貰って……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「勝手にすればいいじゃない……」
+			PRINTFORMW 「今更躊躇うような人じゃないでしょ、あなたは」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 『メリー、ひとつになりましょう……」
+				PRINTFORMW 「れ、蓮子、嘘でしょ……！？」
+				PRINTFORMW 「い、嫌、やめて、やめてよ蓮子、だめっ、あっ、いやぁぁぁーー！」
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「お願い、私初めてなの、それだけはやめて、そんな……！」
+			PRINTFORMW 「い、嫌っ、いやぁーーー！！」
+		ENDIF
+	;非処女
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上+反発刻印Lv0
+				IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+					PRINTFORMW 『ご主人様じゃなくて残念……とか？』
+					PRINTFORMW 「そんなこと言わないで、私は……」
+					PRINTFORMW 『ごめんメリー、じゃ、いくわよ」
+				;それ以外
+				ELSE
+					PRINTFORMW 『ご主人様じゃなくて残念……とか？』
+					PRINTFORMW 「そんな事言わないで……」
+					PRINTFORMW 『ごめんごめん、じゃ、いくわよ』
+				ENDIF
+			ENDIF
+		;恋慕+助手なし
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「きて、ご主人様……あっ、ご主人さまっ、好きっ、ああっ！」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「蓮子、きて……私の膣内に……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「今更普通にするって……そう」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			PRINTFORMW 「蓮子、もうやめて、やめてってばぁ……」
+			PRINTFORMW メリーは涙を流し訴えるが蓮子はただメリーを犯し続けている……
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「やめて、嫌よっ、あなたとなんかしたくないの！」
+			PRINTFORMW 「お願い、やめて……嫌っ、あっ、あぁぁーー！」
+		ENDIF
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 『んっ、メリー……今は余計なこと考えないで私のことだけ見てて……』
+				PRINTFORMW 「蓮子……あっ、んんっ、気持ちいっ、ああっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「い、いいっ、ああっ、おかしくなっちゃう！」
+				PRINTFORMW 「で、でもっ、……んんっ！」
+				PRINTFORMW 『この時ぐらいご主人様のことは忘れて……今は私としてるんだから』
+				PRINTFORMW 「れ、蓮子……んっ、あっ、そんなっ、あああっ！」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「あっ、凄いっ、もっと、もっと突いてぇっ！」
+		PRINTFORMW 「んっ、くぅっ、お願い、このまま……このまま膣内に出してっ！」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3+V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 『どうメリー、気持ちいいかしら？』
+				PRINTFORMW 「うん蓮子……もっと、もっとしていいから……」
+			;それ以外
+			ELSE
+				PRINTFORMW 『メリー、大丈夫？ 痛くない？』
+				PRINTFORMW 「うん、大丈夫……蓮子と繋がっている事のほうが嬉しいから……」
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;屈服刻印Lv3+V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「くっ……うぅっ……あっ……」
+			PRINTFORMW 何とか耐えようとしているが時折声が漏れている……
+		;それ以外
+		ELSE
+			PRINTFORMW メリーは無表情で行為が終わるのを待っている……
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3+V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 『気持ちいいでしょ、メリー？ もう充分慣れたでしょ？』
+				PRINTFORMW 『そろそろ激しくいくわよ、覚悟はいいかしら？』
+				PRINTFORMW 「れ、蓮子……あぁっ……そんな、駄目よ……私……ふぁぁっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ぃゃ……もう……やめてよ……蓮子……どうして……」
+				PRINTFORMW メリーはただ泣き続けている……
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0 && (CFLAG:237 <= 1 || FLAG:7 == 2)
+		;屈服刻印Lv3+V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:4 >= 3
+			PRINTFORMW 「んっ、あっ、熱い……もっと、動いて……！」
+			PRINTFORMW （だめっ、気持ちよすぎて……こんなの、駄目なのに……）
+		;それ以外
+		ELSE
+			PRINTFORMW 「もうやめて……お願い……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_21
+;初めて
+IF TFLAG:95 == 1
+	;処女
+	IF TALENT:処女
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上+反発刻印Lv0
+				IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+					PRINTFORMW 「え、蓮子……？」
+					PRINTFORMW 『……お願い、メリー。ひとつになりましょう……』
+					PRINTFORMW 「蓮子……うん、……でも、後ろからなんて……ちょっと、怖いわね……」
+					PRINTFORMW （ご主人様、ごめんなさい、でも、私……）
+				;それ以外
+				ELSE
+					PRINTFORMW 「ちょ、ちょっと、蓮子、何を……」
+					PRINTFORMW 『何をって、メリーの初めてを貰うのよ。覚悟はいい？』
+					PRINTFORMW 「えっ、ま、まって、後ろからなんて」
+					PRINTFORMW 「だめよっ、蓮子……そんな……」
+				ENDIF
+			ENDIF
+		;恋慕+助手なし
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「え？ 後ろから？ 初めてだからご主人様を見ていたいのに……」
+			PRINTFORMW 「……いえ、いいわ。ご主人様、私を貰ってください……」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 『メリー、初めてよね……貰ってもいいわよね？』
+				PRINTFORMW 「……あいつの命令でしょ？ 蓮子になら、いいわよ……」
+				PRINTFORMW 「でもできれば、蓮子の顔を見ながらの方が良かったわ……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「……こんな体勢で初めてを奪うのね」
+			PRINTFORMW 「今更どうこう言うつもりはないわ、勝手にして……」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「れ、蓮子、嘘でしょ……！？」
+				PRINTFORMW 『メリー、ひとつになりましょう……」
+				PRINTFORMW 「い、嫌、やめて、やめてよ蓮子、だめっ、あっ、いやぁぁぁーー！」
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「お願い、私初めてなの、それだけはやめて、そんな……！」
+			PRINTFORMW 「い、嫌っ、いやぁーーー！！」
+		ENDIF
+	;非処女
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				;レズ中毒Lv5以上+反発刻印Lv0
+				IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+					PRINTFORMW 『後ろからだと怖い？』
+					PRINTFORMW 「……そんな事、ないわよ」
+					PRINTFORMW 『……そう、じゃあ、余計なこと考えられないくらい乱れさせてあげるから……！』
+				;それ以外
+				ELSE
+					PRINTFORMW 『後ろからだと怖い？』
+					PRINTFORMW 「そんな事ないわ、そんな事……」
+					PRINTFORMW 『そう……。……それじゃ、いくわね』
+				ENDIF
+			ENDIF
+		;恋慕+助手なし
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「後ろから……ちょっと怖い、けど……」
+			PRINTFORMW 「ううん、いいの、きて……」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 『後ろからだと怖い？』
+				PRINTFORMW 「……そんな事、ないわ。でも、後ろから抱きしめてくれると嬉しいわ」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「後ろから無理矢理……」
+			PRINTFORMW 「今更抵抗なんて……勝手にすればいいわ」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「蓮子、もうやめて、やめてってばぁ……」
+				PRINTFORMW メリーは涙を流し訴えるが蓮子はただメリーを犯し続けている……
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「後ろからって……ただでさえ嫌なのにそんなの……」
+			PRINTFORMW 「お願い、もう……嫌っ、あっ、あぁぁーー！」
+		ENDIF
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 「あっ、いい、んんっ……」
+				PRINTFORMW 『メリー、ご主人様が気になるのはわかるけど、今は私のほうに集中してよ』
+				PRINTFORMW 「ごめん、んっ、蓮子、あぁっ、あんっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あっ、いい、んんっ……」
+				PRINTFORMW 『メリー、ご主人様が気になるのはわかるけど、今は私のほうに集中してよ』
+				PRINTFORMW 「そんな、蓮子っ、意地悪言わないで、あぁっ、はぁっ！」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「あんっ、深いっ、もっと、もっと奥まできてぇ！」
+		PRINTFORMW 「ご主人様の顔見ていたいのに、んっ、私、あっ、感じすぎちゃう……！」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3+V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「んっ、蓮子っ、もっと、動いてっ……」
+				PRINTFORMW 『いいわ、もっと激しくしてあげるからっ』
+				PRINTFORMW 「あっ、蓮子、蓮子っ、も、もっと、いっぱい……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ああっ……蓮子、もっと、ぎゅってして……」
+				PRINTFORMW 「まだ、ちょっと怖いし、蓮子の顔見れないのなら、せめて……お願い……」
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;屈服刻印Lv3+V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「くっ……うぅっ……あっ……」
+			PRINTFORMW （感じたくない、感じたくなんかない……のに……）
+		;それ以外
+		ELSE
+			PRINTFORMW メリーは無表情で行為が終わるのを待っている……
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3+V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あっ、はぁっ、あんっ、ああ……駄目……なのにぃ……」
+				PRINTFORMW 「怖いの……感じすぎちゃう……蓮子ぉ、あぁっ……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ぃゃ……もう……やめてよ……蓮子……どうして……」
+				PRINTFORMW メリーはただ泣き続けている……
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3+V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「いやっ、こんな格好嫌なのに……どうして……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「こんな、ただでさえ嫌なのに、またこんなの……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;対面座位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_22
+;初めて
+IF TFLAG:95 == 1
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「この体勢のままで？ また凄いこと考えるわね……」
+			PRINTFORMW 『お互いを見ながらっていうのもいいと思うわよ？ いいでしょ？』
+			PRINTFORMW 「……うん、まぁ、そういうのも、いいかな……いいよ、きて」
+		ENDIF
+	;恋慕+助手なし
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「んっ、ちゅっ……え、この体勢で？」
+		PRINTFORMW 「お互いを見つめて抱き合いながらっていうのもいいわね、うん、きて……」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「んっ、ちゅっ、蓮子……」
+			PRINTFORMW 『ねぇ、このままの体勢でしてみない？』
+			PRINTFORMW 「このままって……、……うん、そういうのもいいかもね」
+			PRINTFORMW 「お願い、しっかり抱きしめながらして……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW （今更抱き合って優しくとかいうわけではないわよね……）
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「こんな体勢でだなんて……」
+			PRINTFORMW 『こうやってぎゅって抱き合いながらやれば普通にやるよりいいかと思ってね』
+			PRINTFORMW 「できれば何もせずほっといて欲しいわ……」
+			PRINTFORMW 『ほら、つべこべ言わずにやるわよ』
+			PRINTFORMW 「……」
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「この体勢でって……あんたの顔を見ながらだなんて……」
+		PRINTFORMW 「ただでさえ嫌なのに、そんなの……」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 「んっ、あんっ、はぁっ……れ、蓮子……」
+				PRINTFORMW 『ほら、メリー……キスしながら……ね』
+				PRINTFORMW 「んっ、ちゅっ、……ぷはっ、蓮子、もっと……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あぅ、やぁっ、んっ、んぁっ、はぁっ……」
+				PRINTFORMW 『ね、キスしながら……んっ……』
+				PRINTFORMW 「あぁっ、んっ……んくっ……はぁっ、こんなの、気持ちよすぎて、私……！」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「んっ、あぁぁっ！ 奥まで、来てる……！」
+		PRINTFORMW 「んっ、くぅっ、お願いキスして、もっと抱きしめて……！」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3＋V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「蓮子、もっと、もっときつく抱きしめて……」
+				PRINTFORMW 『んっ、メリー、キスしよ……』
+				PRINTFORMW 「んっ、ちゅっ、……ぷはっ、蓮子、もっと、もっときて……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「この格好だと蓮子を全身で感じられるから安心できるわ……」
+				PRINTFORMW 『ね、いいでしょ？ メリー、キスしよ……』
+				PRINTFORMW 「んっ、ちゅっ、……ぷはっ……はぁっ……」
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;屈服刻印Lv3＋V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「今更無理に愛してあげる、なんて言いたげな格好でしなくてもいいのに……」
+		;それ以外
+		ELSE
+			PRINTFORMW （早く終わらないかしら……）
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3＋V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あぅ、やぁっ、んっ、んぁっ、はぁっ……」
+				PRINTFORMW 『ね、キスしながら……んっ……』
+				PRINTFORMW 「あぁっ、んっ……んくっ……はぁっ、こんなの、気持ちよすぎて、私……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「もう、もうやめて、蓮子、もう、私、おかしく、あぁ……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3＋V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「やっ、嫌なのにっ、私……！」
+			PRINTFORMW 「そ、そんな、感じすぎちゃ……いやっ、だめっ、はぁっ、んっ、んぁぁっ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「こんな、こんなのいやぁ……」
+			PRINTFORMW メリーは顔を合わせようとせず涙を流しつつ行為をしている……
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;背面座位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_23
+;初めて
+IF TFLAG:95 == 1
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『この格好だと後ろからぎゅって抱きしめられていいと思わない？』
+			PRINTFORMW 「あっ、れ、蓮子、うん、もっと抱きしめて、……えっ、ふぁっ、胸もだなんて……」
+			PRINTFORMW 「そ、そんなっ、感じすぎちゃう、蓮子、もっと、もっと……！」
+		ENDIF
+	;恋慕+助手なし
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「ご主人様、後ろからしっかり抱きしめて……んっ、んぁぁっ、はぁっ……」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「蓮子、こんな格好でだなんて、怖い……」
+			PRINTFORMW 『大丈夫よ、ほら……こうすれば……ね』
+			PRINTFORMW 「んっ……蓮子、もっとぎゅって抱きしめて……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「するなら普通にすればいいのに……」
+		PRINTFORMW 「……いえ、この体勢でしたいのなら、それでいいわ」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「こんな体勢で……恥ずかしいわよ、こんなの……」
+			PRINTFORMW 『こうやって後ろからぎゅって抱きながらやる方がただ後ろからやるよりいいと思って』
+			PRINTFORMW 「できれば何もせずほっといて欲しいわ……何でこうも変なことばかり思いつくのかしら」
+			PRINTFORMW 『つべこべ言わない。ほら、動くわよ……』
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「何でこんな格好でなのよ……うぅ、恥ずかしい……」
+		PRINTFORMW 「ただでさえ嫌なのに、そんなの……」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 「あぁっ、凄いっ、奥まで、当たって……！」
+				PRINTFORMW 『そんなにいい？ ほら、胸も揉んであげるから……』
+				PRINTFORMW 「んんっ、そんな、私っ、体全部が感じすぎちゃって……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「こんな、こんな格好で、私……ご主人様が見てるのに……！」
+				PRINTFORMW 『これだと奥まで当たって気持ちいいでしょ？ 今はただ感じていればいいのよ』
+				PRINTFORMW 「そんな、蓮子っ、だめっ、なのにっ、わたし、感じすぎちゃってる……！」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「んっ、あんっ、あぁっ、はぁん！」
+		PRINTFORMW 「だめぇっ、そんな、胸強く揉んじゃ……あぁっ、凄いっ、体全部でイっちゃう……！」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3＋V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「んっ、あんっ、あぁっ、はぁん！」
+				PRINTFORMW 『凄い乱れ様ね……。ほら、メリー、こっち向ける？』
+				PRINTFORMW 「れ、蓮子、何？ あっ……んっ……ちゅっ……、ぷはっ、蓮子、もっと動いていいよ……」
+			;それ以外
+			ELSE
+				PRINTFORMW 『この体勢だと後ろからぎゅって抱きしめられるからいいのよ』
+				PRINTFORMW 「全身で蓮子を感じられるのはいいけど、あまり胸ばかり揉まなくても……」
+				PRINTFORMW 『いいじゃないの、減るものでもないし』
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;屈服刻印Lv3＋V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「胸ばかりだなんて……ぅんっ……！」
+			PRINTFORMW 「んっ、急に激しく……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「んっ……んんんっ……！」
+			PRINTFORMW メリーは声を出さないよう必死になっている……
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3＋V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あぅ、やぁっ、んっ、んぁっ、はぁっ……」
+				PRINTFORMW 『ね、こっち向ける？ キスしながら……んっ……』
+				PRINTFORMW 「あぁっ、んっ……んくっ……はぁっ、こんなの、気持ちよすぎて、私……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「……っ、全身弄られてる感じで……嫌なのに……」
+				PRINTFORMW 「そんなっ、蓮子……私っ、……だめぇっ、胸、触らないでってば！」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3＋V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「いやぁっ、こんなの嫌なのにぃっ、私、私っ……！」
+			PRINTFORMW 「やだっ、胸揉まないでっ、ふあぁっ、そんな、だめぇっ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……っ、全身弄られてる感じで……嫌なのに……」
+			PRINTFORMW 「いやっ、そんなとこ触らないで……あぁっ……そんな……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;騎乗位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_24
+;初めて
+IF TFLAG:95 == 1
+	;処女
+	IF TALENT:処女
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「蓮子、何を……？」
+				PRINTFORMW 『私が下で、メリーが上でするの。ほら、来て』
+				PRINTFORMW 「ちょ、ちょっと待って、そんな……！ 私、初めてなのに……」
+				PRINTFORMW 『……私、メリーの初めてが欲しいの。お願い、来て……』
+				PRINTFORMW 「うぅ……わかったわよ……。……くぅっ……痛っ、うっ、うあぁぁぁぁっ！」
+				PRINTFORMW （ご主人様、ごめんなさい、私……）
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			;従順Lv5以上
+			IF ABL:従順 >= 5
+				PRINTFORMW 「自分から、ね……わかったわ」
+				PRINTFORMW 「……ううん、怖いんじゃない、嬉しいの。私の初めてをご主人様にあげることができる事に」
+				PRINTFORMW 「ご主人様に、私の初めてを捧げます……くっ、痛……あぁぁぁぁっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「私が、上で……う、うん……でも、怖い……」
+				PRINTFORMW 「私、まだ初めてだから……あ、でも、ご主人様にあげられるのは嬉しいのよ」
+				PRINTFORMW 「……ええ、ご主人様、いくわね……んっ、痛っ……うっ、あぁぁぁぁっ！」
+			ENDIF
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「自分から、ね……わかったわ」
+				PRINTFORMW 『大丈夫？ メリー、初めてよね？』
+				PRINTFORMW 「蓮子になら、いいの。それに……」
+				PRINTFORMW 『それに？』
+				PRINTFORMW 「……何でもないわ。蓮子、あなたに全てを捧げます……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「自分からって……」
+			PRINTFORMW 「そこまでさせたいの……」
+			PRINTFORMW 「…………」
+			PRINTFORMW 「いいわ……逆らえるわけがないし……」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「れ、蓮子、何させる気よ……」
+				PRINTFORMW 『あなたが上にくるのよ、メリー』
+				PRINTFORMW 「……嘘でしょ、ねぇ、嘘よね、蓮子……私、まだなのに……」
+				PRINTFORMW 「蓮子……酷いよ……そんなの……」
+				PRINTFORMW メリーはしばらくためらっていたが蓮子が何度も命ずると
+				PRINTFORMW 涙を流しながらゆっくり蓮子の上に跨り腰を下ろしていった……
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「嘘……嘘よね、ねぇ……自分からって……」
+			PRINTFORMW 「嫌……お願い、他のことなら何でもするから、それだけは……！」
+			PRINTFORMW %CALLNAME:MASTER%は嫌がるメリーを無理矢理跨らせ、下から貫いた
+			PRINTFORMW 「っ！！！ ひぎっ、痛っ、痛い、もう、もう抜いてぇっ！！」
+		ENDIF
+	;非処女
+	ELSE
+		;恋慕+助手蓮子
+		IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「え、蓮子……私が上に……なの？」
+				PRINTFORMW 「う、うん……ちょっと怖いけど……」
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+			PRINTFORMW 「私が上に……ちょっと、恥ずかしいけど、いいわ……」
+		;?+助手蓮子
+		ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「自分から入れてしろ、ね……」
+				PRINTFORMW 「いいよ、蓮子……そのまま……挿入れるからね……」
+			ENDIF
+		;?
+		ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+			PRINTFORMW 「自分から……わかったわ……」
+		;助手蓮子
+		ELSEIF ASSI > 0 && ASSIPLAY
+			IF NO:ASSI == 1049
+				PRINTFORMW 「自分からしろだなんて、蓮子、冗談でしょ……」
+				PRINTFORMW 「そんな……嘘……酷いよ、蓮子……」
+			ENDIF
+		;助手なし
+		ELSEIF ASSIPLAY == 0
+			PRINTFORMW 「嫌、いやぁ！ やめてっ、やめてってば！」
+			PRINTFORMW %CALLNAME:MASTER%は嫌がるメリーを無理矢理跨がせ、下から貫いた
+			PRINTFORMW 「だめっ、い、いやぁー！」
+		ENDIF
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5以上+反発刻印Lv0
+			IF ABL:レズ中毒 >= 5 && MARK:反発刻印 == 0
+				PRINTFORMW 「あっ、ああ……この体勢だと蓮子を私が犯してるみたいで……」
+				PRINTFORMW 『ふふっ、こういうのもいいでしょ？』
+				PRINTFORMW 「う、うん……はぁっ、あんっ、腰が、勝手に動いて……ふぁぁっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あっ、ああ……そんな、わ、私……」
+				PRINTFORMW 『メリー、ご主人様が気になるのはわかるけど、今は私のほうに集中してよ』
+				PRINTFORMW 「ごめん、蓮子、で、でも……あっ……！」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「こ、この体勢、だと、私が、ご主人様を、犯してる、みたいで……」
+		PRINTFORMW 「うっ、んっ……私の中、気持ちいっ、いい……の……？」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3+V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あっ、ああ……この体勢だと蓮子を私が犯してるみたいで……」
+				PRINTFORMW 『ふふっ、こういうのもいいでしょ？』
+				PRINTFORMW 「そ、そんな……はぁっ、あんっ、腰が、勝手に動い……ちゃう……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あっ、はぁっ、あんっ、ああ……蓮子は、動かなくていいからね……」
+				PRINTFORMW 「まだぎこちないかもしれないけど、頑張るから……」
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;屈服刻印Lv3+V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「くっ……う……！」
+			PRINTFORMW メリーは声を漏らさないよう必死になっているが自分の腰が動いていることに気付いていないようだ……
+		;それ以外
+		ELSE
+			PRINTFORMW 「私が動かなければいけないの？」
+			PRINTFORMW 「……そう。あなたが気持ちいいのかどうかはわからないけど……」
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;屈服刻印Lv3+V感覚Lv3以上
+			IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あっ、はぁっ、あんっ、ああ……腰が、勝手に……！」
+				PRINTFORMW 「怖いの……感じすぎちゃう……蓮子ぉ、あぁっ……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ああっ……蓮子、こんなの恥ずかしいし怖いよ……」
+				PRINTFORMW 「せめて、普通に、蓮子がしてよ……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;屈服刻印Lv3+V感覚Lv3以上
+		IF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「いやっ、そんな、こんなの恥ずかしいのに、どうして……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「こんなの、こんなのもういやぁ……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;逆レイプ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_25
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手を犯す
+;助手が蓮子のときのみ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_26
+;初めて
+IF TFLAG:95 == 1
+	IF ASSI > 0
+		IF NO:ASSI == 1049
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「蓮子ばかり……ご主人様、私にも……」
+			;?
+			ELSEIF TALENT:悲観的
+				PRINTFORMW 「いやぁ！ 蓮子に、蓮子には手を出さないで！」
+				PRINTFORMW 「何でもするから、蓮子にだけは……！！」
+				PALAM:抑鬱 += 100000
+			;恋慕なし
+			ELSE
+				PRINTFORMW 『あっ、いいっ！ もっと、もっとぉ……！』
+				PRINTFORMW 「そんな……、蓮子……やめて、やめてよ……！」
+			ENDIF
+		ENDIF
+	ENDIF
+;二回目以降
+ELSE
+	IF ASSI > 0
+		IF NO:ASSI == 1049
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 『ご主人様っ、わ、私ばかり、あっ、だけじゃなくて、んっ、メリーも抱いてあげて……！』
+				PRINTFORMW 「蓮子……」
+			;?
+			ELSEIF TALENT:悲観的
+				PRINTFORMW 「お願い、もう、やめて……蓮子に手を出さないで……！」
+				PRINTFORMW 『め、メリー……』
+				PALAM:抑鬱 += 100000
+			;恋慕なし
+			ELSE
+				PRINTFORMW 『んっ……メリーもしてもらえばいいのに……』
+				PRINTFORMW 「な……何で……蓮子、こんなのおかしいわよ……！」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;対面立位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_27
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面立位
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_28
+;PRINTFORMW 
+
+;-------------------------------------------------
+;正常位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_30
+;初めて
+IF TFLAG:95 == 1
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「蓮子……？ え、こっちなの？」
+			PRINTFORMW 「ちょっと怖いけど、うん、いいよ……」
+		ENDIF
+	;恋慕+助手なし
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「ご主人様、何を……え？ そっち？」
+		PRINTFORMW 「いえ、嫌じゃないわ。でも、ちょっと怖い……」
+		PRINTFORMW 「……ふぅ、いいわ、来て……」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『メリー、いくわよ。覚悟はいいかしら？』
+			PRINTFORMW 「そっちは違うんじゃ……え、合ってるの？」
+			PRINTFORMW 「そう……、……うん、いいわ、きて蓮子……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「……一応訊くけど、そっちであってるの？ ……そう」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『メリー、いくわよ。覚悟はいいかしら？』
+			PRINTFORMW 「え、そっちは違う……嘘でしょ、蓮子、ちょ、ちょっと……」
+			PRINTFORMW 「そ、そんな、やめ、やめて、蓮子、蓮子ってば……嫌、もういやぁぁー！」
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「嫌、やめてっ！ 中に入れないで……え、違う？」
+		PRINTFORMW 「じゃあ何を……え？ こっちって……嘘でしょ、ねぇ……」
+		PRINTFORMW 「そんなの入るわけが……やめて、やめてってば、嫌、もういやぁぁー！」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「あっ、はぁっ、はぁっ……お尻が……おかしくなっちゃう……私、私……あぁっ……そんな……」
+				PRINTFORMW 『お尻で感じるなんて、メリーも充分変態さんよねぇ』
+				PRINTFORMW 『……でも、そんなメリーも好きよ。さ、もっともっとしてあげるから」
+			;それ以外
+			ELSE
+				PRINTFORMW 「また、こっちなの？ こっちは痛くて怖いのに……」
+				PRINTFORMW 『ご主人様の命令だし、まぁ慣れればいいだけの話よ』
+				PRINTFORMW 「……わかったわよ、蓮子。来て……ぁ痛っ……くぅぅっ……」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「ご主人様、早く来て……はぁぁぁっ！ 凄い、こんな、こんなのって……！」
+			PRINTFORMW 「私、お尻の穴で感じてるっ……ぁぁっ、こんなの、……私、おかしくなっちゃう……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ご主人様、またこっちなの？」
+			PRINTFORMW 「痛っ、あぁ……ご主人さまぁ……お願い、あまり激しくしないで……」
+		ENDIF
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「あっ、はぁっ、はぁっ……お尻が……おかしくなっちゃう……あぁっ………」
+				PRINTFORMW 『お尻で感じるなんて、メリーも充分変態さんよねぇ』
+				PRINTFORMW 『……でも、そんなメリーも好きよ。さ、もっともっとしてあげるから」
+			;それ以外
+			ELSE
+				PRINTFORMW 「またうしろなの？」
+				PRINTFORMW 『慣れれば気持ち良くなれるわよ、さ、いくわよ』
+				PRINTFORMW 「うん、来て、蓮子……くぅっ、痛っ……」
+			ENDIF
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「は……んっ……！ うぅっ……」
+			PRINTFORMW （嫌……こんなところで感じたくなんか……）
+		;それ以外
+		ELSE
+			PRINTFORMW 「痛っ……くっ……」
+		ENDIF
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;A感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				PRINTFORMW 『こっちの方も大分慣れたわね。どう、メリー？』
+				PRINTFORMW 「蓮子、も、もう、やめっ……くっ、はぁっ、あんっ、あぁっ！」
+				PRINTFORMW 『充分感じちゃってるじゃない、ほらほら、もっと激しくするわよ』
+			;それ以外
+			ELSE
+				PRINTFORMW 「も、もうやめて、蓮子、そっちは、そっちは嫌だってば……」
+				PRINTFORMW 「蓮子、も、もう、やめっ……いっ、いやぁぁぁーー！」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		;A感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「いやっ、嫌なのに……！」
+			PRINTFORMW 「私、お尻の穴で感じてる……そんな、そんなの私じゃない……こんなの嘘よ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やだ、やめて、もういやぁぁーー！」
+			PRINTFORMW 「蓮子、助けて……誰か、お願い……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_31
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面座位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_32
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面座位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_33
+;PRINTFORMW 
+
+;-------------------------------------------------
+;騎乗位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_34
+;PRINTFORMW 
+
+;-------------------------------------------------
+;逆アナルレイプ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_35
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手のＡを犯す
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_36
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面立位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_37
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面立位アナル
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_38
+;PRINTFORMW 
+
+;-------------------------------------------------
+;手淫
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_40
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「手ですればいいの？ わかったわ、ご主人様」
+		PRINTFORMW 「……いつでも出していいからね」
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW 「手で……それでいいのなら……」
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「えっ、手で？ それでいいのなら……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「手でしろなんて……なんでそんな事……」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;奉仕精神Lv5以上
+		IF ABL:奉仕精神 >= 5
+			PRINTFORMW 「手だけでいいの？ 言ってくれれば何でもやるわよ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「びくびくしてる……気持ちいいの？」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW メリーは黙々と%CALLNAME:MASTER%のペニスを扱いている……
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「こんな感じでいいのかしら？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「自分ですればいいのに……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フェラチオ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_41
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「これを、口でするの……わかったわ、んっ、はむぅっ……」
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW 「口で……わかったわ……」
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「えっ、口で？ わかったわ……なんか凄い臭いがするけど……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「口でしろなんて……」
+		PRINTFORMW 「……やればいいんでしょ、やれば……うぅっ、どうしてこんな事……」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;奉仕精神Lv5以上
+		IF ABL:奉仕精神 >= 5
+			PRINTFORMW 「そんなに私の口がいいの？ ……うん、いいのなら、もっとしてあげるわ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「まだまだ拙いかもしれないけど、ご主人様が気持ちいいのなら、もっとしてあげる……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW 「んっ、ちゅぷっ、はむっ……」
+		PRINTFORMW 「こんな感じでいいの？ そう……」
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「んっ、んん……はぁっ、こんな感じでいいのかしら？」
+		PRINTFORMW 「……そう、なら、そのまま続けるわ」
+	;それ以外
+	ELSE
+		PRINTFORMW 「んっ、んむっ、げほっ、酷い臭い……気持ち悪い……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;パイズリ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_42
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「私の胸、無駄に大きいから……でも、ご主人様にこうやってご奉仕できるのなら、大きくても良かったのかなって」
+		PRINTFORMW 「んっ……どうかしら？ 気持ちいい？」
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW 「胸で……いずれ言うとは思っていたけど……」
+		PRINTFORMW 「いいわよ、やるから……」
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「胸でしろ？ ……はぁ、うん……いいわよ」
+		PRINTFORMW 「こんな感じでいいのかしら？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「胸でしろ？ そんなもの、胸で挟むなんて……」
+		PRINTFORMW （これだから胸が大きいのなんて邪魔なだけって思うのよね……）
+		PRINTFORMW （男からも女からも変な目で見られるし、こういう変な要求されるし……）
+		PRINTFORMW 「……はぁ、やればいいんでしょ、やれば……」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;奉仕精神Lv5以上
+		IF ABL:奉仕精神 >= 5
+			PRINTFORMW 「んっ、先のほうも舐めてあげる……ぺろっ、ちゅっ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「こんな感じでいいの？ ……そう、ならそのまま続けるわね」
+			PRINTFORMW 「私も、何だか変な感じに……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW メリーは黙々と%CALLNAME:MASTER%のペニスを胸に挟み扱いている……
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「んっ、どう？ こんな感じでいいの？」
+		PRINTFORMW 「あ、びくびくしてきてる……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「はぁ……何でこんな事……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;素股
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_43
+;初めて
+IF TFLAG:95 == 1
+	;処女+恋慕
+	IF TALENT:処女 && TALENT:恋慕
+		PRINTFORMW 「えっ……初めてを貰ってくれるわけじゃないの……」
+		PRINTFORMW 「……いえ、いいの。股ですればいいのね、わかったわ」
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「股なんかでいいの？ ご主人様がそれでいいのならやるけど」
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW 「股で擦ればいいの？ それでいいのなら……」
+	;処女
+	ELSEIF TALENT:処女
+		PRINTFORMW 「お願い、私初めてなの、それだけはやめ……え？ 股で擦ればいいの？」
+		PRINTFORMW 「それぐらいなら、まだ……いいけど……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「……股で、ねぇ。何考えてるのかよくわからないわ」
+		PRINTFORMW 「中に入れられるよりは遥かにマシだけど……」
+	ENDIF
+;二回目以降
+ELSE
+	;処女+恋慕
+	IF TALENT:処女 && TALENT:恋慕 && EXP:Ｖ経験 == 0
+		PRINTFORMW 「はぁっ、擦れて、気持ちいい……」
+		PRINTFORMW 「でも、できることなら、あぁ……」
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「はぁっ、擦れて、気持ちいい……」
+		PRINTFORMW 「でも、切ないわ……ご主人様、次は、中に来て欲しい……」
+	;?
+	ELSEIF TALENT:悲観的
+		PRINTFORMW 「……これで、いいの？」
+		PRINTFORMW 「そう、気持ちいいのなら、続けるわ……」
+	;処女
+	ELSEIF TALENT:処女 && EXP:Ｖ経験 == 0
+		PRINTFORMW 「絶対に、絶対に中には入れないでよ……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「これでいいの？ ……そう」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナル舐め強制
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_44
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナルおねだり
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_45
+;PRINTFORMW 
+
+;-------------------------------------------------
+;足舐め強制
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_46
+;PRINTFORMW 
+
+;-------------------------------------------------
+;足扱き
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_47
+;PRINTFORMW 
+
+;-------------------------------------------------
+;髪扱き
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_48
+;PRINTFORMW 
+
+;-------------------------------------------------
+;腋扱き
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_49
+;PRINTFORMW 
+
+;-------------------------------------------------
+;全身扱き
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_1050
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尻扱き
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_51
+;PRINTFORMW 
+
+;-------------------------------------------------
+;竿扱き
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_52
+;PRINTFORMW 
+
+;-------------------------------------------------
+;玉揉み強制
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_53
+;PRINTFORMW 
+
+;-------------------------------------------------
+;玉舐め強制
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_54
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナル愛撫強制
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_55
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ナイズリ
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_56
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ローション
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_60
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「それは……別に、そんなもの使わなくてもいいのに」
+	;?助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「そんなもの使わなくてもいいのに……」
+			PRINTFORMW 『手っ取り早くやりたいだけよ』
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW （無理矢理やられるよりはマシ……なのかしら）
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv5以上
+			IF ABL:レズ中毒 >= 5
+				PRINTFORMW 「蓮子、それって……」
+				PRINTFORMW 「そんなもの使わなくたって、私……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「それって……ああ、ベトベトする……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「それは……いやっ、塗り付けないで！」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「またそれ使うの？ そんなことしなくても……」
+		PRINTFORMW 「それともそんなに早くやりたいの？」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 『全身ローションまみれっていうのもなんかエッチよね～』
+			PRINTFORMW 「……そういうものなの？ よくわからないわ」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW メリーは冷めた目で自分の身体にローションを塗られていく様子を見ている……
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv3以上
+			IF ABL:レズ中毒 >= 3
+				PRINTFORMW 「蓮子、またそれなの？ そんなものに頼らなくても、私……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「蓮子、またそれ？ ベトベトして気持ち悪いのに……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「またそれなの？ ベトベトして気持ち悪いのに……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;媚薬
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_61
+;初めて
+IF TFLAG:95 == 1
+	;恋慕+助手蓮子
+	IF TALENT:恋慕 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「蓮子、何を飲ませ……た……うぅっ……」
+			PRINTFORMW 「まさか……媚薬……？ やだ……そんな……」
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORMW 「んっ、何を飲ませたの？」
+		PRINTFORMW 「あっ……なんか変な感じ、……もしかして媚薬？ 聞いたことはあるけど本当にあるなんて」
+		PRINTFORMW 「んっ、はぁっ……、身体が熱い……ご主人様、早く……」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「れ、蓮子……何飲ませたのよ……」
+			PRINTFORMW 「まさか、媚薬……そんなものまであるなんて……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 &&  ASSIPLAY == 0
+		PRINTFORMW 「な、何を飲ませ……た……のよ……」
+		PRINTFORMW 「薬なんかに、た、頼らなくたって、私は……」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv3以上
+			IF ABL:レズ中毒 >= 3
+				PRINTFORMW 「蓮子、何を飲ませ……」
+				PRINTFORMW 「う、あぁぁ……これって、もしかして媚薬……？」
+				PRINTFORMW 「あっ、身体が熱いの、お願い、メリー、早く……！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「蓮子、何を飲ませ……た……うぅっ……」
+				PRINTFORMW 「まさか……媚薬だなんて……やだ……そんな……。薬に頼るなんて酷いよ、蓮子……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「うっ、くっ……何を飲ませ……た……のよ……」
+		PRINTFORMW 「薬なんかに、た、頼るなんて……」
+	ENDIF
+;二回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「そんなもの飲ませなくたっていいのに……」
+		PRINTFORMW 「んっ、はぁ……これ飲むと、私、狂いそう……」
+	;?+助手蓮子
+	ELSEIF TALENT:悲観的 && ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			PRINTFORMW 「蓮子にならそんなものに頼らなくてもいいのに……」
+		ENDIF
+	;?
+	ELSEIF TALENT:悲観的 && ASSIPLAY == 0
+		PRINTFORMW 「う……あぁ……抵抗なんてしないのに……」
+		PRINTFORMW 「それとも……無理にでも私の感情を高ぶらせたいの……？」
+	;助手蓮子
+	ELSEIF ASSI > 0 && ASSIPLAY
+		IF NO:ASSI == 1049
+			;レズ中毒Lv3以上
+			IF ABL:レズ中毒 >= 3
+				PRINTFORMW 「そんなもの飲ませなくたって、蓮子なら、私……」
+			;それ以外
+			ELSE
+				PRINTFORMW 「またこれ飲むの……？」
+				PRINTFORMW 『飲まないのならそれでもいいけど……んっ……』
+				PRINTFORMW 「れ、蓮子、何を……んっ、んんーっ！ こくっ……こくっ……ぷはっ、はぁ……うぅ……」
+			ENDIF
+		ENDIF
+	;助手なし
+	ELSEIF ASSIPLAY == 0
+		PRINTFORMW 「またそんなもので……薬なんかで、無理矢理なんて……んっ！ ぐっ、うぶっ、いやっ！」
+		PRINTFORMW %CALLNAME:MASTER%は口移しで無理やり媚薬をメリーに飲ませた……
+		PRINTFORMW 「う……あ……あぁ……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;利尿薬
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_62
+;PRINTFORMW 
+
+;-------------------------------------------------
+;座薬
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_63
+;PRINTFORMW 
+
+;-------------------------------------------------
+;座薬(膣)
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_64
+;PRINTFORMW 
+
+;-------------------------------------------------
+;賢者の血
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_65
+;PRINTFORMW 
+
+;-------------------------------------------------
+;排卵誘発剤
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_66
+;PRINTFORMW 
+
+;-------------------------------------------------
+;緊急避妊薬
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_67
+;PRINTFORMW 
+
+;-------------------------------------------------
+;産卵促進剤
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_68
+;PRINTFORMW 
+
+;-------------------------------------------------
+;陰核成長剤
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_69
+;PRINTFORMW 
+
+;-------------------------------------------------
+;興奮剤
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_70
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手避妊薬
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_71
+;PRINTFORMW 
+
+;-------------------------------------------------
+;感覚増幅薬
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_72
+;PRINTFORMW 
+
+;-------------------------------------------------
+;お香を焚く
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_79
+;シダーウッド
+IF TFLAG:99 == 0
+	;PRINTFORMW 
+;ペパーミント
+ELSEIF TFLAG:99 == 1
+	;PRINTFORMW 
+;ジャスミン
+ELSEIF TFLAG:99 == 2
+	;PRINTFORMW 
+;ラヴェンダー
+ELSEIF TFLAG:99 == 3
+	;PRINTFORMW 
+;ムスク
+ELSEIF TFLAG:99 == 4
+	;PRINTFORMW 
+;フランキンセンス
+ELSEIF TFLAG:99 == 5
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;クリトリス注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_80
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ヴァギナ注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_81
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナル注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_82
+;PRINTFORMW 
+
+;-------------------------------------------------
+;バスト注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_83
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尿道注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_84
+;PRINTFORMW 
+
+;-------------------------------------------------
+;Ｃ肥大注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_85
+;PRINTFORMW 
+
+;-------------------------------------------------
+;Ｃ賢者の血注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_86
+;PRINTFORMW 
+
+;-------------------------------------------------
+;採血注射
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_88
+;PRINTFORMW 
+
+;-------------------------------------------------
+;裸エプロン
+;蓮子がメリーに新妻プレイ強制というのを想像してはいけません
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_90
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;初めて
+	IF TFLAG:95 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あ、もう終わり……？」
+			PRINTFORMW 「また、着けてしましょうよ、いいでしょ？」
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW メリーは無言でエプロンを脱ぎ捨てた……
+		;それ以外
+		ELSE
+			PRINTFORMW 「はぁ……ものすごく惨めな気分……」
+		ENDIF
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「外すと寂しいものね……。またしましょうね、ご主人様」
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW 「何をさせたかったのかよくわからないわ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「はぁ……ものすごく惨めな気分……」
+		ENDIF
+	ENDIF
+;装着時
+ELSE
+	;初めて
+	IF TFLAG:95 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「裸にエプロン……裸でいるよりエッチよね、この格好」
+			PRINTFORMW 「どう、似合うかしら？ ふふっ、何だか幸せな気分……」
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW 「これを着けろ？ それは構わないけど……」
+			PRINTFORMW 「今更私に愛着が出たとかいう冗談ではないわよね……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「これを着けろ、って……」
+			PRINTFORMW 「今更だけどあんたが何考えてるのか本気で分からないわ……」
+		ENDIF
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「この格好でいるとドキドキするの……。恥ずかしいんじゃない、嬉しくて、幸せで」
+			PRINTFORMW 「本当の夫婦みたいな感じだからかしら？ ふふっ、ご主人様、始めましょっ」
+		;?
+		ELSEIF TALENT:悲観的
+			PRINTFORMW 「今更こんなもの着せてどうなるっていうのかしら……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……またこれ？ こんなもの着けさせてどうなるっていうのよ……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;スク水プレイ
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_91
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;お医者プレイ
+;TEQUIP:お医者さんプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_92
+;解除時
+IF TEQUIP:お医者さんプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;コスプレ
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_93
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;助手コスプレ
+;TEQUIP:ASSI:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1050_TRAIN_MESSAGE_S_COM_94
+;解除時
+IF TEQUIP:ASSI:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF

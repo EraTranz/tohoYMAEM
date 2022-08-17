@@ -1,0 +1,27 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝パイズリ
+;TFLAG:99で精液経験増加量を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE141
+SELECTCASE RAND:3
+	CASE 2 * K2008F_CASEIF(TFLAG:99 >= 4)
+		CALL K2008_EJAC_TO("顔")
+		PRINTFORMW ――快感で目が覚めると、精液まみれの顔をした夢美がこちらを眺めている
+		PRINTFORMW どうやら寝起きを見計らってパイズリをしに来たらしい
+		PRINTFORML 
+		PRINTFORML 「うーん、朝イチの精液洗顔ってのもなかなか素敵だわ」
+		PRINTFORML 「もっとおっぱいで搾り取ってあげるから覚悟しなさい」
+	CASE 1
+		CALL K2008_COM("奉仕")
+		PRINTFORMW ――目が覚めると、夢美が%K2008FS_BSIZE(1)%でペニスを挟んでいた
+		PRINTFORML 
+		PRINTFORML 「あら、起こしちゃったか。　残念、失敗ね」
+		PRINTFORML 「ほらほら、朝立ち%K2008FS_CALL_YOUR_C()%も気持ちよくなりましょう」
+	CASEELSE
+		CALL K2008_COM("奉仕")
+		PRINTFORMW ――夢美のパイズリ奉仕で目を覚ました
+		PRINTFORML 
+		PRINTFORML 「おはようございます、%CALLNAME:MASTER%」
+		PRINTFORMW 「え、これ？　軽い朝の運動よ。　気持ちいいでしょ？」
+ENDSELECT

@@ -1,0 +1,232 @@
+﻿;=============================================================================
+;顔面騎乗アナル
+;=============================================================================
+;eratohoDCの同名コマンドを参考にしたが、こっちは押し倒され専用ではない。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE187
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:187 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;主人が[禁断の知識]持ちじゃないとき、体格差が2段階以内か調教者が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+	RETURN 0
+;アナルが汚れており、調教者が[汚れ無視]でない場合(愛液、アナル、母乳の汚れは条件対象外)
+IF COM_ABLE_STAIN(TARGET, 4, 25) == 0 && TALENT:PLAYER:汚れ無視 == 0
+	;調教者が助手で[汚臭敏感]を持ち、《従順》5未満の場合はダメ
+	SIF ASSIPLAY && TALENT:PLAYER:汚臭敏感 && ABL:PLAYER:従順 < 5
+		RETURN 0
+ENDIF
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURN 0
+ENDIF
+;調教者が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:PLAYER:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;調教者が[猫舌]だと調教者に技巧4必要
+SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;対象にペニスがあるならダメ
+SIF EXIST_BAR(TARGET)
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手が褌着用中の場合はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;焦らしプレイ中は不可
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 187) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM187
+PRINTL 顔面騎乗アナル
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 187
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 顔面騎乗アナル
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:露出 = 300
+SOURCE:欲情追加 = 240
+SOURCE:液体追加 = 60
+SOURCE:逸脱 = 750
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 5
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 50
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 200
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 500
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1000
+ELSE
+	SOURCE:快Ａ = 1800
+ENDIF
+
+;調教者のTALENT:舌使いをみる
+IF TALENT:PLAYER:舌使い
+	TIMES SOURCE:快Ａ , 2.00
+	SOURCE:恭順追加 += SOURCE:快Ａ/20
+ENDIF
+;調教者の猫舌をみる
+SIF TALENT:PLAYER:猫舌
+	TIMES SOURCE:快Ａ , 0.70
+
+;対象がサドかドＳかサドっ気Lv3以上のとき
+IF TALENT:サド || TALENT:ドＳ || ABL:サドっ気 > 2
+	;調教者のマゾっ気をみる
+	IF ABL:PLAYER:サドっ気 == 0
+		TIMES SOURCE:欲情追加 , 0.50
+		TIMES SOURCE:液体追加 , 0.90
+	ELSEIF ABL:PLAYER:サドっ気 == 1
+		TIMES SOURCE:欲情追加 , 0.75
+		TIMES SOURCE:液体追加 , 1.00
+	ELSEIF ABL:PLAYER:サドっ気 == 2
+		TIMES SOURCE:欲情追加 , 1.00
+		TIMES SOURCE:液体追加 , 1.10
+	ELSEIF ABL:PLAYER:サドっ気 == 3
+		TIMES SOURCE:欲情追加 , 1.10
+		TIMES SOURCE:液体追加 , 1.20
+	ELSEIF ABL:PLAYER:サドっ気 == 4
+		TIMES SOURCE:欲情追加 , 1.20
+		TIMES SOURCE:液体追加 , 1.25
+	ELSE
+		TIMES SOURCE:欲情追加 , 1.30
+		TIMES SOURCE:液体追加 , 1.30
+	ENDIF
+ENDIF
+
+;対象が淫魔か淫尻か淫乱のとき
+IF TALENT:淫魔 || TALENT:淫尻 || TALENT:淫乱
+	;調教者の技巧をみる
+	IF ABL:PLAYER:技巧 == 0
+		TIMES SOURCE:快Ａ , 0.80
+		TIMES SOURCE:恭順追加 , 0.80
+	ELSEIF ABL:PLAYER:技巧 == 1
+		TIMES SOURCE:快Ａ , 0.90
+		TIMES SOURCE:恭順追加 , 0.90
+	ELSEIF ABL:PLAYER:技巧 == 2
+		TIMES SOURCE:快Ａ , 1.00
+		TIMES SOURCE:恭順追加 , 1.00
+	ELSEIF ABL:PLAYER:技巧 == 3
+		TIMES SOURCE:快Ａ , 1.10
+		TIMES SOURCE:恭順追加 , 1.10
+	ELSEIF ABL:PLAYER:技巧 == 4
+		TIMES SOURCE:快Ａ , 1.20
+		TIMES SOURCE:恭順追加 , 1.20
+	ELSE
+		TIMES SOURCE:快Ａ , 1.30
+		TIMES SOURCE:恭順追加 , 1.30
+	ENDIF
+ENDIF
+
+TCVAR:Ａ経験 += 1
+
+;奴隷のＡ⇔調教者の口の汚れが移動
+STAIN:アナル |= STAIN:PLAYER:口
+STAIN:PLAYER:口 |= STAIN:アナル
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_187
+PRINTFORM %CALLNAME:PLAYER%が%CALLNAME:TARGET%の
+SIF EXP:Ａ経験 <= 10
+	PRINT 硬く閉ざされた
+;猫舌
+IF TALENT:PLAYER:猫舌
+	PRINT アヌスを舌先で小刻みにくすぐ
+	SIF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3 && TEQUIP:焦らしプレイ == 0
+		PRINT り、筒状にした舌を穴の中まで挿し入れてや
+	PRINTFORML ってやると、%CALLNAME:TARGET%はそのアヌスを
+	;対象がサドかドＳかサドっ気Lv3以上で、淫魔か淫尻か淫乱のとき
+	IF (TALENT:サド || TALENT:ドＳ || ABL:サドっ気 > 2) && (TALENT:淫魔 || TALENT:淫尻 || TALENT:淫乱)
+		PRINTFORML %CALLNAME:PLAYER%の顔にぐりぐりと痛めつけるように押し付けさらなる快感を得ようとしている…
+	;対象がサドかドＳかサドっ気Lv3以上のとき
+	ELSEIF TALENT:サド || TALENT:ドＳ || ABL:サドっ気 > 2
+		PRINTFORML %CALLNAME:PLAYER%の顔にぐりぐりと痛めつけるように押し付けてきた…
+	;対象が淫魔か淫尻か淫乱のとき
+	ELSEIF TALENT:淫魔 || TALENT:淫尻 || TALENT:淫乱
+		PRINTFORML %CALLNAME:PLAYER%の顔に押し付けさらなる快感を得ようとしている…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%の顔におそるおそる押し付けてきた…
+	ENDIF
+ELSE
+	PRINT アヌスを丁寧に舐めほぐし
+	SIF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3 && TEQUIP:焦らしプレイ == 0
+		PRINT 、舌先を突き入れて穴の中までかきまわしてやっ
+	PRINTFORML てやると、%CALLNAME:TARGET%はそのアヌスを
+	;対象がサドかドＳかサドっ気Lv3以上で、淫魔か淫尻か淫乱のとき
+	IF (TALENT:サド || TALENT:ドＳ || ABL:サドっ気 > 2) && (TALENT:淫魔 || TALENT:淫尻 || TALENT:淫乱)
+		PRINTFORML %CALLNAME:PLAYER%の顔にぐりぐりと痛めつけるように押し付けさらなる快感を得ようとしている…
+	;対象がサドかドＳかサドっ気Lv3以上のとき
+	ELSEIF TALENT:サド || TALENT:ドＳ || ABL:サドっ気 > 2
+		PRINTFORML %CALLNAME:PLAYER%の顔にぐりぐりと痛めつけるように押し付けてきた…
+	;対象が淫魔か淫尻か淫乱のとき
+	ELSEIF TALENT:淫魔 || TALENT:淫尻 || TALENT:淫乱
+		PRINTFORML %CALLNAME:PLAYER%の顔に押し付けさらなる快感を得ようとしている…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%の顔におそるおそる押し付けてきた…
+	ENDIF
+ENDIF

@@ -1,0 +1,43 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;おねしょイベント(おもらし癖取得)
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE102
+PRINTFORMW （……ん、なんだか冷たいわね）
+
+IF EXP:放尿経験 > EXPLV:4 ;放尿経験多い
+	PRINTFORML ちょろちょろちょろ……
+	PRINTFORMW （んふぅ……　あったかぁい……）
+ENDIF
+
+IF EXP:Ｕ拡張経験 > EXPLV:3 ;Ｕ拡張経験多い
+	PRINTFORML （おしっこ……　したくなっちゃった……）
+	PRINTFORML （そうそう、おしっこ我慢するの大変なのよねぇ）
+	PRINTFORMW （それもこれも無理やり広げてくるのが悪いのよ、まったく……）
+	PRINTFORMW じょぼぼぼぼ……
+	PRINTFORMW （んんんっ、すっきりしたぁ……）
+	PRINTFORMW （あったかぁーい）
+ENDIF
+
+PRINTFORML 
+PRINTFORMW …
+PRINTFORMW ……
+PRINTFORMW ………
+PRINTFORMW （あ、あれ？　私、トイレで……　え、ええ！？）
+PRINTFORML 
+PRINTFORMW ガバッ！！
+PRINTFORMW 「わ、私が……　私がおねしょするなんて……」
+PRINTFORML 
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTFORML 「こんなのバレたら……　何とかして隠さなきゃ」
+	CASE 2 TO 3
+		PRINTFORML 「はは……　ははは」
+		PRINTFORMW 「最近、やたらと尿道弄ってくるなぁ、とは思ってたけど」
+		PRINTFORMW 「まさかこれが狙いだったりするのかしら、はぁ……」
+	CASE 4 TO 5
+		PRINTFORMW 「素敵……　素敵だわ！」
+		PRINTFORML 「あぁっ、なんていう解放感なのかしら」
+		PRINTFORMW 「寝たままのおトイレも悪くないわね」
+ENDSELECT
+

@@ -1,0 +1,227 @@
+﻿;=============================================================================
+;触手妖精按摩
+;=============================================================================
+;触手系他のコマンドとクリキャップから邪教合成
+;触手生贄を通じて下半身が触手と一体化した大妖精を召喚、クンニし続けます
+;健気だ…
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE590
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:590 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｃ系装着器具 == 7
+	RETURN 1
+;オトコだとダメ
+SIF TALENT:オトコ
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[HIGH-FAIRY触手]を得ていないとダメ
+SIF (FLAG:98 & 1024) == 0
+	RETURN 0
+;大妖精を触手生贄に捧げていない(=大妖精が何らかの形で存在している)とダメ
+SIF (FLAG:97 & 1024) == 0
+	RETURN 0
+;他のＣ系触手責め中はダメ
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 7
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 590) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM590
+PRINTL 触手妖精按摩
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 590
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手妖精按摩
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 15
+DOWNBASE:1 += 120
+
+LOCAL:1 = 120
+LOCAL:2 = 70
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 180
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 340
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 810
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1440
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2160
+ELSE
+	SOURCE:快Ｃ = 2700
+ENDIF
+
+;主人が[妖精知識]
+IF TALENT:MASTER:妖精知識
+	TIMES SOURCE:快Ｃ , 1.20
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+ENDIF
+
+;大妖精との相性あるなしで補正が上下
+LOCAL:3 = 4
+IF RELATION:(LOCAL:3) > 0 && RELATION:(LOCAL:3) != 100
+	LOCAL:1 *= RELATION:(LOCAL:3)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:3)
+	LOCAL:2 /= 100
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:トラウマ += (LOCAL:1 + LOCAL:2)/2
+SOURCE:逸脱 += LOCAL:2
+
+IF TEQUIP:Ｃ系装着器具 == 7
+	TEQUIP:Ｃ系装着器具 = 0
+ELSE
+	TEQUIP:Ｃ系装着器具 = 7
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手妖精按摩中
+;-------------------------------------------------
+@EQUIP_COM590
+PRINTL ＜触手妖精按摩中＞
+
+DOWNBASE:0 += 8
+DOWNBASE:1 += 25
+
+LOCAL:2 = 50
+LOCAL:3 = 30
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 36
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 108
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 225
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 405
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 540
+ELSE
+	LOCAL:1 = 675
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+ELSE
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 1.30
+ENDIF
+
+;主人が[妖精知識]
+IF TALENT:MASTER:妖精知識
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+	TIMES LOCAL:3 , 1.20
+ENDIF
+
+;大妖精との相性あるなしで補正が上下
+LOCAL = 4
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+ENDIF
+
+SOURCE:快Ｃ += LOCAL:1
+SOURCE:露出 += LOCAL:2
+SOURCE:欲情追加 += 50
+SOURCE:トラウマ += (LOCAL:2 + LOCAL:3)/2
+SOURCE:逸脱 += LOCAL:3
+
+;大妖精の性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_590
+IF TEQUIP:Ｃ系装着器具
+	PRINTFORML %CALLNAME:PLAYER%の命令を受けると、大妖精は一瞬寂しそうな表情を浮かべた
+	PRINTFORML しかし気を取り直したらしく、%CALLNAME:TARGET%の身体から離れていった
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 小さな悲鳴を上げた%CALLNAME:TARGET%に小さく会釈すると、大妖精は管状の触手の内に身を潜ませ、そのまま肉壁の向こう側へと消えて行った……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%に小さく会釈すると、大妖精は管状の触手の内に身を潜ませ、そのまま肉壁の向こう側へと消えて行った……
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に応じたのか、触手の壁をかき分けて少し大きな太さの触手が現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと花弁を開くように先端が割れ、中から肉の管と一体化した大妖精が一糸纏わぬ姿で身を乗り出した
+	PRINTFORML 大妖精は%CALLNAME:MASTER%に向かって一礼すると、光を宿していない瞳を%CALLNAME:TARGET%に向けた
+	PRINTFORML そして多数の触手を出し触手で%CALLNAME:TARGET%を固定しつつ、その秘裂を大妖精が一生懸命クンニしはじめた…
+ENDIF

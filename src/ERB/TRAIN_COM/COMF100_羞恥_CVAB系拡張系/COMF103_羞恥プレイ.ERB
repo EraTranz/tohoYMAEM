@@ -1,0 +1,358 @@
+﻿;=============================================================================
+;羞恥プレイ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE103
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:103 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:羞恥プレイ
+	RETURN 1
+;調教者が映姫様でないか、キャラ拡張コマンドOFFの場合にはアイテム必須
+IF NO:PLAYER != 1036 || (FLAG:15 & 16384) == 0
+	;お風呂場プレイ中ならアイテム「風呂場用大鏡」が必要
+	SIF TEQUIP:お風呂場プレイ && ITEM:風呂場用大鏡 == 0
+		RETURN 0
+	;お風呂場プレイ中でなければアイテム｢大鏡｣を持っていないとダメ
+	SIF TEQUIP:お風呂場プレイ == 0 && ITEM:大鏡 == 0
+		RETURN 0
+ENDIF
+;従順が1以上ないとダメ
+SIF ABL:従順 < 1
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;蜘蛛の巣にかけているときは移動できない
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;野外プレイ中はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 103) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM103
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;調教者が映姫様でコンフィグの設定「浄玻璃の鏡」が有効または浄玻璃の鏡使用中の場合、浄玻璃の鏡に変化。
+SIF (NO:PLAYER == 1036 && FLAG:15 & 16384) || TEQUIP:羞恥プレイ == 2
+	JUMP COM650
+
+PRINTL 羞恥プレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 103
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 羞恥プレイ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;鏡のセット
+;終了時は修正なし
+IF TEQUIP:羞恥プレイ
+	TEQUIP:羞恥プレイ = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 200
+
+LOCAL:1 = 500
+LOCAL:2 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.30
+ELSE
+	TIMES LOCAL:1 , 1.40
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	SOURCE:屈従 += 600
+	SOURCE:逸脱 += 1000
+	SOURCE:反感追加 += 1000
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	SOURCE:屈従 += 500
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 300
+	SOURCE:液体追加 += 300
+	SOURCE:屈従 += 400
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 600
+	SOURCE:液体追加 += 600
+	SOURCE:屈従 += 300
+	TIMES LOCAL:1 , 2.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 1000
+	SOURCE:液体追加 += 1000
+	SOURCE:屈従 += 200
+	TIMES LOCAL:1 , 2.60
+ELSE
+	SOURCE:中毒充足 += 1800
+	SOURCE:液体追加 += 1800
+	SOURCE:屈従 += 100
+	TIMES LOCAL:1 , 3.80
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 1.80
+ELSE
+	TIMES LOCAL:1 , 2.00
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 1.50
+;無関心
+SIF TALENT:無関心
+	TIMES LOCAL:1 , 0.80
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL:1 , 2.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 3.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.20
+ENDIF
+;魅力
+IF TALENT:魅力
+	SOURCE:情愛 += 500
+	SOURCE:恭順追加 += 500
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.20
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:恭順追加 += LOCAL:1 /2
+SOURCE:トラウマ += LOCAL:2 /2
+SOURCE:羞恥扇情 += LOCAL:1 /2
+SOURCE:逸脱 += LOCAL:2
+TEQUIP:羞恥プレイ = 1
+RETURN 1
+
+;-------------------------------------------------
+;羞恥プレイ中
+;-------------------------------------------------
+@EQUIP_COM103
+PRINTL ＜羞恥プレイ中＞
+
+;睡眠中か気絶中ならばソースは入らないが体力気力消費も減少
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	DOWNBASE:0 += 5
+	DOWNBASE:1 += 20
+	GOTO PASSOUT_103
+ENDIF
+
+;以下通常時の処理
+DOWNBASE:0 += 10
+DOWNBASE:1 += 100
+
+LOCAL = 500
+LOCAL:1 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.30
+ELSE
+	TIMES LOCAL , 1.40
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	SOURCE:屈従 += 600
+	SOURCE:逸脱 += 1000
+	SOURCE:反感追加 += 1000
+	TIMES LOCAL , 0.30
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	SOURCE:屈従 += 500
+	TIMES LOCAL , 1.00
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 300
+	SOURCE:液体追加 += 300
+	SOURCE:屈従 += 400
+	TIMES LOCAL , 2.00
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 600
+	SOURCE:液体追加 += 600
+	SOURCE:屈従 += 300
+	TIMES LOCAL , 3.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 1000
+	SOURCE:液体追加 += 1000
+	SOURCE:屈従 += 200
+	TIMES LOCAL , 4.60
+ELSE
+	SOURCE:中毒充足 += 1800
+	SOURCE:液体追加 += 1800
+	SOURCE:屈従 += 100
+	TIMES LOCAL , 5.80
+ENDIF
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL , 1.10
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL , 1.20
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL , 1.40
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL , 1.60
+ELSE
+	TIMES LOCAL , 1.80
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 1.50
+;無関心
+SIF TALENT:無関心
+	TIMES LOCAL , 0.80
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL , 2.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:1 , 3.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;魅力
+IF TALENT:魅力
+	SOURCE:情愛 += 500
+	SOURCE:恭順追加 += 500
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+SOURCE:露出 += LOCAL
+SOURCE:恭順追加 += LOCAL /2
+SOURCE:トラウマ += LOCAL:1 /2
+SOURCE:逸脱 += LOCAL:1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+$PASSOUT_103
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:露出癖 >= 3
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_103
+IF TEQUIP:羞恥プレイ
+	;失神しているか睡眠中
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を鏡の前から運び出すことにした…
+	;その他
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を連れて鏡の前から離れた…
+	ENDIF
+ELSE
+	;失神しているか睡眠中
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を鏡の前まで運んだ…
+	;吸血鬼
+	ELSEIF TALENT:吸血鬼
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を鏡の前に連れて来た
+		PRINTFORML 自分の姿が映らない鏡を%CALLNAME:TARGET%は気にしないことにしたようだ…
+	;臆病か恥じらい
+	ELSEIF TALENT:臆病 || TALENT:恥じらい
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を鏡の前に連れて来た
+		PRINTFORML 鏡に姿が映ると%CALLNAME:TARGET%は羞恥のあまり身体を震わせた…
+	;その他
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を鏡の前に連れて来た…
+	ENDIF
+ENDIF

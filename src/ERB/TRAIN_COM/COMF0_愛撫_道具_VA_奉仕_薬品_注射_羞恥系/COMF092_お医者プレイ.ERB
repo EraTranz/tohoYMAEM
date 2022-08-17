@@ -1,0 +1,292 @@
+﻿;=============================================================================
+;お医者プレイ
+;=============================================================================
+;従順が低いと羞恥感が、高いと安心感を与えます。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE92
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:92 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;解除はいつでも可
+SIF TEQUIP:お医者さんプレイ
+	RETURN 1
+;アイテム「聴診器」を持っていないとダメ
+SIF ITEM:聴診器 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;野外プレイ中はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 92) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM92
+PRINTL お医者プレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 92
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = お医者プレイ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 100
+
+LOCAL:1 = 200
+LOCAL:2 = 200
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL:1, 0.30
+	TIMES LOCAL:2, 2.00
+ELSEIF ABL:従順 == 1
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	TIMES LOCAL:1, 1.00
+	TIMES LOCAL:2, 1.50
+ELSEIF ABL:従順 == 2
+	SOURCE:中毒充足 += 300
+	SOURCE:液体追加 += 300
+	TIMES LOCAL:1, 1.60
+	TIMES LOCAL:2, 1.30
+ELSEIF ABL:従順 == 3
+	SOURCE:中毒充足 += 500
+	SOURCE:液体追加 += 500
+	TIMES LOCAL:1, 2.00
+	TIMES LOCAL:2, 1.00
+ELSEIF ABL:従順 == 4
+	SOURCE:中毒充足 += 800
+	SOURCE:液体追加 += 800
+	TIMES LOCAL:1, 2.60
+	TIMES LOCAL:2, 0.30
+ELSE
+	SOURCE:中毒充足 += 1200
+	SOURCE:液体追加 += 1200
+	TIMES LOCAL:1, 3.80
+	TIMES LOCAL:2, 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.30
+ELSE
+	TIMES LOCAL:1 , 1.40
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 1.50
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ENDIF
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL:1 , 2.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL:2 , 3.00
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:2 , 0.50
+ENDIF
+;幼稚
+IF TALENT:幼稚
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+
+SOURCE:情愛 += LOCAL:1
+SOURCE:露出 += LOCAL:2
+
+IF TEQUIP:お医者さんプレイ
+	TEQUIP:お医者さんプレイ = 0
+ELSE
+	TEQUIP:お医者さんプレイ = 1
+	;調教者のコスプレ経験
+	CFLAG:PLAYER:コスプレ実行回数 += 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;お医者プレイ中
+;-------------------------------------------------
+@EQUIP_COM92
+PRINTL ＜お医者プレイ中＞
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 100
+
+LOCAL = 150
+LOCAL:1 = 150
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL, 0.30
+	TIMES LOCAL:1, 2.60
+ELSEIF ABL:従順 == 1
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	TIMES LOCAL, 0.80
+	TIMES LOCAL:1, 2.00
+ELSEIF ABL:従順 == 2
+	SOURCE:中毒充足 += 300
+	SOURCE:液体追加 += 300
+	TIMES LOCAL, 1.60
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:従順 == 3
+	SOURCE:中毒充足 += 500
+	SOURCE:液体追加 += 500
+	TIMES LOCAL, 2.00
+	TIMES LOCAL:1, 0.80
+ELSEIF ABL:従順 == 4
+	SOURCE:中毒充足 += 800
+	SOURCE:液体追加 += 800
+	TIMES LOCAL, 2.60
+	TIMES LOCAL:1, 0.30
+ELSE
+	SOURCE:中毒充足 += 1200
+	SOURCE:液体追加 += 1200
+	TIMES LOCAL, 3.00
+	TIMES LOCAL:1, 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.30
+ELSE
+	TIMES LOCAL , 1.40
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 1.50
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 0.80
+ENDIF
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL , 2.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL , 1.50
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL:1 , 3.00
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:1 , 0.50
+ENDIF
+;幼稚
+IF TALENT:幼稚
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 0.50
+ENDIF
+
+SOURCE:情愛 += LOCAL
+SOURCE:露出 += LOCAL:1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:露出癖 >= 3
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_92
+IF TEQUIP:お医者さんプレイ
+	PRINTFORML %CALLNAME:PLAYER%は診察を終わらせた…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のはだけた服の隙間から、聴診器を押し当てて診察を始めた…
+	PRINTFORM %CALLNAME:TARGET%は
+	IF ABL:従順 <= 2
+		PRINT 呆れた様な表情であなたを見て
+	ELSEIF ABL:従順 <= 4
+		PRINT ぶつぶつと何か呟きながら、診察に頬を染めて
+	ELSE
+		PRINT 聴診器の感触にくすぐったそうにしながら、安心しきった表情をして
+	ENDIF
+	PRINTL いる…
+ENDIF

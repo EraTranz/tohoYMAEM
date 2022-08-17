@@ -1,0 +1,355 @@
+﻿;=============================================================================
+;ヴァギナバルーン
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE157
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:157 > 0
+	RETURN 0
+;Ｖ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;対象のＶ拡張経験が0のとき異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ｖ拡張経験 == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｖ系装着器具 == 6
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:ヴァギナバルーン == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;処女だとダメ
+SIF TALENT:処女 == 1
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;他のＶ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 157) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM157
+PRINTL ヴァギナバルーン
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 157
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ヴァギナバルーン
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 140
+DOWNBASE:1 += 190
+
+SOURCE:露出 = 300
+SOURCE:痛み = 400
+SOURCE:中毒充足 = 500
+SOURCE:逸脱 = 900
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 10
+	SOURCE:屈従 = 40
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 30
+	SOURCE:屈従 = 200
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 300
+	SOURCE:屈従 = 400
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 600
+	SOURCE:屈従 = 800
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 900
+	SOURCE:屈従 = 1300
+ELSE
+	SOURCE:快Ｖ = 1200
+	SOURCE:屈従 = 2500
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.05
+	SOURCE:痛み += 26000
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み += 6000
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 0.50
+	SOURCE:痛み += 2000
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.40
+	SOURCE:痛み += 600
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	SOURCE:痛み += 200
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 12000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.40
+	SOURCE:痛み += 3400
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:屈従 , 1.40
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+TCVAR:Ｖ経験 += 5
+SIF EXP:Ｖ拡張経験 == 0 
+	TCVAR:異常経験 += 1
+TCVAR:Ｖ拡張経験 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+
+;拡張バルーンの着脱
+IF TEQUIP:Ｖ系装着器具
+	TEQUIP:Ｖ系装着器具 = 0
+ELSE
+	TEQUIP:Ｖ系装着器具 = 6
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;ヴァギナバルーン挿入中
+;--------------------------------------------------
+@EQUIP_COM157
+PRINTL ＜ヴァギナバルーン挿入中＞
+
+DOWNBASE:0 += 45
+DOWNBASE:1 += 95
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	LOCAL = 10
+	LOCAL:1 = 40
+	SOURCE:情愛 += 20
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL = 20
+	LOCAL:1 = 200
+	SOURCE:情愛 += 40
+ELSEIF ABL:Ｖ感覚 == 2
+	LOCAL = 200
+	LOCAL:1 = 400
+	SOURCE:情愛 += 140
+ELSEIF ABL:Ｖ感覚 == 3
+	LOCAL = 400
+	LOCAL:1 = 800
+	SOURCE:情愛 += 280
+ELSEIF ABL:Ｖ感覚 == 4
+	LOCAL = 700
+	LOCAL:1 = 1300
+	SOURCE:情愛 += 550
+ELSE
+	LOCAL = 1000
+	LOCAL:1 = 2500
+	SOURCE:情愛 += 950
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES LOCAL , 0.05
+	LOCAL:2 = 26000
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES LOCAL , 0.20
+	LOCAL:2 = 6000
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES LOCAL , 0.50
+	LOCAL:2 = 2000
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+	LOCAL:2 = 1200
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:2 = 600
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:2 = 200
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.20
+ELSE
+	TIMES LOCAL , 1.40
+	TIMES LOCAL:1 , 1.40
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES LOCAL:2 , 2.00
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:1 /= 3
+
+SOURCE:快Ｖ += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+SOURCE:逸脱 += LOCAL:1
+
+TCVAR:Ｖ経験 += 3
+TCVAR:Ｖ拡張経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_157
+IF TEQUIP:Ｖ系装着器具
+	PRINTFORML %CALLNAME:PLAYER%は、\@(MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0) ? 屈辱に耐える # \@%CALLNAME:TARGET%の広がりきった膣からバルーンを抜いてやった
+	IF ABL:Ｖ感覚 == 0
+		PRINTFORML %CALLNAME:TARGET%の膣はゆっくりと閉じていった…
+	ELSEIF ABL:Ｖ感覚 == 1
+		PRINTFORML %CALLNAME:TARGET%の膣はひくつきながらゆるゆると閉じていった…
+	ELSEIF ABL:Ｖ感覚 == 2
+		PRINTFORML %CALLNAME:TARGET%の膣はぽっかり口を開いている…
+	ELSEIF ABL:Ｖ感覚 == 3
+		PRINTFORML %CALLNAME:TARGET%の膣は拡がったままなかなか戻らないようだ…
+	ELSEIF ABL:Ｖ感覚 == 4
+		PRINTFORML %CALLNAME:TARGET%の膣から産道の中が丸見えになっている…
+	ELSEIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は、自分の膣を指で拡げ、恍惚としている…
+	ENDIF
+ELSE
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%は、嫌がる%CALLNAME:TARGET%を無理やり押さえつけた
+		PRINTFORM そして、%CALLNAME:TARGET%の
+		SIF PALAM:潤滑 >= PALAMLV:4
+			PRINT 濡れそぼった
+		PRINTL 膣にエアバルーンを挿入し、空気を送り込んだ…
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の
+		SIF PALAM:潤滑 >= PALAMLV:4
+			PRINT 濡れそぼった
+		PRINTL 膣にエアバルーンを挿入し、空気を送り込んだ…
+	ENDIF
+ENDIF

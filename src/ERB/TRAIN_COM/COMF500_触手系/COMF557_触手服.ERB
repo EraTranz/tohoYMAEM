@@ -1,0 +1,3262 @@
+﻿;=============================================================================
+;触手服 (未実装)
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE557
+;実装したらこの下のリターンは消す
+;RETURN 0
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:557 > 0
+	RETURN 0
+;対象が触手娘かつ触手使役術を触手娘から取得していないかつ触手娘の触手使役Lvを適用していない場合はダメ
+SIF NO:TARGET == 5001 && (FLAG:570 & 48) == 0
+	RETURN 0
+;調教者が禁断の知識をもっていないとダメ
+SIF TALENT:PLAYER:禁断の知識 == 0
+	RETURN 0
+;調教者が触手使役術を持っていないとダメ
+SIF TALENT:PLAYER:触手使役術 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:触手服
+	RETURN 1
+;触手経験が0の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:触手経験 == 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;ＶＡ経験は伴わなくてもいいかも？非処女時は触手を挿入し経験があるときアナルに触手を挿入
+;Ｖ調教フィルタがオフになってないとダメ(対象が[オトコ]の場合は除く)
+SIF FLAG:2 & 1 && TALENT:オトコ == 0 && TALENT:処女 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2 && EXP:Ａ経験
+	RETURN 0
+;調教者は触手使役LV2必要＜結構強いコマンドになったので適宜変える
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 557) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM557
+PRINTL 触手服
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 557
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手服
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験は伴わなくてもいいかも？とりあえず処女じゃないとき
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+SIF TALENT:処女 == 0
+	TFLAG:1 = 1
+
+LOCAL:1 = 60
+;触手経験をみる
+SELECTCASE EXP:触手経験
+	CASE IS < EXPLV:1
+		TIMES LOCAL:1 , 3.00
+	CASE IS < EXPLV:2
+		TIMES LOCAL:1 , 2.50
+	CASE IS < EXPLV:3
+		TIMES LOCAL:1 , 2.00
+	CASE IS < EXPLV:4
+		TIMES LOCAL:1 , 1.00
+	CASE IS < EXPLV:5
+		TIMES LOCAL:1 , 0.80
+	CASEELSE
+		TIMES LOCAL:1 , 0.60
+ENDSELECT
+
+;触手中毒をみる
+SELECTCASE ABL:触手中毒
+	CASE 0
+		TIMES LOCAL:1 , 1.00
+	CASE 1
+		TIMES LOCAL:1 , 0.90
+	CASE 2
+		TIMES LOCAL:1 , 0.80
+	CASE 3
+		TIMES LOCAL:1 , 0.70
+	CASE 4
+		TIMES LOCAL:1 , 0.60
+	CASEELSE
+		TIMES LOCAL:1 , 0.50
+ENDSELECT
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.60
+;寄生
+SIF TALENT:寄生
+	TIMES LOCAL:1 , 0.70
+;懐卵
+SIF TALENT:懐卵
+	TIMES LOCAL:1 , 0.80
+;触手インプラント
+SIF CFLAG:41
+	TIMES LOCAL:1 , 0.75
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1 * 2
+SOURCE:トラウマ += LOCAL:1 * 20
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:逸脱 += LOCAL:1 * 10
+
+;触手服の着脱
+IF TEQUIP:触手服
+	SIF TEQUIP:触手服 & 2
+		TEQUIP:Ｃ系装着器具 = 0
+	SIF TEQUIP:触手服 & 4
+		TEQUIP:Ｂ系装着器具 = 0
+	SIF TEQUIP:触手服 & 8
+		TEQUIP:Ｖ系装着器具 = 0
+	SIF TEQUIP:触手服 & 16
+		TEQUIP:Ａ系装着器具 = 0
+	SIF TEQUIP:触手服 & 32
+		TEQUIP:Ｕ系装着器具 = 0
+	TEQUIP:触手服 = 0
+ELSE
+	TEQUIP:触手服 = 1
+	SIF EXIST_BAR(TARGET)
+		STAIN:ペニス |= 64
+	STAIN:胸 |= 64
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 2
+RETURN 1
+
+;-------------------------------------------------
+;触手服着衣中
+;-------------------------------------------------
+@EQUIP_COM557
+#DIM TENTACLE_ABLE,					1	;関数TENTACLE_COM_ABLEXXXを呼び出してビット格納
+#DIM TENTACLE_EXECUTE,				1	;TENTACLE_EXECUTE内部の値で実行するコマンド決め
+#DIM TENTACLE_EXECUTABLE,			4	;0～3に下一桁から順に数値代入
+#DIMS TENTACLE_ABLE_STR,			1	;文字列としてRESULTから帰ってきた値を保存
+#DIMS TENTACLE_SELECT_STR,			7 = "503,505,515","501,520,521,535","502,522,523,524","504,525,526","527,528","511,512,550,552,553,554,556,560","541,542,543"
+										;見に行きたいTENTACLE_COM_ABLEの番号を入れておく
+#DIMS RAND_STR,						5 = "0/10/10/10/10/10","0/10/10/10/10/10/10/5/5","0/3/3/3/3/3","0/10/8/15/20/20/15/15/10","0/5/5/5"
+										;文字列として確率を保存
+										;最初が一括変更用（入れればすべてその値に）
+										;その次から(C,B,V,A,U)の確率(一括/C/B/V/A/U)
+										;2つ目は最後に回復、催眠、チキチキ用
+										;4つ目は特殊行動用(一括/くすぐり/秘貝/催眠/針/放電/吸血/チキチキ/回復)
+										;5つ目は洗浄用(一括/V/A/U)
+#DIMS RAND_NAME_STR,				5 = "START_RAND","END_RAND","START_WRIGGLE_RAND","START_SPECIAL_WRIGGLE_RAND","START_WASH_RAND"
+										;RANDにつけた名前を保存する＜これを使用する方式は無理そう
+#DIM START_RAND,					5	;責め始める確率(RAND_STR:0に対応)
+#DIM END_RAND,						8	;責め終わる確率(RAND_STR:1に対応)
+#DIM START_WRIGGLE_RAND,			5	;何もつけていないときに蠢く確率(RAND_STR:2に対応)
+#DIM START_SPECIAL_WRIGGLE_RAND,	8	;特殊な責めを始める確率(RAND_STR:3に対応)
+#DIM START_WASH_RAND,				3	;洗浄する確率(RAND_STR:4に対応)
+#DIM TCOUNT,						2	;FOR文のカウント用
+#DIM SAVE_SLOT,						2	;0:催眠/チキチキ/回復が今回始まったことを示すBIT格納用
+										;1:SELECTCOM	転写用
+PRINTL ＜触手服着衣中＞
+
+;RAND_STR:0 = 1
+;RAND_STR:1 = 3
+;RAND_STR:2 = 3
+;RAND_STR:1 = 0/3/4/10/5/6
+
+;RAND_NAME_STRの要素数分回す
+FOR TCOUNT:0, 0, VARSIZE("RAND_NAME_STR")
+	;RAND_STRの指定番目に入れた文字列を分割
+	SPLIT  RAND_STR:(TCOUNT:0), "/", LOCALS
+	;最初に0以外が入っていれば一括変更
+	IF LOCALS:0 != "0"
+		SELECTCASE TCOUNT:0
+		CASE 0
+			VARSET START_RAND, TOINT(LOCALS:0)
+			;RANDに0以下を渡さないため
+			SIF TOINT(LOCALS:0) < 0
+				VARSET START_RAND, 1
+		CASE 1
+			VARSET END_RAND, TOINT(LOCALS:0)
+			SIF TOINT(LOCALS:0) < 0
+				VARSET END_RAND, 1
+		CASE 2
+			VARSET START_WRIGGLE_RAND, TOINT(LOCALS:0)
+			SIF TOINT(LOCALS:0) < 0
+				VARSET START_WRIGGLE_RAND, 1
+		CASE 3
+			VARSET START_SPECIAL_WRIGGLE_RAND, TOINT(LOCALS:0)
+			SIF TOINT(LOCALS:0) < 0
+				VARSET START_SPECIAL_WRIGGLE_RAND, 1
+		CASE 4
+			VARSET START_WASH_RAND, TOINT(LOCALS:0)
+			SIF TOINT(LOCALS:0) < 0
+				VARSET START_WASH_RAND, 1	
+		ENDSELECT
+	;最初が0だったのに要素数が足りない場合
+	ELSEIF RESULT != 9 && GROUPMATCH(TCOUNT:0, 1, 3)
+		SELECTCASE TCOUNT:0
+		CASE 3
+			SPLIT  "0/10/8/15/20/20/15/15/10", "/", LOCALS
+			FOR TCOUNT:1, 0, RESULT - 1
+				START_SPECIAL_WRIGGLE_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					START_SPECIAL_WRIGGLE_RAND:(TCOUNT:1) = 1
+			NEXT
+		CASE 1
+			SPLIT  "0/10/10/10/10/10/10/5/5", "/", LOCALS
+			FOR TCOUNT:1, 0, RESULT - 1
+				END_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					END_RAND:(TCOUNT:1) = 1
+			NEXT
+		ENDSELECT
+	ELSEIF RESULT != 6 && GROUPMATCH(TCOUNT:0, 0, 2, 4)
+		SELECTCASE TCOUNT:0
+		CASE 0
+			VARSET START_RAND, 10
+		CASE 2
+			VARSET START_WRIGGLE_RAND, 3
+		CASE 4
+			VARSET START_WASH_RAND, 5
+		ENDSELECT
+	ELSE
+		FOR TCOUNT:1, 0, RESULT - 1
+			SELECTCASE TCOUNT:0
+			CASE 0
+				START_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					START_RAND:(TCOUNT:1) = 1
+			CASE 1
+				END_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					END_RAND:(TCOUNT:1) = 1
+			CASE 2
+				START_WRIGGLE_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					START_WRIGGLE_RAND:(TCOUNT:1) = 1
+			CASE 3
+				START_SPECIAL_WRIGGLE_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					START_SPECIAL_WRIGGLE_RAND:(TCOUNT:1) = 1
+			CASE 4
+				START_WASH_RAND:(TCOUNT:1) = TOINT(LOCALS:(TCOUNT:1 + 1))
+				SIF TOINT(LOCALS:(TCOUNT:1 + 1)) == 0
+					START_WASH_RAND:(TCOUNT:1) = 1
+			ENDSELECT
+		NEXT
+	ENDIF	
+NEXT
+
+; ～～(RAND_NAME_STR:0):1 が START_RAND:1 と等しくなるような命令？関数？ってあるのだろうか
+
+;PRINTW ST1
+
+SPLIT (TENTACLE_SELECT_STR:6), ",", LOCALS
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}(START_WASH_RAND:COUNT)
+	IF RESULT
+		CALLFORM SYSTXT_TRAIN_MESSAGE_F_COM_{TOINT(LOCALS:COUNT)}
+		CALLFORM COM{TOINT(LOCALS:COUNT)}
+	ENDIF
+NEXT
+
+SAVE_SLOT:0 = 0
+SAVE_SLOT:1 = SELECTCOM
+SELECTCOM:2 = SELECTCOM
+VARSET TENTACLE_ABLE_STR
+VARSET TENTACLE_EXECUTABLE
+
+SPLIT (TENTACLE_SELECT_STR:5), ",", LOCALS
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}
+	TENTACLE_EXECUTABLE |= RESULT
+NEXT
+IF TENTACLE_EXECUTABLE
+		;触手くすぐり
+		IF TENTACLE_EXECUTABLE & 1p0
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:0)
+			CASE 0
+				;口上用にTFLAG:201を使用。(0=ヘソくすぐり, 1=ペニス/クリトリスくすぐり, 2=バストくすぐり, 3=アナルくすぐり)
+				TFLAG:201 = 0
+				;SAVE_SLOT:1 = 0
+				;IF FLAG:10
+				;	SAVE_SLOT:1 |= FLAG:10
+				;	FLAG:10 = 0
+				;ENDIF
+				SELECTCOM = 511	
+				CALL COM511
+				PREVCOM = SAVE_SLOT:1
+				;IF SAVE_SLOT:1
+				;	FLAG:10 |= SAVE_SLOT:1
+				;ENDIF
+			ENDSELECT
+		ENDIF
+		;触手秘貝開き
+		IF TENTACLE_EXECUTABLE & 1p1
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:1)
+			CASE 0
+				;SAVE_SLOT:1 = 0
+				;IF FLAG:10
+				;	SAVE_SLOT:1 |= FLAG:10
+				;	FLAG:10 = 0
+				;ENDIF
+				SELECTCOM = 512
+				CALL COM512
+				PREVCOM = SAVE_SLOT:1
+				;IF SAVE_SLOT:1
+				;	FLAG:10 |= SAVE_SLOT:1
+				;ENDIF
+			ENDSELECT
+		ENDIF
+		;触手催眠
+		;IF TENTACLE_EXECUTABLE & 1p2
+		;	SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:2)
+		;	CASE 0
+		;		CALL COM553
+		;		TEQUIP:触手服 |= 128
+		;		SAVE_SLOT:0 |= 128
+		;	ENDSELECT
+		;ENDIF
+		;触手針責め
+		IF TENTACLE_EXECUTABLE & 1p3
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:3)
+			CASE 0
+				;SAVE_SLOT:1 = 0
+				;IF FLAG:10
+				;	SAVE_SLOT:1 |= FLAG:10
+				;	FLAG:10 = 0
+				;ENDIF
+				SELECTCOM = 552
+				CALL COM552
+				PREVCOM = SAVE_SLOT:1
+				;IF SAVE_SLOT:1
+				;	FLAG:10 |= SAVE_SLOT:1
+				;ENDIF
+			ENDSELECT
+		ENDIF
+		;触手放電
+		IF TENTACLE_EXECUTABLE & 1p4
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:4)
+			CASE 0
+				SELECTCOM = 553
+				CALL COM553
+				PREVCOM = SAVE_SLOT:1
+			ENDSELECT
+		ENDIF
+		;触手吸血
+		IF TENTACLE_EXECUTABLE & 1p5
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:5)
+			CASE 0
+				SELECTCOM = 554
+				CALL COM554
+				PREVCOM = SAVE_SLOT:1
+			ENDSELECT
+		ENDIF
+		;触手チキチキ
+		IF TENTACLE_EXECUTABLE & 1p6
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:6)
+			CASE 0
+				CALL SYSTXT_TRAIN_MESSAGE_F_COM_556
+				TEQUIP:触手チキチキ = 1
+				CALL EQUIP_COM556
+				TEQUIP:触手服 |= 256
+				SAVE_SLOT:0 |= 256
+			ENDSELECT
+		ENDIF
+		;触手強制回復
+		IF TENTACLE_EXECUTABLE & 1p7 && (BASE:体力 <= 750 || BASE:体力 <= MAXBASE:0 / 2 )
+			SELECTCASE RAND:(START_SPECIAL_WRIGGLE_RAND:7)
+			CASE 0
+				CALL SYSTXT_TRAIN_MESSAGE_F_COM_560
+				;口上用
+				TFLAG:201 = 0
+				IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) && TEQUIP:口装着器具 == 2
+					;触手貫通＋触手口辱
+					TFLAG:201 = 3
+				ELSEIF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23)
+					;触手貫通のみ
+					TFLAG:201 = 1
+				ELSEIF TEQUIP:口装着器具 == 2
+					;触手口辱のみ
+					TFLAG:201 = 2
+				ENDIF
+				CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+				;触手強制回復
+				IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) || TEQUIP:口装着器具 == 1
+					TEQUIP:触手強制回復 = 2
+				ELSEIF TEQUIP:口装着器具 == 2
+					TEQUIP:口装着器具 = 0
+					TEQUIP:触手強制回復 = 1
+				ELSE
+					TEQUIP:触手強制回復 = 1
+				ENDIF
+				CALL EQUIP_COM560
+				TEQUIP:触手服 |= 64
+				SAVE_SLOT:0 |= 64
+			ENDSELECT
+		ENDIF
+ENDIF
+
+CALL TENTACLE_COM_ABLE550
+;触手催眠解除
+IF RESULT && TEQUIP:触手催眠 && TEQUIP:触手服 & 128 && !(SAVE_SLOT:0 & 128)
+	SELECTCASE RAND:(END_RAND:6)
+	CASE 0
+		CALL SYSTXT_TRAIN_MESSAGE_F_COM_550
+		TEQUIP:触手催眠 = 0
+		TEQUIP:触手服 &= 0b101111111
+	CASEELSE
+	ENDSELECT
+ENDIF
+CALL TENTACLE_COM_ABLE556
+;触手チキチキ解除
+IF RESULT && TEQUIP:触手チキチキ && TEQUIP:触手服 & 256 && !(SAVE_SLOT:0 & 256)
+	SELECTCASE RAND:(END_RAND:7)
+	CASE 0
+		CALL SYSTXT_TRAIN_MESSAGE_F_COM_556
+		TEQUIP:触手チキチキ = 0
+		TEQUIP:触手服 &= 0b011111111
+	CASEELSE
+	ENDSELECT
+ENDIF
+CALL TENTACLE_COM_ABLE560
+;触手強制回復解除
+IF RESULT && TEQUIP:触手強制回復 && TEQUIP:触手服 & 64 && !(SAVE_SLOT:0 & 64)
+	SELECTCASE RAND:(END_RAND:5)
+	CASE 0
+		CALL SYSTXT_TRAIN_MESSAGE_F_COM_560
+		TEQUIP:触手強制回復 = 0
+		TEQUIP:触手服 &= 0b110111111
+	CASEELSE
+	ENDSELECT
+ENDIF
+
+VARSET TENTACLE_ABLE_STR
+VARSET TENTACLE_EXECUTABLE
+
+SPLIT (TENTACLE_SELECT_STR:0), ",", LOCALS
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}
+	IF RESULT
+		SIF !(TENTACLE_ABLE_STR == "")
+			TENTACLE_ABLE_STR += "/"
+		TENTACLE_ABLE_STR += TOSTR(RESULT)
+	ENDIF
+NEXT
+
+;PRINTW C1
+
+;Ｃ責め分 C系統に装備がある場合は飛ばす
+IF TEQUIP:Ｃ系装着器具 && TEQUIP:触手服 & 2
+	;{END_RAND}分の一で責め解除
+	SELECTCASE RAND:(END_RAND:0)
+	CASE 0
+		IF TEQUIP:Ｃ系装着器具 == 26
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_515
+		ELSEIF TEQUIP:Ｃ系装着器具 == 22
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_505
+		ELSEIF TEQUIP:Ｃ系装着器具 == 21
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_503
+		ENDIF
+		TEQUIP:Ｃ系装着器具 = 0
+		TEQUIP:触手服 &= 0b111111101
+	CASEELSE
+	ENDSELECT
+ELSEIF TENTACLE_ABLE_STR != ""
+	;{START_RAND}分の一で責め始める
+	SELECTCASE RAND:(START_RAND:0)
+	CASE 0
+		SPLIT TENTACLE_ABLE_STR, "/", LOCALS
+		FOR COUNT, 0, RESULT
+			TENTACLE_EXECUTABLE:COUNT = TOINT(LOCALS:COUNT)
+		NEXT
+		;PRINTW C2
+		SELECTCASE TENTACLE_EXECUTABLE:(RAND:RESULT)
+		CASE 1p2
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は放電しつつ肉棒を扱き始めたようだ
+			TEQUIP:Ｃ系装着器具 = 26
+			TEQUIP:触手服 |= 2
+			CALL EQUIP_COM17
+		CASE 1p1
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は肉棒を扱き始めたようだ
+			TEQUIP:Ｃ系装着器具 = 22
+			TEQUIP:触手服 |= 2
+			CALL EQUIP_COM16
+		CASE 1p0
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は陰核を責め始めたようだ
+			TEQUIP:Ｃ系装着器具 = 21
+			TEQUIP:触手服 |= 2
+			CALL EQUIP_COM14
+		ENDSELECT
+	ENDSELECT
+ENDIF
+
+VARSET TENTACLE_ABLE_STR
+VARSET TENTACLE_EXECUTABLE
+
+SPLIT (TENTACLE_SELECT_STR:1), ",", LOCALS
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}
+	IF RESULT
+		SIF !(TENTACLE_ABLE_STR == "")
+			TENTACLE_ABLE_STR += "/"
+		TENTACLE_ABLE_STR += TOSTR(RESULT)
+	ENDIF
+NEXT
+
+;PRINTW B1
+
+;Ｂ責め分 B系統に装備がある場合は飛ばす
+IF TEQUIP:Ｂ系装着器具 && TEQUIP:触手服 & 4
+	SELECTCASE RAND:(END_RAND:1)
+	CASE 0
+		IF TEQUIP:Ｂ系装着器具 == 23
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_526
+		ELSEIF TEQUIP:Ｂ系装着器具 == 22
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_525
+		ELSEIF TEQUIP:Ｂ系装着器具 == 21
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_504
+		ENDIF
+		TEQUIP:Ｂ系装着器具 = 0
+		TEQUIP:触手服 &= 0b111111011
+	CASEELSE
+	ENDSELECT
+ELSEIF TENTACLE_ABLE_STR != ""
+	SELECTCASE RAND:(START_RAND:1)
+	CASE 0
+		SPLIT TENTACLE_ABLE_STR, "/", LOCALS
+		FOR COUNT, 0, RESULT
+			TENTACLE_EXECUTABLE:COUNT = TOINT(LOCALS:COUNT)
+		NEXT
+		;PRINTW B2
+		SELECTCASE TENTACLE_EXECUTABLE:(RAND:RESULT)
+		CASE 1p2
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は乳腺を責め始めたようだ
+			TEQUIP:Ｂ系装着器具 = 23
+			TEQUIP:触手服 |= 4
+			CALL EQUIP_COM526
+		CASE 1p1
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は乳房を吸い始めたようだ
+			TEQUIP:Ｂ系装着器具 = 22
+			TEQUIP:触手服 |= 4
+			CALL EQUIP_COM191
+		CASE 1p0
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は乳房を責め始めたようだ
+			TEQUIP:Ｂ系装着器具 = 21
+			TEQUIP:触手服 |= 4
+			CALL EQUIP_COM15
+		ENDSELECT
+	ENDSELECT
+ENDIF
+
+VARSET TENTACLE_ABLE_STR
+VARSET TENTACLE_EXECUTABLE
+
+SPLIT (TENTACLE_SELECT_STR:2), ",", LOCALS
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}
+	IF RESULT
+		SIF !(TENTACLE_ABLE_STR == "")
+			TENTACLE_ABLE_STR += "/"
+		TENTACLE_ABLE_STR += TOSTR(RESULT)
+	ENDIF
+NEXT
+
+;PRINTW V1
+
+;Ｖ責め分 V系統に装備がある場合、今回コマンドでV使用または処女の時は飛ばす
+IF TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8
+	SELECTCASE RAND:(END_RAND:2)
+	CASE 0
+		IF TEQUIP:Ｖ系装着器具 == 27
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_535
+		ELSEIF TEQUIP:Ｖ系装着器具 == 23
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_501
+		ELSEIF TEQUIP:Ｖ系装着器具 == 22
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_501
+		ELSEIF TEQUIP:Ｖ系装着器具 == 21
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_501
+		ENDIF
+		TEQUIP:Ｖ系装着器具 = 0
+		TEQUIP:触手服 &= 0b111110111
+	CASEELSE
+	ENDSELECT
+ELSEIF TALENT:処女 == 0 && TENTACLE_ABLE_STR != "" && !(TFLAG:9 == 1)
+	SELECTCASE RAND:(START_RAND:2)
+	CASE 0
+		SPLIT TENTACLE_ABLE_STR, "/", LOCALS
+		FOR COUNT, 0, RESULT
+			TENTACLE_EXECUTABLE:COUNT = TOINT(LOCALS:COUNT)
+		NEXT
+		;PRINTW V2
+		SELECTCASE TENTACLE_EXECUTABLE:(RAND:RESULT)
+		CASE 1p3
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は膣に侵入し愛液を吸っているようだ
+			TEQUIP:Ｖ系装着器具 = 27
+			TEQUIP:触手服 |= 8
+			STAIN:ヴァギナ |= 64
+			CALL EQUIP_COM153
+		CASE 1p2
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は膣に侵入し子宮口を穿っているようだ
+			TEQUIP:Ｖ系装着器具 = 23
+			TEQUIP:触手服 |= 8
+			STAIN:ヴァギナ |= 64
+			CALL EQUIP_COM521
+		CASE 1p1
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は膣に侵入し敏感な部分を蹂躙しているようだ
+			TEQUIP:Ｖ系装着器具 = 22
+			TEQUIP:触手服 |= 8
+			STAIN:ヴァギナ |= 64
+			CALL EQUIP_COM520
+		CASE 1p0
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は膣に侵入したようだ
+			TEQUIP:Ｖ系装着器具 = 21
+			TEQUIP:触手服 |= 8
+			STAIN:ヴァギナ |= 64
+			CALL EQUIP_COM12
+		ENDSELECT
+	ENDSELECT
+ENDIF
+
+VARSET TENTACLE_ABLE_STR
+VARSET TENTACLE_EXECUTABLE
+
+SPLIT (TENTACLE_SELECT_STR:3), ",", LOCALS 
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}
+	IF RESULT
+		SIF !(TENTACLE_ABLE_STR == "")
+			TENTACLE_ABLE_STR += "/"
+		TENTACLE_ABLE_STR += TOSTR(RESULT)
+	ENDIF
+NEXT
+
+;PRINTW A1
+
+;Ａ責め分 A系統に装備がある場合、今回コマンドでA使用または経験がない時は飛ばす
+IF TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16
+	SELECTCASE RAND:(END_RAND:3)
+	CASE 0
+		IF TEQUIP:Ａ系装着器具 == 27
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_522
+		ELSEIF TEQUIP:Ａ系装着器具 == 23
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_524
+		ELSEIF TEQUIP:Ａ系装着器具 == 22
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_523
+		ELSEIF TEQUIP:Ａ系装着器具 == 21
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_502
+		ENDIF
+		TEQUIP:Ａ系装着器具 = 0
+		TEQUIP:触手服 &= 0b111101111
+	CASEELSE
+	ENDSELECT
+ELSEIF EXP:Ａ経験 && TENTACLE_ABLE_STR != "" && !(TFLAG:9 == 2)
+	SELECTCASE RAND:(START_RAND:3)
+	CASE 0
+		SPLIT TENTACLE_ABLE_STR, "/", LOCALS
+		FOR COUNT, 0, RESULT
+			TENTACLE_EXECUTABLE:COUNT = TOINT(LOCALS:COUNT)
+		NEXT
+		;PRINTW A2
+		SELECTCASE TENTACLE_EXECUTABLE:(RAND:RESULT)
+		CASE 1p3
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服はお尻から体内に侵入しそのまま口から出てきたようだ
+			TEQUIP:Ａ系装着器具 = 23
+			TEQUIP:触手服 |= 16
+			STAIN:アナル |= 64
+			CALL EQUIP_COM524
+		CASE 1p2
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服はお尻から体内に侵入し小腸を蹂躙しているようだ
+			TEQUIP:Ａ系装着器具 = 22
+			TEQUIP:触手服 |= 16
+			STAIN:アナル |= 64
+			CALL EQUIP_COM523
+		CASE 1p1
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服はお尻から体内に侵入し薬液を分泌したようだ
+			TEQUIP:Ａ系装着器具 = 27
+			TEQUIP:触手服 |= 16
+			STAIN:アナル |= 64
+			CALL EQUIP_COM174
+		CASE 1p0
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服はお尻から体内に侵入したようだ
+			TEQUIP:Ａ系装着器具 = 21
+			TEQUIP:触手服 |= 16
+			STAIN:アナル |= 64
+			CALL EQUIP_COM13
+		ENDSELECT
+	ENDSELECT
+ENDIF
+
+VARSET TENTACLE_ABLE_STR
+VARSET TENTACLE_EXECUTABLE
+
+SPLIT (TENTACLE_SELECT_STR:4), ",", LOCALS
+FOR COUNT, 0, RESULT
+	CALLFORM TENTACLE_COM_ABLE{TOINT(LOCALS:COUNT)}
+	IF RESULT
+		SIF !(TENTACLE_ABLE_STR == "")
+			TENTACLE_ABLE_STR += "/"
+		TENTACLE_ABLE_STR += TOSTR(RESULT)
+	ENDIF
+NEXT
+
+;PRINTW U1
+
+;Ｕ責め分 U系統に装備がある場合または経験がない時は飛ばす
+IF TEQUIP:Ｕ系装着器具 && TEQUIP:触手服 & 32
+	SELECTCASE RAND:(END_RAND:4)
+	CASE 0
+		IF TEQUIP:Ｕ系装着器具 == 22
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_528
+		ELSEIF TEQUIP:Ｕ系装着器具 == 21
+			CALL SYSTXT_TRAIN_MESSAGE_F_COM_527
+		ENDIF
+		TEQUIP:Ｕ系装着器具 = 0
+		TEQUIP:触手服 &= 0b111011111
+	CASEELSE
+	ENDSELECT
+ELSEIF EXP:尿道開発経験 && TENTACLE_ABLE_STR != ""
+	SELECTCASE RAND:(START_RAND:4)
+	CASE 0
+		SPLIT TENTACLE_ABLE_STR, "/", LOCALS
+		FOR COUNT, 0, RESULT
+			TENTACLE_EXECUTABLE:COUNT = TOINT(LOCALS:COUNT)
+		NEXT
+		;PRINTW U2
+		SELECTCASE TENTACLE_EXECUTABLE:(RAND:RESULT)
+		CASE 1p1
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は尿道に侵入し尿を吸い始めたようだ
+			TEQUIP:Ｕ系装着器具 = 22
+			TEQUIP:触手服 |= 32
+			TCVAR:Ｕ拡張経験 += 1
+			CALL EQUIP_COM142
+		CASE 1p0
+			PRINTFORML %CALLNAME:TARGET%に纏わりつく触手服は尿道に侵入したようだ
+			TEQUIP:Ｕ系装着器具 = 21
+			TEQUIP:触手服 |= 32
+			CALL EQUIP_COM141
+		ENDSELECT
+	ENDSELECT
+ENDIF
+
+TENTACLE_ABLE = 0
+;以下それぞれ{START_WRIGGLE_RAND}分の一の確率で責める
+CALL TENTACLE_COM_ABLE503
+TENTACLE_ABLE |= RESULT
+CALL TENTACLE_COM_ABLE505
+TENTACLE_ABLE |= RESULT
+;Ｃ責め分 C系統に装備がある場合は飛ばす
+IF RAND:(START_WRIGGLE_RAND:0) == 0 && TENTACLE_ABLE
+	IF EXIST_BAR(TARGET)
+		PRINTFORML 触手服は肉棒を扱いているようだ
+	ELSE
+		PRINTFORML 触手服は敏感な豆を責めているようだ
+	ENDIF
+	DOWNBASE:0 += 5
+	DOWNBASE:1 += 20
+	
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		LOCAL = 40
+	ELSEIF ABL:Ｃ感覚 == 1
+		LOCAL = 120
+	ELSEIF ABL:Ｃ感覚 == 2
+		LOCAL = 250
+	ELSEIF ABL:Ｃ感覚 == 3
+		LOCAL = 450
+	ELSEIF ABL:Ｃ感覚 == 4
+		LOCAL = 600
+	ELSE
+		LOCAL = 750
+	ENDIF
+
+	;PALAM:欲情をみる
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES LOCAL , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES LOCAL , 0.90
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES LOCAL , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES LOCAL , 1.10
+	ELSE
+		TIMES LOCAL , 1.20
+	ENDIF
+
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL , 0.80
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL , 0.90
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL , 1.10
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL , 1.20
+	ELSE
+		TIMES LOCAL , 1.30
+	ENDIF
+
+	SOURCE:快Ｃ += LOCAL
+	SOURCE:露出 += 50
+	SOURCE:欲情追加 += 50
+ENDIF
+TENTACLE_ABLE = 0
+CALL TENTACLE_COM_ABLE504
+TENTACLE_ABLE = RESULT
+;Ｂ責め分 B系統に装備がある場合は飛ばす
+IF RAND:(START_WRIGGLE_RAND:1) == 0 && TENTACLE_ABLE
+	PRINTFORML 触手服は胸を愛撫しているようだ
+	DOWNBASE:0 += 5
+	DOWNBASE:1 += 20
+	
+	;ABL:Ｂ感覚をみる
+	IF ABL:Ｂ感覚 == 0
+		LOCAL = 40
+	ELSEIF ABL:Ｂ感覚 == 1
+		LOCAL = 120
+	ELSEIF ABL:Ｂ感覚 == 2
+		LOCAL = 250
+	ELSEIF ABL:Ｂ感覚 == 3
+		LOCAL = 450
+	ELSEIF ABL:Ｂ感覚 == 4
+		LOCAL = 600
+	ELSE
+		LOCAL = 750
+	ENDIF
+
+	;PALAM:欲情をみる
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES LOCAL , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES LOCAL , 0.90
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES LOCAL , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES LOCAL , 1.10
+	ELSE
+		TIMES LOCAL , 1.20
+	ENDIF
+
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL , 0.80
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL , 0.90
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL , 1.10
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL , 1.20
+	ELSE
+		TIMES LOCAL , 1.30
+	ENDIF
+
+	SOURCE:快Ｂ += LOCAL
+	SOURCE:露出 += 50
+	SOURCE:欲情追加 += 50
+ENDIF
+TENTACLE_ABLE = 0
+CALL TENTACLE_COM_ABLE501
+TENTACLE_ABLE = RESULT
+;Ｖ責め分 V系統に装備がある場合または処女の時は飛ばす
+IF TALENT:処女 == 0 && RAND:(START_WRIGGLE_RAND:2) == 0 && TENTACLE_ABLE
+	PRINTFORML 触手服は膣の中で震えているようだ
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 30
+	
+	;ABL:Ｖ感覚をみる
+	IF ABL:Ｖ感覚 == 0
+		LOCAL = 40
+		LOCAL:2 = 100
+	ELSEIF ABL:Ｖ感覚 == 1
+		LOCAL = 120
+		LOCAL:2 = 300
+	ELSEIF ABL:Ｖ感覚 == 2
+		LOCAL = 300
+		LOCAL:2 = 600
+	ELSEIF ABL:Ｖ感覚 == 3
+		LOCAL = 500
+		LOCAL:2 = 1000
+	ELSEIF ABL:Ｖ感覚 == 4
+		LOCAL = 650
+		LOCAL:2 = 1500
+	ELSE
+		LOCAL = 850
+		LOCAL:2 = 2100
+	ENDIF
+
+	;EXP:Ｖ経験をみる
+	;処女はありえない
+	IF EXP:Ｖ経験 < EXPLV:2
+		TIMES LOCAL , 0.60
+		LOCAL:1 = 150
+	ELSEIF EXP:Ｖ経験 < EXPLV:3
+		TIMES LOCAL , 1.00
+		LOCAL:1 = 20
+	ELSEIF EXP:Ｖ経験 < EXPLV:4
+		TIMES LOCAL , 1.20
+		LOCAL:1 = 0
+	ELSEIF EXP:Ｖ経験 < EXPLV:5
+		TIMES LOCAL , 1.40
+		LOCAL:1 = 0
+	ELSE
+		TIMES LOCAL , 1.60
+		LOCAL:1 = 0
+	ENDIF
+
+	;PALAM:潤滑をみる
+	IF PALAM:潤滑 < PALAMLV:1
+		TIMES LOCAL , 0.10
+		LOCAL:1 += 400
+		TIMES LOCAL:1 , 3.00
+		LOCAL:2 += 1000
+	ELSEIF PALAM:潤滑 < PALAMLV:2
+		TIMES LOCAL , 0.40
+		LOCAL:1 += 150
+		TIMES LOCAL:1 , 1.00
+		LOCAL:2 += 200
+	ELSEIF PALAM:潤滑 < PALAMLV:3
+		TIMES LOCAL , 1.00
+		TIMES LOCAL:1 , 0.50
+		LOCAL:2 += 80
+	ELSEIF PALAM:潤滑 < PALAMLV:4
+		TIMES LOCAL , 1.40
+		TIMES LOCAL:1 , 0.20
+	ELSE
+		TIMES LOCAL , 1.80
+		TIMES LOCAL:1 , 0.10
+	ENDIF
+
+	;PALAM:欲情をみる
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES LOCAL , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES LOCAL , 0.90
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES LOCAL , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES LOCAL , 1.10
+	ELSE
+		TIMES LOCAL , 1.20
+	ENDIF
+
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL , 0.80
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL , 0.90
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL , 1.10
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL , 1.20
+	ELSE
+		TIMES LOCAL , 1.30
+	ENDIF
+
+	;貞操観念
+	IF TALENT:貞操観念
+		;処女はありえない
+		TIMES LOCAL:2, 3.00
+	ENDIF
+	;小柄体型
+	SIF TALENT:小柄体型
+		TIMES LOCAL:1 , 2.00
+
+	SOURCE:快Ｖ += LOCAL
+	SOURCE:痛み += LOCAL:1
+	SOURCE:屈従 += LOCAL:2
+	
+	;Ｖ経験
+	TCVAR:Ｖ経験 += 1
+	STAIN:ヴァギナ |= 64
+ENDIF
+TENTACLE_ABLE = 0
+CALL TENTACLE_COM_ABLE502
+TENTACLE_ABLE = RESULT
+;Ａ責め分 A系統に装備がある場合または経験がない時は飛ばす
+IF EXP:Ａ経験 && RAND:(START_WRIGGLE_RAND:3) == 0 && TENTACLE_ABLE
+	PRINTFORML 触手服はお尻の穴で震えているようだ
+	DOWNBASE:0 += 20
+	DOWNBASE:1 += 60
+	
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		LOCAL = 40
+		LOCAL:1 = 300
+	ELSEIF ABL:Ａ感覚 == 1
+		LOCAL = 120
+		LOCAL:1 = 800
+	ELSEIF ABL:Ａ感覚 == 2
+		LOCAL = 300
+		LOCAL:1 = 1400
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL = 500
+		LOCAL:1 = 1800
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL = 650
+		LOCAL:1 = 2100
+	ELSE
+		LOCAL = 850
+		LOCAL:1 = 2400
+	ENDIF
+
+	;EXP:Ａ経験をみる
+	IF EXP:Ａ経験 < EXPLV:1
+		TIMES LOCAL , 0.50
+		LOCAL:2 = 2000
+	ELSEIF EXP:Ａ経験 < EXPLV:2
+		TIMES LOCAL , 1.00
+		LOCAL:2 = 300
+	ELSEIF EXP:Ａ経験 < EXPLV:3
+		TIMES LOCAL , 1.10
+		LOCAL:2 = 50
+	ELSEIF EXP:Ａ経験 < EXPLV:4
+		TIMES LOCAL , 1.20
+		LOCAL:2 = 10
+	ELSEIF EXP:Ａ経験 < EXPLV:5
+		TIMES LOCAL , 1.40
+		LOCAL:2 = 0
+	ELSE
+		TIMES LOCAL , 1.60
+		LOCAL:2 = 0
+	ENDIF
+
+	;PALAM:潤滑をみる
+	IF PALAM:潤滑 < PALAMLV:1
+		TIMES LOCAL , 0.40
+		LOCAL:2 += 800
+	ELSEIF PALAM:潤滑 < PALAMLV:2
+		TIMES LOCAL , 0.80
+		LOCAL:2 += 500
+	ELSEIF PALAM:潤滑 < PALAMLV:3
+		TIMES LOCAL , 1.00
+		LOCAL:2 += 300
+	ELSEIF PALAM:潤滑 < PALAMLV:4
+		TIMES LOCAL , 1.40
+		LOCAL:2 += 120
+	ELSE
+		TIMES LOCAL , 1.80
+		LOCAL:2 += 100
+	ENDIF
+
+	;PALAM:欲情をみる
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES LOCAL , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES LOCAL , 0.90
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES LOCAL , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES LOCAL , 1.10
+	ELSE
+		TIMES LOCAL , 1.20
+	ENDIF
+
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL , 0.80
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL , 0.90
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL , 1.10
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL , 1.20
+	ELSE
+		TIMES LOCAL , 1.30
+	ENDIF
+
+	;小柄体型
+	SIF TALENT:小柄体型
+		TIMES LOCAL:2 , 2.00
+
+	;処女で貞操観念
+	IF TALENT:処女 == 1 && TALENT:貞操観念
+		LOCAL:1 /= 3
+	ELSEIF TALENT:処女 && TALENT:貞操観念
+		LOCAL:1 /= 2
+	ENDIF
+
+	SOURCE:快Ａ += LOCAL
+	SOURCE:痛み += LOCAL:2
+	SOURCE:屈従 += LOCAL:1
+	
+	;Ａ経験
+	TCVAR:Ａ経験 += 2
+	STAIN:アナル |= 64
+ENDIF
+TENTACLE_ABLE = 0
+CALL TENTACLE_COM_ABLE527
+TENTACLE_ABLE = RESULT
+;Ｕ責め分 U系統に装備がある場合または経験がない時は飛ばす
+IF EXP:尿道開発経験 && RAND:(START_WRIGGLE_RAND:4) == 0 && TENTACLE_ABLE
+	PRINTFORML 触手服は尿道で震えているようだ
+	LOCAL:3 = 20
+	
+	;EXP:Ｕ拡張経験をみる
+	IF EXP:Ｕ拡張経験 < EXPLV:1
+		TIMES LOCAL:3 , 3.00
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:2
+		TIMES LOCAL:3 , 2.50
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:3
+		TIMES LOCAL:3 , 2.00
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:4
+		TIMES LOCAL:3 , 1.00
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:5
+		TIMES LOCAL:3 , 0.80
+	ELSE
+		TIMES LOCAL:3 , 0.60
+	ENDIF
+	
+	;臆病
+	SIF TALENT:臆病
+		TIMES LOCAL:3 , 2.00
+	;感情乏しい
+	SIF TALENT:感情乏しい
+		TIMES LOCAL:3 , 0.60
+	
+	DOWNBASE:0 += LOCAL:3
+	DOWNBASE:1 += LOCAL:3 * 2
+	
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		LOCAL = 80
+		LOCAL:1 = 300
+	ELSEIF ABL:Ｃ感覚 == 1
+		LOCAL = 250
+		LOCAL:1 = 800
+	ELSEIF ABL:Ｃ感覚 == 2
+		LOCAL = 600
+		LOCAL:1 = 1400
+	ELSEIF ABL:Ｃ感覚 == 3
+		LOCAL = 1000
+		LOCAL:1 = 1800
+	ELSEIF ABL:Ｃ感覚 == 4
+		LOCAL = 1300
+		LOCAL:1 = 2100
+	ELSE
+		LOCAL = 1700
+		LOCAL:1 = 2400
+	ENDIF
+	
+	;EXP:尿道経験をみる
+	IF EXP:尿道開発経験 < EXPLV:1
+		TIMES LOCAL , 0.50
+		LOCAL:2 = 2000
+	ELSEIF EXP:尿道開発経験 < EXPLV:2
+		TIMES LOCAL , 1.00
+		LOCAL:2 = 300
+	ELSEIF EXP:尿道開発経験 < EXPLV:3
+		TIMES LOCAL , 1.10
+		LOCAL:2 = 50
+	ELSEIF EXP:尿道開発経験 < EXPLV:4
+		TIMES LOCAL , 1.20
+		LOCAL:2 = 10
+	ELSEIF EXP:尿道開発経験 < EXPLV:5
+		TIMES LOCAL , 1.40
+		LOCAL:2 = 0
+	ELSE
+		TIMES LOCAL , 1.60
+		LOCAL:2 = 0
+	ENDIF
+	
+	;PALAM:潤滑をみる
+	IF PALAM:潤滑 < PALAMLV:1
+		TIMES LOCAL , 0.40
+		LOCAL:2 += 800
+	ELSEIF PALAM:潤滑 < PALAMLV:2
+		TIMES LOCAL , 0.80
+		LOCAL:2 += 500
+	ELSEIF PALAM:潤滑 < PALAMLV:3
+		TIMES LOCAL , 1.00
+		LOCAL:2 += 300
+	ELSEIF PALAM:潤滑 < PALAMLV:4
+		TIMES LOCAL , 1.40
+		LOCAL:2 += 120
+	ELSE
+		TIMES LOCAL , 1.80
+		LOCAL:2 += 100
+	ENDIF
+	
+	;PALAM:欲情をみる
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES LOCAL , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES LOCAL , 0.90
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES LOCAL , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES LOCAL , 1.10
+	ELSE
+		TIMES LOCAL , 1.20
+	ENDIF
+	
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL , 0.80
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL , 0.90
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL , 1.10
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL , 1.20
+	ELSE
+		TIMES LOCAL , 1.30
+	ENDIF
+	
+	;小柄体形
+	SIF TALENT:小柄体型
+		TIMES LOCAL:2 , 2.00
+	;尿道狂
+	SIF TALENT:尿道狂
+		TIMES LOCAL , 1.20
+	
+	;Ｃ敏感、鈍感をみる
+	;快Ｃ自体のチェックは後でまとめてやる
+	IF TALENT:Ｃ鈍感
+		TIMES LOCAL , 1.50
+		TIMES LOCAL:1 , 1.50
+		TIMES LOCAL:2 , 1.50
+	ELSEIF TALENT:Ｃ敏感
+		TIMES LOCAL , 0.60
+		TIMES LOCAL:1 , 0.60
+		TIMES LOCAL:2 , 0.60
+	ENDIF
+	
+	;処女で貞操観念
+	SIF TALENT:処女 == 1 && TALENT:貞操観念
+		LOCAL:1 /= 3
+	
+	SOURCE:快Ｃ += LOCAL
+	SOURCE:屈従 += LOCAL:1
+	SOURCE:痛み += LOCAL:2
+	SOURCE:逸脱 += LOCAL:1
+	
+	;カテーテル挿入中のときは強制的に尿意を催される効果も(＝放尿レベル増加)
+	IF TEQUIP:利尿剤
+		CFLAG:放尿レベル += 2
+	ELSE
+		CFLAG:放尿レベル += 1
+	ENDIF
+	
+	SETCOLOR COLOR("P-RED")
+	;尿道開発経験
+	TCVAR:尿道開発経験 += 3
+	RESETCOLOR
+ENDIF
+
+TENTACLE_ABLE = 0
+
+;触手経験フラグ
+SIF TEQUIP:触手服
+	TFLAG:90 += 1
+
+;--------------------------------------------------
+;TSTR:0関連で避けられなかった どうしてこうなった
+;--------------------------------------------------
+SELECTCASE SELECTCOM:2
+;--------------------------------------------------
+;愛撫系コマンド(0～9)
+CASE 0
+	TSTR:0 '= "愛撫"
+CASE 1
+	TSTR:0 '= "クンニ"
+CASE 2
+	TSTR:0 '= "アナル愛撫"
+CASE 3
+	TSTR:0 '= "胸愛撫"
+CASE 4
+	TSTR:0 '= "指挿入れ"
+CASE 5
+	TSTR:0 '= "フェラする"
+CASE 6
+	TSTR:0 '= "キスする"
+CASE 7
+	TSTR:0 '= "自慰"
+CASE 9
+	TSTR:0 '= "何もしない"
+;--------------------------------------------------
+;基本道具使用コマンド(10～19)
+CASE 10
+	TSTR:0 '= "ローター"
+CASE 11
+	TSTR:0 '= "電気按摩"
+CASE 12
+	TSTR:0 '= "バイブ"
+CASE 13
+	TSTR:0 '= "アナルバイブ"
+CASE 14
+	TSTR:0 '= "クリキャップ"
+CASE 15
+	TSTR:0 '= "ニプルキャップ"
+CASE 16
+	TSTR:0 '= "オナホール"
+CASE 17
+	TSTR:0 '= "電極オナホール"
+;--------------------------------------------------
+;セックス系コマンド(20～29)
+CASE 20
+	TSTR:0 '= "正常位"
+CASE 21
+	TSTR:0 '= "後背位"
+CASE 22
+	TSTR:0 '= "対面座位"
+CASE 23
+	TSTR:0 '= "背面座位"
+CASE 24
+	TSTR:0 '= "騎乗位"
+CASE 25
+	TSTR:0 '= "逆レイプ"
+CASE 26
+	TSTR:0 '= "助手を犯す"
+CASE 27
+	TSTR:0 '= "対面立位"
+CASE 28
+	TSTR:0 '= "背面立位"
+;--------------------------------------------------
+;アナルセックス系コマンド(30～39)
+CASE 30
+	TSTR:0 = 正常位アナル
+CASE 31
+	TSTR:0 = 後背位アナル
+CASE 32
+	TSTR:0 = 対面座位アナル
+CASE 33
+	TSTR:0 = 背面座位アナル
+CASE 34
+	TSTR:0 = 騎乗位アナル
+CASE 35
+	TSTR:0 = 逆アナルレイプ
+CASE 36
+	TSTR:0 = 助手のＡを犯す
+CASE 37
+	TSTR:0 = 対面立位アナル
+CASE 38
+	TSTR:0 = 背面立位アナル
+;--------------------------------------------------
+;奉仕系コマンド(40～59)
+CASE 40
+	TSTR:0 = 手淫
+CASE 41
+	TSTR:0 = フェラチオ
+CASE 42
+	TSTR:0 = パイズリ
+CASE 43
+	TSTR:0 = 素股
+CASE 44
+	TSTR:0 = アナル舐め強制
+CASE 45
+	TSTR:0 = アナルおねだり
+CASE 46
+	TSTR:0 = 足舐め強制
+CASE 47
+	TSTR:0 = 足扱き
+CASE 48
+	TSTR:0 = 髪扱き
+CASE 49
+	TSTR:0 = 腋扱き
+CASE 50
+	TSTR:0 = 全身扱き
+CASE 51
+	TSTR:0 = 尻扱き
+CASE 52
+	TSTR:0 = 竿扱き
+CASE 53
+	TSTR:0 = 玉揉み強制
+CASE 54
+	TSTR:0 = 玉舐め強制
+CASE 55
+	TSTR:0 = アナル愛撫強制
+CASE 56
+	TSTR:0 = ナイズリ
+;--------------------------------------------------
+;薬品系コマンド(60～79)
+CASE 60
+	TSTR:0 = ローション
+CASE 61
+	TSTR:0 = 媚薬
+CASE 62
+	TSTR:0 = 利尿剤
+CASE 63
+	TSTR:0 = 座薬
+CASE 64
+	TSTR:0 = 座薬(膣)
+CASE 65
+	TSTR:0 = 賢者の血
+CASE 66
+	TSTR:0 = 排卵誘発剤
+CASE 67
+	TSTR:0 = 緊急避妊薬
+CASE 68
+	TSTR:0 = 産卵促進剤
+CASE 69
+	TSTR:0 = 陰核成長剤
+CASE 70
+	TSTR:0 = 興奮剤
+CASE 71
+	TSTR:0 = 助手避妊薬
+CASE 72
+	TSTR:0 = 感覚増幅薬
+CASE 79
+	TSTR:0 = お香を焚く
+;--------------------------------------------------
+;注射系コマンド(80～89)
+CASE 80
+	TSTR:0 = クリトリス注射
+CASE 81
+	TSTR:0 = ヴァギナ注射
+CASE 82
+	TSTR:0 = アナル注射
+CASE 83
+	TSTR:0 = バスト注射
+CASE 84
+	TSTR:0 = 尿道注射
+CASE 85
+	TSTR:0 = Ｃ肥大注射
+CASE 86
+	TSTR:0 = Ｃ賢者の血注射
+CASE 88
+	TSTR:0 = 採血注射
+;--------------------------------------------------
+;羞恥プレイ系＋α(90～119)
+CASE 90
+	TSTR:0 = 裸エプロン
+CASE 91
+	TSTR:0 = スク水プレイ
+CASE 92
+	TSTR:0 = お医者プレイ
+CASE 93
+	TSTR:0 = コスプレ
+CASE 94
+	TSTR:0 = 助手コスプレ
+
+CASE 100
+	TSTR:0 = ビデオ撮影
+CASE 101
+	TSTR:0 = ビデオ鑑賞
+CASE 102
+	TSTR:0 = 写真撮影
+CASE 103
+	TSTR:0 = 羞恥プレイ
+CASE 104
+	TSTR:0 = 野外プレイ
+CASE 105
+	TSTR:0 = 公開露出ライブ
+CASE 106
+	TSTR:0 = 公衆肉便器プレイ
+CASE 107
+	TSTR:0 = 裸体盛り
+CASE 108
+	TSTR:0 = ベビープレイ
+CASE 109
+	TSTR:0 = オムツにお漏らし,（未実装）
+CASE 110
+	TSTR:0 = 秘貝開帳
+CASE 111
+	TSTR:0 = 放尿
+CASE 112
+	TSTR:0 = 剃毛
+CASE 113
+	TSTR:0 = 毛抜き
+CASE 114
+	TSTR:0 = 毛を抜かせる
+CASE 115
+	TSTR:0 = 自慰見せつけ
+CASE 116
+	TSTR:0 = 二人自慰見せつけ
+CASE 117
+	TSTR:0 = 秘貝開帳見せつけ
+CASE 118
+	TSTR:0 = 二人秘貝見せつけ
+
+;--------------------------------------------------
+;Ｃ系拡張コマンド(120～149)
+CASE 120
+	TSTR:0 = 焦らしプレイ
+CASE 121
+	TSTR:0 = 射精止め
+CASE 122
+	TSTR:0 = 豆責め
+CASE 123
+	TSTR:0 = 豆絞り
+CASE 124
+	TSTR:0 = ローター自慰
+CASE 125
+	TSTR:0 = 電マ自慰
+CASE 126
+	TSTR:0 = 顔面騎乗
+
+CASE 128
+	TSTR:0 = 亀頭責め
+
+CASE 130
+	TSTR:0 = 陰核クリップ
+CASE 131
+	TSTR:0 = 陰核電極
+CASE 132
+	TSTR:0 = ペニスローター
+CASE 133
+	TSTR:0 = 電マペニス責め
+;(陰核成長系コマンド)
+CASE 135
+	TSTR:0 = 陰核測定
+CASE 136
+	TSTR:0 = 割礼
+CASE 137
+	TSTR:0 = 射精機能開発
+
+;(尿道系拡張コマンド)
+CASE 140
+	TSTR:0 = 尿道綿棒
+CASE 141
+	TSTR:0 = カテーテル
+CASE 142
+	TSTR:0 = 採尿器
+CASE 143
+	TSTR:0 = バルーンカテーテル
+CASE 144
+	TSTR:0 = 電極カテーテル
+CASE 145
+	TSTR:0 = 飲尿する
+CASE 146
+	TSTR:0 = 尿道挿入
+;--------------------------------------------------
+;Ｖ系拡張コマンド(150～169)
+CASE 150
+	TSTR:0 = クスコ
+CASE 151
+	TSTR:0 = ローター挿入
+CASE 152
+	TSTR:0 = 小陰唇指愛撫
+CASE 153
+	TSTR:0 = 愛液採集器
+CASE 155
+	TSTR:0 = ヴァギナ電極
+CASE 156
+	TSTR:0 = ヴァギナバーベル
+CASE 157
+	TSTR:0 = ヴァギナバルーン
+;--------------------------------------------------
+;Ａ系拡張コマンド(170～189)
+CASE 170
+	TSTR:0 = ローターＡ挿入
+CASE 171
+	TSTR:0 = アナル電極
+CASE 172
+	TSTR:0 = アナルビーズ
+CASE 173
+	TSTR:0 = 拡張バルーン
+CASE 174
+	TSTR:0 = 浣腸プレイ
+CASE 175
+	TSTR:0 = 空気浣腸
+CASE 179
+	TSTR:0 = アナルバーベル
+CASE 180
+	TSTR:0 = アナル舐め
+CASE 181
+	TSTR:0 = アナル綿棒
+CASE 182
+	TSTR:0 = アナニー
+CASE 183
+	TSTR:0 = 尻素股
+CASE 184
+	TSTR:0 = フリスク挿入
+CASE 186
+	TSTR:0 = 尻愛撫
+CASE 187
+	TSTR:0 = 顔面騎乗アナル
+CASE 188
+	TSTR:0 = アナルの皺数え
+;--------------------------------------------------
+;Ｂ系拡張コマンド(190～219)
+CASE 190
+	TSTR:0 = 乳首ローター
+CASE 191
+	TSTR:0 = 搾乳機
+CASE 192
+	TSTR:0 = 乳腺開発
+CASE 193
+	TSTR:0 = 乳房電極
+CASE 194
+	TSTR:0 = サラシ
+CASE 195
+	TSTR:0 = 乳首クリップ
+
+CASE 200
+	TSTR:0 = 胸揉み
+CASE 201
+	TSTR:0 = 乳首責め
+CASE 202
+	TSTR:0 = 乳首舐め
+CASE 203
+	TSTR:0 = 乳首吸い
+CASE 204
+	TSTR:0 = 母乳飲み
+CASE 205
+	TSTR:0 = 胸自慰
+CASE 206
+	TSTR:0 = 乳スパンキング
+CASE 207
+	TSTR:0 = 乳ファック
+CASE 208
+	TSTR:0 = 縦パイズリ
+CASE 209
+	TSTR:0 = パイズリフェラ
+CASE 210
+	TSTR:0 = 乳合わせ
+CASE 211
+	TSTR:0 = 乳合わせ見せつけ
+;--------------------------------------------------
+;ＳＭ系、ハードな調教コマンド(220～239)
+CASE 220
+	TSTR:0 = スパンキング
+CASE 221
+	TSTR:0 = 鞭
+CASE 222
+	TSTR:0 = 針
+CASE 223
+	TSTR:0 = 蝋燭
+CASE 224
+	TSTR:0 = 縄
+CASE 225
+	TSTR:0 = アイマスク
+CASE 226
+	TSTR:0 = ボールギャグ
+CASE 227
+	TSTR:0 = 罵倒
+CASE 228
+	TSTR:0 = 鼻フック
+CASE 229
+	TSTR:0 = 強制開口器
+CASE 230
+	TSTR:0 = イラマチオ
+CASE 231
+	TSTR:0 = フィストファック
+CASE 232
+	TSTR:0 = アナルフィスト
+CASE 233
+	TSTR:0 = 両穴フィスト
+CASE 234
+	TSTR:0 = ヴァギナダイビング
+CASE 235
+	TSTR:0 = アナルダイビング
+CASE 236
+	TSTR:0 = ツボを突く
+CASE 237
+	TSTR:0 = 鼻クリップ
+CASE 238
+	TSTR:0 = スタンガン
+;--------------------------------------------------
+;拷問系、精神操作系コマンド(240～269)
+CASE 240
+	TSTR:0 = 足で踏む
+CASE 241
+	TSTR:0 = 腹パン
+CASE 242
+	TSTR:0 = 三角木馬
+CASE 243
+	TSTR:0 = 杭
+CASE 244
+	TSTR:0 = ナイフ
+CASE 245
+	TSTR:0 = 鉈
+
+CASE 251
+	TSTR:0 = ビンタを張る
+CASE 252
+	TSTR:0 = アイアンメイデン
+CASE 253
+	TSTR:0 = 水を飲ませる
+;--------------------------------------------------
+;マゾ系調教コマンド(270～289)
+CASE 270
+	TSTR:0 = 罵ってもらう
+CASE 271
+	TSTR:0 = 足を舐める
+CASE 272
+	TSTR:0 = 叩いてもらう
+CASE 273
+	TSTR:0 = 鞭で打ってもらう
+CASE 274
+	TSTR:0 = 血を吸われる
+;--------------------------------------------------
+;妊娠パッチのコマンド(290～299)
+CASE 290
+	TSTR:0 = コンドーム
+CASE 291
+	TSTR:0 = コンドーム精飲(奴)
+CASE 292
+	TSTR:0 = コンドーム精飲(助)
+CASE 293
+	TSTR:0 = ザーメンキス
+;--------------------------------------------------
+;助手によるコマンド、及びレズ(ＢＬ)プレイ(300～319)
+CASE 300
+	TSTR:0 = クンニ強制
+CASE 301
+	TSTR:0 = 貝あわせ
+CASE 302
+	TSTR:0 = 足コキする
+CASE 303
+	TSTR:0 = 二人フェラチオ
+CASE 304
+	TSTR:0 = 二本フェラチオ
+CASE 305
+	TSTR:0 = 二人でパイズリ
+CASE 306
+	TSTR:0 = 二人で素股
+CASE 307
+	TSTR:0 = 助手を犯させる
+CASE 308
+	TSTR:0 = 助手のＡを犯させる
+CASE 309
+	TSTR:0 = 助手とキスする
+CASE 310
+	TSTR:0 = 二人の尻を叩く
+CASE 311
+	TSTR:0 = 尻を二人で叩く
+CASE 312
+	TSTR:0 = 二人のＶをフィスト
+CASE 313
+	TSTR:0 = 二人のＡをフィスト
+;--------------------------------------------------
+;逆奉仕、ウフフ系コマンド(320～349)
+CASE 320
+	TSTR:0 = 優しくする
+CASE 321
+	TSTR:0 = 手淫する
+CASE 322
+	TSTR:0 = パイズリする
+CASE 323
+	TSTR:0 = 正常位させる
+CASE 324
+	TSTR:0 = 後背位させる
+CASE 325
+	TSTR:0 = 騎乗位する
+CASE 326
+	TSTR:0 = ペニバン挿入
+CASE 327
+	TSTR:0 = 指チュパ
+CASE 328
+	TSTR:0 = 首筋耳裏責め
+CASE 329
+	TSTR:0 = 玉愛撫
+CASE 330
+	TSTR:0 = 玉を舐める
+CASE 331
+	TSTR:0 = 二人でフェラする
+CASE 332
+	TSTR:0 = Ａ正常位させる
+CASE 333
+	TSTR:0 = Ａ後背位させる
+CASE 334
+	TSTR:0 = Ａ騎乗位する
+CASE 335
+	TSTR:0 = パイズリフェラする
+CASE 336
+	TSTR:0 = ヴァギナを拭く
+CASE 337
+	TSTR:0 = 二人で首筋耳裏責め
+CASE 338
+	TSTR:0 = 二人に犯させる
+CASE 339
+	TSTR:0 = 膣内洗浄
+CASE 340
+	TSTR:0 = ぱふぱふ
+CASE 341
+	TSTR:0 = 胸枕
+CASE 342
+	TSTR:0 = 乳繰り合う
+CASE 343
+	TSTR:0 = 乳ビンタ
+CASE 344
+	TSTR:0 = 乳の揉み合い
+CASE 345
+	TSTR:0 = お風呂を楽しむ
+CASE 346
+	TSTR:0 = お外を楽しむ
+CASE 347
+	TSTR:0 = お嫁さんで楽しむ
+CASE 348
+	TSTR:0 = お酒を飲ませる
+CASE 349
+	TSTR:0 = ふぉーゆーっ！
+;--------------------------------------------------
+;風呂系コマンド(350～379)
+CASE 350
+	TSTR:0 = お風呂場プレイ
+CASE 351
+	TSTR:0 = シャワー
+CASE 352
+	TSTR:0 = 泡踊り
+CASE 353
+	TSTR:0 = 泡踊りする
+CASE 354
+	TSTR:0 = たわし洗い
+
+CASE 360
+	TSTR:0 = 蟲風呂
+CASE 361
+	TSTR:0 = 鰻風呂
+CASE 362
+	TSTR:0 = ローション風呂
+CASE 363
+	TSTR:0 = スライム風呂
+CASE 364
+	TSTR:0 = 媚薬風呂
+CASE 365
+	TSTR:0 = 水牢
+CASE 366
+	TSTR:0 = 精液風呂
+CASE 367
+	TSTR:0 = 酒風呂
+CASE 368
+	TSTR:0 = トロロ風呂
+CASE 369
+	TSTR:0 = 毛玉風呂
+CASE 370
+	TSTR:0 = 蒸し風呂
+CASE 371
+	TSTR:0 = 国士無双の薬風呂
+CASE 372
+	TSTR:0 = 厄毒風呂
+CASE 373
+	TSTR:0 = 岩盤浴
+CASE 374
+	TSTR:0 = 札束風呂
+;--------------------------------------------------
+;獣姦系コマンド(380～394)
+CASE 380
+	TSTR:0 = バター犬プレイ
+CASE 381
+	TSTR:0 = 犬に犯させる
+CASE 382
+	TSTR:0 = 犬を犯させる
+CASE 383
+	TSTR:0 = 豚に犯させる
+CASE 384
+	TSTR:0 = 豚を犯させる
+CASE 385
+	TSTR:0 = 馬のをフェラさせる
+CASE 386
+	TSTR:0 = 馬に犯させる
+CASE 387
+	TSTR:0 = 犬とキスさせる
+CASE 388
+	TSTR:0 = 豚とキスさせる
+CASE 389
+	TSTR:0 = 犬にＡ犯させる
+CASE 390
+	TSTR:0 = 豚にＡ犯させる
+CASE 391
+	TSTR:0 = 馬にＡ犯させる
+;--------------------------------------------------
+;髮型系コマンド(395～399)
+CASE 395
+	TSTR:0 = 髪を染める
+CASE 396
+	TSTR:0 = 髪型を弄る
+;--------------------------------------------------
+;固有コマンド(400～499)
+CASE 400
+	TSTR:0 = 吸血
+CASE 401
+	TSTR:0 = 暗闇
+CASE 402
+	TSTR:0 = 尻子玉抜き
+CASE 403
+	TSTR:0 = 焼芋責め
+CASE 404
+	TSTR:0 = 巨峰責め
+CASE 405
+	TSTR:0 = 石勺柏責め
+CASE 406
+	TSTR:0 = 荊で緊縛
+CASE 407
+	TSTR:0 = 荊の鞭
+CASE 408
+	TSTR:0 = 蜘蛛の糸
+CASE 409
+	TSTR:0 = 独楽回し
+CASE 410
+	TSTR:0 = 蜘蛛脚愛撫
+CASE 411
+	TSTR:0 = 人形愛撫
+CASE 412
+	TSTR:0 = 操りの糸
+CASE 413
+	TSTR:0 = 豆炙り
+CASE 414
+	TSTR:0 = 乳豆炙り
+CASE 415
+	TSTR:0 = 読心
+CASE 416
+	TSTR:0 = 思姦
+CASE 417
+	TSTR:0 = 筆責め
+CASE 418
+	TSTR:0 = 時間停止
+CASE 419
+	TSTR:0 = 狂気の目
+CASE 420
+	TSTR:0 = 鈴蘭の毒
+CASE 421
+	TSTR:0 = 昆虫採集セットの薬
+CASE 422
+	TSTR:0 = 媚薬漬け
+CASE 423
+	TSTR:0 = 酒漬け
+CASE 424
+	TSTR:0 = わかめ酒
+CASE 425
+	TSTR:0 = かりちゅまがーど
+CASE 427
+	TSTR:0 = 陰毛炙り
+CASE 430
+	TSTR:0 = 御所車
+CASE 431
+	TSTR:0 = フォーオブアカインド
+CASE 432
+	TSTR:0 = 氷柱責め
+CASE 433
+	TSTR:0 = アナル卒塔婆
+CASE 434
+	TSTR:0 = 角愛撫
+CASE 435
+	TSTR:0 = 角挿入
+CASE 436
+	TSTR:0 = 角アナル挿入
+CASE 437
+	TSTR:0 = ヴァギナ要石
+CASE 438
+	TSTR:0 = アナル要石
+CASE 439
+	TSTR:0 = 両穴要石
+CASE 440
+	TSTR:0 = 半霊を犯す
+CASE 441
+	TSTR:0 = 半霊を挿入(前)
+CASE 442
+	TSTR:0 = 半霊を挿入(後)
+CASE 443
+	TSTR:0 = 幽明の苦輪
+CASE 444
+	TSTR:0 = 半霊再構成
+CASE 445
+	TSTR:0 = 薀蓄語り
+CASE 446
+	TSTR:0 = 説教を受ける
+CASE 447
+	TSTR:0 = 傘を愛撫する
+CASE 448
+	TSTR:0 = 房中術
+CASE 449
+	TSTR:0 = フィーバー！
+CASE 450
+	TSTR:0 = ピッチャー二つ
+CASE 451
+	TSTR:0 = 酔生夢死
+CASE 452
+	TSTR:0 = 超凝視
+CASE 453
+	TSTR:0 = 傘に舐めさせる
+CASE 490
+	TSTR:0 = ローション練成
+CASE 491
+	TSTR:0 = 野菜式体液媚薬変換
+;--------------------------------------------------
+;触手系コマンド(500～509)
+CASE 500
+	TSTR:0 = 触手召喚
+CASE 501
+	TSTR:0 = 触手挿入
+CASE 502
+	TSTR:0 = 触手アナル挿入
+CASE 503
+	TSTR:0 = 触手クリ責め
+CASE 504
+	TSTR:0 = 触手乳首責め
+CASE 505
+	TSTR:0 = 触手ペニス責め
+CASE 506
+	TSTR:0 = 触手口辱
+CASE 507
+	TSTR:0 = 触手緊縛
+CASE 508
+	TSTR:0 = 触手鼻穴挿入
+CASE 509
+	TSTR:0 = 触手メイデン
+;--------------------------------------------------
+;紳士的な触手系コマンド(510～599)
+CASE 510
+	TSTR:0 = 触手寄生
+CASE 511
+	TSTR:0 = 触手くすぐり
+CASE 512
+	TSTR:0 = 触手秘貝開き
+CASE 513
+	TSTR:0 = 触手パイズリ
+CASE 514
+	TSTR:0 = 触手素股
+CASE 515
+	TSTR:0 = 触手放電ペニス責め
+
+CASE 520
+	TSTR:0 = 触手Ｇスポ責め
+CASE 521
+	TSTR:0 = 触手子宮責め
+CASE 522
+	TSTR:0 = 触手浣腸
+CASE 523
+	TSTR:0 = 触手小腸責め
+CASE 524
+	TSTR:0 = 触手貫通
+CASE 525
+	TSTR:0 = 触手搾乳
+CASE 526
+	TSTR:0 = 触手乳腺挿入
+CASE 527
+	TSTR:0 = 触手カテーテル
+CASE 528
+	TSTR:0 = 触手採尿
+CASE 529
+	TSTR:0 = 触手耳穴挿入
+CASE 530
+	TSTR:0 = 触手ヴァギナ拡張
+CASE 531
+	TSTR:0 = 触手アナル拡張
+CASE 532
+	TSTR:0 = 触手両穴拡張
+CASE 533
+	TSTR:0 = 触手産卵
+CASE 534
+	TSTR:0 = 触手アナル産卵
+CASE 535
+	TSTR:0 = 触手愛液採集
+
+CASE 540
+	TSTR:0 = 触手口内洗浄
+CASE 541
+	TSTR:0 = 触手膣内洗浄
+CASE 542
+	TSTR:0 = 触手腸内洗浄
+CASE 543
+	TSTR:0 = 触手膀胱洗浄
+CASE 544
+	TSTR:0 = 触手鼻腔洗浄
+CASE 545
+	TSTR:0 = 触手耳穴洗浄
+CASE 546
+	TSTR:0 = 触手全穴洗浄
+
+CASE 550
+	TSTR:0 = 触手催眠
+CASE 551
+	TSTR:0 = 触手鞭打ち
+CASE 552
+	TSTR:0 = 触手針責め
+CASE 553
+	TSTR:0 = 触手放電
+CASE 554
+	TSTR:0 = 触手吸血
+;555,触手丸呑み,(構想中)
+CASE 556
+	TSTR:0 = 触手チキチキ
+CASE 557
+	TSTR:0 = 触手服
+
+CASE 560
+	TSTR:0 = 触手強制回復
+CASE 561
+	TSTR:0 = 触手排卵誘発
+CASE 562
+	TSTR:0 = 触手避妊膜塗布
+CASE 563
+	TSTR:0 = 触手発毛剤
+CASE 564
+	TSTR:0 = 触手脱毛剤
+
+CASE 580
+	TSTR:0 = 触手読心責め
+CASE 581
+	TSTR:0 = 触手潮干狩り
+CASE 582
+	TSTR:0 = 触手幽霊膣鏡
+CASE 583
+	TSTR:0 = 触手強制飲酒
+CASE 584
+	TSTR:0 = 触手精神制御
+CASE 585
+	TSTR:0 = 触手厄落とし
+CASE 586
+	TSTR:0 = 触手腸内撮影
+CASE 587
+	TSTR:0 = 触手言葉責め
+CASE 588
+	TSTR:0 = 触手鈴蘭媚薬
+CASE 589
+	TSTR:0 = 触手官能図書
+CASE 590
+	TSTR:0 = 触手妖精按摩
+CASE 591
+	TSTR:0 = 触手氷精手淫
+CASE 592
+	TSTR:0 = 触手淫脈探査
+CASE 593
+	TSTR:0 = 触手最終審判
+CASE 594
+	TSTR:0 = 触手百裂紅葉
+CASE 595
+	TSTR:0 = 触手豊穣淫香
+;--------------------------------------------------
+;派生コマンド(600～699)
+CASE 600
+	TSTR:0 = Ｇスポット刺激
+CASE 601
+	TSTR:0 = 潜望鏡
+CASE 602
+	TSTR:0 = シックスナイン
+CASE 603
+	TSTR:0 = ６９パイズリ
+CASE 604
+	TSTR:0 = 雁が首
+CASE 605
+	TSTR:0 = 指でＶを撫でる
+CASE 606
+	TSTR:0 = ペッティング
+
+CASE 610
+	TSTR:0 = 二人で犯す
+CASE 611
+	TSTR:0 = 岩清水
+CASE 612
+	TSTR:0 = 乱れ牡丹
+CASE 613
+	TSTR:0 = 騎乗乳房自慰
+CASE 614
+	TSTR:0 = 挿入Ｇスポ責め
+CASE 615
+	TSTR:0 = 挿入子宮口責め
+CASE 616
+	TSTR:0 = 後背位愛撫
+CASE 617
+	TSTR:0 = 対面愛撫
+CASE 618
+	TSTR:0 = 後背位アナル胸愛撫
+CASE 619
+	TSTR:0 = 対面アナル胸愛撫
+CASE 620
+	TSTR:0 = 強制放尿
+CASE 621
+	TSTR:0 = 口移し
+CASE 622
+	TSTR:0 = 四肢緊縛
+CASE 623
+	TSTR:0 = 亀甲縛り
+CASE 624
+	TSTR:0 = 吊り下げ
+CASE 625
+	TSTR:0 = ローションプレイ
+CASE 626
+	TSTR:0 = 搾乳
+CASE 627
+	TSTR:0 = 乳首甘噛み
+CASE 628
+	TSTR:0 = 相互自慰
+CASE 629
+	TSTR:0 = サンドイッチ
+CASE 630
+	TSTR:0 = 後背位手淫
+CASE 631
+	TSTR:0 = 相互秘貝開帳
+CASE 632
+	TSTR:0 = 背面座位胸愛撫
+CASE 633
+	TSTR:0 = 背面座位アナル胸愛撫
+
+CASE 649
+	TSTR:0 = イきつけ三杯
+CASE 650
+	TSTR:0 = 浄玻璃の鏡
+CASE 651
+	TSTR:0 = 御所車ＴＹＰＥ－Ｒ
+CASE 652
+	TSTR:0 = フォーオブアカインド(ふたなり)
+CASE 653
+	TSTR:0 = 蜘蛛の巣
+CASE 654
+	TSTR:0 = 蜘蛛脚六点責め
+CASE 655
+	TSTR:0 = 蜘蛛の巣姦
+CASE 656
+	TSTR:0 = 蜘蛛の巣肛門姦
+CASE 657
+	TSTR:0 = 蓑虫プレイ
+CASE 658
+	TSTR:0 = 拘束∇
+;659,暗黒潮干狩り,(未実装)
+CASE 660
+	TSTR:0 = 性感槍ぐんぐにる
+
+CASE 680
+	TSTR:0 = 触手撫で回し
+CASE 682
+	TSTR:0 = 触手アナル愛撫
+CASE 683
+	TSTR:0 = 触手胸愛撫
+
+;699,頼む
+;--------------------------------------------------
+;戦闘コマンド(700～799)
+CASE 700
+	TSTR:0 = *近寄る
+CASE 701
+	TSTR:0 = *距離をとる
+CASE 702
+	TSTR:0 = *背後に回る
+CASE 703
+	TSTR:0 = *見切り
+CASE 704
+	TSTR:0 = *防御
+
+CASE 730
+	TSTR:0 = ●脱衣
+
+CASE 760
+	TSTR:0 = ★拘束
+
+ENDSELECT
+;--------------------------------------------------
+;寄生関連
+;--------------------------------------------------
+
+CALL ADD_SOURCE_27
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_557
+IF TEQUIP:触手服
+	PRINTFORML %CALLNAME:PLAYER%が触手に命じると%CALLNAME:TARGET%を覆っていた服はするすると解けていった
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の呼び出したものは、一見普通の服のように見えるがよく見ると何やら蠢いている
+	PRINTFORML %CALLNAME:PLAYER%が命じるとそれは一瞬にして解け異形の触手が姿を見せ
+	PRINTFORML みるみるうちに%CALLNAME:TARGET%の体にまとわりつくと肌をすっぽりと覆い
+	PRINTFORML %CALLNAME:TARGET%のボディラインをくっきりと浮かび上がらせた
+	PRINTL
+	PRINTFORML はたからみると普通の服を着ているように見えるが、中では体中を愛撫されているらしく
+	PRINTFORML %CALLNAME:TARGET%は悲鳴とも嬌声ともつかぬ声を漏らし始めた
+ENDIF
+
+;==============================================================================================================================
+;触手服専用実行判定(501,502,503,504,505,511,512,515,520,521,522,523,524,525,526,527,528,535,541,542,543,550,552,553,554,556,560)
+;==============================================================================================================================
+;RETURN		(1p0,1p1,1p2,1p3,1p4,1p5,1p6,1p7)	TEQUIP	BIT:97	
+;C			(503,505,515)						30		2		
+;V			(501,520,521,535,541)				20		8		
+;A			(502,522,523,524,542)				25		16		
+;B			(504,525,526)						35		4		
+;U			(527,528,543)						32		32
+;くすぐり	(511)										
+;秘貝開き	(	,512)									
+;催眠		(	,	,550)						92		128
+;針責め		(	,	,	,552)							
+;放電		(	,	,	,	,553)						
+;吸血		(	,	,	,	,	,554)					
+;チキチキ	(	,	,	,	,	,	,556)		96		256
+;回復		(	,	,	,	,	,	,	,560)	91		64
+;--------------------------------------------------
+;触手挿入実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE501
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:501 > 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;今回実行したコマンドの種類がＶセックス系の時はダメ
+SIF TFLAG:9 == 1
+	RETURN 0
+;他のＶ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 && TEQUIP:Ｖ系装着器具 != 21
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 8) && TEQUIP:Ｖ系装着器具 == 1
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 501) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;触手アナル挿入実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE502
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:502 > 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;今回実行したコマンドの種類がＡセックス系の時はダメ
+SIF TFLAG:9 == 2
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 21
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 16) && TEQUIP:Ａ系装着器具 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 502) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;触手クリ責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE503
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:503 > 0
+	RETURN 0
+;対象にペニスがあるならダメ
+SIF EXIST_BAR(TARGET)
+	RETURN 0
+;他のＣ系触手責め中はダメ
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 21
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 2) && TEQUIP:Ｃ系装着器具 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 503) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;触手乳首責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE504
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:504 > 0
+	RETURN 0
+;他のＢ系触手責め中は不可
+SIF (TEQUIP:Ｂ系装着器具 && TEQUIP:Ｂ系装着器具 != 21) || TEQUIP:サラシ
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 4) && TEQUIP:Ｂ系装着器具 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 504) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;触手ペニス責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE505
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:505 > 0
+	RETURN 0
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;他のＣ系触手責め中はダメ
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 2) && TEQUIP:Ｃ系装着器具 == 2
+	RETURN 0
+;調教対象がオトコのときコンドーム装着中はダメ
+SIF TALENT:オトコ && TEQUIP:コンドーム
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 505) == 0
+	RETURN 0
+RETURN 2
+
+;--------------------------------------------------
+;触手くすぐり実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE511
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:511 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手が[磯巾着型触手]を得ていないとダメ
+SIF (FLAG:75 & 256) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 511) == 0
+	RETURN 0
+RETURN 1p0
+
+;--------------------------------------------------
+;触手秘貝開き実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE512
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:512 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;Ｖ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 512) == 0
+	RETURN 0
+RETURN 1p1
+
+;--------------------------------------------------
+;触手放電ペニス責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE515
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:515 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;他のＣ系触手責め中はダメ
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 26
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 2) && TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;調教対象がオトコのときコンドーム装着中はダメ
+SIF TALENT:オトコ && TEQUIP:コンドーム
+	RETURN 0
+;触手が[放電触手]を得ていないとダメ
+SIF (FLAG:75 & 4) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 515) == 0
+	RETURN 0
+RETURN 4
+
+;--------------------------------------------------
+;触手Ｇスポ責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE520
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:520 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;他のＶ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 && TEQUIP:Ｖ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 8) && TEQUIP:Ｖ系装着器具 == 2
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;触手挿入中じゃないとダメ<とりあえず服は勝手に入るし勝手にやる
+;SIF TEQUIP:Ｖ系装着器具 == 0
+;	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 520) == 0
+	RETURN 0
+RETURN 2
+
+;--------------------------------------------------
+;触手子宮責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE521
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:521 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;他のＶ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 && TEQUIP:Ｖ系装着器具 != 23
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 8) && TEQUIP:Ｖ系装着器具 == 3
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;妊娠中はダメ
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;触手挿入中じゃないとダメ<とりあえず服は勝手に入るし勝手にやる
+;SIF TEQUIP:Ｖ系装着器具 == 0
+;	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;卵が邪魔で子宮責めできない
+SIF TEQUIP:触手膣内産卵
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 521) == 0
+	RETURN 0
+RETURN 4
+
+;--------------------------------------------------
+;触手浣腸実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE522
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:522 > 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 27
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 16) && TEQUIP:Ａ系装着器具 == 7
+	RETURN 0
+;卵が邪魔で浣腸できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 522) == 0
+	RETURN 0
+RETURN 2
+
+;--------------------------------------------------
+;触手小腸責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE523
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:523 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[遠隔精密制御]を得ていないとダメ
+SIF (FLAG:75 & 512) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 16) && TEQUIP:Ａ系装着器具 == 2
+	RETURN 0
+;卵が邪魔で小腸まで到達できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 523) == 0
+	RETURN 0
+RETURN 4
+
+;--------------------------------------------------
+;触手貫通実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE524
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:524 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;一度も触手貫通をしたことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:24 & 32) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;触手が[遠隔精密制御]を得ていないとダメ
+SIF (FLAG:75 & 512) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 23
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 16) && TEQUIP:Ａ系装着器具 == 3
+	RETURN 0
+;ボールギャグ装着中、触手口辱中はダメ
+SIF TEQUIP:口装着器具
+	RETURN 0
+;触手強制回復中(口内)はダメ
+SIF TEQUIP:触手強制回復 == 1
+	RETURN 0
+;卵が邪魔で触手貫通できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;触手催眠中は不可
+SIF TEQUIP:触手催眠
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 524) == 0
+	RETURN 0
+RETURN 8
+
+;--------------------------------------------------
+;触手搾乳実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE525
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:525 > 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;他のＢ系触手責め中は不可
+SIF TEQUIP:Ｂ系装着器具 && TEQUIP:Ｂ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 4) && TEQUIP:Ｂ系装着器具 == 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 525) == 0
+	RETURN 0
+RETURN 2
+
+;--------------------------------------------------
+;触手乳腺挿入実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE526
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:526 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;一度も触手乳腺挿入をしたことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:24 & 2) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[極細触手]を得ていないとダメ
+SIF (FLAG:75 & 16) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;他のＢ系触手責め中は不可
+SIF TEQUIP:Ｂ系装着器具 && TEQUIP:Ｂ系装着器具 != 23
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 4) && TEQUIP:Ｂ系装着器具 == 3
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 526) == 0
+	RETURN 0
+RETURN 4
+
+;--------------------------------------------------
+;触手カテーテル実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE527
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:527 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;触手が[抗菌触手]を得ていないとダメ
+SIF (FLAG:75 & 64) == 0
+	RETURN 0
+;他の触手尿道責め中はダメ
+SIF TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 21
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 32) && TEQUIP:Ｕ系装着器具 == 1
+	RETURN 0
+;[オトコ]の場合、コンドーム装着中はダメ
+SIF TALENT:オトコ && TEQUIP:コンドーム
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 527) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;触手採尿実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE528
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:528 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[抗菌触手]を得ていないとダメ
+SIF (FLAG:75 & 64) == 0
+	RETURN 0
+;他の触手尿道責め中はダメ
+SIF TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 32) && TEQUIP:Ｕ系装着器具 == 2
+	RETURN 0
+;[オトコ]の場合、コンドーム装着中はダメ
+SIF TALENT:オトコ && TEQUIP:コンドーム
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 528) == 0
+	RETURN 0
+RETURN 2
+
+;--------------------------------------------------
+;触手愛液採集実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE535
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:535 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;Ｖ系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;対象のＶ拡張経験が0のとき異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ｖ拡張経験 == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;処女だとダメ
+SIF TALENT:処女 == 1
+	RETURN 0
+;Ｖ調律経験が10未満だとダメ
+SIF EXP:Ｖ調律経験 < 10
+	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;他のＶ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 && TEQUIP:Ｖ系装着器具 != 27
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 8) && TEQUIP:Ｖ系装着器具 == 7
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 535) == 0
+	RETURN 0
+RETURN 8
+
+;--------------------------------------------------
+;触手膣内洗浄実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE541(ARG)
+#DIM START_WASH_RAND
+START_WASH_RAND = ARG
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:541 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;触手が[特殊ホルモン分泌]を得ていないとダメ
+SIF (FLAG:75 & 1024) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;妊娠中はダメ
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;触手挿入中じゃないとダメ
+SIF TEQUIP:Ｖ系装着器具 == 0
+	RETURN 0
+;触手が邪魔で膣内洗浄できない
+SIF TEQUIP:Ｖ系装着器具 == 23
+	RETURN 0
+;それ以外の触手挿入系は設定していないので排除
+SIF TEQUIP:Ｖ系装着器具 >= 4 && TEQUIP:Ｖ系装着器具 != 21 && TEQUIP:Ｖ系装着器具 !=22
+	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;卵が邪魔で膣内洗浄できない
+SIF TEQUIP:触手膣内産卵
+	RETURN 0
+;上で決めた確率でかつ愛液以外の汚れがある場合実行
+SELECTCASE RAND:(START_WASH_RAND)
+CASE 0
+	IF GROUPMATCH(STAIN:ヴァギナ, 1p1, 1p2, 1p3, 1p4, 1p5, 1p6, 1p7)	
+	ELSE
+		RETURN 0
+	ENDIF
+CASEELSE
+	RETURN 0
+ENDSELECT
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 541) == 0
+	RETURN 0
+RETURN 16
+
+;--------------------------------------------------
+;触手腸内洗浄実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE542(ARG)
+#DIM START_WASH_RAND
+START_WASH_RAND = ARG
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:542 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;触手が[特殊ホルモン分泌]を得ていないとダメ
+SIF (FLAG:75 & 1024) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;アナル触手中じゃないとダメ
+SIF TEQUIP:Ａ系装着器具 == 0
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 > 2 && TEQUIP:Ａ系装着器具 != 21 && TEQUIP:Ａ系装着器具 != 22
+	RETURN 0
+;卵が邪魔で腸内洗浄できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;上で決めた確率でかつアナル汚れ以外がある場合実行
+SELECTCASE RAND:(START_WASH_RAND)
+CASE 0
+	IF GROUPMATCH(STAIN:アナル, 1p0, 1p1, 1p2, 1p4, 1p5, 1p6, 1p7)	
+	ELSE
+		RETURN 0
+	ENDIF
+CASEELSE
+	RETURN 0
+ENDSELECT
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 542) == 0
+	RETURN 0
+RETURN 16
+
+;--------------------------------------------------
+;触手膀胱洗浄実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE543(ARG)
+#DIM START_WASH_RAND
+START_WASH_RAND = ARG
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:543 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[特殊ホルモン分泌]を得ていないとダメ
+SIF (FLAG:75 & 1024) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;触手カテーテル中じゃないとダメ
+SIF TEQUIP:Ｕ系装着器具 != 1 && TEQUIP:Ｕ系装着器具 != 21
+	RETURN 0
+;上で決めた確率で実行
+SELECTCASE RAND:(START_WASH_RAND)
+CASE 0
+CASEELSE
+	RETURN 0
+ENDSELECT
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 543) == 0
+	RETURN 0
+RETURN 8
+
+;--------------------------------------------------
+;触手催眠実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE550
+;シチュエーションとか思いつかないのでとりあえずダメ
+RETURN 0
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:550 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;一度も触手催眠を実行したことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:24 & 8) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;触手が[催眠触手]を得ていないとダメ
+SIF (FLAG:75 & 8) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 550) == 0
+	RETURN 0
+RETURN 1p2
+
+;--------------------------------------------------
+;触手針責め実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE552
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:552 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手が[針状触手]を得ていないとダメ
+SIF (FLAG:75 & 2) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 552) == 0
+	RETURN 0
+RETURN 1p3
+
+;--------------------------------------------------
+;触手放電実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE553
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:553 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手が[放電触手]を得ていないとダメ
+SIF (FLAG:75 & 4) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 553) == 0
+	RETURN 0
+RETURN 1p4
+
+;--------------------------------------------------
+;触手吸血実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE554
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:554 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;吸血経験が0の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:吸血経験 == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手が[吸血触手]を得ていないとダメ
+SIF (FLAG:75 & 65536) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;すでに実行しているとダメ
+SIF TFLAG:140 & 64
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;媚薬効果発揮中はダメ
+SIF TEQUIP:媚薬
+	RETURN 0
+;利尿剤効果発揮中はダメ
+SIF TEQUIP:利尿剤
+	RETURN 0
+;賢者の血効果発揮中はダメ
+SIF TEQUIP:賢者の血
+	RETURN 0
+;睡眠薬効果発揮中はダメ
+SIF EQUIP:睡眠薬
+	RETURN 0
+;排卵誘発剤効果発揮中はダメ
+SIF TEQUIP:排卵誘発剤
+	RETURN 0
+;緊急避妊薬効果発揮中はダメ
+SIF TEQUIP:緊急避妊薬
+	RETURN 0
+;鈴蘭の毒効果発揮中はダメ
+SIF TEQUIP:鈴蘭の毒
+	RETURN 0
+;昆虫採集セットの薬効果発揮中はダメ
+SIF TEQUIP:昆虫採集セットの薬
+	RETURN 0
+;触手強制回復効果発揮中はダメ
+SIF TEQUIP:触手強制回復
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 554) == 0
+	RETURN 0
+RETURN 1p5
+
+;--------------------------------------------------
+;触手チキチキ実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE556
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:556 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;触手が[放電触手]を得ていないとダメ
+SIF (FLAG:75 & 4) == 0
+	RETURN 0
+;触手が[極細触手]を得ていないとダメ
+SIF (FLAG:75 & 16) == 0
+	RETURN 0
+;触手が[遠隔精密制御]を得ていないとダメ
+SIF (FLAG:75 & 512) == 0
+	RETURN 0
+;機械でないとダメ
+SIF TALENT:機械 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 556) == 0
+	RETURN 0
+RETURN 1p6
+
+;--------------------------------------------------
+;触手強制回復実行判定
+;--------------------------------------------------
+@TENTACLE_COM_ABLE560
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:560 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;調教者は触手使役LV5以上必要
+SIF ABL:PLAYER:触手使役 < 5
+	RETURN 0
+;触手が[養分注入触手]を得ていないとダメ
+SIF (FLAG:75 & 32) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:触手強制回復
+	RETURN 1
+;調教者の気力または体力が1000以下だとダメ
+SIF BASE:PLAYER:体力 < 1000 || BASE:PLAYER:気力 < 1000
+	RETURN 0
+;奴隷の体力が最大だとダメ
+SIF BASE:体力 >= MAXBASE:0
+	RETURN 0
+;技巧が4以上ないとダメ
+SIF ABL:PLAYER:技巧 < 4
+	RETURN 0
+;ボールギャグ使用中及び触手貫通中は触手が[針状触手]を持っていないとダメ
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) || TEQUIP:口装着器具
+	SIF (FLAG:75 & 2) == 0
+		RETURN 0
+ENDIF
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !(TEQUIP:触手服 & 64) && TEQUIP:触手強制回復
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 560) == 0
+	RETURN 0
+RETURN 1p7

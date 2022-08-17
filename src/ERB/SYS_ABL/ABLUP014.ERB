@@ -1,0 +1,180 @@
+﻿;=============================================================================
+;露出癖
+;=============================================================================
+@ABLUP14
+DRAWLINE
+SIF ABL:露出癖 >= 5
+	JUMP ABLUP_MAX
+
+;露出癖を3以上に上げるなら恥辱刻印が必要
+SIF COST14(2)
+	PRINTFORM %MARKNAME:4%{COST14(2)}LV以上、かつ
+;ＬＶ3から4、4から5に上げるときは異常経験必要（素質：[目立ちたがり]なら無視できる）
+SIF COST14(3)
+	PRINTFORM %EXPNAME:50%{COST14(3)}以上、かつ
+;絶頂経験、または調教自慰経験が必要
+PRINTFORML \@(ABL:露出癖 < 2) ? %EXPNAME:2% # %EXPNAME:11%\@1以上、かつ
+
+PRINTFORM [0] - %PALAMNAME:15%の珠×{COST14(0)}
+SIF COST14(1) > 0
+	PRINTFORM 、%EXPNAME:14%{COST14(1)}以上
+PRINT ……
+CALL SHOW_ISABLUP_COMMON, CAN14(0)
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && CAN14(0) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:恥情 -= COST14(0)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:露出癖 += 1
+PRINTFORMW %ABLNAME:14%のレベルが{ABL:露出癖}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP14
+SIF ABL:露出癖 >= 5
+	RETURN 0
+
+CALLF CALC_COST14, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP14("CHECK")
+
+@COST14(ARG)
+#FUNCTION
+RETURNF CALC_COST14("GET", ARG)
+
+@CALC_COST14(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:露出癖 == 0
+	LOCAL:0 = 100
+	LOCAL:1 = 0
+ELSEIF ABL:露出癖 == 1
+	LOCAL:0 = 1000
+	LOCAL:1 = 1
+ELSEIF ABL:露出癖 == 2
+	LOCAL:0 = 5000
+	LOCAL:1 = 5
+ELSEIF ABL:露出癖 == 3
+	LOCAL:0 = 15000
+	LOCAL:1 = 20
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 1.50
+	ENDIF
+ELSEIF ABL:露出癖 == 4
+	LOCAL:0 = 35000
+	LOCAL:1 = 100
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 3.00
+		TIMES LOCAL:1 , 2.50
+	ENDIF
+ENDIF
+
+;目立ちたがり
+IF TALENT:目立ちたがり
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.80
+ENDIF
+;マゾ
+IF TALENT:マゾ
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+ENDIF
+
+;欲望が高いと軽減
+IF ABL:欲望 >= 5
+	TIMES LOCAL:0 , 0.70
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:欲望 == 4
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:欲望 == 3
+	TIMES LOCAL:0 , 0.85
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:欲望 == 2
+	TIMES LOCAL:0 , 0.90
+ELSEIF ABL:欲望 == 1
+	TIMES LOCAL:0 , 0.95
+ENDIF
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 2
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+;露出癖を3以上に上げるなら恥辱刻印が必要
+SIF ABL:露出癖 > 1
+	LOCAL:2 = ABL:露出癖 - 1
+
+;ＬＶ3から4、4から5に上げるときは異常経験必要（素質：[目立ちたがり]なら無視できる）
+SIF ABL:露出癖 >= 3 && TALENT:目立ちたがり == 0
+	LOCAL:3 = ABL:露出癖 - 2
+
+RETURNF 0
+
+@CAN14(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP14("GET", ARG)
+
+@CAN_ABLUP14(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;露出癖を3以上に上げるなら恥辱刻印が必要
+IF ABL:露出癖 > 1
+	;恥辱刻印が不足
+	SIF MARK:恥辱刻印 < COST14(2)
+		LOCAL:0 |= 8
+ENDIF
+
+;異常経験が必要な場合
+SIF EXP:異常経験 < COST14(3)
+	LOCAL:0 |= 2
+
+;恥情の珠で上げる
+SIF JUEL:恥情 < COST14(0)
+	LOCAL:0 |= 1
+
+;露出快楽経験が必要な場合
+SIF EXP:露出快楽経験 < COST14(1)
+	LOCAL:0 |= 2
+IF ABL:露出癖 < 2
+	;絶頂経験が必要
+	SIF EXP:絶頂経験 == 0
+		LOCAL:0 |= 2
+ELSE
+	;調教自慰経験が必要
+	SIF EXP:調教自慰経験 == 0
+		LOCAL:0 |= 2
+ENDIF
+
+RETURNF (LOCAL:0 == 0)

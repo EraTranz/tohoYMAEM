@@ -1,0 +1,1055 @@
+﻿;=============================================================================
+;アイテム関連の処理
+;=============================================================================
+;--------------------------------------------------
+;アイテム購入処理
+;--------------------------------------------------
+@TOOL_BUY_MAIN
+;売られているアイテムを確認
+CALL SALEITEM_CHECK
+LOCAL = FLAG:575 / 10000
+SIF FLAG:575 > 0 && LOCAL <= 0
+	LOCAL = 1
+LOCAL *= 10000
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORML 調教道具を購入できます。何を買いますか？(残り{MONEY}圓)
+DRAWLINE
+;売り物表示
+REPEAT 100
+	;購入費用が足りないアイテムを非表示にしたい場合は右のカッコ内の構文を直下の行の右端に追加してください。「 && ITEMPRICE:COUNT <= MONEY」
+	IF ITEMPRICE:COUNT > 0
+		IF ITEMSALES:COUNT == 1
+			CALL PRINT_NEW_SHOPITEM, COUNT
+		ELSEIF ITEMSALES:COUNT == 2
+			CALL PRINT_NEW_SHOPITEM_2, COUNT
+		ENDIF
+	ENDIF
+REND
+IF LINEISEMPTY()
+	PRINTL 買えるものがありません
+ELSE
+	PRINTL 
+ENDIF
+DRAWLINE
+PRINTLC [100] 戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	VARSET ITEMSALES, 0
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100 || ITEMSALES:RESULT == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF ITEMSALES:RESULT == 2 && MONEY < ITEMPRICE:RESULT + LOCAL
+	CLEARLINE 1
+	REUSELASTLINE 所持金が足りません
+	GOTO INPUT_LOOP
+ELSEIF MONEY < ITEMPRICE:RESULT
+	CLEARLINE 1
+	REUSELASTLINE 所持金が足りません
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+;消耗品
+IF LOCAL >= 60 && LOCAL < 90
+	CALL BUY_PLURAL, LOCAL
+;単体エンド等
+ELSEIF LOCAL >= 95 && LOCAL < 100
+	CALL USE_ITEM, LOCAL
+ELSE
+	PRINTFORMW ＜%ITEMNAME:LOCAL%を購入しました＞
+	MONEY -= ITEMPRICE:LOCAL
+	ITEM:LOCAL = 1
+	;娼館を開設する場合
+	SIF LOCAL == 90
+		CALL BROTHEL_OPEN
+	CALL MESSAGE_ITEM_BUY
+ENDIF
+;単体エンドアイテムはSHOPメニューに戻るように
+IF LOCAL == 98 || LOCAL == 99
+	VARSET ITEMSALES, 0
+	RETURN 0
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+RESTART
+
+;--------------------------------------------------
+;売り物表示
+;--------------------------------------------------
+@PRINT_NEW_SHOPITEM, ARG
+PRINTFORMLC [{ARG, 2}] %ITEMNAME:ARG%(%SHOW_YEN(ITEMPRICE:ARG)%)
+
+;--------------------------------------------------
+;売り物表示
+;--------------------------------------------------
+@PRINT_NEW_SHOPITEM_2, ARG
+LOCAL = FLAG:575 / 10000
+SIF FLAG:575 > 0 && LOCAL <= 0
+	LOCAL = 1
+LOCAL *= 10000
+PRINTFORMLC [{ARG, 2}] %ITEMNAME:ARG%(%SHOW_YEN(ITEMPRICE:ARG + LOCAL)%)
+
+;--------------------------------------------------
+;アイテム出現条件
+;--------------------------------------------------
+@SALEITEM_CHECK
+;アイテム・奴隷陳列フラグの削除
+VARSET ITEMSALES, 0
+
+;拡張コマンド用アイテム
+FOR LOCAL, 0, 60
+	ITEMSALES:LOCAL = 1
+	;未実装アイテム
+	IF ITEMPRICE:LOCAL == 0
+		ITEMSALES:LOCAL = 0
+	;封印アイテム・コマンド
+	ELSEIF GROUPMATCH(LOCAL, 1, 6, 15, 20, 21, 37, 41, 43, 44, 46, 48, 50, 53, 75) && (FLAG:13 & 2) == 0
+		ITEMSALES:LOCAL = 0
+	;Ｖ系拡張コマンド
+	ELSEIF (LOCAL >= 4 && LOCAL <= 8) && (FLAG:15 & 2) == 0
+		ITEMSALES:LOCAL = 0
+	;Ａ系拡張コマンド
+	ELSEIF (LOCAL == 4 || LOCAL >= 10 && LOCAL <= 14) && (FLAG:15 & 4) == 0
+		ITEMSALES:LOCAL = 0
+	;Ｃ系拡張コマンド
+	ELSEIF ((LOCAL >= 17 && LOCAL <= 19) || (LOCAL >= 25 && LOCAL <= 28)) && (FLAG:15 & 1) == 0
+		ITEMSALES:LOCAL = 0
+	;Ｂ系拡張コマンド
+	ELSEIF (LOCAL >= 21 && LOCAL <= 24) && (FLAG:15 & 8) == 0
+		ITEMSALES:LOCAL = 0
+	;羞恥プレイ系拡張コマンド
+	ELSEIF (LOCAL == 40 || (LOCAL >= 43 && LOCAL <= 47) || LOCAL == 49) && (FLAG:15 & 512) == 0
+		ITEMSALES:LOCAL = 0
+	;撮影系拡張コマンド
+	ELSEIF LOCAL == 51 && (FLAG:15 & 128) == 0
+		ITEMSALES:LOCAL = 0
+	;注射系拡張コマンド
+	ELSEIF LOCAL == 53 && (FLAG:15 & 64) == 0
+		ITEMSALES:LOCAL = 0
+	ENDIF
+	;既に購入済みのアイテムは販売されない
+	SIF ITEM:LOCAL > 0
+		ITEMSALES:LOCAL = 0
+NEXT
+
+;強力アイテム販売設定
+SIF FLAG:3 >= 3 && TALENT:MASTER:998 == 0 && FLAG:13 & 2
+	CALL SALEITEM_CHECK_EX
+
+;スタンガンは失神モード無効ならここで弾く
+SIF (FLAG:16 & 2) == 0
+	ITEMSALES:37 = 0
+
+;編集機材(ビデオカメラがあり、編集機材が未購入で、撮影コマンド拡張が有効な場合には店頭に並ぶ)
+ITEMSALES:58 = 0
+SIF ITEM:ビデオカメラ && ITEM:編集機材 == 0 && FLAG:15 & 128
+	ITEMSALES:58 = 1
+
+;進化の秘法(進化の秘法未購入で、主人が禁断の知識と触手使役術を持っており、紳士的な触手系コマンドが有効の場合は店頭に並ぶ)
+ITEMSALES:59 = 0
+SIF TALENT:MASTER:禁断の知識 && TALENT:MASTER:触手使役術 && ITEM:進化の秘法 == 0 && FLAG:15 & 4096
+	ITEMSALES:59 = 1
+
+;ローション、媚薬、ビデオテープはとりあえず99個まで
+FOR LOCAL, 60, 90
+	ITEMSALES:LOCAL = 1
+	;未実装アイテム
+	IF ITEMPRICE:LOCAL == 0
+		ITEMSALES:LOCAL = 0
+	;特殊な薬系(特殊な薬が無効なら販売されない)
+	ELSEIF LOCAL >= 62 && LOCAL < 75 && (FLAG:13 & 1) == 0
+		ITEMSALES:LOCAL = 0
+	;ビデオテープ(既にビデオカメラを購入してないと販売されない)
+	ELSEIF LOCAL == 75 && ITEM:ビデオカメラ == 0
+		ITEMSALES:LOCAL = 0
+	;フィルム(既にカメラを購入していないと販売されないし、撮影コマンド拡張を無効にしていても販売されない)
+	ELSEIF LOCAL == 76 && (ITEM:カメラ == 0 || (FLAG:15 & 128) == 0)
+		ITEMSALES:LOCAL = 0
+	;コンドーム(調教者奉仕・ウフフ系拡張コマンド無効なら販売されない)
+	ELSEIF LOCAL == 78 && (FLAG:15 & 2048) == 0
+		ITEMSALES:LOCAL = 0
+	;綿棒(Ｃ系拡張コマンドとＡ系拡張コマンドがいずれも無効なら販売されない)
+	ELSEIF LOCAL == 79 && (FLAG:15 & 1) == 0 && (FLAG:15 & 4) == 0
+		ITEMSALES:LOCAL = 0
+	;蓋付き瓶(展示室が無効なら販売されない)
+	ELSEIF LOCAL == 81 && (FLAG:12 & 8) == 0
+		ITEMSALES:LOCAL = 0
+	;ヲトナのオムツ(羞恥プレイ系拡張コマンド無効なら販売されない)
+	ELSEIF LOCAL == 82 && (FLAG:15 & 512) == 0
+		ITEMSALES:LOCAL = 0
+	;フリスク(Ａ系拡張コマンド無効だと販売されない)
+	ELSEIF LOCAL == 83 && (FLAG:15 & 4) == 0
+		ITEMSALES:LOCAL = 0
+	ENDIF
+	;既に99個持っているアイテムは販売されない
+	SIF ITEM:LOCAL >= 99
+		ITEMSALES:LOCAL = 0
+NEXT
+
+;娼館(娼館未購入で、娼館機能が有効な場合には店頭に並ぶ)
+ITEMSALES:90 = 0
+SIF ITEM:娼館 == 0 && FLAG:17 & 1
+	ITEMSALES:90 = 1
+
+;空晶石の首輪
+ITEMSALES:95 = 0
+IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:赤い首輪 == 0 && FLAG:15 & 16
+	;デバッグモードのときは動作チェック用に販売
+	ITEMSALES:95 = 2
+;大甲斐性必須・赤い首輪を所持していないも条件
+ELSEIF TALENT:MASTER:大甲斐性 && CHARANUM > 1 && ITEM:赤い首輪 == 0 && FLAG:15 & 16
+	;通常の隷属イベント用
+	REPEAT CHARANUM
+		SIF SALE_ITEM_95(COUNT)
+			ITEMSALES:95 = 2
+	REND
+ENDIF
+
+;青珊瑚の指輪
+ITEMSALES:96 = 0
+IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:エンゲージリング == 0 && FLAG:15 & 2048
+	;デバッグモードのときは動作チェック用に販売
+	ITEMSALES:96 = 2
+;大甲斐性必須
+ELSEIF TALENT:MASTER:大甲斐性 && CHARANUM > 1 && ITEM:エンゲージリング == 0 && FLAG:15 & 2048
+	;通常の相愛イベント用
+	REPEAT CHARANUM
+		SIF SALE_ITEM_96(COUNT)
+			ITEMSALES:96 = 2
+	REND
+ENDIF
+
+;隷属の証
+ITEMSALES:97 = 0
+IF TALENT:MASTER:998 && CHARANUM > 1
+	;デバッグモードのときは動作チェック用に販売
+	ITEMSALES:97 = 2
+ELSEIF CHARANUM > 1
+	;通常の烙印イベント用
+	REPEAT CHARANUM
+		SIF SALE_ITEM_97(COUNT)
+			ITEMSALES:97 = 2
+	REND
+ENDIF
+
+;赤い首輪（奴隷エンド条件はここで処理）
+ITEMSALES:98 = 0
+;渡したい相手が調教対象であり、ゲームモードがeratohoYMかABNORMALかREVERSALでまだエンディングを迎えておらず、エンゲージリングと赤い首輪を未所持であること
+IF TARGET >= 0 && (FLAG:4 < 2 || FLAG:4 == 3) && FLAG:5 == 0 && ITEM:赤い首輪 == 0 && ITEM:エンゲージリング == 0
+	IF TALENT:MASTER:998
+		;デバッグモードのときは動作チェック用に販売
+		ITEMSALES:98 = 2
+	;恋慕か服従か壊造人格のいずれかを持ち、淫乱であり、烙印、隷属、精神崩壊、傀儡がなく、屈服刻印が3で反発刻印が0、従順＋欲望＋奉仕精神Lvの合計が15以上で、技巧＋マゾっ気＋精液中毒Lvの合計が13以上で、Ｖ経験＋Ａ経験の合計が200以上で調教自慰経験とフェラ経験がいずれも150以上で、好感度が2500以上。
+	ELSEIF (TALENT:恋慕 || TALENT:服従 || TALENT:壊造人格) && TALENT:淫乱 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && MARK:屈服刻印 >= 3 && MARK:反発刻印 == 0 && (ABL:従順+ABL:欲望+ABL:奉仕精神 >= 15) && (ABL:技巧+ABL:マゾっ気+ABL:精液中毒 >= 13) && (EXP:Ｖ経験+EXP:Ａ経験 >= 200) && EXP:調教自慰経験 >= 150 && EXP:フェラ経験 >= 150 && CFLAG:好感度 >= 2500
+		;通常の奴隷エンド用
+		;主人が大甲斐性を持ち、この周回が５周目以降であり対象が引き継ぎキャラであるor主人が男の場合には対象のレズ経験が500未満であること。主人が女の場合には対象のＢＬ経験が500未満であること。
+		SIF (TALENT:MASTER:オトコ && EXP:レズ経験 < 500) || (TALENT:MASTER:オトコ == 0 && EXP:ＢＬ経験 < 500) || (TALENT:MASTER:大甲斐性 && FLAG:6 >= 5 && CFLAG:18)
+			ITEMSALES:98 = 2
+	ENDIF
+ENDIF
+
+;エンゲージリング（単体エンド条件はここで処理）
+ITEMSALES:99 = 0
+;渡したい相手が調教対象であり、助手がおらず、ゲームモードがeratohoYMかABNORMALかREVERSALでまだエンディングを迎えておらず、エンゲージリングと赤い首輪と青珊瑚の指輪を未所持であること。
+IF ASSI < 0 && TARGET >= 0 && (FLAG:4 < 2 || FLAG:4 == 3) && FLAG:5 == 0 && ITEM:青珊瑚の指輪 == 0 && ITEM:赤い首輪 == 0 && ITEM:エンゲージリング == 0
+	RESULT = 0
+	;口上呼び出し。口上側で単体エンディングが設定されておればその帰り値によってはエンゲージリングが購入可能になる。
+	TRYCALLFORM EX_ENDING_{NO:TARGET}
+	IF TALENT:MASTER:998
+		;デバッグモードのときは動作チェック用に販売
+		ITEMSALES:99 = 2
+	;大甲斐性がない場合には主人と対象キャラの２人きりであること（失踪中や幽閉中であっても他のキャラがいてはだめ）
+	ELSEIF CHARANUM == 2 && TALENT:MASTER:大甲斐性 == 0
+		;通常の単体エンド用
+		;恋慕があり、相愛、烙印、隷属、使い魔、精神崩壊、傀儡、壊造人格のいずれもなく、薬物刻印と恐怖刻印と反発刻印が0で、対象の従順＋欲望＋技巧＋奉仕精神Lvの合計が17以上で、好感度が3000以上あり、同一周回中に陥落させた奴隷が一人だけである
+		IF TALENT:恋慕 && TALENT:相愛 == 0 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:使い魔 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0 && MARK:反発刻印 == 0 && (ABL:従順+ABL:欲望+ABL:技巧+ABL:奉仕精神 >= 17) && CFLAG:MASTER:98 == 1 && CFLAG:好感度 >= 3000
+			;主人が男の場合には対象のレズ経験が500未満であること。主人が女の場合には対象のＢＬ経験が500未満であること。
+			SIF (TALENT:MASTER:オトコ && EXP:レズ経験 < 500) || (TALENT:MASTER:オトコ == 0 && EXP:ＢＬ経験 < 500)
+				ITEMSALES:99 = 2
+		ENDIF
+	ELSEIF TALENT:MASTER:大甲斐性
+		;主人が[大甲斐性]を持っていた場合、条件次第でエンゲージリングが購入可能に
+		;恋慕があり、相愛、烙印、隷属、使い魔、精神崩壊、傀儡、壊造人格のいずれもなく、薬物刻印と恐怖刻印と反発刻印が0で、対象の従順＋欲望＋技巧＋奉仕精神Lvの合計が17以上で、好感度が3500以上ある
+		IF TALENT:恋慕 && TALENT:相愛 == 0 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:使い魔 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0 && MARK:反発刻印 == 0 && (ABL:従順+ABL:欲望+ABL:技巧+ABL:奉仕精神 >= 17) && CFLAG:好感度 >= 3500
+			;この周回が５周目以降であり対象が引き継ぎキャラであるor主人が男の場合には対象のレズ経験が500未満であること。主人が女の場合には対象のＢＬ経験が500未満であること。
+			SIF (TALENT:MASTER:オトコ && EXP:レズ経験 < 500) || (TALENT:MASTER:オトコ == 0 && EXP:ＢＬ経験 < 500) || (FLAG:6 >= 5 && CFLAG:18)
+				ITEMSALES:99 = 2
+		ENDIF
+	ELSEIF RESULT
+		;特殊単体エンド条件が存在し、それを満たす場合購入可能に
+		ITEMSALES:99 = 2
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;強力アイテム出現条件
+;--------------------------------------------------
+;アイテム発売解禁の個別設定私案より頂きました。一文字変数Iの代わりにLOCALを使用
+;以下各種道具販売解禁のための条件
+;電気按摩：存在している奴隷の内誰かが「淫乱」を持っている
+;愛液採集器:存在している奴隷の内誰かが「淫壷」を持っている
+;クリキャップ：存在している奴隷の内誰かが「淫核／淫茎」を持っている
+;ニプルキャップ：存在している奴隷の内誰かが「淫乳」を持っている
+;搾乳器：存在している奴隷の内誰かが「母乳体質」を持っている
+;スタンガン：主人調教師Lv1以上
+;首輪＋リード：存在している奴隷の内誰かが「服従」を持っている
+;エプロン：存在している奴隷の内誰かが「恋慕」を持っている
+;聴診器・注射セット：存在している奴隷の内誰かが「治療」を持っている
+;ビデオカメラ・ビデオテープ：主人撮影技能Lv1以上
+;特注日傘:助手可能な奴隷の中に美鈴・咲夜のいずれかがいるか主人が美鈴・咲夜のいずれかである。
+;たらい＋台車：存在している奴隷の内誰かが「人魚」を持っている
+@SALEITEM_CHECK_EX
+LOCAL = 0
+;電気按摩
+ITEMSALES:1 = 0
+;愛液採集器
+ITEMSALES:6 = 0
+;クリキャップ
+ITEMSALES:15 = 0
+;ニプルキャップ
+ITEMSALES:20 = 0
+;搾乳器
+ITEMSALES:21 = 0
+;スタンガン
+ITEMSALES:37 = 0
+;首輪＋リード
+ITEMSALES:41 = 0
+;エプロン
+ITEMSALES:44 = 0
+;聴診器・注射セット
+ITEMSALES:46 = 0
+ITEMSALES:53 = 0
+;ビデオカメラ・ビデオテープ
+ITEMSALES:50 = 0
+ITEMSALES:75 = 0
+;特注日傘
+ITEMSALES:48 = 0
+;たらい＋台車
+ITEMSALES:54 = 0
+
+REPEAT CHARANUM
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;美鈴・咲夜のいずれかが主人または助手可能な奴隷にいる
+	SIF (NO:COUNT == 1006 || NO:COUNT == 1009) && (COUNT == MASTER || CFLAG:COUNT:1 == 2)
+		LOCAL |= 256
+	;人魚
+	SIF TALENT:COUNT:人魚
+		LOCAL |= 1024
+	;MASTERは除外
+	SIF COUNT == 0
+		CONTINUE
+	;淫乱
+	SIF TALENT:COUNT:淫乱
+		LOCAL |= 1
+	;淫核／淫茎
+	SIF TALENT:COUNT:淫核／淫茎
+		LOCAL |= 2
+	;淫乳
+	SIF TALENT:COUNT:淫乳
+		LOCAL |= 4
+	;母乳体質
+	SIF TALENT:COUNT:母乳体質
+		LOCAL |= 8
+	;服従
+	SIF TALENT:COUNT:服従
+		LOCAL |= 16
+	;妄信
+	SIF TALENT:COUNT:妄信
+		LOCAL |= 32
+	;恋慕
+	SIF TALENT:COUNT:恋慕
+		LOCAL |= 64
+	;治療
+	SIF TALENT:COUNT:治療
+		LOCAL |= 128
+	;淫壷
+	SIF TALENT:COUNT:淫壷
+		LOCAL |= 512
+REND
+
+SIF LOCAL & 1 && ITEM:電気按摩 == 0
+	ITEMSALES:1 = 1
+SIF LOCAL & 2 && ITEM:クリキャップ == 0
+	ITEMSALES:15 = 1
+SIF LOCAL & 4 && ITEM:ニプルキャップ == 0
+	ITEMSALES:20 = 1
+SIF LOCAL & 8 && ITEM:搾乳器 == 0
+	ITEMSALES:21 = 1
+SIF LOCAL & 16 && ITEM:首輪＋リード == 0
+	ITEMSALES:41 = 1
+SIF LOCAL & 64 && ITEM:エプロン == 0
+	ITEMSALES:44 = 1
+IF LOCAL & 128
+	SIF ITEM:聴診器 == 0
+		ITEMSALES:46 = 1
+	SIF FLAG:15 & 64 && ITEM:注射セット == 0
+		ITEMSALES:53 = 1
+ENDIF
+SIF LOCAL & 256 && ITEM:特注日傘 == 0
+	ITEMSALES:48 = 1
+SIF LOCAL & 1024 && ITEM:たらい＋台車 == 0
+	ITEMSALES:54 = 1
+IF ABL:MASTER:撮影技能 >= 1
+	SIF ITEM:ビデオカメラ == 0
+		ITEMSALES:50 = 1
+	SIF ITEM:ビデオカメラ && ITEM:ビデオテープ < 99
+		ITEMSALES:75 = 1
+ENDIF
+SIF LOCAL & 512 && ITEM:愛液採集器 == 0
+	ITEMSALES:6 = 1
+;スタンガン（失神パッチ無効時は別所で弾く）
+SIF ABL:MASTER:調教師Lv >= 1 && ITEM:スタンガン == 0
+	ITEMSALES:37 = 1
+
+;--------------------------------------------------
+;複数個所持可能なアイテム購入処理
+;--------------------------------------------------
+;複数個所持可能なアイテムについて、同時購入個数を選択
+;LOCALは購入可能個数を示す
+@BUY_PLURAL, ARG
+LOCAL = MIN(MONEY / ITEMPRICE:ARG, MAX(99-ITEM:ARG, 0))
+DRAWLINE
+PRINTFORML %ITEMNAME:ARG%をいくつ買いますか？(残り{MONEY}圓)
+PRINTFORML {LOCAL}個まで購入できます(現在{ITEM:ARG}個所持)
+PRINTLC [0] やめる
+PRINTLC [1] 1個
+SIF LOCAL >= 5
+	PRINTLC [5] 5個
+SIF LOCAL >= 10
+	PRINTLC [10] 10個
+SIF LOCAL != 1 && LOCAL != 5 && LOCAL != 10
+	PRINTFORMLC [{LOCAL}] 買えるだけ
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	RETURN 0
+ELSEIF RESULT < 0
+	CLEARLINE 1
+	REUSELASTLINE  
+	GOTO INPUT_LOOP
+ELSEIF ITEMPRICE:ARG * RESULT > MONEY
+	CLEARLINE 1
+	REUSELASTLINE お金が足りません
+	GOTO INPUT_LOOP
+ELSEIF RESULT > LOCAL
+	ライン数:2 = LINECOUNT
+	PRINTL そんなに持てませんが、持てるまで買いますか？
+	PRINTLC [0] はい
+	PRINTLC [1] いいえ
+	INPUT
+	IF RESULT == 0
+		RESULT = LOCAL
+	ELSEIF RESULT != 0
+		RETURN 0
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 
+	ENDIF
+ELSEIF RESULT > LOCAL
+	CLEARLINE 1
+	REUSELASTLINE そんなに持てません
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORMW ＜%ITEMNAME:ARG%を{RESULT}個購入しました＞
+ITEM:ARG += RESULT
+MONEY -= ITEMPRICE:ARG * RESULT
+CALL MESSAGE_ITEM_BUY
+
+
+;--------------------------------------------------
+;アイテム購入に対するキャラ口上
+;--------------------------------------------------
+@MESSAGE_ITEM_BUY
+;アイテムを購入したことに対する助手の口上
+TFLAG:99 = 0
+SIF ASSI > 0
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ASSI, 35, 0
+;アイテムを購入したことに対する奴隷の口上
+SIF TARGET > 0 && TFLAG:99 == 0
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 36
+
+;--------------------------------------------------
+;アイテム使用処理
+;--------------------------------------------------
+@USE_ITEM, ARG
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;失踪中のキャラは排除
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;空晶石の首輪
+	IF ARG == 95
+		IF SALE_ITEM_95(COUNT)
+			PRINT 
+		ELSE
+			CONTINUE
+		ENDIF
+	;青珊瑚の指輪
+	ELSEIF ARG == 96
+		IF SALE_ITEM_96(COUNT)
+			PRINT 
+		ELSE
+			CONTINUE
+		ENDIF
+	;隷属の証
+	ELSEIF ARG == 97
+		IF SALE_ITEM_97(COUNT)
+			PRINT 
+		ELSE
+			CONTINUE
+		ENDIF
+	;赤い首輪
+	ELSEIF ARG == 98 && COUNT != TARGET
+		CONTINUE
+	;エンゲージリング
+	ELSEIF ARG == 99 && COUNT != TARGET
+		CONTINUE
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+DRAWLINE
+PRINTFORM %ITEMNAME:ARG%：
+;アイテムの効果を表示する
+SIF ARG == 95
+	PRINTL 性なる契約を結びます
+SIF ARG == 96
+	PRINTL 愛の誓いを立てます
+SIF ARG == 97
+	PRINTL 奴隷に烙印を押します
+SIF ARG == 98
+	PRINTL 最高の奴隷である証を与えます
+SIF ARG == 99
+	PRINTL 自分の気持ちを伝えます
+PRINTFORML 誰に\@(ARG == 95 || ARG == 97 || ARG == 98) ? 与え # 渡し\@ますか？ ＜page.{LOCAL+1}＞
+
+CALL USE_ITEM_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_0
+ENDIF
+
+LOCAL = FLAG:575 / 10000
+SIF FLAG:575 > 0 && LOCAL <= 0
+	LOCAL = 1
+LOCAL *= 10000
+MONEY -= ITEMPRICE:ARG + LOCAL
+FLAG:575 = 0
+FLAG:576 = 0
+ITEM:ARG += 1
+;空晶石の首輪(隷属)・青珊瑚の指輪(親愛)・隷属の証(烙印)
+IF ARG == 95 || ARG == 96 || ARG == 97
+	LOCAL:98 = TARGET
+	TARGET = RESULT
+	CALLFORM USE_ITEM_{ARG}
+	TARGET = LOCAL:98
+;赤い首輪(奴隷エンド)・エンゲージリング(単体エンド)
+ELSEIF ARG == 98 || ARG == 99
+	CALLFORM USE_ITEM_{ARG}
+ENDIF
+
+;-------------------------------------------------
+;アイテムを使用時のキャラ一覧表示処理
+;-------------------------------------------------
+@USE_ITEM_LIST, ARG
+IF MARK:MASTER:98 == 1
+	DRAWLINE
+	PRINTFORM 　[ 0]
+	PRINTFORML %SHOW_CALLNAME(MASTER)%(主人)　体力({BASE:MASTER:体力, 4}/{MAXBASE:MASTER:0, 4})
+ENDIF
+DRAWLINE
+REPEAT 20
+	LOCAL = GET_LIST(COUNT + ARG * 20)
+	SIF LOCAL == 0
+		CONTINUE
+	SIF CFLAG:LOCAL:4 == 1 || CFLAG:LOCAL:4 == 8192
+		CONTINUE
+	IF LOCAL == TARGET
+		PRINT ☆
+	ELSEIF LOCAL == ASSI
+		PRINT ★
+	ELSEIF CFLAG:LOCAL:4 == 4
+		PRINT ◆
+		LOCAL:3 = 1
+	ELSEIF CFLAG:LOCAL:4 == 1024
+		PRINT ▼
+	ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+		PRINT ▽
+	ELSEIF ISASSI:LOCAL == 1
+		PRINT ●
+	ELSEIF CFLAG:LOCAL:1 == 2
+		PRINT ○
+	ELSE
+		PRINT 　
+	ENDIF
+	CALL ARRANGE_CHARALIST, LOCAL
+	CALL ARRANGE_CHARALIFE, LOCAL
+	SIF CFLAG:LOCAL:1 == 2
+		PRINT 助手可
+	PRINTL 
+REND
+
+;--------------------------------------------------
+;特殊アイテム販売可能判定処理
+;--------------------------------------------------
+;………………………………………………
+;空晶石の首輪
+;………………………………………………
+@SALE_ITEM_95, ARG
+#FUNCTION
+;その場にいないとダメ
+SIF CFLAG:ARG:4
+	RETURNF 0
+;[淫乱]を持っている、かつ[恋慕][服従][壊造人格]のいずれかを持っている
+SIF TALENT:ARG:淫乱 == 0 || (TALENT:ARG:恋慕 == 0 && TALENT:ARG:服従 == 0 && TALENT:ARG:壊造人格 == 0)
+	RETURNF 0
+;すでに[相愛][烙印][隷属][精神崩壊][傀儡]を取得している、あるいは好感度が2500未満だとダメ
+SIF TALENT:ARG:相愛 || TALENT:ARG:烙印 || TALENT:ARG:隷属 || TALENT:ARG:精神崩壊 || TALENT:ARG:傀儡 || CFLAG:ARG:好感度 < 2500
+	RETURNF 0
+;Ｖ経験＋Ａ経験の合計が200以上、調教自慰経験とフェラ経験がそれぞれ150以上
+SIF (EXP:ARG:Ｖ経験+EXP:ARG:Ａ経験 < 200) || EXP:ARG:調教自慰経験 < 150 || EXP:ARG:フェラ経験 < 150
+	RETURNF 0
+;屈服刻印が3、反発刻印が0、従順＋欲望＋奉仕精神の合計が15以上、技巧＋マゾっ気＋精液中毒の合計が13以上
+SIF MARK:ARG:屈服刻印 < 3 || MARK:ARG:反発刻印 || (ABL:ARG:従順 + ABL:ARG:欲望 + ABL:ARG:奉仕精神 < 15) || (ABL:ARG:技巧 + ABL:ARG:マゾっ気 + ABL:ARG:精液中毒 < 13)
+	RETURNF 0
+;男主人なら対象のレズ経験が、女主人なら対象のＢＬ経験が500未満じゃないとダメ
+;ただしこのプレイが5周目以上、引き継ぎキャラであった場合はレズ経験、ＢＬ経験の判定は免除
+;相手が[両刀]で男主人のときは対象のＢＬ中毒がLV5以上、女主人のときは対象のレズ中毒がLV5の場合もレズ経験、ＢＬ経験の判定は免除
+SIF (TALENT:MASTER:オトコ && ((TALENT:ARG:両刀 && ABL:ARG:ＢＬ中毒 >= 5) || EXP:ARG:レズ経験 < 500)) || (TALENT:MASTER:オトコ == 0 && ((TALENT:ARG:両刀 && ABL:ARG:レズ中毒 >= 5) || EXP:ARG:ＢＬ経験 < 500)) || (FLAG:6 >= 5 && CFLAG:ARG:18)
+	RETURNF 1
+RETURNF 0
+
+;………………………………………………
+;青珊瑚の指輪
+;………………………………………………
+@SALE_ITEM_96, ARG
+#FUNCTION
+;その場にいないとダメ
+SIF CFLAG:ARG:4
+	RETURNF 0
+;[親愛]を持っている、または好感度が3500以上かつ愛情経験が500以上で[妄信]を持っている
+SIF ((TALENT:ARG:妄信 == 0 || EXP:ARG:愛情経験 < 500 || CFLAG:ARG:好感度 < 3500) && TALENT:ARG:親愛 == 0)
+	RETURNF 0
+;すでに[相愛][烙印][傷物][使い魔][精神崩壊][傀儡][壊造人格]を取得しているとダメ
+SIF TALENT:ARG:相愛 || TALENT:ARG:烙印 || TALENT:ARG:傷物 || TALENT:ARG:使い魔 || TALENT:ARG:精神崩壊 || TALENT:ARG:傀儡 || TALENT:ARG:壊造人格
+	RETURNF 0
+;薬物刻印と恐怖刻印と反発刻印が0、従順＋欲望＋技巧＋奉仕精神の合計が17以上
+SIF MARK:ARG:薬物刻印 || MARK:ARG:恐怖刻印 || MARK:ARG:反発刻印 || (ABL:ARG:従順 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 < 17)
+	RETURNF 0
+;[隷属]がある場合には、好感度が35000以上かつ愛情経験が5000以上ないとダメ
+SIF TALENT:ARG:隷属 && (CFLAG:ARG:好感度 < 35000 || EXP:ARG:愛情経験 < 5000)
+	RETURNF 0
+;男主人なら対象のレズ経験が、女主人なら対象のＢＬ経験が500未満じゃないとダメ
+;ただしこのプレイが5周目以上、引き継ぎキャラであった場合はレズ経験、ＢＬ経験の判定は免除
+;相手が[両刀]で男主人のときは対象のＢＬ中毒がLV5以上、女主人のときは対象のレズ中毒がLV5の場合もレズ経験、ＢＬ経験の判定は免除
+SIF (TALENT:MASTER:オトコ && ((TALENT:ARG:両刀 && ABL:ARG:ＢＬ中毒 >= 5) || EXP:ARG:レズ経験 < 500)) || (TALENT:MASTER:オトコ == 0 && ((TALENT:ARG:両刀 && ABL:ARG:レズ中毒 >= 5) || EXP:ARG:ＢＬ経験 < 500)) || (FLAG:6 >= 5 && CFLAG:ARG:18)
+	RETURNF 1
+RETURNF 0
+
+;………………………………………………
+;隷属の証
+;………………………………………………
+@SALE_ITEM_97, ARG
+#FUNCTION
+;その場にいないとダメ
+SIF CFLAG:ARG:4
+	RETURNF 0
+;好感度が500以上、恋慕、服従、壊造人格、淫乱のうちどれかが必要。また、すでに烙印を押されているとダメ
+SIF (TALENT:ARG:恋慕 == 0 && TALENT:ARG:服従 == 0 && TALENT:ARG:壊造人格 == 0 && TALENT:ARG:淫乱 == 0) || TALENT:ARG:烙印 || TALENT:ARG:傷物 || CFLAG:ARG:好感度 < 500
+	RETURNF 0
+;屈服刻印が2以下、または反発刻印が1以上、Ｖ経験＋Ａ経験の合計が100未満、調教自慰経験とフェラ経験のどちらかが50未満だとダメ
+SIF MARK:ARG:屈服刻印 < 3 || MARK:ARG:反発刻印 || (EXP:ARG:Ｖ経験 + EXP:ARG:Ａ経験 < 100) || EXP:ARG:調教自慰経験 < 50 || EXP:ARG:フェラ経験 < 50
+	RETURNF 0
+;従順＋欲望の合計が8以上、技巧＋奉仕精神の合計が7以上、マゾっ気と自慰中毒と精液中毒が全て2以上必要
+SIF (ABL:ARG:従順 + ABL:ARG:欲望 < 8) || (ABL:ARG:技巧 + ABL:ARG:奉仕精神 < 7) || ABL:ARG:マゾっ気 < 2 || ABL:ARG:自慰中毒 < 2 || ABL:ARG:精液中毒 < 2
+	RETURNF 0
+;男主人なら対象のレズ経験が、女主人なら対象のＢＬ経験が1500未満じゃないとダメ
+;ただし主人が[大甲斐性]持ちで、このプレイが5周目以上、引き継ぎキャラであった場合はレズ経験、ＢＬ経験の判定は免除
+SIF (TALENT:MASTER:オトコ && ((TALENT:ARG:両刀 && ABL:ARG:ＢＬ中毒 >= 5) || EXP:ARG:レズ経験 < 1500)) || (TALENT:MASTER:オトコ == 0 && ((TALENT:ARG:両刀 && ABL:ARG:レズ中毒 >= 5) || EXP:ARG:ＢＬ経験 < 1500)) || (TALENT:MASTER:大甲斐性 && FLAG:6 >= 5 && CFLAG:ARG:18)
+	RETURNF 1
+RETURNF 0
+
+;=============================================================================
+;単体エンド系アイテム、特殊素質付加系アイテムの処理
+;=============================================================================
+;--------------------------------------------------
+;エンゲージリング(単体エンド)
+;--------------------------------------------------
+;エンディング番号は500＋キャラ番号を想定
+@USE_ITEM_99
+TFLAG:201 = 1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 200
+PRINTL 
+
+;一線越えない消滅
+IF TALENT:一線越えない
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:27%]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+ENDIF
+;相愛取得
+IF TALENT:相愛 == 0 && TALENT:烙印 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:153%]を得た
+	TALENT:相愛 = 1
+	CALL MASTER_NAME_CHANGE, TARGET, 3
+	IF TALENT:旦那あり
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 825
+		PRINTFORMW %CALLNAME:TARGET%は[旦那あり]を失った
+		TALENT:旦那あり = 0
+	ENDIF
+	CFLAG:14 |= 8
+	FLAG:35 += 1
+ENDIF
+;汎用口上用フラグ
+CFLAG:43 = 0
+;相性アップ
+PRINTFORMW %CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた
+RELATION:(NO:MASTER) = MAX(RELATION:(NO:MASTER), 200)
+
+;売却不可フラグ
+CFLAG:3 |= 1
+;称号履歴
+CFLAG:4001 |= 1
+;後日談表示判別フラグ
+TFLAG:205 = 0
+
+;結婚記念日
+CFLAG:結婚記念日 = DAY
+
+;称号ＧＥＴ！
+NICKNAME:TARGET = 『\@(TALENT:オトコ) ? 最愛の夫 # 最愛の妻\@』
+
+PRINTW  
+IF FLAG:5 == 0 && TFLAG:124 == 0
+	;単体エンド判別用
+	LOCAL = 10000 + NO:TARGET
+	FLAG:LOCAL |= 1
+	IF (FLAG:10 & 1)
+		CALL DISPLAY_KOJO_MESSAGE_SINGLE_ENDING
+	ELSE
+		PRINTW ―――単体エンド条件達成―――
+		PRINTW ………………
+		PRINTW …………
+		PRINTW ……
+	ENDIF
+	SIF TFLAG:201 == 1
+		LOCAL = NO:TARGET + 10000
+	CALL GAME_CONTINUE, 0, LOCAL
+	;単体エンド継続口上
+	SIF !TFLAG:994
+		CALL DISPLAY_KOJO_MESSAGE_SINGLE_ENDING_AFTER
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;赤い首輪(奴隷エンド)
+;--------------------------------------------------
+;エンディング番号は500＋キャラ番号iを想定
+@USE_ITEM_98
+TFLAG:201 = 1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 201
+PRINTL 
+
+;一線越えない消滅
+IF TALENT:一線越えない
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:27%]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+ENDIF
+;貞操観念消滅
+IF TALENT:貞操観念
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:30%]を失った
+	TALENT:貞操観念 = 0
+	CFLAG:13 |= 256
+ENDIF
+;服従取得
+IF TALENT:服従 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:160%]を得た
+	TALENT:服従 = 1
+	CFLAG:15 |= 1
+ENDIF
+;隷属取得
+IF TALENT:相愛 == 0 && TALENT:隷属 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:162%]を得た
+	TALENT:隷属 = 1
+	CFLAG:15 |= 4
+	FLAG:36 += 1
+ENDIF
+;汎用口上用フラグ
+CFLAG:43 = 0
+;相性アップ
+PRINTFORMW %CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた
+RELATION:(NO:MASTER) = MAX(RELATION:(NO:MASTER), 200)
+
+;売却不可フラグ
+CFLAG:3 |= 2
+;称号履歴
+CFLAG:4001 |= 8
+
+;後日談表示判別フラグ
+TFLAG:205 = 0
+
+;契約記念日
+CFLAG:契約記念日 = DAY
+
+;称号ＧＥＴ！
+NICKNAME:TARGET = 『最高の従者』
+
+PRINTW  
+IF FLAG:5 == 0 && TFLAG:124 == 0
+	;奴隷エンド判別用
+	LOCAL = 10000 + NO:TARGET
+	FLAG:LOCAL |= 2
+	IF (FLAG:10 & 1)
+		CALL DISPLAY_KOJO_MESSAGE_SLAVE_ENDING
+	ELSE
+		PRINTW ―――奴隷エンド条件達成―――
+		PRINTW ………………
+		PRINTW …………
+		PRINTW ……
+	ENDIF
+	SIF TFLAG:201 == 1
+		LOCAL = NO:TARGET + 20000
+	CALL GAME_CONTINUE, 0, LOCAL
+	;奴隷エンド継続口上
+	SIF !TFLAG:994
+		CALL DISPLAY_KOJO_MESSAGE_SLAVE_ENDING_AFTER
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;隷属の証(烙印)
+;--------------------------------------------------
+@USE_ITEM_97
+PRINTFORMW ※注意！　%CALLNAME:TARGET%に烙印を押すと二度と売却できなくなります。
+PRINTW それでもいいですか？
+DRAWLINE
+PRINTFORML [0] - %CALLNAME:TARGET%に烙印を押す
+IF FLAG:15 & 16
+	;拷問系、精神操作系コマンド有効で選択肢増加
+	PRINTFORML [1] - %CALLNAME:TARGET%の体にマジックの烙印をつける
+	PRINTFORML [2] - %CALLNAME:TARGET%に焼印を施す
+	PRINTFORML [3] - %CALLNAME:TARGET%の体に%CALLNAME:MASTER%の印を彫る
+	PRINTFORML [4] - %CALLNAME:TARGET%に奴隷用の黒いチョーカーを与える
+ENDIF
+PRINTL [100] - やめる
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 || (RESULT >= 1 && RESULT <= 4 && FLAG:15 & 16)
+	LOCAL = RESULT
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 202, LOCAL
+PRINTL 
+;一線越えない消滅
+IF TALENT:一線越えない
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:27%]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+ENDIF
+;服従取得
+IF TALENT:服従 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:160%]を得た
+	TALENT:服従 = 1
+	CFLAG:15 |= 1
+ENDIF
+;烙印取得
+IF TALENT:烙印 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:161%]を得た
+	TALENT:烙印 = 1
+	CFLAG:15 |= 2
+ENDIF
+FLAG:31 += 1
+;汎用口上用フラグ
+CFLAG:43 = 0
+;売却不可フラグ
+CFLAG:3 |= 2
+
+;称号ＧＥＴ！
+SELECTCASE RAND:2
+	CASE 1
+		NICKNAME:TARGET = 『%CALLNAME:MASTER%のペット』
+		;称号履歴
+		CFLAG:4001 |= 64
+	CASEELSE
+		NICKNAME:TARGET = 『%CALLNAME:MASTER%の玩具』
+		;称号履歴
+		CFLAG:4001 |= 128
+ENDSELECT
+
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%は身も心も%CALLNAME:MASTER%の支配下になりました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%は売却できなくなりました＞
+PRINTL 
+RETURN 1
+
+;--------------------------------------------------
+;青珊瑚の指輪(相愛)
+;--------------------------------------------------
+@USE_ITEM_96
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 205
+PRINTL 
+;一線越えない消滅
+IF TALENT:一線越えない
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:27%]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+ENDIF
+;相愛取得
+IF TALENT:相愛 == 0 && TALENT:烙印 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:153%]を得た
+	TALENT:相愛 = 1
+	IF TALENT:旦那あり
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 825
+		PRINTFORMW %CALLNAME:TARGET%は[旦那あり]を失った
+		TALENT:旦那あり = 0
+	ENDIF
+	CFLAG:14 |= 8
+	FLAG:35 += 1
+ENDIF
+;汎用口上用フラグ
+CFLAG:43 = 0
+;相性アップ
+PRINTFORMW %CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた
+RELATION:(NO:MASTER) = (TALENT:妄信) ? MAX(RELATION:(NO:MASTER), 170) # MAX(RELATION:(NO:MASTER), 150)
+;売却不可フラグ
+CFLAG:3 |= 1
+;結婚記念日
+CFLAG:結婚記念日 = DAY
+PRINTW  
+PRINTFORMW ―――%CALLNAME:MASTER%は%CALLNAME:TARGET%と共に幸せの誓いを立てました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%ITEMNAME:99%は売り切れました＞
+PRINTL 
+
+;称号ＧＥＴ！
+SELECTCASE RAND:3
+	CASE 2
+		NICKNAME:TARGET = 『\@(TALENT:オトコ) ? 最愛の夫 # 最愛の妻\@』
+		;称号履歴
+		CFLAG:4001 |= 1
+	CASE 1
+		NICKNAME:TARGET = 『\@(TALENT:オトコ) ? 満点パパ # 無敵のママさん\@』
+		;称号履歴
+		CFLAG:4001 |= 2
+	CASEELSE
+		NICKNAME:TARGET = 『\@(TALENT:オトコ) ? 運命の男 # 運命の女\@』
+		;称号履歴
+		CFLAG:4001 |= 4
+ENDSELECT
+RETURN 1
+
+;--------------------------------------------------
+;空晶石の首輪(隷属)
+;--------------------------------------------------
+@USE_ITEM_95
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 206
+PRINTL 
+;一線越えない消滅
+IF TALENT:一線越えない
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:27%]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+ENDIF
+;貞操観念消滅
+IF TALENT:貞操観念
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:30%]を失った
+	TALENT:貞操観念 = 0
+	CFLAG:13 |= 256
+ENDIF
+;服従取得
+IF TALENT:服従 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:160%]を得た
+	TALENT:服従 = 1
+	CFLAG:15 |= 1
+ENDIF
+;隷属取得
+IF TALENT:相愛 == 0 && TALENT:隷属 == 0
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:162%]を得た
+	TALENT:隷属 = 1
+	CFLAG:15 |= 4
+	FLAG:36 += 1
+ENDIF
+;汎用口上用フラグ
+CFLAG:43 = 0
+;相性アップ
+RELATION:(NO:MASTER) = (TALENT:妄信) ? MAX(RELATION:(NO:MASTER), 170) # MAX(RELATION:(NO:MASTER), 150)
+PRINTFORMW %CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた
+
+;売却不可フラグ
+CFLAG:3 |= 2
+;契約記念日
+CFLAG:契約記念日 = DAY
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%は永遠に%CALLNAME:MASTER%の奴隷になりました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%は売却できなくなりました＞
+PRINTFORMW ＜%ITEMNAME:98%は売り切れました＞
+PRINTL 
+
+;称号ＧＥＴ！
+SELECTCASE RAND:3
+	CASE 2
+		NICKNAME:TARGET = 『最高の従者』
+		;称号履歴
+		CFLAG:4001 |= 8
+	CASE 1
+		NICKNAME:TARGET = 『専用性奴隷』
+		;称号履歴
+		CFLAG:4001 |= 16
+	CASEELSE
+		NICKNAME:TARGET = 『\@(TALENT:オトコ) ? 雄豚 # 雌豚\@』
+		;称号履歴
+		CFLAG:4001 |= 32
+ENDSELECT
+RETURN 1

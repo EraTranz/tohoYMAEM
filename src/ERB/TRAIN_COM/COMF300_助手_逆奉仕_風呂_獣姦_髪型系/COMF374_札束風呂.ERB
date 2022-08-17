@@ -1,0 +1,212 @@
+﻿;=============================================================================
+;札束風呂
+;=============================================================================
+;資金を札束に変えてそこに飛び込ませるというブルジョワなコマンド。
+;怪しい雑誌の怪しい広告とかにあった奴ｗ
+;初回に150000圓、効果維持に毎ターン1000圓必要(この値は酒風呂と同じ)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE374
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:374 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 32768) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 16
+	RETURN 1
+;貧乏人には扱えないシロモノです
+SIF MONEY < 150000
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中じゃ無いとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 16
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 374) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM374
+PRINTL 札束風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 374
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 札束風呂
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 16
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 20
+	SIF ABL:従順 >= 3
+		SOURCE:反感追加 = 100
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 40
+
+SOURCE:中毒充足 = 500
+SOURCE:達成感 = 100
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:反感追加 = 500
+	SOURCE:恭順追加 = 0
+	SOURCE:逸脱 = 500
+	SOURCE:屈従 = 0
+ELSEIF ABL:従順 == 1
+	SOURCE:反感追加 = 250
+	SOURCE:恭順追加 = 20
+	SOURCE:逸脱 = 250
+	SOURCE:屈従 = 20
+ELSEIF ABL:従順 == 2
+	SOURCE:反感追加 = 100
+	SOURCE:恭順追加 = 100
+	SOURCE:逸脱 = 100
+	SOURCE:屈従 = 100
+ELSEIF ABL:従順 == 3
+	SOURCE:反感追加 = 10
+	SOURCE:恭順追加 = 250
+	SOURCE:逸脱 = 10
+	SOURCE:屈従 = 250
+ELSEIF ABL:従順 == 4
+	SOURCE:反感追加 = 5
+	SOURCE:恭順追加 = 500
+	SOURCE:逸脱 = 5
+	SOURCE:屈従 = 500
+ELSE
+	SOURCE:反感追加 = 0
+	SOURCE:恭順追加 = 800
+	SOURCE:逸脱 = 0
+	SOURCE:屈従 = 800
+ENDIF
+
+MONEY -= 150000
+TEQUIP:特殊風呂入浴中 = 16
+RETURN 1
+
+;--------------------------------------------------
+;札束風呂入浴中
+;--------------------------------------------------
+@EQUIP_COM374
+PRINTL ＜札束風呂入浴中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 20
+
+SOURCE:中毒充足 += 90
+SOURCE:達成感 += 100
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:反感追加 += 600
+	SOURCE:恭順追加 += 5
+	SOURCE:逸脱 += 600
+	SOURCE:屈従 += 5
+ELSEIF ABL:従順 == 1
+	SOURCE:反感追加 += 300
+	SOURCE:恭順追加 += 15
+	SOURCE:逸脱 += 300
+	SOURCE:達成感 += 15
+ELSEIF ABL:従順 == 2
+	SOURCE:反感追加 += 150
+	SOURCE:恭順追加 += 80
+	SOURCE:逸脱 += 150
+	SOURCE:達成感 += 80
+ELSEIF ABL:従順 == 3
+	SOURCE:反感追加 += 30
+	SOURCE:恭順追加 += 150
+	SOURCE:逸脱 += 30
+	SOURCE:屈従 += 150
+ELSEIF ABL:従順 == 4
+	SOURCE:反感追加 += 10
+	SOURCE:恭順追加 += 300
+	SOURCE:逸脱 += 10
+	SOURCE:屈従 += 300
+ELSE
+	SOURCE:反感追加 += 0
+	SOURCE:恭順追加 += 600
+	SOURCE:逸脱 += 0
+	SOURCE:屈従 += 600
+ENDIF
+
+;お金を消費
+MONEY -= 2000
+IF MONEY < 2000
+	PRINTL 風呂に札束を満たすための資金が足りなくなってきた…
+	PRINTFORML %CALLNAME:MASTER%はしかたなく風呂から%CALLNAME:TARGET%を引き揚げた
+	IF ABL:従順 >= 3
+		PRINTFORML 心なしか%CALLNAME:TARGET%は金が切れたこと残念そうにしている…
+		SOURCE:反感追加 += 500
+	ENDIF
+	TEQUIP:特殊風呂入浴中 = 0
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_374
+IF TEQUIP:特殊風呂入浴中 == 16
+	PRINTFORML 札束で満たされた風呂から%CALLNAME:TARGET%を引き揚げた
+	SIF ABL:従順 >= 3
+		PRINTFORML %CALLNAME:TARGET%は少し残念そうな顔をしている…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を札束で満たされた風呂に浸からせた
+	PRINTFORM %CALLNAME:TARGET%は
+	IF (TALENT:恋慕 || TALENT:親愛 || TALENT:相愛) && TALENT:服従 == 0 && TALENT:使い魔 == 0 && ASSIPLAY == 0
+		PRINTFORML %CALLNAME:MASTER%に向かって一緒に入らないかと誘ってきた
+	ELSEIF ABL:従順 >= 5
+		PRINTL 顔を埋めるまで札束に浸かり、リッチな気分を満喫している…
+	ELSEIF ABL:従順 == 4
+		PRINTL 札束の肌触りを思う存分楽しんでいる…
+	ELSEIF ABL:従順 == 3
+		PRINTL 大量の札束に恥ずかしそうに埋もれつつも、少し顔をほころばせている…
+	ELSEIF ABL:従順 == 2
+		PRINTL 嬉しいのか不思議なのか、よく分からない表情を見せている…
+	ELSEIF ABL:従順 == 1
+		PRINTL 呆れ顔をしつつも、札束の中に身体をうずめた…
+	ELSE
+		PRINTFORML 露骨に軽蔑のまなざしを%CALLNAME:PLAYER%に向けつつ、札束の中に嫌々ながら身体をうずめた…
+	ENDIF
+ENDIF

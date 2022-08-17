@@ -1,0 +1,482 @@
+﻿;=============================================================================
+;背面座位アナル胸愛撫
+;=============================================================================
+;対面アナル胸愛撫からほぼコピペ
+;ただしソース計算は全く同じじゃないので注意
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE633
+#FUNCTION
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURNF 0
+;調教者にペニスがない、かつペニスバンドもないとダメ
+SIF EXIST_BAR(PLAYER) == 0 && ITEM:ペニスバンド == 0
+	RETURNF 0
+;主人が[禁断の知識]持ちじゃないとき、体格差が2段階以内か調教者が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+	RETURNF 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURNF 0
+;一定のＡ経験が必要
+SIF EXP:Ａ経験 < EXPLV:3
+	RETURNF 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURNF 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURNF 0
+;Ｖ系装着具使用中は不可
+;SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+;	RETURNF 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURNF 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURNF 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURNF 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURNF 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURNF 0
+;助手が褌着用中の場合技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17 && ABL:技巧 < 4
+	RETURNF 0
+;助手がウェディングドレス・ゴスロリ着用中の場合、助手の技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && (TEQUIP:ASSI:コスチュームプレイ == 19 || TEQUIP:ASSI:コスチュームプレイ == 20) && ABL:ASSI:技巧 < 4
+	RETURNF 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURNF 0
+;ウェディングドレス・ゴスロリ着用中の場合技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:技巧 < 4
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 633) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM633
+PRINTL 背面座位アナル胸愛撫
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 633
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 背面座位アナル胸愛撫
+SELECTCOM = 633
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL = 800
+ELSEIF ABL:技巧 == 1
+	LOCAL = 1000
+ELSEIF ABL:技巧 == 2
+	LOCAL = 1200
+ELSEIF ABL:技巧 == 3
+	LOCAL = 1400
+ELSEIF ABL:技巧 == 4
+	LOCAL = 1600
+ELSE
+	LOCAL = 1800
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_3(TARGET, LOCAL)
+;欲望をみる
+LOCAL = EJACULATIONCHECK_ABL_11_1(TARGET, LOCAL)
+;睡眠薬で寝ているor失神している場合
+SIF EQUIP:睡眠薬 || TFLAG:899 > 0
+	TIMES LOCAL, 0.7
+;潤滑をみる
+LOCAL = EJACULATIONCHECK_PALAM_10_2(TARGET, LOCAL)
+
+;調教者のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+SIF EXIST_PENIS(PLAYER)
+	BASE:PLAYER:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 90
+DOWNBASE:1 += 190
+
+SOURCE:中毒充足 = 100
+SOURCE:情愛 = 100
+SOURCE:露出 = 900
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ += 10
+	SOURCE:情愛 += 10
+	SOURCE:屈従 += 80
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ += 30
+	SOURCE:情愛 += 130
+	SOURCE:屈従 += 300
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ += 200
+	SOURCE:情愛 += 500
+	SOURCE:屈従 += 700
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ += 500
+	SOURCE:情愛 += 1000
+	SOURCE:屈従 += 1500
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ += 900
+	SOURCE:情愛 += 1500
+	SOURCE:屈従 += 2600
+ELSE
+	SOURCE:快Ａ += 1400
+	SOURCE:情愛 += 2000
+	SOURCE:屈従 += 4000
+ENDIF
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 20
+	SOURCE:情愛 += 50
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 100
+	SOURCE:情愛 += 200
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 500
+	SOURCE:情愛 += 400
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 1200
+	SOURCE:情愛 = 600
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 2000
+	SOURCE:情愛 += 1000
+ELSE
+	SOURCE:快Ｂ = 2800
+	SOURCE:情愛 += 1400
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 40
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 160
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 500
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 900
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1400
+ELSE
+	SOURCE:快Ｃ = 2100
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:性行動 = 50
+	SOURCE:達成感 = 10
+	SOURCE:露出 += 100
+	TIMES SOURCE:不潔 , 4.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:性行動 = 150
+	SOURCE:達成感 = 50
+	SOURCE:露出 += 300
+	TIMES SOURCE:不潔 , 2.50
+ELSEIF ABL:露出癖 == 2
+	SOURCE:性行動 = 300
+	SOURCE:達成感 = 100
+	SOURCE:露出 += 700
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:露出癖 == 3
+	SOURCE:性行動 = 400
+	SOURCE:達成感 = 200
+	SOURCE:露出 += 1200
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:性行動 = 500
+	SOURCE:達成感 = 300
+	SOURCE:露出 += 1800
+	TIMES SOURCE:不潔 , 0.50
+ELSE
+	SOURCE:性行動 = 800
+	SOURCE:達成感 = 500
+	SOURCE:露出 += 2500
+	TIMES SOURCE:不潔 , 0.10
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み = 18000
+	DOWNBASE:0 += 40
+	DOWNBASE:1 += 60
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.30
+	SOURCE:痛み = 10000
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 50
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み = 4500
+	DOWNBASE:0 += 20
+	DOWNBASE:1 += 40
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み = 1500
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 30
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み = 700
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 20
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	SOURCE:痛み = 300
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 10000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	SOURCE:痛み += 3600
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 200
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み += 100
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+;淫乳
+IF TALENT:淫乳
+	TIMES SOURCE:快Ｂ , 1.20
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:不潔 , 0.80
+ENDIF
+
+;調教者が[オトコ]
+SIF TALENT:PLAYER:オトコ
+	TIMES SOURCE:快Ａ , 2.50
+;調教者が［幼児］、［幼稚］
+IF TALENT:PLAYER:幼児 || TALENT:PLAYER:幼稚
+	TIMES SOURCE:快Ｂ , 1.20
+	TIMES SOURCE:情愛 , 1.20
+ENDIF
+;調教者が［幼児退行］
+SIF TALENT:PLAYER:幼児退行
+	TIMES SOURCE:情愛 , 1.20
+
+;貞操観念
+IF TALENT:貞操観念
+	IF EXP:Ａ経験 == 0
+		TIMES SOURCE:情愛 , 1.20
+		TIMES SOURCE:恭順追加 , 1.10
+		SOURCE:反感追加 = 500
+	ELSE
+		TIMES SOURCE:情愛 , 1.20
+		TIMES SOURCE:恭順追加 , 1.10
+		SOURCE:反感追加 = 0
+	ENDIF
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:屈従 , 1.40
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:情愛 , 0.60
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:反感追加 , 1.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:反感追加 , 0.80
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:反感追加 , 0.60
+ELSE
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:反感追加 , 0.30
+ENDIF
+
+;プレイヤーのABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	SOURCE:情愛 += 100
+	SOURCE:液体追加 += 0
+	LOCAL:1 = 0
+ELSEIF ABL:PLAYER:技巧 == 1
+	SOURCE:情愛 += 150
+	SOURCE:液体追加 += 50
+	LOCAL:1 = 0
+ELSEIF ABL:PLAYER:技巧 == 2
+	SOURCE:情愛 += 200
+	SOURCE:液体追加 += 100
+	LOCAL:1 = 0
+ELSEIF ABL:PLAYER:技巧 == 3
+	SOURCE:情愛 += 300
+	SOURCE:液体追加 += 150
+	LOCAL:1 = 50
+ELSEIF ABL:PLAYER:技巧 == 4
+	SOURCE:情愛 += 500
+	SOURCE:液体追加 += 250
+	LOCAL:1 = 100
+ELSE
+	SOURCE:情愛 += 800
+	SOURCE:液体追加 += 400
+	LOCAL:1 = 300
+ENDIF
+
+SOURCE:快Ｃ += LOCAL:1
+
+;TALENT:恋慕をみる
+IF TALENT:恋慕
+	TIMES SOURCE:情愛 , 3.00
+	TIMES SOURCE:恭順追加 , 2.00
+	TIMES SOURCE:中毒充足 , 2.00
+ENDIF
+
+TCVAR:Ａ経験 += 2
+SIF ASSIPLAY == 0 && EXIST_BAR(MASTER)
+	CFLAG:主人にＡ捧げ回数 += 2
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	IF ABL:従順 >= 3 && ABL:欲望 >= 3 && CFLAG:9 & 2 && FLAG:10 & 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は背を仰け反らせて%CALLNAME:PLAYER%にしなだれかかった…
+		PRINTL 
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = PLAYER
+	;射精された人物を設定
+	TFLAG:94 = TARGET
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_633
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;射精に関係なく行われる処理はここから
+;奴隷のＡ⇔調教者のＰの汚れが移動
+STAIN:アナル |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:アナル
+;奴隷のＢ⇔調教者の指の汚れが移動
+STAIN:胸 |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:胸
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 7
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 7
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0
+	TFLAG:50 += (ABL:Ａ感覚 >= 3) ? 2 # 1
+
+;前回と今回の調教者が同じで、前回の調教が背面座位アナルか背面座位アナル胸愛撫であり、抜かないフラグがある場合
+IF (PREVCOM == 33 || PREVCOM == 633 ) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	SIF TFLAG:101
+		TFLAG:101 = 2
+ENDIF
+;処女喪失の後でペニスを抜いているか
+TFLAG:101 = (TFLAG:101 == 2) ? 1 # 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_633
+;前回と今回の調教者が同じで、前回の調教が背面座位アナルか背面座位アナル胸愛撫であり、抜かないフラグがある場合
+IF (PREVCOM == 33 || PREVCOM == 633 ) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	;焦らしプレイ
+	IF TEQUIP:焦らしプレイ
+		PRINTFORM %CALLNAME:TARGET%の
+		SIF EX:21
+			PRINT ガクガク暴れる
+		PRINTL 腰を押さえつけ、背中から抱き寄せ、胸をもみしだきながら、腸内から抜かないまま小さくグラインドさせた…
+	;調教者がオトコかふたなりである
+	ELSEIF EXIST_PENIS(PLAYER)
+		PRINTFORML %CALLNAME:TARGET%の身体を背中から抱き寄せて、座った状態でアヌスに挿入したまま、%CALLNAME:TARGET%の胸に手を伸ばし、
+		PRINTFORML %CALLNAME:TARGET%の胸と腸内の感触を味わいながら、再び腰を動かし始めた…
+	;ペニスバンドを使用している場合
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の腸内から抜かずに、胸をもみしだきながら、再び腰を動かし始めた…
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:TARGET%の胸をもみながら身体をぎゅっと抱き寄せ、ゆっくりと降ろしながら
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 濡れそぼった
+	PRINT アヌス
+	IF TEQUIP:焦らしプレイ
+		PRINTFORML に先端だけ挿入した…
+	ELSE
+		PRINTFORML の最奥まで突き入れた…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_633
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 2
+;射精箇所選択の可・不可
+TFLAG:704 = 1

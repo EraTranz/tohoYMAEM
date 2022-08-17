@@ -1,0 +1,33 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;調教後夜這い
+;TFLAG:99=2:主人が女性で調教対象が男性のとき
+;TFLAG:99=1:それ以外
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE158
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW そろそろ寝ようと思い、布団をめくると夢美が中に潜んでいた
+		PRINTFORML 「はぁい、一人で寝ようなんて甘いわよ、%CALLNAME:MASTER%」
+		PRINTFORML 「ほらほら、温めててあげたんだから、布団でぬくぬくしましょ」
+		PRINTFORMW 「あらら、脱ぎ脱ぎしちゃってぇ、お盛んなんだから」
+	CASE 1
+		PRINTFORML 「ふふふ……　いい夜だわ、素敵」
+		PRINTFORMW %CALLNAME:MASTER%の部屋に、こっそりと夢美がやってきた
+		PRINTFORML 「ねえ、起きてるんでしょ？　分かってるんだから」
+		PRINTFORML 「なんだかムラムラしちゃって眠れないのよ」
+		PRINTFORMW 「だから、ね？　私の睡眠のために少し突き合ってちょうだい」
+		PRINTFORMW 「何か違う？　何も間違ってないじゃない、これからやるんだから」
+	CASEELSE
+		PRINTFORMW 夜も更けきった頃、夢美が部屋にやってきた
+		PRINTFORML 「まだ寝てないわよね？　よかった」
+		PRINTFORML 「一人で寝ようと思ったんだけど、思いのほか寂しくなっちゃって」
+		PRINTFORML 「そういうわけだから、私の抱き枕になって頂戴、いいでしょ？」
+		PRINTFORMW 「もちろん、私を抱き枕にしてもいいからね……」
+ENDSELECT
+
+CALL K2008_COM("快楽", 3)
+CALL K2008_ORGASM("並")
+
+PRINTFORML 
+PRINTFORMW お互い満足するまでまぐわりあい、そのまま抱き合って眠りに落ちた

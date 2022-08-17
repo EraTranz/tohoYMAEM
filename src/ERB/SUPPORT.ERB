@@ -1,0 +1,549 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;変数入れ替えにおけるセーブデータ自動修正処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;修正処理本体
+;=============================================================================
+;--------------------------------------------------
+;データのロード時における呼び出し
+;--------------------------------------------------
+@EVENTLOAD
+#ONLY
+;Roguelike風
+IF FLAG:8669 & 2
+	CALL NEW_DRAWLINE
+	PRINTFORM {DAY}日目
+	CALL CALENDAR_PRINT, 1
+	IF TIME == 0
+	SETCOLOR COLOR("PINK")
+	PRINT  (昼)
+	RESETCOLOR
+	ELSE
+	SETCOLOR COLOR("DARK-PINK")
+	PRINT  (夜)
+	RESETCOLOR
+	ENDIF
+	;主人に[Debug]がある=debugモードである場合
+	IF TALENT:MASTER:998
+		SETCOLOR COLOR("P-BLUE")
+		PRINT  ＊Debug＊
+		RESETCOLOR
+	ELSEIF FLAG:8669 & 2
+		SETCOLOR COLOR("ORANGE")
+		PRINT  ＊Roguelike＊
+		RESETCOLOR
+	ENDIF
+	PRINTFORML  ({FLAG:6}周目)
+	CALL NEW_DRAWLINE
+	PRINTFORML %SHOW_CALLNAME(MASTER)%\@(NO:MASTER >= 3000 && NO:MASTER < 4000 && CALLNAME:MASTER != NAME:MASTER) ? (%ITEMNAME:(NO:MASTER)%) # \@ 種族：%STR:2%
+	CALL PRINT_MASTER_STATUS, MASTER
+	;難易度
+	CALL SHOW_DIFFICULTY
+	;この周に迎えたエンディング
+	SIF FLAG:598
+		CALL SHOW_ENDING
+	;助手引継ぎ人数関連
+	SIF FLAG:8
+		CALL PRINT_ASSISTANT_SUCCESSION
+	;主人の○○数
+	CALL PRINT_MASTER_NUMBER
+	;収入金額の最高額
+	SIF MONEY:998 > 0
+		CALL INCOME_LIST
+	;現有全奴隷の各収入合計一覧表示
+	SIF CHARANUM > 1 && SUMCARRAY(CFLAG:MASTER:稼ぎの総額, 1, CHARANUM) > 0
+		CALL PRINT_INCOME_ALLSLAVE, MASTER
+	PRINTL このデータはRoguelikeモードであるため、ゲームを続行することはできない
+	PRINTL [0] ロード
+	PRINTL [1] タイトルに戻る
+	PRINTL [2] ゲームを終了します
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		CALL QUICKLOAD
+	ELSEIF RESULT == 1
+		RESETDATA
+		BEGIN TITLE
+	ELSEIF RESULT == 2
+		QUIT
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+ENDIF
+;処理実行判別のためフラグを流用
+TFLAG:990 = 0
+;現行ver.以前のデータが読み込まれた場合は修正処理へ
+SIF LASTLOAD_VERSION < GAMEBASE_VERSION
+	CALL SAVE_SUPPORT_OLDVERSION
+
+;--------------------------------------------------
+;修正処理汎用部分
+;--------------------------------------------------
+@SAVE_SUPPORT_OLDVERSION
+
+;eratohoYM Mk-X → eratohoYM Mk-Xのセーブ変換処理
+;SIF LASTLOAD_VERSION < XXXX
+;	CALL SAVE_SUPPORT_VERSION_XXXX
+
+;eratohoYM Mk-3改2proto4 → eratohoYM Mk-3改2のセーブ変換処理
+IF LASTLOAD_VERSION == 3104
+	CALL SAVE_SUPPORT_VERSION_3104
+;eratohoYM Mk-3～Mk-3改2proto3 → eratohoYM Mk-3改2のセーブ変換処理
+ELSEIF LASTLOAD_VERSION < 3103
+	CALL SAVE_SUPPORT_VERSION_3103
+ENDIF
+;eratohoYM Mk-3改2～Mk-3改7 → eratohoYM Mk-3改7.1のセーブ変換処理
+SIF LASTLOAD_VERSION < 3701
+	CALL SAVE_SUPPORT_VERSION_3701
+;eratohoYM Mk-3改2～Mk-3改7.1 → eratohoYM Mk-3改8proto6のセーブ変換処理
+SIF LASTLOAD_VERSION < 3706
+	CALL SAVE_SUPPORT_VERSION_3706
+	
+
+;eratohoYM Mk-3改8proto6 → eratohoYM Mk-3改811のセーブ変換処理
+SIF LASTLOAD_VERSION < 3811
+	CALL SAVE_SUPPORT_VERSION_3811
+	
+
+;eratohoYM Mk-3改811 → eratohoYM AE 4219のセーブ変換処理
+SIF LASTLOAD_VERSION < 4220
+	CALL SAVE_SUPPORT_VERSION_4219
+	
+;eratohoYM AE M 4219 → eratohoYM AE Mのセーブ変換処理
+SIF LASTLOAD_VERSION < 4225
+	CALL SAVE_SUPPORT_VERSION_4225
+
+;eratohoYM AE M 4225 → eratohoYM AE M 4236のセーブ変換処理
+SIF LASTLOAD_VERSION < 4236
+	CALL SAVE_SUPPORT_VERSION_4236
+
+;eratohoYM AE M 4236 → eratohoYM AE M 4237のセーブ変換処理
+SIF LASTLOAD_VERSION < 4237
+	CALL SAVE_SUPPORT_VERSION_4237
+	
+;eratohoYM AE M 4237 → eratohoYM AE M 4238のセーブ変換処理
+SIF LASTLOAD_VERSION < 4238
+	CALL SAVE_SUPPORT_VERSION_4238
+	
+;eratohoYM AE M 4238 → eratohoYM AE M 4239のセーブ変換処理
+SIF LASTLOAD_VERSION < 4239
+	CALL SAVE_SUPPORT_VERSION_4239
+	
+;eratohoYM AE M 4239 → eratohoYM AE M 4240のセーブ変換処理
+SIF LASTLOAD_VERSION < 4240
+	CALL SAVE_SUPPORT_VERSION_4240
+
+;eratohoYM AE M 4242 → eratohoYM AE M 4243のセーブ変換処理
+SIF LASTLOAD_VERSION < 4243
+	CALL SAVE_SUPPORT_VERSION_4243
+
+;eratohoYM AE M 4243 → eratohoYM AE M 4245のセーブ変換処理
+SIF LASTLOAD_VERSION < 4245
+	CALL SAVE_SUPPORT_VERSION_4245
+
+;eratohoYM AE M 4245 → eratohoYM AE M 4251のセーブ変換処理
+SIF LASTLOAD_VERSION < 4251
+	CALL SAVE_SUPPORT_VERSION_4251
+
+;eratohoYM AE M 4251 → eratohoYM AE M 4254のセーブ変換処理
+SIF LASTLOAD_VERSION < 4254
+	CALL SAVE_SUPPORT_VERSION_4254
+
+;eratohoYM AE M 4254 → eratohoYM AE M 4266のセーブ変換処理
+SIF LASTLOAD_VERSION < 4266
+	CALL SAVE_SUPPORT_VERSION_4266
+
+IF TFLAG:990 == 1
+	PRINTL セーブデータを現行バージョンのものに修正する作業を実行しました
+	PRINTW SHOPメニューが表示されたら「[200] - セーブ」を選択してください
+ENDIF
+
+;=============================================================================
+;各バージョンごとの修正処理
+;=============================================================================
+;--------------------------------------------------
+;Mk-3 → Mk-3セーブ変換処理
+;--------------------------------------------------
+;処理内容：
+@SAVE_SUPPORT_VERSION_XXXX
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;Mk-3改2proto4 → Mk-3改2セーブ変換処理
+;--------------------------------------------------
+;処理内容：口上表示設定に関するフラグの仕様変更に伴う修正
+@SAVE_SUPPORT_VERSION_3104
+#LOCALSIZE 1
+REPEAT CHARANUM
+	SELECTCASE CFLAG:COUNT:9
+		CASE IS < 0
+			LOCAL = 0
+		CASE 0
+			LOCAL = 1
+		CASE 1
+			LOCAL = 2
+		CASE 2
+			LOCAL = 4
+		CASE 3
+			LOCAL = 6
+		CASE 4
+			LOCAL = 8
+		CASE 5
+			LOCAL = 10
+		CASEELSE
+			LOCAL = 1
+	ENDSELECT
+	CFLAG:COUNT:9 = LOCAL
+REND
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;Mk-3～Mk-3改2proto3 → Mk-3改2セーブ変換処理
+;--------------------------------------------------
+;処理内容：口上表示設定に関するフラグの仕様変更に伴う修正
+@SAVE_SUPPORT_VERSION_3103
+#LOCALSIZE 1
+REPEAT CHARANUM
+	SELECTCASE CFLAG:COUNT:9
+		CASE 0
+			LOCAL = 0
+		CASE 1
+			LOCAL = 1
+		CASE 2
+			LOCAL = 2
+		CASE 3
+			LOCAL = 4
+		CASE 4
+			LOCAL = 8
+		CASEELSE
+			LOCAL = 1
+	ENDSELECT
+	CFLAG:COUNT:9 = LOCAL
+REND
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM Mk-3改2～Mk-3改7 → eratohoYM Mk-3改7.1のセーブ変換処理
+;--------------------------------------------------
+;処理内容：不適切なフラグ処理の修正
+;処理内容：前述の修正のため、キョンシーに変えた人数の累計フラグも初期化
+@SAVE_SUPPORT_VERSION_3701
+FOR PC_VAR1, 411, 420
+	FLAG:PC_VAR1 = 0
+NEXT
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM Mk-3改2～Mk-3改7.1 → eratohoYM Mk-3改8proto6のセーブ変換処理
+;--------------------------------------------------
+;処理内容：同化刻印取得時に触手残数に関わらず蒐集品の種類総数と触手種数が不適切な値になるのを修正
+@SAVE_SUPPORT_VERSION_3706
+#DIM ALRAUNE, 2
+#LOCALSIZE 15
+VARSET ALRAUNE, 0
+VARSET LOCAL, 0
+
+;蒐集品をが有るかチェック
+FOR ALRAUNE:0, 100, 600, 1
+	FOR ALRAUNE:1, 1, 13, 1
+		IF DITEMTYPE:(ALRAUNE:0):(101 + ALRAUNE:1) > 0
+			LOCAL:(ALRAUNE:1) += 1
+			LOCAL:0 += 1
+		ENDIF
+	NEXT
+NEXT
+FOR ALRAUNE:0, 0, 13, 1
+	FLAG:(500 + ALRAUNE:0) = LOCAL:(ALRAUNE:0)
+NEXT
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM Mk-3改8proto6 → eratohoYM Mk-3改811のセーブ変換処理
+;--------------------------------------------------
+;chara番号を4桁で設定するための処理
+@SAVE_SUPPORT_VERSION_3811
+#DIM ALRAUNE, 2
+#LOCALSIZE 15
+VARSET ALRAUNE, 0
+VARSET LOCAL, 0
+
+;蒐集品の引越し「DITEMTYPE:(昔のキャラ番号+100):(101~112) → DA:(今のキャラ番号):(1~12)」
+FOR ALRAUNE:0, 0, 500, 1
+	FOR ALRAUNE:1, 1, 13, 1
+		IF DITEMTYPE:(ALRAUNE:0 + 100):(100 + ALRAUNE:1) > 0
+			DA:(YMAE_NO_CONVERT(ALRAUNE:0)):(ALRAUNE:1) = DITEMTYPE:(ALRAUNE:0 + 100):(100 + ALRAUNE:1)
+
+			LOCAL:(ALRAUNE:1) += 1
+			LOCAL:0 += 1
+			DITEMTYPE:(ALRAUNE:0 + 100):(100 + ALRAUNE:1) = 0
+		ENDIF
+	NEXT
+NEXT
+
+FOR ALRAUNE:1, 0, 12, 1
+	FLAG:(500 + ALRAUNE:1) = LOCAL:(ALRAUNE:1)
+NEXT
+;迎えたエンディング処理
+IF FLAG:598 && FLAG:598 / 1000 > 0
+	LOCAL:1 = FLAG:598 / 1000
+	FLAG:598 = YMAE_NO_CONVERT(FLAG:598 % 1000) + 10000 * LOCAL:1
+ENDIF
+
+FOR LOCAL:1, 0, 499
+	;今までに見たエンディング引越し
+	FLAG:(10000 + LOCAL:1) = FLAG:(4000 + LOCAL:1)
+	;全消去関数があったはずだけど思い出せない
+	FLAG:(4000 + LOCAL:1) = 0
+
+	;キャラエンドの引っ越し
+	FLAG:(10000 + YMAE_NO_CONVERT(LOCAL:1)) = FLAG:(4500 + LOCAL:1)
+	FLAG:(4500 + LOCAL:1) = 0
+
+NEXT
+
+
+
+FOR PC_VAR1, 0, CHARANUM
+	;旧式NO:ARGから現行NO:ARGに
+	NO:PC_VAR1 = YMAE_NO_CONVERT(NO:PC_VAR1)
+	
+	;子供の親NOなどを旧式NOから現行NOに
+	CFLAG:PC_VAR1:78 = YMAE_NO_CONVERT(CFLAG:PC_VAR1:78)
+	CFLAG:PC_VAR1:3000 = YMAE_NO_CONVERT(CFLAG:PC_VAR1:3000)
+	CFLAG:PC_VAR1:3100 = YMAE_NO_CONVERT(CFLAG:PC_VAR1:3100)
+	CFLAG:PC_VAR1:3101 = YMAE_NO_CONVERT(CFLAG:PC_VAR1:3101)
+	CFLAG:PC_VAR1:3103 = YMAE_NO_CONVERT(CFLAG:PC_VAR1:3103)
+	
+	
+	FOR PC_VAR2, 0, 500
+		;キャラ間相性の移行
+		RELATION:PC_VAR1:YMAE_NO_CONVERT(PC_VAR2) = RELATION:PC_VAR1:PC_VAR2
+		
+		;助手としての調教経験移行
+		PC_VAR3 = 10000 + YMAE_NO_CONVERT(PC_VAR2)
+		CFLAG:PC_VAR1:PC_VAR3 = CFLAG:PC_VAR1:(1000 + PC_VAR2)
+		CFLAG:PC_VAR1:(1000 + PC_VAR2) = 0
+	NEXT
+	
+NEXT
+
+
+TFLAG:990 = 1
+
+
+;--------------------------------------------------
+;eratohoYM → eratohoYM AMのキャラNO変換処理
+;--------------------------------------------------
+@YMAE_NO_CONVERT(ARG)
+#FUNCTION
+#LOCALSIZE 1
+SELECTCASE ARG
+	CASE IS <= 87
+		LOCAL = 1000 + ARG
+	CASE 96 TO 99
+		LOCAL = 1000 + ARG - 8
+	CASE IS <= 142
+		LOCAL = 2000 + ARG - 100
+	CASE 147
+		LOCAL = 1092
+	CASE 148 TO 149
+		LOCAL = 2000 + ARG - 100
+	CASE IS <= 156
+		LOCAL = 3000 + ARG - 150
+	CASE IS <= 166
+		LOCAL = 3000 + ARG - 150 - 3
+	CASE IS <= 199
+		LOCAL = 3000 + ARG - 150 - 6
+	CASE IS <= 299
+		LOCAL = 4000 + ARG - 200
+	CASE IS <= 499
+		LOCAL = 5000 + ARG - 400
+ENDSELECT
+
+RETURNF LOCAL
+
+
+
+;--------------------------------------------------
+;eratohoYM Mk-3改811 → eratohoYM AE 4219のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4219
+;[現し身触手](DITEMTYPE:59:999)を移動するための処理
+DA:1000:15 = DITEMTYPE:59:999
+DITEMTYPE:59:999 = 0
+
+;FOR PC_VAR1, 0, 600
+;	DB:0:PC_VAR1 = DITEMTYPE:999:PC_VAR1
+;	DITEMTYPE:999:PC_VAR1 = 0
+;NEXT
+
+TFLAG:990 = 1
+
+
+;--------------------------------------------------
+;eratohoYM AE M 4219 → eratohoYM AE M 4225のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4225
+
+FOR PC_VAR1, 0, CHARANUM
+	;理性ゲージ設定
+	MAXBASE:PC_VAR1:9 = 9500 + 25 * RAND:101
+	BASE:PC_VAR1:9 = MAXBASE:PC_VAR1:9
+	TALENT:PC_VAR1:500 = 1
+	;発情設定
+	SIF TALENT:PC_VAR1:116 || TALENT:PC_VAR1:180 || TALENT:PC_VAR1:209 || TALENT:PC_VAR1:211 || TALENT:PC_VAR1:212 || TALENT:PC_VAR1:214 || TALENT:PC_VAR1:217 || TALENT:PC_VAR1:227 || TALENT:PC_VAR1:229
+		TALENT:PC_VAR1:502 = 1
+	;調教度ゲージ設定
+	CALL CHECK_ACCEPTANCE, PC_VAR1
+	;初期月経周期を設定
+	CALL EVENT_ADD_CHARA_MENSTRUATION, PC_VAR1
+NEXT
+
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4236のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4236
+
+FOR PC_VAR1, 0, CHARANUM
+	CFLAG:PC_VAR1:3664 = CFLAG:PC_VAR1:8664
+	CFLAG:PC_VAR1:8664 = 0
+	CFLAG:PC_VAR1:3665 = CFLAG:PC_VAR1:8665
+	CFLAG:PC_VAR1:8665 = 0
+	CFLAG:PC_VAR1:3666 = CFLAG:PC_VAR1:8666
+	CFLAG:PC_VAR1:8666 = 0
+	CFLAG:PC_VAR1:3667 = CFLAG:PC_VAR1:9867
+	CFLAG:PC_VAR1:9867 = 0
+	CFLAG:PC_VAR1:3668 = CFLAG:PC_VAR1:8668
+	CFLAG:PC_VAR1:8668 = 0
+NEXT
+
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4237のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4237
+
+FOR PC_VAR1, 0, CHARANUM
+	CFLAG:PC_VAR1:3669 = CFLAG:PC_VAR1:9450
+	CFLAG:PC_VAR1:9450 = 0
+NEXT
+
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4238のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4238
+
+GETTIME
+FLAG:9548 = RESULT:0
+SIF NO:MASTER != 0
+	FLAG:9548 += NO:MASTER
+
+FOR PC_VAR1, 0, CHARANUM
+	SIF TALENT:PC_VAR1:150
+		CALL MASTER_CHANGE, PC_VAR1
+NEXT
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4239のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4239
+
+FLAG:800 = ALL_TROPHY_CHECK(1) + MAX(FLAG:6 - 1, 0)
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4240のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4240
+
+FOR PC_VAR1, 0, CHARANUM
+	IF TALENT:PC_VAR1:旦那あり
+		TALENT:PC_VAR1:彼氏あり = 0
+		TALENT:PC_VAR1:思い人あり = 0
+	ELSEIF TALENT:PC_VAR1:彼氏あり
+		TALENT:PC_VAR1:思い人あり = 0
+	ENDIF
+	SIF NAME:MASTER != "あなた" && MASTER_CHECK(PC_VAR1) == 1
+		CSTR:PC_VAR1:34 = NAME:MASTER
+NEXT
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4243のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4243
+
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4245のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4245
+
+;その周回で堕とした人数が25人以上または累計で100人以上で、大甲斐性が付く
+IF (CFLAG:MASTER:98 >= 25 || FLAG:30 >= 100) && TALENT:MASTER:大甲斐性 == 0
+	PRINTFORMW %CALLNAME:MASTER%は[大甲斐性]を身につけた
+	TALENT:MASTER:大甲斐性 = 1
+ENDIF
+;妖精知識
+IF TALENT:MASTER:妖精知識 == 0 && FLAG:32 >= 10
+	PRINTFORMW %CALLNAME:MASTER%は[妖精知識]を身につけた
+	TALENT:MASTER:妖精知識 = 1
+ENDIF
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4251のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4251
+
+;大甲斐性
+IF TALENT:MASTER:大甲斐性 == 1
+	;実績
+	SIF !(GLOBAL:2300 & 32768)
+		GLOBAL:2300 |= 32768
+	SAVEGLOBAL
+ENDIF
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4254のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4254
+
+FOR PC_VAR1, 0, CHARANUM
+	CALL EVENT_ADD_CHARA_MENSTRUATION, PC_VAR1
+NEXT
+
+TFLAG:990 = 1
+
+;--------------------------------------------------
+;eratohoYM AE M → eratohoYM AE M 4266のセーブ変換処理
+;--------------------------------------------------
+@SAVE_SUPPORT_VERSION_4266
+
+FOR PC_VAR1, 0, 101
+	GLOBALS:PC_VAR1 = 
+NEXT
+SAVEGLOBAL
+
+TFLAG:990 = 1

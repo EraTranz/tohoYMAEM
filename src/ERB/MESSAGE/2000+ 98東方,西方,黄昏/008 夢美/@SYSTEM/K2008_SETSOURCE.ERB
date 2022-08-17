@@ -1,0 +1,12 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;SOURCEが入ったことがあるかの経験管理
+;================================================
+@K2008_SETSOURCE
+#DIM _COUNT
+;失神中は気がつかないのでOK
+FOR _COUNT, 0, VARSIZE("SOURCE")
+	SIF SOURCE:_COUNT
+		SETBIT CFLAG:__K2008N_CFLAG_SOURCEHISTORY__, _COUNT
+NEXT
+RETURN 0

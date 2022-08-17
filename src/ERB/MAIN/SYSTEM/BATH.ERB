@@ -1,0 +1,685 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;特殊風呂関係
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ここでは@BATH_REFORMでは改装処理を、@SHOW_BATH_ABLでは改装状況の表示を、
+;@FAIRIES_BATHでは妖精風呂の処理を行う。
+;またいくつかの風呂は@SEAK_ASSIST_BATHでは全キャラクターを参照し、
+;特定のキャラ(素質)が主人または助手がいるときのみ改装可能かどうかを判定する
+;=============================================================================
+;お風呂改装処理
+;=============================================================================
+;嗜好品(?)ってことで割と高めに設定
+;下方の処理の内LOCAL:1は改装に必要な金額(風呂の改装状況はFLAG:46(ビット演算)にて行う)
+;LOCALは助手などを参照し、
+@BATH_REFORM
+PRINTL 現在の風呂場の機能：
+CALL SHOW_BATH_ABL
+LOCAL = SEAK_ASSIST_BATH()
+DRAWLINE
+PRINTL 風呂場のどの機能を開発しますか？
+PRINTFORML 所持金:{MONEY}圓
+FOR COUNT,0, 16
+	SIF !GETBIT(FLAG:74, COUNT) && GETBIT(LOCAL, COUNT)
+PRINTFORML   [{COUNT, 2}] %STR:(500+COUNT),16,LEFT%(%SHOW_YEN(SPECIAL_BATH_PRICE(COUNT))%)
+NEXT
+PRINTL [100]やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT >= 0 && RESULT <= 15 && !GETBIT(FLAG:74, RESULT) && GETBIT(LOCAL, RESULT)
+	LOCAL:1 = SPECIAL_BATH_PRICE(RESULT)
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+IF MONEY < LOCAL:1
+	PRINTW 必要な資金が不足しています
+	RESTART
+ELSE
+	MONEY -= LOCAL:1
+	SETBIT FLAG:74, RESULT
+	PRINTL 風呂場の機能を拡張した
+	PRINTFORMW コマンド\@(RESULT == 13) ? 《%STR:513%》 # ＜%STR:(500+RESULT)%＞\@が使えるようになりました
+ENDIF
+DRAWLINE
+RESTART
+
+;-----------------------------------------------
+;特殊風呂のお値段
+;-----------------------------------------------
+@SPECIAL_BATH_PRICE(ARG)
+#FUNCTION
+SELECTCASE ARG
+	;蟲風呂の改装値段
+	CASE 0
+		RETURNF 230000
+	;鰻風呂の改装値段
+	CASE 1
+		RETURNF 250000
+	;ローション風呂の改装値段
+	CASE 2
+		RETURNF 150000
+	;スライム風呂の改装値段
+	CASE 3
+		RETURNF 200000
+	;媚薬風呂の改装値段
+	CASE 4
+		RETURNF 180000
+	;水牢の改装値段
+	CASE 5
+		RETURNF 500000
+	;精液風呂の改装値段
+	CASE 6
+		RETURNF 300000
+	;酒風呂の改装値段
+	CASE 7
+		RETURNF 260000
+	;トロロ風呂の改装値段
+	CASE 8
+		RETURNF 200000
+	;毛玉風呂の改装値段
+	CASE 9
+		RETURNF 200000
+	;蒸し風呂の改装値段
+	CASE 10
+		RETURNF 520000
+	;国士無双の薬風呂の改装値段
+	CASE 11
+		RETURNF 370000
+	;厄毒風呂の改装値段
+	CASE 12
+		RETURNF 340000
+	;妖精風呂の改装値段
+	CASE 13
+		RETURNF 990000
+	;岩盤浴の改装値段
+	CASE 14
+		RETURNF 750000
+	;札束風呂の改装値段
+	CASE 15
+		RETURNF 880000
+	;そんな風呂はありません。
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+
+;-----------------------------------------------
+;お風呂の改装状況を表示
+;-----------------------------------------------
+@SHOW_BATH_ABL
+IF FLAG:74 == 0
+	PRINT ＊無改造＊
+ELSE
+	FOR COUNT, 0, 16
+		SIF !GETBIT(FLAG:74, COUNT)
+			CONTINUE
+		IF COUNT == 9
+	PRINT [けだマックス] 
+		ELSEIF COUNT == 11
+	PRINT [ドーピングヤゴコロバス] 
+		ELSE
+	PRINTFORM [%STR:(500+COUNT)%] 
+		ENDIF
+	NEXT
+ENDIF
+PRINTL 
+
+;-----------------------------------------------
+;特定の改装が実行できるかどうか判断するために主人・助手を見る処理
+;-----------------------------------------------
+@SEAK_ASSIST_BATH
+#FUNCTION
+LOCAL = 0
+;ローション風呂、スライム風呂、媚薬風呂は無条件でＯＫ
+LOCAL |= 4
+LOCAL |= 8
+LOCAL |= 16
+;精液風呂は触手に[精液放出量強化]能力があれば追加可能
+SIF FLAG:75 & 16384
+	LOCAL |= 64
+;主人が禁断の知識を持っていると鰻、蟲風呂両方追加可能
+IF TALENT:MASTER:禁断の知識
+	LOCAL |= 1
+	LOCAL |= 2
+ENDIF
+REPEAT CHARANUM
+	;失踪中なら除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;主人か助手可能でなければ除外
+	SIF COUNT != MASTER && CFLAG:COUNT:1 < 2
+		CONTINUE
+	;リグルかヤマメの内誰かが主人もしくは助手可能の場合、蟲風呂を追加可能
+	SIF NO:COUNT == 1024 || NO:COUNT == 1068
+		LOCAL |= 1
+	;みすちーか衣玖さんの内誰かが主人もしくは助手可能の場合、鰻風呂を追加可能
+	SIF NO:COUNT == 1025 || NO:COUNT == 1051
+		LOCAL |= 2
+	;にとりか名無しキャラ(河童)の内誰かが主人もしくは助手可能の場合、水牢を追加可能
+	SIF NO:COUNT == 1040 || NO:COUNT == 3024
+		LOCAL |= 32
+	;(旧条件)萃香か勇儀か文か紫の内誰かが主人もしくは助手可能の場合、酒風呂を追加可能
+	;(修正)萃香か勇儀か文か紫か黄昏酒場の面々か名無しキャラ(鴉天狗)か名無しキャラ(旧都鬼)の内誰かが主人もしくは助手可能の場合、酒風呂を追加可能
+	SIF NO:COUNT == 1022 || NO:COUNT == 1023 || NO:COUNT == 1032 || NO:COUNT == 1060 || NO:COUNT == 2039 || NO:COUNT == 2040 || NO:COUNT == 2041 || NO:COUNT == 2042 || NO:COUNT == 3018 || NO:COUNT == 3019 || NO:COUNT == 3025|| NO:COUNT == 3026 
+		LOCAL |= 128
+	;ゆうかりんか秋姉妹の内誰かが主人もしくは助手可能の場合、トロロ風呂を追加可能
+	SIF NO:COUNT == 1034 || NO:COUNT == 1037 || NO:COUNT == 1038
+		LOCAL |= 256
+	;パチュリーか橙、藍様、雛、椛の内誰かが主人もしくは助手可能の場合、毛玉風呂を追加可能
+	SIF NO:COUNT == 1008 || NO:COUNT == 1013 || NO:COUNT == 1021 || NO:COUNT == 1039 || NO:COUNT == 1041
+		LOCAL |= 512
+	;フランちゃんか妹紅、お燐、うにゅほの内誰かが主人もしくは助手可能の場合、蒸し風呂を追加可能
+	SIF NO:COUNT == 1011 || NO:COUNT == 1031 || NO:COUNT == 1062 || NO:COUNT == 1063
+		LOCAL |= 1024
+	;てゐかうどんげ、えーりん、姫の内誰かが主人もしくは助手可能の場合、国士無双の薬風呂を追加可能
+	SIF NO:COUNT == 1027 || NO:COUNT == 1028 || NO:COUNT == 1029 || NO:COUNT == 1030
+		LOCAL |= 2048
+	;メディ、雛、ヤマメ、パルスィの内誰かが主人もしくは助手可能の場合、厄毒風呂を追加可能
+	SIF NO:COUNT == 1033 || NO:COUNT == 1039 || NO:COUNT == 1058 || NO:COUNT == 1059
+		LOCAL |= 4096
+	;妖精が主人もしくは助手可能、かつ堕とした妖精がその時点で50人以上で[つるぺた堕し]か[大乳導]を取得している、または主人が[妖精知識]を取得している場合、妖精風呂を追加可能
+	;CHALLENGEモードのときは妖精が主人もしくは助手可能かつ堕とした妖精が累計20人以上のとき妖精風呂を追加可能
+	IF (FLAG:4 >= 50 && FLAG:32 >= 20) || FLAG:32 >= 50 && (TALENT:MASTER:大乳導 || TALENT:MASTER:つるぺた堕し) || TALENT:MASTER:妖精知識
+		SIF TALENT:COUNT:妖精
+			LOCAL |= 8192
+	ENDIF
+	;理香子、ちゆり、夢美の内誰かが主人もしくは助手可能の場合、岩盤浴を追加可能
+	SIF NO:COUNT == 2006 || NO:COUNT == 2007 || NO:COUNT == 2008
+		LOCAL |= 16384
+REND
+;主人の調教師Lvが4以上である場合には札束風呂を追加可能
+SIF ABL:MASTER:調教師Lv >= 4
+	LOCAL |= 32768
+;デバッグモード時は無条件で改造可能
+SIF TALENT:MASTER:998
+	LOCAL = 65535
+RETURNF LOCAL
+
+;--------------------------------------------------
+;特殊風呂の判定
+;--------------------------------------------------
+;特殊風呂の数を返す
+@SPECIALBATH_CHECK
+#FUNCTION
+LOCAL:1 = 0
+FOR LOCAL, 0, 20
+	LOCAL:1 += GETBIT(FLAG:74, LOCAL)
+NEXT
+RETURNF LOCAL:1
+
+;=============================================================================
+;妖精風呂処理
+;=============================================================================
+;LOCAL=妖精総数, LOCAL:1=堕ちている妖精数, LOCAL:2=心酔している妖精数を示す
+@FAIRIES_BATH
+;妖精数カウント処理
+LOCAL = 0
+LOCAL:1 = 0
+LOCAL:2 = 0
+REPEAT CHARANUM
+	;主人、[オトコ]は条件からはじく
+	SIF COUNT == MASTER || TALENT:COUNT:オトコ
+		CONTINUE
+	;その場にいないキャラは除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;妊娠、抱卵、懐卵も除外
+	SIF TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵
+		CONTINUE
+	;妖精じゃなかったら弾く
+	SIF TALENT:COUNT:妖精 == 0
+		CONTINUE
+	IF TALENT:COUNT:妄信 || TALENT:COUNT:親愛 || TALENT:COUNT:相愛 || TALENT:COUNT:服従 || TALENT:COUNT:烙印 || TALENT:COUNT:隷属 || TALENT:COUNT:使い魔
+		LOCAL:1 += 1
+		LOCAL:2 += 1
+	ELSEIF TALENT:COUNT:恋慕 || TALENT:COUNT:淫乱
+		LOCAL:1 += 1
+	ENDIF
+	LOCAL += 1
+REND
+
+PRINTFORMW %CALLNAME:MASTER%は大きな空の浴槽を用意すると妖精達を呼び、中にぎっしりと詰め込んだ
+PRINT 浴槽の中には
+IF LOCAL > 500
+	PRINT 数え切れない程の
+ELSEIF LOCAL > 50
+	PRINT ものすごい数の
+ELSE
+	PRINT たくさんの
+ENDIF
+PRINTW 妖精達がひしめき合い、
+IF LOCAL:1 > 300
+	PRINTFORMW %CALLNAME:MASTER%を期待のこもった瞳で見つめている……
+ELSEIF LOCAL:1 > 30
+	PRINTFORMW 何をするのだろうかと%CALLNAME:MASTER%を見つめている……
+ELSE
+	PRINTFORMW 窮屈そうな顔をしている……
+ENDIF
+PRINTFORMW %CALLNAME:MASTER%はその中へ飛び込んだ
+PRINTFORM %CALLNAME:MASTER%が中へ入った途端、
+IF LOCAL > 500
+	PRINT 数え切れない程の
+ELSEIF LOCAL > 50
+	PRINT ものすごい数の
+ELSE
+	PRINT たくさんの
+ENDIF
+PRINT 妖精達が
+;風呂の効果計算
+LOCAL:3 = LOCAL + LOCAL:1 * 4 + LOCAL:2 * 16
+IF LOCAL == LOCAL:2
+	LOCAL:3 *= 16
+	PRINTFORMW 我先にと%CALLNAME:MASTER%の取り合いを始めた……
+ELSEIF LOCAL == LOCAL:1
+	LOCAL:3 *= 4
+	PRINTFORMW 一斉に%CALLNAME:MASTER%に群がって来た……
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%に興味を持ったのか、まわりに集まって来た……
+ENDIF
+SIF (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) && LOCAL:3 / 64
+	PRINTFORMW %CALLNAME:MASTER%は多くの妖精に包まれながら、大量の精液をあたりにまき散らした……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+IF (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) && LOCAL:3 / 64
+	PRINTFORML %CALLNAME:MASTER%は{LOCAL:3/64}回射精をした
+	EXP:MASTER:射精経験 += (LOCAL:3 / 64) * 2
+ENDIF
+
+PRINTFORML %EXPNAME:2%＋?
+PRINTFORML %EXPNAME:3%＋?
+PRINTFORML %EXPNAME:4%＋?
+PRINTFORML %EXPNAME:5%＋?
+PRINTFORML %EXPNAME:20%＋?
+PRINTFORML %EXPNAME:50%＋?
+PRINTFORML %PALAMNAME:0%の珠＋?
+PRINTFORML %PALAMNAME:3%の珠＋?
+PRINTFORML %PALAMNAME:12%の珠＋?
+PRINTFORML %PALAMNAME:13%の珠＋?
+PRINTW (ただし0の場合もある)
+
+REPEAT CHARANUM
+	;主人、[オトコ]は条件からはじく
+	SIF COUNT == 0 || TALENT:COUNT:オトコ
+		CONTINUE
+	;失踪中は除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;[妊娠]、[抱卵中]、[懐卵]も除外
+	SIF TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵
+		CONTINUE
+	;[妖精]以外は除外
+	SIF TALENT:COUNT:妖精 == 0
+		CONTINUE
+	;快Ｃの珠、絶頂経験、(射精経験、異常経験)
+	LOCAL:4 = (ABL:COUNT:Ｂ感覚 + 1) * (LOCAL:3/2)
+	SIF TALENT:COUNT:Ｃ鈍感
+		TIMES LOCAL:4 , 0.67
+	SIF TALENT:COUNT:Ｃ敏感
+		TIMES LOCAL:4 , 1.50
+	JUEL:COUNT:快Ｃ += LOCAL:4
+	LOCAL:5 = LOCAL:4 / 20
+	IF LOCAL:4 >= 1000
+		EXP:COUNT:絶頂経験 += LOCAL:4 / 1000
+		IF TALENT:COUNT:ふたなり
+			IF EXP:COUNT:射精経験 == 0
+				EXP:COUNT:異常経験 += 1
+				CFLAG:COUNT:11 |= 4
+			ENDIF
+			EXP:COUNT:射精経験 += LOCAL:4 / 1000
+		ENDIF
+	ENDIF
+	;快Ｂの珠、絶頂経験、(噴乳経験、異常経験)
+	LOCAL:4 = (ABL:COUNT:Ｂ感覚 + 1) * (LOCAL:3/4)
+	SIF TALENT:COUNT:Ｂ鈍感
+		TIMES LOCAL:4 , 0.67
+	SIF TALENT:COUNT:Ｂ敏感
+		TIMES LOCAL:4 , 1.50
+	IF TALENT:COUNT:絶壁
+		TIMES LOCAL:4 , 2.00
+	ELSEIF TALENT:COUNT:貧乳
+		TIMES LOCAL:4 , 1.50
+	ELSEIF TALENT:COUNT:巨乳
+		TIMES LOCAL:4 , 0.67
+	ELSEIF TALENT:COUNT:爆乳
+		TIMES LOCAL:4 , 0.50
+	ENDIF
+	JUEL:COUNT:快Ｂ += LOCAL:4
+	LOCAL:5 += LOCAL:4 / 20
+	IF LOCAL:4 >= 1000
+		EXP:COUNT:絶頂経験 += LOCAL:4 / 1000
+		IF TALENT:COUNT:母乳体質
+			IF EXP:COUNT:噴乳経験 == 0
+				EXP:COUNT:異常経験 += 1
+				CFLAG:COUNT:11 |= 4
+			ENDIF
+			EXP:COUNT:噴乳経験 += LOCAL:4 / 1000
+		ENDIF
+	ENDIF
+	;精液経験
+	IF RAND:2 == 0
+		LOCAL:4 = (LOCAL:3/128 < 2) ? RAND:2 # RAND:(LOCAL:3/128)
+		EXP:COUNT:精液経験 += LOCAL:4
+		LOCAL:5 += LOCAL:4
+	ENDIF
+	;恭順の珠、欲情の珠、奉仕快楽経験
+	LOCAL:5 *= 2 + (TALENT:COUNT:恋慕 + TALENT:COUNT:妄信 + TALENT:COUNT:親愛 + TALENT:COUNT:相愛 + TALENT:COUNT:服従 + TALENT:COUNT:烙印 + TALENT:COUNT:隷属 + TALENT:COUNT:使い魔 + TALENT:COUNT:淫乱 + TALENT:COUNT:淫魔) * 2
+	JUEL:COUNT:欲情 += LOCAL:5
+	JUEL:COUNT:恭順 += LOCAL:5 / 10
+	EXP:COUNT:奉仕快楽経験 += LOCAL:5 / 20
+	;今回から否定の珠も追加。数を計算する。
+	;反発刻印によって基礎値が、屈服刻印によってランダム値が決定される
+	IF MARK:COUNT:反発刻印 > MARK:COUNT:屈服刻印
+		LOCAL:6 = (MARK:COUNT:反発刻印 - MARK:COUNT:屈服刻印) * LOCAL:5 / 5
+	ELSEIF MARK:COUNT:反発刻印 > 0
+		LOCAL:6 = MARK:COUNT:反発刻印 * LOCAL:5 / 20
+	ELSE
+		LOCAL:6 = 0
+	ENDIF
+	IF LOCAL:3 < 10000
+		LOCAL:6 += RAND:20 * (3 - MARK:COUNT:屈服刻印) / 3
+	ELSE
+		LOCAL:6 += RAND:(SQRT(LOCAL:3)/5) * (3 - MARK:COUNT:屈服刻印) / 3
+	ENDIF
+	;反発０だとボーナス
+	IF LOCAL:6 == 0
+		JUEL:COUNT:欲情 += LOCAL:5
+		JUEL:COUNT:恭順 += LOCAL:5 / 9
+		EXP:COUNT:奉仕快楽経験 += LOCAL:5 / 18
+	ELSEIF LOCAL:6 > LOCAL:5 * 11 / 10
+		JUEL:COUNT:否定 += LOCAL:6 - LOCAL:5 * 11 / 10
+	ELSE
+		JUEL:COUNT:欲情 += LOCAL:5 - LOCAL:6 * 10 / 11
+		JUEL:COUNT:恭順 += LOCAL:5 / 10 - LOCAL:6 / 11
+		EXP:COUNT:奉仕快楽経験 += LOCAL:5 / 20
+	ENDIF
+
+	;最後に体力を限界にする
+	BASE:COUNT:体力 = 1 + RAND:499
+REND
+BASE:MASTER:体力 = 1 + RAND:499
+PRINTFORMW %CALLNAME:MASTER%達は疲れ果ててその場で眠ってしまった…
+;妖精の総数が100以上、または堕ちている妖精の数が50以上、または心酔している妖精の数が30以上、
+;または妖精の総数が心酔している妖精の数と同じ、または堕ちている妖精の数が妖精の総数の半分以上を占めているなら風呂は壊れる
+;(暴れまわると解釈)
+IF LOCAL >= 100 || LOCAL:1 >= 50 || LOCAL:2 >= 30 || LOCAL == LOCAL:2 || LOCAL:1 >= LOCAL/2
+	PRINTFORMW はしゃぎすぎたせいか妖精風呂は壊れて使用不能になってしまった……
+	FLAG:74 -= 8192
+ENDIF
+BEGIN TURNEND
+
+RETURN 1
+
+;=============================================================================
+;集団風呂イベント関連処理
+;=============================================================================
+;ただし主人が除外されることに注意。イベントを起こしたいなら計画的に。
+;--------------------------------------------------
+;とりあえず発動条件をチェックする
+;--------------------------------------------------
+@GROUP_BATH_CHECK
+;まずは除外処理
+;キャラ専用コマンド、日常生活両方ともＯＮ必須
+SIF (FLAG:15 & 16384) == 0 || (FLAG:12 & 64) == 0
+	RETURN 0
+;eratohoYM、ABNORMAL、EXTRAモード専用、[DEBUG]はどのゲームでもスルー
+SIF FLAG:4 == 3 || FLAG:4 == 4 || FLAG:4 >= 50 || TALENT:MASTER:998 == 0
+	RETURN 0
+;主人を入れずに全登録キャラが３人以下なら戻る
+SIF CHARANUM < 4
+	RETURN 0
+;引き起こす確率はEASY～NORMALで主人の調教師Lv*6%、HARD以上で調教師Lv*4%とする
+SIF (FLAG:3 <= 2 && RAND:100 > 6*(ABL:MASTER:調教師Lv)) || (FLAG:3 > 2 && RAND:100 > 4*(ABL:MASTER:調教師Lv))
+	RETURN 0
+;----------------------------------------------------------------------------------------------------
+;イベント分岐用一文字変数の初期化
+VARSET LOCAL,0
+;ここより全登録キャラよりイベントありそうなキャラをチェックしていく
+REPEAT CHARANUM
+	;主人は除外
+	SIF COUNT == MASTER
+		CONTINUE
+	;その場にいないキャラは除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;恋慕もしくは服従もしくは淫乱なしなキャラは除外
+	SIF TALENT:COUNT:恋慕 == 0 && TALENT:COUNT:服従 == 0 && TALENT:COUNT:淫乱 == 0
+		CONTINUE
+	;幼児退行もしくは精神崩壊もしくは傀儡もしくは壊造人格もしくは媚薬中毒もしくは抱卵中なキャラは除外
+	SIF TALENT:COUNT:幼児退行 || TALENT:COUNT:精神崩壊 || TALENT:COUNT:傀儡 || TALENT:COUNT:壊造人格 || TALENT:COUNT:媚薬中毒 || TALENT:COUNT:抱卵中
+		CONTINUE
+	;特殊装備を装着している場合は除外
+	SIF CFLAG:COUNT:42
+		CONTINUE
+	;反発刻印2以上,恐怖刻印3以上、薬物刻印3以上なキャラは除外
+	SIF MARK:COUNT:反発刻印 >= 2 || MARK:COUNT:恐怖刻印 >= 3 || MARK:COUNT:薬物刻印 >= 3
+		CONTINUE
+;----------------------------------------------------------------------------------------------------
+	LOCAL = NO:COUNT
+	;バカルテット＋保護者たち（ルーミア、チルノ、リグル、みすちー、大ちゃん、レティ）
+	SIF LOCAL == 1003 || LOCAL == 1004 || LOCAL == 1005 || LOCAL == 1012 || LOCAL == 1024 || LOCAL == 1025
+		LOCAL:11 += 1
+	;八雲一家＋白玉楼の女性たち（橙、藍しゃま、ゆかりん、みょん、ゆゆ様、半霊）
+	SIF LOCAL == 1013 || LOCAL == 1019 || LOCAL == 1020 || LOCAL == 1021 || LOCAL == 1022 || LOCAL == 1065
+		LOCAL:12 += 1
+	;蓬莱の診療所のみなさん（てゐ、うどんげ、えいりん、輝夜）
+	SIF LOCAL == 1027 || LOCAL == 1028 || LOCAL == 1029 || LOCAL == 1030
+		LOCAL:13 += 1
+	;紅魔館のみなさん（門番、こあ、パチェ、メイド長、れみりあ☆う～、フランちゃん）
+	SIF LOCAL == 1006 || LOCAL == 1007 || LOCAL == 1008 || LOCAL == 1009 || LOCAL == 1010 || LOCAL == 1011
+		LOCAL:14 += 1
+	;守矢の神様と豊穣の神様と厄神様（早苗、かな、すわ、秋姉妹、雛っち）
+	SIF LOCAL == 1037 || LOCAL == 1038 || LOCAL == 1039 || LOCAL == 1042 || LOCAL == 1043 || LOCAL == 1044
+		LOCAL:15 += 1
+	;プリズムリバー三姉妹VS三月精（リリカ、メルラン、ルナサ、サニー、ルナ、スター）
+	SIF LOCAL == 1016 || LOCAL == 1017 || LOCAL == 1018 || LOCAL == 1045 || LOCAL == 1046 || LOCAL == 1047
+		LOCAL:16 += 1
+	;古明地一家（さとりん、おりんりん、うにゅほ、こいしちゃん）
+	SIF LOCAL == 1061 || LOCAL == 1062 || LOCAL == 1063 || LOCAL == 1064
+		LOCAL:17 += 1
+	;アリスとかわいい人形たち（アリスＥＸ不可、上海、ホーライ、ゴリアテ、大江戸）
+	SIF (LOCAL == 1014 && CFLAG:COUNT:0 == 0) || LOCAL == 1066 || LOCAL == 1067 || LOCAL == 1088 || LOCAL == 1089
+		LOCAL:18 += 1
+	;白蓮さんとゆかいなみんな（ナズ、一輪、ムラサ、星、白蓮、ぬえ）
+	SIF LOCAL == 1071 || LOCAL == 1073 || LOCAL == 1075 || LOCAL == 1076 || LOCAL == 1077 || LOCAL == 1078
+		LOCAL:19 += 1
+	;夢のおねーさんオールスター！（幽々子、ゆかりん、えいりん、ゆうかりん、映姫さま、神奈子、白蓮、魅魔、神綺さま）
+	SIF LOCAL == 1020 || LOCAL == 1022 || LOCAL == 1029 || LOCAL == 1034 || LOCAL == 1036 || LOCAL == 1043 || LOCAL == 1077 || LOCAL == 2000 || LOCAL == 2019
+		LOCAL:20 += 1
+	;最愛の妹大集合！（フランちゃん、メルラン、リリカ、穣子、依姫、こいし、夢月）
+	SIF LOCAL == 1011 || LOCAL == 1016 || LOCAL == 1017 || LOCAL == 1038 || LOCAL == 1054 || LOCAL == 1064 || LOCAL == 2012
+		LOCAL:21 += 1
+	;主人公たち（霊夢、魔理沙、咲夜、文、早苗）
+	SIF LOCAL == 1001 || LOCAL == 1002 || LOCAL == 1009 || LOCAL == 1032 || LOCAL == 1042
+		LOCAL:22 += 1
+	;魔理沙ハーレム（魔理沙ＥＸ不可、アリス、パチェ、フラン、にとり、こいし）
+	SIF (LOCAL == 1002 && CFLAG:COUNT:0 == 0 ) || LOCAL == 1008 || LOCAL == 1011 || LOCAL == 1014 || LOCAL == 1040 || LOCAL == 1064
+		LOCAL:23 += 1
+	;どきっ！オトコばかりの集団サービスシーン（霖之助、妖忌、半霊(忌)、雲山、シンギョク、ユウゲンマガン、辰巳、天治で全員[オトコ]持ち）
+	SIF (LOCAL == 1069 && TALENT:COUNT:オトコ) || (LOCAL == 1070 && TALENT:COUNT:オトコ)  || (LOCAL == 1074 && TALENT:COUNT:オトコ) || (LOCAL == 1091 && TALENT:COUNT:オトコ) || (LOCAL == 2020 && TALENT:COUNT:オトコ)  || (LOCAL == 2021 && TALENT:COUNT:オトコ) || (LOCAL == 2040 && TALENT:COUNT:オトコ) || (LOCAL == 2042 && TALENT:COUNT:オトコ)
+		LOCAL:24 += 1
+	;神霊廟のみなさん（芳香、青娥、屠自古、布都、神子）
+	SIF LOCAL == 1082 || LOCAL == 1083 || LOCAL == 1084 || LOCAL == 1085 || LOCAL == 1086
+		LOCAL:25 += 1
+REND
+LOCAL = 0
+;バカルテット＋保護者揃ってる？
+IF LOCAL:11 >= 6
+	LOCAL:101 = 1
+	LOCAL += 1
+ENDIF
+;八雲一家＋白玉楼女性陣揃ってる？
+IF LOCAL:12 >= 6
+	LOCAL:102 = 1
+	LOCAL += 1
+ENDIF
+;蓬莱の診療所のみなさん揃ってる？
+IF LOCAL:13 >= 4
+	LOCAL:103 = 1
+	LOCAL += 1
+ENDIF
+;紅魔館のみなさん揃ってる？
+IF LOCAL:14 >= 6
+	LOCAL:104 = 1
+	LOCAL += 1
+ENDIF
+;神様みんな揃ってる？
+IF LOCAL:15 >= 6
+	LOCAL:105 = 1
+	LOCAL += 1
+ENDIF
+;プリズムリバーと三月精揃ってる？
+IF LOCAL:16 >= 6
+	LOCAL:106 = 1
+	LOCAL += 1
+ENDIF
+;古明地一家みんな揃ってる？
+IF LOCAL:17 >= 4
+	LOCAL:107 = 1
+	LOCAL += 1
+ENDIF
+;アリスと人形たち揃ってる？
+IF LOCAL:18 >= 5
+	LOCAL:108 = 1
+	LOCAL += 1
+ENDIF
+;白蓮さん一同揃ってる？
+IF LOCAL:19 >= 6
+	LOCAL:109 = 1
+	LOCAL += 1
+ENDIF
+;素敵なおねーさんばっか揃ってる？
+IF LOCAL:20 >= 9
+	LOCAL:110 = 1
+	LOCAL += 1
+ENDIF
+;妹７人揃ってる？
+IF LOCAL:21 >= 7
+	LOCAL:111 = 1
+	LOCAL += 1
+ENDIF
+;主人公５人衆が揃ってる？
+IF LOCAL:22 >= 5
+	LOCAL:112 = 1
+	LOCAL += 1
+ENDIF
+;魔理沙ハーレムが揃ってる？
+IF LOCAL:23 >= 6
+	LOCAL:113 = 1
+	LOCAL += 1
+ENDIF
+;オトコ８人衆が揃ってる？
+IF LOCAL:24 >= 8
+	LOCAL:114 = 1
+	LOCAL += 1
+ENDIF
+;神霊廟のみなさん揃ってる？
+IF LOCAL:25 >= 5
+	LOCAL:115 = 1
+	LOCAL += 1
+ENDIF
+
+;結局どの組み合わせもなければ終了
+SIF LOCAL <= 0
+	RETURN 0
+;デバッグモードで表示
+SIF TALENT:MASTER:998 == 1
+	PRINTFORML LOCAL = {LOCAL}
+
+;--------------------------------------------------
+;発動決定
+;--------------------------------------------------
+;どのイベントを引き起こそうか？
+LOCAL = 1 + RAND:LOCAL
+
+REPEAT 15
+	SIF COUNT == 0
+		CONTINUE
+	;起きないイベントはスルー
+	SIF LOCAL:(100 + COUNT) == 0
+		CONTINUE
+
+	LOCAL:100 += 1
+	SIF LOCAL:100 == LOCAL
+		LOCAL:200 = COUNT
+REND
+;念のためイベントが発生しない場合をチェック
+SIF LOCAL:200 == 0
+	RETURN 0
+;デバッグモードで表示
+SIF TALENT:MASTER:998 == 1
+	PRINTFORML LOCAL:200 = {LOCAL:200}
+
+CALL GROUP_BATH_EVENT, LOCAL:200
+RETURN 1
+
+;--------------------------------------------------
+;集団入浴イベント本体処理
+;--------------------------------------------------
+@GROUP_BATH_EVENT, ARG
+#LOCALSIZE 2
+DRAWLINE
+;各キャラごとに口上呼び出し、珠取得チェック
+FOR LOCAL:1, 1, 3, 1
+	FOR COUNT, 0, CHARANUM, 1
+		;実行する入浴イベントと参加キャラの判別(該当していないキャラの場合、処理を飛ばす)
+		LOCAL = NO:COUNT
+		SELECTCASE ARG
+			CASE 1
+				SIF LOCAL != 1003 && LOCAL != 1004 && LOCAL != 1005 && LOCAL != 1012 && LOCAL != 1024 && LOCAL != 1025
+					CONTINUE
+			CASE 2
+				SIF LOCAL != 1013 && LOCAL != 1019 && LOCAL != 1020 && LOCAL != 1021 && LOCAL != 1022 && LOCAL != 1065
+					CONTINUE
+			CASE 3
+				SIF LOCAL != 1027 && LOCAL != 1028 && LOCAL != 1029 && LOCAL != 1030
+					CONTINUE
+			CASE 4
+				SIF LOCAL != 1006 && LOCAL != 1007 && LOCAL != 1008 && LOCAL != 1009 && LOCAL != 1010 && LOCAL != 1011
+					CONTINUE
+			CASE 5
+				SIF LOCAL != 1037 && LOCAL != 1038 && LOCAL != 1039 && LOCAL != 1042 && LOCAL != 1043 && LOCAL != 1044
+					CONTINUE
+			CASE 6
+				SIF LOCAL != 1016 && LOCAL != 1017 && LOCAL != 1018 && LOCAL != 1045 && LOCAL != 1046 && LOCAL != 1047
+					CONTINUE
+			CASE 7
+				SIF LOCAL != 1061 && LOCAL != 1062 && LOCAL != 1063 && LOCAL != 1064
+					CONTINUE
+			CASE 8
+				SIF LOCAL != 1014 && LOCAL != 1066 && LOCAL != 1067 && LOCAL != 1088 && LOCAL != 1089
+					CONTINUE
+			CASE 9
+				SIF LOCAL != 1071 && LOCAL != 1073 && LOCAL != 1075 && LOCAL != 1076 && LOCAL != 1077 && LOCAL != 1078
+					CONTINUE
+			CASE 10
+				SIF LOCAL != 1020 && LOCAL != 1022 && LOCAL != 1029 && LOCAL != 1034 && LOCAL != 1036 && LOCAL != 1043 && LOCAL != 1077 && LOCAL != 2000 && LOCAL != 2019
+					CONTINUE
+			CASE 11
+				SIF LOCAL != 1011 && LOCAL != 1016 && LOCAL != 1017 && LOCAL != 1038 && LOCAL != 1054 && LOCAL != 1064 && LOCAL != 2012
+					CONTINUE
+			CASE 12
+				SIF LOCAL != 1001 && LOCAL != 1002 && LOCAL != 1009 && LOCAL != 1032 && LOCAL != 1042
+					CONTINUE
+			CASE 13
+				SIF LOCAL != 1002 && LOCAL != 1008 && LOCAL != 1011 && LOCAL != 1014 && LOCAL != 1040 && LOCAL != 1064
+					CONTINUE
+			CASE 14
+				SIF LOCAL != 1069 && LOCAL != 1070 && LOCAL != 1074 && LOCAL != 1091 && LOCAL != 2020 && LOCAL != 2021 && LOCAL != 2040 && LOCAL != 2042
+					CONTINUE
+			CASE 15
+				SIF LOCAL != 1082 && LOCAL != 1083 && LOCAL != 1084 && LOCAL != 1085 && LOCAL != 1086
+					CONTINUE
+			CASEELSE
+				CONTINUE
+		ENDSELECT
+		IF LOCAL:1 == 1
+			;口上・地の文の表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, COUNT, (500 + ARG)
+			;地の文が連続で出てくるので外付け制御
+			TFLAG:500++
+		ENDIF
+	NEXT
+NEXT
+;そしてリセット
+TFLAG:500 = 0

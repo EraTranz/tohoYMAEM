@@ -1,0 +1,76 @@
+﻿;YM→YMAEコンバータによって作成されました
+
+;-------------------------------------------------
+;日常イベントの快Cイベント（クリトリス・ふたなり・オトコ不問）
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE601
+CALL K2008_SELECT_CALLABLE_FUNCTION("KOJO_2008_MESSAGE_SUB_EVENT_SCENE601_#")
+RETURN RESULT
+
+;-------------------------------------------------
+;通常
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE601_1
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+	
+PRINTFORML 休憩を与えたが、夢美は寂しそうに「一緒に居たい」と部屋までやってきた
+PRINTFORMW いいことを思いついたので、官能小説を夢美に音読させることにした
+PRINTFORMW ・・・
+PRINTFORML 声に熱が入ってきた頃合を見て、夢美の秘裂に手を伸ばして悪戯を始めた
+PRINTFORMW 喘ぐのを我慢しながら必死に読み上げるものの、グチュグチュと水の音は増える一方だ
+PRINTFORML 「『―に、肉棒が秘裂に差し込まれッ、こまれる度に少女があ、あえ・・・』」
+PRINTFORMW 「『喘ぎ声を上げッ、んぁあ！？　恥水がお、音をたてては、はぜッ！』」
+CALL K2008_ORGASM("並")
+
+;-------------------------------------------------
+;ローター装着でお散歩
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE601_2
+SIF __K2008N_CAN_CALL__
+	;ローター所有
+	RETURN ITEM:ローター > 0
+	
+PRINTFORML リモコン式のローターをショーツに入れさせて街中まで散歩にやってきた。
+PRINTFORML 気丈に立ち振る舞っているが、時折、蕩け顔になって寄りかかってくる。
+PRINTFORMW 
+IF ABL:露出癖 >= 4
+	PRINTFORMW ……そろそろ頃合だろう。
+	PRINTFORMW 一気にローターの振動を最強まで上げてやった。
+	PRINTFORML 
+	CALL K2008_COM("快楽")
+	CALL K2008_ORGASM("並")
+	PRINTFORML 
+	PRINTFORML 人目があるのも意に介さず、甘い声を発しながらイッてしまったようだ。
+	PRINTFORMW 絶頂に震える手にリモコンを手渡し、その場を離れた。
+ELSE
+	PRINTFORML 路地裏に連れ込み、しがみ付く手を離して立つように命じた。
+	PRINTFORML 名残惜しそうに離された手にリモコンを渡し、背を向けて路地裏を後にした。
+	PRINTFORMW 去り際に、背中越しに甘ったるい喘ぎ声が聞こえた気がする。
+ENDIF
+
+;-------------------------------------------------
+;おねしょ観察
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE601_11
+SIF __K2008N_CAN_CALL__
+	;お漏らし癖
+	RETURN TALENT:おもらし癖 > 0 && EXP:放尿経験 > EXPLV:3
+
+PRINTFORML 休憩中の夢美の様子を覗いに来たが、ぐっすりと眠っていた
+PRINTFORMW ・・・
+PRINTFORML 少し弄ってやろうと手を布団に入れると、中はぐっしょりと湿っている
+PRINTFORML どうやらおねしょをしたらしい
+PRINTFORML 
+PRINTFORMW 「んふぅ、んぅ？　ん、んくっ、あぁん、んぁ……　んふぅ……♪」
+PRINTFORML 
+PRINTFORML そのまま恥部を軽く揺するのに合わせて、気持ちよさそうな寝顔に喘ぎ声が上がる
+PRINTFORMW 水音を楽しみながら続けると、ビクビクッと震えながら温かい水が溢れてきた
+PRINTFORML 
+PRINTFORML 「ふぁ～、あら、おはよう……　あ、あれ？」
+PRINTFORML 「こ、これは……　そ、そうよ！　%CALLNAME:MASTER%が弄ったりするから！」
+PRINTFORMW 「笑わないでよ！　お、おねしょじゃないってば！　違うんだから！！」
+
+PRINTFORML 
+PRINTFORML 放尿経験 ＋ 1
+EXP:放尿経験 += 1

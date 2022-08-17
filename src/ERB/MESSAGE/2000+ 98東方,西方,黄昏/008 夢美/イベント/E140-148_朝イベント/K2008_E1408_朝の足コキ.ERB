@@ -1,0 +1,25 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝の足コキ
+;TFLAG:99で増加する精液経験の2倍の値を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE148
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORMW ――目を覚ますと、夢美が足コキする体勢で待ち構えている
+		PRINTFORML 
+		PRINTFORML 「ふふふ、まだフニャフニャしてるけど、すぐにご立派様になるわよね」
+		PRINTFORMW 「ほら、ほらっ、勃起できるまで足で愛撫してあげる」
+		CALL K2008_COM("奉仕")
+	CASE 1 * K2008F_CASEIF( K2008F_CAN_EJAC(TARGET) )
+		PRINTFORMW ――夢美の足コキで目を覚ました
+		PRINTFORML 
+		PRINTFORML 「んっ、カチカチですごい気持ちよさそう」
+		PRINTFORMW 「私の%K2008FS_CALL_MY_C()%も……　あとで弄ってほしいわねぇ」
+	CASEELSE
+		PRINTFORMW ――夢美の足コキで目を覚ました
+		PRINTFORML 
+		PRINTFORML 「おはようございます、%CALLNAME:MASTER%」
+		PRINTFORMW 「え、これ？　軽い朝の運動よ。　気持ちいいでしょ？」
+ENDSELECT
+

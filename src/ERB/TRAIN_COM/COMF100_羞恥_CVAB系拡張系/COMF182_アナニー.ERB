@@ -1,0 +1,588 @@
+﻿;=============================================================================
+;アナニー
+;=============================================================================
+;アナルバイブ、ビデオ撮影の時に内容変化
+;ビデオ撮影中なら公開アナニー
+;アナルバイブ装着時ならバイブアナニー
+;アナルビーズ装着時ならビーズアナニー
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE182
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:182 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;助手調教で[小悪魔][妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:小悪魔 == 0 && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURN 0
+ENDIF
+;公開自慰を行ったことがない場合のビデオ撮影中は、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:21 & 1) == 0 && TEQUIP:ビデオ撮影
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;バイブ、クスコ、アナルバイブ、アナルビーズ以外のＶ系装着具、Ａ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 > 1 || TEQUIP:Ａ系装着器具 == 2 || TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ａ系装着器具 > 5 || TEQUIP:氷柱
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:技巧 < 4
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 182) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM182
+LOCALS = 
+SIF TEQUIP:ビデオ撮影
+	LOCALS = %LOCALS%公開
+IF TEQUIP:Ａ系装着器具 == 1
+	LOCALS = %LOCALS%バイブ
+ELSEIF TEQUIP:Ａ系装着器具 == 5
+	LOCALS = %LOCALS%ビーズ
+ENDIF
+LOCALS = %LOCALS%アナニー
+PRINTFORML %LOCALS%
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 182
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = %LOCALS%
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:逸脱 = 400
+LOCAL:1 = 0
+LOCAL:2 = 0
+LOCAL:3 = 0
+
+IF TEQUIP:ビデオ撮影
+	SOURCE:欲情追加 = 100
+	SOURCE:液体追加 = 50
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 7
+	SOURCE:露出 = 2000
+	SOURCE:屈従 = 500
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 25
+	SOURCE:露出 = 2300
+	SOURCE:屈従 = 800
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 150
+	SOURCE:露出 = 2600
+	SOURCE:屈従 = 1200
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 350
+	SOURCE:露出 = 2900
+	SOURCE:屈従 = 1900
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 550
+	SOURCE:露出 = 3200
+	SOURCE:屈従 = 2500
+ELSE
+	SOURCE:快Ａ = 500
+	SOURCE:露出 = 3500
+	SOURCE:屈従 = 3000
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES LOCAL:2 , 0.50
+	LOCAL:3 += 500
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL:2 , 1.00
+	LOCAL:3 += 75
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL:2 , 1.10
+	LOCAL:3 += 10
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL:2 , 1.20
+	LOCAL:3 += 0
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL:2 , 1.40
+	LOCAL:3 += 0
+ELSE
+	TIMES LOCAL:2 , 1.60
+	LOCAL:3 += 0
+ENDIF
+
+;アナルバイブ挿入中を確認・計算
+IF TEQUIP:Ａ系装着器具
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 80
+
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		LOCAL:2 += 40
+		LOCAL:1 += 150
+	ELSEIF ABL:Ａ感覚 == 1
+		LOCAL:2 += 120
+		LOCAL:1 += 400
+	ELSEIF ABL:Ａ感覚 == 2
+		LOCAL:2 += 300
+		LOCAL:1 += 700
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL:2 += 500
+		LOCAL:1 += 900
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL:2 += 650
+		LOCAL:1 += 1000
+	ELSE
+		LOCAL:2 += 850
+		LOCAL:1 += 1200
+	ENDIF
+
+	;EXP:Ａ経験をみる
+	IF EXP:Ａ経験 < EXPLV:1
+		TIMES LOCAL:2 , 0.50
+		LOCAL:3 += 500
+	ELSEIF EXP:Ａ経験 < EXPLV:2
+		TIMES LOCAL:2 , 1.00
+		LOCAL:3 += 75
+	ELSEIF EXP:Ａ経験 < EXPLV:3
+		TIMES LOCAL:2 , 1.10
+		LOCAL:3 += 10
+	ELSEIF EXP:Ａ経験 < EXPLV:4
+		TIMES LOCAL:2 , 1.20
+		LOCAL:3 += 0
+	ELSEIF EXP:Ａ経験 < EXPLV:5
+		TIMES LOCAL:2 , 1.40
+		LOCAL:3 += 0
+	ELSE
+		TIMES LOCAL:2 , 1.60
+		LOCAL:3 += 0
+	ENDIF
+	;PALAM:潤滑をみる
+	IF PALAM:潤滑 < PALAMLV:1
+		TIMES LOCAL:2 , 0.40
+		LOCAL:3 += 800
+	ELSEIF PALAM:潤滑 < PALAMLV:2
+		TIMES LOCAL:2 , 0.80
+		LOCAL:3 += 500
+	ELSEIF PALAM:潤滑 < PALAMLV:3
+		TIMES LOCAL:2 , 1.00
+		LOCAL:3 += 300
+	ELSEIF PALAM:潤滑 < PALAMLV:4
+		TIMES LOCAL:2 , 1.40
+		LOCAL:3 += 120
+	ELSE
+		TIMES LOCAL:2 , 1.80
+		LOCAL:3 += 100
+	ENDIF
+
+	;PALAM:欲情をみる
+	IF PALAM:欲情 < PALAMLV:1
+		TIMES LOCAL:2 , 0.80
+	ELSEIF PALAM:欲情 < PALAMLV:2
+		TIMES LOCAL:2 , 0.90
+	ELSEIF PALAM:欲情 < PALAMLV:3
+		TIMES LOCAL:2 , 1.00
+	ELSEIF PALAM:欲情 < PALAMLV:4
+		TIMES LOCAL:2 , 1.10
+	ELSE
+		TIMES LOCAL:2 , 1.20
+	ENDIF
+
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1 , 0.80
+		TIMES LOCAL:2 , 0.80
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1 , 0.90
+		TIMES LOCAL:2 , 0.90
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1 , 1.00
+		TIMES LOCAL:2 , 1.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1 , 1.10
+		TIMES LOCAL:2 , 1.10
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1 , 1.20
+		TIMES LOCAL:2 , 1.20
+	ELSE
+		TIMES LOCAL:1 , 1.30
+		TIMES LOCAL:2 , 1.30
+	ENDIF
+
+	;貞操観念
+	SIF TALENT:貞操観念
+		TIMES LOCAL:3, 3.00
+	;小柄体形
+	SIF TALENT:小柄体型
+		TIMES LOCAL:3 , 2.00
+ENDIF
+
+;Ａ敏感、鈍感をみる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL:3 , 0.60
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;一度単独で計算
+SOURCE:屈従 += LOCAL:1
+
+SOURCE:快Ａ += LOCAL:2
+SOURCE:痛み += LOCAL:3
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	SOURCE:性行動 = 100
+	TIMES SOURCE:快Ａ , 0.30
+ELSEIF ABL:技巧 == 1
+	SOURCE:性行動 = 160
+	TIMES SOURCE:快Ａ , 0.70
+ELSEIF ABL:技巧 == 2
+	SOURCE:性行動 = 220
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF ABL:技巧 == 3
+	SOURCE:性行動 = 280
+	TIMES SOURCE:快Ａ , 1.20
+ELSEIF ABL:技巧 == 4
+	SOURCE:性行動 = 340
+	TIMES SOURCE:快Ａ , 1.40
+ELSE
+	SOURCE:性行動 = 400
+	TIMES SOURCE:快Ａ , 1.60
+ENDIF
+
+;ABL:自慰中毒をみる
+IF ABL:自慰中毒 == 0
+	SOURCE:中毒充足 = 0
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF ABL:自慰中毒 == 1
+	SOURCE:中毒充足 = 100
+	TIMES SOURCE:快Ａ , 1.10
+ELSEIF ABL:自慰中毒 == 2
+	SOURCE:中毒充足 = 300
+	TIMES SOURCE:快Ａ , 1.20
+ELSEIF ABL:自慰中毒 == 3
+	SOURCE:中毒充足 = 800
+	TIMES SOURCE:快Ａ , 1.30
+ELSEIF ABL:自慰中毒 == 4
+	SOURCE:中毒充足 = 1500
+	TIMES SOURCE:快Ａ , 1.50
+ELSE
+	SOURCE:中毒充足 = 2500
+	TIMES SOURCE:快Ａ , 1.70
+ENDIF
+
+;公開のときは、ABL:露出癖をみる
+IF TEQUIP:ビデオ撮影
+	IF ABL:露出癖 == 0
+		SOURCE:中毒充足 += 0
+		TIMES SOURCE:快Ａ , 1.00
+		TIMES SOURCE:露出 , 1.00
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:中毒充足 += 100
+		TIMES SOURCE:快Ａ , 1.10
+		TIMES SOURCE:露出 , 1.20
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:中毒充足 += 300
+		TIMES SOURCE:快Ａ , 1.20
+		TIMES SOURCE:露出 , 1.40
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:中毒充足 += 800
+		TIMES SOURCE:快Ａ , 1.30
+		TIMES SOURCE:露出 , 1.60
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:中毒充足 += 1500
+		TIMES SOURCE:快Ａ , 1.50
+		TIMES SOURCE:露出 , 2.00
+	ELSE
+		SOURCE:中毒充足 += 2500
+		TIMES SOURCE:快Ａ , 1.70
+		TIMES SOURCE:露出 , 3.00
+	ENDIF
+ENDIF
+
+;ビデオ撮影時は経験にプラス
+IF TEQUIP:ビデオ撮影
+	TCVAR:Ａ経験 += 1
+	TCVAR:自慰経験 += 2
+	TCVAR:調教自慰経験 += 2
+ELSE
+	TCVAR:Ａ経験 += 1
+	TCVAR:自慰経験 += 1
+	TCVAR:調教自慰経験 += 1
+ENDIF
+IF TEQUIP:ビデオ撮影 && (CFLAG:21 & 1) == 0
+	TCVAR:異常経験 += 1
+	CFLAG:21 |= 1
+ENDIF
+
+;奴隷の指⇔奴隷のＡの汚れが移動
+STAIN:手 |= STAIN:アナル
+STAIN:アナル |= STAIN:手
+
+;撮影時の調教内容チェック
+SIF TEQUIP:Ａ系装着器具
+	TFLAG:122 = 992
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_182
+IF TEQUIP:焦らしプレイ
+	SIF PALAM:快Ｃ >= (PALAMLV:4 - 1) ||  PALAM:快Ｖ >= (PALAMLV:4 - 1) ||  PALAM:快Ａ >= (PALAMLV:4 - 1) ||  PALAM:快Ｂ >= (PALAMLV:4 - 1)
+		PRINT 今にもイきそうになっているにもかかわらず、
+	PRINTFORML %CALLNAME:TARGET%は命令を拒否してきた…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%に自慰を命令してみたが拒否された。もう少し調教が必要なようだ。
+ENDIF
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_182
+;焦らしプレイ中に自慰系・騎乗位系・助手を犯させる
+IF TEQUIP:焦らしプレイ
+	SIF PALAM:快Ｃ >= (PALAMLV:4 - 1) ||  PALAM:快Ｖ >= (PALAMLV:4 - 1) ||  PALAM:快Ａ >= (PALAMLV:4 - 1) ||  PALAM:快Ｂ >= (PALAMLV:4 - 1)
+		PRINT 今にもイきそうな
+	PRINTFORML %CALLNAME:TARGET%の好きにさせてやることにした…
+ENDIF
+IF TFLAG:699 > 0
+	PRINTFORML %CALLNAME:MASTER%が何もしないでいると、命令していないのに%CALLNAME:TARGET%は
+	SIF TALENT:淫乱 || TEQUIP:媚薬 == 1
+		PRINT 我慢できないと言った表情で
+	SIF TALENT:サド
+		PRINTFORM 煽るような視線を%CALLNAME:MASTER%に送ると
+	SIF TALENT:嫉妬
+		PRINT 嫉妬の念をぶつける様に
+	SIF TALENT:狂気 && TEQUIP:口装着器具 == 0
+		PRINT 壊れた様な笑い声を上げ、
+	PRINTL お尻の穴を使って一人で勝手に快感に浸っている…
+ELSE
+	IF EX:22
+		PRINTFORM お預けされている%CALLNAME:TARGET%に自慰を許すとだらしな\@(TEQUIP:口装着器具) ? い表情を見せつつ # く唇を歪め\@、
+	ELSEIF TFLAG:240 < 50
+		PRINTFORM 自慰を命令すると%CALLNAME:TARGET%は
+		SIF TALENT:プライド高い
+			PRINT プライドの高さを見せながら
+		SIF TALENT:反抗的
+			PRINT 反抗的な態度で
+		PRINT 睨んできたが再度の命令に渋々
+	ELSEIF TFLAG:240 < 80
+		PRINTFORML 調教の成果が出たか、%CALLNAME:TARGET%は命令に従って、
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は自慰の命令にも嫌がるそぶりを見せず、完全に飼いならされた\@(TALENT:オトコ) ? 獣 # 牝\@の表情で、
+	ENDIF
+	SIF TEQUIP:ビデオ撮影
+		PRINT ビデオカメラの前で
+	SIF ABL:露出癖 > 3
+		PRINT 見せつけるようにして、
+	IF TEQUIP:クスコ && TEQUIP:Ａ系装着器具 == 1
+		PRINT ヴァギナをクスコで開かれたままアナルバイブを自ら抜き挿ししながら
+	ELSEIF TEQUIP:クスコ && TEQUIP:Ａ系装着器具 == 5
+		PRINT ヴァギナをクスコで開かれたままアナルビーズを自ら抜き挿ししながら
+	ELSEIF TEQUIP:クスコ
+		PRINT ヴァギナをクスコで開かれたままアナルを自らの指で弄り
+	ELSEIF TEQUIP:Ａ系装着器具 == 1
+		PRINT 突っ込まれているアナルバイブを自ら抜き挿ししながら
+	ELSEIF TEQUIP:Ａ系装着器具 == 5
+		PRINT 突っ込まれているアナルビーズを自ら抜き挿ししながら
+	ELSE
+		PRINT アナルを自らの指で弄りながら
+	ENDIF
+	PRINTL 快感を味わっている…
+	IF TEQUIP:Ｖ系装着器具 == 1 && TEQUIP:Ａ系装着器具 == 1 && ABL:Ｃ感覚 >= 5 && ABL:Ｖ感覚 >= 5 && ABL:Ａ感覚 >= 5 && ABL:Ｂ感覚 >= 5 && PALAM:欲情 >= PALAMLV:4 && PREVCOM == 182
+		PRINTFORML %CALLNAME:TARGET%はよだれをふきこぼし、ビクビクと身体を痙攣させ\@(TEQUIP:口装着器具) ? て # ながら鳴き叫んで\@いる
+		PRINTFORML どうやら絶頂から降りられず、イキっぱなしになっているようだ…
+	ELSEIF TEQUIP:Ａ系装着器具 == 1 && ABL:Ｃ感覚 >= 5 && ABL:Ａ感覚 >= 5 && ABL:Ｂ感覚 >= 5 && PALAM:欲情 >= PALAMLV:4 && PREVCOM == 182
+		PRINTFORML %CALLNAME:TARGET%はガクガク身体を震わせながら、アヌスにバイブを突きこんでいる
+		PRINTFORML どうやら襞をえぐられるたびに何度も絶頂してしまっているようだ…
+	ELSEIF TEQUIP:Ａ系装着器具 == 5 && ABL:Ｃ感覚 >= 5 && ABL:Ａ感覚 >= 5 && ABL:Ｂ感覚 >= 5 && PALAM:欲情 >= PALAMLV:4 && PREVCOM == 182
+		PRINTFORML %CALLNAME:TARGET%はガクガク身体を震わせながら、アナルビーズを抜き挿ししている
+		PRINTFORML どうやら珠が通り抜けるたびに何度も絶頂してしまっているようだ…
+	ELSEIF ABL:Ｃ感覚 >= 5 && ABL:Ｂ感覚 >= 5 && ABL:自慰中毒 >= 3 && PALAM:欲情 >= PALAMLV:4 && PREVCOM == 182
+		PRINTFORML %CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? # 嬌声をあげながら\@一心不乱に自らのアナルをまさぐり続けている
+		PRINTFORML どうやら止めたくても手が勝手に動いて止まらないようだ…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_182, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+;ABL:自慰中毒
+IF ABL:自慰中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:自慰中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;自慰しやすい
+IF TALENT:自慰しやすい
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+;難易度上昇
+;公開で+10、アナルバイブで-5、ビーズで-5
+TFLAG:241 = 48
+SIF TEQUIP:ビデオ撮影
+	TFLAG:241 += 10
+SIF TEQUIP:Ａ系装着器具 == 1
+	TFLAG:241 -= 5
+SIF TEQUIP:Ａ系装着器具 == 5
+	TFLAG:241 -= 5

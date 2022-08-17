@@ -1,0 +1,126 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;フェラチオ
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK未指定（RANK指定がある場合はそちらを優先する）
+;-------------------------------------------------
+@K2008_COM_41
+;そのままリダイレクト
+CALL K2008_COM_GENERAL
+;ランダムで舐める or しゃぶる
+CALL K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_COM_41
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORMW 「はいはい、舐めればいいんでしょ舐めれば」
+		PRINTFORMW 「……そのうち食いちぎってあげるわ」
+	CASE 2
+		PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%の%K2008FS_CALL_YOUR_C()%、食いちぎっていい？」
+		PRINTFORMW 「だってほら、噛み応えありそうじゃない」
+	CASE 1
+		PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%の%K2008FS_CALL_YOUR_C()%舐めるの嫌なんだけど……」
+		PRINTFORMW 「ンッ、押し付けないでよ！　舐める、舐めるから」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;ランダムで舐める or しゃぶる
+CALL K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_COM_41
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORMW 「ハイハイ、ちゃんと咥えてあげるから大人しくしてなさい」
+		PRINTFORMW 「勝手に動いたら、その粗末なものが体から消失することになるわ」
+	CASE 2
+		PRINTFORMW 「……何よ、%K2008FS_CALL_YOUR_C()%を舐めさせたいの？」
+		PRINTFORMW 「んー、そうねぇ……　まあいいわよ、それくらいなら」
+	CASE 1
+		CALLFORM K2008_VOICE("舐める")
+		CALLFORM K2008_VOICE("咥える")
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;ランダムで舐める or しゃぶる
+CALL K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_COM_41
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%のは口に合わないわね、いろんな意味で」
+		PRINTFORMW 「ま、少しは頑張ってあげるわ」
+	CASE 2
+		CALLFORM K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+		PRINTFORMW 「ぷぁっ……　なによニヤニヤしちゃって」
+	CASE 1
+		PRINTFORMW 「ん、%K2008FS_CALL_YOUR_C()%で顔をペチペチするのやめてよ」
+		PRINTFORMW 「おとなしく舐めてあげるから感謝しなさい」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;ランダムで舐める or しゃぶる
+CALL K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_COM_41
+SELECTCASE RAND:3
+	CASE 2
+		CALLFORM K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+		PRINTFORMW 「ぷはぁ、まだしてほしいの？」
+		PRINTFORMW 「私のお口が癖になっちゃったかしら、ふふふ」
+	CASE 1
+		PRINTFORMW 「%K2008FS_CALL_YOUR_C()%、ビクビクしてる」
+		PRINTFORMW 「あんまり暴れないでね？　咥えるの難しいんだから」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;ランダムで舐める or しゃぶる
+CALL K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_COM_41
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORMW 「%K2008FS_CALL_YOUR_C()%……　食べていいわよね？」
+		PRINTFORMW 「んふふ、いただきまぁーす♪」
+	CASE 2
+		PRINTFORMW 「はー、はーっ、早くぅ……　早くしゃぶらせてよ」
+		PRINTFORMW 「きたぁ♪　%K2008FS_CALL_YOUR_C()%ー！　んプッ！」
+	CASE 1
+		PRINTFORMW 「ほらほら、おくちオナホでじゅぽじゅぽしてあげる」
+		PRINTFORMW 「%K2008FS_CALL_YOUR_C()%……　ビクビクさせちゃって、素敵」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+
+;ランダムで舐める or しゃぶる
+CALL K2008_VOICE(K2008FS_RANDS("舐める", "しゃぶる"))
+
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+@K2008_RANK5_COM_41
+CALL K2008_RANK4_COM_41
+

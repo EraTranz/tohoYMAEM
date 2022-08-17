@@ -1,0 +1,152 @@
+﻿;=============================================================================
+;歌唱技能
+;=============================================================================
+@ABLUP72
+SIF (FLAG:12 & 16) == 0
+	RETURN 0
+DRAWLINE
+SIF ABL:歌唱技能 >= 5
+	JUMP ABLUP_MAX
+
+PRINTFORM [0] - %PALAMNAME:11%の珠×{COST72(0)}、%EXPNAME:73%{COST72(1)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN72(0)
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && CAN72(0) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:習得 -= COST72(0)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:歌唱技能 += 1
+PRINTFORMW %ABLNAME:72%のレベルが{ABL:歌唱技能}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP72
+SIF ABL:歌唱技能 >= 5
+	RETURN 0
+
+CALLF CALC_COST72, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP72("CHECK")
+
+@COST72(ARG)
+#FUNCTION
+RETURNF CALC_COST72("GET", ARG)
+
+@CALC_COST72(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:歌唱技能 == 0
+	LOCAL:0 = 50
+	LOCAL:1 = 10
+ELSEIF ABL:歌唱技能 == 1
+	LOCAL:0 = (EXP:歌唱経験 >= EXPLV:3) ? 35 # 100
+	LOCAL:1 = 25
+ELSEIF ABL:歌唱技能 == 2
+	LOCAL:0 = (EXP:歌唱経験 >= EXPLV:4) ? 200 # 250
+	LOCAL:1 = 40
+ELSEIF ABL:歌唱技能 == 3
+	LOCAL:0 = (EXP:歌唱経験 >= EXPLV:5) ? 1700 # 2000
+	LOCAL:1 = 80
+ELSEIF ABL:歌唱技能 == 4
+	LOCAL:0 = (EXP:歌唱経験 >= EXPLV:5) ? 15000 # 30000
+	LOCAL:1 = 100
+ENDIF
+
+;露出癖が高いと必要珠数と経験が軽減される
+IF ABL:露出癖 == 1
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:露出癖 == 2
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:露出癖 == 3
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:露出癖 == 4
+	TIMES LOCAL:0 , 0.70
+	TIMES LOCAL:1 , 0.70
+ELSEIF ABL:露出癖 >= 5
+	TIMES LOCAL:0 , 0.60
+	TIMES LOCAL:1 , 0.66
+ENDIF
+
+;臆病
+IF TALENT:臆病
+	TIMES LOCAL:0 , 1.10
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;目立ちたがり
+IF TALENT:目立ちたがり
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.80
+ENDIF
+;習得早い
+IF TALENT:習得早い
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.75
+;習得遅い
+ELSEIF TALENT:習得遅い
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.10
+ENDIF
+
+;音感
+IF TALENT:音感
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.90
+;音痴
+ELSEIF TALENT:音痴
+	TIMES LOCAL:0 , 1.10
+	TIMES LOCAL:1 , 1.10
+ENDIF
+;喘息、求聞持
+IF TALENT:喘息 || TALENT:求聞持
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 2
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+RETURNF 0
+
+@CAN72(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP72("GET", ARG)
+
+@CAN_ABLUP72(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;習得の珠で上げる
+SIF JUEL:習得 < COST72(0)
+	LOCAL:0 |= 1
+;歌唱経験が必要
+SIF EXP:歌唱経験 < COST72(1)
+	LOCAL:0 |= 2
+
+RETURNF (LOCAL:0 == 0)

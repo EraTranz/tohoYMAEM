@@ -1,0 +1,139 @@
+﻿;=============================================================================
+;電気按摩
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE11
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:11 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;電気按摩を持っていないとダメ
+SIF ITEM:電気按摩 == 0
+	RETURN 0
+;助手調教の場合、技巧3以上か[サド]じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3 && TALENT:PLAYER:サド == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 11) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM11
+PRINTL 電気按摩
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 11
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 電気按摩
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 30
+DOWNBASE:1 += 150
+
+SOURCE:露出 = 120
+SOURCE:逸脱 = 400
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 2000
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 2500
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 3000
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 3300
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 3600
+ELSE
+	SOURCE:快Ｃ = 3800
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+SIF PLAYER == MASTER
+	TCVAR:Ｃ調律経験 += 2
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_11
+;焦らしプレイ中
+IF TEQUIP:焦らしプレイ
+	SIF EX:20 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINT 期待に満ちた目で見つめる
+	PRINTFORM %CALLNAME:TARGET%の\@(EXIST_PENIS(TARGET)) ? 肉棒 # 恥丘\@に振動している電気按摩を押しつけた
+	IF EQUIP:睡眠薬
+		PRINTL 
+		PRINTFORM %CALLNAME:TARGET%は小さく\@(TEQUIP:口装着器具) ? # 喘ぎ声を上げ、\@身を震わせた
+	ENDIF
+	PRINTL …
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の\@(EXIST_PENIS(TARGET)) ? 股間 # 秘所\@に振動している電気按摩を押しつけた
+	PRINTFORM %CALLNAME:TARGET%は
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML 小さく\@(TEQUIP:口装着器具) ? # 喘ぎ声を上げ、\@身を震わせた…
+	ELSE
+		IF TALENT:恋慕 && ABL:Ｂ感覚 >= 4
+			IF PALAM:欲情 <= PALAMLV:3
+				PRINT 待ちわびたように足を開き、受け入れているようだ
+			ELSEIF PALAM:欲情 <= PALAMLV:5
+				PRINTFORM 快楽に涎をたらしながら、何度も\@(TEQUIP:口装着器具) ? 全身を激しく揺らした # %CALLNAME:PLAYER%の名を呼んだ\@
+			ELSE
+				PRINTFORM %CALLNAME:PLAYER%を掻き抱きながら絶頂の恍惚感に浸っているようだ
+			ENDIF
+		ELSEIF ABL:Ｃ感覚 >= 3
+			IF PALAM:欲情 <= PALAMLV:3
+				PRINT 強い快感に顔を赤らめているようだ
+			ELSEIF PALAM:欲情 <= PALAMLV:5
+				PRINT 惚けた目で快楽を貪っているようだ
+			ELSE
+				PRINT 今にも絶頂に達してしまいそうな様子だ
+			ENDIF
+		ELSE
+			IF PALAM:欲情 <= PALAMLV:3
+				PRINT とてもくすぐったがっているようだ
+			ELSE
+				PRINTFORM 、\@(TEQUIP:口装着器具) ? 振動が生み出す快感に堪えている # 何も言えなくなっている\@ようだ
+			ENDIF
+		ENDIF
+		PRINTL …
+	ENDIF
+ENDIF

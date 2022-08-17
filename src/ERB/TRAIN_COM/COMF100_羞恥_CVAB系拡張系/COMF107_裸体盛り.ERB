@@ -1,0 +1,1724 @@
+﻿;………………………………………………
+;裸体盛り実行判定
+;………………………………………………
+@COM_ABLE107
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:107 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:裸体盛り
+	RETURN 1
+;アイテム｢具材セット｣を持っているか、アイテムなし設定でないとダメ
+SIF ITEM:具材セット == 0 && NOITEM == 0
+	RETURN 0
+;酒恥肉倫を発生させた場合はダメ
+SIF TFLAG:153 == 99
+	RETURN 0
+;従順が3以上ないとダメ
+SIF ABL:従順 < 3
+	RETURN 0
+;クスコ着けているとダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 107) == 0
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;裸体盛り
+;-------------------------------------------------
+@COM107
+IF TALENT:オトコ
+	PRINTL 男体盛り
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 107
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 男体盛り
+ELSE
+	PRINTL 女体盛り
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 107
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 女体盛り
+ENDIF
+
+;裸体盛り終了
+IF TEQUIP:裸体盛り
+	TEQUIP:裸体盛り = 0
+	DOWNBASE:0 += 15
+	DOWNBASE:1 += 50
+	SOURCE:欲情追加 = ABL:欲望 * 300
+	SOURCE:露出 = ABL:露出癖 * 500
+	TFLAG:153 = 0
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+	RETURN 1
+ENDIF
+
+;特別メニューの有無をサーチしておく
+TFLAG:153 = 0
+STRLENS CSTR:2
+SIF RESULT >= 1
+	TFLAG:153 = 90
+
+IF FLAG:14 & 8
+	PRINTL 盛りつけは何にする？
+	SIF ABL:PLAYER:料理技能 >= 5 && TFLAG:153 == 90
+		PRINTFORML [1] - %CALLNAME:TARGET%の%CSTR:2%
+	PRINTFORML [2] - %CALLNAME:TARGET%の海鮮盛り
+	PRINTFORML [3] - %CALLNAME:TARGET%のスイートケーキ
+	PRINTFORML [4] - %CALLNAME:TARGET%の新鮮サラダ
+	$INPUT_LOOP
+	INPUT
+	IF RESULT >= 2 && RESULT <= 4
+		TEQUIP:裸体盛り = RESULT
+	ELSEIF RESULT == 1 && ABL:PLAYER:料理技能 >= 5 && TFLAG:153 == 90
+		TEQUIP:裸体盛り = 1
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+ELSE
+	LOCAL:6 = RAND:4 + 1
+	SIF LOCAL:6 == 1 && ABL:PLAYER:料理技能 >= 5 && TFLAG:153 == 90
+		LOCAL:6 = 90
+	SIF LOCAL:6 == 1
+		LOCAL:6 = 2+RAND:3
+	TEQUIP:裸体盛り = LOCAL
+ENDIF
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 50
+
+LOCAL:1 = 500
+LOCAL:2 = 500
+LOCAL:3 = ABL:MASTER:技巧 + ABL:ASSI:技巧
+LOCAL:4 = ABL:MASTER:料理技能 + ABL:ASSI:料理技能
+LOCAL:5 = MAX(LOCAL:4 /2, 1)
+
+;料理の種類によって伸びるソースが変化
+IF TEQUIP:裸体盛り == 1
+	TIMES LOCAL:1 , 1.50
+ELSEIF TEQUIP:裸体盛り == 2
+	TIMES LOCAL:2 , 1.50
+ELSEIF TEQUIP:裸体盛り == 3
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 50
+	SOURCE:液体追加 += 50
+	TIMES LOCAL:1, 1.20
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	TIMES LOCAL:1, 1.40
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 400
+	SOURCE:液体追加 += 400
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 750
+	SOURCE:液体追加 += 750
+	TIMES LOCAL:1, 2.00
+ELSE
+	SOURCE:中毒充足 += 1300
+	SOURCE:液体追加 += 1300
+	TIMES LOCAL:1, 3.00
+ENDIF
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1 , 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 2.00
+
+SOURCE:トラウマ += LOCAL:2 /2
+SOURCE:羞恥扇情 += LOCAL:1 /2
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 2.00
+
+SOURCE:露出 += LOCAL:1
+SOURCE:逸脱 += LOCAL:2
+SOURCE:恭順追加 += LOCAL:1 /2
+
+;浣腸＋排泄後の裸体盛りは…
+SIF TFLAG:140 & 256
+	SOURCE:不潔 += 6000
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF LOCAL:4 > 0
+	IF LOCAL:4 > 8 && ABL:PLAYER:料理技能 >= 4
+		LOCAL:5 = LOCAL:4
+		JUEL:ASSI:習得 += 500 * LOCAL:4
+		PRINTFORML 習得の珠(%CALLNAME:ASSI%)＋{500*LOCAL:4}
+	ELSEIF LOCAL:4 > 6 && ABL:PLAYER:90 >= 3
+		JUEL:ASSI:習得 += 300 * LOCAL:4
+		PRINTFORML 習得の珠(%CALLNAME:ASSI%)＋{300*LOCAL:4}
+	ELSEIF LOCAL:4 > 4 && ABL:PLAYER:90 >= 2
+		JUEL:ASSI:習得 += 200 * LOCAL:4
+		PRINTFORML 習得の珠(%CALLNAME:ASSI%)＋{200*LOCAL:4}
+	ELSE
+		JUEL:ASSI:習得 += 100 * LOCAL:4
+		PRINTFORML 習得の珠(%CALLNAME:ASSI%)＋{100*LOCAL:4}
+	ENDIF
+ELSE
+	JUEL:ASSI:習得 += 10 * (LOCAL:3 +1)
+	PRINTFORML 習得の珠(%CALLNAME:ASSI%)＋{10*(LOCAL:3 +1)}
+ENDIF
+TCVAR:ASSI:調理経験 += LOCAL:5
+TCVAR:MASTER:調理経験 += LOCAL:5
+
+IF TEQUIP:裸体盛り == 1
+	SOURCE:中毒充足 += 2500
+	SOURCE:不潔 += 5000
+	SOURCE:露出 += 500
+ELSE
+	SOURCE:不潔 += 2000
+ENDIF
+
+IF NOITEM == 0
+	ITEM:具材セット -= 1
+	SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:77
+		CALL FILL_PLURAL_ITEM, 77
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;裸体盛り中
+;-------------------------------------------------
+@EQUIP_COM107
+LOCAL:2 = RAND:8
+IF FLAG:15 & 256
+	IF (LOCAL:2 == 0 || TFLAG:151 == 4) && TALENT:オトコ == 0 && TEQUIP:緊縛関連 && TEQUIP:野外プレイ && TFLAG:150
+		;縄で緊縛＋野外プレイのとき一定確率で発生。ただし、集団視姦中は自動発生、中庭(TFLAG:150=0)では発生しない。
+		PRINTL ＜酒恥肉倫＞
+		CALL NYOTAIMORI_PARTY
+		TEQUIP:裸体盛り = 0
+		TFLAG:153 = 99
+		;調教対象の酒恥肉倫回数
+		CFLAG:58 += 1
+		RETURN 1
+	ENDIF
+;ELSE
+;	;一定確率で主人が他人を集める、というイベント
+;	;めんどくさいので、オミット
+;	IF LOCAL:2 == 0 && TALENT:オトコ == 0 && TEQUIP:緊縛関連 && TEQUIP:野外プレイ
+;		;縄で緊縛＋野外プレイのとき一定確率で発生
+;		PRINTL ＜酒恥肉倫＞
+;		CALL NYOTAIMORI_PARTY
+;		TEQUIP:裸体盛り = 0
+;		TFLAG:153 = 99
+;		;調教対象の酒恥肉倫回数
+;		CFLAG:58 += 1
+;		RETURN 1
+;	ENDIF
+ENDIF
+
+IF TALENT:オトコ
+	PRINTL ＜男体盛りプレイ中＞
+ELSE
+	PRINTL ＜女体盛りプレイ中＞
+ENDIF
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 50
+
+LOCAL = 500
+LOCAL:1 = 500
+IF TEQUIP:裸体盛り == 2
+	TIMES LOCAL , 1.50
+ELSEIF TEQUIP:裸体盛り == 3
+	TIMES LOCAL:1 , 1.50
+ELSEIF TEQUIP:裸体盛り == 4
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL, 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 50
+	SOURCE:液体追加 += 50
+	TIMES LOCAL, 1.20
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	TIMES LOCAL, 1.40
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 400
+	SOURCE:液体追加 += 400
+	TIMES LOCAL, 1.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 750
+	SOURCE:液体追加 += 750
+	TIMES LOCAL, 2.00
+ELSE
+	SOURCE:中毒充足 += 1300
+	SOURCE:液体追加 += 1300
+	TIMES LOCAL, 3.00
+ENDIF
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL , 2.00
+ELSE
+	TIMES LOCAL , 3.00
+ENDIF
+
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL , 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:トラウマ += LOCAL:1 /2
+SOURCE:羞恥扇情 += LOCAL/2
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:露出 += LOCAL
+SOURCE:逸脱 += LOCAL:1
+SOURCE:恭順追加 += LOCAL/2
+
+;浣腸＋排泄後の裸体盛りは…
+SIF TFLAG:140 & 256
+	SOURCE:不潔 += 2000
+
+IF TEQUIP:裸体盛り == 1
+	SOURCE:中毒充足 += 2000
+	SOURCE:不潔 += 3000
+	SOURCE:露出 += 300
+ELSE
+	SOURCE:不潔 += 1000
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+RETURN 1
+
+;-----------------------------------------------
+;酒恥肉倫
+;ここでは処理計算のみ
+;LOCAL:15で人種を定めていたが、TFLAG:150でよくね？
+;-----------------------------------------------
+@NYOTAIMORI_PARTY
+LOCALS:1 = %CALLNAME:TARGET%の%CSTR:2%
+LOCALS:2 = %CALLNAME:TARGET%の海鮮盛り
+LOCALS:3 = %CALLNAME:TARGET%のスイートケーキ
+LOCALS:4 = %CALLNAME:TARGET%の新鮮サラダ
+
+VARSET LOCAL , 0
+;IF FLAG:15 & 256
+;	;区分したが、見物人は@OUTDOOR_GALLERY_NAMEで一定なので
+;	;区分する必要があったのか、と言われると疑問が残る
+;	SELECTCASE TFLAG:150
+;	;早見表(暫定)
+;	;1	博麗神社	人間、妖怪
+;	;2	紅魔館		妖精
+;	;3	冥界		妖怪、亡霊
+;	;4	竹林		妖怪、兎
+;	;5	彼岸		妖怪、亡霊、鬼
+;	;6	妖怪の山	妖怪、天狗
+;	;7	旧地獄市外	妖怪、亡霊、鬼
+;	;8	妖精の森	妖精
+;	;9	有頂天		天人
+;	;10	太陽の畑	妖怪、妖精
+;	;11	月の都		兎
+;	;12	魔界		魔界人
+;	;13	地獄界		亡霊、鬼
+;	;14	命蓮寺		人間、妖怪、亡霊
+;	;15	神霊廟		人間、妖怪、亡霊
+;	;		
+;	;99	人里		人間
+;	;LOCAL:15
+;	;1:人間、2:妖怪、3:妖精、4:亡霊
+;	;5:兎、6:鬼、7:天狗、8:天人、9:魔界人
+;		;1:博麗神社		1:人間、2:妖怪
+;		CASE 1
+;			;神社には、人妖関係なくやってくる、やや2:妖怪が多いかも
+;			LOCAL:15 = (RAND:3 == 0) ? 1 # 2
+;		;2:紅魔館				3:妖精
+;		;8:妖精の森				3:妖精
+;		;10:太陽の畑	2:妖怪、3:妖精
+;		CASE 2,8,10
+;			LOCAL:15 = 3
+;			SIF TFLAG:150 == 11 && RAND:2
+;				LOCAL:15 = 2
+;		;3:冥界					2:妖怪、4:亡霊
+;		;14:命蓮寺		1:人間、2:妖怪、4:亡霊
+;		;15:神霊廟		1:人間、2:妖怪、4:亡霊
+;		CASE 3,14,15
+;			IF RAND:3 == 0 && TFLAG:150 != 3
+;				LOCAL:15 = 1
+;			ELSEIF RAND:2
+;				LOCAL:15 = 2
+;			ELSE
+;				LOCAL:15 = 4
+;			ENDIF
+;		;4:竹林			2:妖怪、5:兎
+;		;11:月の都				5:兎
+;		CASE 4,11
+;			LOCAL:15 = 5
+;			SIF TFLAG:150 == 4 && RAND:2
+;				LOCAL:15 = 2
+;		;5:彼岸			2:妖怪、4:亡霊、6:鬼
+;		;7:旧地獄市外	2:妖怪、4:亡霊、6:鬼
+;		;13:地獄界				4:亡霊、6:鬼
+;		CASE 5,7,13
+;			IF RAND:3 == 0 && TFLAG:150 != 13
+;				LOCAL:15 = 2
+;			ELSEIF RAND:2
+;				LOCAL:15 = 4
+;			ELSE
+;				LOCAL:15 = 6
+;			ENDIF
+;		;6:妖怪の山		2:妖怪、7:天狗
+;		CASE 6
+;			LOCAL:15 = (RAND:2 == 0) ? 2 # 7
+;		;9:有頂天		8:天人
+;		CASE 9
+;			LOCAL:15 = 8
+;		;12:魔界		9:魔界人
+;		CASE 12
+;			LOCAL:15 = 9
+;		;99:人里		1:人間
+;		CASEELSE
+;			LOCAL:15 = 1
+;	ENDSELECT
+	
+	
+;ELSE
+;	;めんどくさいので、オミット
+;	;所持しているキャラのフラグでも記憶させるかな？
+;	;主人が結構な数の奴隷を従えていればほとんどのところへうろつけるようになる
+;	FOR PC_VAR1, 0, CHARANUM
+;		LOCAL:16 |= CFLAG:PC_VAR1:300
+;	NEXT
+;	IF FLAG:14 & 8
+;		PRINTL …
+;		DRAWLINE
+;		PRINTL （誰を宴に誘ってた？）
+;		PRINTL [1] - 里の人間達
+;		PRINTL [2] - 妖精の群れ
+;		PRINTL [3] - 兎の群れ
+;		PRINTL [4] - 天狗の集団
+;		PRINTL [5] - 魔界人の団体
+	;早見表(暫定)
+	;1	博麗神社	人間、妖怪
+	;2	紅魔館		妖精
+	;3	冥界		妖怪、亡霊
+	;4	竹林		妖怪、兎
+	;5	彼岸		妖怪、亡霊、鬼
+	;6	妖怪の山	妖怪、天狗
+	;7	旧地獄市外	妖怪、亡霊、鬼
+	;8	妖精の森	妖精
+	;9	有頂天		天人
+	;10	太陽の畑	妖怪、妖精
+	;11	月の都		兎
+	;12	魔界		魔界人
+	;13	地獄界		亡霊、鬼
+	;14	命蓮寺		人間、妖怪、亡霊
+	;15	神霊廟		人間、妖怪、亡霊
+	;		
+	;99	人里		人間
+	;LOCAL:15
+	;1:人間、2:妖怪、3:妖精、4:亡霊
+	;5:兎、6:鬼、7:天狗、8:天人、9:魔界人
+;		;博麗神社、命蓮寺、人里
+;		SIF (LOCAL:16 & 1) || (LOCAL:16 & 32768) || (LOCAL:16 & 16384)
+;			PRINTL [1]里の人間達
+;		;紅魔館、妖精の森、太陽の畑(昼)
+;		SIF (LOCAL:16 & 2) || (LOCAL:16 & 128) || (LOCAL:16 & 512)
+;			PRINTL [2]妖精の群れ
+;		;竹林、月の都
+;		SIF (LOCAL:16 & 8) || (LOCAL:16 & 2048)
+;			PRINTL [3]兎の群れ
+;		;妖怪の山
+;		SIF LOCAL:16 & 32
+;			PRINTL [4]天狗の集団
+;		;魔界
+;		SIF LOCAL:16 & 4096
+;			PRINTL [5]魔界人の団体
+;		;冥界、彼岸、旧地獄市外、地獄界、命蓮寺、神霊廟
+;		SIF (LOCAL:16 & 4) || (LOCAL:16 & 16) || (LOCAL:16 & 64) || (LOCAL:16 & 8192) || (LOCAL:16 & 32768) || (LOCAL:16 & 65536)
+;			PRINTL [6]亡霊の団体
+;		;有頂天、まあないと思うけどなぁ
+;		SIF LOCAL:16 & 256
+;			PRINTL [7]天人
+;		;彼岸、旧地獄市外、地獄界
+;		SIF (LOCAL:16 & 16) || (LOCAL:16 & 64) || (LOCAL:16 & 8192)
+;			PRINTL [8]鬼の方々
+;		;博麗神社、命蓮寺、太陽の畑(昼)、太陽の畑(夜)、竹林、妖怪の山、冥界、彼岸、旧地獄市外、地獄界、
+;		SIF (LOCAL:16 & 1) || (LOCAL:16 & 32768) || (LOCAL:16 & 512) || (LOCAL:16 & 1024) || (LOCAL:16 & 8) || (LOCAL:16 & 32) || (LOCAL:16 & 4) || (LOCAL:16 & 16) || (LOCAL:16 & 64) || (LOCAL:16 & 8192)
+;			PRINTL [9]妖怪の方々
+
+;		$INPUT_LOOP
+;		INPUT
+;		IF RESULT == 1
+;			LOCAL:16 = 12
+;		ELSEIF RESULT == 2
+;			LOCAL:16 = 0
+;		ELSEIF RESULT == 3
+;			LOCAL:16 = 4
+;		ELSEIF RESULT == 4
+;			LOCAL:16 = 7
+;		ELSEIF RESULT == 5
+;			LOCAL:16 = 9
+;		ELSE
+;			GOTO INPUT_LOOP
+;		ENDIF
+;	ELSE
+;		PRINT 宴に誘われてどこからともなく現れた
+;		LOCAL:16 = RAND:15
+;	ENDIF
+;	IF LOCAL:16 >= 0 && LOCAL:16 < 4
+;		PRINT 妖精の群れ
+;		LOCAL:15 = 2
+;	ELSEIF LOCAL:16 >= 4 && LOCAL:16 < 7
+;		PRINT 兎の群れ
+;		LOCAL:15 = 3
+;	ELSEIF LOCAL:16 >= 7 && LOCAL:16 < 9
+;		PRINT 天狗の集団
+;		LOCAL:15 = 4
+;	ELSEIF LOCAL:16 == 9
+;		PRINT 魔界人の団体
+;		LOCAL:15 = 5
+;	;追加イベント用
+;	ELSEIF LOCAL:16 == 
+;		PRINT 
+;		LOCAL:15 = 
+;	ELSE
+;		PRINT 里の人間達
+;		LOCAL:15 = 1
+;	ENDIF
+;ENDIF
+
+LOCAL:14 = (ABL:MASTER:料理技能 + ABL:ASSI:料理技能) / 2
+
+;ハイスコアに使用するため初期化
+MONEY:1 = 0
+
+;Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL:1 = 400
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL:1 = 500
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL:1 = 700
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL:1 = 1000
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL:1 = 1300
+ELSE
+	LOCAL:1 = 1800
+ENDIF
+
+;Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL:2 = 250
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL:2 = 500
+ELSEIF ABL:Ｂ感覚 == 2
+	LOCAL:2 = 750
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL:2 = 1000
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL:2 = 1500
+ELSE
+	LOCAL:2 = 2000
+ENDIF
+
+;Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:3 = 100
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:3 = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:3 = 700
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:3 = 1000
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:3 = 1400
+ELSE
+	LOCAL:3 = 1900
+ENDIF
+
+;Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	LOCAL:4 = 300
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL:4 = 400
+ELSEIF ABL:Ｖ感覚 == 2
+	LOCAL:4 = 600
+ELSEIF ABL:Ｖ感覚 == 3
+	LOCAL:4 = 800
+ELSEIF ABL:Ｖ感覚 == 4
+	LOCAL:4 = 1100
+ELSE
+	LOCAL:4 = 1500
+ENDIF
+
+LOCAL:9 = 1 + RAND:5
+LOCAL:10 = 2500
+
+;SELECTCASE LOCAL:15
+;	;人間
+;	CASE 1
+;人里、博麗神社、旧地獄市外、有頂天、太陽の畑(夜)、地獄界、命蓮寺、神霊廟
+IF TFLAG:150 == 99 || TFLAG:150 == 1 || TFLAG:150 == 7 || TFLAG:150 == 9 || (TFLAG:150 == 10 && TIME == 1) || TFLAG:150 >= 13
+		;里の人間達(A,B,C,V,口を責められる)
+		TIMES LOCAL:10 , 1.80
+		LOCAL:5 = 2 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:6 = 4 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 5 + RAND:6
+		LOCAL:3 *= LOCAL:7
+		LOCAL:8 = 3 + RAND:5
+		LOCAL:4 *= LOCAL:8
+		;口枷などがない場合
+		IF TEQUIP:口装着器具 == 0
+			LOCAL:11 = 2 + RAND:5
+			LOCAL:9 *= LOCAL:11
+		ENDIF
+		
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10 * 2
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:痛み = LOCAL:10 / 2
+		SOURCE:トラウマ = LOCAL:10 * 3
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10
+;		;博麗神社に縁のあるキャラだと効果覿面
+;		IF CFLAG:TARGET:300 & 1
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;命蓮寺に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 32768
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;神霊廟に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 65536
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;人里に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 16384
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		ENDIF
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7 + LOCAL:8 + LOCAL:11
+		TCVAR:精液経験 += LOCAL:12/8
+		SIF LOCAL:11 > 0
+			TCVAR:フェラ経験 += LOCAL:11
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加
+		;口枷などがない場合は口にＰと精液汚れがつく
+		IF TEQUIP:耳装着器具 == 0
+			STAIN:口 |= 2
+			STAIN:口 |= 4
+		ENDIF
+		;ＶとＡにＰと精液の汚れがつく
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		STAIN:アナル |= 2
+		STAIN:アナル |= 4
+		LOCAL:13 = LOCAL:12 * (LOCAL:14+1)
+		;難易度による価格基礎修整
+		;HARDは1/2
+		IF FLAG:3 == 3
+			LOCAL:13 /= 2
+		;LUNATIC/ULTRAは1/3
+		ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+			LOCAL:13 /= 3
+		;PHANTASM/OVERDRIVEは1/5
+		ELSEIF FLAG:3 >= 5
+			LOCAL:13 /= 5
+		ENDIF
+		MONEY:1 = LOCAL:13*20
+		CALL SHOW_MONEY_INCREACE
+		PRINTL 
+		;極悪過ぎる計算なので少し緩和
+		;BASE:体力 = MAX(BASE:体力 / 3, 10)
+		;BASE:気力 = MAX(BASE:気力 / 4, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/3, 1000)
+		DOWNBASE:1 += MAX(MAXBASE:1/4, 800)
+;	;妖怪
+;	CASE 2
+;コメントアウトが面倒なんで
+ELSEIF LOCAL > 100
+		;里の人間達(A,B,C,V,口を責められる)
+		;人間のルーチンを丸パクリ
+		;多少は手を加えた方がいいよなぁ
+		TIMES LOCAL:10 , 1.80
+		LOCAL:5 = 2 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:6 = 4 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 5 + RAND:6
+		LOCAL:3 *= LOCAL:7
+		LOCAL:8 = 3 + RAND:5
+		LOCAL:4 *= LOCAL:8
+		;口枷などがない場合
+		IF TEQUIP:口装着器具 == 0
+			LOCAL:11 = 2 + RAND:5
+			LOCAL:9 *= LOCAL:11
+		ENDIF
+		
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10 * 2
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:痛み = LOCAL:10 / 2
+		SOURCE:トラウマ = LOCAL:10 * 3
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10
+;		;博麗神社に縁のあるキャラだと効果覿面
+;		IF CFLAG:TARGET:300 & 1
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;冥界に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 4
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;竹林に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 8
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;彼岸に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 16
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;妖怪の山に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 32
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;旧地獄市外に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 64
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;太陽の畑(夜)に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 1024
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;命蓮寺に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 32768
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;神霊廟に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 65536
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		ENDIF
+		
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7 + LOCAL:8 + LOCAL:11
+		TCVAR:精液経験 += LOCAL:12/8
+		SIF LOCAL:11 > 0
+			TCVAR:フェラ経験 += LOCAL:11
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加
+		;口枷などがない場合は口にＰと精液汚れがつく
+		IF TEQUIP:耳装着器具 == 0
+			STAIN:口 |= 2
+			STAIN:口 |= 4
+		ENDIF
+		;ＶとＡにＰと精液の汚れがつく
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		STAIN:アナル |= 2
+		STAIN:アナル |= 4
+		LOCAL:13 = LOCAL:12 * (LOCAL:14+1)
+		;難易度による価格基礎修整
+		;HARDは1/2
+		IF FLAG:3 == 3
+			LOCAL:13 /= 2
+		;LUNATIC/ULTRAは1/3
+		ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+			LOCAL:13 /= 3
+		;PHANTASM/OVERDRIVEは1/5
+		ELSEIF FLAG:3 >= 5
+			LOCAL:13 /= 5
+		ENDIF
+		MONEY:1 = LOCAL:13*20
+		CALL SHOW_MONEY_INCREACE
+		PRINTL 
+		;BASE:体力 = MAX(BASE:体力 / 3, 10)
+		;BASE:気力 = MAX(BASE:気力 / 4, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/3, 1000)
+		DOWNBASE:1 += MAX(MAXBASE:1/4, 800)
+;	;妖精
+;	CASE 3
+;紅魔館、彼岸、妖精の森、太陽の畑(昼)
+ELSEIF TFLAG:150 == 2 || TFLAG:150 == 5 || TFLAG:150 == 8 || (TFLAG:150 == 10 && TIME == 0)
+		;妖精の群れ(C,B,Aを責められる)
+		TIMES LOCAL:10 , 1.50
+		LOCAL:5 = 1 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:6 = 5 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 4 + RAND:5
+		LOCAL:3 *= LOCAL:7
+		
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7
+		
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:トラウマ = LOCAL:10 * 2
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10 * 2
+		
+		;対象が妖精なら調教の効果上昇
+		IF TALENT:妖精
+			TIMES SOURCE:露出 , 2.00
+			SOURCE:液体追加 += 1000
+			SOURCE:屈従 += 1000
+;		;対象が、紅魔館、旧地獄市外、妖精の森、太陽の畑(昼)に関係のある
+;		ELSEIF (CFLAG:TARGET:300 & 2) || (CFLAG:TARGET:300 & 64) || (CFLAG:TARGET:300 & 128) || (CFLAG:TARGET:300 & 512)
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+		ENDIF
+		
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		IF ITEM:ローション < 99 && NOITEM == 0
+			TFLAG:240 = 1
+			LOCAL:13 = LOCAL:12 + LOCAL:14
+			ITEM:ローション = MIN(ITEM:ローション + (LOCAL:13 / 8) + 1, 99)
+		ENDIF
+		DOWNBASE:0 += 5
+		;BASE:体力 = MAX(BASE:体力, 10)
+		;BASE:気力 = MAX(BASE:気力 / 2, 0)
+		DOWNBASE:0 += MAXBASE:0/10
+		DOWNBASE:1 += MAXBASE:1/10
+;	;亡霊
+;	CASE 4
+;冥界
+ELSEIF TFLAG:150 == 3
+		LOCAL:5 = 3 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:8 = 4 + RAND:5
+		LOCAL:4 *= LOCAL:8
+		
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10
+		SOURCE:痛み = LOCAL:10
+		SOURCE:トラウマ = LOCAL:10 * 3
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10 *2
+;		;白玉楼住人は調教の効果上昇
+;		IF CFLAG:TARGET:300 & 4
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		ENDIF
+		
+		LOCAL:12 = LOCAL:5 + LOCAL:8
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		TCVAR:奉仕快楽経験 += LOCAL:12/4
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加(ＶとＡにＰと精液の汚れがつく)
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		STAIN:アナル |= 2
+		STAIN:アナル |= 4
+		;BASE:体力 = MAX(BASE:体力 / 2, 10)
+		;BASE:気力 = MAX(BASE:気力 / 3, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/4, 750)
+		DOWNBASE:1 += MAX(MAXBASE:1/5, 600)
+;	;兎
+;	CASE 5
+;竹林、月の都
+ELSEIF TFLAG:150 == 4 || TFLAG:150 == 11
+		LOCAL:5 = 3 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:8 = 4 + RAND:5
+		LOCAL:4 *= LOCAL:8
+		
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10
+		SOURCE:痛み = LOCAL:10
+		SOURCE:トラウマ = LOCAL:10 * 3
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10 *2
+;		;永遠亭組は調教の効果上昇(兎の群れ)
+;		IF CFLAG:TARGET:300 & 8
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;現在の月の住人は調教の効果上昇
+;		ELSEIF CFLAG:TARGET:300 & 2048
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		ENDIF
+		
+		LOCAL:12 = LOCAL:5 + LOCAL:8
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		TCVAR:奉仕快楽経験 += LOCAL:12/4
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加(ＶとＡにＰと精液の汚れがつく)
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		STAIN:アナル |= 2
+		STAIN:アナル |= 4
+		LOCAL:13 = LOCAL:12 * (LOCAL:14+1)
+		;難易度による価格基礎修整
+		;HARDは1/2
+		IF FLAG:3 == 3
+			LOCAL:13 /= 2
+		;LUNATIC/ULTRAは1/3
+		ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+			LOCAL:13 /= 3
+		;PHANTASM/OVERDRIVEは1/5
+		ELSEIF FLAG:3 >= 5
+			LOCAL:13 /= 5
+		ENDIF
+		MONEY:1 = LOCAL:13*10
+		CALL SHOW_MONEY_INCREACE
+		;BASE:体力 = MAX(BASE:体力 / 2, 10)
+		;BASE:気力 = MAX(BASE:気力 / 3, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/4, 750)
+		DOWNBASE:1 += MAX(MAXBASE:1/5, 600)
+;	;鬼
+;	CASE 6
+;コメントアウトが面倒なんで無理な分岐を作る
+ELSEIF LOCAL > 101
+		;里の人間達(A,B,C,V,口を責められる)
+		;人間のルーチンの流用
+		TIMES LOCAL:10 , 1.80
+		LOCAL:5 = 2 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:6 = 4 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 5 + RAND:6
+		LOCAL:3 *= LOCAL:7
+		LOCAL:8 = 3 + RAND:5
+		LOCAL:4 *= LOCAL:8
+		;口枷などがない場合
+		IF TEQUIP:口装着器具 == 0
+			LOCAL:11 = 2 + RAND:5
+			LOCAL:9 *= LOCAL:11
+		ENDIF
+		
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10 * 2
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:痛み = LOCAL:10 / 2
+		SOURCE:トラウマ = LOCAL:10 * 3
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10
+;		;博麗神社に縁のあるキャラだと効果覿面
+;		IF CFLAG:TARGET:300 & 1
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;命蓮寺に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 32768
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;神霊廟に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 65536
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;人里に縁のあるキャラだと効果覿面
+;		ELSEIF CFLAG:TARGET:300 & 16384
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		ENDIF
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7 + LOCAL:8 + LOCAL:11
+		TCVAR:精液経験 += LOCAL:12/8
+		SIF LOCAL:11 > 0
+			TCVAR:フェラ経験 += LOCAL:11
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加
+		;口枷などがない場合は口にＰと精液汚れがつく
+		IF TEQUIP:耳装着器具 == 0
+			STAIN:口 |= 2
+			STAIN:口 |= 4
+		ENDIF
+		;ＶとＡにＰと精液の汚れがつく
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		STAIN:アナル |= 2
+		STAIN:アナル |= 4
+		LOCAL:13 = LOCAL:12 * (LOCAL:14+1)
+		;難易度による価格基礎修整
+		;HARDは1/2
+		IF FLAG:3 == 3
+			LOCAL:13 /= 2
+		;LUNATIC/ULTRAは1/3
+		ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+			LOCAL:13 /= 3
+		;PHANTASM/OVERDRIVEは1/5
+		ELSEIF FLAG:3 >= 5
+			LOCAL:13 /= 5
+		ENDIF
+		MONEY:1 = LOCAL:13*20
+		CALL SHOW_MONEY_INCREACE
+		PRINTL 
+		;BASE:体力 = MAX(BASE:体力 / 3, 10)
+		;BASE:気力 = MAX(BASE:気力 / 4, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/3, 1000)
+		DOWNBASE:1 += MAX(MAXBASE:1/4, 800)
+;	;天狗
+;	CASE 7
+;妖怪の山
+ELSEIF TFLAG:150 == 6
+		TIMES LOCAL:10 , 1.80
+		LOCAL:6 = 4 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 5 + RAND:6
+		LOCAL:3 *= LOCAL:7
+		LOCAL:8 = 3 + RAND:5
+		LOCAL:4 *= LOCAL:8
+		;口枷などがない場合
+		IF TEQUIP:口装着器具 == 0
+			LOCAL:11 = 2 + RAND:5
+			LOCAL:9 *= LOCAL:11
+		ENDIF
+		
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10 * 2
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:痛み = LOCAL:10 / 2
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10
+		SOURCE:液体追加 += LOCAL:10 * 3
+		
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7 + LOCAL:8
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:精液経験 += LOCAL:12/8
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		SIF LOCAL:11 > 0
+			TCVAR:フェラ経験 += LOCAL:11
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加
+		;口枷などがない場合は口にＰと精液汚れがつく
+		IF TEQUIP:口装着器具 == 0
+			STAIN:口 |= 2
+			STAIN:口 |= 4
+		ENDIF
+		;汚れ追加(ＶにＰと精液の汚れがつく)
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		;対象が河童、鬼、天狗なら調教の効果上昇
+		IF TALENT:TARGET:河童 || TALENT:TARGET:鬼 || TALENT:TARGET:天狗
+			TIMES SOURCE:露出 , 2.00
+			SOURCE:液体追加 += 1000
+			SOURCE:屈従 += 1000
+		ENDIF
+		IF ITEM:ビデオカメラ && ITEM:ビデオテープ < 99 && NOITEM == 0
+			TFLAG:240 = 1
+			LOCAL:13 = LOCAL:12 + LOCAL:14
+			ITEM:ビデオテープ = MIN(ITEM:ビデオテープ + (LOCAL:13 / 8) + 1, 99)
+		ENDIF
+		LOCAL:13 = LOCAL:12 * (LOCAL:14+1)
+		;難易度による価格基礎修整
+		;HARDは1/2
+		IF FLAG:3 == 3
+			LOCAL:13 /= 2
+		;LUNATIC/ULTRAは1/3
+		ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+			LOCAL:13 /= 3
+		;PHANTASM/OVERDRIVEは1/5
+		ELSEIF FLAG:3 >= 5
+			LOCAL:13 /= 5
+		ENDIF
+		MONEY:1 = LOCAL:13*15
+		CALL SHOW_MONEY_INCREACE
+		PRINTL 
+		;BASE:体力 = MAX(BASE:体力 / 3, 10)
+		;BASE:気力 = MAX(BASE:気力 / 4, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/3, 1000)
+		DOWNBASE:1 += MAX(MAXBASE:1/4, 800)
+;	;天人
+;	CASE 8
+ELSEIF LOCAL > 102
+		;妖精の群れ(C,B,Aを責められる)
+		;妖精のルーチンの流用
+		TIMES LOCAL:10 , 1.50
+		LOCAL:5 = 1 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:6 = 5 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 4 + RAND:5
+		LOCAL:3 *= LOCAL:7
+		
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7
+		
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:トラウマ = LOCAL:10 * 2
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10 * 2
+		
+		;対象が妖精なら調教の効果上昇
+		IF TALENT:妖精
+			TIMES SOURCE:露出 , 2.00
+			SOURCE:液体追加 += 1000
+			SOURCE:屈従 += 1000
+;		;対象が、紅魔館、旧地獄市外、妖精の森、太陽の畑(昼)に関係のある
+;		ELSEIF (CFLAG:TARGET:300 & 2) || (CFLAG:TARGET:300 & 64) || (CFLAG:TARGET:300 & 128) || (CFLAG:TARGET:300 & 512)
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+		ENDIF
+		
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		IF ITEM:ローション < 99 && NOITEM == 0
+			TFLAG:240 = 1
+			LOCAL:13 = LOCAL:12 + LOCAL:14
+			ITEM:ローション = MIN(ITEM:ローション + (LOCAL:13 / 8) + 1, 99)
+		ENDIF
+		DOWNBASE:0 += 5
+		;BASE:体力 = MAX(BASE:体力, 10)
+		;BASE:気力 = MAX(BASE:気力 / 2, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/4, 750)
+		DOWNBASE:1 += MAX(MAXBASE:1/5, 600)
+;	;魔界人
+;	CASE 9
+;魔界
+ELSEIF TFLAG:150 == 12
+		TIMES LOCAL:10 , 1.50
+		
+		LOCAL:5 = 2 + RAND:5
+		LOCAL:1 *= LOCAL:5
+		LOCAL:6 = 4 + RAND:5
+		LOCAL:2 *= LOCAL:6
+		LOCAL:7 = 5 + RAND:6
+		LOCAL:3 *= LOCAL:7
+		LOCAL:8 = 3 + RAND:5
+		SIF TALENT:処女
+			TIMES LOCAL:8 , 4.00
+		LOCAL:4 *= LOCAL:8
+		;口枷などがない場合
+		IF TEQUIP:口装着器具 == 0
+			LOCAL:11 = 2 + RAND:5
+			LOCAL:9 *= LOCAL:11
+		ENDIF
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:快Ｖ = LOCAL:4
+		SOURCE:快Ａ = LOCAL:1
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:10
+		SOURCE:性行動 = LOCAL:10 * 2
+		SOURCE:欲情追加 = LOCAL:10 * 3
+		SOURCE:液体追加 = LOCAL:10 * 3
+		SOURCE:痛み = LOCAL:10 / 2
+		SOURCE:トラウマ = LOCAL:10 * 4
+		SOURCE:不潔 = LOCAL:10
+		SOURCE:逸脱 = LOCAL:10
+		
+		;対象が魔界人なら調教の効果上昇
+;		IF NO:TARGET == 3017 || CSTR:TARGET:33 == "魔界人"
+;			TIMES SOURCE:露出 , 2.00
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 1000
+;		;対象がナズーリン、ムラサ、星、聖のときも効果上昇
+;		ELSEIF CFLAG:TARGET:300 & 32768
+;			TIMES SOURCE:露出 , 2.50
+;			SOURCE:液体追加 += 1000
+;			SOURCE:屈従 += 750
+;		ENDIF
+
+		LOCAL:12 = LOCAL:5 + LOCAL:6 + LOCAL:7 + LOCAL:8
+		TCVAR:Ｖ経験 += LOCAL:8
+		TCVAR:Ａ経験 += LOCAL:5
+		TCVAR:精液経験 += LOCAL:12/8
+		TCVAR:被強姦経験 += 1
+		TCVAR:被輪姦経験 += 1
+		SIF LOCAL:11 > 0
+			TCVAR:フェラ経験 += LOCAL:11
+		
+		;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+		TFLAG:1 = 1
+		
+		;汚れ追加
+		;口枷などがない場合は口にＰと精液汚れがつく
+		IF TEQUIP:口装着器具 == 0
+			STAIN:口 |= 2
+			STAIN:口 |= 4
+		ENDIF
+		;汚れ追加(ＶとＡにＰと精液の汚れがつく)
+		STAIN:ヴァギナ |= 2
+		STAIN:ヴァギナ |= 4
+		STAIN:アナル |= 2
+		STAIN:アナル |= 4
+		IF ITEM:媚薬 < 99 && NOITEM == 0
+			TFLAG:240 = 1
+			LOCAL:13 = LOCAL:12 + LOCAL:14
+			ITEM:媚薬 = MIN(ITEM:媚薬 + (LOCAL:13 / 8) + 1, 99)
+		ENDIF
+		LOCAL:13 = LOCAL:12 * (LOCAL:14+1)
+		;難易度による価格基礎修整
+		;HARDは1/2
+		IF FLAG:3 == 3
+			LOCAL:13 /= 2
+		;LUNATIC/ULTRAは1/3
+		ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+			LOCAL:13 /= 3
+		;PHANTASM/OVERDRIVEは1/5
+		ELSEIF FLAG:3 >= 5
+			LOCAL:13 /= 5
+		ENDIF
+		MONEY:1 = LOCAL:13*25
+		CALL SHOW_MONEY_INCREACE
+		PRINTL 
+		;BASE:体力 = MAX(BASE:体力 / 3, 10)
+		;BASE:気力 = MAX(BASE:気力 / 4, 0)
+		DOWNBASE:0 += MAX(MAXBASE:0/3, 1000)
+		DOWNBASE:1 += MAX(MAXBASE:1/4, 800)
+;ENDSELECT
+ENDIF
+CALL DISPLAY_EQUIP_MESSAGE_COM, 107
+
+;みんな帰っちゃいました
+SIF FLAG:15 & 256
+	TFLAG:151 = 0
+IF TEQUIP:焦らしプレイ
+	PRINTFORML …当然、焦らすどころではなかった。
+	PRINTFORMW ＜焦らしプレイを終了します＞
+	TEQUIP:焦らしプレイ = 0
+ENDIF
+
+;--------------------------------------------------
+;酒恥肉倫で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:974 && MONEY:1 > 0
+	CALL NEW_HIGH_INCOME_ALL, 974
+SIF MONEY:1 > CFLAG:85
+	CALL NEW_HIGH_INCOME_SLAVE, 85
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+
+;特別メニューにはボーナス
+IF TEQUIP:裸体盛り == 1
+	SOURCE:不潔 += 5000
+	SOURCE:中毒充足 += 2500
+	SOURCE:露出 += 500
+;通常メニュー
+ELSE
+	SOURCE:不潔 += 3000
+ENDIF
+WAIT
+
+
+;--------------------------------------------------
+;地の文
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_107
+;構文の順番が逆な気がするが、なに、気にすることはない
+IF TEQUIP:裸体盛り
+	PRINTL 
+	PRINTFORM %CALLNAME:TARGET%を寝かせるとその上に
+	IF TEQUIP:裸体盛り == 2
+		PRINTL 鯵、鮪、鯛等色とりどりの刺身を盛り付けた……
+	ELSEIF TEQUIP:裸体盛り == 3
+		PRINTL 生クリームやフルーツなどを盛り付けた……
+	ELSEIF TEQUIP:裸体盛り == 4
+		;胸の上にキャベツを載せたキャベツブラをやりたかっただけでs(ry
+		PRINTL キャベツやトマトを始めとする、新鮮な野菜を盛り付けた……
+	ELSEIF NO:TARGET == 1001
+		;霊夢の博麗の女体神饌盛り
+		PRINTL 米、塩、水、清酒、鯛、海藻、果物、野菜等を丁寧に盛り付けた……
+	ELSEIF NO:TARGET == 1002
+		;魔理沙のマジカルきのこ盛り
+		PRINTL 香ばしい香りを放つ怪しげな色のきのこを裸体の上に並べた後、特製のソースを垂らした……
+	ELSEIF NO:TARGET == 1011
+		;フランちゃんのクランベリージャムかけｳﾌﾌ
+		PRINTL クランベリージャムをこれでもかと言う位かけまくった……
+	ELSEIF NO:TARGET == 1015 || NO:TARGET == 1056
+		;チョコクリームをたっぷりと塗ったダブルリリーっておいしそうだね！
+		PRINTL チョコクリームをふんだんに使った盛り付けを行った……
+	ELSEIF NO:TARGET == 1021
+		;藍しゃまといえば油揚げと稲荷さんだよね！
+		PRINTL お稲荷寿司と油揚げを魅惑的な身体のラインを際立たせるように盛り付けた……
+	ELSEIF NO:TARGET == 1023
+		;萃香に溶けたチーズをかけて食べる料理
+		PRINTL アツアツでトロトロになったチーズを上からゴージャスにかけた……
+	ELSEIF NO:TARGET == 1028
+		;うどんげの白い肌に映える白いうどんがいっぱい！
+		PRINTL 色々な種類のうどんを大量に盛り付けた……
+	ELSEIF NO:TARGET == 1034
+		;ゆうかりんの胸に蜂蜜をかけてみ隊
+		PRINTL 琥珀色に透き通った蜂蜜を贅沢に
+	ELSEIF NO:TARGET == 1037 || NO:TARGET == 1038
+		;秋姉妹の上からメープルシロップをとろ～りと…
+		PRINTL どことなく気品溢れる甘い香りのメープルシロップをかけまくった……
+	ELSEIF NO:TARGET == 1045
+		;サニーのこくまろミルクをご賞味ください！
+		PRINTL 濃厚な、それでいてすごく新鮮でおいしそうなミルクシロップをかけまくった……
+	ELSEIF NO:TARGET == 1049
+		;ウサミミ蓮子の秘封蓮根盛り
+		PRINTL 輪切りにした蓮根や幾何かの野菜を乗せた後、ドレッシングをかけた……
+	ELSEIF NO:TARGET == 1051
+		;衣玖さんだから電気…、ちなみに通常は食用にはしないはずだが？
+		PRINTL 電気ナマズに電気ウナギの刺身を大量に盛りつけた……
+	ELSEIF NO:TARGET == 1057 || NO:TARGET == 1058
+		;変態紳士パティシエ「あなた」より新メニュー、キスメとヤマメの黒蜜漬け
+		;ただいま期間限定で味見できます
+		PRINTL 黒蜜をこれでもかと掛けまくった……
+	ENDIF
+	PRINTL 
+;Eat in
+ELSE
+	PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%で%CALLNAME:TARGET%に乗っている具材を平らげた……
+ENDIF
+
+
+;-----------------------------------------------
+;地の文(酒恥肉倫)
+;CALL DISPLAY_EQUIP_MESSAGE_COM, 107
+;ただの女体盛りの装着中口上を呼び出す関数だが
+;装着中に何を語るのか、あまり想像できないので、
+;今のところ、「酒恥肉倫」のみの口上とする
+;-----------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_107
+
+LOCALS:1 = %CALLNAME:TARGET%の%CSTR:2%
+LOCALS:2 = %CALLNAME:TARGET%の海鮮盛り
+LOCALS:3 = %CALLNAME:TARGET%のスイートケーキ
+LOCALS:4 = %CALLNAME:TARGET%の新鮮サラダ
+
+VARSET LOCAL , 0
+PRINTL 
+PRINTFORM %CALLNAME:MASTER%と%CALLNAME:ASSI%で作った%LOCALS:(TFLAG:153)%は
+IF FLAG:15 & 256
+	PRINTFORM \@(TFLAG:151 == 4) ? 痴態を眺めていた # 宴に誘われてどこからともなく現れた\@
+	PRINTFORM %OUTDOOR_GALLERY_NAME()%達
+	
+;ELSE
+;	IF FLAG:14 & 8
+;		PRINTL …
+;		DRAWLINE
+;		PRINTL （誰を宴に誘ってた？）
+;		PRINTL [1] - 里の人間達
+;		PRINTL [2] - 妖精の群れ
+;		PRINTL [3] - 兎の群れ
+;		PRINTL [4] - 天狗の集団
+;		PRINTL [5] - 魔界人の団体
+;		$INPUT_LOOP
+;		INPUT
+;		IF RESULT == 1
+;			LOCAL:16 = 12
+;		ELSEIF RESULT == 2
+;			LOCAL:16 = 0
+;		ELSEIF RESULT == 3
+;			LOCAL:16 = 4
+;		ELSEIF RESULT == 4
+;			LOCAL:16 = 7
+;		ELSEIF RESULT == 5
+;			LOCAL:16 = 9
+;		ELSE
+;			CLEARLINE 1
+;			REUSELASTLINE
+;			GOTO INPUT_LOOP
+;		ENDIF
+;		DRAWLINE
+;		PRINT …
+;		PRINTFORM %CALLNAME:MASTER%と%CALLNAME:ASSI%で作った\@(TFLAG:153 == 90) ? %CALLNAME:TARGET%の%CSTR:2% # %LOCALS:(TFLAG:153)%\@は宴に誘った
+;	ELSE
+;		PRINT 宴に誘われてどこからともなく現れた
+;		LOCAL:16 = RAND:15
+;	ENDIF
+;	IF LOCAL:16 >= 0 && LOCAL:16 < 4
+;		PRINT 妖精の群れ
+;		LOCAL:15 = 2
+;	ELSEIF LOCAL:16 >= 4 && LOCAL:16 < 7
+;		PRINT 兎の群れ
+;		LOCAL:15 = 3
+;	ELSEIF LOCAL:16 >= 7 && LOCAL:16 < 9
+;		PRINT 天狗の集団
+;		LOCAL:15 = 4
+;	ELSEIF LOCAL:16 == 9
+;		PRINT 魔界人の団体
+;		LOCAL:15 = 5
+;	;追加イベント用
+;	ELSEIF LOCAL:16 == 
+;		PRINT 
+;		LOCAL:15 = 
+;	ELSE
+;		PRINT 里の人間達
+;		LOCAL:15 = 1
+;	ENDIF
+ENDIF
+PRINTW に振る舞われた……
+PRINTW           ･
+PRINTW           ･
+PRINTW           ･
+
+;人里、博麗神社、旧地獄市外、有頂天、太陽の畑(夜)、地獄界、命蓮寺、神霊廟
+IF TFLAG:150 == 99 || TFLAG:150 == 1 || TFLAG:150 == 7 || TFLAG:150 == 9 || (TFLAG:150 == 10 && TIME == 1) || TFLAG:150 >= 13
+	;里の人間達(A,B,C,V,口を責められる)
+	IF TEQUIP:裸体盛り == 2
+		PRINT 刺身のフルコース
+	ELSEIF TEQUIP:裸体盛り == 3
+		PRINT フルーツケーキ
+	ELSEIF TEQUIP:裸体盛り == 4
+		PRINT フレッシュサラダ
+	ELSE
+		PRINTFORM %CSTR:2%
+	ENDIF
+	PRINTFORML で一通り腹を満たした\@(TALENT:オトコ && TALENT:PLAYER:オトコ) ? 女 # 男\@達は
+	PRINTFORML 一糸纏わぬ姿で横たわる%CALLNAME:TARGET%に魅せられたのか
+	PRINTFORML 次々と凌辱し始めた
+	IF TALENT:処女
+		PRINTFORML まだ処女であることに気づいたリーダー格の巨漢は
+		PRINTFORML 嫌がる%CALLNAME:TARGET%の脚を無理やり拡げ、
+		PRINTFORML 上からのしかかるように自分の太く、長い竿で
+		PRINTFORML %CALLNAME:TARGET%を貫いた
+	ENDIF
+	;酒恥肉倫イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 9, LOCAL:15
+
+	PRINTW           ･
+	PRINTW           ･
+	PRINTW           ･
+	PRINTFORM 料理と%CALLNAME:TARGET%の体をたっぷりと堪能した
+;	IF FLAG:15 & 256 && TFLAG:150 == 7
+;		PRINT 地獄の住人
+;	ELSEIF FLAG:15 & 256 && TFLAG:150 == 9
+;		PRINT 天人
+;	ELSEIF FLAG:15 & 256 && TFLAG:150 == 10 && TIME == 1
+;		PRINT 妖怪
+;	ELSE
+;		PRINT 里の人間
+;	ENDIF
+	PRINTFORM %OUTDOOR_GALLERY_NAME()%
+	PRINTL 達は
+	PRINTFORM %CALLNAME:TARGET%の
+	;口枷などがない場合
+	SIF TEQUIP:口装着器具 == 0
+		PRINT 口、
+	PRINTFORML 膣口や肛門に金貨を詰め込むと、
+	PRINTFORMW そのまま里へ帰って行った……
+	PRINTL 
+	
+;紅魔館、彼岸、妖精の森、太陽の畑(昼)
+ELSEIF TFLAG:150 == 2 || TFLAG:150 == 5 || TFLAG:150 == 8 || (TFLAG:150 == 10 && TIME == 0)
+	;妖精の群れ(C,B,Aを責められる)
+	PRINTFORML 腹を満たした妖精達は悪戯心を起こしたのか
+	PRINTFORML %CALLNAME:TARGET%の胸や恥部へと群がっていった
+	PRINTFORML 陰唇を撫でたり菊門に指を入れつつ、
+	PRINTFORML %CALLNAME:TARGET%の反応を楽しんでいるようだ……
+
+	;酒恥肉倫イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 9, LOCAL:15
+	
+	PRINTW           ･
+	PRINTW           ･
+	PRINTW           ･
+	IF TFLAG:240 == 1
+		PRINTFORML 妖精の群れが去った後、そこには全身を撫でまわされて
+		PRINTFORML 脱力しきった%CALLNAME:TARGET%が液体の入った瓶と共に残されていた……
+		PRINTL 
+		PRINTFORML %ITEMNAME:60%を手に入れた
+		PRINTL 
+	ELSE
+		PRINTFORML 妖精の群れが去った後、そこには全身を撫でまわされて
+		PRINTFORMW 脱力しきった%CALLNAME:TARGET%が残されていた……
+		PRINTL 
+	ENDIF
+	
+ELSEIF TFLAG:150 == 3
+	;霊の群れ(V,Aを責められる)
+	PRINTFORML だが、浮遊霊達は当然ながら食物を食べられない。
+	PRINTFORML 浮遊霊達は%CALLNAME:TARGET%の下半身に群がり、
+	PRINTFORML 体に盛られた様々な食材をふんだんに使用して、アヌスやヴァギナを攻め立てた。
+	IF TALENT:処女
+		PRINTFORML %CALLNAME:TARGET%は喪失の恐怖に怯えて懸命に抵抗するも、
+		PRINTFORML 数多くの霊達によって拘束され、
+		PRINTFORML 純潔の膜を破られてしまった。
+	ENDIF
+	;酒恥肉倫イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 9, LOCAL:15
+	
+	
+	PRINTW           ･
+	PRINTW           ･
+	PRINTW           ･
+	PRINTFORML やがて浮遊霊達は興味を失ったのか、%CALLNAME:TARGET%を解放し、
+	PRINTL 再び周囲に漂い始めた。
+
+ELSEIF TFLAG:150 == 4 || TFLAG:150 == 11
+	;兎の群れ(V,Aを責められる)
+	PRINTFORML 料理を食べ終わった兎の群れは発情したようだ…
+	PRINTFORML 身動きが取れない%CALLNAME:TARGET%の下半身に群がっていくと
+	PRINTFORML 兎達はしきりに股間のモノを%CALLNAME:TARGET%の
+	PRINTFORML アヌスやヴァギナに捻じ込もうとしている……
+	IF TALENT:処女
+		PRINTFORML %CALLNAME:TARGET%は喪失の恐怖に怯えて懸命に抵抗するも、
+		PRINTFORML 大勢で圧し掛かられて満足に抗うことができずに
+		PRINTFORML 純潔の膜を食い破られてしまう
+	ENDIF
+	;酒恥肉倫イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 9, LOCAL:15
+	
+	
+	PRINTW           ･
+	PRINTW           ･
+	PRINTW           ･
+	PRINTL やがて満足したのか、兎達は何度も犯されてぐったりしている
+	PRINTFORML %CALLNAME:TARGET%を解放し金貨をばらまくと、
+	IF TFLAG:150 == 4
+		PRINTW 竹林に向かって走り去っていった……
+	ELSEIF TFLAG:150 == 11
+		PRINTW 都のあちこちに散っていった……
+	ENDIF
+	PRINTL 
+
+ELSEIF TFLAG:150 == 6
+	;天狗の集団(B,C,V,口を責められる)
+	PRINTFORML 料理を食べ終えると天狗の集団は懐から酒を取り出して飲み会を始めた、
+	PRINTFORML 日頃組織にこき使われている鬱憤が溜まっていたのか、酒の量がかなり多いようだ
+	PRINTFORML やがて酔いが回ってきたのか天狗達は%CALLNAME:TARGET%の体に跨り始めた……
+	IF TALENT:処女
+		PRINTFORML 喪失の恐怖に怯える%CALLNAME:TARGET%は無理やり股を開かされ、
+		PRINTFORML 大きく張った天狗のイチモツに貫かれてしまう……
+	ENDIF
+	
+	;酒恥肉倫イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 9, LOCAL:15
+	
+	PRINTW           ･
+	PRINTW           ･
+	PRINTW           ･
+	PRINTFORML 鬱憤が晴れて満足したのか、天狗達は事が終わると何処かへと飛び去っていった
+	PRINTFORM 後に残された%CALLNAME:TARGET%の周辺に金貨
+	SIF TFLAG:240 == 1
+		PRINT やビデオテープ
+	PRINTFORMW が散乱している……
+	PRINTL 
+	SIF TFLAG:240 == 1
+		PRINTFORML %ITEMNAME:75%を手に入れた
+	
+ELSEIF TFLAG:150 == 12
+	;魔界人の群れ(A,B,C,V,口を責められる)
+	PRINTFORML 魔界からやってきた一団は料理を平らげると
+	PRINTFORML おかわりとばかりに次々と%CALLNAME:TARGET%に群がっていった
+	PRINTFORML 怪しげな術をかけられた%CALLNAME:TARGET%は自分の意志とは関係なく体が火照り始める……
+	IF TALENT:処女
+		PRINTFORML まだ獲物が処女であることに気づくと、魔界人達は嬉々として
+		PRINTFORML %CALLNAME:TARGET%の下の口を徹底的に犯した
+	ENDIF
+	;酒恥肉倫イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 9, LOCAL:15
+	
+	PRINTW           ･
+	PRINTW           ･
+	PRINTW           ･
+	PRINTL 事が終わると彼らは満足したような笑みを浮かべ、
+	IF TFLAG:240 == 1
+		PRINTFORML 液体の入った瓶を未だ発情している%CALLNAME:TARGET%の傍に置いて
+		PRINTFORMW \@(TIME == 0) ? 魔界の扉 # 闇夜に紛れるようにどこか\@へと飛び去って行った……
+		PRINTL 
+		PRINTFORML %ITEMNAME:61%を手に入れた
+		PRINTL 
+	ELSE
+		PRINTFORML 未だに発情している%CALLNAME:TARGET%を残して
+		PRINTFORMW \@(TIME == 0) ? 魔界の扉 # 闇夜に紛れるようにどこか\@へと飛び去って行った……
+		PRINTL 
+	ENDIF
+	PRINTL 
+	PRINTL 彼らが飛び去った跡には金貨が残されていた。
+	
+ENDIF

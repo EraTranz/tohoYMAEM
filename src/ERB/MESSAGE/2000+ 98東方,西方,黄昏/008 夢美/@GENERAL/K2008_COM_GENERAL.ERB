@@ -1,0 +1,149 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;調教コマンド汎用口上の呼び出し関数
+;-------------------------------------------------
+;引数は通常省略、口上内で代用するときには評価値を与えることが可能
+;	_PLEASURE	快楽
+;	_FAVOR		好感
+;	_REFUSAL	拒絶
+;	_PAIN		苦痛
+;================================================
+@K2008_COM_GENERAL(_PLEASURE = -1, _FAVOR = -1, _REFUSAL = -1, _PAIN = -1)
+#DIM _PLEASURE
+#DIM _FAVOR
+#DIM _REFUSAL
+#DIM _PAIN
+#DIM _TYPE
+#DIMS _TYPENAME_, 5 = "NOMINAL", "PLEASURE", "FAVOR", "REFUSAL", "PAIN"
+#DIMS _FUNCNAME
+
+;眠ってる場合は戻る
+;SIF EQUIP:睡眠薬
+	;RETURN 0
+;口枷（触手系２種）がある場合も戻る。ボールギャグと猿轡は汎用口上へ飛ばすので通過
+SIF TEQUIP:口装着器具 == K2008F_TEQUIPTYPE("触手口辱") || TEQUIP:口装着器具 == K2008F_TEQUIPTYPE("触手強制飲酒")
+	RETURN 0
+;時止め中は戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+
+;引数が与えられていない場合は、コマンド口上とみなす
+IF _PLEASURE == -1 && _FAVOR == -1 && _REFUSAL == -1 && _PAIN == -1
+	;快楽／好感／拒絶／苦痛の４種類に評価を分ける
+
+	;快楽：快感の度合いを評価。快感を得られるコマンドだと評価が高い
+	_PLEASURE = K2008F_HOWMANY_SOURCE_PLEASURE("GETNOW")
+
+	;好感：好意の度合いを評価。奉仕やイチャイチャする類のコマンドだと評価が高い
+	_FAVOR = K2008F_HOWMANY_SOURCE_FAVOR("GETNOW")
+
+	;拒絶：嫌がりの度合いを評価。いぢめるコマンドだと評価が高い
+	_REFUSAL = K2008F_HOWMANY_SOURCE_REFUSAL("GETNOW")
+
+	;苦痛：痛みの度合いを評価。SMや拷問系のコマンドだと評価が高い
+	_PAIN = K2008F_HOWMANY_SOURCE_PAIN("GETNOW")
+ELSEIF _PLEASURE < 0 && _FAVOR < 0 && _REFUSAL < 0 && _PAIN < 0
+	;引数が与えられている場合は、引数に従う
+	;不適切と思われる（負値が入った）時はエラー
+	THROW 【K2008エラー】負値の引数を与えないでください
+ELSE
+	;引数で判断する。
+ENDIF
+
+;どの口上が呼ばれたかを判断する
+;K2008F_COMHISTORY_GENERAL("GETNOW")だと、コマンド実施前は-1が来るためつかえない
+_TYPE = K2008F_SSELECT_COM_TYPE(_PLEASURE, _FAVOR, _REFUSAL, _PAIN)
+
+SIF 0 && __LINE__ ;デバッグ用。SOUCEを表示するときは0→1
+	CALL K2008_DEBUG_SHOW_SOURCE
+	
+SIF 0 && __LINE__ ;デバッグ用。LV換算のSOURCEを表示するときは0→1
+	CALL K2008_DEBUG_SHOW_SOURCELV
+
+;関数名を作る
+_FUNCNAME =
+
+IF EQUIP:睡眠薬
+	;眠ってる場合は睡眠口上にする
+	_FUNCNAME += "_IN_SLUMBER"
+ELSEIF TEQUIP:口装着器具
+	;口枷がある場合は口枷口上にする
+	_FUNCNAME += "_WITH_GAG"
+ENDIF
+
+_FUNCNAME += "_" + _TYPENAME_:( _TYPE )
+
+CALL K2008D_PRINTFORML("汎用口上" + _FUNCNAME + "を呼び出します。")
+
+;ランク指定の汎用口上があればそちらを優先、ない場合は未指定に飛ばす
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_GENERAL%_FUNCNAME%, _PLEASURE, _FAVOR, _REFUSAL, _PAIN
+CATCH
+	TRYCALLFORM K2008_COM_GENERAL%_FUNCNAME%, _PLEASURE, _FAVOR, _REFUSAL, _PAIN
+ENDCATCH
+
+;================================================
+;調教コマンド汎用口上の簡易呼び出し関数
+;-------------------------------------------------
+;口上側で「とりあえずここで快楽口上」とかいうときに呼びやすいように。
+;いちおう、指定した口上タイプへの評価値も与えられるようにしている。
+;================================================
+@K2008_COM(ARGS = "", ARG = __INT_MIN__)
+#DIM _TYPE
+#DIM _PLEASURE
+#DIM _FAVOR
+#DIM _REFUSAL
+#DIM _PAIN
+
+_PLEASURE = 0
+_FAVOR = 0
+_REFUSAL = 0
+_PAIN = 0
+
+SELECTCASE ARG
+	CASE __INT_MIN__
+		;ランク指定なしなので、判定できる最低値
+		ARG = 1
+	CASE IS < 0
+		THROW 【K2008エラー】未登録の引数 {ARG} が使用されました
+	CASEELSE
+		;何もしない
+ENDSELECT
+
+SELECTCASE ARGS
+	CASE "無"
+		_TYPE = 0
+	CASE "快楽", "快", "快感"
+		_TYPE = 1
+		_PLEASURE = ARG
+	CASE "好感", "好", "奉仕"
+		_TYPE = 2
+		_FAVOR = ARG
+	CASE "拒絶", "拒", "嫌"
+		_TYPE = 3
+		_REFUSAL = ARG
+	CASE "苦痛", "痛"
+		_TYPE = 4
+		_PAIN = ARG
+	CASE "激痛"
+		_TYPE = 4
+		IF ARG <= 0
+			_PAIN = 5
+		ELSE
+			_PAIN = ARG
+		ENDIF
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+;ランク指定の汎用口上があればそちらを優先、ない場合は未指定に飛ばす
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_GENERAL{_TYPE}, _PLEASURE, _FAVOR, _REFUSAL, _PAIN
+CATCH
+	TRYCALLFORM K2008_COM_GENERAL{_TYPE}, _PLEASURE, _FAVOR, _REFUSAL, _PAIN
+ENDCATCH
+

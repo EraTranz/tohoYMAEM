@@ -1,0 +1,458 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;調教コマンド選択直後のSOURCEを解析して口上分岐で使えるようにする
+;------------------------------------------------
+;■引数
+;ARGS
+;	"RESET"
+;		解析履歴を削除
+;	"PRESET"
+;		事前解析（装着アイテム等の算出前）
+;	"SET"
+;		装着アイテムの効果を追加した最終解析値
+;========================================================
+@K2008_ANALYZE_SOURCES(ARGS = "")
+#DIM _PLEASURE
+#DIM _FAVOR
+#DIM _REFUSAL
+#DIM _PAIN
+
+SELECTCASE ARGS
+	CASE "RESET", "PRESET", "SET"
+		_PLEASURE = K2008F_HOWMANY_SOURCE_PLEASURE(ARGS)
+		   _FAVOR = K2008F_HOWMANY_SOURCE_FAVOR(ARGS)
+		 _REFUSAL = K2008F_HOWMANY_SOURCE_REFUSAL(ARGS)
+		    _PAIN = K2008F_HOWMANY_SOURCE_PAIN(ARGS)
+	CASEELSE
+		THROW 未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+;汎用口上の選択先について追加処理
+SELECTCASE ARGS
+	CASE "RESET"
+		;そのままARGSに対応した処理を追加
+		CALLF K2008F_COMHISTORY_GENERAL(ARGS)
+	CASE "SET"
+		;SETの場合、汎用口上の選択先（無快好拒痛）を履歴登録する作業を追加
+		CALLF K2008F_COMHISTORY_GENERAL("SET", K2008F_SSELECT_COM_TYPE(_PLEASURE, _FAVOR, _REFUSAL, _PAIN) )
+		;デバッグモード時は結果を表示する
+		SIF __LINE__
+			CALL K2008_DEBUG_SHOW_ANALYZE
+	CASEELSE
+		;"PRESET"は処理なし
+ENDSELECT
+
+
+;================================================
+;今回調教中のSOURCE解析と履歴管理
+;------------------------------------------------
+;■戻り値
+;	ARG回のコマンドの解析結果を返す
+;	解析結果のGETを正しく使えば必ず0以上の値
+;	設定時の場合は-1が戻る（普通はCALLFで呼ぶので意味なし）
+;------------------------------------------------
+;■引数
+;ARGS
+;	"PRESET"
+;	"GET"
+;	"GETNOW"
+;	"GETPREV"
+;	"SET"
+;	"RESET"
+;		通常は使用せず口上システム側でのみ使用。
+;ARG
+;	ARG回のコマンドを調べる。0なら実行中のもの、1なら前回
+;	ARG >= 0でなければならない
+;================================================
+
+;-------------------------------------------------
+;快楽系の評価式
+;_SETをメモリとして利用する
+;-------------------------------------------------
+@K2008F_HOWMANY_SOURCE_PLEASURE(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+#DIM _TEMP
+#DIM _PRE
+#DIM _SET, 1000
+#DIM _COMCOUNT
+_COMCOUNT = K2008F_COMCOUNT()
+
+SELECTCASE ARGS
+	CASE "PRESET"
+		_SET:_COMCOUNT = 0
+		_PRE = 0
+		_TEMP = 0
+	CASE "SET"
+		;_TEMPを一時退避して初期化（PRESETの結果が入っている）
+		_PRE = _TEMP
+		_TEMP = 0
+	CASE "RESET"
+		VARSET _SET, -1
+		_PRE = 0
+		_TEMP = 0
+		RETURNF -1
+	CASE "GET"
+		SIF ARG <= 0
+			THROW 【K2008エラー】未定義のコマンド履歴 {ARG} が指定されました
+		RETURNF _SET:ARG
+	CASE "GETNOW"
+		RETURNF _SET:_COMCOUNT
+	CASE "GETPREV"
+		SIF _COMCOUNT <= 1
+			THROW 【K2008エラー】前回のコマンドが登録されていません。
+		RETURNF _SET:(_COMCOUNT - 1)
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+
+;快CVABいずれかがある場合のみ評価
+IF SOURCE:快Ｃ > 0 || SOURCE:快Ｖ > 0 || SOURCE:快Ａ > 0 || SOURCE:快Ｂ > 0
+	;快Ｃ
+	_TEMP += K2008F_HOWLV_SOURCENAME("快Ｃ") / (1 + MAX(0, ABL:Ｃ感覚 - 2))
+	;快Ｖ
+	_TEMP += K2008F_HOWLV_SOURCENAME("快Ｖ") / (1 + MAX(0, ABL:Ｖ感覚 - 2))
+	;快Ａ
+	_TEMP += K2008F_HOWLV_SOURCENAME("快Ａ") / (1 + MAX(0, ABL:Ａ感覚 - 2))
+	;快Ｂ
+	_TEMP += K2008F_HOWLV_SOURCENAME("快Ｂ") / (1 + MAX(0, ABL:Ｂ感覚 - 2))
+	;快パラメータに上限処置
+	_TEMP = LIMIT(_TEMP, 0, 8)
+	;ＣＶＡＢいずれかの絶頂がある場合、可算
+	_TEMP += LIMIT(NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂, 0, 1)
+	;中毒充足
+	_TEMP += K2008F_HOWLV_SOURCENAME("中毒充足") / 2
+	;欲情
+	_TEMP += LIMIT(SOURCE:欲情追加, 0, 1)
+	;露出と濡れ
+	_TEMP += LIMIT(SOURCE:露出 * SOURCE:液体追加, 0, 1)
+	;恐怖刻印による補正
+	;SIF _TEMP > 3
+	;	_TEMP -= LIMIT(MARK:恐怖刻印, 0, 1)
+	;反発刻印による補正
+	;SIF _TEMP > 3
+	;	_TEMP -= LIMIT(MARK:反発刻印, 0, 1)
+	;恐怖刻印または反発刻印による補正
+	SIF _TEMP > 2
+		_TEMP -= LIMIT(MARK:恐怖刻印 || MARK:反発刻印, 0, 1)
+	
+	;部位数による補正
+	SIF _TEMP > 3
+		_TEMP -= LIMIT((SOURCE:快Ｃ > 0) + (SOURCE:快Ｖ > 0) + (SOURCE:快Ａ > 0) + (SOURCE:快Ｂ > 0) - 1, 0, 2)
+ENDIF
+
+;評価値は必ず0以上
+_TEMP = MAX(0, _TEMP)
+
+;アイテム装着の効果は半分にする
+SIF ARGS == "SET" && _TEMP > _PRE
+	_TEMP -= (_TEMP - _PRE) / 2
+
+;SETなら登録処理
+SIF ARGS == "SET"
+	_SET:_COMCOUNT = _TEMP
+
+RETURNF _TEMP
+
+;-------------------------------------------------
+;好感系の評価値
+;_SETをメモリとして利用する
+;-------------------------------------------------
+@K2008F_HOWMANY_SOURCE_FAVOR(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+#DIM _TEMP
+#DIM _PRE
+#DIM _SET, 1000
+#DIM _COMCOUNT
+_COMCOUNT = K2008F_COMCOUNT()
+
+SELECTCASE ARGS
+	CASE "PRESET"
+		_SET:_COMCOUNT = 0
+		_PRE = 0
+		_TEMP = 0
+	CASE "SET"
+		;_TEMPを一時退避して初期化（PRESETの結果が入っている）
+		_PRE = _TEMP
+		_TEMP = 0
+	CASE "RESET"
+		VARSET _SET, -1
+		_PRE = 0
+		_TEMP = 0
+		RETURNF -1
+	CASE "GET"
+		SIF ARG <= 0
+			THROW 【K2008エラー】未定義のコマンド履歴 {ARG} が指定されました
+		RETURNF _SET:ARG
+	CASE "GETNOW"
+		RETURNF _SET:_COMCOUNT
+	CASE "GETPREV"
+		SIF _COMCOUNT <= 1
+			THROW 【K2008エラー】前回のコマンドが登録されていません。
+		RETURNF _SET:(_COMCOUNT - 1)
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+;情愛
+_TEMP += K2008F_HOWLV_SOURCENAME("情愛") / 3
+;主導権
+_TEMP += K2008F_HOWLV_SOURCENAME("主導権") / 2
+;性行動
+_TEMP += K2008F_HOWLV_SOURCENAME("性行動") / 2
+;達成感
+_TEMP += K2008F_HOWLV_SOURCENAME("達成感") / 3
+;恭順追加
+_TEMP += K2008F_HOWLV_SOURCENAME("恭順追加") / 3
+;欲情追加
+_TEMP += K2008F_HOWLV_SOURCENAME("欲情追加") / 3
+;性行動のある場合のみ、液体追加
+;SIF SOURCE:性行動 > 0
+;	_TEMP += LIMIT(K2008F_HOWLV_SOURCENAME("液体追加"), 0, 1)
+;屈従
+_TEMP += K2008F_HOWLV_SOURCENAME("屈従") / 2
+;中毒充足
+_TEMP += K2008F_HOWLV_SOURCENAME("中毒充足") / 3
+;不潔
+_TEMP -= K2008F_HOWLV_SOURCENAME("不潔") / 3
+;逸脱
+_TEMP -= K2008F_HOWLV_SOURCENAME("逸脱") / 3
+;反感追加
+_TEMP -= K2008F_HOWLV_SOURCENAME("反感追加") / 2
+;恐怖刻印による補正
+;SIF _TEMP > 2
+;	_TEMP -= LIMIT(MARK:恐怖刻印, 0, 1)
+;反発刻印による補正
+;SIF _TEMP > 2
+;	_TEMP -= LIMIT(MARK:反発刻印, 0, 1)
+;恐怖刻印または反発刻印による補正
+SIF _TEMP > 2
+	_TEMP -= LIMIT(MARK:恐怖刻印 || MARK:反発刻印, 0, 1)
+	
+;評価値は必ず0以上
+_TEMP = MAX(0, _TEMP)
+
+;アイテム装着の効果は半分にする
+SIF ARGS == "SET" && _TEMP > _PRE
+	_TEMP -= (_TEMP - _PRE) / 2
+
+;SETなら登録処理
+SIF ARGS == "SET"
+	_SET:_COMCOUNT = _TEMP
+
+RETURNF _TEMP
+
+
+;-------------------------------------------------
+;拒絶系の評価値
+;_SETをメモリとして利用する
+;-------------------------------------------------
+@K2008F_HOWMANY_SOURCE_REFUSAL(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+#DIM _TEMP
+#DIM _PRE
+#DIM _SET, 1000
+#DIM _COMCOUNT
+_COMCOUNT = K2008F_COMCOUNT()
+
+SELECTCASE ARGS
+	CASE "PRESET"
+		_SET:_COMCOUNT = 0
+		_PRE = 0
+		_TEMP = 0
+	CASE "SET"
+		;_TEMPを一時退避して初期化（PRESETの結果が入っている）
+		_PRE = _TEMP
+		_TEMP = 0
+	CASE "RESET"
+		VARSET _SET, -1
+		_PRE = 0
+		_TEMP = 0
+		RETURNF -1
+	CASE "GET"
+		SIF ARG <= 0
+			THROW 【K2008エラー】未定義のコマンド履歴 {ARG} が指定されました
+		RETURNF _SET:ARG
+	CASE "GETNOW"
+		RETURNF _SET:_COMCOUNT
+	CASE "GETPREV"
+		SIF _COMCOUNT <= 1
+			THROW 【K2008エラー】前回のコマンドが登録されていません。
+		RETURNF _SET:(_COMCOUNT - 1)
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+;情愛
+_TEMP -= K2008F_HOWLV_SOURCENAME("情愛") / 2
+;痛み
+_TEMP += K2008F_HOWLV_SOURCENAME("痛み") / 2
+;痒み
+_TEMP += K2008F_HOWLV_SOURCENAME("痒み") / 2
+;屈従
+_TEMP -= K2008F_HOWLV_SOURCENAME("屈従") / 2
+;不潔
+_TEMP += K2008F_HOWLV_SOURCENAME("不潔") / 3
+;逸脱
+_TEMP += K2008F_HOWLV_SOURCENAME("逸脱") / 3
+;反感追加
+_TEMP += K2008F_HOWLV_SOURCENAME("反感追加") / 2
+;快楽がある場合の補正
+SIF _TEMP > 2
+	_TEMP -= LIMIT(SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ, 0, 1)
+;屈服刻印による補正
+SIF _TEMP > 2
+	_TEMP -= LIMIT(MARK:屈服刻印, 0, 1)
+;反発刻印による補正
+SIF _TEMP > 2
+	_TEMP += LIMIT(MARK:反発刻印, 0, 1)
+
+;評価値は必ず0以上
+_TEMP = MAX(0, _TEMP)
+
+;アイテム装着の効果は半分にする
+SIF ARGS == "SET" && _TEMP > _PRE
+	_TEMP -= (_TEMP - _PRE) / 2
+
+;SETなら登録処理
+SIF ARGS == "SET"
+	_SET:_COMCOUNT = _TEMP
+
+RETURNF _TEMP
+
+
+;-------------------------------------------------
+;苦痛系の評価値
+;_SETをメモリとして利用する
+;-------------------------------------------------
+@K2008F_HOWMANY_SOURCE_PAIN(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+#DIM _TEMP
+#DIM _PRE
+#DIM _SET, 1000
+#DIM _COMCOUNT
+_COMCOUNT = K2008F_COMCOUNT()
+
+SELECTCASE ARGS
+	CASE "PRESET"
+		_SET:_COMCOUNT = 0
+		_PRE = 0
+		_TEMP = 0
+	CASE "SET"
+		;_TEMPを一時退避して初期化（PRESETの結果が入っている）
+		_PRE = _TEMP
+		_TEMP = 0
+	CASE "RESET"
+		VARSET _SET, -1
+		_PRE = 0
+		_TEMP = 0
+		RETURNF -1
+	CASE "GET"
+		SIF ARG <= 0
+			THROW 【K2008エラー】未定義のコマンド履歴 {ARG} が指定されました
+		RETURNF _SET:ARG
+	CASE "GETNOW"
+		RETURNF _SET:_COMCOUNT
+	CASE "GETPREV"
+		SIF _COMCOUNT <= 1
+			THROW 【K2008エラー】前回のコマンドが登録されていません。
+		RETURNF _SET:(_COMCOUNT - 1)
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+;痛みがあるときのみ評価
+IF K2008F_HOWLV_SOURCENAME("痛み") > 0
+	;痛み
+	_TEMP += K2008F_HOWLV_SOURCENAME("痛み")
+	;中毒充足
+	_TEMP += K2008F_HOWLV_SOURCENAME("中毒充足") / 2
+	;逸脱
+	_TEMP += K2008F_HOWLV_SOURCENAME("逸脱") / 2
+	;反感追加
+	_TEMP += K2008F_HOWLV_SOURCENAME("反感追加") / 2
+	;欲情SOURCEがLv1未満の場合は2倍補正
+	SIF K2008F_HOWLV_SOURCENAME("欲情追加") < 1
+		_TEMP *= 2
+	;恐怖刻印または反発刻印による補正
+	SIF _TEMP < 3
+		_TEMP += LIMIT(MARK:恐怖刻印 || MARK:反発刻印, 0, 1)
+	;反発刻印による補正
+;	SIF _TEMP < 3
+;		_TEMP += LIMIT(MARK:反発刻印, 0, 1)
+	;屈服刻印による補正
+	SIF _TEMP > 4
+		_TEMP -= LIMIT(MARK:屈服刻印, 0, 1)
+	;快楽発生時の特殊補正（マゾっ気、[マゾ]、[ドＭ]）
+	IF SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ > 0
+		SIF _TEMP > 2
+			_TEMP -= LIMIT(ABL:マゾっ気 > 3, 0, 1)
+		SIF _TEMP > 2
+			_TEMP -= LIMIT(TALENT:マゾ, 0, 1)
+		SIF _TEMP > 2
+			_TEMP -= LIMIT(TALENT:ドＭ, 0, 1)
+	ENDIF
+ENDIF
+
+;評価値は必ず0以上
+_TEMP = MAX(0, _TEMP)
+
+;アイテム装着の効果は半分にする
+SIF ARGS == "SET" && _TEMP > _PRE
+	_TEMP -= (_TEMP - _PRE) / 2
+
+;SETなら登録処理
+SIF ARGS == "SET"
+	_SET:_COMCOUNT = _TEMP
+
+RETURNF _TEMP
+
+;-------------------------------------------------
+;SOURCELVを定義して返す関数
+;-------------------------------------------------
+@K2008F_HOWLV_SOURCE(ARG)
+#FUNCTION
+;とりあえずPALAMLVそのまま利用
+RETURNF GETPALAMLV(SOURCE:ARG, 100)
+
+;-------------------------------------------------
+;SOURCELVを定義して返す関数（逆引き版）
+;-------------------------------------------------
+@K2008F_HOWLV_SOURCENAME(ARGS)
+#FUNCTION
+;とりあえずPALAMLVそのまま利用
+RETURNF GETPALAMLV(SOURCE:( GETNUM(SOURCE, ARGS )), 100)
+
+
+;-------------------------------------------------
+;快好拒痛の区分けを返す関数
+;-------------------------------------------------
+@K2008F_SSELECT_COM_TYPE(_PLEASURE = -1, _FAVOR = -1, _REFUSAL = -1, _PAIN = -1)
+#FUNCTION
+#DIM _PLEASURE
+#DIM _FAVOR
+#DIM _REFUSAL
+#DIM _PAIN
+#DIM _TYPE
+
+SELECTCASE MAX(0, _PLEASURE, _FAVOR, _REFUSAL, _PAIN)
+	;何もない
+	CASE 0
+		_TYPE = 0
+	;快
+	CASE _PLEASURE
+		_TYPE = 1
+	;好
+	CASE _FAVOR
+		_TYPE = 2
+	;拒
+	CASE _REFUSAL
+		_TYPE = 3
+	;痛
+	CASE _PAIN
+		_TYPE = 4
+	;ここにはこないが念のため
+	CASEELSE
+		_TYPE = 0
+ENDSELECT
+RETURNF _TYPE

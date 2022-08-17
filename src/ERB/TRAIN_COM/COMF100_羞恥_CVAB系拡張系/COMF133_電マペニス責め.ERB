@@ -1,0 +1,105 @@
+﻿;=============================================================================
+;電マペニス責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE133
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:133 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;電気按摩を持っていないとダメ
+SIF ITEM:電気按摩 == 0
+	RETURN 0
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム
+	RETURN 0
+;助手調教の場合、技巧3以上か[サド]じゃないと使えない。
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3 && TALENT:PLAYER:サド == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 133) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM133
+PRINTL 電マペニス責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 133
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 電マペニス責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 30
+DOWNBASE:1 += 180
+
+SOURCE:露出 = 280
+SOURCE:逸脱 = 400
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 1000
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 1500
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 2000
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 2500
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2800
+ELSE
+	SOURCE:快Ｃ = 3300
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;コマンド属性:道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_133
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のペニスに電気按摩を当てて、刺激を与えている…

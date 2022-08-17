@@ -1,0 +1,60 @@
+﻿;-------------------------------------------------
+;ルール無視関数
+;-------------------------------------------------
+;ルール無視してヤっちゃった、つまり生
+;気力によって確率が変わる、少ないとヤっちゃう
+;[売春中毒]者は、煽るので大概ヤる
+@BRO_COMMIT_CRIME(ARG)
+#FUNCTION
+IF RAND:(100 + CHECK_PERCENTAGE_BASE(ARG, 1)) < B_C_C_RANDOM_VARIABLE(ARG)
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;確率計算のための関数
+@B_C_C_RANDOM_VARIABLE(ARG)
+#FUNCTION
+;基本値
+PL_VAR_X:0 = (100 - CHECK_PERCENTAGE_BASE(ARG, 1)) / 10
+;抑制値
+PL_VAR_X:1 = 1
+;暴走値
+PL_VAR_X:2 = 1
+;自身の意思が強いとき、ルールに従いやすい
+;[自制心][一線越えない][貞操観念]の所持ごとに増加(ただし、[売春中毒]を持っているとオミット)
+IF TALENT:ARG:売春中毒 == 0
+	PL_VAR_X:1 += TALENT:ARG:自制心 + TALENT:ARG:一線越えない + TALENT:ARG:貞操観念
+ELSE
+	SIF PL_VAR_X:0 == 0
+		PL_VAR_X:0 = 1
+	PL_VAR_X:2 = 3 + RAND:3
+ENDIF
+;[貞操無頓着][中毒しやすい][中毒扇動]の所持ごとに増加
+PL_VAR_X:2 += TALENT:ARG:貞操無頓着 + TALENT:ARG:中毒しやすい + TALENT:ARG:中毒扇動
+
+;[親愛][相愛]持ちだと[売春中毒]関係なしに抑止力となる
+;「愛が有れば、LOVE is OK!」
+PL_VAR_X:1 += TALENT:ARG:親愛 + TALENT:ARG:相愛 * 2
+
+RETURNF PL_VAR_X:0 / PL_VAR_X:1 * PL_VAR_X:2
+
+;-------------------------------------------------
+;
+;-------------------------------------------------
+@CHOOSE_PROSTITUTE_COM, ARG, ARG:1
+VARSET PL_VAR_X, 0
+PC_VAR2 = 0
+FOR PC_VAR1, 1, 10
+	RESULT = 0
+	TRYCALLFORM JUDGE_PROSTITUTE_COM{ARG:1 * 10 + PC_VAR1}, ARG
+	SIF RESULT == 0
+		CONTINUE
+	PL_VAR_X:PC_VAR2 = PC_VAR1
+	PC_VAR2++
+NEXT
+PC_VAR1 = RAND:PC_VAR2
+RETURN PL_VAR_X:PC_VAR1 + ARG:1 * 10
+
+;-------------------------------------------------
+;-------------------------------------------------

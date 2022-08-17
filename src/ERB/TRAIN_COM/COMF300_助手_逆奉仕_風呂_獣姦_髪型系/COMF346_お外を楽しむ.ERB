@@ -1,0 +1,162 @@
+﻿;=============================================================================
+;お外を楽しむ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE346
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:346 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;主人でないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;野外調教コマンド拡張が有効な時はダメ(テキストとの整合性が取れないので)
+SIF FLAG:15 & 256
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外プレイ中でないとダメ
+SIF TEQUIP:野外プレイ == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 346) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM346
+PRINTL お外を楽しむ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 346
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = お外を楽しむ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 30
+
+SOURCE:逸脱 = 100
+SOURCE:露出 = 120
+
+;奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:情愛 = 10
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:情愛 = 30
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:情愛 = 80
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:情愛 = 150
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:情愛 = 200 + (ABL:奉仕精神 * 20)
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:露出 , 0.80
+	SOURCE:液体追加 = 10
+	SOURCE:欲情追加 = 10
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:露出 , 1.00
+	SOURCE:液体追加 = 40
+	SOURCE:欲情追加 = 60
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:情愛 , 1.30
+	TIMES SOURCE:露出 , 1.20
+	SOURCE:液体追加 = 80
+	SOURCE:欲情追加 = 120
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:露出 , 1.40
+	SOURCE:液体追加 = 140
+	SOURCE:欲情追加 = 240
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:情愛 , 1.70
+	TIMES SOURCE:露出 , 1.50
+	SOURCE:液体追加 = 220
+	SOURCE:欲情追加 = 360
+ELSE
+	SOURCE:情愛 = SOURCE:情愛 * (ABL:マゾっ気 * 15 + 125) / 100
+	SOURCE:露出 = SOURCE:露出 * (ABL:マゾっ気 * 10 + 120) / 100
+	SOURCE:液体追加 = 100 + (ABL:マゾっ気 * 20)
+	SOURCE:欲情追加 = 150 + (ABL:マゾっ気 * 35)
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_346
+PRINTFORM %CALLNAME:PLAYER%は
+IF RAND:4 == 0
+	PRINTFORML %CALLNAME:TARGET%を景色のいい場所に連れていった…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%に抱きついたまま、うっとりしている…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は目の前の景色に心を奪われているようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%はどうしても景色を楽しむ気にならないようだ…
+	ELSE
+		PRINTFORML 今の%CALLNAME:TARGET%には景色など目に入らないようだ…
+	ENDIF
+ELSEIF RAND:3 == 0 && TEQUIP:口装着器具 == 0
+	PRINTFORML お弁当を取りだした…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%もこっそりお弁当を作ってきたらしく、二人で食べさせっこをして楽しんだ…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:PLAYER%があ～んと言うと、%CALLNAME:TARGET%は顔を真っ赤にしておずおずと口を開けた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は全く食欲がないようだ…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%はお弁当をはねのけた…
+	ENDIF
+ELSEIF RAND:2 == 0
+	PRINTFORML %CALLNAME:TARGET%と散歩をした…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%と腕を組み、人気の多い方に向かった…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は裸で外出することにだいぶ慣れてきたようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%はさりげなく人通りの少ないところへ行こうとする…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は泣きそうな顔で抵抗した…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:TARGET%と日向ぼっこをした…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の腕をしっかりと抱きしめている…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしそうにしているが、いくらかリラックスしてもいるようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%はできる限り体を隠そうとしている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は隙を見つけて逃げようとしていた…
+	ENDIF
+ENDIF

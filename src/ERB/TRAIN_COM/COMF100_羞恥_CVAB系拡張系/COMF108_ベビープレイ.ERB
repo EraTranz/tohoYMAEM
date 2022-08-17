@@ -1,0 +1,404 @@
+﻿;=============================================================================
+;ベビープレイ
+;=============================================================================
+;オムツパッチのコマンドを大幅に手直し
+;幼児プレイって表記もよさそうな気がしてきた(※名称をベビープレイに変更)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE108
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:108 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:オムツプレイ
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF TEQUIP:オムツプレイ == 0 && ITEM:ヲトナのオムツ == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム
+	RETURN 0
+;Ｕ系装着具使用中は不可
+SIF TEQUIP:Ｕ系装着器具
+	RETURN 0
+;緊縛しているとダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;幼児or幼児退行なら能力に関係なく可能
+SIF TALENT:幼児 || TALENT:幼児退行
+	RETURN 1
+;従順が3以上必要
+SIF ABL:従順 < 3
+	RETURN 0
+;反抗的やプライド高いには従順が4以上ないと使用不可(調教者がサドまたはドＳまたはサドっ気Lv3以上ならＯＫ)
+IF TALENT:反抗的 || TALENT:プライド高い
+	SIF ABL:従順 < 4 && TALENT:PLAYER:サド == 0 && TALENT:PLAYER:ドＳ == 0 && ABL:PLAYER:サドっ気 < 3
+		RETURN 0
+ENDIF
+;人魚はダメ
+SIF TALENT:人魚 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 108) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM108
+PRINTL ベビープレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 108
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ベビープレイ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 100
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 6000
+	SOURCE:逸脱 = 2000
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 5000
+	SOURCE:逸脱 = 1000
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 4000
+	SOURCE:逸脱 = 500
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 3000
+	SOURCE:逸脱 = 100
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 2000
+	SOURCE:逸脱 = 50
+ELSE
+	SOURCE:露出 = 1000
+	SOURCE:逸脱 = 10
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:露出 , 0.80
+	SOURCE:欲情追加 = 100
+	SOURCE:液体追加 = 100
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:露出 , 1.00
+	SOURCE:欲情追加 = 200
+	SOURCE:液体追加 = 300
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:露出 , 1.20
+	SOURCE:欲情追加 = 400
+	SOURCE:液体追加 = 700
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:露出 , 1.40
+	SOURCE:欲情追加 = 700
+	SOURCE:液体追加 = 1200
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:露出 , 1.50
+	SOURCE:欲情追加 = 1100
+	SOURCE:液体追加 = 1800
+ELSE
+	TIMES SOURCE:露出 , 1.70
+	SOURCE:欲情追加 = 1500
+	SOURCE:液体追加 = 2500
+ENDIF
+
+;野外プレイ中
+IF TEQUIP:野外プレイ
+	TIMES SOURCE:逸脱 , 2.50
+;浄玻璃の鏡
+ELSEIF TEQUIP:羞恥プレイ == 2
+	TIMES SOURCE:逸脱 , 2.00
+;羞恥プレイ中(吸血鬼は除く)
+ELSEIF TEQUIP:羞恥プレイ && TALENT:吸血鬼 == 0
+	TIMES SOURCE:逸脱 , 1.50
+ENDIF
+
+LOCAL:1 = 50
+;EXP:愛情経験をみる
+IF EXP:愛情経験 < EXPLV:1
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:愛情経験 < EXPLV:2
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:愛情経験 < EXPLV:3
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:愛情経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.00
+ELSEIF EXP:愛情経験 < EXPLV:5
+	TIMES LOCAL:1 , 0.80
+ELSE
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL:1 , 2.00
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:1 , 2.00
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:1 , 0.80
+ENDIF
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.60
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1 , 0.80
+;抑圧
+SIF TALENT:抑圧
+	TIMES LOCAL:1 , 3.00
+;抵抗
+SIF TALENT:抵抗
+	TIMES LOCAL:1 , 3.00
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL:1 , 3.50
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:1 , 0.50
+ENDIF
+;幼児、幼児退行
+SIF TALENT:幼児 || TALENT:幼児退行
+	TIMES LOCAL:1 , 0.50
+
+SOURCE:トラウマ += LOCAL:1 * 3
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 1.20
+
+SOURCE:逸脱 += LOCAL:1 * 5
+SOURCE:反感追加 += LOCAL:1 * 2
+
+;オムツの着脱
+IF TEQUIP:オムツプレイ
+	TEQUIP:オムツプレイ = 0
+ELSE
+	TEQUIP:オムツプレイ = 1
+	;ヲトナのオムツ1つ消費
+	CALL USE_PLURAL_ITEM, 82, 1
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;オムツ装着中
+;-------------------------------------------------
+@EQUIP_COM108
+PRINTL ＜オムツ装着中＞
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 70
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	LOCAL:1 = 3000
+	LOCAL:4 = 1000
+ELSEIF ABL:露出癖 == 1
+	LOCAL:1 = 2000
+	LOCAL:4 = 500
+ELSEIF ABL:露出癖 == 2
+	LOCAL:1 = 1500
+	LOCAL:4 = 250
+ELSEIF ABL:露出癖 == 3
+	LOCAL:1 = 1000
+	LOCAL:4 = 100
+ELSEIF ABL:露出癖 == 4
+	LOCAL:1 = 50
+	LOCAL:4 = 10
+ELSE
+	LOCAL:1 = 100
+	LOCAL:4 = 5
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 50
+	LOCAL:3 = 50
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+	LOCAL:2 = 100
+	LOCAL:3 = 150
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+	LOCAL:2 = 200
+	LOCAL:3 = 350
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.40
+	LOCAL:2 = 350
+	LOCAL:3 = 600
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 1.50
+	LOCAL:2 = 550
+	LOCAL:3 = 900
+ELSE
+	TIMES LOCAL:1 , 1.70
+	LOCAL:2 = 750
+	LOCAL:3 = 1250
+ENDIF
+
+;野外プレイ中
+IF TEQUIP:野外プレイ
+	TIMES LOCAL:4 , 2.50
+;浄玻璃の鏡
+ELSEIF TEQUIP:羞恥プレイ == 2
+	TIMES LOCAL:4 , 2.00
+;羞恥プレイ中(吸血鬼は除く)
+ELSEIF TEQUIP:羞恥プレイ && TALENT:吸血鬼 == 0
+	TIMES LOCAL:4 , 1.50
+ENDIF
+
+LOCAL = 25
+;EXP:愛情経験をみる
+IF EXP:愛情経験 < EXPLV:1
+	TIMES LOCAL , 3.00
+ELSEIF EXP:愛情経験 < EXPLV:2
+	TIMES LOCAL , 2.50
+ELSEIF EXP:愛情経験 < EXPLV:3
+	TIMES LOCAL , 2.00
+ELSEIF EXP:愛情経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+ELSEIF EXP:愛情経験 < EXPLV:5
+	TIMES LOCAL , 0.80
+ELSE
+	TIMES LOCAL , 0.60
+ENDIF
+
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL , 2.00
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL , 2.00
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL , 0.80
+ENDIF
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL , 0.60
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL , 0.80
+;抑圧
+SIF TALENT:抑圧
+	TIMES LOCAL , 3.00
+;抵抗
+SIF TALENT:抵抗
+	TIMES LOCAL , 3.00
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL , 3.50
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL , 0.50
+ENDIF
+;幼児
+SIF TALENT:幼児
+	TIMES LOCAL , 0.50
+
+SOURCE:トラウマ += LOCAL * 3
+
+;臆病、幼児、幼児退行
+SIF TALENT:臆病 || TALENT:幼児 || TALENT:幼児退行
+	TIMES LOCAL , 1.20
+
+SOURCE:反感追加 += LOCAL * 2
+LOCAL:4 += LOCAL * 5
+
+SOURCE:露出 += LOCAL:1
+SOURCE:欲情追加 += LOCAL:2
+SOURCE:液体追加 += LOCAL:3
+SOURCE:逸脱 += LOCAL:4
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_108
+IF TEQUIP:オムツプレイ
+	PRINTFORML %CALLNAME:TARGET%に履かせていたオムツを取り外した
+	PRINT 中は汗
+	IF PALAM:潤滑 >= PALAMLV:2
+		PRINT と
+		SIF PALAM:潤滑 >= PALAMLV:4
+			PRINT 大量の
+		PRINT 愛液
+	ENDIF
+	PRINT で蒸れ、オムツを広げると
+	IF PALAM:潤滑 >= PALAMLV:4
+		PRINTL 部屋中にその淫靡な香りが充満した
+	ELSE
+		PRINTFORML かすかにその匂いが%CALLNAME:MASTER%の鼻をついた
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:TARGET%に
+	IF TALENT:小人体型
+		PRINT 人形用の
+	ELSEIF TALENT:小柄体型
+		PRINT 子供用の
+	ELSE
+		PRINT 大人用の
+	ENDIF
+	PRINTL オムツを履かせた…
+ENDIF

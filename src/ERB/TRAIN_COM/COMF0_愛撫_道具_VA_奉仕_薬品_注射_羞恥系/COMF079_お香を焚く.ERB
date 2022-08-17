@@ -1,0 +1,91 @@
+﻿;=============================================================================
+;お香を焚く
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE79
+#LOCALSIZE 2
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:79 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;お香使用中はダメ
+SIF TEQUIP:89
+	RETURN 0
+;お香が必要
+LOCAL = 0
+FOR LOCAL:1, 0, 6
+	SIF ITEM:(610+LOCAL:1) > 0
+		LOCAL = 1
+NEXT
+SIF LOCAL == 0
+	RETURN 0
+;野外プレイ中はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 79) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM79
+#LOCALSIZE 1
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 79
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+DRAWLINE
+PRINTL どのお香を焚きますか？
+DRAWLINE
+FOR LOCAL, 0, 6
+	SIF STRLENS(ITEMNAME:(610+LOCAL)) <= 0 || ITEM:(610+LOCAL) <= 0
+		CONTINUE
+	PRINTFORML [{LOCAL}] %ITEMNAME:(610+LOCAL)%
+NEXT
+$INPUT_LOOP
+INPUT
+IF RESULT < 0 || RESULT > 5 || STRLENS(ITEMNAME:(610+RESULT)) <= 0 || ITEM:(610+RESULT) <= 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+TFLAG:99 = RESULT
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+PRINTFORML お香(%ITEMNAME:(610+TFLAG:99)%)を焚く
+TSTR:0 = お香(%ITEMNAME:(610+TFLAG:99)%)を焚く
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 5
+
+SOURCE:薬物浸潤 = 500
+
+;お香を消費
+ITEM:(610+TFLAG:99) -= 1
+TEQUIP:89 = TFLAG:99 + 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_79
+PRINTFORML %CALLNAME:PLAYER%は、%ITEMNAME:(610+TFLAG:99)%を焚いた
+PRINTFORML %ITEMNAME:(610+TFLAG:99)%の香りが調教部屋の隅々にまで広がっていった…

@@ -1,0 +1,124 @@
+﻿;=============================================================================
+;鉈
+;=============================================================================
+;ナイフよりさらに気力体力を持っていく・苦痛が大きい
+;(TODO 手足不自由判定の追加)
+;地の文は現在のところなし
+;構想：エプロンやスク水装着中は破れて使い物にならなくなるようにする
+;(メリットは羞恥大幅アップとシチュ程度?)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE245
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:245 > 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;初体験のときは異常系調教フィルタがオフになってないとダメ
+SIF (FLAG:25 & 16) == 0 && FLAG:2 & 4
+	RETURN 0
+;鉈を購入(開発?)していないとダメ
+SIF (FLAG:73 & 16) == 0
+	RETURN 0
+;調教者がサドか狂気を持っていないとダメ
+SIF TALENT:PLAYER:サド == 0 && TALENT:PLAYER:狂気 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 245) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM245
+PRINTL 鉈
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 245
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 鉈
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 300
+
+SOURCE:逸脱 = 6000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 8000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 8500
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 9000
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 10000
+ELSE
+	SOURCE:痛み = 10500
+ENDIF
+
+;サラシ装着している場合苦痛ソース軽減もサラシ破損
+IF TEQUIP:サラシ
+	SOURCE:痛み -= 200
+	TEQUIP:サラシ = 0
+	ITEM:サラシ = 0
+ENDIF
+;衣装を装着している場合苦痛ソース軽減もエプロンとスク水破損
+IF TEQUIP:コスチュームプレイ
+	SOURCE:痛み -= 100
+	SIF TEQUIP:コスチュームプレイ == 1
+		ITEM:エプロン = 0
+	SIF TEQUIP:コスチュームプレイ == 2
+		ITEM:スクール水着 = 0
+	TEQUIP:コスチュームプレイ = 0
+ENDIF
+
+;鉈で切られるのは異常経験なので点を入れる
+IF (CFLAG:22 & 16) == 0
+	TCVAR:異常経験 += 1
+	CFLAG:22 |= 16
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_245
+PRINTFORM %CALLNAME:PLAYER%は
+IF TEQUIP:コスチュームプレイ
+	PRINTFORM %CALLNAME:TARGET%が着ている
+	IF TEQUIP:コスチュームプレイ == 1
+		PRINT エプロン
+	ELSEIF TEQUIP:コスチュームプレイ == 2
+		PRINT スクール水着
+	ELSE
+		PRINT 衣装
+	ENDIF
+	SIF TEQUIP:サラシ
+		PRINT や巻いてあるサラシ
+	PRINT ごと
+ELSEIF TEQUIP:サラシ
+	PRINTFORM %CALLNAME:TARGET%の胸に巻いてあるサラシごと
+ELSE
+	PRINTFORM %CALLNAME:TARGET%の柔肌を
+ENDIF
+PRINTL 鉈でずたずたに切り裂いた。

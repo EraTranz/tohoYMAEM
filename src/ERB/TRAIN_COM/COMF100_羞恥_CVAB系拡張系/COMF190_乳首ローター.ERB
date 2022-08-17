@@ -1,0 +1,91 @@
+﻿;=============================================================================
+;乳首ローター
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE190
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:190 > 0
+	RETURN 0
+;Ｂ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:ローター == 0
+	RETURN 0
+;調教者がウェディングドレス・ゴスロリ着用中の場合調教者に技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;Ｂ系装着具使用中は不可
+SIF TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 190) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM190
+PRINTL 乳首ローター
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 190
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 乳首ローター
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 120
+SOURCE:逸脱 = 70
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 150
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 360
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 840
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 1500
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 2200
+ELSE
+	SOURCE:快Ｂ = 2800
+ENDIF
+
+;淫乳
+SIF TALENT:淫乳
+	TIMES SOURCE:快Ｂ , 1.40
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_190
+PRINTFORM %CALLNAME:TARGET%の
+SIF PALAM:欲情 >= PALAMLV:3
+	PRINT 期待に硬く尖った
+SIF TALENT:母乳体質
+	PRINT 母乳が滴る
+IF TEQUIP:焦らしプレイ
+	PRINTL 乳首の周りをローターでなぞった…
+ELSE
+	PRINTL 乳首に震えるローターを押し当てた…
+ENDIF

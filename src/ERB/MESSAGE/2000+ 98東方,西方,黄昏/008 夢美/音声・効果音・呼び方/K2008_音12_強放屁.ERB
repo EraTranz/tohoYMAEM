@@ -1,0 +1,39 @@
+﻿;YM→YMAEコンバータによって作成されました
+;=================================================
+;■重放屁（ランク分けなし）
+;-------------------------------------------------
+;ARGで表示長（反復回数）の指定が可能
+;=================================================
+@K2008FS_SE12_TEXT(ARG = 0)
+#FUNCTIONS
+#DIM _COUNT
+#DIM _REP
+#DIMS _SETEXT
+
+_SETEXT =
+
+SELECTCASE ARG
+	CASE 0
+		_REP = K2008F_RANK() / 2 + RAND:(2 + K2008F_RANK()) / 2
+		_REP = MIN(5, _REP)
+		_REP = MAX(2, _REP)
+	CASE IS < 0
+		THROW 【K2008エラー】@K2008_SE12_TEXTの引数は正の値が必要です。
+	CASEELSE
+		_REP = ARG
+ENDSELECT
+
+FOR _COUNT, 0, _REP
+	_SETEXT += K2008FS_SPLITRANDS("ばすぅっ,バスッ,ぶーーっ,ブーーッ,プシューー,ブビー,ぶぴー,ブビィ,ぶぴぃー,ブビビィー,ぶぴぴぃ,ブビビィィ,ぶぴぴぃぃ,ブビビビィイ,ぶぶぅー,ブブゥー,ブブブピッ,ぶボンッ,ぶぼぼぉっ,ボシューッ,ぶひゅ,ぼひゅっ,ボブーッ")
+
+	SELECTCASE _COUNT
+		CASE _REP - 1
+			;文末
+			_SETEXT += K2008FS_SPLITRANDS("！,!!,")
+		CASEELSE
+			;区切り文字
+			_SETEXT += K2008FS_SPLITRANDS("、,！,!!,　,　,")
+	ENDSELECT
+NEXT
+
+RETURNF _SETEXT

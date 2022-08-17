@@ -1,0 +1,147 @@
+﻿;=====================================================================
+;リリースノート、他告知等
+;=====================================================================
+;--------------------------------------------------
+;メッセージ表示
+;--------------------------------------------------
+@RELEASE_NOTE
+LOCAL = 0
+LOCAL:1 = 9
+$PRINT_LIST
+ライン数:0 = LINECOUNT
+ALIGNMENT CENTER
+PRINTFORML 更新内容   ＜page.{LOCAL+1}/{LOCAL:1+1}＞
+ALIGNMENT LEFT
+DRAWLINE
+IF LOCAL == 0
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.267 ← ver,4.266◆
+	RESETCOLOR
+	PRINTL ・細かい変更などいくつか
+	PRINTL ・テキストの誤字脱字を修正（汎用口上、野外ライブ、御所車ＴＹＰＥ－Ｒ）
+	PRINTL ・賢者の血の判定エラーを修正（反動処理）
+	PRINTL ・精飲絶頂の判定エラーを修正（触手召喚）
+	PRINTL ・精飲開発度の減少処理の判定エラーを修正（精液中毒）
+	PRINTL ・主人の呼び方の判定エラーを修正（自分で決める）
+	PRINTL ・キャラ解放処理の判定エラーを修正（奴隷市場）
+ELSEIF LOCAL == 1
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.266 ← ver,4.265◆
+	RESETCOLOR
+	PRINTL ・細かい変更などいくつか
+	PRINTL ・使い魔の判定エラーを修正（調教対象）
+	PRINTL ・ゲージ計算の判定エラーを修正（噴乳、放尿）
+	PRINTL ・壊造人格の判定エラーを修正（人数カウント）
+	PRINTL ・宝珠変動汎用処理の判定エラーを修正（変動後の珠の数）
+	PRINTL ・ローグライクモードの判定エラーを修正（タイトルに戻る）
+	PRINTL ・ＢＦシステムの判定エラーを修正（キャラカード）
+	PRINTL ・奴隷市場の判定エラーを修正（裏売却判定）
+	PRINTL ・実績特典の判定エラーを修正（延期）
+	PRINTL ・口上の判定エラーを修正（番号）
+	PRINTL # リリカ、衣玖、青娥
+ELSEIF LOCAL == 2
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.265 ← ver,4.264◆
+	RESETCOLOR
+	PRINTL ・細かい変更などいくつか
+	PRINTL ・口、手、足、ペニスの汚れを拭く機能を追加（汚れ表示[811]）
+	PRINTL ・テキストの誤字脱字を修正（汎用口上、装備品に応じた補完メッセージ）
+	PRINTL ・コマンドの判定エラーを修正（昆虫採集セットの薬）
+	PRINTL ・パラメーターチェックの判定エラーを修正（連動パラメーター）
+	PRINTL ・エンディングの判定エラーを修正（死亡）
+ELSEIF LOCAL == 3
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.264 ← ver,4.263◆
+	RESETCOLOR
+	PRINTL ・eraTx1818 触手服修正パッチを取り込み
+	PRINTL ・eraTx1812 メディスン口上加筆＆触手服＆誤字修正＆デバッグ強化パッチを取り込み
+	PRINTL ・細かい変更などいくつか
+	PRINTL ・テキストの改行を修正（日常イベント、調教後自慰）
+	PRINTL ・汎用口上の判定エラーを修正（恋慕、自動喘ぎ）
+	PRINTL ・奴隷市場の判定エラーを修正（反発刻印、恐怖刻印）
+	PRINTL ・背面座位アナル胸愛撫の判定エラーを修正（Ｖ系装着具）
+ELSEIF LOCAL == 4
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.263 ← ver,4.262◆
+	RESETCOLOR
+	PRINTL ・細かい変更などいくつか
+	PRINTL ・テキストの改行を修正（奴隷市場）
+	PRINTL ・奴隷市場の判定エラーを修正（キャラカード）
+	PRINTL ・汎用口上の判定エラーを修正（人格設定）
+ELSEIF LOCAL == 5
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.262 ← ver,4.261◆
+	RESETCOLOR
+	PRINTL ・小陰唇指愛撫にＣ調律経験＋1を追加（COMF152.ERB）
+	PRINTL ・不必要なWAITを削除（日常イベント）
+	PRINTL ・テキストの改行を修正（奴隷市場）
+	PRINTL ・使い魔の判定エラーを修正（契約条件）
+	PRINTL ・超常目算の判定エラーを修正（素質確認）
+	PRINTL ・コマンドの判定エラーを修正（@SHOP_COM_101）
+	PRINTL ・汎用口上の判定エラーを修正（愛撫）
+ELSEIF LOCAL == 6
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.261 ← ver,4.260◆
+	RESETCOLOR
+	PRINTL ・夢美口上を追加
+	PRINTL ・身体測定の初期化設定を追加
+	PRINTL ・ＢＦシステムを調整
+	PRINTL # 先攻・後攻を実装
+	PRINTL # 運動による影響を若干弱めた
+	PRINTL # 幻想少女の攻撃力をわずかに下げた
+	PRINTL # PREVCOMの判定を調整
+	PRINTL ・テキストの誤字脱字を修正（夢美口上）
+ELSEIF LOCAL == 7
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.260 ← ver,4.259◆
+	RESETCOLOR
+	PRINTL ・実績特典を追加（初期資金ボーナス、反発刻印リセット、恐怖刻印取得履歴リセット）
+	PRINTL ・バトルルール説明を追加（購入確認処理）
+	PRINTL ・可変画像表示システムを少しだけ強化（スク水プレイ、コスプレ）
+	PRINTL ・テキストの誤字脱字を修正（借金返済、外見選択の処理）
+	PRINTL ・娘に遺伝しない素質消去処理の判定エラーを修正（理性、死亡、月経周期、常時発情）
+	PRINTL ・妊娠の判定エラーを修正（修正されているかどうかは不明だが）
+	PRINTL ・口上の判定エラーを修正（面識検索関数）
+	PRINTL # ヤマメ、パルスィ、さどり
+ELSEIF LOCAL == 8
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.259 ← ver,4.258◆
+	RESETCOLOR
+	PRINTL ・自動喘ぎ関数の判定を調整（首筋耳裏舐め、角愛撫）
+	PRINTL ・らぶらぶ口上の表示判定を調整（妄信 → 恋慕）
+	PRINTL ・不必要なWAITを削除（膣内洗浄、能力上昇、夜イベント）
+	PRINTL ・テキストの誤字脱字を修正（背面座位アナル胸愛撫）
+	PRINTL ・コマンドの判定エラーを修正（角愛撫）
+	PRINTL ・ＢＦシステムの判定エラーを修正（距離）
+	PRINTL ・一括レベルアップの判定エラーを修正（欲望の上昇による[抑圧][抵抗]の消滅）
+	PRINTL ・調教終了時の珠入手処理の判定エラーを修正（否定の珠による打ち消し処理）
+	PRINTL ・口上の判定エラーを修正（睡眠、口枷、時止め、気絶）
+	PRINTL # 霊夢、小悪魔、橙、リリカ、メルラン、妖夢、幽々子、藍、紫、萃香、慧音、
+	PRINTL # 永琳、輝夜、小町、映姫、にとり、早苗、蓮子、メリー、響子、芳香、布都、
+	PRINTL # 影狼、雷鼓、サグメ、口上テンプレート
+ELSEIF LOCAL == 9
+	SETCOLOR 0xAA99CC
+	PRINTL ◆ver,4.258 ← ver,4.257◆
+	RESETCOLOR
+	PRINTL ・奴隷市場の判定エラーを修正（月経周期）
+	PRINTL ・犯されモードの判定エラーを修正（調教対象が勝手にコマンドを実行した場合の処理）
+ENDIF
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 18% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 18% # [1009]後ろのページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+GOTO PRINT_LIST

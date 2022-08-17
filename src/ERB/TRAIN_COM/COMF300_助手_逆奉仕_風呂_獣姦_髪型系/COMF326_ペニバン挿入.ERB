@@ -1,0 +1,224 @@
+﻿;=============================================================================
+;ペニバン挿入
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE326
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:326 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;ペニスバンドが無いとダメ
+SIF ITEM:ペニスバンド == 0
+	RETURN 0
+;Ｖ系装着道具使用中はダメ
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手が褌着用中の場合、奴隷と助手の技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17 && (ABL:ASSI:技巧 < 4 || ABL:技巧 < 4)
+	RETURN 0
+;褌着用中の場合調教者と奴隷の双方が技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && (ABL:PLAYER:技巧 < 4 || ABL:技巧 < 4)
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 326) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM326
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;クスコ挿入中または前回の調教がＧスポットまたは指挿入れかつプレイヤの技巧３以上だとＧスポット刺激に
+IF TEQUIP:クスコ || PREVCOM == 4 && ABL:PLAYER:技巧 >= 3 || PREVCOM == 600
+	SIF EXCOM_ABLE600() == 1
+		JUMP COM600
+ENDIF
+
+PRINTL ペニバン挿入
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 326
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ペニバン挿入
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+DOWNBASE:0 += 60
+DOWNBASE:1 += 120
+
+SOURCE:情愛 = 100
+SOURCE:露出 = 800
+SOURCE:逸脱 = 500
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 30
+	SOURCE:屈従 = 200
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 120
+	SOURCE:屈従 = 350
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 350
+	SOURCE:屈従 = 550
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 700
+	SOURCE:屈従 = 900
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1300
+	SOURCE:屈従 = 1500
+ELSE
+	SOURCE:快Ｖ = 2000
+	SOURCE:屈従 = 2300
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	TIMES SOURCE:屈従, 0.20
+	SOURCE:痛み = 300
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:屈従, 0.50
+	SOURCE:痛み = 180
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:屈従, 0.80
+	SOURCE:痛み = 80
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:屈従, 1.00
+	SOURCE:痛み = 30
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:屈従, 1.20
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:屈従, 1.50
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 700
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み += 200
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:痛み , 0.80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.50
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+ENDIF
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	TIMES SOURCE:屈従 , 2.00
+
+TCVAR:Ｖ経験 += 1
+
+;奴隷のＶ⇔調教者の口の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:口
+STAIN:PLAYER:口 |= STAIN:ヴァギナ
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 7
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_326
+PRINTFORM %CALLNAME:PLAYER%はペニスバンドを口に装着して、%CALLNAME:TARGET%の
+IF TALENT:処女 == 1
+	PRINT 男を知らない
+ELSEIF PALAM:潤滑 >= PALAMLV:4
+	PRINT 濡れそぼった
+ENDIF
+SIF TEQUIP:クスコ
+	PRINT のクスコで抉じ開けられた
+IF TALENT:小柄体型
+	PRINT 幼いワレメ
+ELSE
+	PRINT 秘裂
+ENDIF
+PRINTL に挿入した…
+
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM %CALLNAME:PLAYER%は
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 顔を愛液まみれにしながら、
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORM %CALLNAME:TARGET%の顔をじっと見上げて
+	ELSEIF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ || (ABL:PLAYER:サドっ気 >= 3 && RAND:2 == 0)
+		PRINT 激しく
+	ELSE
+		PRINT ゆっくりと
+	ENDIF
+	PRINTL 頭を振っている…
+ENDIF

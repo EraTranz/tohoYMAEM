@@ -1,0 +1,646 @@
+﻿
+;………………………………………………
+;肉便器プレイ実行判定
+;………………………………………………
+@COM_ABLE106
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:106 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;公衆肉便器プレイの場合はアイテム｢プラカード｣を持っているか、アイテムなし設定でないとダメ
+SIF TEQUIP:野外プレイ && ITEM:プラカード == 0 && NOITEM == 0
+	RETURN 0
+;調教者が主人じゃないとダメ
+SIF PLAYER != MASTER
+	RETURN 0
+;オトコだとダメ
+SIF TALENT:オトコ
+	RETURN 0
+;公衆肉便器プレイを実行する場合、烙印を押しているか壊造人格でないとダメ
+IF TALENT:烙印 == 0 && TALENT:壊造人格 == 0 && TEQUIP:野外プレイ
+	RETURN 0
+;肉便器プレイを実行する場合、対象に赤い首輪を与えたか烙印を押されているか壊造人格ないとダメ
+ELSEIF TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:壊造人格 == 0
+	;ただし主人が狂気持ちで対象が反発刻印Lv3または精神崩壊、妄信、傀儡のどれかなら実行可能
+	SIF TALENT:MASTER:狂気 == 0 || (MARK:反発刻印 < 3 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:妄信 == 0)
+		RETURN 0
+ENDIF
+IF TALENT:小柄体型
+	;小柄体型なら従順が4以上かつマゾっ気が4以上かつ拡張経験10以上じゃないと実行できない
+	SIF ABL:従順 <= 3 || ABL:マゾっ気 <= 3 || EXP:Ｖ拡張経験 < 10 || EXP:Ａ拡張経験 < 10
+		RETURN 0
+ELSEIF TALENT:小人体型
+	;調教対象が小人体型の場合、上の条件に加え主人が禁断の知識持ちじゃないとダメ
+ 	SIF TALENT:MASTER:禁断の知識 == 0 || ABL:従順 <= 3 || ABL:マゾっ気 <= 3 || EXP:Ｖ拡張経験 < 10 || EXP:Ａ拡張経験 < 10
+		RETURN 0
+ELSE
+	;それ以外の場合、従順とマゾっ気が3以上ないとダメ
+	SIF ABL:従順 < 3 || ABL:マゾっ気 < 3
+		RETURN 0
+ENDIF
+;体力が1000未満では使用不可
+SIF BASE:体力 < 1000 && !(FLAG:16 & 32)
+	RETURN 0
+;気力が0の時はダメ
+SIF BASE:気力 <= 0 && !(FLAG:16 & 32)
+	RETURN 0
+;一定のＶ・Ａ経験が必要
+SIF EXP:Ｖ経験 < 20 || EXP:Ａ経験 < 20
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0 && NOITEM == 0
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;裸体盛り中はダメ
+SIF TEQUIP:裸体盛り
+	RETURN 0
+;焦らしプレイ中はダメ
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 106) == 0
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;肉便器プレイ(分岐)
+;地の文の構成は、設置、と、使用済み
+;設置後に汎用、および専用口上が呼び出され、
+;使用済み後に汎用、および専用口上が呼び出されるように
+;TFLAG:99で管理
+;便器使用料etcに関しては、
+;MONEY:1  = 今回の稼ぎ
+;MONEY:20 = 1回の使用料、中田氏はそれの2倍
+;-------------------------------------------------
+;野外プレイだと公衆肉便器プレイ、それ以外だと肉便器プレイに
+@COM106
+IF TEQUIP:野外プレイ
+	JUMP COM106_OUT
+ELSE
+	JUMP COM106_IN
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;肉便器プレイ
+;-------------------------------------------------
+@COM106_IN
+;肉便器プレイ
+PRINTL 肉便器プレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 106
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 肉便器プレイ
+;口上分岐のための
+TFLAG:99 = 1
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 750
+DOWNBASE:1 += 850
+
+;↓俺専用の穴
+LOCAL:3 = (ABL:欲望+ABL:奉仕精神+ABL:露出癖+ABL:精液中毒)
+LOCAL:2 = 2+RAND:(LOCAL:3)
+LOCAL:1 = 1+RAND:(LOCAL:3)
+SOURCE:快Ｖ += 250*LOCAL:2
+SOURCE:快Ａ += 150*LOCAL:1
+SOURCE:性行動 += 125*(LOCAL:2 + LOCAL:1)
+SOURCE:中毒充足 += 250*(LOCAL:2 + LOCAL:1)
+SOURCE:不潔 += 100*(LOCAL:2 + LOCAL:1)
+SOURCE:液体追加 += 125*(LOCAL:2 + LOCAL:1)
+SOURCE:欲情追加 += 150*(LOCAL:2 + LOCAL:1)
+SOURCE:露出 += 100*(LOCAL:2 + LOCAL:1)
+SOURCE:屈従 += 200*LOCAL:1
+SOURCE:逸脱 += 400*(LOCAL:2 + LOCAL:1)
+SOURCE:支配 += 150*(LOCAL:2 + LOCAL:1)
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+SIF TALENT:処女 && TALENT:恋慕 && ASSIPLAY == 0
+	TFLAG:2 = TALENT:処女
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL = 500
+ELSEIF ABL:技巧 == 1
+	LOCAL = 600
+ELSEIF ABL:技巧 == 2
+	LOCAL = 800
+ELSEIF ABL:技巧 == 3
+	LOCAL = 1000
+ELSEIF ABL:技巧 == 4
+	LOCAL = 1400
+ELSE
+	LOCAL = 2000
+ENDIF
+
+;欲望をみる
+LOCAL = EJACULATIONCHECK_ABL_11_1(TARGET, LOCAL)
+;欲情をみる
+LOCAL = EJACULATIONCHECK_PALAM_13_2(TARGET, LOCAL)
+;睡眠薬で寝ているor失神している場合
+SIF EQUIP:睡眠薬 || TFLAG:899 > 0
+	TIMES LOCAL, 0.7
+;潤滑をみる
+LOCAL = EJACULATIONCHECK_PALAM_10_2(TARGET, LOCAL)
+
+;調教者のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+SIF EXIST_PENIS(PLAYER)
+	BASE:PLAYER:射精 += LOCAL
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+;射精時の処理(暫定的に正常位と同じ処理)
+IF TFLAG:91 >= 1
+	;射精先タイプの設定
+	TFLAG:703 = 1
+	;射精先選択の可・不可
+	TFLAG:704 = 0
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;奴隷のＡ⇔調教者のＰの汚れが移動
+STAIN:アナル |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:アナル
+;奴隷のＶ⇔調教者のＰの汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:ヴァギナ
+;奴隷のＡ⇔指の汚れが移動
+STAIN:アナル |= STAIN:手
+STAIN:手 |= STAIN:アナル
+;奴隷のＶ⇔指の汚れが移動
+STAIN:ヴァギナ |= STAIN:手
+STAIN:手 |= STAIN:ヴァギナ
+;奴隷の指⇒口の汚れが移動
+IF NOWEX:MASTER:5 > 0
+	STAIN:手 |= STAIN:ヴァギナ
+	STAIN:手 |= STAIN:アナル
+ENDIF
+
+;Ｖ経験
+TCVAR:Ｖ経験 += LOCAL:1
+;Ｖ調律経験
+TCVAR:Ｖ調律経験 += (PLAYER == MASTER) ? LOCAL:1 # 0
+;Ａ経験
+TCVAR:Ａ経験 += LOCAL:2
+IF ASSIPLAY == 0 && EXIST_BAR(MASTER)
+	CFLAG:主人にＶ捧げ回数 += LOCAL:1
+	CFLAG:主人にＡ捧げ回数 += LOCAL:2
+ENDIF
+;口上分岐のための
+;ここで奴隷の具合によって地の文を変えたいところ
+TFLAG:99 = 2
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+RETURN 1
+
+;-------------------------------------------------
+;公衆肉便器プレイ
+;-------------------------------------------------
+;調教対象がれみりゃだと「全世界公衆肉便器」、天子だと「全人類の公衆肉便器」に
+@COM106_OUT
+;場所選択できるのも魅力的だが、キャラ準拠なのでオミット
+;PRINTL どこに行く？
+;DRAWLINE
+;PRINTL [0] - 人里郊外
+;PRINTL [1] - 魔法の森
+;PRINTL [2] - 竹林
+;PRINTL [3] - 妖怪の山
+;PRINTL [100] - 今はやめておく
+;DRAWLINE
+;$INPUT_LOOP
+;INPUT
+;IF RESULT == 0
+;	LOCAL:2 = 0
+;ELSEIF RESULT == 1
+;	LOCAL:2 = 1
+;ELSEIF RESULT == 2
+;	LOCAL:2 = 2
+;ELSEIF RESULT == 3
+;	LOCAL:2 = 3 + RAND:3
+;ELSEIF RESULT == 100
+;	RETURN 0
+;ELSE
+;	CLEARLINE 1
+;	REUSELASTLINE
+;	GOTO INPUT_LOOP
+;ENDIF
+
+LOCAL:1 = 0
+IF NO:TARGET == 1010
+	PRINTL 全世界公衆肉便器
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 106
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 全世界公衆肉便器
+	LOCAL:1 = 1
+ELSEIF NO:TARGET == 1052
+	PRINTL 全人類の公衆肉便器
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 106
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 全人類の公衆肉便器
+	LOCAL:1 = 2
+;うにょほがEX化していないことが条件
+ELSEIF NO:TARGET == 1063 && CFLAG:0 == 0
+	PRINTL 熱核公衆肉便器
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 106
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 熱核公衆肉便器
+	LOCAL:1 = 3
+ELSE
+	PRINTL 公衆肉便器プレイ
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 106
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 公衆肉便器プレイ
+ENDIF
+
+DOWNBASE:0 += 850
+DOWNBASE:1 += 1000
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+LOCAL:3 = (RAND:10 + 1) * 10
+LOCAL:4 = RAND:10 + 1
+LOCAL:5 = RAND:10 + 11
+LOCAL:6 = RAND:5 + 6
+LOCAL:7 = 0
+;本当はMONEY:20で統一するべきだが面倒なので、
+MONEY:20 = LOCAL:3
+
+TFLAG:99 = 11
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+
+;補正色々
+;処女
+IF TALENT:処女
+	TIMES LOCAL:5 , 1.50
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:5 , 1.50
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL:5 , 1.50
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:5 , 1.50
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:6 , 1.20
+ENDIF
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:5 , 0.50
+	TIMES LOCAL:6 , 0.50
+ENDIF
+;感情乏しい
+IF TALENT:感情乏しい
+	TIMES LOCAL:5 , 0.80
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:5 , 1.50
+;男嫌い
+IF TALENT:男嫌い
+	TIMES LOCAL:5 , 0.80
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:5 , 1.25
+	TIMES LOCAL:6 , 1.25
+ENDIF
+;魅惑
+SIF TALENT:魅惑
+	TIMES LOCAL:5 , 1.50
+;謎の魅力
+SIF TALENT:謎の魅力
+	TIMES LOCAL:5 , 1.50
+;人気
+SIF TALENT:人気
+	TIMES LOCAL:5 , 1.50
+;淫壷
+SIF TALENT:淫壷
+	TIMES LOCAL:6 , 0.90
+;淫尻
+SIF TALENT:淫尻
+	TIMES LOCAL:6 , 1.50
+
+;ABL:精液中毒をみる
+IF ABL:精液中毒 == 0
+	TIMES LOCAL:4 , 0.90
+ELSEIF ABL:精液中毒 == 1
+	TIMES LOCAL:4 , 1.00
+ELSEIF ABL:精液中毒 == 2
+	TIMES LOCAL:4 , 1.20
+ELSEIF ABL:精液中毒 == 3
+	TIMES LOCAL:4 , 1.50
+ELSEIF ABL:精液中毒 == 4
+	TIMES LOCAL:4 , 1.80
+ELSE
+	TIMES LOCAL:4 , 2.40
+ENDIF
+
+;人里郊外なら全人類公衆肉便器で襲われる回数アップ
+IF LOCAL:1 == 2 && TFLAG:150 == 99
+	TIMES LOCAL:5 , 1.50
+	TIMES LOCAL:6 , 1.50
+;全世界公衆肉便器はどこにいても襲われる回数アップ(補正は全人類よりも少し低い)
+ELSEIF LOCAL:1 == 1
+	TIMES LOCAL:5 , 1.20
+	TIMES LOCAL:6 , 1.20
+ENDIF
+
+;回数制限
+LOCAL:5 = TABLE_CALC(LOCAL:5, 20, 2)
+LOCAL:5 = TABLE_CALC(LOCAL:5, 40, 4)
+LOCAL:5 = TABLE_CALC(LOCAL:5, 60, 6)
+
+IF TALENT:処女 == 1
+	;条件ではＶ経験が一定数必要となっているが、一応生娘の処理も作成
+	LOCAL:7 += 50000
+	SOURCE:逸脱 = (EXP:Ｖ経験 <= 0) ? 7500000 # 5000000
+ELSEIF TALENT:処女
+	LOCAL:7 += 20000
+	SOURCE:逸脱 = (EXP:Ｖ経験 <= 0) ? 1200000 # 1000000
+ENDIF
+;奴隷のＡ、Ｖ、口に精液汚れ
+STAIN:口 |= 4
+STAIN:ヴァギナ |= 4
+STAIN:アナル |= 4
+TCVAR:Ｖ経験 += LOCAL:5-LOCAL:6
+TCVAR:Ａ経験 += LOCAL:6
+TCVAR:精液経験 += LOCAL:4
+
+SOURCE:快Ｖ += 250*(LOCAL:5-LOCAL:6)
+SOURCE:快Ａ += 150*LOCAL:6
+SOURCE:性行動 += 125*LOCAL:5
+SOURCE:中毒充足 += 250*LOCAL:5
+SOURCE:不潔 += 100*LOCAL:5
+SOURCE:液体追加 += 125*LOCAL:5
+SOURCE:欲情追加 += 150*LOCAL:5
+SOURCE:露出 += 100*LOCAL:5
+SOURCE:屈従 += 225*LOCAL:5
+SOURCE:逸脱 += 400*LOCAL:5
+SOURCE:支配 += 175*LOCAL:5
+
+;いいアイデアがないのでオミット
+;当初は放置場所が一定数しかなかった、
+;持っているキャラによってうろつける場所を増やしたいが、何か良いアイデアはないものか
+;いちいち計算させるのも癪だしなぁ
+;;人里出身は調教の効果上昇
+;IF CFLAG:TARGET:300 & 16384
+;	TIMES SOURCE:露出 , 2.00
+;	SOURCE:液体追加 += 1000
+;	SOURCE:屈従 += 1000
+;	SOURCE:支配 += 1000
+;;永遠亭組は調教の効果上昇
+;ELSEIF CFLAG:TARGET:300 & 8
+;	TIMES SOURCE:露出 , 2.00
+;	SOURCE:液体追加 += 1000
+;	SOURCE:屈従 += 1000
+;	SOURCE:支配 += 1000
+;;対象が天狗、河童、鬼なら調教の効果上昇(有名キャラは種族外れても該当、それ以外はTALENTで判断)
+;ELSEIF CFLAG:TARGET:300 & 32
+;	TIMES SOURCE:露出 , 2.00
+;	SOURCE:液体追加 += 1000
+;	SOURCE:屈従 += 1000
+;	SOURCE:支配 += 1000
+;ENDIF
+
+;挿入回数×設定料金
+IF TALENT:処女
+	LOCAL:7 += LOCAL:3 * (LOCAL:5 + LOCAL:6 - 1)
+ELSE
+	LOCAL:7 += LOCAL:3 * (LOCAL:5 + LOCAL:6)
+ENDIF
+;中出し回数分だけ追加
+LOCAL:7 += LOCAL:4 * LOCAL:3 * 2
+
+;全世界公衆肉便器修整
+IF LOCAL:1 == 1
+	TIMES SOURCE:中毒充足 , 1.50
+	TIMES SOURCE:屈従 , 2.00
+	TIMES LOCAL:7 , 3.00
+;全人類の公衆肉便器修整
+ELSEIF LOCAL:1 == 2
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:露出 , 2.00
+	TIMES LOCAL:7 , 2.50
+;熱核公衆肉便器修整
+ELSEIF LOCAL:1 == 3
+	TIMES SOURCE:逸脱 , 1.20
+	TIMES LOCAL:7 , 1.50
+ENDIF
+MONEY:1 = LOCAL:7
+;口上分岐
+TFLAG:99 = 12
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;肉便器プレイで稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:976
+	CALL NEW_HIGH_INCOME_ALL, 976
+SIF MONEY:1 > CFLAG:86
+	CALL NEW_HIGH_INCOME_SLAVE, 86
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+;調教対象の公衆肉便器プレイ実行回数
+CFLAG:54 += 1
+
+RETURN 1
+
+;--------------------------------------------------
+;地の文(2回は呼び出されます)
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_106
+SELECTCASE TFLAG:99
+	CASE 1
+		PRINTL 
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:TARGET%のお腹にマジックで「↓俺専用の穴」と書いた
+		PRINTFORMW ……では、さっそく%CALLNAME:TARGET%の肉便器を試してみるか…………
+	CASE 2
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTFORML %CALLNAME:TARGET%の肉便器の使い心地は抜群だ。
+		PRINTFORML いまや完全に%CALLNAME:MASTER%のモノとなった%CALLNAME:TARGET%は、
+		PRINT 事が終わってもなお恍惚とした表情を浮かべ、
+		IF NOWEX:MASTER:5 > 0
+			PRINTL 白い液体にまみれた自分のヴァギナやアヌスを見下ろし、
+			PRINTW 零れ出た精液を指ですくい取っては穴に戻したり舌で舐め取ったりしている……
+		ELSE
+			PRINTFORML %CALLNAME:MASTER%の尿をふんだんに注ぎ込まれた自分のヴァギナやアヌスを見下ろし、
+			PRINTW 時折指で栓をしながら膣や腸に溜まった異物感を楽しんでいる……
+		ENDIF
+	CASE 3
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTFORMW %CALLNAME:TARGET%の肉便器の使い心地は抜群だ
+		PRINTFORML いまや完全に%CALLNAME:MASTER%のモノとなった%CALLNAME:TARGET%は
+		PRINTL 事が終わってもなお恍惚とした表情を浮かべ、
+		IF NOWEX:MASTER:5 > 0
+			PRINTL 白い液体にまみれた自分のヴァギナやアヌスを見下ろし、
+			PRINTW 零れ出た精液を指ですくい取っては穴に戻したり舌で舐め取ったりしている……
+		ELSE
+			PRINTFORML %CALLNAME:MASTER%の尿をふんだんに注ぎ込まれた自分のヴァギナやアヌスを見下ろし
+			PRINTW 時折指で栓をしながら膣や腸に溜まった異物感を楽しんでいる……
+		ENDIF
+	CASE 11
+		;ところどころ人なんていなさそうなところに配置されるが、なに、気にすることはない
+		SELECTCASE TFLAG:150
+			CASE 1
+				PRINTFORML 博麗神社にて、%CALLNAME:TARGET%を賽銭箱の上で
+			CASE 2
+				PRINTFORML %CALLNAME:TARGET%を紅魔館の人通りの多い廊下で
+			CASE 3
+				PRINTFORML %CALLNAME:TARGET%を冥界の長階段で
+			CASE 4
+				PRINTFORML 竹林にて、%CALLNAME:TARGET%を適当な茂みの前で
+			CASE 5
+				PRINTFORML 彼岸にて、%CALLNAME:TARGET%を適当な石の上で
+			CASE 6
+				PRINTFORML 妖怪の山にて、%CALLNAME:TARGET%を適当な石の上で
+			CASE 7
+				PRINTFORML 旧地獄市外にて、%CALLNAME:TARGET%を適当な道で
+			CASE 8
+				PRINTFORML 妖精の森にて、%CALLNAME:TARGET%を適当な木の元で
+			CASE 9
+				PRINTFORML 有頂天にて、%CALLNAME:TARGET%を適当な開けた所で
+			CASE 10
+				PRINTFORML 太陽の畑にて、%CALLNAME:TARGET%を適当な開けた所で
+			CASE 11
+				PRINTFORML 月の都にて、%CALLNAME:TARGET%を人通りの多い適当な道で
+			CASE 12
+				PRINTFORML 魔界にて、%CALLNAME:TARGET%を人通りの多い適当な道で
+		;	CASE XX
+		;		;場所が想像できないので彼岸みたいな場所と妄想
+		;		PRINTFORML 地獄界にて、%CALLNAME:TARGET%を霊の多い適当な川岸で
+		;	CASE XX
+		;		PRINTFORML 命蓮寺にて、%CALLNAME:TARGET%を本堂の入り口で
+		;	CASE XX
+		;		;神霊廟というのがイメージできなかったのでどこぞの同人誌のネタを使用
+		;		PRINTFORML 神霊廟にて、%CALLNAME:TARGET%を「厠」の入り口で
+		;	CASE XX
+		;		PRINTFORML %CALLNAME:TARGET%を輝針城の城門で
+			CASE 99
+				PRINTFORML 人里にて、%CALLNAME:TARGET%を人通りの多い適当な道で
+			CASE 831
+				PRINTFORML %CALLNAME:TARGET%を%CALLNAME:MASTER%館の人通りの多い廊下で
+		ENDSELECT
+		PRINTL 股を大きく広げるようにして座らせ、その手に
+		IF TALENT:処女 == 1
+			;条件ではＶ経験が一定数必要となっているが、一応生娘の処理も作成
+			PRINT 　　　　　　　「初回５萬圓」
+		ELSEIF TALENT:処女
+			PRINT 　　　　　　　「初回２萬圓」
+		ENDIF
+		PRINTFORML 　　　　　「１回{MONEY:20}圓・中出し＋{MONEY:20*2}圓也」
+		PRINTL ……と書かれたプラカードを持たせた。
+		PRINTFORMW そして%CALLNAME:TARGET%のお腹にマジックで「↓公衆便所」と書くと、そこで待機するよう命令した。
+	CASE 12
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTFORMW どうやら%CALLNAME:TARGET%の肉便器は%OUTDOOR_GALLERY_NAME()%に好評だったようだ……
+		PRINTW 彼らが去った跡には金貨が残されていた。
+	CASE 13
+		PRINTW           ･
+		PRINTW           ･
+		PRINTW           ･
+		PRINTFORMW どうやら%CALLNAME:TARGET%の肉便器は%OUTDOOR_GALLERY_NAME()%に好評だったようだ……
+		PRINTW 彼らが去った跡には金貨が残されていた。
+ENDSELECT
+

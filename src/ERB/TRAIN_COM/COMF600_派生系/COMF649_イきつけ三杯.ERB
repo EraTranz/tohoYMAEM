@@ -1,0 +1,95 @@
+﻿;=============================================================================
+;イきつけ三杯
+;=============================================================================
+;イった調教対象に対するお仕置きとしてお酒を三杯飲ませる
+;当然お酒を飲ませるよりも効果は強め
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM649
+PRINTFORML イきつけ三杯(%ITEMNAME:(TFLAG:149)%)
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 649
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = イきつけ三杯(%ITEMNAME:(TFLAG:149)%)
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;カルーア
+IF TFLAG:149 == 600
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 50
+	SOURCE:酒酔い = 800
+;ビール
+ELSEIF TFLAG:149 == 601
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 60
+	SOURCE:酒酔い = 1600
+;ワイン
+ELSEIF TFLAG:149 == 602
+	DOWNBASE:0 += 75
+	DOWNBASE:1 += 110
+	SOURCE:酒酔い = 2400
+;大吟醸酒
+ELSEIF TFLAG:149 == 603
+	DOWNBASE:0 += 90
+	DOWNBASE:1 += 130
+	SOURCE:酒酔い = 3400
+;スピリタス
+ELSEIF TFLAG:149 == 604
+	DOWNBASE:0 += 180
+	DOWNBASE:1 += 220
+	SOURCE:酒酔い = 4500
+	SOURCE:鬼殺し = 1500
+;神便鬼毒酒
+ELSEIF TFLAG:149 == 605
+	DOWNBASE:0 += 150
+	DOWNBASE:1 += 200
+	SOURCE:酒酔い = 1000
+	SOURCE:鬼殺し = 7000
+ENDIF
+
+;酒を消費
+ITEM:(TFLAG:149) -= 3
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_649
+PRINTFORML %CALLNAME:PLAYER%は持ってきた%ITEMNAME:(TFLAG:149)%を立て続けに三杯
+PRINTFORML %CALLNAME:TARGET%に飲ませた
+;カルーア
+IF TFLAG:149 == 600
+	PRINTFORML カルーアの重厚な味を立て続けに飲まされて、%CALLNAME:TARGET%の身体はさらに燃え上がった…
+;ビール
+ELSEIF TFLAG:149 == 601
+	PRINTL 喉越しこそさっぱりとしていたが、自己主張の激しいビールを立て続けに飲まされてしまい、
+	PRINTFORML %CALLNAME:TARGET%は、心地よい眩暈を感じつつも気持ちは盛り上がっていった…
+;ワイン
+ELSEIF TFLAG:149 == 602
+	PRINTL 上品な味と香りで定評のあるワインもさすがに立て続けに味合わされると、
+	PRINTFORML %CALLNAME:TARGET%もなんだかふらふらと妖しいよろけ方をするようになった…
+;大吟醸酒
+ELSEIF TFLAG:149 == 603
+	PRINTL さらりとした舌触りのために、立て続けに飲まされても平気なように思えた酒であったが、
+	PRINTFORML %CALLNAME:TARGET%にとってはさすがにきつかったようで、しきりに首を振っている…
+;スピリタス
+ELSEIF TFLAG:149 == 604
+	PRINTL 強烈な刺激と独特の甘みが特徴ある強烈な酒を立て続けに飲まされて、
+	PRINTFORML %CALLNAME:TARGET%の理性はもはや風前の灯のようであった…
+;神便鬼毒酒
+ELSEIF TFLAG:149 == 605
+	PRINTL この世のものとは思えないような味の強烈な酒を立て続けに飲まされてしまい、
+	IF TALENT:鬼
+		PRINTFORML 酒に強いはずの%CALLNAME:TARGET%もさすがにメロメロにされてしまったようだ……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は全身を真っ赤に染めながら、よく分からない踊りをしてしまっている……
+	ENDIF
+ENDIF

@@ -1,0 +1,118 @@
+﻿;=============================================================================
+;乳合わせ見せつけ
+;=============================================================================
+;調教者と助手が乳首を合わせるプレイ
+;見た目的には眼福だが効果的にはやはりしょぼい
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE211
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:211 > 0
+	RETURN 0
+;Ｂ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8) == 0
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;主人もしくは助手がオトコだとダメ
+SIF TALENT:MASTER:オトコ || TALENT:ASSI:オトコ
+	RETURN 0
+;主人と助手の体格差が違いすぎるとダメ(禁断の知識は無関係で)
+SIF ABS(COMMON_BODYSIZE_CHECK2(MASTER, ASSI)) > 1
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;助手がウェディングドレス・ゴスロリ着用中の場合助手に技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && (TEQUIP:ASSI:コスチュームプレイ == 19 || TEQUIP:ASSI:コスチュームプレイ == 20) && ABL:ASSI:技巧 < 4
+	RETURN 0
+;眼隠しと耳栓両方つけていた場合は意味がないので実行できない
+SIF TEQUIP:目装着器具 && TEQUIP:耳装着器具
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 211) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM211
+PRINTL 乳合わせ見せつけ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 211
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 乳合わせ見せつけ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 10
+
+SOURCE:逸脱 = 180
+SOURCE:性行動 = 10
+SOURCE:不潔 = 80
+SOURCE:露出 = 120
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:欲情追加 = 10
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:欲情追加 = 20
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:欲情追加 = 40
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:欲情追加 = 80
+ELSE
+	SOURCE:欲情追加 = 160
+ENDIF
+
+;主人のＢ⇔助手のＢの汚れが移動
+STAIN:MASTER:胸 |= STAIN:ASSI:胸
+STAIN:ASSI:胸 |= STAIN:MASTER:胸
+
+SIF TALENT:MASTER:オトコ == 0 && TALENT:ASSI:オトコ == 0
+	TCVAR:ASSI:レズ経験 += 5
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_211
+PRINTFORM %CALLNAME:TARGET%に見せ付けるように、%CALLNAME:MASTER%は
+IF TALENT:MASTER:絶壁
+	PRINT ほぼ無に等しい
+ELSEIF TALENT:MASTER:小柄体型 && TALENT:MASTER:貧乳
+	PRINT 僅かに膨らみが感じられる程度の
+ELSEIF TALENT:MASTER:貧乳
+	PRINT 標準よりやや小さめの
+ELSEIF TALENT:MASTER:巨乳
+	PRINT 手から溢れそうなほどの
+ELSEIF TALENT:MASTER:爆乳
+	PRINT 手に余るほど大きな
+ENDIF
+PRINTL 胸の先端の、まだ柔らかい突起と、
+PRINTFORM %CALLNAME:ASSI%の
+IF TALENT:ASSI:絶壁
+	PRINT ほぼ無に等しい
+ELSEIF TALENT:ASSI:小柄体型 && TALENT:ASSI:貧乳
+	PRINT 僅かに膨らみが感じられる程度の
+ELSEIF TALENT:ASSI:貧乳
+	PRINT 標準よりやや小さめの
+ELSEIF TALENT:ASSI:巨乳
+	PRINT 手から溢れそうなほどの
+ELSEIF TALENT:ASSI:爆乳
+	PRINT 手に余るほど大きな
+ENDIF
+PRINTL 胸の先端の、まだ柔らかい突起をくっつけ少し押したりしてみた…

@@ -1,0 +1,139 @@
+﻿;=============================================================================
+;狂気の目
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE419
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:419 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が[狂気の目]を持っていないとダメ
+SIF TALENT:PLAYER:狂気の目 == 0
+	RETURN 0
+;狂人には通用しない
+SIF TALENT:狂気
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;アイマスク、暗闇展開中は不可能
+SIF TEQUIP:目装着器具 || TEQUIP:暗闇
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 419) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM419
+PRINTL 狂気の目
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 419
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 狂気の目
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;発動中であれば発動停止
+IF TEQUIP:狂気の目
+	TEQUIP:狂気の目 = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 40
+
+SOURCE:中毒充足 = 700
+SOURCE:逸脱 = 4500
+SOURCE:支配 = 500
+
+TEQUIP:狂気の目 = 1
+RETURN 1
+
+;-------------------------------------------------
+;狂気の目発動中
+;-------------------------------------------------
+;パラメータ変化。CVABの快感値をランダムに入れ替え
+;加算される可能性を置いているのはカオスっぽくなるから
+;またカオスさを増強させるため、さらにパラメーターに加算される値が上下に変化するように
+@EQUIP_COM419
+PRINTL ＜狂気の目発動中＞
+;テンポラリに配置して、元々のSOURCE値をリセット
+LOCAL:1 = SOURCE:快Ｃ
+LOCAL:2 = SOURCE:快Ｖ
+LOCAL:3 = SOURCE:快Ａ
+LOCAL:4 = SOURCE:快Ｂ
+SOURCE:快Ｃ = 0
+SOURCE:快Ｖ = 0
+SOURCE:快Ａ = 0
+SOURCE:快Ｂ = 0
+
+;再計算
+REPEAT 4
+	IF COUNT == 0
+		LOCAL:5 = LOCAL:1
+	ELSEIF COUNT == 1
+		SIF TALENT:オトコ
+			CONTINUE
+		LOCAL:5 = LOCAL:2
+	ELSEIF COUNT == 2
+		LOCAL:5 = LOCAL:3
+	ELSE
+		LOCAL:5 = LOCAL:4
+	ENDIF
+	IF RAND:3 == 0
+		TIMES LOCAL:5 , 0.80
+	ELSEIF RAND:2 == 0
+		TIMES LOCAL:5 , 1.20
+	ENDIF
+	LOCAL:6 = RAND:100
+	;オトコの場合
+	IF TALENT:オトコ
+		LOCAL:6 %= 3
+	ELSE
+		LOCAL:6 %= 4
+	ENDIF
+	IF LOCAL:6 == 0
+		SOURCE:快Ｃ += LOCAL:5
+	ELSEIF LOCAL:6 == 1
+		SOURCE:快Ｂ += LOCAL:5
+	ELSEIF LOCAL:6 == 2
+		SOURCE:快Ａ += LOCAL:5
+	ELSE
+		SOURCE:快Ｖ += LOCAL:5
+	ENDIF
+REND
+
+LOCAL = RAND:5
+IF LOCAL == 0
+	;痛覚が欲情に追加
+	LOCAL:7 = SOURCE:痛み / 10 * 7
+	SOURCE:欲情追加 += LOCAL:7
+ELSEIF LOCAL == 1
+	;欲情が痛覚に追加
+	LOCAL:7 = SOURCE:欲情追加 / 10 * 7
+	SOURCE:痛み += LOCAL:7
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_419
+IF TEQUIP:狂気の目
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の瞳を覗きこむのをやめた
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の瞳の奥を覗きこんだ
+ENDIF

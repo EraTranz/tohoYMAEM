@@ -1,0 +1,236 @@
+﻿;=============================================================================
+;サラシ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE194
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:194 > 0
+	RETURN 0
+;Ｂ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8) == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:サラシ
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:サラシ == 0
+	RETURN 0
+;助手調教の場合、技巧4以上じゃないと使えない（霊夢、妖夢、早苗の誰かならＯＫ）
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4 && SARASHI_ANSHIN_BONUS(PLAYER) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;他のＢ系装着具使用中は不可
+SIF TEQUIP:Ｂ系装着器具
+	RETURN 0
+;緊縛中はダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 11 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 194) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM194
+PRINTL サラシ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 194
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = サラシ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 70
+
+SOURCE:露出 = 100
+SOURCE:逸脱 = 90
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL:1 = 50
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL:1 = 100
+ELSEIF ABL:Ｂ感覚== 2
+	LOCAL:1 = 300
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL:1 = 600
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL:1 = 1200
+ELSE
+	LOCAL:1 = 2100
+ENDIF
+
+;Ｂ敏感
+IF TALENT:Ｂ敏感
+	TIMES LOCAL:1 , 1.50
+;Ｂ鈍感
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;絶壁
+IF TALENT:絶壁
+	TIMES LOCAL:1 , 1.80
+	SOURCE:露出 += 1000
+;貧乳
+ELSEIF TALENT:貧乳
+	TIMES LOCAL:1 , 1.50
+	SOURCE:露出 += 700
+;巨乳
+ELSEIF TALENT:巨乳
+	TIMES LOCAL:1 , 0.80
+	SOURCE:痛み = 300
+;爆乳
+ELSEIF TALENT:爆乳
+	TIMES LOCAL:1 , 0.50
+	SOURCE:痛み = 800
+ENDIF
+
+SOURCE:快Ｂ += LOCAL:1
+
+;サラシの着脱
+IF TEQUIP:サラシ
+	TEQUIP:サラシ = 0
+ELSE
+	TEQUIP:サラシ = 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;サラシ装備中
+;--------------------------------------------------
+@EQUIP_COM194
+PRINTL ＜サラシ装着中＞
+;胸が大きいと体力がより消耗
+IF TALENT:爆乳
+	DOWNBASE:0 += 15
+ELSEIF TALENT:巨乳
+	DOWNBASE:0 += 10
+ELSE
+	DOWNBASE:0 += 5
+ENDIF
+DOWNBASE:1 += 20
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL = 20
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL = 40
+ELSEIF ABL:Ｂ感覚 == 2
+	LOCAL = 80
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL = 160
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL = 320
+ELSE
+	LOCAL = 640
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;絶壁
+IF TALENT:絶壁
+	TIMES LOCAL , 1.30
+	SOURCE:露出 += 1000
+;貧乳
+ELSEIF TALENT:貧乳
+	TIMES LOCAL , 1.10
+	SOURCE:露出 += 700
+;巨乳
+ELSEIF TALENT:巨乳
+	TIMES LOCAL , 0.90
+	SOURCE:痛み += 100
+;爆乳
+ELSEIF TALENT:爆乳
+	TIMES LOCAL , 0.70
+	SOURCE:痛み += 300
+ENDIF
+
+SOURCE:快Ｂ += LOCAL
+SOURCE:欲情追加 += 10
+SOURCE:露出 += 50
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_194
+IF TEQUIP:サラシ
+	PRINTFORML %CALLNAME:TARGET%に巻いてあるサラシを外した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の胸にサラシを巻き付けた
+	PRINTFORM %CALLNAME:TARGET%は
+	IF SARASHI_ANSHIN_BONUS(TARGET)
+		PRINTL これが一番落ち着くと感じているのかほっとした表情を浮かべている
+	ELSEIF TALENT:絶壁
+		PRINTL 胸が殆ど無いことにコンプレックスを感じているのか、顔を真っ赤に染めたまま俯いている
+	ELSEIF TALENT:貧乳
+		PRINTL 改めて自分の胸が小さいことを気にし始めたのか、頬を朱に染染めている
+	ELSEIF TALENT:巨乳
+		PRINTL 少し窮屈そうな表情を浮かべ、白い布によって締め付けられた自分の豊かな胸を見下ろしている
+	ELSEIF TALENT:爆乳
+		PRINTL 窮屈そうに顔を顰め、白い布で締め付けられ形を歪められた自分の胸を見下ろしている
+	ELSE
+		PRINTL 胸に巻かれた物に違和感を感じるのか、困惑した表情でしきりに布をくいくいと引っ張っている……
+	ENDIF
+ENDIF

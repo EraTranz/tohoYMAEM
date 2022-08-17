@@ -1,0 +1,1317 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;エンディング関連処理
+;
+;ここでは主に各エンディングの判定を行う
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;判定用汎用関数群
+;=============================================================================
+;-------------------------------------------------
+;助手可能キャラの計算
+;-------------------------------------------------
+@GET_ABLE_ASSI
+#FUNCTION
+;今の周回ですでに計算済みなら値だけ返す
+SIF LOCAL:1 == FLAG:6
+	RETURNF LOCAL
+LOCAL = 0
+FOR PC_VAR1, 1, CHARANUM
+	SIF CFLAG:PC_VAR1:1 == 2 && CFLAG:PC_VAR1:4 != 1
+		LOCAL++
+NEXT
+;計算済みフラグ
+LOCAL:1 = FLAG:6
+RETURNF LOCAL
+
+;-------------------------------------------------
+;女性キャラの恋慕判定
+;-------------------------------------------------
+@CHECK_FEMALE_CHARA_LOVE(ARG, ARG:1)
+#FUNCTION
+;ARG：キャラのNO
+RETURNF (GETCHARA(ARG, ARG:1) != -1 && TALENT:GETCHARA(ARG, ARG:1):120 == 0 && TALENT:GETCHARA(ARG, ARG:1):150 && CFLAG:GETCHARA(ARG, ARG:1):4 != 1)
+
+;-------------------------------------------------
+;男性キャラの恋慕判定
+;-------------------------------------------------
+@CHECK_MALE_CHARA_LOVE(ARG, ARG:1)
+#FUNCTION
+;ARG：キャラのNO
+RETURNF (GETCHARA(ARG, ARG:1) != -1 && TALENT:GETCHARA(ARG, ARG:1):120 && TALENT:GETCHARA(ARG, ARG:1):150 && CFLAG:GETCHARA(ARG, ARG:1):4 != 1)
+
+;-------------------------------------------------
+;女性キャラの助手判定
+;-------------------------------------------------
+@CHECK_FEMALE_CHARA_ASSI(ARG, ARG:1)
+#FUNCTION
+;ARG：キャラのNO
+RETURNF (GETCHARA(ARG, ARG:1) != -1 && TALENT:GETCHARA(ARG, ARG:1):120 == 0 && CFLAG:GETCHARA(ARG, ARG:1):1 == 2 && CFLAG:GETCHARA(ARG, ARG:1):4 != 1)
+
+;-------------------------------------------------
+;男性キャラの助手判定
+;-------------------------------------------------
+@CHECK_MALE_CHARA_ASSI(ARG, ARG:1)
+#FUNCTION
+;ARG：キャラのNO
+RETURNF (GETCHARA(ARG, ARG:1) != -1 && TALENT:GETCHARA(ARG, ARG:1):120 == 0 && CFLAG:GETCHARA(ARG, ARG:1):1 == 2 && CFLAG:GETCHARA(ARG, ARG:1):4 != 1)
+
+;-------------------------------------------------
+;性別条件なしでのキャラの恋慕判定
+;-------------------------------------------------
+@CHECK_CHARA_LOVE(ARG, ARG:1)
+#FUNCTION
+;ARG：キャラのNO
+RETURNF (GETCHARA(ARG, ARG:1) != -1 && TALENT:GETCHARA(ARG, ARG:1):150 && CFLAG:GETCHARA(ARG, ARG:1):4 != 1)
+
+;-------------------------------------------------
+;性別条件なしでのキャラの助手判定
+;-------------------------------------------------
+@CHECK_CHARA_ASSI(ARG, ARG:1)
+#FUNCTION
+;ARG：キャラのNO
+RETURNF (GETCHARA(ARG, ARG:1) != -1 && CFLAG:GETCHARA(ARG, ARG:1):1 == 2 && CFLAG:GETCHARA(ARG, ARG:1):4 != 1)
+
+;=============================================================================
+;各エンディングの判定
+;=============================================================================
+;-------------------------------------------------
+;通常ハーレムエンド
+;-------------------------------------------------
+@ENDING_JUDGE2
+RETURN (GET_ABLE_ASSI() >= 10)
+
+;-------------------------------------------------
+;靈異エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE5
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1001)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2000)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2022)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2023)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2024)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2025)
+
+;男性キャラ数え上げ
+LOCAL:1 += CHECK_MALE_CHARA_LOVE(2021)
+
+;その他キャラ数え上げ
+LOCAL:2 += CHECK_CHARA_LOVE(2020)
+
+RETURN (LOCAL >= 6 && LOCAL:1 && LOCAL:2)
+
+;-------------------------------------------------
+;封魔エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE6
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1001)
+SIF CHECK_FEMALE_CHARA_LOVE(1002, 1) && CFLAG:GETCHARA(1002, 1):0 == 1
+	LOCAL++
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2000)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2001)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2002)
+
+RETURN (LOCAL >= 5)
+
+;-------------------------------------------------
+;夢時空エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE7
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2003)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2004)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2005)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2006)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2007)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2008)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(2027)
+
+RETURN (LOCAL >= 6) ? ((LOCAL:1) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;幻想郷エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE8
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1034)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2009)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2010)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2011)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2012)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2013)
+
+RETURN (LOCAL >= 6)
+
+;-------------------------------------------------
+;怪綺談エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE9
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+SIF CHECK_FEMALE_CHARA_LOVE(1014, 1) && CFLAG:GETCHARA(1014, 1):0 == 1
+	LOCAL++
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2016)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2017)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2018)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2019)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(2014)
+LOCAL:1 += CHECK_CHARA_LOVE(2015)
+
+RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 2) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;紅魔郷エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE10
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1006)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1008)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1009)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1010)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1011)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(1003)
+LOCAL:1 += CHECK_CHARA_LOVE(1004)
+LOCAL:1 += CHECK_CHARA_LOVE(1005)
+LOCAL:1 += CHECK_CHARA_LOVE(1007)
+
+RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 4) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;妖々夢エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE11
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1013)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1019)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1020)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1021)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1022)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(1005)
+LOCAL:1 += CHECK_CHARA_LOVE(1012)
+LOCAL:1 += CHECK_CHARA_LOVE(1014)
+LOCAL:1 += CHECK_CHARA_LOVE(1015)
+LOCAL:1 += CHECK_CHARA_LOVE(1016)
+LOCAL:1 += CHECK_CHARA_LOVE(1017)
+LOCAL:1 += CHECK_CHARA_LOVE(1018)
+
+RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 7) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;萃夢想エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE12
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1001)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1002)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1022)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1023)
+
+;助手可キャラ判定
+LOCAL:1 += CHECK_CHARA_ASSI(1006)
+LOCAL:1 += CHECK_CHARA_ASSI(1008)
+LOCAL:1 += CHECK_CHARA_ASSI(1009)
+LOCAL:1 += CHECK_CHARA_ASSI(1010)
+LOCAL:1 += CHECK_CHARA_ASSI(1014)
+LOCAL:1 += CHECK_CHARA_ASSI(1019)
+LOCAL:1 += CHECK_CHARA_ASSI(1020)
+
+;ENDING派生用の判定
+LOCAL:2 += CHECK_CHARA_LOVE(1006)
+LOCAL:2 += CHECK_CHARA_LOVE(1008)
+LOCAL:2 += CHECK_CHARA_LOVE(1009)
+LOCAL:2 += CHECK_CHARA_LOVE(1010)
+LOCAL:2 += CHECK_CHARA_LOVE(1014)
+LOCAL:2 += CHECK_CHARA_LOVE(1019)
+LOCAL:2 += CHECK_CHARA_LOVE(1020)
+
+RETURN (LOCAL >= 4 && LOCAL:1 >= 6) ? ((LOCAL:2 >= 7) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;永夜抄エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE13
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1027)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1028)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1029)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1030)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1031)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(1001)
+LOCAL:1 += CHECK_CHARA_LOVE(1002)
+LOCAL:1 += CHECK_CHARA_LOVE(1024)
+LOCAL:1 += CHECK_CHARA_LOVE(1025)
+LOCAL:1 += CHECK_CHARA_LOVE(1026)
+
+RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 5) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;花映塚エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE14
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1035)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1036)
+
+;助手可キャラ判定
+LOCAL:1 += CHECK_CHARA_ASSI(1001)
+LOCAL:1 += CHECK_CHARA_ASSI(1002)
+LOCAL:1 += CHECK_CHARA_ASSI(1005)
+LOCAL:1 += CHECK_CHARA_ASSI(1009)
+LOCAL:1 += CHECK_CHARA_ASSI(1016)
+LOCAL:1 += CHECK_CHARA_ASSI(1019)
+LOCAL:1 += CHECK_CHARA_ASSI(1025)
+LOCAL:1 += CHECK_CHARA_ASSI(1027)
+LOCAL:1 += CHECK_CHARA_ASSI(1028)
+LOCAL:1 += CHECK_CHARA_ASSI(1032)
+LOCAL:1 += CHECK_CHARA_ASSI(1033)
+LOCAL:1 += CHECK_CHARA_ASSI(1034)
+
+;ENDING派生用の判定
+LOCAL:2 += CHECK_CHARA_LOVE(1001)
+LOCAL:2 += CHECK_CHARA_LOVE(1002)
+LOCAL:2 += CHECK_CHARA_LOVE(1005)
+LOCAL:2 += CHECK_CHARA_LOVE(1009)
+LOCAL:2 += CHECK_CHARA_LOVE(1016)
+LOCAL:2 += CHECK_CHARA_LOVE(1019)
+LOCAL:2 += CHECK_CHARA_LOVE(1025)
+LOCAL:2 += CHECK_CHARA_LOVE(1027)
+LOCAL:2 += CHECK_CHARA_LOVE(1028)
+LOCAL:2 += CHECK_CHARA_LOVE(1032)
+LOCAL:2 += CHECK_CHARA_LOVE(1033)
+LOCAL:2 += CHECK_CHARA_LOVE(1034)
+
+RETURN (LOCAL >= 2 && LOCAL:1 >= 7) ? ((LOCAL:2 >= 12) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;風神録エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE15
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1032)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1040)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1042)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1043)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1044)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(1037)
+LOCAL:1 += CHECK_CHARA_LOVE(1038)
+LOCAL:1 += CHECK_CHARA_LOVE(1039)
+
+RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 3) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;緋想天エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE16
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1023)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1051)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1052)
+
+;助手可キャラ判定
+LOCAL:1 += CHECK_CHARA_ASSI(1001)
+LOCAL:1 += CHECK_CHARA_ASSI(1002)
+LOCAL:1 += CHECK_CHARA_ASSI(1008)
+LOCAL:1 += CHECK_CHARA_ASSI(1009)
+LOCAL:1 += CHECK_CHARA_ASSI(1010)
+LOCAL:1 += CHECK_CHARA_ASSI(1014)
+LOCAL:1 += CHECK_CHARA_ASSI(1019)
+LOCAL:1 += CHECK_CHARA_ASSI(1020)
+LOCAL:1 += CHECK_CHARA_ASSI(1022)
+LOCAL:1 += CHECK_CHARA_ASSI(1028)
+LOCAL:1 += CHECK_CHARA_ASSI(1032)
+LOCAL:1 += CHECK_CHARA_ASSI(1035)
+
+;ENDING派生用の判定
+LOCAL:2 += CHECK_CHARA_LOVE(1001)
+LOCAL:2 += CHECK_CHARA_LOVE(1002)
+LOCAL:2 += CHECK_CHARA_LOVE(1008)
+LOCAL:2 += CHECK_CHARA_LOVE(1009)
+LOCAL:2 += CHECK_CHARA_LOVE(1010)
+LOCAL:2 += CHECK_CHARA_LOVE(1014)
+LOCAL:2 += CHECK_CHARA_LOVE(1019)
+LOCAL:2 += CHECK_CHARA_LOVE(1020)
+LOCAL:2 += CHECK_CHARA_LOVE(1022)
+LOCAL:2 += CHECK_CHARA_LOVE(1028)
+LOCAL:2 += CHECK_CHARA_LOVE(1032)
+LOCAL:2 += CHECK_CHARA_LOVE(1035)
+
+RETURN (LOCAL >= 3 && LOCAL:1 >= 7) ? ((LOCAL:2 >= 12) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;地霊殿エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE17
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1060)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1061)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1062)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1063)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1064)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(1057)
+LOCAL:1 += CHECK_CHARA_LOVE(1058)
+LOCAL:1 += CHECK_CHARA_LOVE(1059)
+
+RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 3) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;儚月抄エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE18
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1022)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1029)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1053)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1054)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1055)
+
+;助手可キャラ判定
+LOCAL:1 += CHECK_CHARA_ASSI(1001)
+LOCAL:1 += CHECK_CHARA_ASSI(1002)
+LOCAL:1 += CHECK_CHARA_ASSI(1008)
+LOCAL:1 += CHECK_CHARA_ASSI(1009)
+LOCAL:1 += CHECK_CHARA_ASSI(1010)
+LOCAL:1 += CHECK_CHARA_ASSI(1019)
+LOCAL:1 += CHECK_CHARA_ASSI(1020)
+LOCAL:1 += CHECK_CHARA_ASSI(1021)
+LOCAL:1 += CHECK_CHARA_ASSI(1022)
+LOCAL:1 += CHECK_CHARA_ASSI(1028)
+LOCAL:1 += CHECK_CHARA_ASSI(1029)
+LOCAL:1 += CHECK_CHARA_ASSI(1053)
+LOCAL:1 += CHECK_CHARA_ASSI(1054)
+LOCAL:1 += CHECK_CHARA_ASSI(1055)
+
+RETURN (LOCAL >= 5 && LOCAL:1 >= 5) ? ((LOCAL:2 >= 12) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;星蓮船エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE19
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1071)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1073)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1075)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1076)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1077)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1078)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_CHARA_LOVE(1072)
+LOCAL:1 += CHECK_CHARA_LOVE(1074)
+SIF GETCHARA(1072) != -1 && TALENT:GETCHARA(1072):151
+	LOCAL:2 += 1
+
+RETURN (LOCAL >= 6) ? ((LOCAL:1 >= 2) ? ((LOCAL:2) ? 4 # 2) # 1) # 0
+
+;-------------------------------------------------
+;香霖堂エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE20
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1001)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1002)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1022)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1068)
+
+;男性キャラ数え上げ
+LOCAL += CHECK_MALE_CHARA_LOVE(1069)
+
+RETURN (LOCAL >= 5)
+
+;-------------------------------------------------
+;三月精エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE21
+VARSET LOCAL, 0
+
+;女性キャラ数え上げ
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1001) && CHECK_CHARA_ASSI(1001))
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1002) && CHECK_CHARA_ASSI(1002))
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1045) && CHECK_CHARA_ASSI(1045))
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1046) && CHECK_CHARA_ASSI(1046))
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1047) && CHECK_CHARA_ASSI(1047))
+
+;助手可キャラ判定
+LOCAL:1 += CHECK_CHARA_ASSI(1004)
+LOCAL:1 += CHECK_CHARA_ASSI(1005)
+LOCAL:1 += CHECK_CHARA_ASSI(1006)
+LOCAL:1 += CHECK_CHARA_ASSI(1008)
+LOCAL:1 += CHECK_CHARA_ASSI(1009)
+LOCAL:1 += CHECK_CHARA_ASSI(1010)
+LOCAL:1 += CHECK_CHARA_ASSI(1014)
+LOCAL:1 += CHECK_CHARA_ASSI(1015)
+LOCAL:1 += CHECK_CHARA_ASSI(1019)
+LOCAL:1 += CHECK_CHARA_ASSI(1022)
+LOCAL:1 += CHECK_CHARA_ASSI(1023)
+LOCAL:1 += CHECK_CHARA_ASSI(1027)
+LOCAL:1 += CHECK_CHARA_ASSI(1028)
+LOCAL:1 += CHECK_CHARA_ASSI(1029)
+LOCAL:1 += CHECK_CHARA_ASSI(1035)
+
+RETURN (LOCAL >= 5 && LOCAL:1 >= 5)
+
+;-------------------------------------------------
+;文花帖エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE22
+VARSET LOCAL, 0
+
+;主人の技巧か撮影技能が5未満なら見ない
+SIF ABL:MASTER:技巧 < 5 || ABL:MASTER:撮影技能 < 5
+	RETURN 0
+;あややややチェック
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1032) && CHECK_CHARA_ASSI(1032) && TALENT:GETCHARA(1032):160 && ABL:GETCHARA(1032):12 >= 5 && ABL:GETCHARA(1032):71 >= 5)
+
+;助手可キャラ判定
+LOCAL:1 += CHECK_CHARA_ASSI(1003)
+LOCAL:1 += CHECK_CHARA_ASSI(1005)
+LOCAL:1 += CHECK_CHARA_ASSI(1006)
+LOCAL:1 += CHECK_CHARA_ASSI(1008)
+LOCAL:1 += CHECK_CHARA_ASSI(1009)
+LOCAL:1 += CHECK_CHARA_ASSI(1010)
+LOCAL:1 += CHECK_CHARA_ASSI(1011)
+LOCAL:1 += CHECK_CHARA_ASSI(1012)
+LOCAL:1 += CHECK_CHARA_ASSI(1013)
+LOCAL:1 += CHECK_CHARA_ASSI(1014)
+LOCAL:1 += CHECK_CHARA_ASSI(1019)
+LOCAL:1 += CHECK_CHARA_ASSI(1020)
+LOCAL:1 += CHECK_CHARA_ASSI(1021)
+LOCAL:1 += CHECK_CHARA_ASSI(1022)
+LOCAL:1 += CHECK_CHARA_ASSI(1023)
+LOCAL:1 += CHECK_CHARA_ASSI(1024)
+LOCAL:1 += CHECK_CHARA_ASSI(1026)
+LOCAL:1 += CHECK_CHARA_ASSI(1027)
+LOCAL:1 += CHECK_CHARA_ASSI(1028)
+LOCAL:1 += CHECK_CHARA_ASSI(1029)
+LOCAL:1 += CHECK_CHARA_ASSI(1030)
+LOCAL:1 += CHECK_CHARA_ASSI(1031)
+LOCAL:1 += CHECK_CHARA_ASSI(1033)
+LOCAL:1 += CHECK_CHARA_ASSI(1035)
+LOCAL:1 += CHECK_CHARA_ASSI(1036)
+
+RETURN (LOCAL >= 1 && LOCAL:1 >= 11)
+
+;-------------------------------------------------
+;博麗神社エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE50
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1001)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1002)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1014)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1023)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1048)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2000)
+
+RETURN (LOCAL >= 6)
+
+;-------------------------------------------------
+;人形遣いエンド判定
+;-------------------------------------------------
+@ENDING_JUDGE51
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1014, 1) && CFLAG:GETCHARA(1014, 1):0 == 0)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1033)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1066)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1067)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1088)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1089)
+
+RETURN (LOCAL >= 6)
+
+;-------------------------------------------------
+;幻想楽団エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE52
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1016)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1017)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1018)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1025)
+
+RETURN (LOCAL >= 4)
+
+;-------------------------------------------------
+;妖稚園エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE53
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1004)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1005)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1015)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1045)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1046)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1047)
+
+RETURN (LOCAL >= 6)
+
+;-------------------------------------------------
+;お姉様エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE54
+VARSET LOCAL, 0
+
+;女性キャラ数え上げ
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1020))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1021))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1022))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1029))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1034))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1035))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1036))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1043))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(1060))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(2000))
+LOCAL += (CHECK_FEMALE_CHARA_ASSI(2019))
+
+RETURN (LOCAL >= 11)
+
+;-------------------------------------------------
+;妹エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE55
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1011)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1016)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1017)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1038)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1054)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1064)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2012)
+
+RETURN (LOCAL >= 7)
+
+;-------------------------------------------------
+;妬まれエンド判定
+;-------------------------------------------------
+@ENDING_JUDGE56
+VARSET LOCAL, 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1033)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1039)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1058)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1059)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1061)
+
+RETURN (LOCAL >= 5)
+
+;-------------------------------------------------
+;動物エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE57
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;恋慕持ちキャラ数え上げ
+LOCAL += CHECK_CHARA_LOVE(1010)
+LOCAL += CHECK_CHARA_LOVE(1021)
+LOCAL += CHECK_CHARA_LOVE(1024)
+LOCAL += CHECK_CHARA_LOVE(1025)
+LOCAL += CHECK_CHARA_LOVE(1027)
+LOCAL += CHECK_CHARA_LOVE(1028)
+LOCAL += CHECK_CHARA_LOVE(1032)
+LOCAL += CHECK_CHARA_LOVE(1041)
+LOCAL += CHECK_CHARA_LOVE(1044)
+LOCAL += CHECK_CHARA_LOVE(1055)
+LOCAL += CHECK_CHARA_LOVE(1058)
+LOCAL += CHECK_CHARA_LOVE(1061)
+LOCAL += CHECK_CHARA_LOVE(1062)
+LOCAL += CHECK_CHARA_LOVE(1063)
+LOCAL += CHECK_CHARA_LOVE(1071)
+LOCAL += CHECK_CHARA_LOVE(1076)
+
+;恋慕持ちの橙が必須
+RETURN (LOCAL >= 5 && CHECK_CHARA_LOVE(1013))
+
+;-------------------------------------------------
+;オトコの娘エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE58
+VARSET LOCAL, 0
+
+;男性キャラ数え上げ
+LOCAL += CHECK_MALE_CHARA_LOVE(1019)
+LOCAL += CHECK_MALE_CHARA_LOVE(1024)
+LOCAL += CHECK_MALE_CHARA_LOVE(1031)
+LOCAL += CHECK_MALE_CHARA_LOVE(1041)
+LOCAL += CHECK_MALE_CHARA_LOVE(1060)
+LOCAL += CHECK_MALE_CHARA_LOVE(2007)
+
+RETURN (LOCAL >= 6)
+
+;-------------------------------------------------
+;漢の世界エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE59
+VARSET LOCAL, 0
+
+;男性キャラ数え上げ
+LOCAL += CHECK_MALE_CHARA_LOVE(1069)
+LOCAL += CHECK_MALE_CHARA_LOVE(1070)
+LOCAL += CHECK_MALE_CHARA_LOVE(1074)
+LOCAL += CHECK_MALE_CHARA_LOVE(1091)
+LOCAL += CHECK_MALE_CHARA_LOVE(2021)
+
+RETURN (LOCAL >= 5)
+
+;-------------------------------------------------
+;メディア王エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE60
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 11
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += ((TALENT:PC_VAR1:150 || TALENT:PC_VAR1:170) && (TALENT:PC_VAR1:94 || ABL:PC_VAR1:71 >= 5) && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;搾乳奴隷牧場エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE61
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 11
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += (CFLAG:PC_VAR1:1 == 2 && TALENT:PC_VAR1:134 && (ABL:PC_VAR1:3 >= 5 || ABL:PC_VAR1:34 >= 3) && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;教祖様エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE62
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 11
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += (TALENT:PC_VAR1:151 && TALENT:PC_VAR1:153 == 0 && TALENT:PC_VAR1:161 == 0 && TALENT:PC_VAR1:162 == 0 && TALENT:PC_VAR1:167 == 0 && TALENT:PC_VAR1:168 == 0 && TALENT:PC_VAR1:169 == 0 && TALENT:PC_VAR1:180 == 0 && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;東方ハーレムエンド判定
+;-------------------------------------------------
+@ENDING_JUDGE63
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 51
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	;Sパッチ等を考えたらNOの条件はもう少しいじらないとダメかも
+	LOCAL += (TALENT:PC_VAR1:150 && NO:PC_VAR1 < 3000 && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (50 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 50)
+
+;-------------------------------------------------
+;中ボス連合エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE64
+VARSET LOCAL, 0
+
+;アイテム使用かつローターなしなら見ない
+SIF !(ITEM:ローター)
+	RETURN 0
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1004)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1007)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1027)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1037)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1041)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1057)
+
+;女性キャラ数え上げその2
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(1015)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(1056)
+
+RETURN (LOCAL >= 6 && LOCAL:1 >= 1)
+
+;-------------------------------------------------
+;10人の貴婦人エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE65
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1010)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1030)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1031)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1036)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1054)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1090)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2001)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2002)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2006)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2019)
+
+;上の10人以外にキャラがいてはならない
+RETURN (LOCAL >= 10 && CHARANUM == 11)
+
+;-------------------------------------------------
+;淫魔エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE66
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 11
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += (TALENT:PC_VAR1:180 && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;悪魔王エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE67
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 11
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += (TALENT:PC_VAR1:169 && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;無名エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE68
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 31
+	RETURN 0
+
+;キャラ番号150から199に該当するキャラを数え上げる
+FOR LOCAL, 3000, 3050
+	;存在しないキャラは弾く
+	SIF EXISTCSV(LOCAL , 0) <= 0
+		CONTINUE
+	LOCAL:1 += CHECK_CHARA_LOVE(LOCAL)
+	LOCAL:2 += 1
+NEXT
+
+RETURN (LOCAL:1 >= LOCAL:2)
+
+;-------------------------------------------------
+;山の神々エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE69
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1037)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1038)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1039)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1042)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1043)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1044)
+
+;ENDING派生用チェック
+LOCAL:1 += CHECK_CHARA_LOVE(2019)
+LOCAL:1 += CHECK_CHARA_LOVE(2024)
+LOCAL:1 += CHECK_CHARA_LOVE(2025)
+
+RETURN (LOCAL >= 6) ? ((LOCAL:1 >= 3) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;虹色エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE70
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1006)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1008)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1011)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1014)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1016)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1017)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1018)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1090)
+
+RETURN (LOCAL >= 8)
+
+;-------------------------------------------------
+;非売エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE71
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+RETURN (FLAG:33 <= 0 && FLAG:66 <= 0 && FLAG:67 <= 0)
+
+;-------------------------------------------------
+;大富豪エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE72
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+RETURN (MONEY >= (MONEY:100*10) + FLAG:575)
+
+;-------------------------------------------------
+;弁当屋エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE73
+VARSET LOCAL, 0
+
+;主人の調理技能が4未満なら見る必要なし
+SIF ABL:MASTER:料理技能 < 4
+	RETURN 0
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += ((TALENT:PC_VAR1:150 || TALENT:PC_VAR1:160) && (ABL:PC_VAR1:70 >= 5 && EXP:PC_VAR1:70 >= 200) && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;アイドルエンド判定
+;-------------------------------------------------
+@ENDING_JUDGE74
+VARSET LOCAL, 0
+
+;主人が歌唱技能も調教師Lvも持たないなら見ない
+SIF !(ABL:MASTER:歌唱技能 || ABL:MASTER:調教師Lv)
+	RETURN 0
+;主人が[魅力]、[魅力]、[魅惑]、[謎の魅力]、[鼓舞]、[大甲斐性]のいずれも持たないならみない
+SIF !(TALENT:MASTER:魅力 || TALENT:MASTER:魅惑 || TALENT:MASTER:謎の魅力 || TALENT:MASTER:鼓舞 || TALENT:MASTER:大甲斐性)
+	RETURN 0
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += ((TALENT:PC_VAR1:150 || TALENT:PC_VAR1:160) && (ABL:PC_VAR1:72 >= 5 && TALENT:PC_VAR1:94) && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;宴会エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE75
+VARSET LOCAL, 0
+
+;酒風呂なしなら見ない
+SIF !(FLAG:74 & 128)
+	RETURN 0
+;お酒を全種類持っていないなら見ない
+SIF !(ITEM:カルーア && ITEM:ビール && ITEM:ワイン && ITEM:大吟醸酒 && ITEM:スピリタス && ITEM:神便鬼毒酒)
+	RETURN 0
+;恋慕持ちの萃香・勇儀のどちらか一方でも欠けてるなら見ない
+SIF !(CHECK_CHARA_LOVE(1023) && CHECK_CHARA_LOVE(1060))
+	RETURN 0
+
+;必須の萃香・勇儀以外で対象助手可能キャラを数え上げ
+FOR PC_VAR1, 1, CHARANUM
+	SIF NO:PC_VAR1 != 1023 && NO:PC_VAR1 != 1060 && CFLAG:PC_VAR1:4 != 1
+		LOCAL += (ABL:PC_VAR1:12 > 4 || ABL:PC_VAR1:70 > 4)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (8 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL > 7)
+
+;-------------------------------------------------
+;夢想エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE76
+VARSET LOCAL, 0
+
+;必須の麟が恋慕かつ助手可でないなら見ない
+SIF !(CHECK_CHARA_LOVE(1092) && CHECK_CHARA_ASSI(1092))
+	RETURN 0
+
+;キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1092)
+LOCAL:1 += (CHECK_CHARA_ASSI(1092) && TALENT:GETCHARA(1092):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4000)
+LOCAL:1 += (CHECK_CHARA_ASSI(4000) && TALENT:GETCHARA(4000):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4001)
+LOCAL:1 += (CHECK_CHARA_ASSI(4001) && TALENT:GETCHARA(4001):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4002)
+LOCAL:1 += (CHECK_CHARA_ASSI(4002) && TALENT:GETCHARA(4002):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4003)
+LOCAL:1 += (CHECK_CHARA_ASSI(4003) && TALENT:GETCHARA(4003):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4004)
+LOCAL:1 += (CHECK_CHARA_ASSI(4004) && TALENT:GETCHARA(4004):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4005)
+LOCAL:1 += (CHECK_CHARA_ASSI(4005) && TALENT:GETCHARA(4005):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4006)
+LOCAL:1 += (CHECK_CHARA_ASSI(4006) && TALENT:GETCHARA(4006):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4007)
+LOCAL:1 += (CHECK_CHARA_ASSI(4007) && TALENT:GETCHARA(4007):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4008)
+LOCAL:1 += (CHECK_CHARA_ASSI(4008) && TALENT:GETCHARA(4008):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4009)
+LOCAL:1 += (CHECK_CHARA_ASSI(4009) && TALENT:GETCHARA(4009):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4010)
+LOCAL:1 += (CHECK_CHARA_ASSI(4010) && TALENT:GETCHARA(4010):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4011)
+LOCAL:1 += (CHECK_CHARA_ASSI(4011) && TALENT:GETCHARA(4011):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4012)
+LOCAL:1 += (CHECK_CHARA_ASSI(4012) && TALENT:GETCHARA(4012):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4013)
+LOCAL:1 += (CHECK_CHARA_ASSI(4013) && TALENT:GETCHARA(4013):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4014)
+LOCAL:1 += (CHECK_CHARA_ASSI(4014) && TALENT:GETCHARA(4014):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4015)
+LOCAL:1 += (CHECK_CHARA_ASSI(4015) && TALENT:GETCHARA(4015):150)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(4016)
+LOCAL:1 += (CHECK_CHARA_ASSI(4016) && TALENT:GETCHARA(4016):150)
+
+RETURN (LOCAL >= 10 && LOCAL:1 >= 10)
+
+;-------------------------------------------------
+;純愛エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE77
+VARSET LOCAL, 0
+
+;純愛イベント無効なら見ない
+SIF (FLAG:12 & 32) == 0
+	RETURN 0
+;主人が狂気持ちなら却下
+SIF TALENT:MASTER:狂気
+	RETURN 0
+;主人が強姦してたりされてたりした場合は却下
+SIF (EXP:MASTER:強姦経験 || EXP:MASTER:被強姦経験 || EXP:MASTER:被輪姦経験 || EXP:MASTER:被姦快楽経験)
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	IF CFLAG:PC_VAR1:4 != 1 && (TALENT:PC_VAR1:152 || TALENT:PC_VAR1:153) & (CFLAG:PC_VAR1:11 & 2) == 0 && (CFLAG:PC_VAR1:11 & 4) == 0 && MARK:PC_VAR1:3 == 0 && MARK:PC_VAR1:8 == 0 && MARK:PC_VAR1:9 == 0 && MARK:PC_VAR1:96 == 0 && MARK:PC_VAR1:97 == 0 && (CFLAG:PC_VAR1:17 & 2) == 0
+		SIF TALENT:PC_VAR1:157 == 0 && TALENT:PC_VAR1:161 == 0 && TALENT:PC_VAR1:163 == 0 && TALENT:PC_VAR1:39 == 0 && EXP:PC_VAR1:53 == 0 && EXP:PC_VAR1:56 == 0 && EXP:PC_VAR1:76 == 0 && EXP:PC_VAR1:80 == 0 && EXP:PC_VAR1:81 == 0 && EXP:PC_VAR1:82 == 0 && EXP:PC_VAR1:83 == 0 && EXP:PC_VAR1:90 == 0
+			LOCAL++
+	ENDIF
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;大図書館エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE78
+VARSET LOCAL, 0
+
+;触手能力を調べ、ひとつでも開発されていたら却下
+SIF SPECIALTENTACLE_CHECK() || CHARATENTACLE_CHECK()
+	RETURN 0
+
+;その周回中で、触手に生贄を捧げていたら却下
+SIF FLAG:33 > 0
+	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1002) && CHECK_CHARA_ASSI(1002) && ABL:GETCHARA(1002):10 >= 5 && ABL:GETCHARA(1002):12 >= 5 && (ABL:GETCHARA(1002):30 + ABL:GETCHARA(1002):31 + ABL:GETCHARA(1002):32 + ABL:GETCHARA(1002):33 + ABL:GETCHARA(1002):34 + ABL:GETCHARA(1002):35 + ABL:GETCHARA(1002):36 + ABL:GETCHARA(1002):37) < 5)
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1007) && CHECK_CHARA_ASSI(1007) && ABL:GETCHARA(1007):10 >= 5 && ABL:GETCHARA(1007):12 >= 5 && (ABL:GETCHARA(1007):30 + ABL:GETCHARA(1007):31 + ABL:GETCHARA(1007):32 + ABL:GETCHARA(1007):33 + ABL:GETCHARA(1007):34 + ABL:GETCHARA(1007):35 + ABL:GETCHARA(1007):36 + ABL:GETCHARA(1007):37) < 5)
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1008) && CHECK_CHARA_ASSI(1008) && ABL:GETCHARA(1008):10 >= 5 && ABL:GETCHARA(1008):12 >= 5 && (ABL:GETCHARA(1008):30 + ABL:GETCHARA(1008):31 + ABL:GETCHARA(1008):32 + ABL:GETCHARA(1008):33 + ABL:GETCHARA(1008):34 + ABL:GETCHARA(1008):35 + ABL:GETCHARA(1008):36 + ABL:GETCHARA(1008):37) < 5)
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1014) && CHECK_CHARA_ASSI(1014) && ABL:GETCHARA(1014):10 >= 5 && ABL:GETCHARA(1014):12 >= 5 && (ABL:GETCHARA(1014):30 + ABL:GETCHARA(1014):31 + ABL:GETCHARA(1014):32 + ABL:GETCHARA(1014):33 + ABL:GETCHARA(1014):34 + ABL:GETCHARA(1014):35 + ABL:GETCHARA(1014):36 + ABL:GETCHARA(1014):37) < 5)
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1048) && CHECK_CHARA_ASSI(1048) && ABL:GETCHARA(1048):10 >= 5 && ABL:GETCHARA(1048):12 >= 5 && (ABL:GETCHARA(1048):30 + ABL:GETCHARA(1048):31 + ABL:GETCHARA(1048):32 + ABL:GETCHARA(1048):33 + ABL:GETCHARA(1048):34 + ABL:GETCHARA(1048):35 + ABL:GETCHARA(1048):36 + ABL:GETCHARA(1048):37) < 5)
+LOCAL += (CHECK_FEMALE_CHARA_LOVE(1068) && CHECK_CHARA_ASSI(1068) && ABL:GETCHARA(1068):10 >= 5 && ABL:GETCHARA(1068):12 >= 5 && (ABL:GETCHARA(1068):30 + ABL:GETCHARA(1068):31 + ABL:GETCHARA(1068):32 + ABL:GETCHARA(1068):33 + ABL:GETCHARA(1068):34 + ABL:GETCHARA(1068):35 + ABL:GETCHARA(1068):36 + ABL:GETCHARA(1068):37) < 5)
+
+;ENDING派生用の判定
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5023)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5024)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5025)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5026)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5027)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5028)
+LOCAL:1 += CHECK_FEMALE_CHARA_LOVE(5029)
+
+RETURN (LOCAL >= 6) ? ((LOCAL:1 >= 7) ? 2 # 1) # 0
+
+;-------------------------------------------------
+;蓬莱人エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE79
+VARSET LOCAL, 0
+
+;そもそもキャラ数が足りないなら見ない
+SIF CHARANUM < 11
+	RETURN 0
+
+;主人が蓬莱人でなければ却下
+SIF TALENT:MASTER:蓬莱人 == 0
+	RETURN 0
+
+FOR PC_VAR1, 1, CHARANUM
+	LOCAL += ((TALENT:PC_VAR1:49 || MARK:PC_VAR1:10 > 2) && CFLAG:PC_VAR1:4 != 1)
+	;条件を満たす可能性がなくなった時点で戻る
+	SIF (CHARANUM - 1) - PC_VAR1 < (10 - LOCAL)
+		RETURN 0
+NEXT
+
+RETURN (LOCAL >= 10)
+
+;-------------------------------------------------
+;魔法少女エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE80
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;女性キャラ数え上げ
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1002)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1008)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1011)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1014)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1034)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(1077)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2003)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2016)
+LOCAL += CHECK_FEMALE_CHARA_LOVE(2017)
+
+RETURN (LOCAL >= 9)
+
+;-------------------------------------------------
+;黄昏酒場エンド判定
+;-------------------------------------------------
+@ENDING_JUDGE83
+VARSET LOCAL, 0
+
+;助手可能人数が足りないなら不可
+;SIF (GET_ABLE_ASSI() < 10)
+;	RETURN 0
+
+;伊佐美の恋慕チェック
+LOCAL += CHECK_CHARA_LOVE(2039)
+
+;辰巳、ルミ、天治が助手可能かつ料理技能5かチェック。ルミは歌唱技能でも可
+LOCAL += CHECK_CHARA_ASSI(2040) && ABL:GETCHARA(2040):70 >= 5
+LOCAL += CHECK_CHARA_ASSI(2041) && (ABL:GETCHARA(2041):70 >= 5 || ABL:GETCHARA(2041):72 >= 5)
+LOCAL += CHECK_CHARA_ASSI(2042) && ABL:GETCHARA(2042):70 >= 5
+
+RETURN (LOCAL >= 4)
+
+
+
+
+
+
+
+
+

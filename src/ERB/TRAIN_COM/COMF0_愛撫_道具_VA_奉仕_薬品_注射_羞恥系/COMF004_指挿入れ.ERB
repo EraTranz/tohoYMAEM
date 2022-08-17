@@ -1,0 +1,224 @@
+﻿;=============================================================================
+;指挿入れ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE4
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:4 > 0
+	RETURN 0
+;助手調教もしくは純愛モードが無効の場合は、Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1 && ((FLAG:12 & 32) == 0 || ASSIPLAY)
+	RETURN 0
+;別条件をチェックし、それがだめならＶ調教フィルタがオフになっていないとダメ
+SIF EXCOM_ABLE605() == 0 && FLAG:2 & 1
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 4) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM4
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;主人調教で純愛モードが有効で対象が処女もしくはＶ経験ない場合は指でＶを撫でるに。
+IF ASSIPLAY == 0 && FLAG:12 & 32 && (TALENT:処女 || EXP:Ｖ経験 <= 0)
+	SIF EXCOM_ABLE605() == 1
+		JUMP COM605
+ENDIF
+;前回の調教が指挿入れかつプレイヤの技巧３以上または前回の調教Ｇスポット刺激、またはクスコ挿入中ならＧスポット刺激に
+IF (PREVCOM == 4 && ABL:PLAYER:技巧 >= 3) || PREVCOM == 600 || TEQUIP:クスコ
+	SIF EXCOM_ABLE600() == 1
+		JUMP COM600
+ENDIF
+
+PRINTL 指挿入れ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 4
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 指挿入れ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+DOWNBASE:0 += 30
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 300
+SOURCE:性行動 = 200
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 10
+	SOURCE:屈従 = 150
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 50
+	SOURCE:屈従 = 250
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 250
+	SOURCE:屈従 = 400
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 600
+	SOURCE:屈従 = 700
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1200
+	SOURCE:屈従 = 1300
+ELSE
+	SOURCE:快Ｖ = 1800
+	SOURCE:屈従 = 2000
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	SOURCE:痛み = 300
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:屈従 , 0.50
+	SOURCE:痛み = 180
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:屈従 , 0.80
+	SOURCE:痛み = 80
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:痛み = 30
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:屈従 , 1.50
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 700
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み += 200
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:痛み , 0.80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.50
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+ENDIF
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	TIMES SOURCE:屈従 , 2.00
+
+TCVAR:Ｖ経験 += 1
+
+;奴隷のＶ⇔調教者の指の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:ヴァギナ
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_4
+PRINTFORM %CALLNAME:TARGET%の
+IF TALENT:処女 == 1
+	PRINT 男を知らない
+ELSEIF PALAM:潤滑 >= PALAMLV:4
+	PRINT 濡れそぼった
+ENDIF
+IF TALENT:小柄体型
+	PRINT 幼いワレメ
+ELSE
+	PRINT 秘裂
+ENDIF
+IF TEQUIP:Ｖ系装着器具 == 1
+	PRINTFORML の中で、妖しくうねるバイブを前後に抜き差しした
+ELSEIF TEQUIP:Ｖ系装着器具 == 2
+	PRINTFORML の中で、鎮座している要石を前後に抜き差しした
+ELSEIF TEQUIP:Ｖ系装着器具 == 3
+	PRINTFORML の中で、唸り声を上げているローターを前後に抜き差しした
+ELSEIF TEQUIP:Ｖ系装着器具 == 4
+	PRINTFORML の中に取り付けてある電極の周りを指で撫で回した
+ELSEIF TEQUIP:Ｖ系装着器具 == 5
+	PRINTFORML の中に挿入されているバーベルを軽く揺らしてみた
+ELSEIF TEQUIP:Ｖ系装着器具 == 6
+	PRINTFORML の中で膨らんでいる風船を前後に抜き差しした
+ELSEIF TEQUIP:Ｖ系装着器具 == 7
+	PRINTFORML の中で、愛液を採集し続けている器具を軽く揺らしてみた
+ELSEIF TEQUIP:Ｖ系装着器具 == 9
+	PRINTFORML の中で座り込んでいる焼き芋を掴んで、軽く回してみた
+ELSEIF TEQUIP:クスコ
+	PRINTFORML のクスコで開かれた内壁を、ゆっくりと撫で回した
+ELSE
+	PRINTFORML に%CALLNAME:PLAYER%の指をゆっくりと挿入した…
+ENDIF

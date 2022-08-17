@@ -1,0 +1,220 @@
+﻿;=============================================================================
+;岩盤浴
+;=============================================================================
+;熱した岩からでる赤外線で熱々な感じのサウナみたいなもの
+;消耗はたぶん蒸し風呂より激しくなる。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE373
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:373 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 16384) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 15
+	RETURN 1
+;みすちー、あやや、うにゅほまたは動物耳持ちは従順が2以上ないとダメ
+SIF (NO:TARGET == 1025 || NO:TARGET == 1032 || NO:TARGET == 1063 || TALENT:動物耳) && ABL:Ｃ感覚 < 2
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手がスク水とビキニと褌以外のコスプレ中はだめ
+SIF ASSIPLAY && TEQUIP:PLAYER:コスチュームプレイ > 1 && TEQUIP:PLAYER:コスチュームプレイ != 2 && TEQUIP:PLAYER:コスチュームプレイ != 12 && TEQUIP:PLAYER:コスチュームプレイ != 17
+	RETURN 0
+;ビキニと褌以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 12 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 373) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM373
+IF NO:TARGET == 1025 || NO:TARGET == 1032 || NO:TARGET == 1063
+	PRINTL 鳥の岩盤蒸し
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 373
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 鳥の岩盤蒸し
+	LOCAL:1 = 1
+ELSEIF NO:TARGET == 1037 || NO:TARGET == 1038
+	PRINTL 芋の岩盤蒸し
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 373
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 芋の岩盤蒸し
+	LOCAL:1 = 2
+ELSE
+	PRINTL 岩盤浴
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 373
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 岩盤浴
+	LOCAL:1 = 0
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 60
+
+IF TEQUIP:特殊風呂入浴中 == 15
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+LOCAL:2 = MAX(CFLAG:好感度 / 250, 20)
+SOURCE:情愛 = LOCAL:2
+SOURCE:液体追加 = 280
+
+;露出癖
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 20
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 50
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 120
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 190
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 270
+ELSE
+	SOURCE:露出 = 360
+ENDIF
+
+IF LOCAL:1 == 1
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:液体追加 , 2.50
+	TIMES SOURCE:露出 , 1.60
+ELSEIF LOCAL:1 == 2
+	TIMES SOURCE:情愛 , 0.75
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:露出 , 2.00
+ENDIF
+
+TFLAG:155 = 0
+TEQUIP:特殊風呂入浴中 = 15
+RETURN 1
+
+;--------------------------------------------------
+;岩盤浴中
+;--------------------------------------------------
+@EQUIP_COM373
+IF NO:TARGET == 1025 || NO:TARGET == 1032 || NO:TARGET == 1063
+	PRINTL ＜岩蒸し鳥調教中＞
+	LOCAL = 1
+ELSEIF NO:TARGET == 1037 || NO:TARGET == 1038
+	PRINTL ＜岩ふかし芋調教中＞
+	LOCAL = 2
+ELSE
+	PRINTL ＜岩盤浴入浴中＞
+	LOCAL = 0
+ENDIF
+
+TFLAG:155 += (TFLAG:155 < 10) ? 1 # 0
+DOWNBASE:0 += 10 + 10 * TFLAG:155
+DOWNBASE:1 += 20 + 20 * TFLAG:155
+
+LOCAL:1 = MAX(CFLAG:好感度 / 500, 10)
+LOCAL:2 = 180
+LOCAL:3 = 35 * TFLAG:155
+
+;露出癖
+IF ABL:露出癖 == 0
+	LOCAL:4 = 10
+ELSEIF ABL:露出癖 == 1
+	LOCAL:4 = 20
+ELSEIF ABL:露出癖 == 2
+	LOCAL:4 = 50
+ELSEIF ABL:露出癖 == 3
+	LOCAL:4 = 90
+ELSEIF ABL:露出癖 == 4
+	LOCAL:4 = 140
+ELSE
+	LOCAL:4 = 200
+ENDIF
+
+IF LOCAL == 1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 2.50
+	TIMES LOCAL:3 , 1.20
+	TIMES LOCAL:4 , 1.60
+ELSEIF LOCAL == 2
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 2.00
+	TIMES LOCAL:3 , 2.00
+	TIMES LOCAL:4 , 1.20
+ENDIF
+
+SOURCE:情愛 += LOCAL:1
+SOURCE:液体追加 += LOCAL:2
+SOURCE:欲情追加 += LOCAL:3
+SOURCE:露出 += LOCAL:4
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_373
+IF TEQUIP:特殊風呂入浴中 == 15
+	PRINTFORML 岩盤浴室から%CALLNAME:TARGET%を連れ出した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を岩盤浴室へと連れ込んだ
+ENDIF

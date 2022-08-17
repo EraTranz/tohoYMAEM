@@ -1,0 +1,380 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;浣腸プレイ
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+;	■■■注意■■■
+;	かなり過激なことをやっています。
+;	汚物系・排水溝系の耐性がない人は引き返してください。
+;-------------------------------------------------
+
+;-------------------------------------------------
+;コマンド専用処理（１）TRAINSTART後
+;-------------------------------------------------
+@K2008_COMSYSTEM_TRAINSTART_174
+;浣腸処理を初期化（たまに残っていることがあるので）
+CALLF K2008F_COM_174_TYPE("RESET")
+CALLF K2008F_COM_174_ELAPSEDTIME("RESET")
+
+;-------------------------------------------------
+;コマンド専用処理（２）SELECTCOM後
+;-------------------------------------------------
+@K2008_COMSYSTEM_SELECT_174
+;取り付け
+IF TEQUIP:Ａ系装着器具 != K2008F_TEQUIPTYPE("浣腸")
+	;セットした浣腸の種類を覚えておく
+	;汎用口上に来るときにはTFLAG:99が消えているため
+	CALLF K2008F_COM_174_TYPE("SET")
+	;装着時間のカウント開始
+	CALLF K2008F_COM_174_ELAPSEDTIME("SET")
+;取り外し
+ELSE
+	;ここでは何も処理しない
+ENDIF
+
+;-------------------------------------------------
+;コマンド専用処理（３）アイテム装着中※SELECTCOM後、SOURCE解析完了前
+;-------------------------------------------------
+@K2008_COMSYSTEM_EQUIPPING_174
+;浣腸プレイ中
+IF TEQUIP:Ａ系装着器具 == K2008F_TEQUIPTYPE("浣腸") && SELECTCOM != K2008F_GETNUM_TRAIN("浣腸プレイ")
+	CALLF K2008F_COM_174_ELAPSEDTIME("COUNTUP")
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_EVENT_WITH_ENEMA
+	CATCH
+		CALL K2008_EVENT_WITH_ENEMA
+	ENDCATCH
+ENDIF
+
+;-------------------------------------------------
+;RANK未指定（RANK指定がある場合はそちらを優先する）
+;-------------------------------------------------
+@K2008_COM_174
+
+;分岐口上方式を採用
+;取り付け
+IF TEQUIP:Ａ系装着器具 == K2008F_TEQUIPTYPE("浣腸")
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_174_SET
+	CATCH
+		CALL K2008_COM_GENERAL
+	ENDCATCH
+;取り外し
+ELSE
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_COM_174_UNSET
+	CATCH
+		CALL K2008_COM_GENERAL
+	ENDCATCH
+	;取り外し終わった処理
+	CALLF K2008F_COM_174_TYPE("UNSET")
+	CALLF K2008F_COM_174_ELAPSEDTIME("UNSET")
+	CFLAG:__K2008N_CFLAG_SELECTCOM__ += 1
+ENDIF
+
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_COM_174_SET
+;初回実行時
+IF EXP:調教排泄経験 == EXPLV:0
+	PRINTFORMW 「ちょ、ちょっと、なによそれ！」
+	PRINTFORMW 「いやいや、冗談、冗談よね？　私に中身をかけるだけよね？」
+	PRINTFORMW 「い、痛ッ！　ま、まだ許してあげるわ。　だから、ほら、そのまま抜いて」
+	PRINTFORMW 「ぬ、抜いて、お、押しちゃだめよ、それ、おしちゃ、だ、だめ……」
+	PRINTFORMW 「ーーッ！　や、は、はいって、入ってくる……　い、いやぁ……」
+	PRINTFORML 
+	PRINTFORMW 「痛ッ、ご丁寧にプラグまで入れて……」
+	PRINTFORMW 「と……　トイレには、行かせてくれるのよね？　もちろんよね、ね……？」
+;2回目以降
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「ま、またそれ……　そんなに気に入ったの？」
+			PRINTFORMW 「……変態の嗜好はさっぱり理解できないわ」
+			PRINTFORMW 「うんっ、き、気持ち悪い……　ほんと、何がいいのよ……」
+		CASEELSE
+			PRINTFORMW 「も、もうやだ！　お浣腸ヤダァアア！　や、やめっ」
+			PRINTFORMW 「は、入んない、もう入らないってば！」
+	ENDSELECT
+ENDIF
+
+@K2008_RANK0_COM_174_UNSET
+;初回実行時
+IF EXP:調教排泄経験 == EXPLV:0
+	PRINTFORML 「ね、ねえ、ト、トイレ、行かせてくれるのよ、ね？」
+	PRINTFORMW 「お願い、お願いだから、トイレ……　え、行っていいの？」
+	PRINTFORML 
+	PRINTFORML 「じゃ、じゃあ！　ちょっとだけ失礼して……　え？」
+	PRINTFORMW 「どこに行くって、そりゃトイレに――」
+	PRINTFORML 「や、ヤダ！　ここはトイレじゃないって！　違う、違うわ！」
+	PRINTFORML 「プ、プラグ抜いちゃ駄目！　出ちゃう！　抜いたら出ちゃッ――」
+	PRINTFORMW 
+	CALL K2008_SE("液便", 3)
+	PRINTFORML 
+	PRINTFORML 「い、イヤァアアア！！」
+	PRINTFORMW 「こんなのっ、こんなのッ！　トイレ、行けな……」
+	CALL K2008_SE("脱糞")
+	PRINTFORMW 「もうイヤッ！　見ないで……　汚いから見ないで……　ううぅ」
+;2回目以降
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORML 「お願いだから見ないで……」
+			PRINTFORMW 「もうこんな姿見られるのイヤァぁああ！！」
+			PRINTFORML
+			CALL K2008_SE("液便")
+			PRINTFORML 
+			PRINTFORMW 「ま、また見られた……」
+		CASE 1
+			PRINTFORML 「も、やだぁ……　ト、トイレ……」
+			PRINTFORMW 「ここで、もう、ここでいいから……　ここで出させてください！」
+			PRINTFORML
+			PRINTFORML キュポンッ
+			CALL K2008_SE("液便")
+			PRINTFORML 
+			PRINTFORMW 「うぅ……　止まんない、止まんないよぉ……」
+		CASEELSE
+			PRINTFORMW 「お腹痛い……　ンぐッ、お、押しちゃ駄、んぷっ！」
+			PRINTFORML
+			PRINTFORML ブポンッ
+			CALL K2008_SE("液便")
+			PRINTFORML 
+			PRINTFORMW 「うぁ、あぁ……　ぜ、全部でれるぅ……　うぐぅ……」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_COM_174_SET
+CALL K2008_RANK0_COM_174_SET
+
+@K2008_RANK1_COM_174_UNSET
+CALL K2008_RANK0_COM_174_UNSET
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_COM_174_SET
+CALL K2008_RANK0_COM_174_SET
+
+@K2008_RANK2_COM_174_UNSET
+CALL K2008_RANK0_COM_174_UNSET
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_COM_174_SET
+;初回実行時
+IF EXP:調教排泄経験 == EXPLV:0
+	PRINTFORMW 「お浣腸？　え、え？」
+	PRINTFORMW 「したことはないけど……　そんなにいっぱい入れちゃうんだ」
+	PRINTFORMW 「んっ、はぅ、入ってきてるぅ……」
+	PRINTFORMW 「意外と気持ちいい、のかな？　あ、もう一本入れるの？」
+	PRINTFORMW 「あはぁ……　お腹がずっしりしてきちゃう」
+;2回目以降
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「あら、また浣腸するの？」
+			PRINTFORMW 「この間のも結構気持ちよかったから、いっぱい入れていいわよ」
+		CASEELSE
+			PRINTFORMW 「あら、今度は白い浣腸なのね」
+			PRINTFORMW 「お尻から白い液体を出すなんて恥ずかしそう……」
+	ENDSELECT
+ENDIF
+
+@K2008_RANK3_COM_174_UNSET
+;初回実行時
+IF EXP:調教排泄経験 == EXPLV:0
+	PRINTFORMW 「んっ、出していいのね。　じゃあトイレに行ってく……　ここでするの？」
+	PRINTFORMW 「お掃除大変そう……　まぁ掃除なんて今更ね。　どうせベチョベチョだし」
+	PRINTFORMW 「じゃあ遠慮なく排泄させてもらうわ。　プラグ、抜いて頂戴」
+	PRINTFORML 
+	CALL K2008_SE("液便")
+	PRINTFORML 
+	PRINTFORMW 「んっ、んーっ、んぅ、覚悟はしてたけど、は、恥ずかしいわね」
+	PRINTFORMW 「けど、お腹すっきりするの、んふっ、んん、ふぅ、癖になりそう」
+	PRINTFORML 
+	CALL K2008_SE("脱糞")
+	PRINTFORML 
+	PRINTFORMW 「うわ、汚っ、こんなに溜まってたのね」
+	PRINTFORMW 「こんなことするなんて思ってなくて……　幻滅しちゃった？」
+;2回目以降
+ELSE
+	;前半
+	SELECTCASE RAND:2
+		CASE 1
+			CALL K2008_SE("液便")
+			PRINTFORMW 
+			PRINTFORMW 「いっ、いきなりプラグ抜くなんてズルいわね」
+			PRINTFORMW 「んーーんっ、まだ残ってる、かな？　ふ、んんっ！」
+		CASEELSE
+			PRINTFORMW 「んぅ、プラグ抜いちゃうの？　ちょっとまって」
+			PRINTFORMW 「よっと……　ほら、この格好ならよく飛ばせると思うわ」
+			PRINTFORMW 「あんっ、プラグ弄ってないで、はやくぅ」
+			PRINTFORML
+			CALL K2008_SE("液便")
+			PRINTFORML 
+			PRINTFORMW 「あはぁ、気持ちイィ。　空っぽになるまで出しちゃうわね」
+	ENDSELECT
+	;後半（追加構文）
+	SIF K2008F_DEVRANK("排泄") >= 3
+		TRYCALL K2008_RANK3_COM_174_UNSET_ADDITINAL
+ENDIF
+
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_COM_174_SET
+CALL K2008_RANK3_COM_174_SET
+
+@K2008_RANK4_COM_174_UNSET
+CALL K2008_RANK3_COM_174_UNSET
+
+;-------------------------------------------------
+;RANK = 5
+;あぶのーまるぱっちがある場合、拡張口上にも飛ぶ
+;-------------------------------------------------
+@K2008_RANK5_COM_174_SET
+TRYCCALL K2008_EXIST_ABNORMAL
+	IF K2008F_DEVRANK("排泄") >= 3
+		TRYCALL K2008_RANK5_COM_174_SET2
+	ELSE
+		CALL K2008_RANK3_COM_174_SET
+	ENDIF
+CATCH
+	CALL K2008_RANK3_COM_174_SET
+ENDCATCH
+
+@K2008_RANK5_COM_174_UNSET
+TRYCCALL K2008_EXIST_ABNORMAL
+	IF K2008F_DEVRANK("排泄") >= 3
+		TRYCALL K2008_RANK5_COM_174_UNSET2
+	ELSE
+		CALL K2008_RANK3_COM_174_UNSET
+	ENDIF
+CATCH
+	CALL K2008_RANK3_COM_174_UNSET
+ENDCATCH
+
+
+;-------------------------------------------------
+;浣腸中のイベント口上
+;	＜浣腸＋アナルプラグ挿入中＞
+;	の表示直後に呼ばれる
+;-------------------------------------------------
+@K2008_EVENT_WITH_ENEMA
+;空白行
+SELECTCASE K2008F_COM_174_ELAPSEDTIME("GET")
+	CASE 2, 3
+		PRINTFORMW 時間経過とともに便意がどんどん増加しているようだ
+	CASE 5, 7
+		PRINTFORMW 浣腸してからだいぶ時間が経過した
+		PRINTFORMW プラグをひり出そうとするので、強引に押し込んでやると激しくえずいている
+ENDSELECT
+
+;-------------------------------------------------
+;浣腸中のイベント口上
+;	＜浣腸＋アナルプラグ挿入中＞
+;	の表示直後に呼ばれる
+;-------------------------------------------------
+@K2008_RANK5_EVENT_WITH_ENEMA
+
+TRYCCALL K2008_EXIST_ABNORMAL
+	TRYCALL K2008_EVENT_WITH_ENEMA2
+CATCH
+	;通常の構文を使う
+	CALL K2008_EVENT_WITH_ENEMA
+ENDCATCH
+
+
+;-------------------------------------------------
+;絶頂口上（ＣＶＡＢ）
+;	RETURN 1すると、射精させた口上は呼び出されない
+;	絶頂＋射精させた口上を同時に処理したい場合はRETURN 1のこと
+;-------------------------------------------------
+@K2008_EX_COM_174
+IF TEQUIP:Ａ系装着器具 == K2008F_TEQUIPTYPE("浣腸")
+	;取り付け時は汎用口上に飛ばす
+	CALL K2008_ORGASM_GENERAL
+ELSE
+	;排泄行為は全てコマンド口上で終わらせるので表示しない
+	;絶頂も同じ
+ENDIF
+
+;================================================
+;浣腸に使われた薬剤（液体）の種類を管理
+;------------------------------------------------
+;■戻り値
+;	GETまたは空文字列の場合は、最後に使われた液体の種類を返す
+;	SET/RESETの場合は0が戻る（普通はCALLFで呼ぶので意味なし）
+;	UNSETされると、種類の数値×-1で上書きする
+;------------------------------------------------
+;■引数
+;ARGS
+;	"GET"
+;	"SET"
+;	"SET_OVERRIDE"
+;		あぶのーまるぱっちでのみ使用。
+;	"RESET"
+;	"UNSET"
+;		通常は使用せず口上システム側でのみ使用。
+;ARG
+;	SET_OVERRIDEのみ使用。詳細はあぶのーまるぱっち参照
+;================================================
+@K2008F_COM_174_TYPE(ARGS="", ARG=0)
+#FUNCTION
+#DIM _TYPE
+SELECTCASE ARGS
+	CASE "", "GET"
+		RETURNF _TYPE
+	CASE "SET"
+		_TYPE = TFLAG:99
+	CASE "SET_OVERRIDE"
+		SIF ARG < 10
+			THROW 【K2008エラー】未定義の種類 {ARG} が指定されました
+		_TYPE = ARG
+	CASE "UNSET"
+		;取り外した後は負値にしておく
+		_TYPE *= -1
+		RETURNF _TYPE
+	CASE "RESET"
+		VARSET _TYPE, 0
+		RETURNF 0
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+
+RETURNF 0
+
+
+;================================================
+;浣腸されてからの時間経過
+;------------------------------------------------
+;■戻り値
+;	浣腸されたターン数を0とした時の経過ターン数
+;------------------------------------------------
+;■引数
+;ARGS
+;	"GET"
+;	"SET"
+;	"RESET"
+;	"UNSET"
+;		通常は使用せず口上システム側でのみ使用。
+;================================================
+@K2008F_COM_174_ELAPSEDTIME(ARGS="")
+#FUNCTION
+#DIM _NUM
+SELECTCASE ARGS
+	CASE "", "GET"
+		RETURNF _NUM
+	CASE "SET", "RESET"
+		_NUM = 0
+	CASE "UNSET"
+		_NUM *= -1
+	CASE "COUNTUP"
+		_NUM += 1
+ENDSELECT
+
+RETURNF 0

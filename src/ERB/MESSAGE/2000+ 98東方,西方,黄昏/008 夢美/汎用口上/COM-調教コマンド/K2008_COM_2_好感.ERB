@@ -1,0 +1,235 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;（専用がないという意味で）汎用コマンド口上
+;========================================================
+
+;-------------------------------------------------
+;好感系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽／苦痛を伴わない場合
+IF ARG:0 == 0 && ARG:3 == 0
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「何よ、私に何かさせたいの？」
+		CASE 1
+			PRINTFORMW 「時間の無駄だわ。さっさと出て行って、私に一人の時間を頂戴」
+		CASEELSE
+			PRINTFORMW 「さっさと飽きて帰って頂戴。面倒くさいんだから」
+	ENDSELECT
+;快楽≧拒絶および快楽≧苦痛の場合
+ELSEIF ARG:0 >= ARG:2 && ARG:0 >= ARG:3
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「なによ。いっぱしのことはできるんじゃない」
+		CASE 1
+			PRINTFORMW 「いまさら何の真似よ。改心でもしたの？」
+		CASEELSE
+			PRINTFORMW 「どこが良いんだかさっぱりだわ」
+	ENDSELECT
+;上記以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「今度やったら苺クロスでボコボコにしてあげるわ。楽しみにしてなさい。」
+		CASEELSE
+			PRINTFORMW 「窮してこんな真似しかできなくなったのね。哀れむ気にもなれないわ」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽／苦痛を伴わない場合
+IF ARG:0 == 0 && ARG:3 == 0
+	SELECTCASE RAND:7
+		CASE 6
+			PRINTFORMW 「優しく扱ってれば大人しくなるとでも？　甘いわね」
+		CASE 5
+			PRINTFORMW 「ふふ、こんな事が効果的とか勘違いしてないかしら？」
+		CASE 4
+			PRINTFORMW （……何の狙いがあるのかしら、よく分からないわね）
+		CASE 3
+			PRINTFORMW 「あんまり慣れ慣れしくしないで……」
+		CASE 2
+			PRINTFORMW 「ふんっ、いまさらこれで懐柔しようって魂胆かしら」
+		CASE 1
+			PRINTFORMW 「見くびらないでよね。こんなのどうってことないわ」
+		CASEELSE
+			PRINTFORMW 「お人形さん遊びがしたければ他所に行ってね」
+	ENDSELECT
+;快楽＞拒絶および快楽＞苦痛の場合
+ELSEIF ARG:0 > ARG:2 && ARG:0 > ARG:3
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「素敵、とはこの程度じゃ流石に言えないわね」
+		CASE 1
+			PRINTFORMW 「はいはい、大人しくしてればいいんでしょ」
+		CASEELSE
+			PRINTFORMW 「こんな真似しても服従なんかしないわよ」
+	ENDSELECT
+;上記以外
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「窮鼠猫を……　って理解できる？」
+		CASE 1
+			PRINTFORMW 「いい加減にしなさい。後が怖いわよ」
+		CASEELSE
+			PRINTFORMW 「くぅっ、こんなの何がいいのよ」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽／苦痛を伴わない場合
+IF ARG:0 == 0 && ARG:3 == 0
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「ふーん。仕方ないわね、付き合ってあげるわ。」
+		CASE 1
+			PRINTFORMW 「今のうちは大人しくしてあげるわ」
+		CASEELSE
+			PRINTFORMW 「何よこんなこと……」
+	ENDSELECT
+;快楽＞拒絶および快楽＞苦痛の場合
+ELSEIF ARG:0 > ARG:2 && ARG:0 > ARG:3
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「存外、悪くない……　のかな？　よくわからないわ」
+		CASE 1
+			PRINTFORMW 「んぅ……　ちょっとだけいいかも」
+		CASEELSE
+			PRINTFORMW 「何事もやってみないとわからない、かしらね」
+	ENDSELECT
+;上記以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「ちょ、ちょっとなんなのよ！」
+		CASEELSE
+			PRINTFORMW 「素敵さの欠片も見当たらないわね」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽／苦痛を伴わない場合
+IF ARG:0 == 0 && ARG:3 == 0
+	SELECTCASE RAND:5
+		CASE 4
+			PRINTFORMW 「ご奉仕、っていうのかしら？　上手にできてるといいんだけど」
+		CASE 3
+			PRINTFORMW 「ふふ、悪くない気分だわ。%K2008FS_CALL_YOUR_NAME()%はどう？」
+		CASE 2
+			PRINTFORMW 「ほらほら、どうして欲しいか言ってみなさい。やってあげるわ」
+		CASE 1
+			PRINTFORMW 「たまには従順なのも素敵だと思わない？」
+		CASEELSE
+			PRINTFORMW 「嫌じゃないっていうのは……　良いってことよ」
+	ENDSELECT
+;快楽＞拒絶および快楽＞苦痛の場合
+ELSEIF ARG:0 > ARG:2 && ARG:0 > ARG:3
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「素敵だわ。もっとやりましょうね」
+		CASEELSE
+			PRINTFORMW 「気持ちいいって甘い罪ね。このまま堕落しちゃいそう」
+	ENDSELECT
+;上記以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「こんな身勝手なことをするなんて酷いのね」
+		CASEELSE
+			PRINTFORMW 「優しくしてくれたら素直になってもいいわよ？」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽／苦痛を伴わない場合
+IF ARG:0 == 0 && ARG:3 == 0
+	SELECTCASE RAND:6
+		CASE 5
+			PRINTFORMW 「もっと玩具みたいに好き勝手使ってもいいのに……　やさしい」
+		CASE 4
+			PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%ばかり楽しんでずるいわ」
+			PRINTFORMW 「……上手におねだりしたらご褒美くれる？」
+		CASE 3
+			PRINTFORMW 「ほーら、我慢しなくていいのよ。もっと大胆に行きましょ？」
+		CASE 2
+			PRINTFORMW 「ねえ、次はどうして欲しい？　いろいろしてあげるわ」
+		CASE 1
+			PRINTFORMW 「あはぁ、こんなのも素敵ね」
+		CASEELSE
+			PRINTFORMW 「ほらほら、もっといっぱいしましょう、ね？」
+	ENDSELECT
+;快楽が大きめ
+ELSEIF ARG:0 >= 4
+	SELECTCASE RAND:5
+		CASE 4
+			PRINTFORMW 「いい、イィ♪　ご奉仕中なのにスケベ顔出ちゃうっ、すてきぃ」
+		CASE 3
+			PRINTFORMW 「止まんない止まんないッ！　体が勝手に動いちゃう！！」
+		CASE 2
+			PRINTFORMW 「もっとぉ、もっと頑張るからっ、頭の中がとろけそうで、素敵ッ！」
+		CASE 1
+			PRINTFORMW 「あはぁ、気持ちよすぎてご奉仕忘れちゃいそう」
+		CASEELSE
+			PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%はどう？　私は……　我慢できないっぽいわ！」
+	ENDSELECT
+;快楽＞拒絶および快楽＞苦痛の場合
+ELSEIF ARG:0 > ARG:2 && ARG:0 > ARG:3
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「スケベなご奉仕スキよ、%K2008FS_CALL_YOUR_NAME()%も好きよね？」
+		CASE 2
+			PRINTFORMW 「あぁ、病み付きになりそう、素敵」
+		CASE 1
+			PRINTFORMW 「いっぱいしてあげるから、もっと楽しみましょうね」
+		CASEELSE
+			PRINTFORMW 「これも素敵ね。まだまだいけるわよ」
+	ENDSELECT
+;上記以外（ちょっとイヤ）
+ELSE
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「反抗なんてしないわ」
+			PRINTFORMW 「できるわけ無いじゃない。　私は%CALLNAME:MASTER%の玩具なんだから」
+		CASE 2
+			PRINTFORMW 「酷いのね……　嫌いになりそうだから、次はやさしくして、ね？」
+		CASE 1
+			PRINTFORMW 「んもう、もうちょっと優しくしてくれてもいいじゃない」
+		CASEELSE
+			PRINTFORMW 「こんなのやられたら、やり返してあげなきゃね」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+@K2008_RANK5_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+
+CALL K2008_RANK4_COM_GENERAL_FAVOR(ARG:0, ARG:1, ARG:2, ARG:3)
+

@@ -1,0 +1,435 @@
+﻿;=============================================================================
+;尻子玉抜き
+;=============================================================================
+;(元ファイルより)尻子玉を抜かれると腑抜けになってしまうらしい。なってもらおうじゃないか
+;シチュよりもゲーム性を追求していると解釈したので別途用意した尻子玉抜きを作成
+;強さと実行判定が存在する以外は元の尻子玉抜きと扱いは同じなのでTFLAG:140を使用。この辺の参考は吸血
+;腑抜け設定を活かすため初回は最大体力と気力が低下するように。また地の文を追加し、Ａ拡張経験も入る様に
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE402
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:402 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;Ａ拡張経験が0の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ａ拡張経験 == 0
+	RETURN 0
+;すでに実行しているとダメ
+SIF TFLAG:140 & 8
+	RETURN 0
+;調教者がにとりまたは河童でないとダメ
+SIF NO:PLAYER != 1040 && TALENT:PLAYER:河童 == 0
+	RETURN 0
+;HARDモード以上は別条件
+IF FLAG:3 >= 3
+	;技巧が4以上無いと駄目
+	SIF ABL:PLAYER:技巧 < 4
+		RETURN 0
+	;調教者の技巧が4のときは一定のＡ経験が必要
+	SIF ABL:PLAYER:技巧 == 4 && EXP:Ａ経験 < EXPLV:3
+		RETURN 0
+ELSE
+	;にとり以外の河童の場合は技巧が4以上無いと駄目
+	IF TALENT:PLAYER:河童 && NO:PLAYER != 1040
+		SIF ABL:PLAYER:技巧 < 4
+			RETURN 0
+	ENDIF
+ENDIF
+;体力が1500以上じゃないとダメ
+SIF BASE:体力 < 1500 && !(FLAG:16 & 32)
+	RETURN 0
+;気力が500以上じゃないとダメ
+SIF BASE:気力 < 500 && !(FLAG:16 & 32)
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 1) == 0
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;小柄体型なら従順が3以上かつマゾっ気が3以上じゃないと実行できない
+IF TALENT:小柄体型
+	SIF ABL:従順 < 3 || ABL:マゾっ気 < 3
+		RETURN 0
+ENDIF
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 402) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM402
+PRINTL 尻子玉抜き
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 402
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 尻子玉抜き
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;一度尻子玉を抜かれると消耗が軽減
+DOWNBASE:0 += (CFLAG:10 & 1) ? 500 # 700
+DOWNBASE:1 += (CFLAG:10 & 1) ? 1000 # 5000
+
+SOURCE:露出 = 500
+SOURCE:逸脱 = 14000
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 2000
+	SOURCE:屈従 = 1500
+	SOURCE:不潔 = 25000
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 3000
+	SOURCE:屈従 = 1700
+	SOURCE:不潔 = 17000
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 4500
+	SOURCE:屈従 = 2000
+	SOURCE:不潔 = 8000
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 6900
+	SOURCE:屈従 = 3200
+	SOURCE:不潔 = 3500
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 7500
+	SOURCE:屈従 = 4500
+	SOURCE:不潔 = 1200
+ELSE
+	SOURCE:快Ａ = 10000
+	SOURCE:屈従 = 6000
+	SOURCE:不潔 = 500
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:屈従, 0.60
+	SOURCE:痛み = 1500
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:屈従, 0.90
+	SOURCE:痛み = 900
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従, 1.00
+	SOURCE:痛み = 700
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.10
+	TIMES SOURCE:屈従, 1.10
+	SOURCE:痛み = 300
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.25
+	TIMES SOURCE:屈従, 1.25
+	SOURCE:痛み = 150
+ELSE
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:屈従, 1.40
+	SOURCE:痛み = 80
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:痛み , 3.00
+	TIMES SOURCE:屈従 , 0.10
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:痛み , 2.00
+	TIMES SOURCE:屈従 , 0.20
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:痛み , 1.00
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:痛み , 0.50
+	TIMES SOURCE:屈従, 1.00
+ELSE
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:痛み , 0.10
+	TIMES SOURCE:屈従 , 1.30
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:屈従, 0.10
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:屈従, 0.50
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:屈従, 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.10
+	TIMES SOURCE:屈従, 1.10
+ELSE
+	TIMES SOURCE:快Ａ , 1.25
+	TIMES SOURCE:屈従, 1.25
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+SIF EXP:Ａ拡張経験 == 0
+	TCVAR:異常経験 += 1
+TCVAR:Ａ拡張経験 += 1
+TCVAR:Ａ経験 += 10
+
+;奴隷のＡ⇔調教者の指の汚れが移動
+STAIN:アナル |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:アナル
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+
+TFLAG:140 |= 8
+
+;尻子玉入手イベント
+SIF FLAG:12 & 8
+	CALL SWEET_POTATO_SHIRIKODAMA
+
+LOCAL:1 = 0
+IF CFLAG:10 & 1
+	;何度も尻子玉を抜かれているならクセになってしまう
+	SOURCE:中毒充足 = 2500
+	IF ABL:Ａ感覚 >= 5
+		LOCAL:1 = 4
+		SOURCE:中毒充足 += 2500
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL:1 = 3
+		SOURCE:中毒充足 += 1500
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL:1 = 2
+		SOURCE:中毒充足 += 500
+	ENDIF
+ELSE
+	;尻子玉抜きが初体験のときは腑抜けになってしまう
+	SOURCE:トラウマ = 2500
+	MAXBASE:0 -= 100
+	MAXBASE:1 -= 200
+	LOCAL:1 = 1
+ENDIF
+;尻子玉を抜かれたメッセージの口上・地の文表示
+SIF LOCAL:1 > 0
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 9, LOCAL:1
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_402
+PRINTFORML %CALLNAME:TARGET%の尻子玉を抜こうとしたが拒絶された。
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_402
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を四つん這いにさせ、お尻を高々と持ち上げさせた
+PRINTFORML そして%CALLNAME:TARGET%の肉穴にいきなり手を突っ込むと、奥に鎮座していた尻子玉を素早く抜き取った
+PRINTFORM %CALLNAME:PLAYER%の拳が抜かれた%CALLNAME:TARGET%の肛門は
+IF ABL:Ａ感覚 <= 2
+	PRINTL ぽっかり口を開いている
+ELSEIF ABL:Ａ感覚 == 3
+	PRINTL 拡がったままなかなか戻らない
+ELSEIF ABL:Ａ感覚 == 4
+	PRINTL まるで洞窟のように大きな口を開けている…
+ELSE
+	PRINTL 最初からそうであったかのように拡き切っている…
+	PRINTFORML 尻子玉を抜かれた快感からか、それとも苦痛からか%CALLNAME:TARGET%が大きく息を継ぐ度に菊門をヒクつかせている……
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_402, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+;ABL:Ａ感覚
+IF ABL:Ａ感覚
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:Ａ感覚
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:2%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;男嫌い
+IF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
+;女嫌い
+ELSEIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 7
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+;淫尻
+IF TALENT:淫尻
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 7
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:173%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+TFLAG:241 = 50

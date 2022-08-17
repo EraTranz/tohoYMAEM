@@ -1,0 +1,156 @@
+﻿;=============================================================================
+;幽明の苦輪
+;=============================================================================
+;5ターン継続、使用中奉仕効果増大、体力減少大
+;TEQUIP:幽明の苦輪を使わせてもらいました
+;奉仕行動以外はほぼ体力消費するだけの悲しい効果
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE443
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:443 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;対象が妖夢のときは半霊が調教可能なキャラでなおかつ主人や助手をしていない状態でないと使えない
+IF NO:TARGET == 1019
+	;半霊が現在調教可能
+	LOCAL:1 = 0
+	FOR LOCAL, 0, CHARANUM
+		;主人や助手は除外
+		SIF LOCAL == MASTER || LOCAL == ASSI
+			CONTINUE
+		;妊娠していたら除外
+		SIF TALENT:LOCAL:妊娠 == 1
+			CONTINUE
+		;失踪中などこの場にいないなら除外
+		SIF CFLAG:LOCAL:4
+			CONTINUE
+		;反発刻印もしくは恐怖刻印３がある場合は除外（拒絶する）
+		SIF MARK:LOCAL:恐怖刻印 > 2 || MARK:LOCAL:反発刻印
+			CONTINUE
+		;半霊だったらLOCAL:1に+1
+		SIF NO:LOCAL == 1065
+			LOCAL:1 += 1
+	NEXT
+	SIF LOCAL:1 == 0
+		RETURN 0
+;対象が妖忌のときは半霊(忌)が調教可能なキャラでなおかつ主人や助手をしていない状態でないと使えない
+ELSEIF NO:TARGET == 1070
+	;半霊(忌)が現在調教可能
+	LOCAL:1 = 0
+	FOR LOCAL, 0, CHARANUM
+		;主人や助手は除外
+		SIF LOCAL == MASTER || LOCAL == ASSI
+			CONTINUE
+		;妊娠していたら除外
+		SIF TALENT:LOCAL:妊娠 == 1
+			CONTINUE
+		;失踪中などこの場にいないなら除外
+		SIF CFLAG:LOCAL:4
+			CONTINUE
+		;反発刻印もしくは恐怖刻印３がある場合は除外（拒絶する）
+		SIF MARK:LOCAL:恐怖刻印 > 2 || MARK:LOCAL:反発刻印
+			CONTINUE
+		;半霊(忌)だったらLOCAL:1に+1
+		SIF NO:LOCAL == 1091
+			LOCAL:1 += 1
+	NEXT
+	SIF LOCAL:1 == 0
+		RETURN 0
+;対象が妖夢か妖忌でないとダメ
+ELSE
+	RETURN 0
+ENDIF
+;助手可または恋慕または奉仕精神４以上または従順・技巧・奉仕精神が全て3以上
+SIF CFLAG:1 < 2 && TALENT:恋慕 == 0 && ABL:奉仕精神 < 4 && (ABL:従順 < 3 || ABL:技巧 < 3 || ABL:奉仕精神 < 3)
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 443) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM443
+PRINTL 幽明の苦輪
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 443
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 幽明の苦輪
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+
+IF TEQUIP:幽明の苦輪 > 0
+	DOWNBASE:1 += 30
+	TEQUIP:幽明の苦輪 = 0
+ELSE
+	DOWNBASE:1 += 40
+	TEQUIP:幽明の苦輪 = 6
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;幽明の苦輪発動中
+;--------------------------------------------------
+@EQUIP_COM443
+PRINTL ＜幽明の苦輪発動中＞
+LOCALS:0 = 妖夢
+LOCALS:1 = 妖忌
+
+DOWNBASE:0 += DOWNBASE:1 * 4 / 5
+DOWNBASE:1 += 20
+
+SOURCE:性行動 += 300
+IF (SELECTCOM >= 40 && SELECTCOM <= 59) || (SELECTCOM >= 300 && SELECTCOM <= 309) || SELECTCOM == 602 || SELECTCOM == 603 || SELECTCOM == 604 || SELECTCOM == 610
+	PRINTFORML %LOCALS:((NO:TARGET == 1070) > 0)%は半霊と一緒に奉仕をしている…
+	TIMES SOURCE:快Ｃ , 1.60
+	TIMES SOURCE:情愛 , 1.80
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:達成感 , 1.20
+	TIMES SOURCE:恭順追加 , 1.60
+	TIMES SOURCE:欲情追加 , 1.20
+	TIMES SOURCE:屈従 , 1.80
+	TIMES SOURCE:中毒充足 , 1.60
+ELSE
+	TIMES SOURCE:性行動 , 1.20
+ENDIF
+
+TEQUIP:幽明の苦輪 -= 1
+SIF TEQUIP:幽明の苦輪 == 0
+	PRINTFORML ＜幽明の苦輪が終了しました＞
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_443
+LOCALS:0 = 妖夢
+LOCALS:1 = 妖忌
+PRINTL 
+IF PREVCOM != 440 && PREVCOM != 441 && PREVCOM != 442 && PREVCOM != 443 && PREVCOM == 444
+	IF NO:TARGET == 70 
+		PRINTFORML %CALLNAME:MASTER%は半霊(忌)を調教の場所まで呼び出した。
+	ELSE
+		PRINTFORML %CALLNAME:MASTER%は半霊を調教の場所まで呼び出した。
+	ENDIF
+ENDIF
+IF TEQUIP:幽明の苦輪 > 0
+	PRINTFORML %LOCALS:((NO:TARGET == 1070) > 0)%\@(TALENT:恋慕) ? に幽明の苦輪をやめさせた # は幽明の苦輪をやめた\@
+ELSE
+	PRINTFORML %LOCALS:((NO:TARGET == 1070) > 0)%\@(TALENT:恋慕) ? は幽明の苦輪を使った # に幽明の苦輪を使わせた\@
+ENDIF

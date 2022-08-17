@@ -1,0 +1,32 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;調教後に触手に襲われる
+;TFLAG:99で触手に襲われる回数を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE161
+SELECTCASE K2008F_TRANK()
+	CASE 0
+		PRINTFORMW 「え、ちょ、ちょっと待って！　『これ』片づけてってよ！」
+		PRINTFORMW 「やだっ、来ないで！！　嫌ぁああーー」
+		PRINTFORML 
+		PRINTFORML ……夢美は調教終了後にも関わらず、触手に玩ばれている
+		PRINTFORML 
+		;汎用口上の快楽系に丸投げする
+		CALL K2008_COM_GENERAL, 2, 0, 1, 1
+	CASE 1 TO 3
+		PRINTFORML 「あ、あら～触手さん、今日も元気ですね」
+		PRINTFORMW 「……ほどほどで止めていただけると助かるわ」
+		PRINTFORML 
+		PRINTFORML 夢美は触手の塊に身を預け、触手の思うがままに凌辱されている
+		PRINTFORML 
+		;汎用口上の快楽系に丸投げする
+		CALL K2008_COM_GENERAL, 2, 0, 0, 0
+	CASE 4 TO 5
+		PRINTFORML 「んふふ、触手さん♪　まだまだ元気よね？」
+		PRINTFORMW 「ほらほら、いらっしゃい。　素敵な玩具はこっちよ」
+		PRINTFORML 
+		PRINTFORML 夢美は触手の塊に身を預け、触手の思うがままに凌辱されている
+		PRINTFORML 
+		;汎用口上の好感系に丸投げする
+		CALL K2008_COM_GENERAL, 1, 2, 0, 0
+ENDSELECT

@@ -1,0 +1,2100 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;システムに深くかかわる処理等
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;タイトルの処理
+;=============================================================================
+@SYSTEM_TITLE_OLD
+#DIM MENU_LENGTH, 1
+DRAWLINE
+ALIGNMENT CENTER
+FONTBOLD
+PRINTFORML %GAMEBASE_TITLE% ver.%DISPLAY_GAMEVERSION(GAMEBASE_VERSION)%
+FONTREGULAR
+PRINTL 製作年：2009～2012年
+PRINTFORML 原作者：芋
+PRINTL 改変年：2014.05.10
+PRINTL 改変者：house
+PRINTL 改変年：2015
+PRINTFORML 改変者：%GAMEBASE_AUTHOR%
+PRINTL 
+PRINTL ※当バリアントは調教SLG作成ツールerakanonを改変・再配布したものです。
+PRINTL ※18才未満または社会的常識に基づいた行動がとれない方はプレイしないで下さい。
+DRAWLINE
+MENU_LENGTH = 22
+PRINTFORML % "[0] ロードしてはじめる", MENU_LENGTH, LEFT %
+PRINTFORML % "[1] 最初からはじめる", MENU_LENGTH, LEFT %
+PRINTFORML % "[2] ゲームを終了する", MENU_LENGTH, LEFT %
+ALIGNMENT LEFT
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	LOADGAME
+ELSEIF RESULT == 1
+	RESETDATA
+	ADDCHARA 1000
+	BEGIN FIRST
+ELSEIF RESULT == 2
+	CLEARLINE 1
+	PRINTFORMW %GAMEBASE_TITLE%を終了します
+	QUIT
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE  
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;ゲームバージョンの表示
+;--------------------------------------------------
+@DISPLAY_GAMEVERSION(ARG)
+#LOCALSIZE 1
+#FUNCTIONS
+RETURNF @"{ARG/1000}.{(ARG%1000)/100}{(ARG%100)/10}{ARG%10}"
+
+;=============================================================================
+;「最初から」選択時の処理
+;=============================================================================
+@EVENTFIRST
+#ONLY
+;!;[SKIPSTART]
+PRINTW このバリアントはEmuera以外では実行できません
+QUIT
+;!;[SKIPEND]
+
+;周回・日付
+FLAG:6 = 1
+DAY = 1
+CALL CALENDAR_INIT
+
+;調教対象・助手設定
+TARGET = -1
+ASSI = -1
+
+;初期金額
+;弄ることで最初から所持している金額を変更させることが出来ます。
+MONEY = 25000
+;目標金額
+;弄ることで目標金額の額を変更出来ます。
+MONEY:100 = 1000000
+;初期収容可能人数
+FLAG:91 = 1
+FLAG:92 = 10
+
+;期限日数
+FLAG:999 = 0
+
+;SHOPアイテム・所持アイテム表示
+FLAG:21 = 3
+
+;妊娠系フラグ
+;FLAG:600は妊娠から出産までの日数(標準は20日)
+FLAG:600 = 20
+;FLAG:601は親離れまでの日数(標準は25日) なお、胎生・卵生共通なので注意のこと。
+FLAG:601 = 25
+;FLAG:602は立っていると中田氏で即妊娠(Debug用)
+FLAG:602 = 0
+
+;ゲームモード選択
+CALL SELECT_GAMEMODE
+;難易度選択
+CALL SELECT_DIFFICULTY
+;EASYモード
+IF FLAG:3 == 1
+	ABL:MASTER:技巧 = MAX(ABL:MASTER:技巧, 3)
+	ITEM:ビデオカメラ = 1
+	ITEM:ビデオテープ = 1
+	TALENT:MASTER:調合知識 = 1
+	TALENT:MASTER:魅惑 = 1
+ENDIF
+;テキストの表示(デフォルトでは表示する)
+FLAG:10 = 1
+;技能訓練士(デフォルトでは有効)
+FLAG:12 = 4096
+;射精個所選択他
+FLAG:11 = 0
+;初めに追加機能全部解放させることが可能
+CALL START_CONFIGURATION
+;強力アイテム封印設定
+SIF FLAG:3 >= 3
+	FLAG:13 |= 2
+;チャレンジモード
+SIF FLAG:4 >= 50
+	CALL START_CHALLENGEMODE
+;主人のキャラカード取得
+LOCAL = NO:MASTER
+;主人が汎用キャラではなくカードを持っていないか、汎用キャラか
+SIF (ITEM:LOCAL == 0 && (LOCAL < 3000 || LOCAL >= 4000)) || (LOCAL >= 3000 && LOCAL < 4000) || (LOCAL == 2048 || LOCAL == 2049)
+	ITEM:LOCAL += 1
+
+;主人のキャラID設定
+CFLAG:MASTER:3109 = 1
+FLAG:998 = CHARANUM + 1
+;主人の酔いゲージ設定
+CALL CALC_GAUGE8, MASTER, 0
+;主人の初期月経周期設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, MASTER
+;主人の称号が無い場合、紳士か淑女の称号を付与
+SIF STRLENS(NICKNAME:MASTER) == 0 && TALENT:MASTER:998 == 0
+	NICKNAME:MASTER = \@(TALENT:MASTER:オトコ) ? 紳士 # 淑女\@
+;eratohoYMモードやEXTRAモードだとプロローグを表示するか聞く
+IF FLAG:4 == 0
+	CALL PROLOGUE_SELECT_YM
+ELSEIF FLAG:4 == 2
+	CALL PROLOGUE_SELECT_EXTRA
+ENDIF
+PRINTL 
+;CALL ANIMATION_LOAD_MIDDLE, "Now loading"
+
+CALL TROPHY_BONUS, 0
+
+GETTIME
+FLAG:9548 = RESULT:0
+SIF NO:MASTER != 0
+	FLAG:9548 += NO:MASTER
+
+BEGIN SHOP
+
+;--------------------------------------------------
+;ゲームモード選択
+;--------------------------------------------------
+@SELECT_GAMEMODE
+ライン数:0 = LINECOUNT
+FLAG:4 = 0
+DRAWLINE
+PRINTL ★★モードを選択してください★★
+;PRINTL 
+
+ALIGNMENT RIGHT
+PRINTFORM [999]ローグライク : 
+IF FLAG:8669 & 2
+	PRINTFORM  ON
+ELSE
+	PRINTFORM OFF
+ENDIF
+PRINTPLAINFORM 　　
+PRINTL 
+ALIGNMENT LEFT
+
+DRAWLINE
+PRINTL [ 0]NORMAL
+PRINTL [ 1]ABNORMAL
+PRINTL [ 2]PROSTITUTE
+;以下おまけモード
+PRINTL [ 7]REVERSAL
+PRINTL [ 8]CHALLENGE
+PRINTL [ 9]EXTRA    
+;PRINTL [??]DEBUG    
+PRINTL [10]HELP   （各ゲームモードの簡単な説明）
+$INPUT_LOOP_GAMEMODE
+INPUT
+IF RESULT == 0
+	PRINTW “NORMAL”モードを選択しました
+	CALL MASTER_MAKE
+ELSEIF RESULT == 1
+	PRINTW “ABNORMAL”モードを選択しました
+	FLAG:4 = 1
+	CALL MASTER_MAKE
+	CALL SET_MASTER_SEX
+ELSEIF RESULT == 2
+	PRINTW “PROSTITUTE”モードを選択しました
+	CALL MASTER_MAKE
+	FLAG:4 = 4
+	FLAG:17 = 1
+	ITEM:娼館 = 1
+	MONEY += 25000
+	CALL BROTHEL_OPEN
+ELSEIF RESULT == 7
+	PRINTW “REVERSAL”モードを選択しました
+	FLAG:4 = 3
+	CALL START_CHARA_SELECT
+	CALL RV_CHARA0
+	CALL MASTER_MAKE
+	MASTER = 0
+	TARGET = 1
+	CFLAG:3109 = 2
+	CALL MASTER_FUTA_SET
+	CALL MASTER_SAD_SET
+	MONEY += 25000
+ELSEIF RESULT == 8
+	PRINTW “CHALLENGE”モードを選択しました
+	FLAG:5 |= 1
+	CALL MASTER_MAKE
+	CALL SELECT_CHALLENGEMODE
+ELSEIF RESULT == 9
+	PRINTW “EXTRA”モードを選択しました
+	FLAG:4 = 2
+	FLAG:5 |= 1
+	CALL START_CHARA_SELECT
+	MONEY += 25000
+ELSEIF RESULT == 10
+	DRAWLINE
+	PRINTL NORMAL      ：普通にプレイをする人向け。期限あり
+	PRINTL ABNORMAL    ：女主人やショタで始めたい人向け。期限あり
+	PRINTL PROSTITUTE  ：娼館を運営していくモードです。期限あり
+	PRINTL REVERSAL    ：東方キャラにエロいことをされたい人向け。期限なし
+	PRINTL CHALLENGE   ：名無しキャラ大好きな人向け。期限なし
+	PRINTL EXTRA       ：百合と薔薇の世界へようこそ。期限なし
+;	PRINTL DEBUG       ：バグを相手に終わり無き戦いを始めます。フリーダム
+	PRINTL ローグライク：セーブ＆ロードが出来ないモードです。期限への影響なし
+	DRAWLINE
+	WAIT
+	DRAWLINE
+	DRAWLINE
+	DRAWLINE
+	RESTART
+ELSEIF RESULT == 999
+	FLAG:8669 ^= 2
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	RESTART
+;「博麗霊夢」入力でSPキャラで始められるXEXTRAモード(主人が最初からSPキャラが使えるEXTRAモード)
+ELSEIF RESULT == 890016
+	PRINTW “XEXTRA”モードを選択しました
+	FLAG:4 = 2
+	FLAG:5 |= 1
+	CALL START_EXTRACHARA_SELECT
+	CALL MASTER_MAKE
+	MONEY += 10000
+;「野菜いっぱい」入力で特殊な素質が付いたYASAIモード(実際の扱いは特殊主人で始めるEXTRAモード)
+ELSEIF RESULT == 831181
+	PRINTW “YASAI”モードを選択しました
+	FLAG:4 = 2
+	FLAG:5 |= 1
+	FLAG:570 |= 1
+	CALL SELECT_MASTER_YASAIMODE
+	CALL MASTER_MAKE
+;「コ○コ○コミック」入力でデバッグモードへ(期限不明、目標：全バグ潰し)
+;「31337」入力で捕鯨大好きな反則紳士に
+;「96996」入力でSPキャラを主人に選択可能(96996→黒心→ブラックハー(ry )
+;「99100101」入力でREVERSALの究極股間機が開発可能に(パイルバンカー波動砲は男の浪漫)
+;「↑↑↓↓←→←→」入力で主人がチ一夕一マンに(チーター乙)
+;「578370（こちやさなえ）」入力で東方キャラを主人に選択できるデバグモードに
+ELSEIF RESULT == 31337 || RESULT == 9999 || RESULT == 96996 || RESULT == 5656539 || RESULT == 578370 || RESULT == 46826482 || RESULT == 88224646 || RESULT == 99100101
+	CALL SELECT_DEBUGMODE, RESULT
+	CALL MASTER_MAKE
+ELSE
+	GOTO INPUT_LOOP_GAMEMODE
+ENDIF
+
+;--------------------------------------------------
+;デバッグモード選択
+;--------------------------------------------------
+@SELECT_DEBUGMODE, ARG
+CALL SYSTXT_FUN_EVENT_DEBUGMODE_HEAD
+SELECTCASE ARG
+	CASE 31337
+		ADDCHARA 500
+		DELCHARA 0
+		MASTER = 0
+		NO:MASTER = 1000
+		NICKNAME:MASTER = 『反則紳士』
+	CASE 9999
+		FLAG:4 = 4
+		FLAG:17 = 1
+		ITEM:娼館 = 1
+		MONEY += 40000
+		CALL BROTHEL_OPEN
+		NICKNAME:MASTER = 『娼館DEBUGGER』
+	CASE 96996
+		CALL START_EXTRACHARA_SELECT
+		SIF TALENT:MASTER:オトコ && NO:MASTER == 1000
+			NICKNAME:MASTER = 『GENTLEMAN』
+	CASE 578370
+		CALL START_CHARA_SELECT
+		NICKNAME:MASTER = 『幻想郷調停者』
+	CASE 88224646
+		NAME:MASTER = チ一夕一マン
+		CALLNAME:MASTER = チ一夕一マン
+		NICKNAME:MASTER = 『チーター』
+		TALENT:MASTER:猫舌 = 1
+		TALENT:MASTER:動物耳 = 1
+		TALENT:MASTER:遅漏 = 1
+	CASE 99100101
+		FLAG:4 = 3
+		CALL START_CHARA_SELECT
+		CALL RV_CHARA0
+		CALL MASTER_MAKE
+		MASTER = 0
+		TARGET = 1
+		CFLAG:3109 = 2
+		CALL MASTER_FUTA_SET
+		CALL MASTER_SAD_SET
+		SIF TALENT:オトコ && NO:TARGET == 1000
+			NICKNAME:TARGET = 『GENTLEMAN』
+	CASEELSE
+		NICKNAME:MASTER = 『DEBUGGER』
+ENDSELECT
+TALENT:MASTER:998 = 1
+FLAG:5 |= 1
+MONEY = 50000
+
+;--------------------------------------------------
+;難易度選択
+;--------------------------------------------------
+@SELECT_DIFFICULTY
+DRAWLINE
+PRINTL ★★難易度を選択してください★★
+PRINTL 
+DRAWLINE
+IF CHECK_GAMEMODE_ENDING_EXIST() == 1
+    SETCOLOR COLOR("P-GREEN")
+	PRINTFORML [1]EASY     ({SET_DEADLINE(1), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+    SETCOLOR COLOR("aqua")
+	PRINTFORML [2]NORMAL   ({SET_DEADLINE(2), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+	SETCOLOR COLOR("P-BLUE")
+	PRINTFORML [3]HARD     ({SET_DEADLINE(3), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+	SETCOLOR COLOR("P-RED")
+	PRINTFORML [4]LUNATIC  ({SET_DEADLINE(4), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+	SETCOLOR COLOR("RED")
+	PRINTFORML [5]PHANTASM ({SET_DEADLINE(5), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+	PRINTFORML [6]ULTRA    ({SET_DEADLINE(6), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+	PRINTFORML [7]OVERDRIVE({SET_DEADLINE(7), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)
+	RESETCOLOR
+ELSE
+    SETCOLOR COLOR("P-GREEN")
+	PRINTL [1]EASY
+    SETCOLOR COLOR("aqua")
+	PRINTL [2]NORMAL
+	SETCOLOR COLOR("P-BLUE")
+	PRINTL [3]HARD
+	SETCOLOR COLOR("P-RED")
+	PRINTL [4]LUNATIC
+	SETCOLOR COLOR("RED")
+	PRINTL [5]PHANTASM
+	PRINTL [6]ULTRA
+	PRINTL [7]OVERDRIVE
+	RESETCOLOR
+ENDIF
+SETCOLOR COLOR("ORANGE")
+PRINTL [10]HELP    (各難易度の簡単な説明）
+RESETCOLOR
+$INPUT_LOOP_DIFFICULTY
+INPUT
+IF RESULT == 10
+	DRAWLINE
+	SETCOLOR COLOR("P-GREEN")
+	PRINTL EASY     ：ヌルく遊んでみたい人向け    一部機能制限有り
+	SETCOLOR COLOR("aqua")
+	PRINTL NORMAL   ：普通にプレイをする人向け    一部機能制限有り
+	SETCOLOR COLOR("P-BLUE")
+	PRINTL HARD     ：難しめのプレイもOKな人向け
+	SETCOLOR COLOR("P-RED")
+	PRINTL LUNATIC  ：かなりマゾなプレイヤー向け  特別機能有り
+	SETCOLOR COLOR("RED")
+	PRINTL PHANTASM ：超弩級なマゾプレイヤー向け  特別機能有り
+	PRINTL ULTRA    ：刻符で悪足掻きたい人向け    特別機能有り
+	PRINTL OVERDRIVE：理不尽な世界を見たい人向け  特別機能有り
+	RESETCOLOR
+	DRAWLINE
+	WAIT
+	DRAWLINE
+	DRAWLINE
+	DRAWLINE
+	RESTART
+ELSEIF RESULT == 1
+    PRINT 難易度:“
+    SETCOLOR COLOR("P-GREEN")
+	PRINT EASY
+	RESETCOLOR
+	PRINTW ”を選択しました
+ELSEIF RESULT == 2
+    PRINT 難易度:“
+    SETCOLOR COLOR("aqua")
+	PRINT NORMAL
+	RESETCOLOR
+	PRINTW ”を選択しました
+ELSEIF RESULT == 3
+    PRINT 難易度:“
+    SETCOLOR COLOR("P-BLUE")
+	PRINT HARD
+	RESETCOLOR
+	PRINTW ”を選択しました
+ELSEIF RESULT == 4
+    PRINT 難易度:“
+    SETCOLOR COLOR("P-RED")
+	PRINT LUNATIC
+	RESETCOLOR
+	PRINTW ”を選択しました
+	;初期ステータス：マゾ
+	TALENT:MASTER:マゾ = 1
+ELSEIF RESULT == 5
+    PRINT 難易度:“
+    SETCOLOR COLOR("RED")
+	PRINT PHANTASM
+	RESETCOLOR
+	PRINTW ”を選択しました
+	;主人の技巧を強制的に1にする
+	ABL:MASTER:技巧 = 1
+	;初期ステータス：ドＭ
+	TALENT:MASTER:ドＭ = 1
+ELSEIF RESULT == 6
+    PRINT 難易度:“
+    SETCOLOR COLOR("RED")
+	PRINT ULTRA
+	RESETCOLOR
+	PRINTW ”を選択しました
+	;主人の技巧を強制的に1にする
+	ABL:MASTER:技巧 = 1
+	;初期ステータス：狂気
+	TALENT:MASTER:狂気 = 1
+	DRAWLINE
+	SETCOLOR COLOR("P-RED")
+	ALIGNMENT CENTER
+	PRINTL 
+	PRINTL “Welcome to Special Round”
+	PRINTL 
+	RESETCOLOR
+	DRAWLINE
+	WAIT
+	ALIGNMENT LEFT
+ELSEIF RESULT == 7
+	PRINT 難易度:“
+    SETCOLOR COLOR("RED")
+	PRINT OVERDRIVE
+	RESETCOLOR
+	PRINTW ”を選択しました
+	;主人の技巧を強制的に1にする
+	ABL:MASTER:技巧 = 1
+	;初期ステータス：狂気
+	TALENT:MASTER:狂気 = 1
+	DRAWLINE
+	SETCOLOR COLOR("RED")
+	ALIGNMENT CENTER
+	PRINTL 
+	PRINTL “地獄へようこそ”
+	PRINTL 
+	RESETCOLOR
+	DRAWLINE
+	WAIT
+	ALIGNMENT LEFT
+ELSE
+	GOTO INPUT_LOOP_DIFFICULTY
+ENDIF
+FLAG:3 = RESULT
+;期限設定
+SIF CHECK_GAMEMODE_ENDING_EXIST() == 1
+	FLAG:999 = SET_DEADLINE(FLAG:3)
+
+;========================================================================
+;主人をキャラメイク
+;========================================================================
+@MASTER_MAKE
+SIF NO:MASTER != 1000 && NO:MASTER != 5000
+	RETURN 0
+DRAWLINE
+PRINTFORMW 「%NAME:MASTER%」のデータを作成します。
+PRINTFORML 現在、「%NAME:MASTER%」の名称は%NAME:MASTER%、愛称は%CALLNAME:MASTER%です
+PRINTL 名前を変更しますか？
+PRINTL [0]このまま
+PRINTL [1]変更する
+CALL INPUTINT,0,1
+IF RESULT == 1
+	CALL SET_MASTER_NAME
+ENDIF
+SIF FLAG:4 != 3
+	RETURN 0
+PRINTFORM 現在、「%NAME:MASTER%」の髪型は
+PRINTFORM %HAIR_CHECK_1(MASTER)%、髪色は
+PRINTFORMW %HAIR_CHECK(MASTER)%です
+PRINTL 外見を変更しますか？
+PRINTL [0]このまま
+PRINTL [1]変更する
+CALL INPUTINT,0,1
+IF RESULT == 1
+	CALL SET_CHARA_OTHER, MASTER
+ENDIF
+CFLAG:MASTER:3664 = 1
+
+@HAIR_CHECK, ARG, returnFlag
+#FUNCTIONS
+#DIM returnFlag
+IF TALENT:ARG:黒髪
+	LOCALS = 黒髪
+ELSEIF TALENT:ARG:栗毛
+	LOCALS = 栗毛
+ELSEIF TALENT:ARG:金髪
+	LOCALS = 金髪
+ELSEIF TALENT:ARG:赤毛
+	LOCALS = 赤毛
+ELSEIF TALENT:ARG:銀髪
+	LOCALS = 銀髪
+ELSEIF TALENT:ARG:青髪
+	LOCALS = 青髪
+ELSEIF TALENT:ARG:緑髪
+	LOCALS = 緑髪
+ELSEIF TALENT:ARG:ピンク髪
+	LOCALS = ピンク髪
+ELSEIF TALENT:ARG:紫髪
+	LOCALS = 紫髪
+ELSEIF TALENT:ARG:白髪
+	LOCALS = 白髪
+ELSEIF TALENT:ARG:オレンジ髪
+	LOCALS = オレンジ髪
+ELSEIF TALENT:ARG:水色髪
+	LOCALS = 水色髪
+ELSEIF TALENT:ARG:灰髪
+	LOCALS = 灰髪
+ELSE
+	LOCALS = ない
+ENDIF
+SIF returnFlag
+	RETURNF LOCALS
+PRINTFORM %LOCALS%
+
+@HAIR_CHECK_1, ARG, returnFlag
+#FUNCTIONS
+#DIM returnFlag
+IF TALENT:ARG:長髪
+	LOCALS = 長髪
+ELSEIF TALENT:ARG:セミロング
+	LOCALS = セミロング
+ELSEIF TALENT:ARG:ショートカット
+	LOCALS = ショートカット
+ELSEIF TALENT:ARG:ポニーテール
+	LOCALS = ポニーテール
+ELSEIF TALENT:ARG:ツインテール
+	LOCALS = ツインテール
+ELSEIF TALENT:ARG:サイドテール
+	LOCALS = サイドテール
+ELSEIF TALENT:ARG:縦ロール
+	LOCALS = 縦ロール
+ELSEIF TALENT:ARG:ツインリング
+	LOCALS = ツインリング
+ELSEIF TALENT:ARG:三つ編み
+	LOCALS = 三つ編み
+ELSEIF TALENT:ARG:短髪
+	LOCALS = 短髪
+ELSEIF TALENT:ARG:おさげ髪
+	LOCALS = おさげ髪
+ELSEIF TALENT:ARG:ポンパドール
+	LOCALS = ポンパドール
+ELSEIF TALENT:ARG:ポニーアップ
+	LOCALS = ポニーアップ
+ELSEIF TALENT:ARG:サイドダウン
+	LOCALS = サイドダウン
+ELSEIF TALENT:ARG:お団子髪
+	LOCALS = お団子髪
+ELSEIF TALENT:ARG:ツーサイドアップ
+	LOCALS = ツーサイドアップ
+ELSEIF TALENT:ARG:ダブルポニー
+	LOCALS = ダブルポニー
+ELSEIF TALENT:ARG:横ロール
+	LOCALS = 横ロール
+ELSEIF TALENT:ARG:まとめ髪
+	LOCALS = まとめ髪
+ELSEIF TALENT:ARG:ボブカット
+	LOCALS = ボブカット
+ELSEIF TALENT:ARG:シニヨン
+	LOCALS = シニヨン
+ELSEIF TALENT:ARG:ロングヘア
+	LOCALS = ロングヘア
+ELSE
+	LOCALS = ない
+ENDIF
+SIF returnFlag
+	RETURNF LOCALS
+PRINTFORM %LOCALS%
+
+;========================================================================
+;主人の名前設定
+;========================================================================
+@SET_MASTER_NAME
+$INPUTS_NAME
+PRINTL あなたの名前を入力してください
+IF STRLENS(NAME:MASTER)
+	PRINTFORM 現在の名前：%NAME:MASTER%      
+	PRINTBUTTON "[変更しない]",""
+	PRINTL
+ENDIF
+INPUTS
+IF RESULTS == ""
+	LOCALS = %NAME:MASTER%
+ELSE
+	LOCALS = %RESULTS%
+ENDIF
+
+PRINTL あなたの愛称を入力してください
+IF STRLENS(CALLNAME:MASTER)
+	PRINTFORM 現在の愛称：%CALLNAME:MASTER%      
+	PRINTBUTTON "[変更しない]",""
+	PRINTL
+ENDIF
+INPUTS
+IF RESULTS == ""
+	LOCALS:1 = %CALLNAME:MASTER%
+ELSE
+	LOCALS:1 = %RESULTS%
+ENDIF
+
+DRAWLINE
+PRINTFORML 名前：%LOCALS%　愛称：%LOCALS:1%
+PRINTL これでいいですか？
+PRINTL [0]はい
+PRINTL [1]いいえ
+CALL INPUTINT,0,1
+IF RESULT == 0
+	NAME:MASTER = %LOCALS%
+	CALLNAME:MASTER = %LOCALS:1%
+ELSEIF RESULT == 1
+	GOTO INPUTS_NAME
+ENDIF
+
+;========================================================================
+;外見定義関数
+;========================================================================
+@GET_HAIR_TYPE_STR(ARG)
+#FUNCTIONS
+RETURNF STR:(CFLAG:ARG:元の髪型)
+
+@GET_HAIR_COLOR_STR(ARG)
+#FUNCTIONS
+RETURNF STR:(CFLAG:ARG:元の髪色)
+
+@GET_EYE_COLOR_STR(ARG)
+#FUNCTIONS
+RETURNF STR:(CFLAG:ARG:元の瞳色)
+
+@GET_CLOTH_COLOR_STR(ARG)
+#FUNCTIONS
+RETURNF STR:(CFLAG:ARG:元の服色)
+
+; 髪型・髪色を資質から、CFLAGに設定する
+@RESET_HAIR_CFLAG(ARG)
+REPEAT 30
+	SIF TALENT:ARG:(580 + COUNT)
+		CFLAG:ARG:元の髪型 = (2000 + COUNT)
+REND
+REPEAT 20
+	SIF TALENT:ARG:(560 + COUNT)
+		CFLAG:ARG:元の髪色 = (2050 + COUNT)
+REND
+RETURN
+
+;========================================================================
+;外見設定
+;========================================================================
+@SET_CHARA_OTHER, ARG
+$INPUTS_OTHER
+REPEAT 50
+	TALENT:ARG:(560 + COUNT) = 0
+REND
+
+PRINTFORML %CALLNAME:ARG%の髪型を選んでください
+REPEAT 22
+	PRINTFORMLC [{COUNT, 2, RIGHT}] %STR:(2000 + COUNT)%
+REND
+CALL INPUTINT2,0,22
+TALENT:ARG:(580 + RESULT) = 1
+CFLAG:ARG:元の髪型 = (2000 + RESULT)
+
+PRINTFORML %CALLNAME:ARG%の髪色を選んでください
+REPEAT 13
+	PRINTFORMLC [{COUNT, 2, RIGHT}] %STR:(2050 + COUNT)%
+REND
+CALL INPUTINT2,0,13
+TALENT:ARG:(560 + RESULT) = 1
+CFLAG:ARG:元の髪色 = (2050 + RESULT)
+
+LOCALS = %PARSE_IMAGE_NO(ARG)%
+
+IF LOCALS == ""
+
+	PRINTFORML %CALLNAME:ARG%の瞳色を選んでください
+	REPEAT 9
+		PRINTFORMLC [{COUNT, 2, RIGHT}] %STR:(2100 + COUNT)%
+	REND
+	CALL INPUTINT2,0,8
+	CFLAG:ARG:元の瞳色 = (2100 + RESULT)
+
+	PRINTFORML %CALLNAME:ARG%の服色を選んでください
+	REPEAT 9
+		PRINTFORMLC [{COUNT, 2, RIGHT}] %STR:(2150 + COUNT)%
+	REND
+	CALL INPUTINT2,0,8
+	CFLAG:ARG:元の服色 = (2150 + RESULT)
+	
+ENDIF
+
+DRAWLINE
+PRINTFORM 髪型：%GET_HAIR_TYPE_STR(ARG)%　
+PRINTFORM 髪色：%GET_HAIR_COLOR_STR(ARG)%　
+IF LOCALS == ""
+	PRINTFORM 瞳色：%GET_EYE_COLOR_STR(ARG)%　
+	PRINTFORM 服色：%GET_CLOTH_COLOR_STR(ARG)%　
+ENDIF
+PRINTFORML
+PRINTL これでいいですか？
+PRINTL [0]はい
+PRINTL [1]いいえ
+CALL INPUTINT,0,1
+IF RESULT == 1
+	GOTO INPUTS_OTHER
+ENDIF
+
+;========================================================================
+;外見設定(ランダム)
+;========================================================================
+@SET_CHARA_OTHER_RANDOM, ARG, autoFlag, hairTypeFlag, hairColorFlag
+#DIM autoFlag
+#DIM hairTypeFlag
+#DIM hairColorFlag
+
+$INPUTS_OTHER_RANDOM
+REPEAT 20
+	SIF !(autoFlag && hairColorFlag)
+		TALENT:ARG:(560 + COUNT) = 0
+REND
+REPEAT 30
+	SIF !(autoFlag && hairTypeFlag)
+		TALENT:ARG:(580 + COUNT) = 0
+REND
+
+IF !(autoFlag && hairTypeFlag)
+	RESULT = RAND:22
+	TALENT:ARG:(580 + RESULT) = 1
+	CFLAG:ARG:元の髪型 = (2000 + RESULT)
+ENDIF
+
+IF !(autoFlag && hairColorFlag)
+	RESULT = RAND:13
+	TALENT:ARG:(560 + RESULT) = 1
+	CFLAG:ARG:元の髪色 = (2050 + RESULT)
+ENDIF
+
+IF CFLAG:ARG:元の瞳色 < 2100
+	RESULT = RAND:9
+	CFLAG:ARG:元の瞳色 = (2100 + RESULT)
+ENDIF
+
+IF CFLAG:ARG:元の服色 < 2150
+	RESULT = RAND:9
+	CFLAG:ARG:元の服色 = (2150 + RESULT)
+ENDIF
+
+DRAWLINE
+PRINTFORM 髪型%((autoFlag && hairTypeFlag) ? "(固定)" # "")%：%GET_HAIR_TYPE_STR(ARG)%　
+PRINTFORM 髪色%((autoFlag && hairColorFlag) ? "(固定)" # "")%：%GET_HAIR_COLOR_STR(ARG)%　
+LOCALS = %PARSE_IMAGE_NO(ARG)%
+IF LOCALS == ""
+	PRINTFORM 瞳色：%GET_EYE_COLOR_STR(ARG)%　
+	PRINTFORM 服色：%GET_CLOTH_COLOR_STR(ARG)%　
+ENDIF
+IF autoFlag
+	PRINTFORML になりました
+ELSE
+	PRINTFORML
+	PRINTL これでいいですか？
+	PRINTL [0]はい
+	PRINTL [1]いいえ
+	CALL INPUTINT,0,1
+	IF RESULT == 1
+		GOTO INPUTS_OTHER_RANDOM
+	ENDIF
+ENDIF
+
+;=============================================================================
+;EXTRAモード関連の処理
+;=============================================================================
+;-------------------------------------------------
+;プレイヤーキャラ選択処理
+;-------------------------------------------------
+;REVERSALモードの時とそうでない時とで若干挙動は違う
+;IRCキャラは選択できない
+@START_CHARA_SELECT
+VARSET LOCAL, 0
+
+;選択可能なプレイヤーキャラの設定
+CALL CHECK_START_CHARA, 5
+LOCAL:2 = RESULT
+
+;ページをめくったときなどはここから
+$PRINT_LIST
+
+DRAWLINE
+PRINTFORML ★★\@(FLAG:4 == 3) ? ご主人様 # プレイヤー\@を変更できます★★
+PRINTFORML キャラを選択してください ＜page.{LOCAL:1+1}＞
+DRAWLINE
+LOCAL:3 = 0
+FOR LOCAL:10, 1, 5
+	FOR COUNT, 0, 120
+		;ITEMSALES:n(選択可否)が0の場合は除外
+		SIF ITEMSALES:(1000 * LOCAL:10 + COUNT) == 0
+			CONTINUE
+		;子供は除外
+		SIF (1000 * LOCAL:10 + COUNT) == 2048 || (1000 * LOCAL:10 + COUNT) == 2049
+			CONTINUE
+		;どこからどこまでを陳列するか
+		LOCAL:3 += 1
+		IF LOCAL:3 <= (LOCAL:1 + 1) * 30 && LOCAL:3 > LOCAL:1 * 30
+			;REVERSALモードで専用逆口上が存在している
+			SIF GET_LIST(1000 * LOCAL:10 + COUNT) == 1
+				FONTITALIC
+			PRINTFORMLC [{1000 * LOCAL:10 + COUNT}] %ITEMNAME:(1000 * LOCAL:10 + COUNT)%
+			FONTREGULAR
+		ENDIF
+	NEXT
+NEXT
+
+PRINTL 
+DRAWLINE
+
+PRINTFORMLC \@(LOCAL:1 <= 0) ? %" " * 16% # [444]前のページ\@
+PRINTFORMLC \@(FLAG:4 == 3) ? %" " * 16% # [555]変更しない\@
+PRINTFORMLC \@(LOCAL:1 >= LOCAL:2) ? %" " * 16% # [666]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+;変更しないを選んだ場合は"あなた"でここで終わり
+IF RESULT == 555 && FLAG:4 != 3
+	LOCAL = 1000
+ELSEIF RESULT == 444 && LOCAL:1 > 0
+	LOCAL:1 -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 666 && LOCAL:1 < LOCAL:2
+	LOCAL:1 += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 1000 || RESULT >= 5000 || ITEMSALES:RESULT == 0
+	REUSELASTLINE  
+	CLEARLINE 1
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+ENDIF
+
+;ID(LOCAL)番のキャラをマスターにする
+ADDCHARA LOCAL
+DELCHARA 0
+MASTER = 0
+
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, MASTER
+
+;汎用キャラの場合はランダム素質付加処理に飛ぶ
+IF NO:MASTER >= 3000 && NO:MASTER < 4000
+	CALL CHARA_RANDOM_STATE_M
+;それ以外の場合、キャラカードを取得
+ELSE
+	ITEM:LOCAL = 1
+ENDIF
+
+PRINTFORMW \@(FLAG:4 == 3) ? マスター # プレイヤー\@を「%NAME:MASTER%」に設定します
+CALL MASTER_MAKE
+;調教者に使用する口上の選択
+SIF FLAG:4 == 3
+	CALL SELECT_TEXT_DISPLAY, MASTER
+;アイテム・奴隷陳列フラグの削除
+VARSET ITEMSALES, 0
+RETURN 0
+
+;-------------------------------------------------
+;選択可能キャラ判別処理
+;-------------------------------------------------
+;現在EXTRAモード、REVERSALモードに対応している他、将来的にINFINITYモードにも対応させる予定
+;ARGの値によって見る範囲を限定させることが可能(アイテム番号に対応)。基本は500か600
+;なお、100以下の数字を入れるとエラーになる
+@CHECK_START_CHARA, ARG
+;アイテム・奴隷陳列フラグの削除
+VARSET ITEMSALES, 0
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+;選択可能キャラの判別(ITEMSALES:COUNTに1が代入されていると選択可能)
+;REVERSALモード限定でフラグに1が入っている場合、キャラが斜体で表示される
+FOR LOCAL:10, 1, ARG
+	FOR COUNT, 0, 120
+		;存在しないキャラは除外
+		SIF ITEMPRICE:(1000 * LOCAL:10 + COUNT) == 0
+			CONTINUE
+		;あなた除外
+		SIF (1000 * LOCAL:10 + COUNT) == 1000 || (1000 * LOCAL:10 + COUNT) == 5000
+			CONTINUE
+		;子供、客も除外(長いので二つに分割)
+		SIF (1000 * LOCAL:10 + COUNT) == 2048 || (1000 * LOCAL:10 + COUNT) == 2049 || (1000 * LOCAL:10 + COUNT) == 2046
+			CONTINUE
+		;REVERSALモード場合、専用逆口上をサーチする
+		IF FLAG:4 == 3
+			RESULT = 0
+			TRYCALLFORM TRY_0_{1000 * LOCAL:10 + COUNT}
+			CALLF SET_LIST, 1000 * LOCAL:10 + COUNT, RESULT
+		ENDIF
+
+		ITEMSALES:(1000 * LOCAL:10 + COUNT) = 1
+		LOCAL:2 += 1
+		SIF (LOCAL:2%30) == 1 && LOCAL:2 > 30
+			LOCAL:1 += 1
+	NEXT
+NEXT
+RETURN LOCAL:1
+
+
+;=============================================================================
+;XEXTRAモード関連の処理
+;=============================================================================
+;実際は能力などを一旦リセットした後キャラを再生成する処理を行う
+;キャンセルした場合は一度0番のキャラを作り、その後前のキャラを消去してEXTRAモードへと移行
+;-------------------------------------------------
+;PCをSPキャラで始める処理
+;-------------------------------------------------
+@START_EXTRACHARA_SELECT
+TARGET = 0
+MAXBASE:0 = 0
+MAXBASE:1 = 0
+MAXBASE:2 = 0
+MAXBASE:9 = 0
+VARSET ABL:TARGET:Ｃ感覚, 0, 0, 100
+VARSET EXP:TARGET:Ｖ経験, 0, 0, 100
+VARSET RELATION:TARGET:0, 0, 0, 200
+VARSET TALENT:TARGET:処女, 0, 0, 1000
+DRAWLINE
+PRINTL ★★プレイヤーを変更できます★★
+PRINTL ★★キャラを選択してください★★
+DRAWLINE
+PRINTLC [000] キャンセル
+PRINTLC [001] 罪袋
+PRINTLC [002] カドケシさん
+PRINTLC [003] タカヒロ
+PRINTLC [004] ジャミ
+PRINTLC [012] 霊夢様
+PRINTLC [021] 魔梨沙
+PRINTLC [022] 超魔理沙
+PRINTLC [031] ＥＸルーミア
+PRINTLC [041] ＥＸ大妖精
+PRINTLC [042] Ｂ大妖精
+PRINTLC [051] アドベントチルノ
+PRINTLC [052] 倍チルノ
+PRINTLC [141] ちびアリス
+PRINTLC [201] 生前ゆゆ様
+PRINTLC [272] てゐ師匠
+PRINTLC [381] 稔子
+PRINTLC [401] ぐりんだむ
+PRINTLC [422] 早苗様
+PRINTLC [612] むっつりさとりん
+PRINTLC [1562]ジュリアン
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	ADDCHARA 1000
+	DELCHARA 0
+	MASTER = 0
+	TARGET = -1
+	CALL START_CHARA_SELECT
+	RETURN 0
+ELSEIF RESULT == 1
+	CALL EXTRA_MASTER_00_1
+ELSEIF RESULT == 2
+	CALL EXTRA_MASTER_00_2
+ELSEIF RESULT == 3
+	CALL EXTRA_MASTER_00_3
+ELSEIF RESULT == 4
+	CALL EXTRA_MASTER_00_4
+ELSEIF RESULT == 12
+	CALL EXTRA_MASTER_01_2
+ELSEIF RESULT == 21
+	CALL EXTRA_MASTER_02_1
+ELSEIF RESULT == 22
+	CALL EXTRA_MASTER_02_2
+ELSEIF RESULT == 31
+	CALL EXTRA_MASTER_03_1
+ELSEIF RESULT == 41
+	CALL EXTRA_MASTER_04_1
+ELSEIF RESULT == 42
+	CALL EXTRA_MASTER_04_2
+ELSEIF RESULT == 51
+	CALL EXTRA_MASTER_05_1
+ELSEIF RESULT == 52
+	CALL EXTRA_MASTER_05_2
+ELSEIF RESULT == 141
+	CALL EXTRA_MASTER_14_1
+ELSEIF RESULT == 201
+	CALL EXTRA_MASTER_20_1
+ELSEIF RESULT == 272
+	CALL EXTRA_MASTER_27_2
+ELSEIF RESULT == 381
+	CALL EXTRA_MASTER_38_1
+ELSEIF RESULT == 401
+	CALL EXTRA_MASTER_40_1
+ELSEIF RESULT == 422
+	CALL EXTRA_MASTER_42_2
+ELSEIF RESULT == 612
+	CALL EXTRA_MASTER_61_2
+ELSEIF RESULT == 1562
+	CALL EXTRA_MASTER_156_2
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+
+BASE:体力 = MAXBASE:0
+BASE:気力 = MAXBASE:1
+MAXBASE:9 = 0
+BASE:理性 = MAXBASE:9
+TALENT:理性 = 0
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, TARGET
+CFLAG:0 = RESULT%10
+MASTER = 0
+TARGET = -1
+PRINTFORMW プレイヤーを「%NAME:MASTER%」に設定します
+
+;=============================================================================
+;YASAIモード関連の処理
+;=============================================================================
+;--------------------------------------------------
+;YASAIモードの主人選択
+;--------------------------------------------------
+@SELECT_MASTER_YASAIMODE
+PRINTW 主人を選択してください
+PRINTL どの項目から主人を選択しますか？
+PRINTL [0]変更しない
+PRINTL [1]通常キャラ
+PRINTL [2]SPキャラ
+PRINTL [3]IRCキャラ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL START_CHARA_SELECT
+ELSEIF RESULT == 2
+	CALL START_EXTRACHARA_SELECT
+ELSEIF RESULT == 3
+	CALL START_IRCCHARA_SELECT
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP
+ENDIF
+
+;-------------------------------------------------
+;PCをIRCキャラで始める処理
+;-------------------------------------------------
+@START_IRCCHARA_SELECT
+CALLF CLEAR_LIST
+DRAWLINE
+PRINTL ★★プレイヤーを変更できます★★
+PRINTL ★★キャラを選択してください★★
+PRINTLC [000] キャンセル
+REPEAT 100
+	;霊夢様は選択不能
+	SIF COUNT == 4
+		CONTINUE
+	IF ITEMPRICE:(COUNT+5000) > 0
+		PRINTFORMLC [{COUNT+5000}] %ITEMNAME:(COUNT+5000)%
+		CALLF SET_LIST, COUNT + 5000, 1
+	ENDIF
+REND
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	RETURN 0
+ELSEIF RESULT < 5000 || RESULT >= 6000 || GET_LIST(RESULT) == 0
+	GOTO INPUT_LOOP
+ENDIF
+ADDCHARA RESULT
+DELCHARA 0
+MASTER = 0
+
+TARGET = -1
+PRINTFORMW プレイヤーを「%NAME:MASTER%」に設定します
+
+;=============================================================================
+;チャレンジモード用の処理
+;=============================================================================
+;--------------------------------------------------
+;チャレンジモード選択時の処理
+;--------------------------------------------------
+@SELECT_CHALLENGEMODE
+;表示させるキャラを抽出
+CALLF CLEAR_LIST
+FOR COUNT, 3000, 3050
+	;存在しないキャラは弾く
+	STRLENS ITEMNAME:COUNT
+	SIF RESULT < 1
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+NEXT
+
+$PRINT_LIST
+DRAWLINE
+PRINTL どのコースを選択しますか？
+PRINTLC [   0]ランダム
+PRINTLC [   1]妖精乱舞
+PRINTLC [   2]地獄巡り
+PRINTLC [   3]動物王国
+;50以降は各名無しキャラオンリーの予定
+REPEAT 50
+	SIF GET_LIST(COUNT + 3000) == 0
+		CONTINUE
+	PRINTFORMLC [{(COUNT + 3000)}]%ITEMNAME:(COUNT + 3000)%天国
+REND
+PRINTL [ 100]説明
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	CALL CHALLENGEMODE_MANUAL
+	GOTO PRINT_LIST
+ELSEIF RESULT == 0
+	LOCALS = ランダム
+	FLAG:4 = 100
+ELSEIF RESULT == 1
+	LOCALS = 妖精乱舞
+	FLAG:4 = 101
+ELSEIF RESULT == 2
+	LOCALS = 地獄巡り
+	FLAG:4 = 102
+ELSEIF RESULT == 3
+	LOCALS = 動物王国
+	FLAG:4 = 103
+;各名無しキャラオンリーモード
+ELSEIF RESULT >= 3000 && RESULT < 3050 && GET_LIST(RESULT) == 1
+	LOCALS = %ITEMNAME:RESULT%天国
+	FLAG:4 = RESULT
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORMW %LOCALS%コースを選択しました
+
+;--------------------------------------------------
+;チャレンジモード内の各モードの説明
+;--------------------------------------------------
+@CHALLENGEMODE_MANUAL
+PRINTL 以下各コースのおおざっぱな説明です。
+DRAWLINE
+PRINTL 0   　　   ランダム：偏りなく名無しキャラがランダムに追加されます
+PRINTL 1   　　   妖精乱舞：妖精の名無しキャラのみランダムで追加されます
+PRINTL 2   　　   地獄巡り：死神、鬼、亡霊等の名無しキャラが追加されます
+PRINTL 3   　　   動物王国：兎や鴉等動物系キャラがランダムで追加されます
+PRINTL 3000～3049 ○○天国：表示されている名無しキャラのみが追加されます
+DRAWLINE
+WAIT
+
+;--------------------------------------------------
+;チャレンジモード開始時の処理
+;--------------------------------------------------
+@START_CHALLENGEMODE
+PRINTL ＜名無しキャラ性別ランダム＞機能を有効にしますか？
+PRINTL ※後でコンフィグの設定を変更することもできます
+PRINTL [0]はい
+PRINTL [1]いいえ
+PRINTL [9]説明プリーズ
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	FLAG:12 |= 2048
+	PRINTW 購入・追加される名無しキャラの性別をランダムに設定しました
+ELSEIF RESULT == 1
+	SIF FLAG:12 & 2048
+		FLAG:12 -= 2048
+	PRINTW 購入・追加される名無しキャラの性別は全て♀のみに設定しました
+ELSEIF RESULT == 9
+	PRINTL ＜名無しキャラ性別ランダム＞機能を有効にした場合、
+	PRINTL 一部キャラを除きいて追加される名無しキャラの性別がランダムになります
+	PRINTL 無効の場合は追加される名無しキャラが♀のみに固定されます
+	PRINTW 男の名無しキャラも調教したい！……という人向け
+	PRINTL 
+	RESTART
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+
+FLAG:90 = 4
+FLAG:92 = 99
+FLAG:93 = 20
+FLAG:94 = 99
+SAVESTR:1 = 《隠れ里》
+
+FLAG:565 = 2
+
+CALL FILL_CHARA
+TARGET = -1
+
+;--------------------------------------------------
+;名無しキャラ補充処理
+;--------------------------------------------------
+@FILL_CHARA
+SIF CHARANUM >= 100 || FLAG:4 < 50
+	RETURN 0
+IF FLAG:4 >= 3000 && FLAG:4 < 3050
+	;各キャラオンリー
+	LOCAL = FLAG:4
+ELSEIF FLAG:4 == 100
+	;ランダム
+	LOCAL = 3000 + RAND:50
+	SIF !EXISTCSV(LOCAL, 0)
+		RESTART
+ELSEIF FLAG:4 == 101
+	;妖精乱舞
+	LOCAL = 3000 + RAND:35
+	SIF !EXISTCSV(LOCAL, 0)
+		RESTART
+ELSEIF FLAG:4 == 102
+	;地獄巡り(ゾンビフェアリー、黒呪精、地獄鴉、亡霊、旧都鬼、地獄鬼、死神の中からランダムで追加される)
+	SELECTCASE RAND:7
+		CASE 0
+			LOCAL = 3006
+		CASE 1
+			LOCAL = 3013
+		CASE 2
+			LOCAL = 3022
+		CASE 3
+			LOCAL = 3023
+		CASE 4
+			LOCAL = 3025
+		CASE 5
+			LOCAL = 3026
+		CASE 6
+			LOCAL = 3027
+	ENDSELECT
+ELSEIF FLAG:4 == 103
+	;動物王国(地上の兎、鴉天狗、白狼天狗、夜雀、地獄鴉、河童、玉兎、化け猫、化け狐、化け鼠の中からランダムで追加される)
+	SELECTCASE RAND:12
+		CASE 0
+			LOCAL = 3014
+		CASE 1
+			LOCAL = 3018
+		CASE 2
+			LOCAL = 3019
+		CASE 3
+			LOCAL = 3021
+		CASE 4
+			LOCAL = 3022
+		CASE 5
+			LOCAL = 3024
+		CASE 6
+			LOCAL = 3028
+		CASE 7
+			LOCAL = 3030
+		CASE 8
+			LOCAL = 3031
+		CASE 9
+			LOCAL = 3032
+		CASE 10
+			LOCAL = 3035
+		CASE 11
+			LOCAL = 3036
+	ENDSELECT
+ENDIF
+ADDCHARA LOCAL
+;キャラカード取得
+;ITEM:LOCAL += 1
+TARGET = CHARANUM - 1
+CALL CHARA_RANDOM_STATE
+
+;理性ゲージ設定
+SIF MAXBASE:9 <= 0
+	MAXBASE:9 = 9500 + 25 * RAND:101
+BASE:理性 = MAXBASE:9
+TALENT:理性 = 1
+;発情設定
+SIF TALENT:動物耳 || TALENT:淫魔 || TALENT:悪魔 || TALENT:妖狐 || TALENT:半白澤 || TALENT:鬼 || TALENT:鵺 || TALENT:化け狸 || TALENT:人狼
+	TALENT:発情可 = 1
+;調教度ゲージ設定
+CALL CHECK_ACCEPTANCE,TARGET
+;射精ゲージ設定
+SIF (TALENT:オトコ || TALENT:ふたなり) && MAXBASE:2 <= 0
+	MAXBASE:2 = CALC_GAUGE2_COMMON(TARGET)
+;噴乳ゲージ設定
+SIF TALENT:母乳体質
+	CALL CALC_GAUGE3_SLAVE, TARGET, 1
+;尿意ゲージ設定
+SIF TALENT:おもらし癖 || EXP:放尿経験
+	CALL CALC_GAUGE4_SLAVE, TARGET, 1
+;触手ゲージ設定
+SIF TALENT:寄生
+	CALL CALC_TENTACLE_GAUGE
+;酔いゲージ設定
+CALL CALC_GAUGE8, TARGET, 0
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, TARGET
+
+CFLAG:3109 = CHARANUM
+CSTR:3 = %CALLNAME:MASTER%に調教されるために連れて来られた。
+SIF CHARANUM < 100
+	RESTART
+
+;=============================================================================
+;「あなた」設定関連
+;=============================================================================
+;ゲーム開始時や引き継ぎで設定変更を選択したときはここであなたの性別を決定する処理を実行
+;南無三って入力すれば身体強化魔法により[ふたなり]で開始可能(デバッグモード以外の時は選択肢非表示)
+@SET_MASTER_SEX
+PRINTL あなたの性別は？
+PRINTLC [0]♂
+PRINTLC [1]♀
+SIF TALENT:MASTER:998
+	PRINTLC [763]ふたなり
+PRINTL 
+$INPUT_LOOP_5
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:処女 = 0
+	TALENT:MASTER:肥大陰核 = 0
+	TALENT:MASTER:絶壁 = 0
+	TALENT:MASTER:貧乳 = 0
+	TALENT:MASTER:巨乳 = 0
+	TALENT:MASTER:爆乳 = 0
+	TALENT:MASTER:オトコ = 1
+	TALENT:MASTER:ふたなり = 0
+	ABL:MASTER:レズっ気 = 0
+	ABL:MASTER:レズ中毒 = 0
+	EXP:MASTER:Ｖ経験 = 0
+	EXP:MASTER:レズ経験 = 0
+	MAXBASE:MASTER:2 = CALC_GAUGE2_COMMON(MASTER)
+	PRINTW 性別：♂で始めます
+ELSEIF RESULT == 1
+	TALENT:MASTER:肥大陰核 = 0
+	TALENT:MASTER:オトコ = 0
+	TALENT:MASTER:ふたなり = 0
+	MAXBASE:MASTER:2 = 0
+	PRINTW 性別：♀で始めます
+ELSEIF RESULT == 763
+	TALENT:MASTER:肥大陰核 = 0
+	TALENT:MASTER:オトコ = 0
+	TALENT:MASTER:ふたなり = 1
+	MAXBASE:MASTER:2 = CALC_GAUGE2_COMMON(MASTER)
+	PRINTW [ふたなり]で始めます
+ELSE
+	GOTO INPUT_LOOP_5
+ENDIF
+;そこまで影響はないがイメージ的に初期の体力・気力を変更。単なるイメージってことで
+MAXBASE:MASTER:0 = (TALENT:MASTER:オトコ) ? 2500 # 1800
+MAXBASE:MASTER:1 = (TALENT:MASTER:オトコ) ? 2000 # 1500
+MAXBASE:MASTER:9 = 0
+;全快処理
+BASE:MASTER:体力 = MAXBASE:MASTER:0
+BASE:MASTER:気力 = MAXBASE:MASTER:1
+BASE:MASTER:理性 = MAXBASE:MASTER:9
+;体型設定
+TALENT:MASTER:小人体型 = 0
+TALENT:MASTER:小柄体型 = 0
+TALENT:MASTER:巨躯 = 0
+TALENT:MASTER:理性 = 0
+PRINTL 
+PRINTL あなたの体型は？
+PRINTL [0]いたって普通…かな？
+PRINTFORML [1]\@(TALENT:MASTER:オトコ) ? ショタは歓迎するよ！ # このロリコンどもめ！\@
+PRINTL [2]ミニマム！ミニマム！
+PRINTL [3]《Giant Growth》発動！
+$INPUT_LOOP_6
+INPUT
+IF RESULT == 1
+	TALENT:MASTER:小柄体型 = 1
+ELSEIF RESULT == 2
+	TALENT:MASTER:小人体型 = 1
+ELSEIF RESULT == 3
+	TALENT:MASTER:巨躯 = 1
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_6
+ENDIF
+PRINTL 
+PRINTL あなたの性癖は？
+PRINTL [0]男も女も両方いけるクチです
+IF TALENT:MASTER:オトコ
+	PRINTL [1]幻想郷の少女達を調教したい程度の興味は持っています
+	PRINTL [2]野郎なんかに触られるとジンマシンが…！
+	PRINTL [3]実は私、女性アレルギーです！
+ELSE
+	PRINTL [1]ガチレズって程じゃないけどちょっぴり気になります
+	PRINTL [2]幻想郷に男なんか必要ない！…と本気で考えています
+	PRINTL [3]女なんぞ私一人で十分！
+ENDIF
+$INPUT_LOOP_7
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:両刀 = 1
+ELSEIF RESULT == 1
+	TALENT:MASTER:両刀 = 0
+	IF TALENT:MASTER:オトコ
+		TALENT:MASTER:女嫌い = 0
+	ELSE
+		TALENT:MASTER:男嫌い = 0
+	ENDIF
+ELSEIF RESULT == 2
+	TALENT:MASTER:両刀 = 0
+	TALENT:MASTER:男嫌い = 1
+ELSEIF RESULT == 3
+	TALENT:MASTER:両刀 = 0
+	TALENT:MASTER:女嫌い = 1
+ELSE
+	GOTO INPUT_LOOP_7
+ENDIF
+SIF TALENT:MASTER:オトコ
+	RETURN 0
+PRINTL 
+PRINTL 経験はある？
+PRINTL [0]バリバリの生娘です
+PRINTL [1]非処女ですがなにか？
+$INPUT_LOOP_8
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:処女 = 1
+	EXP:MASTER:Ｖ経験 = 0
+ELSEIF RESULT == 1
+	TALENT:MASTER:処女 = 0
+	EXP:MASTER:Ｖ経験 += RAND:3
+ELSE
+	GOTO INPUT_LOOP_8
+ENDIF
+TALENT:MASTER:絶壁 = 0
+TALENT:MASTER:貧乳 = 0
+TALENT:MASTER:巨乳 = 0
+TALENT:MASTER:爆乳 = 0
+PRINTL 
+PRINTL 胸の大きさはどのくらい？
+PRINTL [0]貧乳
+PRINTL [1]普通
+PRINTL [2]巨乳
+$INPUT_LOOP_9
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:貧乳 = 1
+ELSEIF RESULT == 2
+	TALENT:MASTER:巨乳 = 1
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP_9
+ENDIF
+
+;=============================================================================
+;逆調教設定関連
+;=============================================================================
+@MASTER_TALENT_SET
+;逆調教用の構文を流用する為
+TARGET = MASTER
+
+PRINTL 
+PRINTFORML %NAME:TARGET%の性別を教えてください
+PRINTL [0]♂
+PRINTL [1]♀
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 0
+	TALENT:処女 = 0
+	TALENT:絶壁 = 0
+	TALENT:貧乳 = 0
+	TALENT:巨乳 = 0
+	TALENT:爆乳 = 0
+	TALENT:オトコ = 1
+	TALENT:ふたなり = 0
+	ABL:レズっ気 = 0
+	EXP:Ｖ経験 = 0
+	EXP:レズ経験 = 0
+	MAXBASE:2 = CALC_GAUGE2_COMMON(TARGET)
+ELSEIF RESULT == 1
+	TALENT:オトコ = 0
+	TALENT:ふたなり = 0
+	MAXBASE:2 = 0
+ELSE
+	GOTO INPUT_LOOP_0
+ENDIF
+;[女嫌い]対応が面倒だったので本体からお借りしました
+PRINTL 
+PRINTFORML %NAME:MASTER%の性癖は？
+PRINTL [0]男も女も両方いけるクチです
+IF TALENT:MASTER:オトコ
+	PRINTL [1]幻想郷の少女達を調教したい程度の興味は持っています
+	PRINTL [2]野郎なんかに触られるとジンマシンが…！
+	PRINTL [3]実は私、女性アレルギーです！
+ELSE
+	PRINTL [1]ガチレズって程じゃないけどちょっぴり気になります
+	PRINTL [2]幻想郷に男なんか必要ない！…と本気で考えています
+	PRINTL [3]女なんぞ私一人で十分！
+ENDIF
+PRINTL [4]男も女も大の苦手です
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:両刀 = 1
+ELSEIF RESULT == 1
+	TALENT:MASTER:両刀 = 0
+	IF TALENT:MASTER:オトコ
+		TALENT:MASTER:女嫌い = 0
+	ELSE
+		TALENT:MASTER:男嫌い = 0
+	ENDIF
+ELSEIF RESULT == 2
+	TALENT:MASTER:両刀 = 0
+	TALENT:MASTER:男嫌い = 1
+ELSEIF RESULT == 3
+	TALENT:MASTER:両刀 = 0
+	TALENT:MASTER:女嫌い = 1
+ELSEIF RESULT == 4
+	TALENT:MASTER:両刀 = 0
+	TALENT:MASTER:男嫌い = 1
+	TALENT:MASTER:女嫌い = 1
+ELSE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+SIF TALENT:オトコ
+	GOTO TALENT_SET_COMMON
+
+PRINTL 処女ですか？
+PRINTL [0]はい
+PRINTL [1]実は違います
+PRINTL [2]経験豊富です
+$INPUT_LOOP_2
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:処女 = 1
+	EXP:MASTER:Ｖ経験 = 0
+ELSEIF RESULT == 1
+	TALENT:MASTER:処女 = 0
+	SIF EXP:MASTER:Ｖ経験 == 0
+		EXP:MASTER:Ｖ経験 += RAND:2 + 1
+ELSEIF RESULT == 2
+	TALENT:MASTER:処女 = 0
+	SIF EXP:MASTER:Ｖ経験 == 0
+		EXP:MASTER:Ｖ経験 += RAND:91 + 30
+ELSE
+	GOTO INPUT_LOOP_2
+ENDIF
+
+TALENT:MASTER:絶壁 = 0
+TALENT:MASTER:貧乳 = 0
+TALENT:MASTER:巨乳 = 0
+TALENT:MASTER:爆乳 = 0
+PRINTL 胸の大きさは？
+PRINTL [0]自信あるよ
+PRINTL [1]普通かな
+PRINTL [2]……………
+$INPUT_LOOP_3
+INPUT
+IF RESULT == 0
+	TALENT:MASTER:巨乳 = 1
+ELSEIF RESULT == 2
+	TALENT:MASTER:貧乳 = 1
+ELSEIF RESULT != 1
+	GOTO INPUT_LOOP_3
+ENDIF
+$TALENT_SET_COMMON
+
+;体型
+TALENT:MASTER:小人体型 = 0
+TALENT:MASTER:小柄体型 = 0
+TALENT:MASTER:巨躯 = 0
+PRINTL 体型は……
+PRINTL [0]普通だよ
+PRINTL [1]ちっちゃいってゆーな！
+PRINTL [2]ミニマム！ミニマム！
+PRINTL [3]＼でけぇ！／
+$INPUT_LOOP_4
+INPUT
+IF RESULT == 1
+	TALENT:MASTER:小柄体型 = 1
+ELSEIF RESULT == 2
+	TALENT:MASTER:小人体型 = 1
+ELSEIF RESULT == 3
+	TALENT:MASTER:巨躯 = 1
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_4
+ENDIF
+
+;気力/体力
+PRINTL インドア？　アウトドア？
+PRINTL [0]拘りはない
+PRINTL [1]インドア
+PRINTL [2]アウトドア
+$INPUT_LOOP_5
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_5
+;かなり適当な数値
+;[オトコ]は体力高め、女の子は気力多め、どの組み合わせも他のそれより体力/気力が同時に下回らない
+;[オトコ]は被調教上不利だから、多めにした方が良いかも
+IF RESULT == 0
+	MAXBASE:MASTER:0 = (TALENT:MASTER:オトコ) ? 2200 # 1500
+	MAXBASE:MASTER:1 = (TALENT:MASTER:オトコ) ? 1500 # 1800
+ELSEIF RESULT == 1
+	MAXBASE:MASTER:0 = (TALENT:MASTER:オトコ) ? 1600 # 1000
+	MAXBASE:MASTER:1 = (TALENT:MASTER:オトコ) ? 1600 # 2500
+ELSEIF RESULT == 2
+	MAXBASE:MASTER:0 = (TALENT:MASTER:オトコ) ? 2500 # 2300
+	MAXBASE:MASTER:1 = (TALENT:MASTER:オトコ) ? 1200 # 1400
+ENDIF
+BASE:MASTER:体力 = MAXBASE:MASTER:0
+BASE:MASTER:気力 = MAXBASE:MASTER:1
+MAXBASE:MASTER:9 = 0
+BASE:MASTER:理性 = MAXBASE:MASTER:9
+TALENT:理性 = 0
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, MASTER
+
+;趣味的素質付加をスキップするかどうか
+IF FLAG:4 == 3
+	PRINTL 残りの質問は難易度変わっちゃうけど……
+ELSE
+	PRINTL ちょっと質問が長くなりますが、付き合いますか？
+ENDIF
+PRINTL [0]どんと来い
+PRINTL [1]やめとく
+$INPUT_LOOP_6
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_6
+SIF RESULT == 1 && FLAG:4 == 3
+	GOTO TALENT_SET_END
+SIF RESULT == 1
+	GOTO TALENT_SET_EX
+
+;臆病
+PRINTL 知らない人に話しかけられたら……
+PRINTL [0]受け答えする
+PRINTL [1]とりあえず逃げる
+$INPUT_LOOP_7
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_7
+TALENT:臆病 = RESULT
+
+;反抗的とツンデレ
+PRINTL ツンデレですか？
+PRINTL [0]それはない
+PRINTL [1]デレはない
+PRINTFORML [2]\@(TALENT:MASTER:オトコ) ? そ、そんなバカな事 # そ、そんなことないわよ\@！
+$INPUT_LOOP_8
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_8
+TALENT:反抗的 = RESULT != 0
+TALENT:ツンデレ = (RESULT & 2) == 2
+
+;素直
+SIF TALENT:反抗的
+	GOTO JUMP_1
+PRINTL じゃ、素直って事だね？
+PRINTL [0]短絡的すぎるよ
+PRINTL [1]はい
+$INPUT_LOOP_9
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_9
+TALENT:素直 = RESULT
+$JUMP_1
+
+;気丈
+;PRINTL 挫けぬ心は……
+;PRINTL [0]兵士に回収されました
+;PRINTL [1]この胸に
+PRINTL 何事にも屈しない？
+PRINTL [0]折れがち
+PRINTL [1]そうあるつもり
+$INPUT_LOOP_10
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_10
+TALENT:気丈 = RESULT
+
+;大人しい
+PRINTL 大人しいって言われる？
+PRINTL [0]そんなには
+PRINTL [1]よく言われる
+$INPUT_LOOP_11
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_11
+TALENT:大人しい = RESULT
+
+;生意気
+PRINTL 生意気ってのは？
+PRINTL [0]そんなには
+PRINTL [1]よく言われる
+$INPUT_LOOP_11_2
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_11_2
+TALENT:生意気 = RESULT
+
+;自制心
+PRINTL 自分を自分で止められる？
+PRINTL [0]そんなのできない
+PRINTL [1]できる
+$INPUT_LOOP_11_3
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_11_3
+TALENT:自制心 = RESULT
+
+;感情乏しい
+PRINTL 感情の表現は……
+PRINTL [0]難なく
+PRINTL [1]うまく伝わらない
+$INPUT_LOOP_11_4
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_11_4
+TALENT:感情乏しい = RESULT
+
+;プライド高い/低い
+PRINTL 自分のプライドは……
+PRINTL [0]ほどほどに
+PRINTL [1]一番大事
+PRINTL [2]犬に食わせろ
+$INPUT_LOOP_12
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_12
+TALENT:プライド高い = RESULT & 1
+TALENT:プライド低い = (RESULT & 2) == 2
+
+;保守的と好奇心と無関心
+PRINTL 真新しいものには……
+PRINTL [0]気が向いたら
+PRINTL [1]なんでも手を出す
+PRINTL [2]手を出さない
+PRINTL [3]そんなのどうでもいい
+$INPUT_LOOP_13
+INPUT
+IF RESULT == 1
+	TALENT:好奇心 = 1
+ELSEIF RESULT == 2
+	TALENT:保守的 = 1
+ELSEIF RESULT == 3
+	TALENT:無関心 = 1
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_13
+ENDIF
+
+;楽観的と悲観的
+PRINTL 恋愛映画を見ていると……
+PRINTL [0]先が気になる
+PRINTL [1]ハッピーエンドになるよ
+PRINTL [2]どうせバッドエンドだよ
+$INPUT_LOOP_13_2
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_13_2
+TALENT:楽観的 = RESULT & 1
+TALENT:悲観的 = (RESULT & 2) == 2
+
+;一線越えない
+PRINTL 人との関係は……
+PRINTL [0]気にしない
+PRINTL [1]距離を置いてしまう
+$INPUT_LOOP_14
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_14
+TALENT:一線越えない = RESULT
+
+;目立ちたがり
+PRINTL 目立つ事は……
+PRINTL [0]イヤではない
+PRINTL [1]○○ちゃーん見てるー？
+$INPUT_LOOP_15
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_15
+TALENT:目立ちたがり = RESULT
+
+;貞操観念と貞操無頓着
+PRINTL エッチな事は……
+PRINTL [0]誰彼かまわずやるのは問題
+PRINTL [1]結婚初夜で
+PRINTL [2]ヤりたい時にヤる
+$INPUT_LOOP_16
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_16
+TALENT:貞操観念 = RESULT & 1
+TALENT:貞操無頓着 = (RESULT & 2) == 2
+
+;抑圧と解放
+PRINTL 自分の気持ちは……
+PRINTL [0]楽になれる程度に
+PRINTL [1]しまっておく
+PRINTL [2]筒抜け
+$INPUT_LOOP_17
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_17
+TALENT:抑圧 = RESULT & 1
+TALENT:解放 = (RESULT & 2) == 2
+
+;抵抗
+PRINTL 諦めは……
+PRINTL [0]肝心
+PRINTL [1]悪いよ
+$INPUT_LOOP_18
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_18
+TALENT:抵抗 = RESULT
+
+;恥じらいと恥薄い
+PRINTL 人前で脱いだりとかは……
+PRINTL [0]出来なくもない
+PRINTL [1]恥ずかしくて無理
+PRINTL [2]平気
+$INPUT_LOOP_19
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_19
+TALENT:恥じらい = RESULT & 1
+TALENT:恥薄い = (RESULT & 2) == 2
+
+;痛みに弱い/強い
+PRINTL 痛いのは……
+PRINTL [0]好きではないよ
+PRINTL [1]勘弁して欲しいです
+PRINTL [2]慣れてます
+$INPUT_LOOP_20
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_20
+TALENT:痛みに弱い = RESULT & 1
+TALENT:痛みに強い = (RESULT & 2) == 2
+
+;濡れやすい/にくい
+PRINTL 濡れやすい？
+PRINTL [0]普通だと思う
+PRINTL [1]そんな気がする
+PRINTL [2]むしろ逆かな
+$INPUT_LOOP_21
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_21
+TALENT:濡れやすい = RESULT & 1
+TALENT:濡れにくい = (RESULT & 2) == 2
+
+;習得早い/遅い
+PRINTL 物覚えは……
+PRINTL [0]普通だと思う
+PRINTL [1]良い
+PRINTL [2]あれ？昨日何やったっけ？
+$INPUT_LOOP_22
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_22
+TALENT:習得早い = RESULT & 1
+TALENT:習得遅い = (RESULT & 2) == 2
+
+;汚臭鈍感/敏感
+PRINTL 部屋の掃除は……
+PRINTL [0]適度に
+PRINTL [1]サボりがち
+PRINTL [2]こまめに
+$INPUT_LOOP_23
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_23
+TALENT:汚臭鈍感 = RESULT & 1
+TALENT:汚臭敏感 = (RESULT & 2) == 2
+
+;快感に素直/の否定
+PRINTL 気持ち良い事は……
+PRINTL [0]良いも悪いも無い
+PRINTL [1]良い事
+PRINTL [2]えっちなのはいけないと思います！
+$INPUT_LOOP_24
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_24
+TALENT:快感に素直 = RESULT & 1
+TALENT:快感の否定 = (RESULT & 2) == 2
+
+;自慰しやすい
+PRINTL 自分ですることは……
+PRINTL [0]人並み程度には
+PRINTL [1]多い……かも
+$INPUT_LOOP_25
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_25
+TALENT:自慰しやすい = RESULT
+IF RESULT == 1
+	EXP:MASTER:自慰経験 += RAND:11 + 30
+ELSE
+	EXP:MASTER:自慰経験 += RAND:10 + 1
+ENDIF
+
+;中毒しやすい
+PRINTL 何かにはまってしまったら……
+PRINTL [0]それでも節度は守る
+PRINTL [1]やめられない、とまらない
+$INPUT_LOOP_26
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_26
+TALENT:中毒しやすい = RESULT
+
+;倒錯的
+PRINTL 普通の事には興味ない？
+PRINTL [0]そんな事ない
+PRINTL [1]もちろん
+$INPUT_LOOP_27
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_27
+TALENT:倒錯的 = RESULT
+
+$TALENT_SET_EX
+IF FLAG:4 != 3
+	;ゲームバランスにかかわる素質をスキップするか
+	PRINTL 残りの質問は難易度変わっちゃうけど……
+	PRINTL [0]どんと来い
+	PRINTL [1]やめとく
+	$INPUT_LOOP_31
+	INPUT
+	IF RESULT == 1
+		GOTO TALENT_SET_END
+	ELSEIF RESULT != 0
+		PRINTL 正しい値を入力してください
+		GOTO INPUT_LOOP_31
+	ENDIF
+ENDIF
+
+;サド/小悪魔/マゾ
+PRINTL いじめるのは……
+PRINTL [0]悪いことです
+PRINTL [1]大好きです
+PRINTL [2]むしろいじめてください
+$INPUT_LOOP_28
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_28
+SIF RESULT == 1
+	CALL TALENT_SET_S
+TALENT:マゾ = (RESULT & 2) == 2
+
+;幼稚
+PRINTL 子供っぽい性格？
+PRINTL [0]まさか
+PRINTL [1]うにゅ？
+$INPUT_LOOP_29
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_29
+;TALENT:小悪魔 = RESULT & 1
+TALENT:幼稚 = RESULT & 1
+
+;回復早い/遅い
+PRINTL 自分の体力について……
+PRINTL [0]平均的
+PRINTL [1]元気だと思う
+PRINTL [2]病弱かも
+$INPUT_LOOP_30
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_30
+TALENT:回復早い = RESULT & 1
+TALENT:回復遅い = (RESULT & 2) == 2
+
+;c/v/a/b鈍感/敏感はどうしようか
+
+$TALENT_SET_END
+
+
+;多分問題ないと思うけど、念のためターゲットを初期化
+TARGET = -1
+
+RETURN 1
+
+@TALENT_SET_M
+;[オトコ]用両刀と男嫌い
+PRINTFORML 両方いける？
+PRINTL [0] マテ、何の話だ
+PRINTL [1] どんと来い
+PRINTL [2] 無理！　絶対に無理！
+$INPUT_LOOP_1
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+	GOTO INPUT_LOOP_1
+TALENT:両刀 = RESULT & 1
+TALENT:男嫌い = (RESULT & 2) == 2
+
+@TALENT_SET_F
+;女の子用両刀
+PRINTFORML それじゃ女の子が好きってこと？
+PRINTL [0] そう言う訳じゃ……
+PRINTL [1] 大好きです
+$INPUT_LOOP_1
+INPUT
+SIF RESULT != 0 && RESULT != 1
+	GOTO INPUT_LOOP_1
+TALENT:両刀 = RESULT & 1
+
+@TALENT_SET_S
+;サド/小悪魔
+PRINTFORML 怖がらせて、痛めつけるのと
+PRINTFORML トロトロに蕩けさせて、可愛く鳴かせるのと
+PRINTFORML どっちが好き？
+PRINTL [0] 出直します
+PRINTL [1] 痛めつけたい
+PRINTL [2] 鳴かせたい
+PRINTL [3] 両方！　両方！
+$INPUT_LOOP_1
+INPUT
+SIF RESULT != 0 && RESULT != 1 && RESULT != 2 && RESULT != 3
+	GOTO INPUT_LOOP_1
+TALENT:サド = RESULT & 1
+TALENT:小悪魔 = (RESULT & 2) == 2
+
+@MASTER_FUTA_SET
+SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	RETURN 0
+
+PRINTL 
+PRINTFORML 最初から%CALLNAME:MASTER%をふたなり化させることが出来ます。どうしますか？
+PRINTL [0] ふたなり化する
+PRINTL [1] そんな事はしない
+$INPUT_LOOP3
+INPUT
+IF RESULT == 0
+	PRINTFORMW %CALLNAME:MASTER%をふたなりにしました
+	TALENT:MASTER:ふたなり = 1
+	MAXBASE:MASTER:2 = CALC_GAUGE2_COMMON(MASTER)
+ELSEIF RESULT != 1
+	PRINTL 正しい値を入力してください
+	GOTO INPUT_LOOP3
+ENDIF
+
+@MASTER_SAD_SET
+SIF TALENT:MASTER:サド
+	RETURN 0
+
+PRINTL 
+PRINTFORML 最初から%CALLNAME:MASTER%をサドにすることが出来ます。どうしますか？
+PRINTL [0] サドにする
+PRINTL [1] そんな事はしない
+$INPUT_LOOP4
+INPUT
+IF RESULT == 0
+	PRINTFORMW %CALLNAME:MASTER%をサドにしました
+	TALENT:MASTER:サド = 1
+ELSEIF RESULT != 1
+	PRINTL 正しい値を入力してください
+	GOTO INPUT_LOOP4
+ENDIF
+
+;逆調教用あなた加入処理を間借り
+@RV_CHARA0
+ADDCHARA 1000
+MASTER = 1
+CALL MASTER_TALENT_SET
+;理性ゲージ設定
+SIF MAXBASE:MASTER:9 <= 0
+	MAXBASE:MASTER:9 = 9500 + 25 * RAND:101
+BASE:MASTER:理性 = MAXBASE:MASTER:9
+TALENT:MASTER:理性 = 1
+;調教度ゲージ設定
+CALL CHECK_ACCEPTANCE, MASTER
+;発情設定
+SIF TALENT:MASTER:動物耳 || TALENT:MASTER:淫魔 || TALENT:MASTER:悪魔 || TALENT:MASTER:妖狐 || TALENT:MASTER:半白澤 || TALENT:MASTER:鬼 || TALENT:MASTER:鵺 || TALENT:MASTER:化け狸 || TALENT:MASTER:人狼
+	TALENT:MASTER:発情可 = 1
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, MASTER
+
+
+;=============================================================================
+;アホモード：DEADorALIVE用
+;=============================================================================
+;時間経過のとき、1/256の確率で落ちるアホなゲームモード……の残骸。と言うよりZANGUY
+;何かに使えないかと踏んでとりあえず残すことに
+;なお、動作・表示テストの意味も兼ねて東方調教典のネタばれＱ＆Ａにおいて、[999]を入力すると見れるように
+;@EVENTSHOP
+;#PRI
+;SIF RAND:256 == 0
+;	CALL EVENT_ERATOHOYM_CRASH
+
+@EVENT_ERATOHOYM_CRASH
+CALL SYSTXT_FUN_ERATOHOYM_CRASH_BLUE
+QUIT

@@ -1,0 +1,325 @@
+﻿;=============================================================================
+;ヴァギナ注射
+;=============================================================================
+;強制的にＶ絶頂させられた場合、処女喪失＋Ｖ経験が入ります。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE81
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:81 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;注射系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 64) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;助手調教の場合、技巧4以上か[針さばき]じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4 && TALENT:PLAYER:針さばき == 0
+	RETURN 0
+;注射セットと媚薬を持っていないとダメ
+SIF (ITEM:注射セット == 0 || ITEM:媚薬 == 0)
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;Ｖ系装着具使用中は不可(クスコ除く)
+SIF TEQUIP:Ｖ系装着器具
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 81) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM81
+PRINTL ヴァギナ注射
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 81
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 =ヴァギナ注射
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+LOCAL:3 = (TALENT:MASTER:調合知識) ? 1 # 0
+SIF ASSI >= 0 && TALENT:ASSI:調合知識
+	LOCAL:3 = 1
+
+;調教対象に媚薬中毒があれば消費を抑える
+IF LOCAL:3
+	LOCAL:1 = (TALENT:媚薬中毒) ? 250 # 500
+	LOCAL:2 = (TALENT:媚薬中毒) ? 150 # 300
+ELSE
+	LOCAL:1 = (TALENT:媚薬中毒) ? 400 # 800
+	LOCAL:2 = (TALENT:媚薬中毒) ? 250 # 500
+ENDIF
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+SOURCE:快Ｖ = 500
+SOURCE:中毒充足 = 500
+SOURCE:薬物浸潤 = 3000
+SOURCE:逸脱 = 3500
+
+;触手でない場合は媚薬を1個使用
+IF TEQUIP:触手調教
+	TFLAG:90 = 1
+ELSE
+	CALL USE_PLURAL_ITEM, 61, 1
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:逸脱 , 3.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:逸脱 , 2.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:逸脱 , 2.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:逸脱 , 1.00
+ELSE
+	TIMES SOURCE:逸脱 , 0.80
+ENDIF
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	TIMES SOURCE:快Ｖ , 0.50
+ELSEIF ABL:Ｖ感覚 == 1
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF ABL:Ｖ感覚 == 2
+	TIMES SOURCE:快Ｖ , 1.50
+ELSEIF ABL:Ｖ感覚 == 3
+	TIMES SOURCE:快Ｖ , 2.00
+	EX:1 += RAND:2
+ELSEIF ABL:Ｖ感覚 == 4
+	TIMES SOURCE:快Ｖ , 2.50
+	EX:1 += 1
+ELSE
+	TIMES SOURCE:快Ｖ , 3.00
+	EX:1 += 2
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:中毒充足 , 0.80
+	TIMES DOWNBASE:0 , 1.20
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:中毒充足 , 1.10
+	TIMES DOWNBASE:0 , 1.10
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:中毒充足 , 1.30
+	TIMES DOWNBASE:0 , 1.00
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:中毒充足 , 1.50
+	TIMES DOWNBASE:0 , 0.90
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:中毒充足 , 1.70
+	TIMES DOWNBASE:0 , 0.80
+ELSE
+	TIMES SOURCE:中毒充足 , 2.10
+	TIMES DOWNBASE:0 , 0.70
+ENDIF
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 3300
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 3600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 4000
+ELSE
+	SOURCE:痛み = 4500
+ENDIF
+
+;媚薬効果を発揮
+TEQUIP:媚薬 = 1
+
+;反抗的
+SIF TALENT:反抗的
+	TIMES SOURCE:痛み , 1.10
+;抵抗
+SIF TALENT:抵抗
+	TIMES SOURCE:痛み , 1.10
+;媚薬中毒
+IF TALENT:媚薬中毒
+	SOURCE:中毒充足 += 500
+	TIMES SOURCE:快Ｖ , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+	SOURCE:媚薬浸潤 = 300
+ELSE
+	SOURCE:媚薬浸潤 = 2 + RAND:5
+ENDIF
+;Ｖ敏感
+IF TALENT:Ｖ敏感
+	IF ABL:Ｖ感覚 <= 3
+		TIMES SOURCE:快Ｖ , 1.80
+	ELSEIF ABL:Ｖ感覚 == 4
+		TIMES SOURCE:快Ｖ , 2.00
+		EX:1 += RAND:2
+	ELSE
+		TIMES SOURCE:快Ｖ , 2.20
+		EX:1 += RAND:3
+	ENDIF
+;Ｖ鈍感
+ELSEIF TALENT:Ｖ鈍感
+	IF ABL:Ｖ感覚 <= 3
+		TIMES SOURCE:快Ｖ , 0.70
+		EX:1 -= (EX:1 > 1) ? 1 # 0
+	ELSEIF ABL:Ｖ感覚 == 4
+		TIMES SOURCE:快Ｖ , 0.75
+		EX:1 -= (EX:1 > 1) ? 1 # 0
+	ELSE
+		TIMES SOURCE:快Ｖ , 0.80
+	ENDIF
+ENDIF
+
+;クスコ使用中に絶頂回数増加
+IF TEQUIP:クスコ
+	IF ABL:Ｖ感覚 >= 5
+		EX:1 += 2
+	ELSEIF ABL:Ｖ感覚 == 4
+		EX:1 += 1
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.50
+	ENDIF
+ENDIF
+;触手補正
+IF TEQUIP:触手調教
+	TIMES SOURCE:痛み , 0.30
+	TIMES SOURCE:逸脱 , 0.80
+	LOCAL:1 -= 200
+	DOWNBASE:0 -= LOCAL:1
+	DOWNBASE:1 -= 400
+ENDIF
+
+;調教者に針さばき
+SIF TALENT:PLAYER:針さばき
+	TIMES SOURCE:痛み , 0.90
+;調教者に幼稚
+SIF TALENT:PLAYER:幼稚
+	TIMES SOURCE:痛み , 1.20
+
+;鈴仙か永琳による使用
+IF TEQUIP:触手調教 == 0
+	SIF NO:PLAYER == 1028
+		TIMES SOURCE:痛み , 0.70
+	SIF NO:PLAYER == 1029
+		TIMES SOURCE:痛み , 0.50
+ENDIF
+
+IF EX:1 > 0
+	;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+	TFLAG:1 = 1
+	TCVAR:Ｖ経験 += 1
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_81
+PRINTFORM %CALLNAME:TARGET%の
+SIF TALENT:Ｖ敏感
+	PRINT 敏感な
+IF TEQUIP:クスコ
+	PRINT クスコで無防備になった子宮口に
+ELSEIF TFLAG:899 >= 1
+	PRINT 失神して無防備になった膣口を開き子宮口に
+ELSEIF ABL:Ｖ感覚 >= 4
+	PRINT 片手の指で押し広げた膣壁に
+ELSE
+	PRINT ヒクつく膣口に
+ENDIF
+PRINTL 注射針を突き立てた
+
+PRINTFORM %CALLNAME:TARGET%は
+IF TFLAG:899 > 0
+	PRINT 失神しているにも拘らず、
+	IF ABL:Ｖ感覚 >= 5
+		PRINT 体の奥から込み上げてくる快感に身を跳ねさせている…
+	ELSEIF ABL:Ｖ感覚 >= 3
+		PRINT 抑えきれない疼きに身体を紅潮させている…
+	ELSE
+		PRINT 激痛と湧き上がる感覚に呻き声を上げている…
+	ENDIF
+ELSE
+	IF ABL:Ｖ感覚 >= 5
+		PRINT 体の奥から込み上げてくる激感に身を跳ねさせて、
+	ELSEIF ABL:Ｖ感覚 >= 3
+		PRINT 抑えきれない疼きに身を紅潮させて、
+	ELSE
+		PRINT 激痛と湧き上がる感覚に呻き声を上げて、
+	ENDIF
+	IF PALAM:欲情 >= PALAMLV:5
+		PRINT 泣き叫びながら
+		IF ABL:露出癖 >= 3 && TEQUIP:緊縛関連 == 0
+			PRINT 両手で膣肉を押し広げて
+		ELSE
+			PRINT あなたにすがり付いて
+		ENDIF
+		PRINT 懇願し
+	ELSEIF PALAM:欲情 >= PALAMLV:3
+		PRINT 指で何とかして疼きを収めようと自慰を始め
+	ELSE
+		PRINT 体を抱え込むようにして必死で耐え
+	ENDIF
+	PRINTL ている…
+ENDIF

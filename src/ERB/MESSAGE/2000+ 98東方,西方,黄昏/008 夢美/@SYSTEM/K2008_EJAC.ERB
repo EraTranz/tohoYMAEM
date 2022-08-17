@@ -1,0 +1,127 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;射精口上
+;========================================================
+@K2008_EJAC
+#DIM _COUNT
+#DIM _TFLAG703
+#DIM _SHOOT_TARGET1
+#DIM _SHOOT_TARGET2
+
+;相手を射精させたかのチェックを先に実施
+_SHOOT_TARGET1 = 0
+_SHOOT_TARGET2 = 0
+
+FOR _COUNT, 10, 28+1
+	IF TFLAG:_COUNT
+		_SHOOT_TARGET1 = _COUNT
+		BREAK
+	ENDIF
+NEXT
+
+;射精がなければ終わる
+SIF _SHOOT_TARGET1 == 0
+	RETURN 0
+
+;空白行
+PRINTL 
+
+;TFLAG:703を念のため退避
+_TFLAG703 = TFLAG:703
+;射精先を再取得する
+TRYCALLFORM COM_SHOOT_{SELECTCOM}
+;取得した本来の射精先を残す（場所の数値と10ずれるので補正する）
+_SHOOT_TARGET2 = TFLAG:703 + 10
+;TFLAG:703を戻す（不要かもしれないけど、念のため）
+TFLAG:703 = _TFLAG703
+
+;射精先がコマンドと同じ場合は、コマンド射精を呼び出す
+IF _SHOOT_TARGET1 == _SHOOT_TARGET2
+	;ランク指定
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_EJAC_COM_{SELECTCOM}
+		RETURN 0
+	CATCH
+		;コマンド指定（コマンド口上内で処理のこと）
+		TRYCCALLFORM K2008_EJAC_COM_{SELECTCOM}
+			RETURN 0
+		CATCH
+			;コマンド指定が見つからなかったので続ける
+		ENDCATCH
+	ENDCATCH
+ENDIF
+
+;汎用射精口上
+CALL K2008_EJAC_GENERAL, _SHOOT_TARGET1
+
+;================================================
+;相手を射精させた口上
+;------------------------------------------------
+;ECAJ番号は以下のとおり。TFLAGの番号に同じ
+;	10 = 口に射精後舐め取り
+;	11 = 膣内に射精
+;	12 = アナルに射精
+;	13 = 髪に射精
+;	14 = 顔に射精
+;	15 = 口に射精
+;	16 = 胸に射精
+;	17 = 腹に射精
+;	18 = 腋に射精
+;	19 = 手に射精
+;	20 = 秘裂に射精
+;	21 = 竿に射精
+;	22 = 尻に射精
+;	23 = 太腿に射精
+;	24 = 足で射精
+;	25 = その他の射精
+;	26 = 調教者がキスで射精
+;	27 = 主人が助手を犯すで射精
+;	28 = 調教者がコンドームに射精
+;================================================
+@K2008_EJAC_TO(ARGS = "")
+#DIM _SHOOT_TARGET
+
+SELECTCASE ARGS
+	CASE "口", "舐め取り"
+		_SHOOT_TARGET = 10
+	CASE "膣", "膣内射精"
+		_SHOOT_TARGET = 11
+	CASE "アナル", "腸内射精"
+		_SHOOT_TARGET = 12
+	CASE "髪"
+		_SHOOT_TARGET = 13
+	CASE "顔"
+		_SHOOT_TARGET = 14
+	CASE "口"
+		_SHOOT_TARGET = 15
+	CASE "胸"
+		_SHOOT_TARGET = 16
+	CASE "腹"
+		_SHOOT_TARGET = 17
+	CASE "腋"
+		_SHOOT_TARGET = 18
+	CASE "手"
+		_SHOOT_TARGET = 19
+	CASE "秘裂", "恥丘", "割れ目", "ワレメ"
+		_SHOOT_TARGET = 20
+	CASE "竿", "ペニス", "肥大陰核", "巨クリ"
+		_SHOOT_TARGET = 21
+	CASE "尻"
+		_SHOOT_TARGET = 22
+	CASE "太腿", "脚"
+		_SHOOT_TARGET = 23
+	CASE "足"
+		_SHOOT_TARGET = 24
+	CASE "その他"
+		_SHOOT_TARGET = 25
+	CASE "キス", "キスで射精"
+		_SHOOT_TARGET = 26
+	CASE "助手を犯す", "自分以外"
+		_SHOOT_TARGET = 27
+	CASE "コンドーム内"
+		_SHOOT_TARGET = 28
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+CALL K2008_EJAC_GENERAL, _SHOOT_TARGET
+

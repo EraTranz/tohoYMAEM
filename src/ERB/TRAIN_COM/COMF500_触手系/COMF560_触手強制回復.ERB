@@ -1,0 +1,357 @@
+﻿;=============================================================================
+;触手強制回復
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE560
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:560 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとはダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;調教者は触手使役LV5以上必要
+SIF ABL:PLAYER:触手使役 < 5
+	RETURN 0
+;触手が[養分注入触手]を得ていないとダメ
+SIF (FLAG:75 & 32) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:触手強制回復
+	RETURN 1
+;調教者の気力または体力が1000以下だとダメ
+SIF BASE:PLAYER:体力 < 1000 || BASE:PLAYER:気力 < 1000
+	RETURN 0
+;奴隷の体力が最大だとダメ
+SIF BASE:体力 >= MAXBASE:0
+	RETURN 0
+;技巧が4以上ないとダメ
+SIF ABL:PLAYER:技巧 < 4
+	RETURN 0
+;ボールギャグ使用中及び触手貫通中は触手が[針状触手]を持っていないとダメ
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) || TEQUIP:口装着器具
+	SIF (FLAG:75 & 2) == 0
+		RETURN 0
+ENDIF
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 560) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM560
+;口上用にTFLAG:201を使用。(0=使った時点で触手貫通、口辱ではない, 1=使った時点で触手貫通中, 2=使った時点で触手口辱中, 3=使った時点で触手貫通中かつ触手口辱中)
+PRINTL 触手強制回復
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 560
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手強制回復
+
+;口上用
+TFLAG:201 = 0
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) && TEQUIP:口装着器具 == 2
+	;触手貫通＋触手口辱
+	TFLAG:201 = 3
+ELSEIF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23)
+	;触手貫通のみ
+	TFLAG:201 = 1
+ELSEIF TEQUIP:口装着器具 == 2
+	;触手口辱のみ
+	TFLAG:201 = 2
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;触手強制回復解除
+IF TEQUIP:触手強制回復
+	TEQUIP:触手強制回復 = 0
+	;触手経験フラグ
+	TFLAG:90 = 0
+	RETURN 1
+ENDIF
+
+;触手強制回復
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) || TEQUIP:口装着器具 == 1
+	TEQUIP:触手強制回復 = 2
+ELSEIF TEQUIP:口装着器具 == 2
+	TEQUIP:口装着器具 = 0
+	TEQUIP:触手強制回復 = 1
+ELSE
+	TEQUIP:触手強制回復 = 1
+ENDIF
+
+LOCAL:1 = 100
+LOCAL:2 = 500
+
+;EXP:触手経験をみる
+IF EXP:触手経験 < EXPLV:1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 3.00
+	SOURCE:トラウマ += 2000
+ELSEIF EXP:触手経験 < EXPLV:2
+	TIMES LOCAL:2 , 2.50
+	SOURCE:トラウマ += 1000
+ELSEIF EXP:触手経験 < EXPLV:3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 2.00
+	SOURCE:トラウマ += 100
+ELSEIF EXP:触手経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 1.50
+ELSEIF EXP:触手経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.00
+ELSE
+	TIMES LOCAL:1 , 1.80
+	TIMES LOCAL:2 , 0.80
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	LOCAL:3 = 0
+	TIMES LOCAL:2 , 1.50
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:3 = 5
+	TIMES LOCAL:2 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:3 = 20
+	TIMES LOCAL:2 , 0.90
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:3 = 80
+	TIMES LOCAL:2 , 0.60
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:3 = 300
+	TIMES LOCAL:2 , 0.30
+ELSE
+	LOCAL:3 = 1000
+	TIMES LOCAL:2 , 0.10
+ENDIF
+
+;薬毒耐性
+SIF TALENT:薬毒耐性
+	TIMES LOCAL:1 , 0.40
+;中毒しやすい
+SIF TALENT:中毒しやすい
+	TIMES LOCAL:1 , 1.10
+;回復早い
+IF TALENT:回復早い
+	TIMES LOCAL:1 , 1.30
+;回復遅い
+ELSEIF TALENT:回復遅い
+	TIMES LOCAL:1 , 0.75
+ENDIF
+;機械
+SIF TALENT:機械
+	TIMES LOCAL:1 , 0.20
+
+LOCAL:4 = LOCAL:1 /4
+;調教者が小柄体型・小人体型なら消耗が大きい
+SIF TALENT:小人体型 || TALENT:小柄体型
+	TIMES LOCAL:4 , 1.20
+SIF LOCAL:4 >= BASE:PLAYER:体力
+	LOCAL:4 = BASE:PLAYER:体力 - 1
+;調教者の体力を糧にしている
+BASE:PLAYER:体力 -= LOCAL:4
+PRINTFORML %CALLNAME:TARGET%を回復するために%CALLNAME:PLAYER%は自分の体力を犠牲にした
+SIF BASE:PLAYER:体力 < 500
+	CALL TRAIN_EVENT_COM560
+
+;寄生(栄養が一部取られているので)
+SIF TALENT:寄生
+	TIMES LOCAL:1 , 0.70
+
+LOCAL:4 = LOCAL:1
+SIF LOCAL:4 + BASE:体力 > MAXBASE:0
+	LOCAL:4 = MAXBASE:0 - BASE:体力
+BASE:体力 = MIN(BASE:体力 + LOCAL:4, MAXBASE:0)
+PRINTFORML 体力+{LOCAL:4}
+LOCAL:4 = LOCAL:1 /2
+SIF LOCAL:4 + BASE:気力 > MAXBASE:1
+	LOCAL:4 = MAXBASE:1 - BASE:気力
+BASE:気力 = MIN(BASE:気力 + LOCAL:4, MAXBASE:1)
+PRINTFORML 気力+{LOCAL:4}
+
+SOURCE:トラウマ += LOCAL:2 * 2
+SOURCE:中毒充足 += LOCAL:3
+SOURCE:不潔 += LOCAL:1 + LOCAL:2
+SOURCE:逸脱 += LOCAL:2 * 2
+SOURCE:反感追加 += LOCAL:2
+SOURCE:支配 += (LOCAL:2 + LOCAL:3) / 2
+
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) || TEQUIP:口装着器具 == 1
+	STAIN:手 |= 2
+	STAIN:手 |= 64
+ELSE
+	STAIN:口 |= 2
+	STAIN:口 |= 64
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;触手強制回復中
+;--------------------------------------------------
+@EQUIP_COM560
+PRINTL ＜触手強制回復中＞
+SIF SELECTCOM != 560
+	CALL DISPLAY_EQUIP_MESSAGE_COM, 560
+
+LOCAL = 250
+LOCAL:1 = 300
+
+;EXP:触手経験をみる
+IF EXP:触手経験 < EXPLV:1
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:触手経験 < EXPLV:2
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:触手経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:触手経験 < EXPLV:4
+	TIMES LOCAL , 1.30
+	TIMES LOCAL:1 , 1.50
+ELSEIF EXP:触手経験 < EXPLV:5
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL:1 , 1.80
+	TIMES LOCAL:1 , 0.80
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	LOCAL:2 = 0
+	TIMES LOCAL:1 , 1.50
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:2 = 5
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:2 = 20
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:2 = 80
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:2 = 300
+	TIMES LOCAL:1 , 0.30
+ELSE
+	LOCAL:2 = 1000
+	TIMES LOCAL:1 , 0.10
+ENDIF
+
+;薬毒耐性
+SIF TALENT:薬毒耐性
+	TIMES LOCAL , 0.40
+;中毒しやすい
+SIF TALENT:中毒しやすい
+	TIMES LOCAL , 1.10
+;回復早い
+IF TALENT:回復早い
+	TIMES LOCAL , 1.30
+;回復遅い
+ELSEIF TALENT:回復遅い
+	TIMES LOCAL , 0.75
+ENDIF
+;機械
+SIF TALENT:機械
+	TIMES LOCAL , 0.20
+
+;寄生(栄養が一部取られているので)
+SIF TALENT:寄生
+	TIMES LOCAL , 0.70
+
+LOCAL:3 = LOCAL
+SIF LOCAL:3 + BASE:体力 > MAXBASE:0
+	LOCAL:3 = MAXBASE:0 - BASE:体力
+BASE:体力 = MIN(BASE:体力 + LOCAL:3, MAXBASE:0)
+PRINTFORML 体力+{LOCAL:3}
+LOCAL:3 = LOCAL/2
+SIF LOCAL:3 + BASE:気力 > MAXBASE:1
+	LOCAL:3 = MAXBASE:1 - BASE:気力
+BASE:気力 = MIN(BASE:気力 + LOCAL:3, MAXBASE:1)
+PRINTFORML 気力+{LOCAL:3}
+
+SOURCE:トラウマ += LOCAL:1 * 2
+SOURCE:支配 += (LOCAL:1 + LOCAL:2) / 4
+SOURCE:中毒充足 += LOCAL:2
+SOURCE:薬物浸潤 += LOCAL:2 / 5
+SOURCE:不潔 += LOCAL + LOCAL:1
+SOURCE:逸脱 += LOCAL:1 * 2
+SOURCE:反感追加 += LOCAL:1 / 5
+
+;薬物経験
+TCVAR:薬物経験 += 1
+
+LOCAL:4 = LOCAL/5
+;調教者が小柄体型・小人体型なら消耗が大きい
+SIF TALENT:PLAYER:小人体型 || TALENT:PLAYER:小柄体型
+	TIMES LOCAL:4 , 1.20
+SIF LOCAL:4 >= BASE:PLAYER:体力
+	LOCAL:4 = BASE:PLAYER:体力 - 1
+;調教者の体力を糧にしている
+BASE:PLAYER:体力 -= LOCAL:4
+SIF BASE:PLAYER:体力 < 500
+	CALL TRAIN_EVENT_COM560
+;触手経験フラグ
+TFLAG:90 /= 2
+RETURN 1
+
+;--------------------------------------------------
+;体力切れの処理
+;--------------------------------------------------
+@TRAIN_EVENT_COM560
+IF ASSIPLAY
+	PRINTFORML %CALLNAME:ASSI%の足元がフラフラしてきている
+ELSE
+	PRINTL 少し足元がフラフラしてきた
+ENDIF
+PRINTL これ以上続けないほうがよさそうだ……
+TEQUIP:触手強制回復 = 0
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_560
+IF TEQUIP:触手強制回復
+	IF TEQUIP:触手強制回復 == 2
+		PRINTFORML %CALLNAME:TARGET%の体から栄養液を注入していた触手が引き抜かれた
+	ELSE
+		PRINTFORML 栄養液を流し込んでいた触手が%CALLNAME:TARGET%の口から引き抜かれた
+	ENDIF
+ELSE
+	IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) || TEQUIP:口装着器具 == 1
+		PRINTFORML 注射針のような触手が%CALLNAME:TARGET%の腕を突き刺すと、そこから高い栄養価値の高い液体を注入し始めた…
+	ELSEIF TEQUIP:口装着器具 == 2
+		PRINTFORML %CALLNAME:TARGET%の口を犯していた触手は突如、即効性の回復効果がある液体を咽の奥へと注ぎ始めた…
+	ELSE
+		PRINTFORML 管状の触手が強引に%CALLNAME:TARGET%の口に侵入し、高い栄養価値の即効性の回復薬を流し込んだ…
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_560
+IF TEQUIP:触手強制回復 == 2
+	PRINTFORML 触手は%CALLNAME:TARGET%の体に栄養液を直接注ぎ込んでいる…
+ELSE
+	PRINTFORML 触手は%CALLNAME:TARGET%の口に栄養液を流し込んでいる…
+ENDIF

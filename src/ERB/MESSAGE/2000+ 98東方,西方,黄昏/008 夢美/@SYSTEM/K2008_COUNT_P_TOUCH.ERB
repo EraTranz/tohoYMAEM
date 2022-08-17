@@ -1,0 +1,63 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;CFLAG:7200～に、調教者ペニスとの接触回数を加算する
+;	いい取得方法がなさそうなので、COM決め打ち
+;-------------------------------------------------
+@K2008_COUNT_P_TOUCH
+
+IF K2008F_CAN_EJAC(PLAYER)
+	SELECTCASE SELECTCOM
+		;C（陰核、陰茎）
+		CASE 43, 52, 306, 629
+			CFLAG:__K2008N_CFLAG_COUNT_PTOC__ += 1
+		;V（膣穴）
+		CASE 20, 21, 22, 23, 24, 27, 28, 612, 613, 614, 615, 616, 617, 630, 632
+			CFLAG:__K2008N_CFLAG_COUNT_PTOV__ += 1
+		;A（尻穴）
+		CASE 30, 31, 32, 33, 34, 37, 38, 618, 619, 633, 
+			CFLAG:__K2008N_CFLAG_COUNT_PTOA__ += 1
+		;B（乳房）
+		CASE 42, 56, 207, 208, 209, 305, 603
+			CFLAG:__K2008N_CFLAG_COUNT_PTOB__ += 1
+		;U（尿道）
+		CASE 146
+			CFLAG:__K2008N_CFLAG_COUNT_PTOU__ += 1
+		;口
+		CASE 41, 209, 303, 601, 602, 604
+			CFLAG:__K2008N_CFLAG_COUNT_PTOMOUTH__ += 1
+		;手
+		CASE 40
+			CFLAG:__K2008N_CFLAG_COUNT_PTOHAND__ += 1
+		;口（二人分）
+		CASE 304
+			CFLAG:__K2008N_CFLAG_COUNT_PTOMOUTH__ += 1
+		;3P（特殊処理）
+		CASE 610
+			IF K2008F_CAN_EJAC(MASTER)
+				SELECTCASE TFLAG:130
+					CASE 1
+						;主人がＶを犯す
+						CFLAG:__K2008N_CFLAG_COUNT_PTOV__ += 1
+					CASE 2
+						;主人がＡを犯す
+						CFLAG:__K2008N_CFLAG_COUNT_PTOA__ += 1
+					CASE 3
+						;主人が口を犯す
+						CFLAG:__K2008N_CFLAG_COUNT_PTOMOUTH__ += 1
+				ENDSELECT
+			ENDIF
+			IF K2008F_CAN_EJAC(ASSI)
+				SELECTCASE TFLAG:131
+					CASE 1
+						;助手がＶを犯す
+						CFLAG:__K2008N_CFLAG_COUNT_PTOV__ += 1
+					CASE 2
+						;助手がＡを犯す
+						CFLAG:__K2008N_CFLAG_COUNT_PTOA__ += 1
+					CASE 3
+						;助手が口を犯す
+						CFLAG:__K2008N_CFLAG_COUNT_PTOMOUTH__ += 1
+				ENDSELECT
+			ENDIF
+	ENDSELECT
+ENDIF

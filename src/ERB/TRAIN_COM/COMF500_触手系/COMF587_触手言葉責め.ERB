@@ -1,0 +1,197 @@
+﻿;=============================================================================
+;触手言葉責め
+;=============================================================================
+;言葉責めから地の文と処理の一部を拝借
+;触手生贄を通じて触手と一体化したパルスィを召喚、
+;奴隷の様子に嫉妬心を煽られた揚句、八つ当たりの如くぱるぱるしていく……という超微妙なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE587
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:587 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:キャラ触手 & 4
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[PARSEE触手]を得ていないとダメ
+SIF (FLAG:98 & 128) == 0
+	RETURN 0
+;パルスィを触手生贄に捧げていない(=パルスィが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 128) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 587) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM587
+PRINTL 触手言葉責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 587
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手言葉責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 200
+	LOCAL:2 = 500
+	LOCAL:3 = 1500
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 400
+	LOCAL:2 = 700
+	LOCAL:3 = 1000
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 600
+	LOCAL:2 = 900
+	LOCAL:3 = 500
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 800
+	LOCAL:2 = 1300
+	LOCAL:3 = 250
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 1000
+	LOCAL:2 = 1500
+	LOCAL:3 = 100
+ELSE
+	LOCAL:1 = 1200
+	LOCAL:2 = 1800
+	LOCAL:3 = 50
+ENDIF
+
+;パルスィとの相性あるなしで補正が上下
+LOCAL:4 = 59
+IF RELATION:(LOCAL:4) > 0 && RELATION:(LOCAL:4) != 100
+	LOCAL:1 *= RELATION:(LOCAL:4)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:4)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:4)
+	LOCAL:3 /= 100
+ENDIF
+
+SOURCE:露出 = LOCAL:1
+SOURCE:屈従 = LOCAL:2
+SOURCE:トラウマ = (LOCAL:1 + LOCAL:2)/2
+SOURCE:逸脱 = LOCAL:3
+
+IF TEQUIP:キャラ触手 & 4
+	TEQUIP:キャラ触手 -= 4
+ELSE
+	TEQUIP:キャラ触手 |= 4
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手言葉責め中
+;-------------------------------------------------
+@EQUIP_COM587
+PRINTL ＜触手言葉責め中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 100
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 150
+	LOCAL:2 = 60
+	LOCAL:3 = 1000
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 300
+	LOCAL:2 = 120
+	LOCAL:3 = 500
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 450
+	LOCAL:2 = 240
+	LOCAL:3 = 250
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 600
+	LOCAL:2 = 360
+	LOCAL:3 = 100
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 750
+	LOCAL:2 = 480
+	LOCAL:3 = 50
+ELSE
+	LOCAL:1 = 900
+	LOCAL:2 = 600
+	LOCAL:3 = 10
+ENDIF
+
+;パルスィとの相性あるなしで補正が上下
+LOCAL = 59
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:屈従 += LOCAL:2
+SOURCE:トラウマ += (LOCAL:1 + LOCAL:2)/2
+SOURCE:逸脱 += LOCAL:3
+
+
+;パルスィの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_587
+IF TEQUIP:キャラ触手 & 4
+	PRINTFORML 言葉責めに興じているパルスィにとって%CALLNAME:PLAYER%の命令は不満だったらしく、一瞬だけ顔を顰めた
+	PRINTFORML しかし気を取り直したのか不意に%CALLNAME:TARGET%に近寄り、頬に軽く接吻するとそのまま触手の管に身をすべり込ませた
+	PRINTFORML 管の口が完全に閉まる直前、パルスィはちらりと後ろを振り返って%CALLNAME:TARGET%に満足そうな笑みを残すと、そのまま肉塊と共に触手の壁へと帰って行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に応じて人が一人入れそうな太さの触手がどこからともかく現れた
+	PRINTFORML %CALLNAME:TARGET%に近いた触手はザクロが割れるように身を開かせ、中から化け物と融合したパルスィが素肌に粘液を纏わせながら這い出てきた
+	PRINTFORML パルスィは%CALLNAME:MASTER%に恭しく頭を垂れると、%CALLNAME:TARGET%に感情が抜け落ちたような顔を向けた
+	PRINTFORML 自由な%CALLNAME:TARGET%の身体に対して嫉妬心を抱いたのかパルスィ瞳は瞬時に濁った緑色をたたえるようになった
+	PRINTFORML 怪しくも艶めかしい笑みを顔に張り付かせ、%CALLNAME:TARGET%と自らの胸を見比べたり揉み比べたりした後、最大限の屈辱を与えるかのごとく、%CALLNAME:TARGET%の痴態を声に出して説明し始めた…
+ENDIF

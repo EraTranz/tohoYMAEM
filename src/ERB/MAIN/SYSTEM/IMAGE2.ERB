@@ -1,0 +1,506 @@
+﻿;===========================================================================
+;	リソース表示関連で使用する関数群
+;
+;===========================================================================
+;=========================================================
+;	可変画像の生成
+;
+;	ARG：表示対象
+;	nudeFlag：裸の場合true
+;=========================================================
+@CN_CREATE_IMAGE(ARG, nudeFlag, clothFlag = 0)
+#DIM nudeFlag = 0
+#DIM clothFlag
+#DIMS CN_PARTS_STRUCT
+
+;可変画像の初期化
+CALL CN_INITIALIZE
+IF nudeFlag
+	CALL CN_INITIALIZE_GTARGET("CN_101")
+	CALL CN_INITIALIZE_GTARGET("CN_102")
+ELSE
+	CALL CN_INITIALIZE_GTARGET("CN_001")
+	CALL CN_INITIALIZE_GTARGET("CN_002")
+ENDIF
+
+;可変画像の設定
+CN_PARTS_STRUCT = ""
+CN_PARTS_STRUCT += GET_CN_STR_HAIR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_HAED(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_FACE(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_CLOTH(ARG, nudeFlag,,clothFlag)
+CN_PARTS_STRUCT += GET_CN_STR_EYE_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_HAIR_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_CLOTH_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_SKIN_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_EAR_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_TAIL_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_ACCESSORY(ARG, nudeFlag, clothFlag)
+;PRINTFORML %CN_PARTS_STRUCT%
+IF nudeFlag
+	CALL CN_REDRAW_CHARACTER("CN_101", CN_PARTS_STRUCT)
+ELSE
+	CALL CN_REDRAW_CHARACTER("CN_001", CN_PARTS_STRUCT)
+ENDIF
+
+CN_PARTS_STRUCT = ""
+CN_PARTS_STRUCT += GET_CN_STR_HAIR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_HAED(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_FACE(ARG, 1)
+CN_PARTS_STRUCT += GET_CN_STR_CLOTH(ARG, nudeFlag, 1, clothFlag)
+CN_PARTS_STRUCT += GET_CN_STR_EYE_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_HAIR_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_CLOTH_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_SKIN_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_EAR_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_TAIL_COLOR(ARG)
+CN_PARTS_STRUCT += GET_CN_STR_ACCESSORY(ARG, nudeFlag, clothFlag)
+;PRINTFORML %CN_PARTS_STRUCT%
+IF nudeFlag
+	CALL CN_REDRAW_CHARACTER("CN_102", CN_PARTS_STRUCT)
+ELSE
+	CALL CN_REDRAW_CHARACTER("CN_002", CN_PARTS_STRUCT)
+ENDIF
+
+RETURN RESULT
+
+;=========================================================
+;	髪型文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_HAIR(ARG)
+#FUNCTIONS
+
+SELECTCASE STR:(CFLAG:ARG:元の髪型)
+	CASE "長髪"
+		RETURNF "[前髪:前髪_お嬢様][後髪:後髪_ロング]"
+	CASE "セミロング"
+		RETURNF "[前髪:前髪_ワイルド][後髪:後髪_セミロング]"
+	CASE "ショートカット"
+		RETURNF "[前髪:前髪_ぱっつん][後髪:後髪_ショート]"
+	CASE "ポニーテール"
+		RETURNF "[前髪:前髪_お嬢様][後髪:後髪_ポニーテール]"
+	CASE "ツインテール"
+		RETURNF "[前髪:前髪_無造作][後髪:後髪_ツインテール(長)【リボンなし】]"
+	CASE "サイドテール"
+		RETURNF "[前髪:前髪_中分け1][後髪:後髪_サイドテール【リボンなし】]" + "[装飾10:装飾_ヘアバンド(赤)]"
+	CASE "縦ロール"
+		RETURNF "[前髪:前髪_ぱっつん][後髪:後髪_ツインドリル【リボンなし】]"
+	CASE "ツインリング"
+		;髪型が無い
+		RETURNF "[前髪:前髪_ナチュラル][後髪:後髪_ツインテール(短)]"
+	CASE "三つ編み"
+		RETURNF "[前髪:前髪_横分け][後髪:後髪_三つ編み【リボンなし】]"
+	CASE "短髪"
+		RETURNF "[前髪:前髪_無造作][後髪:後髪_ショート]"
+	CASE "おさげ髪"
+		RETURNF "[前髪:前髪_ワイルド][後髪:後髪_ショート]" + "[装飾10:装飾_もみあげ編み(髪)]"
+	CASE "ポンパドール"
+		RETURNF "[前髪:前髪_中分け1][後髪:後髪_ウェーブセミロング]"
+	CASE "ポニーアップ"
+		RETURNF "[前髪:前髪_無造作][後髪:後髪_ポニーテール【リボンなし】]"
+	CASE "サイドダウン"
+		RETURNF "[前髪:前髪_横分け][後髪:後髪_ショート]" + "[装飾10:装飾_もみあげ片編み(髪)]"
+	CASE "お団子髪"
+		;髪型が無い
+		RETURNF "[前髪:前髪_ぱっつん][後髪:後髪_セミロング]"
+	CASE "ツーサイドアップ"
+		RETURNF "[前髪:前髪_ぱっつん][後髪:後髪_ツインテール(短)【リボンなし】]"
+	CASE "ダブルポニー"
+		RETURNF "[前髪:前髪_中分け1][後髪:後髪_ポニーテール【リボンなし】]"
+	CASE "横ロール"
+		RETURNF "[前髪:前髪_ナチュラル][後髪:後髪_ツインドリル【リボンなし】]"
+	CASE "まとめ髪"
+		RETURNF "[前髪:前髪_ワイルド][後髪:後髪_サイドテール【リボンなし】]"
+	CASE "ボブカット"
+		RETURNF "[前髪:前髪_ぱっつん][後髪:後髪_ボブカット]"
+	CASE "シニヨン"
+		;髪型が無い
+		RETURNF "[前髪:前髪_ウェーブ][後髪:後髪_ウェーブショート]"
+	CASE "ロングヘア"
+		RETURNF "[前髪:前髪_ナチュラル][後髪:後髪_ウェーブロング]"
+ENDSELECT
+
+RETURNF "[前髪:前髪_お嬢様][後髪:後髪_ロング]"
+
+;=========================================================
+;	頭部文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_HAED(ARG)
+#FUNCTIONS
+
+SELECTCASE STR:(GET_RACE_STR_NO(ARG))
+	CASE "";混血
+		RETURNF "[頭部:頭部_普通な顔1]"
+	CASE "キョンシー","亡霊","幽霊"
+		RETURNF "[頭部:頭部_青ざめた顔]"
+	CASE "ゾンビフェアリー","悪霊","舟幽霊","土蜘蛛","死神"
+		RETURNF "[頭部:頭部_黒い顔]"
+	CASEELSE
+		RETURNF "[頭部:頭部_普通な顔1]"
+ENDSELECT
+
+;=========================================================
+;	表情文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_FACE(ARG, mouseoverFlag)
+#FUNCTIONS
+#DIM mouseoverFlag
+
+;死亡
+SIF TALENT:ARG:死亡
+	RETURNF "[目瞳:目瞳_普通な目(黒め)1][表情:表情_素]"
+
+SELECTCASE (!mouseoverFlag ? GET_IMAGE_FACE(ARG) #  GET_IMAGE_MOUSEOVER_FACE(ARG))
+	CASE "笑い"
+		RETURNF "[目瞳:目瞳_閉じ目2][表情:表情_笑い(口開き)]"
+	CASE "怒り"
+		IF CFLAG:ARG:嫉妬ポイント >= 100
+			IF GET_CN_STR_HAIR_COLOR_IS_RED(ARG)
+				RETURNF "[目瞳:目瞳_普通な目(黒め)2][表情:表情_怒り(口開き)][装飾10:装飾_マーク(怒り黄)]"
+			ELSE
+				RETURNF "[目瞳:目瞳_普通な目(黒め)2][表情:表情_怒り(口開き)][装飾10:装飾_マーク(怒り赤)]"
+			ENDIF
+		ELSE
+			IF GET_CN_STR_HAIR_COLOR_IS_RED(ARG)
+				RETURNF "[目瞳:目瞳_普通な目2][表情:表情_怒り(口開き)][装飾10:装飾_マーク(怒り黄)]"
+			ELSE
+				RETURNF "[目瞳:目瞳_普通な目2][表情:表情_怒り(口開き)][装飾10:装飾_マーク(怒り赤)]"
+			ENDIF
+		ENDIF
+	CASEELSE
+		;"通常"
+		IF CFLAG:ARG:嫉妬ポイント >= 100
+			RETURNF "[目瞳:目瞳_普通な目(黒め)1][表情:表情_笑い(口閉じ)]"
+		ELSE
+			RETURNF "[目瞳:目瞳_普通な目1][表情:表情_笑い(口閉じ)]"
+		ENDIF
+ENDSELECT
+
+RETURNF "[目瞳:目瞳_普通な目1][表情:表情_驚き]"
+
+;=========================================================
+;	服装文字列の取得
+;
+;	ARG：表示対象
+;	nudeFlag：裸の場合true
+;=========================================================
+@GET_CN_STR_CLOTH(ARG, nudeFlag, mouseoverFlag, clothFlag = 0)
+#FUNCTIONS
+#DIM nudeFlag
+#DIM mouseoverFlag
+#DIM pauseNo
+#DIM clothFlag
+
+; ポーズNoを決める
+SELECTCASE (!mouseoverFlag ? GET_IMAGE_FACE(ARG) #  GET_IMAGE_MOUSEOVER_FACE(ARG))
+	CASE "笑い"
+		pauseNo = 2
+	CASE "怒り"
+		pauseNo = 3
+	CASEELSE
+		;"通常"
+		pauseNo = 1
+ENDSELECT
+
+;コスチュームプレイ
+SELECTCASE clothFlag
+	CASE 2
+		RETURNF @"[身体:身体_スク水{pauseNo}]"
+	CASE 4
+		RETURNF @"[身体:身体_和服{pauseNo}]"
+	CASE 5
+		RETURNF @"[身体:身体_メイド服{pauseNo}]"
+	CASE 9
+		RETURNF @"[身体:身体_セーラー服{pauseNo}]"
+	CASE 20
+		RETURNF @"[身体:身体_ゴスロリ{pauseNo}]"
+ENDSELECT
+
+SIF nudeFlag
+	RETURNF @"[身体:身体_素体{pauseNo}]"
+
+;番号
+;SELECTCASE NO:ARG
+;	CASE 4100
+;		RETURNF @"[身体:身体_ゴスロリ{pauseNo}]"
+;ENDSELECT
+
+;種族
+SELECTCASE STR:(GET_RACE_STR_NO(ARG))
+	CASE "妖精","ゾンビフェアリー"
+		RETURNF @"[身体:身体_妖精服{pauseNo}]"
+	CASE "月の兎"
+		RETURNF @"[身体:身体_玉兎服(色固定){pauseNo}]"
+	CASE "鴉天狗"
+		RETURNF @"[身体:身体_天狗服(色固定){pauseNo}]"
+	CASE "河童"
+		RETURNF @"[身体:身体_河童服(色固定){pauseNo}]"
+	CASE "白狼天狗"
+		RETURNF @"[身体:身体_白狼天狗服(色固定){pauseNo}]"
+ENDSELECT
+
+RETURNF @"[身体:身体_和服{pauseNo}]"
+
+;=========================================================
+;	装飾文字列の取得
+;
+;	ARG：表示対象
+;	nudeFlag：裸の場合true
+;=========================================================
+@GET_CN_STR_ACCESSORY(ARG, nudeFlag, clothFlag = 0)
+#FUNCTIONS
+#DIM nudeFlag = 0
+#DIM clothFlag
+#DIMS equip_str
+
+equip_str = ""
+;equip_str += "[装飾1:][装飾2:][装飾3:]"
+
+;種族
+SELECTCASE STR:(GET_RACE_STR_NO(ARG))
+	CASE "妖精","ゾンビフェアリー"
+		equip_str += "[装飾1:装飾_妖精の羽]"
+	CASE "悪魔","魔界人"
+		equip_str += "[装飾1:装飾_悪魔の羽]"
+	CASE "吸血鬼"
+		equip_str += (nudeFlag ? "" # "[装飾1:装飾_ZUN帽(服)]") + "[装飾2:装飾_悪魔の羽]"
+	CASE "化け猫","火車"
+		equip_str += "[装飾1:装飾_ネコ耳(耳)][装飾2:装飾_ネコしっぽ]"
+	CASE "化け狐"
+		equip_str += "[装飾1:装飾_狐耳(耳)][装飾2:装飾_狐しっぽ(尾)]"
+	CASE "鬼"
+		equip_str += "[装飾1:装飾_鬼の角(一角)]"
+	CASE "夜雀"
+		equip_str += "[装飾1:装飾_白い羽根]"
+	CASE "ワーハクタク","白澤"
+		equip_str += "[装飾1:装飾_鬼の角]"
+	CASE "妖怪兎","月の兎"
+		equip_str += "[装飾1:装飾_ウサ耳]"
+	CASE "鴉天狗"
+		equip_str += (nudeFlag ? "" # "[装飾1:装飾_天狗帽子]") + "[装飾2:装飾_黒い羽根]"
+	CASE "河童"
+		equip_str += (nudeFlag ? "" # "[装飾1:装飾_河童帽子]")
+	CASE "白狼天狗"
+		equip_str += (nudeFlag ? "" # "[装飾1:装飾_白浪天狗帽子]") + "[装飾2:装飾_獣耳(耳)][装飾3:装飾_獣しっぽ(尾)]"
+	CASE "地獄鴉 with 八咫烏","魔界の神","地獄鴉"
+		equip_str += "[装飾1:装飾_黒い羽根]"
+	CASE "妖怪ネズミ "
+		equip_str += "[装飾1:装飾_獣耳(耳)]"
+	CASE "天使"
+		equip_str += "[装飾1:装飾_天使の輪][装飾2:装飾_白い羽根]"
+	CASE "化け狸"
+		equip_str += "[装飾1:装飾_たぬきしっぽ][装飾2:装飾_たぬき耳]"
+	CASE "人狼"
+		equip_str += "[装飾1:装飾_獣耳(耳)][装飾2:装飾_獣しっぽ(尾)]"
+ENDSELECT
+
+SIF TALENT:ARG:眼鏡っ子
+	equip_str += "[装飾4:装飾_メガネ(普通)]"
+
+SIF TALENT:ARG:動物耳 && (STRFIND(equip_str,"耳") == -1)
+	equip_str += "[装飾4:装飾_獣耳(耳)]"
+
+;コスチュームプレイ
+SIF clothFlag == 5
+	equip_str += "[装飾5:装飾_メイドカチューシャ]"
+
+RETURNF equip_str
+
+
+;=========================================================
+;	髪色文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_HAIR_COLOR(ARG)
+#FUNCTIONS
+
+SELECTCASE STR:(CFLAG:ARG:元の髪色)
+	CASE "栗毛"
+		RETURNF "[髪色:栗]"
+	CASE "金髪"
+		RETURNF "[髪色:黄]"
+	CASE "赤毛"
+		RETURNF "[髪色:赤]"
+	CASE "ピンク髪"
+		RETURNF "[髪色:桃]"
+	CASE "オレンジ髪"
+		RETURNF "[髪色:橙]"
+	CASE "水色髪"
+		RETURNF "[髪色:水]"
+	CASE "銀髪"
+		RETURNF "[髪色:白]"
+	CASEELSE
+		RETURNF @"[髪色:%REPLACE(STR:(CFLAG:ARG:元の髪色),"髪","")%]"
+ENDSELECT
+
+@GET_CN_STR_HAIR_COLOR_IS_RED(ARG)
+#FUNCTION
+
+SELECTCASE STR:(CFLAG:ARG:元の髪色)
+	CASE "赤毛","ピンク髪","紫髪","オレンジ髪"
+		RETURNF 1
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+
+;=========================================================
+;	瞳色文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_EYE_COLOR(ARG)
+#FUNCTIONS
+RETURNF @"[瞳色:%REPLACE(STR:(CFLAG:ARG:元の瞳色),"瞳","")%]"
+
+;=========================================================
+;	服色文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_CLOTH_COLOR(ARG)
+#FUNCTIONS
+RETURNF @"[服色:%REPLACE(STR:(CFLAG:ARG:元の服色),"服","")%]"
+
+;=========================================================
+;	肌色文字列の取得
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_SKIN_COLOR(ARG)
+#FUNCTIONS
+
+SELECTCASE STR:(GET_RACE_STR_NO(ARG))
+	CASE "";混血
+		RETURNF "[肌色:普通]"
+	CASE "";人魚
+		RETURNF "[肌色:褐色]"
+	CASE ""
+		RETURNF "[肌色:日焼]"
+	CASE "亡霊","悪霊","幽霊","霊体","舟幽霊","死神","釣瓶落とし","吸血鬼";,"幽霊と人間のハーフ"
+		RETURNF "[肌色:不健康]"
+	CASE "悪魔","キョンシー","ゾンビフェアリー"
+		RETURNF "[肌色:悪魔]"
+	CASEELSE
+		RETURNF "[肌色:普通]"
+ENDSELECT
+
+;=========================================================
+;	耳色文字列の取得(未実装)
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_EAR_COLOR(ARG)
+#FUNCTIONS
+
+;[髪色]を使用
+RETURNF REPLACE(GET_CN_STR_HAIR_COLOR(ARG),"髪","耳")
+
+;=========================================================
+;	尾色文字列の取得(未実装)
+;
+;	ARG：表示対象
+;=========================================================
+@GET_CN_STR_TAIL_COLOR(ARG)
+#FUNCTIONS
+
+;[髪色]を使用
+RETURNF REPLACE(GET_CN_STR_HAIR_COLOR(ARG),"髪","尾")
+
+;=========================================================
+;	種族STR番号を取得
+;	(無い場合は、[0:混血]が戻る)
+;
+;	ARG：表示対象
+;	■戻り値(数値)
+;	0:混血
+;	それ以外:STR参照
+;=========================================================
+@GET_RACE_STR_NO(ARG)
+#FUNCTION
+#DIM strNo
+
+strNo = 0
+
+IF TALENT:ARG:呪精
+	;呪精
+	strNo = 145
+ELSEIF TALENT:ARG:妖精 && CFLAG:ARG:5 == 1
+	;妖精
+	strNo = 103
+ELSEIF TALENT:ARG:吸血鬼 && CFLAG:ARG:5 == 2
+	;吸血鬼
+	strNo = 106
+ELSEIF TALENT:ARG:機械 && CFLAG:ARG:5 == 3
+	;機械
+	strNo = 146
+ELSEIF TALENT:ARG:霊体 && CFLAG:ARG:5 == 4
+	;霊体
+	strNo = 143
+ELSEIF TALENT:ARG:人形 && CFLAG:ARG:5 == 5
+	;人形
+	strNo = 121
+ELSEIF TALENT:ARG:悪魔 && CFLAG:ARG:5 == 6
+	;悪魔
+	strNo = 104
+ELSEIF TALENT:ARG:河童 && CFLAG:ARG:5 == 7
+	;河童
+	strNo = 127
+ELSEIF TALENT:ARG:妖狐 && CFLAG:ARG:5 == 8
+	;妖狐
+	strNo = 112
+ELSEIF TALENT:ARG:半白澤 && CFLAG:ARG:5 == 9
+	;半白澤
+	strNo = 116
+ENDIF
+
+;純血はここで抜ける
+IF strNo != 0
+	RETURNF strNo
+ENDIF
+
+; 遺伝子を検索(@FIND_RACEを流用)
+LOCAL:1 = 0
+LOCAL:2 = 0
+VARSET RESULT
+FOR LOCAL , 3200 , 3400
+	IF CFLAG:ARG:LOCAL >= 35
+		IF CFLAG:ARG:LOCAL > CFLAG:ARG:(LOCAL:1) || LOCAL:1 == 0
+			LOCAL:2 = LOCAL:1
+			LOCAL:1 = LOCAL
+		ELSEIF CFLAG:ARG:LOCAL > CFLAG:ARG:(LOCAL:2) || LOCAL:2 == 0
+			LOCAL:2 = LOCAL
+		ENDIF
+	ENDIF
+NEXT
+
+IF (LOCAL:1 == 3201 && LOCAL:2 == 3253) || (LOCAL:1 == 3253 && LOCAL:2 == 3201)
+	;半白澤
+	strNo = 3253
+ELSEIF LOCAL:1 && LOCAL:2
+	;種族
+	;ハーフの場合は、「3200:人間」「3201:人間」以外をなるべく採用する方向で
+	IF (LOCAL:1 == 3200) || (LOCAL:1 == 3201)
+		strNo = LOCAL:2
+	ELSE
+		strNo = LOCAL:1
+	ENDIF
+ELSEIF LOCAL:1 == 0 && LOCAL:2 == 0
+	;混血
+	strNo = 0
+ELSE
+	;種族
+	strNo = LOCAL:1
+ENDIF
+
+IF strNo == 0
+	RETURNF strNo
+ELSE
+	RETURNF strNo - 3100
+ENDIF

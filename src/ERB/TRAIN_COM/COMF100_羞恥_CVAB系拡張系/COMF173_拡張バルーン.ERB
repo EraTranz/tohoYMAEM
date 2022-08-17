@@ -1,0 +1,342 @@
+﻿;=============================================================================
+;拡張バルーン
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE173
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:173 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;対象のＡ拡張経験が0のとき異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ａ拡張経験 == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ａ系装着器具 == 6
+	RETURN 1
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:拡張バルーン == 0
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;他のＡ系装着具使用中は不可
+SIF (TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 6) || TEQUIP:氷柱
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 173) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM173
+PRINTL 拡張バルーン
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 173
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 拡張バルーン
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 150
+DOWNBASE:1 += 200
+
+SOURCE:露出 = 300
+SOURCE:痛み = 400
+SOURCE:中毒充足 = 500
+SOURCE:逸脱 = 1000
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 10
+	SOURCE:屈従 = 100
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 30
+	SOURCE:屈従 = 500
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 300
+	SOURCE:屈従 = 1000
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 600
+	SOURCE:屈従 = 2000
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 900
+	SOURCE:屈従 = 3000
+ELSE
+	SOURCE:快Ａ = 1200
+	SOURCE:屈従 = 6000
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み += 12000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.30
+	SOURCE:痛み += 6000
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み += 2000
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 600
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	SOURCE:痛み += 200
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 10000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	SOURCE:痛み += 3600
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 200
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:屈従 , 1.40
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+TCVAR:Ａ経験 += 5
+SIF EXP:Ａ拡張経験 == 0 
+	TCVAR:異常経験 += 1
+TCVAR:Ａ拡張経験 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+
+;拡張バルーンの着脱
+IF TEQUIP:Ａ系装着器具
+	TEQUIP:Ａ系装着器具 = 0
+ELSE
+	TEQUIP:Ａ系装着器具 = 6
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;拡張バルーン挿入中
+;--------------------------------------------------
+@EQUIP_COM173
+PRINTL ＜拡張バルーン挿入中＞
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 100
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL = 10
+	LOCAL:1 = 100
+	SOURCE:情愛 += 10
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 20
+	LOCAL:1 = 500
+	SOURCE:情愛 += 30
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL = 200
+	LOCAL:1 = 1000
+	SOURCE:情愛 += 100
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL = 400
+	LOCAL:1 = 2000
+	SOURCE:情愛 += 200
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL = 700
+	LOCAL:1 = 3000
+	SOURCE:情愛 += 450
+ELSE
+	LOCAL = 1000
+	LOCAL:1 = 6000
+	SOURCE:情愛 += 750
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES LOCAL , 0.10
+	LOCAL:2 = 12000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL , 0.30
+	LOCAL:2 = 6000
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL , 0.50
+	LOCAL:2 = 2000
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+	LOCAL:2 = 1200
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:2 = 600
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:2 = 200
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.20
+ELSE
+	TIMES LOCAL , 1.40
+	TIMES LOCAL:1 , 1.40
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES LOCAL:2 , 2.00
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:1 /= 3
+
+SOURCE:快Ａ += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+SOURCE:逸脱 += LOCAL:1
+
+TCVAR:Ａ経験 += 3
+TCVAR:Ａ拡張経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_173
+IF TEQUIP:Ａ系装着器具
+	PRINTFORML %CALLNAME:PLAYER%は、\@(MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0) ? 屈辱に耐える # \@%CALLNAME:TARGET%の広がりきった菊穴からバルーンを抜いてやった
+	IF ABL:Ａ感覚 == 0
+		PRINTFORML %CALLNAME:TARGET%の肛門はゆっくりと閉じていった…
+	ELSEIF ABL:Ａ感覚 == 1
+		PRINTFORML %CALLNAME:TARGET%の肛門はひくつきながらゆるゆると閉じていった…
+	ELSEIF ABL:Ａ感覚 == 2
+		PRINTFORML %CALLNAME:TARGET%の肛門はぽっかり口を開いている…
+	ELSEIF ABL:Ａ感覚 == 3
+		PRINTFORML %CALLNAME:TARGET%の肛門は拡がったままなかなか戻らないようだ…
+	ELSEIF ABL:Ａ感覚 == 4
+		PRINTFORML %CALLNAME:TARGET%の肛門から腸の中が丸見えになっている…
+	ELSEIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は、自分の肛門を指で拡げ、恍惚としている…
+	ENDIF
+ELSE
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%は、嫌がる%CALLNAME:TARGET%を無理やり押さえつけると、
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の
+	ENDIF
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 粘液にまみれた
+	PRINTL 菊穴にエアバルーンを挿入し、空気を送り込んだ…
+ENDIF

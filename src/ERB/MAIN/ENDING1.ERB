@@ -1,0 +1,2696 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;エンディング関連処理
+;
+;ここではノーマルエンド以上のエンディング(特殊ハーレム含む)の表示処理等を行う
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;通常エンド、ハーレムエンド用
+;=============================================================================
+;エンディング01～04：ノーマル・ハーレム系エンド
+;エンディング05～09：旧作エンド
+;エンディング10～49：現行の東方projectエンド(各作品ごとみたいな)
+;エンディング50～　：各テーマ毎のハーレムエンド
+;--------------------------------------------------
+;ノーマルエンド
+;--------------------------------------------------
+@ENDING_1, ARG
+;プロローグに対応したノーマルエンドがあるのかを判定
+IF FLAG:994
+	TRYCCALLFORM EXE_EPILOGUE_YM_{FLAG:995}
+		FLAG:10001 |= 1
+	CATCH
+		CALL EXE_EPILOGUE_YM_NORMAL
+	ENDCATCH
+ELSE
+	CALL EXE_EPILOGUE_YM_NORMAL
+ENDIF
+CALL GAME_CONTINUE, 1, 1
+CALL GET_GENSOUKYOU
+
+;………………………………………………
+;プロローグに対応したものが無い場合
+;………………………………………………
+@EXE_EPILOGUE_YM_NORMAL
+PRINTW 今日も｢商品｣は高く売れた
+PRINTW 数ヶ月前、この不思議な世界に迷い込んだ時にはどうなる事かと思ったが
+PRINTW 案外自分はここの生活、そして今の仕事に向いていたようだ
+PRINTW 仕事……少女を捕らえ性の奴隷へと調教する
+PRINTW 調教した少女を顧客に売り渡し、あるいは気に入った少女を自ら飼育する
+PRINTW どちらにせよ彼女らは人間ではないのだから遠慮する事もない
+PRINTW  
+IF TARGET >= 0 && TALENT:妊娠 && (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり)
+	PRINTFORMW 中でも%CALLNAME:MASTER%のお気に入りは%CALLNAME:TARGET%だった
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%に膣内を開発され、すっかりその虜となっていた
+	PRINTFORMW %CALLNAME:TARGET%は何度も子宮に注がれ%CALLNAME:MASTER%の子を妊娠していたが
+	PRINTW 大きな腹をしながらも我慢できないらしく、膣内への挿入を望んでくる
+	PRINTW 我が子への愛情と背徳の快楽の狭間で揺れるその姿に情欲を刺激され
+	PRINTFORMW %CALLNAME:MASTER%は屹立した肉棒を%CALLNAME:TARGET%の膣内へとうずめていった…
+	FLAG:10001 |= 2
+ELSEIF TARGET >= 0 && ABL:Ａ感覚 >= 5 && TALENT:処女 == 1 && (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり)
+	PRINTFORMW 中でも%CALLNAME:MASTER%のお気に入りは%CALLNAME:TARGET%だった
+	PRINTFORMW %CALLNAME:TARGET%はいまだ処女のままだ
+	PRINTFORMW しかし%CALLNAME:MASTER%の手で後ろの穴を開発され、その快感にとりつかれてしまった
+	PRINTW 今ではアナルでの性交にこの上ない愉悦を感じるようになっている
+	PRINTFORMW 処女のままでアナルに挿入され、直腸まで犯されながら絶頂に達する%CALLNAME:TARGET%
+	PRINTW その倒錯的な姿に強烈な興奮を覚えながら、腸内に白濁液を注ぎ込んでいった…
+	FLAG:10001 |= 4
+ELSEIF TARGET >= 0 && TALENT:MASTER:オトコ == 0 && (TALENT:恋慕 || TALENT:淫乱) && EXP:主人調教経験 >= 1000 && MARK:快楽刻印 >= 3
+	PRINTFORMW 中でも%CALLNAME:MASTER%のお気に入りは%CALLNAME:TARGET%だった
+	PRINTW 暇があれば彼女を調教し、いつしか快楽の虜に仕立てていたのである
+	PRINTFORMW 今日もまた%CALLNAME:MASTER%に触れられるだけで
+	PRINTFORMW %CALLNAME:TARGET%の身体は激しく快感に震え、穴という穴から愛液を垂れ流すのであった
+	PRINTFORMW その姿に興奮を覚えた%CALLNAME:MASTER%もまた自分の秘裂から愛液を噴き出させてしまうのであった…
+	FLAG:10001 |= 8
+ELSE
+	PRINTW さて、次は誰をどんな風に仕立てようか？
+	IF TALENT:MASTER:オトコ == 0
+		PRINT 湧き上がる暗い欲情に身をまかせつつ、
+	ELSEIF ASSI >= 0
+		PRINTFORM 隆起しだした肉棒を%CALLNAME:ASSI%に鎮めさせながら、
+	ELSE
+		PRINT 肉棒が隆起しだすのを感じながら、
+	ENDIF
+	PRINTFORMW %CALLNAME:MASTER%は次の獲物に思いを馳せていた……
+	FLAG:10001 |= 1
+ENDIF
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.01 (ノーマルエンド)
+
+;--------------------------------------------------
+;ハーレムエンド
+;--------------------------------------------------
+@ENDING_2, ARG
+PRINTW 幻想郷に迷い込んで、早数ヶ月
+PRINTFORMW %CALLNAME:MASTER%はここでの生活を満喫していた
+PRINTW 当初はどうなる事かとも思ったが、慣れてみるとどうという事もない
+PRINTFORMW 何よりここには%CALLNAME:MASTER%を慕い、どんな命令にも応えてくれる奴隷達がいるのだ
+PRINTW  
+IF TARGET >= 0 && TALENT:妊娠 && (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり)
+	PRINTFORMW 中でも%CALLNAME:MASTER%のお気に入りは%CALLNAME:TARGET%だった
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%に膣内を開発され、すっかりその虜となっていた
+	PRINTFORMW %CALLNAME:TARGET%は何度も子宮に注がれ%CALLNAME:MASTER%の子を妊娠していたが
+	PRINTW 大きな腹をしながらも我慢できないらしく、膣内への挿入を望んでくる
+	PRINTW 我が子への愛情と背徳の快楽の狭間で揺れるその姿に情欲を刺激され
+	PRINTFORMW %CALLNAME:MASTER%は屹立した肉棒を%CALLNAME:TARGET%の膣内へとうずめていった…
+	FLAG:10002 |= 2
+ELSEIF TARGET >= 0 && ABL:Ａ感覚 >= 5 && TALENT:処女 == 1 && (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり)
+	PRINTFORMW 中でも%CALLNAME:MASTER%のお気に入りは%CALLNAME:TARGET%だった
+	PRINTFORMW %CALLNAME:TARGET%はいまだ処女のままだ
+	PRINTFORMW しかし%CALLNAME:MASTER%の手で後ろの穴を開発され、その快感にとりつかれてしまった
+	PRINTW 今ではアナルでの性交にこの上ない愉悦を感じるようになっている
+	PRINTFORMW 処女のままでアナルに挿入され、直腸まで犯されながら絶頂に達する%CALLNAME:TARGET%
+	PRINTW その倒錯的な姿に強烈な興奮を覚えながら、腸内に白濁液を注ぎ込んでいった…
+	FLAG:10002 |= 4
+ELSEIF TARGET >= 0 && TALENT:MASTER:オトコ == 0 && (TALENT:恋慕 || TALENT:淫乱) && EXP:主人調教経験 >= 1000 && MARK:快楽刻印 >= 3
+	PRINTFORMW 中でも%CALLNAME:MASTER%のお気に入りは%CALLNAME:TARGET%だった
+	PRINTW 暇があれば彼女を調教し、いつしか快楽の虜に仕立てていたのである
+	PRINTFORMW 今日もまた%CALLNAME:MASTER%に触れられるだけで
+	PRINTFORMW %CALLNAME:TARGET%の身体は激しく快感に震え、穴という穴から愛液を垂れ流すのであった
+	PRINTFORMW その姿に興奮を覚えた%CALLNAME:MASTER%もまた自分の秘裂から愛液を噴き出させてしまうのであった…
+	FLAG:10002 |= 8
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%が指示しなくても、奴隷達は手で、胸で、あるいは口で%CALLNAME:MASTER%に奉仕する
+	PRINTFORMW 積極的に%CALLNAME:MASTER%を求め、与えられる快感に敏感に反応してくる
+	PRINTFORMW さて、次は誰を抱いてやろうか？
+	IF TARGET >= 0
+		PRINTFORMW %CALLNAME:MASTER%は、並んで%CALLNAME:MASTER%を待つ奴隷達の中から%CALLNAME:TARGET%に目をつけた
+		PRINTFORMW ぐっしょりと股間を濡らし、期待するように%CALLNAME:MASTER%を見上げるその姿に誘われ
+		PRINTFORMW %CALLNAME:MASTER%はゆっくりと%CALLNAME:TARGET%に近づいていった…
+	ELSE
+		IF TALENT:MASTER:オトコ == 0
+			PRINT 湧き上がる暗い欲情に身をまかせつつ、
+		ELSEIF ASSI >= 0
+			PRINTFORM 隆起しだした肉棒を%CALLNAME:ASSI%に鎮めさせながら、
+		ELSE
+			PRINT 肉棒が隆起しだすのを感じながら、
+		ENDIF
+		PRINTFORMW %CALLNAME:MASTER%は次の獲物に思いを馳せていた……
+	ENDIF
+	FLAG:10002 |= 1
+ENDIF
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.02 (ハーレムエンド)
+CALL GAME_CONTINUE, 1, 2
+CALL GET_GENSOUKYOU
+
+;--------------------------------------------------
+;触手使いエンド
+;--------------------------------------------------
+@ENDING_3, ARG
+PRINTW 幻想郷に迷い込んで、早数ヶ月
+PRINTFORMW %CALLNAME:MASTER%はここでの生活を満喫していた
+PRINTW 当初はどうなる事かと思ったが、禁断の領域に手を染めてから世界は急変した
+PRINTW  
+PRINTW 触手――
+PRINTW 文字通り無数の触手を自在に動かすことが出来る異形の者
+PRINTW 絶大な力を持った妖怪の一種なのか、あるいは古き神の眷族なのか
+PRINTW 出自はおろか、名前すら存在するのかは今でも不明である
+PRINTW 一つだけ確かなこと
+PRINTFORMW それは%CALLNAME:MASTER%がこの魔物を完全に制御する術を手に入れている点である
+PRINTW  
+PRINTW 人里から離れた館の中
+PRINTW その地下に広がる広大な空間にて
+PRINTFORMW 今日もまた%CALLNAME:MASTER%は己のために狂った宴を開いていた
+PRINTW  
+PRINTW  
+PRINTW 宴はまだ終わらない……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.03 (触手使いエンド)
+FLAG:10003 |= 1
+CALL GAME_CONTINUE, 1, 3
+
+;--------------------------------------------------
+;触手姫エンド～ Elegant princesses of Tentacle
+;--------------------------------------------------
+@ENDING_4, ARG
+PRINTW 幻想郷に迷い込んで、早数ヶ月
+PRINTFORMW %CALLNAME:MASTER%はここでの生活を満喫していた
+PRINTW 当初はどうなる事かと思ったが、禁断の領域に手を染めてから世界は急変した
+PRINTW  
+PRINTW 触手――
+PRINTW 文字通り無数の触手を自在に動かすことが出来る異形の者
+PRINTW 絶大な力を持った妖怪の一種なのか、あるいは古き神の眷族なのか
+PRINTW 出自はおろか、名前すら存在するのかは今でも不明である
+PRINTW 一つだけ確かなこと
+PRINTFORMW それは%CALLNAME:MASTER%がこの魔物を完全に制御する術を手に入れている点である
+PRINTW  
+PRINTW 人里から離れた館の中
+PRINTW その地下に広がる広大な空間にて
+PRINTFORMW 今日もまた%CALLNAME:MASTER%は己のために狂った宴を開いていた
+PRINTW  
+CALL ENDING_4_TEXT
+PRINTW  
+PRINTW  
+PRINTW 宴はまだ終わらない……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.04 (触手姫エンド)
+FLAG:10004 |= 1
+CALL GAME_CONTINUE, 1, 4
+
+;--------------------------------------------------
+;靈異エンド～ Highly Responsive to Prayers
+;--------------------------------------------------
+@ENDING_5, ARG
+PRINTW 博麗神社からは地獄や魔界に通じる門があり、通常は閉ざされているはずである
+PRINTW それを、守っていたのが幻想郷の素敵な巫女である博麗霊夢であった
+PRINTW 
+PRINTFORMW だが、突然博麗神社に通うようになった%CALLNAME:MASTER%が、
+PRINTW その欲望のままに、霊夢を手篭めにしてしまったのである。
+PRINTFORMW そして、霊夢を犯しながらも、さらなる獲物を欲した%CALLNAME:MASTER%は、
+PRINTW 霊夢から、その門のことを聞き出したのであった
+PRINTW 
+PRINTW その門の向こう側に、犯すべき者たちが待っている！
+PRINTFORMW その予感に突き動かされるように%CALLNAME:MASTER%はまずは地獄に向かうのであった
+PRINTW
+PRINTW 門番であったシンギョクは、男にも女にもなれるという便利な存在であったので、
+PRINTFORMW %CALLNAME:MASTER%はさっそく、犯しつくして、性奴隷とした
+PRINTW いきなりレイプされたシンギョクは、身も心もメロメロになってしまっていたので、
+PRINTFORMW まるで、その緩くなった膣を開くように地獄と魔界へと通じる門を開けたのである
+PRINTW 
+PRINTFORMW そして、まずは地獄に赴いた%CALLNAME:MASTER%は、
+PRINTW 魅魔と呼ばれる祟り神と称する女と出遭った
+PRINTFORMW 全人類への復讐を言い出した彼女をとりあえず、犯した%CALLNAME:MASTER%は、
+PRINTW 思う存分、搾乳することにしたのである
+PRINTW 魅魔を搾乳しつくして、そろそろ次の場所に行こうと思ったところに、
+PRINTW 偶然にも、キクリと呼ばれる女神がやってきたのである
+PRINTFORMW とりあえず、彼女をレイプしながら%CALLNAME:MASTER%は地獄の主のことを聞き出した
+PRINTW 
+PRINTW 地獄の主はコンガラという仏だということだ。
+PRINTW まあ、男であれ女であれ、穴があればとりあえず犯すつもりで、
+PRINTFORMW %CALLNAME:MASTER%はコンガラの元に向かうことにした
+PRINTW 強力な剣士であるコンガラの激しい迎撃を受けたものの、
+PRINTFORMW 性欲が尽きるまでは無敵である%CALLNAME:MASTER%の敵ではなかった
+PRINTW こうして、コンガラの肉体を思う存分堪能し、ついに地獄の支配者となったものの、
+PRINTFORMW まだまだ、物足りない%CALLNAME:MASTER%は一旦門まで戻り、
+PRINTW そこから、今度は魔界を目指すことにした
+PRINTW 
+PRINTW 少しあるくと、こんどは巨大な５つの眼球が現れた、ユウゲンマガンと名乗っている
+PRINTW その異様な形の裏側に隠れるように、男がいるのを
+PRINTFORMW 天性のレイプハンターである%CALLNAME:MASTER%が見逃すわけがなかった
+PRINTW 激しい責めに、５つの眼から白濁液を噴出するユウゲンマガンをその場に放置して、
+PRINTFORMW さらに奥に進む%CALLNAME:MASTER%であった
+PRINTW 
+PRINTW だいぶ歩くと、今度は紫色の翼を持つ女がなんかオナニーしている真っ最中であった
+PRINTFORMW %CALLNAME:MASTER%はとりあえず、彼女と性交渉を行うことにした
+PRINTW どうやら、彼女はこの魔界でもNo.2の悪魔であるエリスと呼ばれる存在であるらしい、
+PRINTW とりあえず、えっちなことを色々と施してやったら尻尾と腰を振って懐いてきたので、
+PRINTFORMW %CALLNAME:MASTER%は、彼女もまた連れ帰ることにした
+PRINTW で、彼女から、魔界の主のサリエルの居場所を聞いたので、ついでに犯しに行くことにした
+PRINTW 
+PRINTW サリエルはなぜか魔界に住んでいる天使である。まあ、おそらくは堕天使であろうが…
+PRINTFORMW 当然、激しく抵抗されたものの、%CALLNAME:MASTER%必殺のエロパワーの敵ではないのであった
+PRINTW どうやら、色々と体力的にハンデがあるようなので、治療と称して博麗神社まで連れ帰ることにした
+PRINTW 
+PRINTFORMW こうして、いまや地獄と魔界を制覇した%CALLNAME:MASTER%であるが、
+PRINTW 肝心の幻想郷はまだ入手できていないのであった。　まだ見ぬ性奴隷を求めて、
+PRINTFORMW 幻想郷を駆け回る%CALLNAME:MASTER%の物語は、まだまだこれからなのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.05 (靈異エンド)
+FLAG:10005 |= 1
+CALL GAME_CONTINUE, 1, 5
+TSTR:3 = 博麗神社
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;封魔エンド～ the Story of Eastern Wonderland
+;--------------------------------------------------
+@ENDING_6, ARG
+PRINTW 博麗神社から魔界への道の中途に幻夢界と呼ばれる異世界があったが、
+PRINTW 通常は封印されているはずであった。
+IF NO:MASTER != 1001
+	PRINTFORMW だが、%CALLNAME:MASTER%が博麗神社を乗っ取ってしまったときにその封印が解かれてしまい、
+ELSE
+	PRINTFORMW だが、なんの因果か%CALLNAME:MASTER%がその封印を解いてしまい、
+ENDIF
+PRINTW 行き来が可能となったのである。
+PRINTFORMW そうして幻夢界の住人をも毒牙にかけていく%CALLNAME:MASTER%であった。
+PRINTW 今宵もまた幻夢界から引き釣り出され調教され堕ちてしまった哀れな奴隷たちが博麗神社に集っていた。
+PRINTW サムライのような衣装をした明羅が霊夢と激しく絡んでいた。
+PRINTW このサムライもどきは博麗の力が欲しかったようだが、
+PRINTFORMW 力よりもこうやって肉に溺れる方がよほど楽しいということを教え込んでやったところこうなった。
+IF NO:MASTER != 1001
+	PRINTW その美人の二人が絡んでいるのを堪能しつつ
+	PRINTFORMW %CALLNAME:MASTER%\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? は里香の中にしきりに精を放っていた # と里香はその秘所を合わせ激しく絶頂していた。\@。
+	PRINTW 里香は戦車技師とのことで堕としたあと、
+	PRINTW 博麗神社には意味不明な戦車型のモノが大量に置かれるようになってしまった。
+	PRINTW そのために人里からは「戦車神社」などという異名まで頂戴する羽目になってしまっている。
+	PRINTFORMW しかし、里香は昔は%CALLNAME:MASTER%に激しく抵抗し、
+	PRINTW 容易には身も心も許そうとしなかったはずだが、
+	PRINTFORMW いまや、%CALLNAME:MASTER%\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? の剛直が # と身体を合わせ\@ないと生きていけないようにされてしまったのである。
+	PRINTFORMW そんな小柄な里香を堪能しつつ楽しい時間を過ごす%CALLNAME:MASTER%であった。
+	PRINTW 明羅と霊夢も既に何度も絶頂したのか、
+	PRINTW いつの間にか仲良く気絶していたのである。
+ELSE
+	PRINTW その美人の二人が絡んでいるのを堪能しつつも
+	PRINTW 里香はその秘所にヘンテコな戦車の張り型を出し入れしつつ激しく絶頂していた。
+	PRINTW 里香は戦車技師とのことで堕としたあと、
+	PRINTW 博麗神社には意味不明な戦車型のモノが大量に置かれるようになってしまった。
+	PRINTW そのために人里からは「戦車神社」などという異名まで頂戴する羽目になってしまっている。
+	PRINTFORMW しかし、里香は昔は%CALLNAME:MASTER%に激しく抵抗し、
+	PRINTW 容易には身も心も許そうとしなかったはずだが、
+	PRINTW いまや、このように性の快感を得ないことには生きていけないようないやらしい雌にされてしまったのである。
+	PRINTW そんな小柄な里香は、何度も何度も絶頂し、ついに気絶してしまったのであった。
+	PRINTFORMW 明羅と%CALLNAME:MASTER%も既に何度も絶頂したのか、
+	PRINTW いつの間にか仲良く気絶していたのである。
+ENDIF
+PRINTW しばらくして、全裸の魅魔と魔梨沙の師弟が神社に戻ってきた。
+PRINTW どうやら屋外で激しく絡み合っていたようで、互いの裸体は赤く染まっていた。
+IF NO:MASTER != 1001
+	PRINTFORMW %CALLNAME:MASTER%はその二人に対して、自分に奉仕するように命じた。
+	PRINTW 魅魔と魔梨紗はしばらく考えたあと、
+	PRINTFORMW 互いに抱き合いつつその秘所を%CALLNAME:MASTER%に向けてさらけだした。
+	PRINTW そのほどよく濡れた二人の秘所の間に
+	PRINTFORMW %CALLNAME:MASTER%が自慢の怒張を突き入れると電撃のごとき快感が三人それぞれに走った。
+ELSE
+	PRINTFORMW 気絶している%CALLNAME:MASTER%の身体を師弟が巧みに揉み回すと、
+	PRINTFORMW %CALLNAME:MASTER%も少しずつ意識を取り戻してきた。
+	PRINTW その後は三人で互いの身体を弄りあい、貪欲に快感を貪りあうのであった。
+ENDIF
+PRINTW 魅魔は人類に復讐心を持った悪霊だとも祟り神だともいわれていたはずだが、
+PRINTW こうやってみると煩悩に忠実なという意味においては案外俗な存在なのかもしれない。
+PRINTW ともかく、いまや彼女も肉欲に夢中となっていた。
+PRINTW 一方、魔梨沙は元々はこの魅魔の魔法における弟子であったが、
+PRINTFORMW こうやって%CALLNAME:MASTER%のおかげでまた師弟と一緒にいられることを嬉しく思っているようだ。
+IF NO:MASTER != 1001
+	PRINTW 魅魔と魔梨沙の間に数回、そしてそれぞれの蜜壷の中をも数回ずつ放出しながら
+	PRINTFORMW %CALLNAME:MASTER%は今度は誰をこの肉棒の虜にしてやろうかなどと考えるのであった…
+ELSE
+	PRINTW 魅魔と魔梨沙それぞれの美しい肉体を存分に堪能し、何回も絶頂しながら
+	PRINTFORMW %CALLNAME:MASTER%は今度は誰を退治して博麗の力を教え込んでやろうかなどと考えるのであった…
+ENDIF
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.06 (封魔エンド)
+FLAG:10006 |= 1
+CALL GAME_CONTINUE, 1, 6
+TSTR:3 = 博麗神社
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;夢時空エンド～ Phantasmagoria of Dim.Dream
+;--------------------------------------------------
+@ENDING_7, ARG
+PRINTW ありとあらゆる可能性の間を航行するという、可能性空間移動船
+PRINTFORMW %CALLNAME:MASTER%がそれを手に入れたものの、どうすればいいのか思いあぐねていた。
+PRINTW 確かにどこにでも好きなところに行けるというのは便利ではある。使い方によっては幻想郷を支配できるかもしれない。
+PRINTFORMW しかし、%CALLNAME:MASTER%にとってはそういうようなことよりは、かわいい奴隷たちとしばらくは楽しく暮らしたい。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 奴隷たちの中でも理香子は特に研究熱心である。今日もまた彼女の眼鏡に%CALLNAME:MASTER%の白濁液が吐き出された。
+	PRINTW その後ろでそわそわしながら順番を待っているのはいつの間にかそこにいたカナとエレンであった。
+	PRINTW 理香子のパイズリを堪能したあとは、彼女らのダブルフェラの出番となる。
+	PRINTFORMW 実体がないカナだが、実は彼女のフェラが一番気持ちがいい。ひんやりした感触は%CALLNAME:MASTER%のお気に入りである。
+	PRINTW しかし、お預けをくっていたエレンのこともかわいいので二人で奉仕してもらうことにしたのだ。
+ELSE
+	PRINTW 奴隷たちの中でも理香子は特に研究熱心である。
+	PRINTFORMW 今日もまた彼女の巧みな技巧により%CALLNAME:MASTER%は愛液を吹き出してしまった。
+	PRINTW その後ろでそわそわしながら順番を待っているのはいつの間にかそこにいたカナとエレンであった。
+	PRINTW 理香子との貝あわせを堪能したあとは、彼女らに変わりばんこにクンニされることになった。
+	PRINTFORMW 実体がないカナだが、実は彼女の舌が一番気持ちがいい。ひんやりした感触は%CALLNAME:MASTER%のお気に入りである。
+	PRINTW しかし、お預けをくっていたエレンのこともかわいいので二人で交互に奉仕してもらうことにしたのだ。
+ENDIF
+PRINTW その近くには素っ裸になった小兎姫がよく分からない何か棒状のようなものを股間に入れて自慰していた。
+PRINTFORMW 彼女は相変わらずの性格で、%CALLNAME:MASTER%に従順に躾けられた今であってもこういう理解できない行動をするのであった。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW カナとエレンに何回も放出した%CALLNAME:MASTER%ではあるが、まだ欲望を満たすには足りなかった。
+	PRINTW そこに、裸のままの夢美とちゆりが入ってきた。
+	PRINTFORMW %CALLNAME:MASTER%は横になると二人に上に乗り奉仕するように命じた。
+	PRINTFORMW 夢美がその濡れそぼった膣に%CALLNAME:MASTER%の怒張を導いた。一方ちゆりはその陰部を%CALLNAME:MASTER%の
+	PRINTW 舌が届く位置に持ってきた。
+	PRINTFORMW %CALLNAME:MASTER%は激しく腰を動かして貪欲に快感を貪る夢美の中に好きなだけ放出しながら、
+	PRINTW 舌でちゆりの味を存分に堪能した。
+ELSE
+	PRINTFORMW カナとエレンの前で何度も絶頂した%CALLNAME:MASTER%ではあるが、まだ欲望を満たすには足りなかった。
+	PRINTW そこに、裸のままの夢美とちゆりが入ってきた。
+	PRINTFORMW %CALLNAME:MASTER%は三人で互いの性器を舐めあうように命じた。
+	PRINTFORMW 夢美がその濡れそぼった膣を優しく舐めてやる%CALLNAME:MASTER%、
+	PRINTFORMW その%CALLNAME:MASTER%の濡れそぼった膣を舐めるちゆり、
+	PRINTW さらにはそのちゆりの濡れそぼった膣を夢美が舐める。
+	PRINTW このようにして三人は夜が更けるまでひたすら快楽を貪リ尽くしたのである。
+ENDIF
+PRINTFORMW こうして毎日を楽しく過ごすのは悪くない。個性的だがにぎやかな連中に囲まれながら%CALLNAME:MASTER%は
+PRINTW 幻想郷に来て本当に良かったと思った……
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.07+ (東方夢時空エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.07 (夢時空エンド)
+ENDIF
+FLAG:10007 |= 1
+CALL GAME_CONTINUE, 1, 7
+TSTR:3 = 可能性空間移動船
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;夢幻エンド
+;--------------------------------------------------
+@ENDING_8, ARG
+PRINTW 博麗神社の裏山には湖がありそこの穴の奥にとある館がある。その館を夢幻館という。本来は幻想郷と夢幻世界とを
+PRINTFORMW 分かつ境界となっているその館はいまや%CALLNAME:MASTER%の酒池肉林の舞台となっていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 門番であったエリーは己の武器である大鎌のかわりのよくしなる肉体で%CALLNAME:MASTER%の剛直を擦り上げている
+	PRINTFORMW %CALLNAME:MASTER%の右腕はオレンジのかわいらしい陰核を弄っている。妖怪とのことだがこうやって触っている
+	PRINTW かぎりにおいてはごく普通の女であるといえよう
+	PRINTFORMW その一方、%CALLNAME:MASTER%の左腕により胸を激しく揉まれ込んでいるのが吸血鬼のくるみである
+	PRINTFORMW 隠れた被虐傾向のあるくるみにとっては少々物足りない責めであろうが、時間をじっくり掛けて
+	PRINTW ねっとりと愛撫してやることにしよう。夜はまだまだ長い。そして、
+	PRINTW その絡みを羨ましそうに眺めている３人の美女が控えていた
+ELSE
+	PRINTFORMW 門番であったエリーは己の武器である大鎌のかわりのよくしなる両腕で%CALLNAME:MASTER%の胸を揉みあげている
+	PRINTFORMW %CALLNAME:MASTER%の右腕はオレンジのかわいらしい陰核を弄っている。妖怪とのことだがこうやって触っている
+	PRINTW かぎりにおいてはごく普通の女であるといえよう
+	PRINTFORMW その一方、%CALLNAME:MASTER%の左腕により胸を激しく揉まれ込んでいるのが吸血鬼のくるみである
+	PRINTW 隠れた被虐傾向のあるくるみにとっては少々物足りない責めであろうが、時間をじっくり掛けて
+	PRINTW ねっとりと愛撫してやることにしよう。夜はまだまだ長い。そして、
+	PRINTW その絡みを羨ましそうに眺めている３人の美女が控えていた
+ENDIF
+PRINTW 夢幻館の本来の主であった幽香、そして夢幻世界の本来の主であった夢月と幻月姉妹である
+PRINTFORMW %CALLNAME:MASTER%はその3人によく見えるようにしながら絡み続けていた
+PRINTW だが、ついに我慢できなくなった幽香がその大きな胸を揺らしながらやってきてエリーを蹴り飛ばして
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW %CALLNAME:MASTER%の剛直を奪い取っていきなり自らの膣に導いた
+	PRINTFORMW %CALLNAME:MASTER%は苦笑しながらも幽香を突いていると、今度は夢月がその背後から
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%の胸を激しく揉みながら口付けをし、舌を入れて絡めようとしてきた
+	PRINTFORMW %CALLNAME:MASTER%は苦笑しつつ幽香と絡んでいると、今度は夢月がその背後から
+ENDIF
+PRINTW 幽香のたわわな乳房をもみしだきはじめた
+PRINTFORMW それらを見せ付けられた幻月は泣きながら%CALLNAME:MASTER%の元にやってきて、
+PRINTFORMW オレンジとくるみを突き飛ばし、%CALLNAME:MASTER%の両腕をつかって自らの胸や秘部を激しく刺激している
+PRINTW このようにして6人の美女たちを思うがままにしながらの毎日は本当に楽しい
+PRINTFORMW いまや夢幻世界の主となった%CALLNAME:MASTER%は、この次に幻想郷そのものを乗っ取り
+PRINTW さらに多くの美女たちを手中に収めたく思ったのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.08 (夢幻エンド)
+FLAG:10008 |= 1
+CALL GAME_CONTINUE, 1, 8
+TSTR:3 = 夢幻館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;魔界エンド
+;--------------------------------------------------
+@ENDING_9, ARG
+PRINTW 現の世とも幻の世とも異なる世界、魔界
+PRINTW この世界の果てにある、魔界の神である神綺が住んでいる屋敷
+PRINTFORMW そこで%CALLNAME:MASTER%は、その娘達に熱烈な奉仕を受けていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 夢子は自慢の巨乳で剛直を扱きながら舌先で尿道をちょろちょろと舐めあげ、アリスは唇を奪いながらその器用な指先で前立腺を刺激する
+ELSE
+	PRINTFORMW 夢子は%CALLNAME:MASTER%の胸に自慢の巨乳をつき合わせ器用に刺激を与え、
+	PRINTFORMW アリスは%CALLNAME:MASTER%と熱いディープキスを交わしている
+ENDIF
+PRINTFORMW ユキは左、マイは右の乳首を丹念に舐めながら、片方の手は%CALLNAME:MASTER%の手を、もう片方の手は相方の手をぎゅっと握り締めている
+PRINTW 意地悪なご主人様にお預けを命じられた母親は、娘達の痴態に当てられて瞳に涙を溜め、頬を上気させ、股をすぼませている
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW その姿に興奮した%CALLNAME:MASTER%は、奉仕される快楽に身を任せ、感じるがままに欲望を吐き出した
+	PRINTW 夢子の顔を白く染めた滾りを四人は仲良く分け合って舐めとり、舌の上で転がして味わいながら嚥下していく
+ELSE
+	PRINTFORMW その姿に興奮した%CALLNAME:MASTER%は、奉仕される快楽に身を任せ、感じるがままに股間から愛液を吐き出した
+	PRINTW その愛液をまるで甘露のごとく四人が舐めとりあい、味わいながら嚥下していく
+ENDIF
+PRINTW もはや我慢の限界を超えている神綺が、実の娘達に羨望と露骨な嫉妬の混じった刺すような視線を送る
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 流石にちょっと可哀そうになったので、禁を解いて呼び寄せると、余程寂しかったのか、涙を流しながら男柱を喉奥まで銜え込んだ
+	PRINTFORMW もう離さないとばかりに恥も外聞も捨てて激しく魔羅を責め立てる神綺の姿に満足しつつ、%CALLNAME:MASTER%は未来に思考を巡らせていた
+ELSE
+	PRINTW 流石にちょっと可哀そうになったので、禁を解いて呼び寄せると、余程寂しかったのか、涙を流しながら激しく肉体をぶつけてきた
+	PRINTFORMW もう離さないとばかりに恥も外聞も捨てて激しく秘貝を合わせ責め立てる神綺の姿に満足しつつ、%CALLNAME:MASTER%は未来に思考を巡らせていた
+ENDIF
+PRINTW 今や魔界のもう一人の神となった。一奴隷商人にしては満足すべき結果だ。しかし、これほど広大な魔界を手に入れられたのだ
+PRINTW ここを新たな拠点として、幻想郷を乗っ取り、いずれは外の世界をも……
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 新たな野望を胸に秘め、%CALLNAME:MASTER%は長い付き合いになるであろう愛しいパートナーに精を放った……
+ELSE
+	PRINTFORMW 新たな野望を胸に秘め、%CALLNAME:MASTER%は長い付き合いになるであろう愛しいパートナーの手により悦楽の頂点に上っていった……
+ENDIF
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.09+ (東方怪綺談エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.09 (魔界エンド)
+ENDIF
+FLAG:10009 |= 1
+CALL GAME_CONTINUE, 1, 9
+TSTR:4 = 魔界
+CALL GET_YARD
+
+;--------------------------------------------------
+;紅魔エンド～The Embodiment of Scarlet Devil.
+;--------------------------------------------------
+@ENDING_10, ARG
+PRINTW 日の差さない薄暗い館……
+PRINTFORMW かつて吸血鬼の住処と呼ばれた館は%CALLNAME:MASTER%のものとなっていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW その一室で、元・館の主だった幼い姉妹が%CALLNAME:MASTER%の前に跪き一心に奉仕していた
+	PRINTW 互いに舌を絡めあい熱心にペニスを舐める姿には、かつての威厳など残ってはいない
+	PRINTW その小さな口に何度目かの精液を吐き出すと、取り合うようにして飲み込んでいく
+ELSE
+	PRINTFORMW その一室で、元・館の主だった幼い姉妹と%CALLNAME:MASTER%が互いの秘部を激しく弄りあっていた
+	PRINTW その姿にはかつての威厳など残ってはいないものの、そのかわりにより愛らしさに満ちていた
+	PRINTW 互いに絶頂を迎えるたびに絶え間なく噴き出される愛液が床を濡らしていく
+ENDIF
+PRINTW ふと視線をずらすと、その先ではパチュリーが自慰に耽っていた
+PRINTFORMW 夢中で快感を貪るその姿は、その行為が%CALLNAME:MASTER%に命じられたものだという事も忘れているかのようだ
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 絶頂に達してだらしなく痙攣するパチュリーをながめ、再び下腹部に血が滾り始めた頃
+	PRINTW 淫靡なメイド服に身を包んだ咲夜が、見計らったように今日の相手を連れてきた
+	PRINTW 連れられてきた美鈴の股間は濡れ光り、溢れた愛液が太腿を伝い落ちている
+	PRINTW 既に充分弄られてきたのだろう。美鈴はすっかり発情した顔でこちらを見つめてくる
+	PRINTFORMW その期待に応えるように、%CALLNAME:MASTER%はいきりたった肉棒をゆっくりと彼女の中にうずめていった……
+ELSE
+	PRINTW 絶頂に達してだらしなく痙攣するパチュリーをながめつつも、なんだか物足りない気がしはじめた頃
+	PRINTW 淫靡なメイド服に身を包んだ咲夜が、見計らったように今日の相手を連れてきた
+	PRINTW 連れられてきた美鈴の股間は濡れ光り、溢れた愛液が太腿を伝い落ちている
+	PRINTW 既に充分弄られてきたのだろう。美鈴はすっかり発情した顔でこちらを見つめてくる
+	PRINTFORMW その期待に応えるように、%CALLNAME:MASTER%は
+	PRINTW 彼女の秘貝と自分の濡れそぼった秘貝をゆっくりとあわせていった……
+ENDIF
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.10+ (東方紅魔郷エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.10 (紅魔エンド)
+ENDIF
+FLAG:10010 |= 1
+CALL GAME_CONTINUE, 1, 10
+TSTR:3 = 紅魔館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;冥界エンド～Perfect Cherry Blossom.
+;--------------------------------------------------
+@ENDING_11, ARG
+PRINTW ここは冥界にある屋敷・白玉楼……
+PRINTW 普段は静寂に包まれたこの世界に、粘った水音と嬌声が響いていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 屋敷の一室で横になる%CALLNAME:MASTER%の上で、紫と幽々子が享楽に耽っているのだ
+	PRINTW 二人は時折絶頂に達しながらも貪欲にペニスを求めてくる
+	PRINTW 大きな胸も顔も精液まみれにしながら自ら尻を押し付け、もっともっととねだってくる
+	PRINTW 飽く事のない交わりを続ける横では、三人の少女が順番を待っていたはずだった
+ELSE
+	PRINTFORMW 屋敷の一室で%CALLNAME:MASTER%と紫と幽々子が絡み合いながら享楽に耽っているのだ
+	PRINTW 三人は時折絶頂に達しながらも貪欲に快楽を求めて絡み合う
+	PRINTW 大きな胸も顔も愛液まみれにしながら、もっともっととねだってくる
+	PRINTW 飽く事のない交わりを続ける横では、三人の少女が順番を待っていたはずだった
+ENDIF
+PRINTW しかし、我慢できずに互いを慰めあっていた藍と橙は既に頂点へと登りつめ、今やぐったりと横たわっている
+PRINTW 自らを慰めている妖夢も濁った瞳で荒い息をついていた
+PRINTW そんな従者たちの姿も目に入らぬかのように、三人は肉欲に溺れ続けている
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 精液の垂れ落ちる秘所を晒し、子宮の奥にまで精液を受け止める紫と幽々子
+ELSE
+	PRINTFORMW 愛液の垂れ落ちる秘所を晒しつつ、%CALLNAME:MASTER%と紫と幽々子はさらに絡み続ける
+ENDIF
+PRINT この快楽の宴に終わりはない
+IF TALENT:MASTER:呪精 || TALENT:MASTER:蓬莱人
+	PRINTW そう永遠に……
+ELSE
+	PRINTFORMW そう、%CALLNAME:MASTER%が生死の境を越えるまで……
+ENDIF
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.11+ (東方妖々夢エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.11 (冥界エンド)
+ENDIF
+FLAG:10011 |= 1
+CALL GAME_CONTINUE, 1, 11
+TSTR:3 = 白玉楼
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;萃夢エンド～Immaterial and Missing Power.
+;--------------------------------------------------
+@ENDING_12, ARG
+PRINTW 博霊神社の境内であって境内ではない、何処ともしれない空間
+PRINTW 明滅する不思議な光に照らされたその場所では淫らな酒宴が営まれていた
+PRINTW 幹事は神社を管理する紅白の巫女、博霊霊夢
+PRINTW この場所を提供したのは境界を操る妖怪、八雲紫
+PRINTW そして主催は密度を操る鬼、伊吹萃香
+PRINTFORMW 今も身体中を\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 白濁 # 愛液\@で染め上げた霊夢と魔理沙が
+PRINTW 陶然とした表情で気怠げに寄り添っている
+PRINTFORMW その視線の先には下から激しく\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 突き上げ # 秘部を舐め上げ\@られ、
+PRINTW 翻弄されながらも己の豊満な肢体を見せつけるように踊る紫がいた
+PRINTW そこにいるのは妖怪の賢者と呼ばれ畏怖される存在ではなく一匹の雌
+PRINTW それを見ていた他の少女達も情欲を抑えきれなくなったのか
+PRINTW 互いを慰めるかのように絡み合い始めた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 胎内に熱い精を受け倒れ込むように仰け反る紫
+	PRINTFORMW それを待ち構えていたかのように%CALLNAME:MASTER%へと荒々しく口付けた萃香は、
+	PRINTW 身体を離し瓢箪から自らの股間へと甘露を湛え誘うように艶然と微笑んでいる
+ELSE
+	PRINTW 激しく絶頂したあとついに倒れこんでしまった紫
+	PRINTFORMW それを待ち構えていたかのように%CALLNAME:MASTER%を引き寄せ荒々しく口付けた萃香は、
+	PRINTW 身体を離し瓢箪から自らの股間へと甘露を湛え誘うように艶然と微笑んでいる
+ENDIF
+PRINTFORMW 彼女たちがいる限り酒肴が尽きる心配はない、%CALLNAME:MASTER%が望む限り宴は開かれ続けるだろう……
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.12+ (東方萃夢想エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.12 (萃夢エンド)
+ENDIF
+FLAG:10012 |= 1
+CALL GAME_CONTINUE, 1, 12
+TSTR:4 = 有頂天
+CALL GET_YARD
+
+;--------------------------------------------------
+;永夜エンド～Imperishable Night.
+;--------------------------------------------------
+@ENDING_13, ARG
+PRINTW 竹薮の奥深くに位置する静かな館……
+PRINTFORMW 今やそこは%CALLNAME:MASTER%と%CALLNAME:MASTER%の奴隷達の隠れ家となっていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 輝夜と妹紅が揃って跪き、%CALLNAME:MASTER%のペニスに奉仕している
+	PRINTW 舌を亀頭に這わせながらお互いのクリトリスをいじり合っている様子は、とてもかつて殺し合っていた仲には見えない
+ELSE
+	PRINTFORMW 輝夜と妹紅と%CALLNAME:MASTER%の三人が互いに秘貝を刺激しあっている
+	PRINTW こうやって三人で楽しんでいると、この輝夜と妹紅の様子は、とてもかつて殺し合っていた仲には見えない
+ENDIF
+PRINTW 庭では鈴仙やてゐを始めとしたイナバ達が思いのままに交わっている
+PRINTW 愛液と精液に塗れ、甲高い嬌声を上げて、ただの獣に成り下がっている
+PRINTW 足音がしたので振り向くと、おぼつかない足取りで永琳がこちらに近づいてきた
+PRINTW 顔は紅潮し、潤んだ瞳は焦点を結ばず、いつもの余裕はどこにもない
+PRINTW 聞けば、新しい強力な媚薬を調合していた時に誤って吸引してしまい、発情してしまったという
+PRINTFORMW 苦笑した%CALLNAME:MASTER%は永琳を抱き寄せ、淫裂に指を突き入れると、そこはもう熱くとろけていた
+PRINTFORMW 指を動かすたびに%CALLNAME:MASTER%の腕の中で歓喜の声を上げる永琳を、輝夜と妹紅が羨ましそうに見ている
+PRINTW 今夜も永い夜になりそうだ……
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.13+ (東方永夜抄エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.13 (永夜エンド)
+ENDIF
+FLAG:10013 |= 1
+CALL GAME_CONTINUE, 1, 13
+TSTR:3 = 永遠亭
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;彼岸エンド～Phantasmagoria of Flower View.
+;--------------------------------------------------
+@ENDING_14, ARG
+PRINTW 六十年に一度の異変の年……
+PRINTFORMW 花咲き乱れる三途の川の此岸は今、%CALLNAME:MASTER%とその奴隷、さらには霊魂までもが入り乱れる快楽の園と化していた
+PRINTW 霊魂が奴隷達の身体にまとわりつき、花畑のそこかしこであられもない嬌声が上がる
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW その心地よい声を耳に、地に寝そべる%CALLNAME:MASTER%は自分に跨った映姫の身体を突き上げ、淫らに踊らせた
+ELSE
+	PRINTFORMW その心地よい声を耳に、地に寝そべる%CALLNAME:MASTER%は自分に跨った映姫の秘部を舌から舐め上げ、淫らに踊らせた
+ENDIF
+LOCAL = GETCHARA(1036)
+IF LOCAL >= 0 && TALENT:LOCAL:ふたなり
+	PRINTW 映姫の正面では小町が自らを慰めながら、映姫のペニスをしごき上げた
+	PRINT 勢いよく射精し、
+ELSE
+	PRINTW 映姫の正面では小町が自らを慰めながら、映姫の胸を激しく揉み上げた
+ENDIF
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり || (LOCAL >= 0 && TALENT:LOCAL:ふたなり)
+	PRINTW 秘肉と肉棒の隙間から愛液を噴き出して映姫は絶頂し、小さな身体をがくがく震わせた
+ELSE
+	PRINTW 下半身の至るところから愛液を噴き出して映姫は絶頂し、小さな身体をがくがく震わせた
+ENDIF
+PRINTW ふと気がつくと、霊魂と戯れていたはずの他の奴隷達が揃って、息も絶え絶えの映姫を情欲に潤んだ瞳で見ている
+PRINTFORMW 口うるさい閻魔に説教された恨みを今晴らしたいのだろう、そう見て取った%CALLNAME:MASTER%は映姫を奴隷達の輪に押し出した
+PRINTW たちまち意地悪な笑みを浮かべた奴隷達に襲いかかられる映姫……
+PRINTW ある者は乳首を指で弄り、ある者は蜜壷に指を突き入れて掻き回し、またある者はアヌスに舌を這わせた
+PRINTFORMW その様子を%CALLNAME:MASTER%は、小町に\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 口と豊満な胸 # 口\@で奉仕させながら見耽った
+PRINTW 映姫の上げる抗議の悲鳴が甘い喘ぎに、そして喜悦の声に取って代わるのには、それほど時間はかからなかった……
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.14+ (東方花映塚エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.14 (彼岸エンド)
+ENDIF
+FLAG:10014 |= 1
+CALL GAME_CONTINUE, 1, 14
+TSTR:4 = 彼岸
+CALL GET_YARD
+
+;--------------------------------------------------
+;守矢エンド～Mountain of Faith.
+;--------------------------------------------------
+@ENDING_15, ARG
+PRINTW 妖怪の山にひっそりと佇む守矢神社……
+PRINTFORMW その境内で%CALLNAME:MASTER%が早苗の口内を味わっていた
+PRINTW 舌を絡めあい、歯列の裏を舐められ、上気した瞳で唾液を飲み込んでいく早苗は
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 反り返った肉棒が尻の割れ目を擦るたびに、小さく体を震わせる
+	PRINTFORMW その肉棒には神奈子が胸を押し付け、諏訪子は%CALLNAME:MASTER%の尻穴に舌を差し入れ舐め上げる
+	PRINTW 柔らかな胸と滑らかな尻に挟まれた肉棒から大量の精液が吐き出され、
+	PRINTW 早苗の背中と神奈子の顔を汚していった……
+	PRINTFORMW そんな姿が画面に映されるのを見ながら、文は%CALLNAME:MASTER%に犯されていた
+	PRINTFORMW 撮影をしながらも興奮していたのだろう。文の肉壺は待ちわびたように%CALLNAME:MASTER%のモノに絡み付いてくる
+	PRINTW 画面の中で、諏訪子の小柄な秘所に溢れるほどの精液が注ぎ込まれている
+	PRINTFORMW それと同時に、%CALLNAME:MASTER%も痙攣を繰り返す文の最奥に精液を叩きつけていく
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%の指にアソコをえぐられるたびに、小さく体を震わせる
+	PRINTFORMW 一方、諏訪子が%CALLNAME:MASTER%の尻穴に舌を差し入れ舐め上げる
+	PRINTW その諏訪子の秘所を責め続けているのが神奈子であった
+	PRINTW こうして四人は互いに刺激し合いつつ、相次いで絶頂へと上りつめていった……
+	PRINTFORMW そんな姿が画面に映されるのを見ながら、文は%CALLNAME:MASTER%に秘所を責められていた
+	PRINTW 撮影をしながらも興奮していたのだろう。文の肉壺は待ちわびたように卑猥な液を垂れ流しはじめた
+	PRINTW 画面の中で、神奈子の執拗な責めに屈した諏訪子の小柄な秘所から大量の愛液が溢れ出している
+	PRINTFORMW それと同時に、文も%CALLNAME:MASTER%の執拗な責めに屈するかのごとく大量の愛液を溢れ出させた
+ENDIF
+PRINTW その様子を傍らで撮影しているにとりの足元には、垂れ落ちた愛液が水溜りをつくっていた……
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.15+ (東方風神録エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.15 (守矢エンド)
+ENDIF
+FLAG:10015 |= 1
+CALL GAME_CONTINUE, 1, 15
+TSTR:3 = 山の神社
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;緋想エンド～Scarlet Weather Rhapsody.
+;--------------------------------------------------
+@ENDING_16, ARG
+VARSET LOCAL, 0
+REPEAT CHARANUM
+	IF NO:COUNT == 1023
+		LOCAL = CFLAG:COUNT:好感度
+	ELSEIF NO:COUNT == 1051
+		LOCAL:1 = CFLAG:COUNT:好感度
+	ELSEIF NO:COUNT == 1052
+		LOCAL:2 = CFLAG:COUNT:好感度
+	ENDIF
+REND
+DRAWLINE
+;衣玖さんの方が萃香、天子よりも好感度が多いと衣玖さんよりのENDに
+IF LOCAL:1 > LOCAL && LOCAL:1 > LOCAL:2
+	;緋想エンドその二
+	PRINTW 有頂天の一角、そこはもう何日も緋色の濃霧で覆われている
+	PRINTW 中の様子を伺うことはできないが、霧が外へ漏れ出す様子もない為、
+	PRINTW 天人達はまたあの不良天人が妙な道楽を始めたのだろうと判断し気に留めることもなかった
+	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		PRINTW その霧の中で、天人の娘が背後から犬のような姿勢でアヌスを貫かれている
+		PRINTW その下には天子に覆いかぶさられる形で萃香が仰向けになり自身の陰核と天子の乳首を慰めている
+		PRINTFORMW %CALLNAME:MASTER%の背中からは衣玖が裸体に羽衣のみを淫らに纏った姿で、その大きく柔らかな胸を押し付け奉仕している
+		PRINTW 既に絶頂を繰り返していた天子は、白濁液を肛内にぶちまけられるとあえなく失神してしまった
+		PRINTFORMW 仕方なく%CALLNAME:MASTER%は天子から肉棒を抜き出すと、衣玖に綺麗にするよう命じた
+		PRINTW 衣玖は羽衣をその豊かな胸に絡めながら奉仕し始めた
+		PRINTW 羽衣と乳房の感触が交互にもたらされ、見る間に肉棒は勢いを取り戻した
+		PRINTFORMW 奉仕に満足した%CALLNAME:MASTER%が褒美として挿入を許可すると
+		PRINTFORMW 衣玖は%CALLNAME:MASTER%の上で淫らな天女の舞を踊り始めた……
+		PRINTW  
+		PRINTW 白濁液を垂れ流す秘裂も愉悦の表情も丸見えで少女達がだらしなく横たわる光景はまさに天上の楽園にふさわしい
+	ELSE
+		PRINTW その霧の中で、天人の娘が背後から犬のような姿勢でアヌスを責められている
+		PRINTW その下には天子に覆いかぶさられる形で萃香が仰向けになり自身の陰核と天子の乳首を慰めている
+		PRINTFORMW %CALLNAME:MASTER%の背中からは衣玖が裸体に羽衣のみを淫らに纏った姿で、その大きく柔らかな胸を押し付けている
+		PRINTW 既に絶頂を繰り返していた天子は、激しくを肛内を責められすぎてそのうち失神してしまった
+		PRINTFORMW 仕方なく%CALLNAME:MASTER%は天子から指を抜き出すと、衣玖に綺麗にするよう命じた
+		PRINTFORMW 衣玖はその扇情的な姿を見せ付けるような格好で%CALLNAME:MASTER%の指を舐め始めた
+		PRINTFORMW やがてすっかり綺麗になった指に満足した%CALLNAME:MASTER%は褒美として張り型を衣玖の膣に挿入してやった
+		PRINTFORMW 衣玖は快感の余り%CALLNAME:MASTER%の前で淫らな天女の舞を踊り始めた……
+		PRINTW  
+		PRINTW 愛液にまみれ快楽に浸る表情をしながら少女達がだらしなく横たわる光景はまさに天上の楽園にふさわしい
+	ENDIF
+	PRINTW 彼女達のように熟した果実の味わいに比べれば、天界の桃などお話にならない
+	PRINTW ――次はどの少女を、どこまで熟した時に味わおうか
+	PRINTFORMW 天界で至高の果実を求め続ける%CALLNAME:MASTER%に退屈が訪れることはない
+	PRINTW  
+	IF ARG == 2
+		PRINTW 　　　　　　　　―― Ending No.16+ (東方緋想天エンドⅡ)
+		FLAG:599 |= 1
+		FLAG:599 |= 2
+	ELSE
+		PRINTW 　　　　　　　　―― Ending No.16 (緋想エンドⅡ)
+		FLAG:599 |= 2
+	ENDIF
+	FLAG:10016 |= 2
+ELSE
+	;緋想エンドその一
+	PRINTW 有頂天の一角、そこはもう何日も緋色の濃霧で覆われている
+	PRINTW 中の様子を伺うことはできないが、霧が外へ漏れ出す様子もない為、
+	PRINTW 天人達はまたあの不良天人が妙な道楽を始めたのだろうと判断し気に留めることもなかった
+	PRINTW その霧の中では、縛り上げられ全身に責具を取り付けられた天人の娘が苦しげに喘いでいる
+	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		PRINTFORMW 何度も達しながら%CALLNAME:MASTER%の元へと這い寄り、差し出されたモノにむしゃぶりつく天子
+		PRINTW だがそこへ龍宮の使いである衣玖が背後から襲いかかり両穴に刺さったバイブを使って攻め立てた
+		PRINTW 既に限界近かった天子は不意の攻撃に耐えきれるはずもなく嬌声を上げ気を失う
+		PRINTFORMW 衣玖はまだ達しておらず不満そうな%CALLNAME:MASTER%へ笑顔を向けると、
+		PRINTW 身体を絡み付かせるようにして優しく押し倒し、そのまま自らの蜜壺へとモノを導いた
+		PRINTFORMW 抗議の声を上げようとする%CALLNAME:MASTER%、だがそれが形になることはなかった
+		PRINTW すかさずその顔の上へ萃香が己の秘所を押し付けるようにのしかかったからだ
+		PRINTFORMW 普段とは違い、己の身体の上で淫らに踊る二人の少女に翻弄される%CALLNAME:MASTER%
+		PRINTFORMW その様子を見ていた他の少女達も、もう我慢できないとばかりに%CALLNAME:MASTER%の身体へと群がり始めた……
+	ELSE
+		PRINTFORMW 何度も達しながら%CALLNAME:MASTER%の元へと這い寄り、口付けし舌を絡めようとする天子
+		PRINTW だがそこへ龍宮の使いである衣玖が背後から襲いかかり両穴に刺さったバイブを使って攻め立てた
+		PRINTW 既に限界近かった天子は不意の攻撃に耐えきれるはずもなく嬌声を上げ気を失う
+		PRINTFORMW 衣玖はまだ達しておらず不満そうな%CALLNAME:MASTER%へ笑顔を向けると、
+		PRINTFORMW 身体を絡み付かせるようにして優しく押し倒し、そのまま持っていた張り型で%CALLNAME:MASTER%の壺を犯しはじめた
+		PRINTFORMW 抗議の声を上げようとする%CALLNAME:MASTER%、だがそれが形になることはなかった
+		PRINTW すかさずその顔の上へ萃香が己の秘所を押し付けるようにのしかかったからだ
+		PRINTFORMW 普段とは違い、己の身体の上で淫らに踊る二人の少女に翻弄される%CALLNAME:MASTER%
+		PRINTFORMW その様子を見ていた他の少女達も、もう我慢できないとばかりに%CALLNAME:MASTER%の身体へと群がり始めた……
+	ENDIF
+	PRINTW  
+	IF ARG == 2
+		PRINTW 　　　　　　　　―― Ending No.16+ (東方緋想天エンド)
+		FLAG:599 |= 1
+	ELSE
+		PRINTW 　　　　　　　　―― Ending No.16 (緋想エンド)
+	ENDIF
+	FLAG:10016 |= 1
+ENDIF
+CALL GAME_CONTINUE, 1, 16
+TSTR:4 = 有頂天
+CALL GET_YARD
+
+;--------------------------------------------------
+;地霊エンド～Subterranean Animism.
+;--------------------------------------------------
+@ENDING_17, ARG
+PRINTW …ここは地の底、幻想郷のモノ達からも疎まれたモノらが集う旧地獄
+PRINTW その最深部近く、灼熱地獄跡に建てられた地霊殿は、かつてのようなペットたちの喧噪ではなく女たちの嬌声で満たされていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 薄暗い部屋の中で、その手に杯を持ったまま這い蹲り背後から豊満な肉体を揺さぶられているのは旧都に住む鬼、勇儀
+ELSE
+	PRINTFORMW 薄暗い部屋の中で、その手に杯を持ったまま%CALLNAME:MASTER%に胸を揉まれ口づけされているのは旧都に住む鬼、勇儀
+ENDIF
+PRINTW その姿を、屋敷の元主にして怨霊からも恐れられたサトリ、さとりとこいしの姉妹がペットである燐と空を嬲りながらじっと見つめている
+PRINTW 勇儀は杯の酒を守り切れれば満足するまで彼女だけの相手をする、だが半分以上溢せば他の四人が満足するまでお預けという賭けを結ばされたのだ
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 二人の視線と言葉に身も心も焼かれながら、激しく突かれる度に中身が溢れかけるのを必死に抑えようとする勇儀
+	PRINTFORMW だが%CALLNAME:MASTER%はそれを嘲笑うかのように、抜けるぎりぎりまで腰を引くと今までよりも強い一突きを叩き込んだ
+	PRINTW 堪えきれず背を仰け反らせながら倒れ込み杯の中身を全て溢してしまう勇儀、そしてほぼ同時に甲高い嬌声を上げる燐と空
+	PRINTFORMW %CALLNAME:MASTER%が余韻に震える身体の中からモノを抜くと、いつの間にか気絶した燐と空を置いて側まで来ていた姉妹が二人がかりで奉仕を始めた
+	PRINTFORMW %CALLNAME:MASTER%の子種を浴び、恍惚とした表情を浮かべながら丁寧にモノを清めるさとりとこいし
+	PRINTFORMW その刺激的な光景に再び力強く熱り立つ%CALLNAME:MASTER%のモノから口を離すと、姉妹は貝を合わせるように身体を重ねた
+	PRINTFORMW ぬらぬらと光る淫裂を見せながら物欲しげに誘ってくる姉妹に対し、%CALLNAME:MASTER%はゆっくりとのしかかっていった……
+ELSE
+	PRINTFORMW 二人の視線と言葉に身も心も焼かれながら、緩急を付けた%CALLNAME:MASTER%の巧みな責めによる刺激の度に
+	PRINTW 中身が溢れかけるのを必死に抑えようとする勇儀
+	PRINTFORMW だが%CALLNAME:MASTER%はそれを嘲笑うかのように、勇儀の濡れそぼっているが無防備な秘部に対していきなり指を突き入れた
+	PRINTW 堪えきれず背を仰け反らせながら倒れ込み杯の中身を全て溢してしまう勇儀、そしてほぼ同時に甲高い嬌声を上げる燐と空
+	PRINTFORMW %CALLNAME:MASTER%が余韻に震える身体の中から指を引き抜くと、いつの間にか気絶した燐と空を置いて側まで来ていた姉妹が
+	PRINTFORMW 二人がかりで%CALLNAME:MASTER%の秘部をまさぐりはじめた
+	PRINTFORMW 恍惚とした表情を浮かべながら丁寧に秘部に奉仕するさとりとこいし
+	PRINTFORMW その刺激的を受け、%CALLNAME:MASTER%は再び絶頂への道に上りはじめると、
+	PRINTFORMW 姉妹の方に向き直り二人の秘部を優しく刺激してやるのであった……
+ENDIF
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.17+ (東方地霊殿エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.17 (地霊エンド)
+ENDIF
+FLAG:10017 |= 1
+CALL GAME_CONTINUE, 1, 17
+TSTR:3 = 地霊殿
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;儚月エンド～Silent Sinner in Blue.
+;--------------------------------------------------
+@ENDING_18, ARG
+VARSET LOCAL, 0
+REPEAT CHARANUM
+	IF NO:COUNT == 1022
+		LOCAL = CFLAG:COUNT:好感度
+	ELSEIF NO:COUNT == 1053
+		SIF TALENT:COUNT:淫乱
+			LOCAL:3 += 1
+		LOCAL:1 = CFLAG:COUNT:好感度
+	ELSEIF NO:COUNT == 1054
+		SIF TALENT:COUNT:淫乱
+			LOCAL:3 += 1
+		LOCAL:2 = CFLAG:COUNT:好感度
+	ENDIF
+REND
+DRAWLINE
+;紫(LOCAL)の方が豊姫(LOCAL:1)、依姫(LOCAL:2)よりも好感度が高く、豊姫依姫が淫乱だと紫よりのENDに
+IF LOCAL > LOCAL:1 && LOCAL > LOCAL:2 && LOCAL:3 == 2
+	;緋想エンドその二
+	PRINTW 穢れた地上から遥か彼方、月の裏側に佇む月の都
+	PRINTW 妖怪の賢者をもってしても為しえなかったはずの月面侵略は成功し、月の都は大混乱に陥っていた
+	PRINTW 地上に追放された月の罪人や月の使者のリーダーが揃って行方知れずになってたことも拍車をかけた
+	PRINTW ……
+	PRINTW 境界と空間を歪められ、あるべき場所から消失した綿月の宮城
+	PRINTFORMW %CALLNAME:MASTER%は今、そこで玉兎達を相手に訓練を行っている
+	PRINTW それは以前見られた戦いの訓練ではなく、性の味を覚えさせる訓練だった
+	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		PRINTFORMW 胡坐をかいた%CALLNAME:MASTER%の上で依姫は剛直をくわえ込んだ姿を玉兎達に凝視され、羞恥に染まりながらも腰を振っている
+		PRINTW その傍らで永琳が依姫の性感帯を指差し卑猥な説明を行っているが、その永琳の尻穴には2本の指が押し込まれている
+		PRINTW 時折声を震わせる永琳と動きを止められない依姫に充てられ、既に自らの性器を弄り始めている玉兎もいる
+		PRINTFORMW 説明が終わると、%CALLNAME:MASTER%はペットへの褒美として二人の挿入済みの穴をかき回し絶頂に導いた
+		PRINTFORMW 余韻が残る依姫の膣穴からペニスを抜き出して立ち上がると、%CALLNAME:MASTER%はレイセンを呼んだ
+	ELSE
+		PRINTFORMW 胡坐をかいた%CALLNAME:MASTER%の前で依姫は指を膣に挿れられた姿を玉兎達に凝視され、羞恥に染まりながらもよがっている
+		PRINTW その傍らで永琳が依姫の性感帯を指差し卑猥な説明を行っているが、その永琳の尻穴にも指が押し込まれている
+		PRINTW 時折声を震わせる永琳と動きを止められない依姫に充てられ、既に自らの性器を弄り始めている玉兎もいる
+		PRINTFORMW 説明が終わると、%CALLNAME:MASTER%はペットへの褒美として二人の穴をかき回し絶頂に導いた
+		PRINTFORMW 余韻が残る依姫の膣穴から指を抜き出して立ち上がると、%CALLNAME:MASTER%はレイセンを呼んだ
+	ENDIF
+	PRINTW たちまち周りの景色が変わり、四つんばいで首輪に繋がれた豊姫と首輪の紐を握るレイセン、そして紫の姿が現れる
+	PRINTW 紫にレイセン達に褒美を与えること、絶頂していない自分を慰めることを命じると、
+	PRINTW 紫は隙間からリモコンスイッチを取り出しボタンを押し込んだ
+	PRINTW 途端に振動音がレイセンと豊姫の股間から鳴り響き、嬌声が上がる
+	PRINTW その声を聞きつけ、依姫や永琳の囲みからあぶれた玉兎達が2人に集まっていく
+	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		PRINTFORMW その間に紫は%CALLNAME:MASTER%の首に手を回し、ペニスに跨って呑みこんだ
+		PRINTFORMW しかしすぐに達して%CALLNAME:MASTER%にしなだれかかる姿は、月面戦争の主犯とは思えぬほど可愛らしかった
+		PRINTW 玉兎達によって奏でられる4人のペットの淫靡な四重奏を背景に、
+		PRINTFORMW %CALLNAME:MASTER%は月面侵略のパートナーである女を何回も絶頂に追いやり、
+		PRINTW 精液を子宮に注ぎ込んだ……
+	ELSE
+		PRINTFORMW その間に紫は%CALLNAME:MASTER%の首に手を回し、顔を近づけ口付けた
+		PRINTFORMW しばらく楽しんだ後に達して%CALLNAME:MASTER%にしなだれかかる姿は、月面戦争の主犯とは思えぬほど可愛らしかった
+		PRINTW 玉兎達によって奏でられる4人のペットの淫靡な四重奏を背景に、
+		PRINTFORMW %CALLNAME:MASTER%は月面侵略のパートナーである女と一緒に何回も絶頂に上りつめた……
+	ENDIF
+	PRINTW  
+	PRINTW 　　　　　　　　―― Ending No.18 (儚月エンドⅡ)
+	FLAG:599 |= 2
+	FLAG:10018 |= 2
+ELSE
+	PRINTW 穢れた地上から遥か彼方、月の裏側に佇む月の都
+	PRINTW その中に、堅く門を閉ざした綿月の宮城がある
+	PRINTW 今その内部では雌の匂いが充満し、誰もが相手の性を貪ることしか考えていない
+	PRINTW 月面侵略の陰謀に加担した地上の少女達は捕らえられ、宮城のペットとなった
+	PRINTW 彼女達は今、同じペットである玉兎達と大広間の至るところで交わっている
+	PRINTW ペットの管理者であるはずのレイセンは真っ先に押し倒され、前後の穴を蹂躙されていた
+	PRINTW 大広間の中央には月面侵攻の首謀者である八雲紫が緊縛され、吊るされている
+	PRINTW 首謀者への罰として紫は吊り下げられたまま傍らに立つ永琳に繰り返し謹製の媚薬を投与され続け、
+	PRINTFORMW 今ではいつでも%CALLNAME:MASTER%を受け入れて悦ぶ、%CALLNAME:MASTER%専用の\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 穴 # 性\@奴隷に仕立てられている
+	PRINTW しかし今日は永琳と双頭の張り型で責められながら、互いの見事な肢体を貪りあうだけだ
+	PRINTFORMW なにしろ%CALLNAME:MASTER%は忙しい
+	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		PRINTFORMW 今%CALLNAME:MASTER%の下では、依姫が尻穴を責め立てられ、あさましいよがり声をあげていた
+		PRINTW 止めに激しく抜き差しすると、依姫は背中をしならせて痙攣し、床に突っ伏した
+		PRINTW あれだけ性の快楽を忌避した依姫が今、不浄の穴を責められ絶頂に浸っている
+		PRINTFORMW そしてそばでずっとお預けを食らっていた豊姫が、%CALLNAME:MASTER%に情けをせがんでくる
+		PRINTFORMW 豊姫の開発された淫乳を揉みしだきながら、%CALLNAME:MASTER%は奉仕を命じた
+		PRINTFORMW 豊姫は気にしているようだが、その柔らかな身体つきは%CALLNAME:MASTER%のお気に入りだ
+		PRINTW その嗜好を汲んでか剛直を挿入したまま身体を摺り寄せてくる豊姫に満足し、
+		PRINTFORMW %CALLNAME:MASTER%は豊姫の身体を蹂躙し、その子宮を精で満たした……
+	ELSE
+		PRINTFORMW 今%CALLNAME:MASTER%の巧みな右手の指により、依姫が尻穴を責め立てられ、あさましいよがり声をあげていた
+		PRINTW 止めに激しく抜き差しすると、依姫は背中をしならせて痙攣し、床に突っ伏した
+		PRINTW あれだけ性の快楽を忌避した依姫が今、不浄の穴を責められ絶頂に浸っている
+		PRINTFORMW そしてそばでずっとお預けを食らっていた豊姫が、%CALLNAME:MASTER%に情けをせがんでくる
+		PRINTFORMW 豊姫の開発された淫乳を左手で揉みしだきながら、%CALLNAME:MASTER%は奉仕を命じた
+		PRINTFORMW 豊姫は%CALLNAME:MASTER%の秘所を舌で刺激しはじめた、その巧みな愛撫は%CALLNAME:MASTER%を満足させた
+		PRINTW 三人は何回も絶頂を迎えながらも絡まり続けるのであった……
+	ENDIF
+	PRINTW  
+	PRINTW 　　　　　　　　―― Ending No.18 (儚月エンド)
+	FLAG:10018 |= 1
+ENDIF
+CALL GAME_CONTINUE, 1, 18
+TSTR:3 = 綿月の宮城
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;星蓮エンド～Undefined Fantastic Object.～
+;--------------------------------------------------
+@ENDING_19, ARG
+PRINTW 遠い昔に魔法を使ったために封印された僧侶。彼女にとってすべてが平等であるべきこの世の中は…
+PRINTW その実、醜い騙し合いや殺し合いが横行する大変危険な現状となっていた。それを糺すべく彼女が縋ったのは
+PRINTFORMW \@(NO:MASTER == 1000) ? 異世界からの使命を受けて降臨した # 幻想郷の現状を憂いて立ち上がった\@%CALLNAME:MASTER%であった
+PRINTW 彼の性による幻想郷の平定はともすれば独善に陥りやすいものであったが、それを優しく正道に導いたのは、
+PRINTW 人も魔も霊も神も仏も平等に愛すことのできる聖白蓮の存在であった。彼女の心優しさとその豊満な肉体は
+PRINTFORMW 今日もまた%CALLNAME:MASTER%を法悦に導いているのであった。
+PRINTFORMW 白蓮はその豊満な胸で%CALLNAME:MASTER%を愉しませつつしっかりとその法力で後方に控える封獣ぬえをも愉しませていた
+PRINTFORMW ぬえもまた白蓮によって救われた魔であるが、同時に%CALLNAME:MASTER%の性のテクニックにも魅了されていたのである
+PRINTW 白蓮の巧みな法力と足技で何度も何度もイカされたぬえであったが、まだここで終わるわけにはいかない。なぜならば
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 彼女のその濡れそぼった穴に納まるべき剛直がまだ白蓮の元で暴れまわっていたからである
+ELSE
+	PRINTFORMW 彼女を可愛がってくれるはずの%CALLNAME:MASTER%はまだ白蓮の胸に夢中だったからである
+ENDIF
+PRINTW とそこに、バイブを二本挿されてよがり狂いながら星が入ってきた。どうやらまたオシオキされたらしい。
+PRINTW 星はどうも最近誰かにオシオキされるのが癖になってしまったようだ。きっと今日もナズーリンあたりにされたのだろう。
+IF ARG & 4
+	PRINTW 星のあとから小傘が入ってきた。この妖怪もいつのまにかここに出入りするようになったというが
+	PRINTFORMW そのかわいらしい肢体もまた%CALLNAME:MASTER%のお気に入りであった。
+	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		PRINTW とりあえず、小傘で三発ほど抜いてもらうべく正面から抱いてあげた。
+	ELSE
+		PRINTW とりあえず、小傘で少し愉しむことにすべく正面から色々と撫で回してあげた。
+	ENDIF
+	PRINTW 小傘とのそういう触れ合いも、白蓮はにこにこしながら眺めているのであった
+	PRINTFORM 小傘と愉しんだあとに、
+ELSE
+	PRINTFORM 白蓮の濃厚な奉仕からやっと解放された
+ENDIF
+PRINTFORMW %CALLNAME:MASTER%は他の住人を求めて別の部屋に移動した
+PRINTW 少し離れた場所では既に一輪とナズーリンが激しく抱き合っていた。
+PRINTFORMW しかし、二人とも%CALLNAME:MASTER%が来たことに気づくとすぐに物欲しそうな顔をしてねだってきた
+PRINTW 一輪は尼入道ということで禁欲的な印象があったものの、いざ堕としてみると誰よりも色に貪欲なけだものになっていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW そして今日も%CALLNAME:MASTER%のイチモツをおいしそうにほおばるのであった。
+ELSE
+	PRINTFORMW そして今日も%CALLNAME:MASTER%のワレメをおいしそうにしゃぶるのであった。
+ENDIF
+PRINTW それから遅れることナズーリンはそのダウジングロッドで一輪の膣とお尻を刺激し始めた
+PRINTFORMW %CALLNAME:MASTER%は一輪に奉仕させつつ、手でナズーリンの身体をなぜ回してやった
+PRINTFORMW こうして３人で身を寄せ合っていると、本当に幸せな日々だと思った%CALLNAME:MASTER%であった
+PRINTFORMW 十分に堪能したあと、%CALLNAME:MASTER%はそろそろ帰還する船長を迎えにいくことにした
+PRINTW 村紗船長は、ときどき「聖輦船」を運行して幻想郷の住人たちと魔界の住人たちの交流の橋渡しをしている
+PRINTFORMW これは%CALLNAME:MASTER%の発案である。すなわち、交流をしていけばそのうちみんな仲良くなれるはずだと。
+PRINTW その考えに強く賛同した白蓮もそれを後押ししての今がある。
+PRINTFORMW それはともかく、せっかく久々に船長と会えたのだからさっそく身体を絡めて彼女を押し倒してみた
+PRINTW 村紗も抵抗したりはしなかった、いや、股間は既にびしょ濡れであった。彼女もまた再会を待ち遠しかったのだ。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 村紗の華奢だが美しい身体を包むセーラー服をずらして、%CALLNAME:MASTER%は待ちきれないかのようにその怒張を叩き込んだ
+ELSE
+	PRINTFORMW 村紗の華奢だが美しい身体を包むセーラー服を巧みにずらして、%CALLNAME:MASTER%は全身を執拗に愛撫して回った
+ENDIF
+PRINTW 激しい責めに村紗はただただ甲高い喘ぎ声をまるで汽笛のごとく響かせるのであった。
+PRINTW こうして互いに十分に堪能したところで、優しい目をした白蓮が夕食の時間を告げに来た。
+PRINTFORMW %CALLNAME:MASTER%はこの住人たちとともにさらなる幻想郷の平和のために多くの奴隷たちを躾なければならないと思った。
+PRINTW そんなことを考えていると白蓮さんが口付けをして、「ずっといっしょにがんばりましょうね？」
+PRINTFORMW ああ、この人と一緒なら大丈夫さ…　%CALLNAME:MASTER%は心からそう思うのであった……
+PRINTW  
+IF ARG & 2
+	PRINTW 　　　　　　　　―― Ending No.19+ (東方星蓮船エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.19 (星蓮エンド)
+ENDIF
+FLAG:10019 |= 1
+CALL GAME_CONTINUE, 1, 19
+TSTR:3 = 命蓮寺
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;香霖堂エンド～Curiosities of Lotus Asia.～
+;--------------------------------------------------
+@ENDING_20, ARG
+PRINTW 人里を離れ、魔法の森の入口近くに構えられた一軒の店
+PRINTW 『香霖堂』と書かれた看板が掲げられたその店の入口には、まだ日も高いというのに
+PRINTW 『閉店中』の札が下がっていた
+PRINTW 店番もいない店内には、外の世界の品が所狭しと並べられている
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW その店の奥、あまり広いとは言えない寝室では、複数の男女が淫らに絡み合っていた
+	PRINTW 「ふ、二人とも、もっとゆっくり動いてくれ……んんっ、ふあっ」
+	PRINTW 一糸纏わぬ姿の魔理沙の下半身には、2本のペニスが突き刺さっている
+	PRINTFORMW ヴァギナを%CALLNAME:MASTER%に、アナルを霖之助に攻め立てられながら、
+	PRINTW 恍惚とした表情で愛しい二人の男のペニスを受け入れる
+	PRINTFORMW 紫は寝そべって下から魔理沙を突き上げている%CALLNAME:MASTER%の顔に跨り、
+	PRINTW 秘所を愛液と唾液でビショビショにしつつ、小柄な魔理沙の
+	PRINTW 体越しに身体を伸ばして霖之助と舌を絡ませながらお互いの唾液を味わっている
+	PRINTW その横では、朱鷺子の胸を霊夢が背後から揉み続けていた
+	PRINTW 官能小説を朗読させられている朱鷺子の口からは、淫らな小説の内容が
+	PRINTW 羞恥にまみれた声で描写され、霊夢が朱鷺子の敏感な部分を指先でなぞる度に
+	PRINTW 朱鷺子自身の喘ぎ声が小説の内容に入り混じる
+	PRINTW 霊夢が手を朱鷺子の秘所に伸ばし、硬く充血したクリトリスを強めに摘むと、
+	PRINTW 朱鷺子は小説の内容と同じように盛大に潮を噴きながら達した
+	PRINTFORMW %CALLNAME:MASTER%と霖之助の動きが激しさを増すと、魔理沙は声にならない声で
+	PRINTFORMW %CALLNAME:MASTER%の名前と霖之助の名前を交互に呼ぶ
+	PRINTW 魔理沙の中で2本のペニスが脈打った瞬間、両方の穴に同時に大量の精液が注がれる
+	PRINTW 同時に魔理沙も絶頂を迎え、下半身に感じる熱の心地よさに満足しながら倒れこんだ
+	PRINTW 紫は体勢を整えると魔理沙を脇に寝かせ、立ちあがった2人の男に膝まづき、
+	PRINTW 精液と魔理沙の愛液に塗れた二人のペニスを、両手に握ると交互に口で掃除していく
+ELSE
+	PRINTW その店の奥、あまり広いとは言えない寝室では、複数の者たちが淫らに絡み合っていた
+	PRINTFORMW %CALLNAME:MASTER%は片隅で自らを慰めつつ目前の狂宴を観察している
+	PRINTW その目前で魔理沙と霖之助と紫の三人が絡んでいた
+	PRINTW 「ふ、もっとゆっくり動いてくれ……んんっ、ふあっ」
+	PRINTW 一糸纏わぬ姿の魔理沙の下半身に、霖之助のペニスが突き刺さっている
+	PRINTW ヴァギナを霖之助に攻め立てられながら恍惚とした表情で愛しい男のペニスを受け入れる
+	PRINTW 紫は寝そべって下から魔理沙を突き上げている霖之助の顔に跨り、
+	PRINTW 秘所を愛液と唾液でビショビショにしつつ、小柄な魔理沙の
+	PRINTW 体越しに身体を伸ばして霖之助と舌を絡ませながらお互いの唾液を味わっている
+	PRINTW その横では、朱鷺子の胸を霊夢が背後から揉み続けていた
+	PRINTW 官能小説を朗読させられている朱鷺子の口からは、淫らな小説の内容が
+	PRINTW 羞恥にまみれた声で描写され、霊夢が朱鷺子の敏感な部分を指先でなぞる度に
+	PRINTW 朱鷺子自身の喘ぎ声が小説の内容に入り混じる
+	PRINTW 霊夢が手を朱鷺子の秘所に伸ばし、硬く充血したクリトリスを強めに摘むと、
+	PRINTW 朱鷺子は小説の内容と同じように盛大に潮を噴きながら達した
+	PRINTW 霖之助の動きが激しさを増すと、魔理沙は声にならない声で霖之助の名前を呼ぶ
+	PRINTW 魔理沙の中で霖之助のペニスが脈打った瞬間、膣に大量の精液が注がれる
+	PRINTW 同時に魔理沙も絶頂を迎え、下半身に感じる熱の心地よさに満足しながら倒れこんだ
+	PRINTW 紫は体勢を整えると魔理沙を脇に寝かせ、立ちあがった霖之助に膝まづき、
+	PRINTW 精液と魔理沙の愛液に塗れたペニスを、両手に握ると口で掃除していく
+	PRINTFORMW %CALLNAME:MASTER%は自らを慰めつつ、その狂宴を眺め続けていた。
+	PRINTW だが、そのような傍観者としての存在を許せなかった他の参加者は
+	PRINTFORMW %CALLNAME:MASTER%の元に殺到しその肢体にそれぞれの欲望をぶつけはじめる
+ENDIF
+PRINTW こうして何度も相手を変えながら、少女たちの体力が続く限りの狂宴が続いていく
+PRINTW そして少女たちの体力が尽きかけると、夜はのんびりと薀蓄を語り合う時間が始まる
+PRINTFORMW 性的なことでは、もはや幻想郷に敵などいない%CALLNAME:MASTER%だが、
+PRINTW この時ばかりは場の主役は霖之助である
+PRINTW 各々が茶や酒を手に、時には新しい道具を、時には幻想郷の様々な現象を肴に、
+PRINTW その時々の話題に対し、霖之助が自分なりの知識と解釈を交えながら語っていく
+PRINTFORMW それに対して少女たちも、そして%CALLNAME:MASTER%も、時には感心し、
+PRINTW 時には自分の意見で反論しながら議論を白熱させていく
+PRINTFORMW 最初は少女たちの体力が回復するまでの暇つぶし程度に考えていた%CALLNAME:MASTER%であったが、
+PRINTW 霖之助の知識や、性行為だけでは見えなかった少女たちの一面などは新鮮な発見であり、
+PRINTW いつしかこういう時間も悪くない、むしろ心地よいとさえ感じるようになっていた
+PRINTW 滅多に客が来なくなった店の中で、限りある至福の時間は緩やかに過ぎていく……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.20 (香霖堂エンド)
+FLAG:10020 |= 1
+CALL GAME_CONTINUE, 1, 20
+TSTR:3 = 香霖堂
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;三月精エンド～Strange and Bright Nature Deity.～
+;--------------------------------------------------
+@ENDING_21, ARG
+PRINTW 悪戯好きな三人の妖精、サニーとルナとスターはいつも仲良しで一緒に過ごしている。
+PRINTW ところがあるとき、悪い奴隷商人に捕まえられ、奴隷として売られる羽目となってしまった。
+PRINTW しかし、何が幸いとなるかは分からないもので…
+PRINTFORMW 売られた先の%CALLNAME:MASTER%はその一風変わった奴隷たちを結構気に入ったようだ。
+PRINTW 実際、三人とえっちなことで遊んでいるとなんだか気分もうきうきしてくるようで、
+PRINTFORMW %CALLNAME:MASTER%はこういう生活も悪くはないものと思っていた。
+PRINTW そこに転機が訪れたのは、同様に奴隷として博麗霊夢と霧雨魔理沙を購入してからである。
+PRINTW 二人とも幻想郷では知らぬものがないぐらい有名な人間であった、
+PRINTFORMW その二人を手中に収めて飼いならした%CALLNAME:MASTER%の手腕はいつしか
+PRINTW その他の幻想郷の有力者たちからも一目置かれることとなった。
+PRINTFORMW %CALLNAME:MASTER%はその他にも何人もの著名な存在を手中に収め、
+PRINTW 一大ハーレムを築きつつあったが、一番のお気に入りはなぜか
+PRINTW 幾多の奴隷の中では取るに足らない存在であったはずの三人の妖精たちであった…
+PRINTW 
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW %CALLNAME:MASTER%の怒張をおいしそうに舐め続けているサニーとルナとスター、
+	PRINTW その刺激はいまだに稚拙ではあったが、心がこもっており
+	PRINTFORMW %CALLNAME:MASTER%も何度となく射精しては三人を純白に染めるのである。
+	PRINTW 真っ白になった三人はむしろそれを喜びつつもさらに奉仕を加速させるのであった…
+ELSE
+	PRINTFORMW サニーの秘所を激しく攻める%CALLNAME:MASTER%の舌、その横では
+	PRINTW ルナとスターが美しい裸身を絡めあっていた。まさに百合の競演である。
+	PRINTFORMW サニーを何回もイカせた%CALLNAME:MASTER%は今度はルナに奉仕させることにした。
+	PRINTW 一方、スターも疲れきってるはずのサニーに刺激をあたえはじめると、
+	PRINTW サニーもなんとか反撃をし、そして互いに上りつめることとなった…
+ENDIF
+PRINTFORMW %CALLNAME:MASTER%はこうやって、もっぱら三妖精と遊ぶのが日課になりつつあった。
+PRINTW 他の奴隷たちもそれを察して、よほどのことがなければでしゃばらないようにした。
+PRINTW こうして、多数の奴隷たちを抱えるにしてはどうもなにか様子が違う不思議な生活に
+PRINTW 三月精たちもまた楽しいと思うようになっているし、
+PRINTFORMW %CALLNAME:MASTER%も幻想郷でこういうことになって
+PRINTW 本当によかったと思うのであった。
+PRINTW なんだか、ハバにされてる霊夢と魔理沙もお互いによろしくやっているようで、
+PRINTW 奴隷たちの関係も良好であるという。
+PRINTFORMW こうして、%CALLNAME:MASTER%の館はこれからも賑やかな生活を送る
+PRINTW 三妖精たちとその他の奴隷たちでにぎわうことになるのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.21 (三月精エンド)
+FLAG:10021 |= 1
+CALL GAME_CONTINUE, 1, 21
+TSTR:3 = 大きな木のある館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;文花帖エンド～Shoot the Bullet.～
+;--------------------------------------------------
+@ENDING_22, ARG
+PRINTFORMW %CALLNAME:MASTER%が幻想郷で出会った者たちのうち、
+PRINTW 鴉天狗の射命丸文は特別な存在となった。
+PRINTFORMW 彼女はその頭の回転の速さとそつのなさで、%CALLNAME:MASTER%にすばやく取り入り、
+PRINTW いつのまにか、その片腕として暗躍するようになっていたのである。
+PRINTFORMW そして、その文にそそのかされて、%CALLNAME:MASTER%はいつしか、
+PRINTW 「文々。新聞」の製作を手伝う羽目になってしまっていた。
+PRINTFORMW 幻想郷でも一部のものたちの間では知られている「文々。新聞」は、
+PRINTW 射命丸文という優秀な記者による、文字通り命がけの取材と
+PRINTW それを元にしたセンセーショナルな記事がその特徴であったという。
+PRINTW ただ、それも活動資金の問題もありいささか停滞気味だったところに、
+PRINTFORMW ノコノコ現れたのが我らが%CALLNAME:MASTER%であったというわけだ。
+PRINTW もちろん、タダというわけではない。
+PRINTW 射命丸文は当然のごとく、自らのその魅惑的な肉体を提供するだけでなく、
+PRINTW ハメ撮り取材と称して美人を連れ込んできてくれるし、
+PRINTW また取材活動を通じて稼いできた様々なネタを提供してくれることで、
+PRINTFORMW %CALLNAME:MASTER%の知的興味までも充足してくれていたのである。
+PRINTW こうして、不思議な人妖による二人三脚のゴシップマスコミは、
+PRINTW 今日も幻想郷のどこかで、誰かの秘密を暴いているということである。
+PRINTW 
+PRINTFORMW %CALLNAME:MASTER%は、今晩も文\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? の膣を肉棒で味わい # と互いの貝を擦り合わせ\@ながら、
+PRINTW 今後のことを色々と考えるべきか？と思っていた。
+PRINTW だが、この目の前の美しい天狗の肉体と彼女の集めるネタを楽しんでいるのも
+PRINTW また事実であり、しばらくは、そしておそらくはこのままずっと
+PRINTFORMW %CALLNAME:MASTER%は、幻想郷で彼女と過ごしていくことになるのだろう。
+PRINTFORMW そう思った、%CALLNAME:MASTER%は、これからもよろしくの意味を込めて、
+PRINTW 繋がったまま、文に優しく口付けをするのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.22 (文花帖エンド)
+FLAG:10022 |= 1
+CALL GAME_CONTINUE, 1, 22
+TSTR:3 = 「文々。新聞」社屋
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;博麗神社エンド～Hakurei Jinja
+;--------------------------------------------------
+@ENDING_50, ARG
+PRINTW ここは幻想郷の東の端にある唯一の神社、博麗神社
+PRINTW いつものように人気はなく寂れている……はずだが少しだけ様子が違った
+PRINTW そう、境内から女の嬌声がするのだ…それも複数の…
+PRINTFORMW 境内では%CALLNAME:MASTER%が何人もの少女と性行為を行っている
+IF TALENT:MASTER:オトコ
+	;男主人
+	PRINTW 博麗の巫女、霊夢と白黒の魔法使い、魔理沙は貪るように彼のペニスにしゃぶりつき
+	PRINTW 先に事を終えた神社の祟り神、魅魔は秘裂から精液を垂れ流し更なる精を求めて彼に抱きつき
+	PRINTW 七色の人形遣いアリスはその様子を恍惚とした表情で眺めながら人形たちに秘所を攻めさせている
+	PRINTW その様子を頬を紅く染め、秘裂に筆を咥えてその筆で事細かに日記に書き記す御阿礼の子、阿求
+	PRINTW 皆服は着ていない…服など宴の邪魔にしかならないからだ
+	PRINTW 霊夢と魔理沙の奉仕はヒートアップし限界に達した肉棒は大量の子種を撒き散らした
+	PRINTW そして衰えぬ肉棒の上に密度を操る鬼、萃香が乗りかかり、輪に入り損ねたアリスと阿求を手招きした
+	PRINTW アリスと阿求は待ってましたといわんばかりに繋がっている2人に奉仕をし始めた
+	PRINTFORMW 萃香は%CALLNAME:MASTER%のペニスをきつく締め上げ激しく彼の上で動く
+	PRINTW そしてアリスの秘所を舐め阿求に菊座を攻めさせる……
+	PRINTW これも鬼の力なのだろうか…割り込まれた霊夢と魔理沙は今度はアリスと阿求を攻め始めた
+	PRINTW 1人の男を囲むように少女達が群がる異常な光景…彼女達全員を満足させるのは骨が折れそうだ
+	PRINTW だが…人攫いの専門家がいるのだ…神社に集まった少女たちだけで終わるはずもない
+	PRINTW そう…萃香がまだ萃めてくれる…宴はまだまだ始まったばかりなのだ
+	PRINTFORMW %CALLNAME:MASTER%はふとそう思うとにやりと口元を歪め、萃香の中にありったけの精を放った
+	FLAG:10050 |= 1
+ELSEIF TALENT:MASTER:ふたなり
+	;ふたなり主人
+	PRINTW 博麗の巫女、霊夢と白黒の魔法使い、魔理沙は貪るように彼女のペニスにしゃぶりつき
+	PRINTW 先に事を終えた神社の祟り神、魅魔は秘裂から精液を垂れ流し更なる精を求めて彼女に抱きつき
+	PRINTW 七色の人形遣いアリスはその様子を恍惚とした表情で眺めながら人形たちに秘所を攻めさせている
+	PRINTW その様子を頬を紅く染め、秘裂に筆を咥えてその筆で事細かに日記に書き記す御阿礼の子、阿求
+	PRINTW 皆服は着ていない…服など宴の邪魔にしかならないからだ
+	PRINTW 霊夢と魔理沙の奉仕はヒートアップし限界に達した肉棒は大量の子種を撒き散らした
+	PRINTW そして衰えぬ肉棒の上に密度を操る鬼、萃香が乗りかかり、輪に入り損ねたアリスと阿求を手招きした
+	PRINTW アリスと阿求は待ってましたといわんばかりに繋がっている2人に奉仕をし始めた
+	PRINTFORMW 萃香は%CALLNAME:MASTER%のペニスをきつく締め上げ激しく彼女の上で動く
+	PRINTW そしてアリスの秘所を舐め阿求に菊座を攻めさせる……
+	PRINTW これも鬼の力なのだろうか…割り込まれた霊夢と魔理沙は今度はアリスと阿求を攻め始めた
+	PRINTW 1人の女を囲むように少女達が群がる異常な光景…彼女達全員を満足させるのは骨が折れそうだ
+	PRINTW だが…人攫いの専門家がいるのだ…神社に集まった少女たちだけで終わるはずもない
+	PRINTW そう…萃香がまだ萃めてくれる…宴はまだまだ始まったばかりなのだ
+	PRINTFORMW %CALLNAME:MASTER%はふとそう思うとにやりと口元を歪め、萃香の中にありったけの精を放った
+	FLAG:10050 |= 4
+ELSE
+	;女主人
+	PRINTFORMW 博麗の巫女、霊夢と%CALLNAME:MASTER%は舌を絡めあい、
+	PRINTFORMW 白黒の魔法使い、魔理沙は貪るように%CALLNAME:MASTER%の秘所を舐めている。
+	PRINTW 先に事を終えた神社の祟り神、魅魔は
+	PRINTFORMW 秘裂から愛液を洪水のように溢れさせながらなお%CALLNAME:MASTER%を求め抱きつき
+	PRINTW 七色の人形遣いアリスはその様子を恍惚とした表情で眺めながら人形たちに秘所を攻めさせている
+	PRINTW その様子を頬を紅く染め、秘裂に筆を咥えてその筆で事細かに日記に書き記す御阿礼の子、阿求
+	PRINTW 皆服は着ていない…服など宴の邪魔にしかならないからだ
+	PRINTFORMW %CALLNAME:MASTER%が霊夢と魔理沙の秘裂に指を突きたて激しく動かすと二人は一気に絶頂に達した。
+	PRINTW そしてぐったりとした二人を押しのけて
+	PRINTFORMW 密度を操る鬼、萃香が%CALLNAME:MASTER%に抱きついて輪に入り損ねたアリスと阿求を手招きした
+	PRINTW アリスと阿求は待ってましたと言わんばかりに絡み合う二人に奉仕をし始めた
+	PRINTFORMW %CALLNAME:MASTER%は萃香の秘所に指を突きたて、アヌスにバイブを挿入した
+	PRINTW そしてアリスの秘所を舐め阿求に菊座を攻めさせる……
+	PRINTW これも鬼の力なのだろうか…割り込まれた霊夢と魔理沙は今度はアリスと阿求を攻め始めた
+	PRINTW 1人の女を囲むように少女達が群がる異常な光景…彼女達全員を満足させるのは骨が折れそうだ
+	PRINTW だが…人攫いの専門家がいるのだ…神社に集まった少女たちだけで終わるはずもない
+	PRINTW そう…萃香がまだ萃めてくれる…宴はまだまだ始まったばかりなのだ
+	FLAG:10050 |= 2
+ENDIF
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.50 (博麗神社エンド)
+CALL GAME_CONTINUE, 1, 50
+TSTR:3 = 博麗神社
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;人形遣いエンド～Dolls Dollmaster.
+;--------------------------------------------------
+@ENDING_51, ARG
+DRAWLINE
+PRINTW 昼なお暗く、鬱蒼とした木々が行く手を阻み人を寄せ付ける事のない魔法の森……
+PRINTW その森の奥深くの開けた場所にぽつりと建つ一軒家
+PRINTW 七色の人形遣いアリス・マーガトロイドの家の開け放たれた窓からは
+PRINTW ひっきりなしに少女の喘ぎ声が響いてきている
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 薄暗い部屋の中には、ベッドの上で絡み合う男女の姿がほの白く浮かび上がっていた
+	PRINTFORMW 館の主である少女は仰向けになった%CALLNAME:MASTER%のペニスにアナルを貫かれ、
+ELSE
+	PRINTW 薄暗い部屋の中には、ベッドの上で絡み合う者たちの姿がほの白く浮かび上がっていた
+	PRINTFORMW 館の主である少女は仰向けになった%CALLNAME:MASTER%にアナルを舐め回され、
+ENDIF
+PRINTW 添い寝する様に寄り添うメディスンはアリスの秘裂に大きな張り型を出し入れさせながらぴちゃぴちゃと淫猥な音を立ててアリスと舌を絡めあい、
+PRINTW 空いた手で一心に自らの秘所を慰めている
+PRINTW よく見るとアリスの胸には、彼女が生み出した人形がそれぞれ一体ずつ跨り
+PRINTW 自らの秘所にアリスの固くしこった乳首を挿入し腰を動かしている
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW %CALLNAME:MASTER%がアリスの腸内に熱い白濁を吐き出すと同時に
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%もまた自身の手で自らの秘所を刺激し続け、
+	PRINTFORMW ついに絶頂を迎えた、と同時にアリスのアナル奥深くに舌を突き入れた。その一撃で
+ENDIF
+PRINTFORMW アリスも絶頂を迎え、そのままぐったりと%CALLNAME:MASTER%に身を預けた……
+PRINTW 間も無く上海人形と蓬莱人形も絶頂を迎え、重なり合う様にしてアリスの胸に倒れこんだ
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW それを見届けたメディスンは、アリスのアナルからごぷっと言う水音を立てて抜けた
+	PRINTFORMW %CALLNAME:MASTER%のペニスを咥え込み口中で味わうように舌で愛撫し始めた
+	PRINTFORMW そして、%CALLNAME:MASTER%のペニスが再び硬く勃起するのを確認すると、
+	PRINTFORMW 四つん這いになり自らの秘所を二本の指で拡げ、%CALLNAME:MASTER%を誘う様に尻を振って見せた……
+ELSE
+	PRINTW それを見届けたメディスンは、アリスのアナルから顔を離した
+	PRINTFORMW %CALLNAME:MASTER%と舌を絡めあいながら絡み始めた
+	PRINTFORMW そして、%CALLNAME:MASTER%が再び絶頂に向かおうとするのを確認すると、
+	PRINTW その胸をリズミカルに揉みながら嬉しそうに微笑んだ……
+ENDIF
+PRINTW 屋敷の外では大江戸人形がゴリアテ人形の股間に顔をうずめ、その敏感な部位をぺちゃぺちゃと舐めている……
+PRINTW 昼なお暗く、鬱蒼とした木々が行く手を阻み人を寄せ付ける事のない魔法の森……
+PRINTW その奥深くの館で、人形遣いと人形達の淫らな宴は続いていく……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.51 (人形遣いエンド)
+FLAG:10051 |= 1
+CALL GAME_CONTINUE, 1, 51
+TSTR:3 = マーガトロイド邸
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;幻想楽団エンド～Phantom Ensemble
+;--------------------------------------------------
+@ENDING_52, ARG
+PRINTW ここは湖の近くにある廃洋館、プリズムリバー邸。
+PRINTW その大広間には、見事な演奏が響き渡っていた。
+PRINTW ルナサのヴァイオリン、メルランのトランペット、リリカのキーボードに、
+PRINTW 以前は一人で歌っていたミスティアが新たにヴォーカルとして加わっていた。
+PRINTW しかし、見事な演奏とは裏腹に少女達の衣服は乱れ、頬は上気して目は潤んでいた。
+PRINTW ……それもその筈、リリカの陰核とメルランの乳房には電動ローターが、
+PRINTW ルナサの膣内とミスティアのアナルにはバイブが取り付けられ、演奏を続ける彼女等を責め続けていたのだから。
+PRINTW  
+PRINTFORMW ……やがて演奏が終わると、姉妹達と夜雀は%CALLNAME:MASTER%の方に向かって集まってきた。
+PRINTFORMW %CALLNAME:MASTER%が少女達を責め苛んでいた器具を外してやると、
+PRINTFORMW 彼女等は一瞬物足りなさそうな表情をしたがすぐに%CALLNAME:MASTER%に奉仕を始めた。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW メルランの大きな胸に挟まり飛び出た%CALLNAME:MASTER%のペニスをリリカが手で扱く。
+	PRINTFORMW その奉仕を受けながら%CALLNAME:MASTER%はルナサの膣孔とミスティアのアナルを再びバイブで責める。
+ELSE
+	PRINTFORMW メルランの大きな胸を揉む%CALLNAME:MASTER%の秘所をリリカが舌で舐める。
+	PRINTFORMW その奉仕を受けながら%CALLNAME:MASTER%はルナサの膣孔とミスティアのアナルを再びバイブで責める。
+ENDIF
+PRINTW ――今は誰も居ない筈のその館からは、見事な演奏の音と少女達の嬌声が交互に、毎日の様に響くのだった――
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.52 (幻想楽団エンド)
+FLAG:10052 |= 1
+CALL GAME_CONTINUE, 1, 52
+TSTR:4 = 冥界
+CALL GET_YARD
+
+;--------------------------------------------------
+;妖稚園エンド～Nature Deities
+;--------------------------------------------------
+@ENDING_53, ARG
+PRINTW 「朝ですよー」
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 窓から差し込む陽光と%CALLNAME:MASTER%の精を浴び、リリーの羽と金髪がきらめいていた
+	PRINTFORMW すっかり濡れた秘部でモノを咥え込もうとするのをやめさせ、%CALLNAME:MASTER%は寝室から出る
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%はリリーに股間を刺激され続けていたようだ。しかし窓からは朝の陽光が差し込んでいる
+	PRINTFORMW リリーの奉仕を十分に堪能した%CALLNAME:MASTER%は奉仕をやめさせ、寝室から出る
+ENDIF
+PRINTW キッチンでは大妖精が裸身に前掛けを着け皆の朝食を作っていた
+PRINTFORMW %CALLNAME:MASTER%の顔を見て飛び出そうとするチルノを大妖精は止め
+PRINTW 「チルノちゃん。お口の周りそんなに汚したままご主人様のとこ行っちゃメ、だよ？」
+PRINTW と、チルノの口自体を咥えるような強引なキスをし、そのまま押し倒す
+PRINTFORMW 朝食が出されず空きっ腹を抱え途方に暮れていた%CALLNAME:MASTER%の袖が引っ張られた
+PRINTFORMW ルナが物欲しそうな目で%CALLNAME:MASTER%の顔を見上げている
+PRINTW 「コーヒーにミルクが欲しいの。お願いしてもいい？」
+PRINTW 「ルナ、それなら私のあげる！」
+PRINTW 「むぐっ！？」
+PRINTW サニーがルナの小さい口腔に有無を言わさず猛りきったペニスを突っ込んだ
+PRINTW 整えられたロールヘアーを乱暴に掴みサニーはとろけた表情で無心に腰を振る
+PRINTFORMW 嬌声と食器の割れる音に包まれたキッチンにうんざりした%CALLNAME:MASTER%が廊下に出ると
+PRINTW その様子をカメラに写し、自慰にふけるスターがいた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW だが%CALLNAME:MASTER%のことに気付いたとたんカメラ（5000圓）を床に放り出し
+	PRINTW 腰にすがりついて猫のように竿へと頬擦りをし、袋を口に含み始める
+ELSE
+	PRINTFORMW だが%CALLNAME:MASTER%のことに気付いたとたんカメラ（5000圓）を床に放り出し
+	PRINTW 胸にすがりついて赤子のように乳首を口に含み始める
+ENDIF
+PRINTW 遊ぶのは食事が済んでからと言い聞かせている間に
+PRINTFORMW キッチンから寝室から慰め合うことに飽きた幼い妖精たちが%CALLNAME:MASTER%を求め群がってきた
+PRINTW 今日も幻想郷は平和です
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.53 (妖稚園エンド)
+FLAG:10053 |= 1
+CALL GAME_CONTINUE, 1, 53
+TSTR:4 = 妖稚園のための
+CALL GET_YARD
+
+;--------------------------------------------------
+;お姉様エンド～
+;--------------------------------------------------
+@ENDING_54, ARG
+PRINTW 乳の海で溺れる――そんな夢を見た。
+PRINTW  
+PRINTW 昼の気だるい光で目覚めると、体が動かなかった。
+PRINTW 正確には、三人の女性が体にまとわりついていた。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 前後二穴から白濁液を垂れ流した跡のある紫が右腕を胸の間に挟むように、
+	PRINTW 首輪と無数のローターをつけたままの勇儀が左腕と左足に絡まるように、
+	PRINTFORMW そして右足の上にまたがって、精液を顔に貼り付けた幽々子が%CALLNAME:MASTER%の肉棒をくわえていた。
+	PRINTFORMW 幽々子は%CALLNAME:MASTER%が起きたことに気づくと、激しい吸引で射精を促した。
+	PRINTFORMW %CALLNAME:MASTER%はこらえきれず射精する。
+ELSE
+	PRINTW 前後二穴にバイブを咥えたままのある紫が右腕を胸の間に挟むように、
+	PRINTW 首輪と無数のローターをつけたままの勇儀が左腕と左足に絡まるように、
+	PRINTFORMW そして右足の上にまたがって、愛液を顔に貼り付けた幽々子が%CALLNAME:MASTER%の秘部を責めていた。
+	PRINTFORMW 幽々子は%CALLNAME:MASTER%が起きたことに気づくと、激しい吸引でさらなる刺激を与えてきた。
+	PRINTFORMW %CALLNAME:MASTER%はこらえきれず絶頂した。
+ENDIF
+PRINTW そして、ごはんもっと、とさらにねだってくる幽々子が突如昏倒した。
+PRINTW その尻には怪しげな注射器が突き立っている。
+PRINTW 扉を見れば、永琳が何かを投げたかのようなポーズで立っていた。
+PRINTW ……なぜか眼鏡とセーラー服を着用していた。
+PRINTFORMW 三人を起こさないようそっと抜け出し、永琳が気絶と覚醒を数回繰り返すまで\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 精液を注ぎ込んだ # 張り型で何度も犯した\@後、%CALLNAME:MASTER%は居間へと向かった。
+PRINTW  
+PRINTW 居間へ向かう途中、台所が目に入った。
+PRINTW 今日の料理当番である魅魔は、裸エプロン姿で、尻を揺らしながら神綺の母乳を搾っている。
+PRINTW すでにかなりの量搾られているのか、神綺はぐったりとしている。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 楽しそうに母乳を絞る魅魔の後ろに忍び寄って肉棒を楽しく十回ほど搾らせ、
+	PRINTFORMW そしてぐったりした神綺にミルクを出た分の二倍近く下から補充し、今度こそ%CALLNAME:MASTER%は居間へと向かった。
+ELSE
+	PRINTW 楽しそうに母乳を絞る魅魔の後ろに忍び寄って後ろから張り型で十回ほど犯し、
+	PRINTFORMW さらにぐったりしていた神綺の秘所を責めて愛液ミルクを補充し、今度こそ%CALLNAME:MASTER%は居間へと向かった。
+ENDIF
+PRINTW  
+PRINTW 居間の窓からは、藍が洗濯物を干しているのが見えた。
+PRINTW 真っ白なシーツがはためいた向こうで、幽香が花の手入れをしているのが見えた。
+PRINTW 二人は顔を見合わせて満足げな笑みを浮かべ、腰をとんとんと叩くジェスチャーをした。
+PRINTW 腰が痛いということだろうか。下駄を突っかけて庭を横断。その途中で二人を脇に抱える。
+PRINTFORMW 軽く抱えられ、顔を真っ赤にして軽いパニックに陥った二人を、腰に負担がかかからない\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 体位で # ようにしつつも激しく責め立て\@数十回ほど絶頂させる。
+PRINTW  
+PRINTW 痙攣するだけになった二人を家の中に連れて行こうと抱えたとき、映姫、小町、神奈子が帰ってくるのが見えた。
+PRINTW 三人の頬は赤い。昨晩、明日の仕事はバイブを入れたまま行えと言っておいたのを思い出した。
+PRINTW これは褒美をやらねばならないだろう。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 彼女たちを何度犯そうかと思うだけで、%CALLNAME:MASTER%の肉棒はまだまだ衰えない。
+ELSE
+	PRINTFORMW 彼女たちとどう絡もうかと思うだけで、%CALLNAME:MASTER%の欲望はまだまだ衰えない。
+ENDIF
+PRINTW  
+PRINTW ……そして深夜。
+PRINTFORMW さすがの%CALLNAME:MASTER%も疲れ果てた頃には、すでに周囲は死屍累々と呼ぶべき状況だった。
+PRINTW 重なったまま、あるいは尻をかかげたまま、足を広げたまま、さまざまな姿勢で、彼女たちは疲れに誘われ眠りに落ちている。
+PRINTW 彼女たちが全員に共通していることは、少女のように穏やかな表情を浮かべていることだ。
+PRINTFORMW 手近な神奈子の胸に顔をうずめると、彼女はゆるい力で%CALLNAME:MASTER%の頭を抱いてきた。
+PRINTW ……眠気が襲ってくる。
+PRINTFORMW 無意識のうちに全身に絡み付いてくる女性たちに苦笑しつつ、%CALLNAME:MASTER%は夢の世界に落ちた。
+PRINTW  
+PRINTW ……宴は終わらない。
+PRINTW 誰の胸の中であっても、きっと良い夢が待っている――。
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.54 (おねーさまエンド)
+FLAG:10054 |= 1
+CALL GAME_CONTINUE, 1, 54
+TSTR:4 = 年上によるハーレム建設のため
+CALL GET_YARD
+
+;--------------------------------------------------
+;妹エンド～
+;--------------------------------------------------
+@ENDING_55, ARG
+PRINTFORMW %CALLNAME:MASTER%はこの幻想郷で作り上げたのはかわいい妹たちとの楽しい生活であった。
+PRINTW メイドのような衣装をきた夢月がお兄ちゃんのために
+PRINTW 一所懸命そのかわいらしいおっぱいとお口でご奉仕してくれている。
+PRINTFORMW 最初は他人のことなど歯牙にもかけなかった夢月も、この%CALLNAME:MASTER%の魅力に惹かれていき今ではその妹として
+PRINTW 健気に尽くしてくれるようになってくれていた。
+PRINTFORMW 夢月が疲れきってしまったので、%CALLNAME:MASTER%は優しく部屋まで運んで寝かせてあげた。すると、それを見ていた
+PRINTW こいしが甘えるように寄りかかってきた。
+PRINTW とりあえず、お姫様だっこしてこいしの部屋まで運んでやるとベッドに寝かせることにする。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW すると%CALLNAME:MASTER%の肉棒をおいしそうに口に含んでそのかわいらしくも巧みな舌使いでお兄ちゃんを
+	PRINTW 昇天させようとしはじめた。
+ELSE
+	PRINTFORMW すると%CALLNAME:MASTER%の秘所をおいしそうに舌で舐めてそのかわいらしくも巧みな舌使いでお姉ちゃんを
+	PRINTW 昇天させようとしはじめた。
+ENDIF
+PRINTFORMW こいしもまた、当初は%CALLNAME:MASTER%のことをさほど慕っていたわけではなかった。しかし、躾けられていくうちに
+PRINTW いろんな快感を知ってしまったためにもう昔のこいしには戻れなくなってしまっていたのであった。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW こいしに６回も出されてしまった%CALLNAME:MASTER%は、さすがに少し疲れたのでそろそろこいしを引き離そうとした、
+	PRINTW それを察したこいしがみずから離れてくれた。心を読む力をみずから封じたはずのこいしであったが、
+	PRINTW いとしいお兄ちゃんの気持ちだけは分るようになっていたのだ。
+	PRINTFORMW 食堂に戻ると、メルランとリリカが全裸で絡み合っていた。それを見ていると疲れていたはずの%CALLNAME:MASTER%の
+	PRINTW 肉棒はふたたび大きくなっていった。それを見たふたりは飛び掛ってきた。
+	PRINTW こうしてなし崩し的に３Ｐに突入するのことになった。
+ELSE
+	PRINTFORMW こいしのテクで６回もイカされてしまった%CALLNAME:MASTER%は、さすがに少し疲れたのでそろそろこいしを引き離そうとした、
+	PRINTW それを察したこいしがみずから離れてくれた。心を読む力をみずから封じたはずのこいしであったが、
+	PRINTW いとしいお姉ちゃんの気持ちだけは分るようになっていたのだ。
+	PRINTFORMW 食堂に戻ると、メルランとリリカが全裸で絡み合っていた。それを見ていると疲れていたはずの%CALLNAME:MASTER%の
+	PRINTW 身体はまた元気になり愛液がみだらに迸っていった。それを見たふたりは飛び掛ってきた。
+	PRINTW こうしてなし崩し的に三人で絡み合うのであった。
+ENDIF
+PRINTFORMW メルランはプリズムリバー三姉妹の次女で何でも前向きで%CALLNAME:MASTER%のところにきてからも率先して奉仕して
+PRINTW くれていた。そしてその豊満な肉体と楽観的な性格はまさに明るく元気な妹そのものでありお気に入りといえた。
+PRINTFORMW いっぽうリリカの方は手先とかが器用ではあるが当初は%CALLNAME:MASTER%に反発するかのごとき言動や態度が目だっていた
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW しかし、男性経験がなくまた、姉たちに隠れていた感じのする彼女の本来の魅力を導いてくれた%CALLNAME:MASTER%に
+	PRINTW いつしか夢中になってしまっていたのであった。そしてそういうリリカもまたお気に入りの妹となっていた。
+	PRINTW 何度となく交わった三人も、そろそろ疲れたメルランとリリカがよろよろと自室に戻ろうと部屋を出て行くと、
+	PRINTFORMW 入れ替わるようにして依姫がはいってきた。この月からきたお方がなぜ%CALLNAME:MASTER%を兄様と慕うようになったのかは、
+	PRINTW 正直、振り返りたくないぐらい様々なことがあったからである。
+	PRINTFORMW 地上人そのものを見下し、さらに男性にも不信感のあった依姫は当然%CALLNAME:MASTER%にも激烈は反感を抱いていた。
+	PRINTW それを無理矢理自分の物にしようと散々ひどいことをしたのであるが、
+ELSE
+	PRINTFORMW しかし、他者に深入りした経験がなくまた、姉たちに隠れていた感じのする彼女の本来の魅力を導いてくれた%CALLNAME:MASTER%に
+	PRINTW いつしか夢中になってしまっていたのであった。そしてそういうリリカもまたお気に入りの妹となっていた。
+	PRINTW 何度となく弄りあった三人も、そろそろ疲れたメルランとリリカがよろよろと自室に戻ろうと部屋を出て行くと、
+	PRINTFORMW 入れ替わるようにして依姫がはいってきた。この月からきたお方がなぜ%CALLNAME:MASTER%を姉様と慕うようになったのかは、
+	PRINTW 正直、振り返りたくないぐらい様々なことがあったからである。
+	PRINTFORMW 地上人そのものを見下し不信感すら持っていた依姫は当然%CALLNAME:MASTER%にも激烈は反感を抱いていた。
+	PRINTW それを無理矢理自分の物にしようと散々ひどいことをしたのであるが、
+ENDIF
+PRINTW 転機となったのは他の妹たちとのふれあいであった。
+PRINTW ここにいるものたちにはみんなそれぞれ実姉がおり、
+PRINTW 年上に対するちょっとした反感とそれ以上にそれを慕う心をもっていた。
+PRINTFORMW そして、%CALLNAME:MASTER%が実はえっちを強要するだけの「敵」ではなく、
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW 優しく頼れる「お兄ちゃん」であるということをいっしょに暮らしていくうちに、
+	PRINTW それぞれの妹が知ることになっていったのだ。酒池肉林のハーレムを築こうとしていたはずが
+	PRINTW いつの間にかかわいらしい妹たちを一生懸命世話している「お兄ちゃん」に
+	PRINTW 依姫もまた惹かれていってしまったのであった。
+	PRINTW そして、当然この場でも依姫はお兄ちゃんに奉仕すべく自ら服を脱いでその美しい裸身を晒した。
+	PRINTW 既にお兄ちゃんのことを思ってびしょぬれになっていた
+	PRINTFORMW その股間を%CALLNAME:MASTER%はやさしく肉棒で埋めてあげるのであった。
+ELSE
+	PRINTW 優しく頼れる「お姉ちゃん」であるということをいっしょに暮らしていくうちに、
+	PRINTW それぞれの妹が知ることになっていったのだ。酒池肉林のハーレムを築こうとしていたはずが
+	PRINTW いつの間にかかわいらしい妹たちを一生懸命世話している「お姉ちゃん」に
+	PRINTW 依姫もまた惹かれていってしまったのであった。
+	PRINTW そして、当然この場でも依姫はお姉ちゃんに奉仕すべく自ら服を脱いでその美しい裸身を晒した。
+	PRINTW 既にお姉ちゃんのことを思ってびしょぬれになっていた
+	PRINTFORMW その股間を%CALLNAME:MASTER%はやさしく指や舌で可愛がってあげるのであった。
+ENDIF
+PRINTFORMW こうして妹たちとの楽しい日々が続くことに%CALLNAME:MASTER%は大きな満足を得ていた。
+PRINTW 幻想郷にきて本当によかったと思いつつ自室に戻ったところ、
+PRINTW 既に服を脱いで四人に分身していたフランたちがにこにこしながら待っていたのであった…
+PRINTFORMW そうか。今晩はまだまだ終わらないんだな。と思う%CALLNAME:MASTER%に対して四人のフランが、
+PRINTW 思い思いの過激な奉仕をするのであった。
+PRINTFORMW 「お\@(TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) ? 兄 # 姉\@ちゃん、だ～いすき～！！」
+PRINTW  
+PRINTFORMW %CALLNAME:MASTER%はこうして妹たちと日々休まることの無い激闘の日々を送るのであった…
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.55 (妹エンド)
+FLAG:10055 |= 1
+CALL GAME_CONTINUE, 1, 55
+TSTR:3 = 妹たちとの愛欲の館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;妬まれエンド～
+;--------------------------------------------------
+@ENDING_56, ARG
+PRINTW 妬まれる者たちがいた。
+PRINTW ある者はその厄が、
+PRINTW ある者はその毒が、
+PRINTW ある者はその力が、
+PRINTW ある者はその心が。
+PRINTFORMW %CALLNAME:MASTER%は女性を次々と調教していくうちに
+PRINTW そんな者ばかりを手元に残していたようだ。
+PRINTW  
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW %CALLNAME:MASTER%はさとりを下から突き上げている。
+	PRINTFORMW ここへ来た頃のすべてを見透かした様子は全く見えず、%CALLNAME:MASTER%の上で悦びを味わうさとり。
+	PRINTFORMW 彼女の豊かな胸が激しく揺れるさまを楽しみながら%CALLNAME:MASTER%はさとりの中に白濁を流し込む。
+	PRINTW 絶頂しぐったりとしたさとりから抜き取った肉棒にヤマメとメディスンが寄ってくる。
+	PRINTFORMW 二人は%CALLNAME:MASTER%の肉棒についた白濁を舐めとっている。
+	PRINTFORMW その奉仕に%CALLNAME:MASTER%は再び肉棒を大きくすると二人は期待に目を光らせる。
+	PRINTW 奉仕の間ずっと我慢していたのであろう。
+	PRINTFORMW その期待にこたえるため、%CALLNAME:MASTER%はヤマメを仰向けに、メディスンをその上で四つん這いにさせ、
+	PRINTW 二人の潤った秘所に交互に肉棒を挿入した。
+	PRINTFORMW 何度も使われたにも関わらず相変わらず%CALLNAME:MASTER%の肉棒をきつく締め付けるそこに
+	PRINTFORMW %CALLNAME:MASTER%は二人の絶頂と同時に二回目の射精をしてしまう。
+	PRINTW ぐったりとした二人の秘所から肉棒を抜き、一息つく。
+	PRINTW すると、絶頂から帰ってきたさとりが、再び汚れた肉棒を咥える。
+	PRINTFORMW 眼を見る限りどうやらまだまだ物足りないようだ。%CALLNAME:MASTER%の肉棒も再び大きくなる。
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%はさとりの秘部を下から嘗め回している。
+	PRINTFORMW ここへ来た頃のすべてを見透かした様子は全く見えず、%CALLNAME:MASTER%の刺激で悦びを味わうさとり。
+	PRINTFORMW 彼女の美しい身体が細かく揺れるさまを楽しみながら%CALLNAME:MASTER%はさとりを絶頂に導く。
+	PRINTFORMW 絶頂しぐったりとしたさとりから離れた%CALLNAME:MASTER%にヤマメとメディスンがよってくる。
+	PRINTFORMW 二人は%CALLNAME:MASTER%の身体の隅々にまで口付けをしている。
+	PRINTFORMW その奉仕に%CALLNAME:MASTER%は思わず絶頂して、身体を震わせてしまった。
+	PRINTW 主人としての威厳のため、二人に反撃を開始しようと、
+	PRINTFORMW %CALLNAME:MASTER%はヤマメを仰向けに、メディスンをその上で四つん這いにさせ、
+	PRINTW 二人の潤った秘所を同時に巧みな舌技で刺激を与え始めた。
+	PRINTW 既に何度も絶頂に至りずぶずぶに濡れていた二人の秘所も
+	PRINTFORMW 最愛の%CALLNAME:MASTER%により再び潮を吹くのであった。
+	PRINTW 何度か二人を絶頂に導き、二人が満足してぐったりとしかし心地よい感じで大人しくなると、
+	PRINTFORMW 絶頂から帰ってきたさとりが、%CALLNAME:MASTER%に絡み始める。
+	PRINTFORMW 眼を見る限りどうやらまだまだ物足りないようだ。%CALLNAME:MASTER%の身体も再び熱くなる。
+ENDIF
+PRINTW  
+PRINTW さとりの口内を楽しんでいると雛がパルスィを連れてやってきた。
+PRINTFORMW 二人は%CALLNAME:MASTER%に生やされた肉棒を互いにいじっている。
+PRINTFORMW 雛はパルスィを気に入っているようで%CALLNAME:MASTER%が別の女を調教している間、
+PRINTW パルスィとの情事に更けこんでいるらしい。
+PRINTW 先日もパルスィの部屋の前を通ると中からあえぎ声が聞こえたので、気になってのぞいてみると
+PRINTW 体中に白濁に染められながら、顔を床につけ尻だけ上げた状態で後ろから雛に貫かれるパルスィの姿があった。
+PRINTW 涙と否定と非難と快楽を喜ぶ声をだすパルスィと彼女の指を丁寧にしゃぶり、子供をあやす様に頭をなでつつも
+PRINTW 力強く腰を動かす雛という光景は非常に楽しめた。
+PRINTW  
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 雛はさとりが%CALLNAME:MASTER%の肉棒に奉仕しているのを見ると、
+	PRINTFORMW 自分も調教によって豊かすぎる大きさになった胸で%CALLNAME:MASTER%の肉棒を包み込んだ。
+	PRINTW それを見たさとりも負けじと自分の豊かな胸で雛の対面から肉棒を包み込む。
+	PRINTW 大きさで負けているのが悔しいのかさとりはさらに雛の唇を自分の唇でふさぎ、胸の先端を自らのものと擦り合わせる。
+	PRINTFORMW さとりの巨乳と雛の爆乳。更に%CALLNAME:MASTER%の肉棒の上で行われる二人の口づけ。混ざった唾液が顎を伝わり落ちてくる。
+	PRINTW 視覚的にも申し分のない状況のところでヤマメとメディスンも復活したようだ。
+	PRINTFORMW 二人は%CALLNAME:MASTER%の肉棒の胸に収まりきらない部分を舐め続ける。
+	PRINTFORMW 一人残されたパルスィは、生やされた肉棒を%CALLNAME:MASTER%に奉仕している雛の濡れた秘所に挿入した。
+	PRINTW 普段受けに回されている復讐と言わんばかりに雛の蜜壷を蹂躙する。
+	PRINTW さらに無理やり雛の唇も奪う。雛の唇を奪ったさとりに嫉妬したのであろう。
+	PRINTW 雛はパルスィとさとりに与えられる快楽に甘い声をあげながらも奉仕を続ける。
+	PRINTW 雛とさとりのダブルパイズリ、ヤマメとメディスンのダブルフェラ、そしてパルスィと雛の情事を見ているうちに
+	PRINTFORMW %CALLNAME:MASTER%は３度目の射精をし、雛、さとり、ヤマメ、メディスンの顔を白く汚し、胸の谷間に白い泉をつくる。
+	PRINTW 四人は互いの顔についた精液を舐めとりあい、泉の白液をすすり、ついでにさとりたちの胸の突起を舌でころがす。
+	PRINTW 後ろでパルスィがうらやましがる顔をしているので、四人が代わる代わる口移しで精液を分け与えた。
+	PRINTW  
+	PRINTFORMW %CALLNAME:MASTER%の精液を喉を鳴らして飲み込んださとりが更なる快楽をねだってきた。
+	PRINTFORMW ヤマメとメディスンも物欲しそうな顔をしていたので、%CALLNAME:MASTER%は触手を召喚し
+	PRINTW 三人を絡めとり、その秘所、アナル、口に触手を挿入してやる。
+	PRINTW 不満そうな顔を浮かべる三人だが、触手の動きによってすぐに悦びの顔に変化した。
+	PRINTFORMW そんな三人が触手と戯れる様子を見ながら%CALLNAME:MASTER%はパルスィの背後にまわり、膣中に肉棒を入れた。
+	PRINTFORMW パルスィは%CALLNAME:MASTER%の肉棒に歓喜の声をあげながら、雛の自分のよりはるかに豊かな胸を揉みながら、
+	PRINTW 肉棒をしごき、舌で口内をも犯す。
+	PRINTW 自分より大きい胸が妬ましいのかそれとも射精が近いのか、雛を貫く腰の動きも一段と強くなる。
+	PRINTFORMW 触手に嬲られる三人ももうすぐイキそうなので、%CALLNAME:MASTER%もパルスィを突くペースを上げる。
+	PRINTFORMW さらに声を大きくする奴隷たちを見ながら%CALLNAME:MASTER%は思う。
+	PRINTW たとえ何者に妬まれようとも自分だけは彼女らを愛してやろうと。
+	PRINTFORMW そんなことを思いながら%CALLNAME:MASTER%は
+	PRINTW 触手に白く染められるさとりたちを見ながら
+	PRINTW 雛に射精するパルスィの中に大量の白濁を出していった…
+ELSE
+	PRINTFORMW 雛はさとりが%CALLNAME:MASTER%の身体に絡んでいるのを見ると、
+	PRINTW 自分も調教によって豊かすぎる大きさになった胸を揺らしつつ
+	PRINTFORMW %CALLNAME:MASTER%を背中から抱きかかえるように取り付いた。
+	PRINTFORMW それを見たさとりも負けじと自分の豊かな胸を%CALLNAME:MASTER%に押し付けた。
+	PRINTW 二人の胸の感触を楽しんでいると、雛に大きさで負けて悔しいさとりは足を使い始めた。
+	PRINTFORMW さとりの足からの刺激を受けた%CALLNAME:MASTER%はその空いた両手をさとりの胸に伸ばそうとした。
+	PRINTW 一方復活したヤマメとメディスンは遅れて入ってきたパルスィにいきなり押し倒されてしまった。
+	PRINTFORMW 二人はパルスィに生やされたの肉棒を押し付けられ奉仕させられる形になったのである。
+	PRINTFORMW 愛しの%CALLNAME:MASTER%を奪われた嫉妬心を燃やしつつヤマメとメディスンを白く染めるパルスィであった。
+	PRINTFORMW いつのまにか雛とさとりと%CALLNAME:MASTER%は横になり互いの秘部をしゃぶっていた。
+	PRINTW そうして六人は飽きることなく絡み合い続けていた。
+	PRINTW  
+	PRINTW それぞれの絡みが一段落ついた頃、まだまだ股間が収まらないパルスィは
+	PRINTFORMW ほどよく濡れた%CALLNAME:MASTER%を抱きかかえその中に挿入した。
+	PRINTFORMW パルスィのリズミカルな腰の動きに思わず高く声を上げる%CALLNAME:MASTER%。
+	PRINTW やがて互いに上り詰めたところでパルスィはその思いとともに
+	PRINTFORMW %CALLNAME:MASTER%の中に放出するのであった。
+	PRINTW それを羨ましげにみていた他の五人もまたある者はひとりで、ある者は互いに刺激を貪りはじめた。
+	PRINTFORMW そうしてひたすら快楽に溺れる奴隷たちと共に暮らしながら%CALLNAME:MASTER%は思う。
+	PRINTW たとえ何者に妬まれようとも自分だけは彼女らを愛してやろうと。
+	PRINTFORMW そんなことを思いつつ%CALLNAME:MASTER%はその膣内にパルスィの精を受け続けるのであった…
+ENDIF
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.56 (妬まれエンド)
+FLAG:10056 |= 1
+CALL GAME_CONTINUE, 1, 56
+TSTR:4 = 嫌われ者同士でひっそりと暮らすための
+CALL GET_YARD
+
+;--------------------------------------------------
+;わくわく動物ランド～
+;--------------------------------------------------
+@ENDING_57, ARG
+PRINTW 初めは橙だった
+PRINTFORMW 橙が時折、何やら気がかりそうな表情を浮かべることに気づいた%CALLNAME:MASTER%は、その理由を問いただした
+PRINTW すると、橙がやおら外に向かって一鳴きしたかと思うと、たちまち数十匹の猫が集まってきた
+PRINTW それは、橙が以前から手懐けようとしていた猫たちだった
+PRINTW 橙の餌付けに慣れてしまった猫たちは、もはや野性では生きていかれないのだという
+PRINTFORMW %CALLNAME:MASTER%は特別動物好きでもなかったが、不安そうに許しを請う橙の姿が愛らしくて、思わず飼うことを許してしまった
+PRINTW それがいけなかったのだ
+PRINTW このことを皮切りに、少女たちは次々と
+LOCAL = 0
+REPEAT CHARANUM
+	SIF NO:COUNT == 1010
+		LOCAL |= 1
+	SIF NO:COUNT == 1021
+		LOCAL |= 2
+	SIF NO:COUNT == 1024
+		LOCAL |= 4
+	SIF NO:COUNT == 1025
+		LOCAL |= 8
+	SIF NO:COUNT == 1027 || NO:COUNT == 1028 || NO:COUNT == 1055
+		LOCAL |= 16
+	SIF NO:COUNT == 1032 || NO:COUNT == 1061 || NO:COUNT == 1063
+		LOCAL |= 32
+	SIF NO:COUNT == 1041
+		LOCAL |= 64
+	SIF NO:COUNT == 1044
+		LOCAL |= 128
+	SIF NO:COUNT == 1058
+		LOCAL |= 256
+	SIF NO:COUNT == 1071
+		LOCAL |= 512
+	SIF NO:COUNT == 1076
+		LOCAL |= 1024
+REND
+IF LOCAL & 1
+	PRINT 蝙蝠
+	SIF LOCAL > 1
+		PRINT 、
+ENDIF
+IF LOCAL & 2
+	PRINT 狐
+	SIF LOCAL > 2
+		PRINT 、
+ENDIF
+IF LOCAL & 4
+	PRINT 蟲
+	SIF LOCAL > 4
+		PRINT 、
+ENDIF
+IF LOCAL & 8
+	PRINT 雀
+	SIF LOCAL > 8
+		PRINT 、
+ENDIF
+IF LOCAL & 16
+	PRINT 兎
+	SIF LOCAL > 16
+		PRINT 、
+ENDIF
+IF LOCAL & 32
+	PRINT 烏
+	SIF LOCAL > 32
+		PRINT 、
+ENDIF
+IF LOCAL & 64
+	PRINT 犬
+	SIF LOCAL > 64
+		PRINT 、
+ENDIF
+IF LOCAL & 128
+	PRINT 蛙
+	SIF LOCAL > 128
+		PRINT 、
+ENDIF
+IF LOCAL & 256
+	PRINT 蜘蛛
+	SIF LOCAL > 256
+		PRINT 、
+ENDIF
+IF LOCAL & 512
+	PRINT 鼠
+	SIF LOCAL > 512
+		PRINT 、
+ENDIF
+IF LOCAL & 1024
+	PRINT 虎
+	SIF LOCAL > 1024
+		PRINT 、
+ENDIF
+
+PRINTW 等の動物を集め、飼うことを求めてきたのだ
+PRINTW 橙には許してしまった手前、無碍にするわけにもいかず、動物は日々増えていった
+PRINTFORMW そして今、%CALLNAME:MASTER%は柵を作っていた
+PRINTW もはや家の中では飼いきれなくなり、表で放し飼いにするしかないのだ
+PRINTFORMW 幸い、%CALLNAME:MASTER%の家は人里から離れており、土地所有の概念のない幻想郷では、土地などいくらでも広げられる
+PRINTW 食べ物があり、野良妖怪に脅かされる心配のないここは、動物たちの楽園だった
+PRINTFORMW %CALLNAME:MASTER%が当初目指したものとは、すっかりかけ離れてしまったが……
+PRINTFORMW 絶えることのない少女たちの笑顔に、これはこれでいいか、と%CALLNAME:MASTER%も笑みをこぼすのであった
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.57 (わくわく動物ランド)
+FLAG:10057 |= 1
+CALL GAME_CONTINUE, 1, 57
+TSTR:4 = わくわく動物ランドのため
+CALL GET_YARD
+
+;--------------------------------------------------
+;オトコの娘エンド～
+;--------------------------------------------------
+@ENDING_58, ARG
+PRINTFORMW %CALLNAME:MASTER%の屋敷に朝が訪れる
+PRINTW そこに集う奴隷達はみんなかわいい。
+PRINTW そしてこんなかわいい奴隷達が女の子であるはずがない！
+PRINTFORMW 心底からそう思っている%CALLNAME:MASTER%は今日も奴隷達のちんぼミルクを賞味するべく
+PRINTW みんなのいる部屋を巡回していくのであった
+PRINTW 鬼の勇儀さん。奴隷のお兄さんとして頼もしいが
+PRINTW またそのちんぼミルクはまさに絶品であり、
+PRINTW 毎日飲んでも飽きなかった
+PRINTW 蓬莱人の妹紅さん。背は多少低いけど気のいい子で、結構テレ屋さんでもあった
+PRINTW いまだに夜はまるで童貞のようにかわいらしいのがまたたまらない
+PRINTW 蛍のリグルきゅん。お尻が光るのはもちろんさわってほしいからである
+PRINTFORMW やさしい%CALLNAME:MASTER%は当然そのかわいらしい願いをかなえてあげるのであった 
+PRINTW 半霊剣士の妖夢ちゃん。剣士としても料理当番としても半人前であったが、夜の作法は
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW だいぶ上達したようで油断してると%CALLNAME:MASTER%の方が
+	PRINTW ちんぽミルクを出す羽目になってしまうのであった
+ELSE
+	PRINTFORMW だいぶ上達したようで油断してると%CALLNAME:MASTER%の方が
+	PRINTW その股間からおもらししてしまう羽目になってしまうのであった
+ENDIF
+PRINTW 研究者のちゆりくん。研究者らしくない性格と風貌だが、元気のよさに救われることも
+PRINTW 多い。当然、彼女のちんぼもまたお元気さんなのであった
+PRINTW 天狗の椛もみもみ。決して犬ではないんだが、まるで犬のように甘えん坊でかわいい
+PRINTFORMW いつもいつも%CALLNAME:MASTER%は椛をやさしくかわいがってあげるのであった
+PRINTW こんなかわいい彼女たちが女の子なはずはないではないか！
+PRINTFORMW %CALLNAME:MASTER%はこうして理想の娘たちと楽しい生活を送り続けていくのであった
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.58 (オトコの娘エンド)
+FLAG:10058 |= 1
+CALL GAME_CONTINUE, 1, 58
+TSTR:4 = こんなかわいい娘たちのため
+CALL GET_YARD
+
+;--------------------------------------------------
+;漢の世界エンド～
+;--------------------------------------------------
+@ENDING_59, ARG
+PRINTFORMW %CALLNAME:MASTER%が求めていたのは弱々しい女子（おなご）などではなく、
+PRINTW 尊敬でき愛し合える魂の兄弟たちであった！そして、ついに出会えた兄弟たち！
+PRINTW 霖之助は一見優男に見えるが芯の強い
+PRINTW まさに漢（おとこ）の中の漢（おとこ……以下略）であった
+PRINTW 妖忌どのとその半霊、その年輪こそを愛でるべきである！
+PRINTW ユウゲンマガンどの、異形に驚いたものの魂のぶつかり合いの日々をへて、
+PRINTW 彼もまた漢であることに気づかされたのは良い思い出であった
+PRINTW 雲山どの、あの図体に似合わずシャイな漢である。が、決めるときには
+PRINTW その必殺のこぶしでフィストをかますまさに漢である
+PRINTW 気の合う漢たちと寝食を共にし、修行を重ね高みを目指す
+PRINTFORMW %CALLNAME:MASTER%の男道いや漢道に終わりはない！ 
+PRINTW もちろん健全たる男子はときどきもよおすこともある
+PRINTW それを互いの肉体のぶつかり合いで癒しながら
+PRINTFORMW %CALLNAME:MASTER%は幻想郷の明日を背負っていくことになるのかもしれない……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.59 (漢の世界エンド)
+FLAG:10059 |= 1
+CALL GAME_CONTINUE, 1, 59
+TSTR:4 = さらに漢を磨くため
+CALL GET_YARD
+
+;--------------------------------------------------
+;メディア王エンド～Media Entertainer
+;--------------------------------------------------
+@ENDING_60, ARG
+PRINTW 資金調達の副業程度のつもりで始めたビデオ撮影
+PRINTFORMW しかし%CALLNAME:MASTER%には才能があったらしく
+PRINTW 気付いた時には幻想郷の性風俗を一手に支配する存在へと登り詰めていた
+PRINTFORMW 奴隷と主人ではなく、モデルと社長の関係になった%CALLNAME:MASTER%はもはや直接調教を行うことはない
+PRINTFORMW しかしカメラのレンズを通して少女達を見るとき、%CALLNAME:MASTER%のアイデアと股間はこの上なく沸き立つのだ
+PRINTW そして今日もまた一人、自ら己の身を売り込みに少女が訪れる
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.60 (メディア王エンド)
+FLAG:10060 |= 1
+CALL GAME_CONTINUE, 1, 60
+CALL GET_GENSOUKYOU
+
+;--------------------------------------------------
+;搾乳奴隷牧場エンド～
+;--------------------------------------------------
+@ENDING_61, ARG
+PRINTFORMW %CALLNAME:MASTER%の屋敷に朝が訪れる
+PRINTW 日が昇るとともに、屋敷では奴隷達の合唱が始まった
+PRINTW 奴隷達が自分から胸に搾乳機を取り付け、母乳を搾り取られる快楽に耐えきれずに嬌声をあげている
+PRINTW 始まりはほんの些細な出来事だった
+PRINTW たまたま搾り取った母乳を売ったことがきっかけとなり、
+PRINTFORMW %CALLNAME:MASTER%の元には母乳を求める好事家達からの注文が連日殺到するようになったのだ
+PRINTFORMW それ以来、%CALLNAME:MASTER%は奴隷から母乳を集めては売り捌くことで生計を立てるようになった
+PRINTW 少女達を調教する目的が母乳を売るためではなく、
+PRINTW 性奴隷として売るためだったのはどれくらい前の話だろうか……
+PRINTW  
+PRINTFORMW 相変わらず奴隷達の嬌声が響き渡る中、%CALLNAME:MASTER%はある部屋の前に立っていた
+PRINTW この部屋は昨日新たに購入した少女のための部屋である
+PRINTFORMW 部屋に入った%CALLNAME:MASTER%は恐怖に打ち震える少女の胸を掴み、おもむろに揉み始めた
+PRINTW 刹那、少女の胸から母乳が吹き出した
+PRINTW 昨夜の食事に仕込んでおいた薬の効果がきちんと発揮されたことを確認すると
+PRINTFORMW %CALLNAME:MASTER%は突然のことに困惑している少女を押し倒した
+PRINTW 彼女が朝の合唱に加わる日もそう遠くはないだろう……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.61 (搾乳奴隷牧場エンド)
+FLAG:10061 |= 1
+CALL GAME_CONTINUE, 1, 61
+TSTR:4 = 搾乳奴隷牧場のため
+CALL GET_YARD
+
+;--------------------------------------------------
+;教祖様エンド～
+;--------------------------------------------------
+@ENDING_62, ARG
+PRINTFORMW %CALLNAME:MASTER%が幻想郷に来てから、彼は自分の教義を広めるべく活動を続けた
+PRINTW 当然、よそから来たただの人間（？）の戯言などと相手にされなかったのだが、
+PRINTFORMW %CALLNAME:MASTER%の粘り強い布教活動により、少しずつ信者が増えていった
+PRINTFORMW そして、%CALLNAME:MASTER%の薫陶を受けた奴隷いや信者たちが新たな信者たちを呼び寄せていき、
+PRINTW いつの間にか幻想郷に一大宗教集団が誕生していたのであった
+PRINTFORMW %CALLNAME:MASTER%は信者たちから教祖様と呼ばれ、崇められ慕われることになった
+PRINTW 登場した一大集団に危機感を抱いた幻想郷の実力者たちは、
+PRINTW それを打倒すべく行動を起こそうとした
+PRINTFORMW %CALLNAME:MASTER%は布教活動の成果により自分自身もまた強力な力を得ていたのである
+PRINTW それがいかなる相手をも屈服させるだけの手腕とカリスマである
+PRINTFORMW 結果として教団の外敵たちもいつしか信者になってしまうのであった
+PRINTW だが、幻想郷はまだ広い。未知なる敵もいるだろう！
+PRINTFORMW 戦え！教祖%CALLNAME:MASTER%！
+PRINTW 君の教えで幻想郷とその中のあらゆる生物を救うがいい！
+PRINTW それこそが、君が幻想郷にやってきた本当の理由だったのだ！
+PRINTFORMW %CALLNAME:MASTER%の戦いはまだまだ続く……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.62 (教祖様エンド)
+FLAG:10062 |= 1
+CALL GAME_CONTINUE, 1, 62
+TSTR:4 = 総本山建立のため
+CALL GET_YARD
+
+;--------------------------------------------------
+;東方ハーレムエンド～ Beginning of the forever.
+;--------------------------------------------------
+@ENDING_63, ARG
+PRINTFORMW %CALLNAME:MASTER%が幻想郷に来てから、彼は精力的に奴隷を調教し続けた
+PRINTW 最初は技巧も拙く、経験もなく、失敗も数多くあった…
+PRINTW 当然死にそうになったこともあるし、資金や気力が尽きそうになったこともある
+PRINTFORMW だが、それでも%CALLNAME:MASTER%は己の欲望と信念のままに奴隷調教を続けた
+PRINTFORMW そうしてそれだけの実力と魅力を兼ね備えていった%CALLNAME:MASTER%は、
+PRINTW いつしか、幻想郷唯一無比の存在となっていったのであった…
+PRINTW その長く苦しく辛い戦いの歴史を経て、いつしか
+PRINTFORMW 幻想郷の主だったメンツのほぼ全てが%CALLNAME:MASTER%の元に集うことになった
+PRINTW かつて人類歴史上においてこれ以上のハーレムを形作ったものは存在するかもしれない…
+PRINTFORMW が、ここまで魅力的な嫁を集めきったのは%CALLNAME:MASTER%ただひとりであろう！
+PRINTFORMW そう、いまや%CALLNAME:MASTER%が望めば名だたる東方の人物たちはみな彼の元に赴き
+PRINTW 夢のようなひと時を与えてくれることだろう。
+PRINTW 終わった…、ついに極めた…
+PRINTW 「おめでとう！　ここまでやり尽くして満足かい？」
+PRINTFORMW そう思っていた%CALLNAME:MASTER%の心の中に不思議な声が聞こえる…
+PRINTW 「本当に、すべてを味わいつくしたのかい？　まだ心残りがあるのではないのか？」
+PRINTFORMW その声に聞き覚えがない%CALLNAME:MASTER%ではあったが、
+PRINTW その内容は無視できるものではなかった。
+PRINTW 「そうだよ、まだ終わってはいない…、味わいつくしてはいないよな」
+PRINTFORMW 心の声に促がされて、%CALLNAME:MASTER%は立ち上がる！
+PRINTW 果たしてその行く先は、今のハーレムの中にあるのか、それとも新たな世界に向かうのか？
+PRINTFORMW それを知るのはもはや%CALLNAME:MASTER%以外にはいなかった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.63 (東方ハーレムエンド)
+FLAG:10063 |= 1
+CALL GAME_CONTINUE, 1, 63
+CALL GET_GENSOUKYOU
+;地獄の勲章(別名：へる子購入する権利)
+SIF (TALENT:MASTER:野菜の錬金術師 == 0 || FLAG:9888) && TALENT:MASTER:地獄の勲章 == 0
+	CALL NEWTERM_TALENT_MASTER, 834
+
+;--------------------------------------------------
+;中ボス連合エンド～
+;--------------------------------------------------
+@ENDING_64, ARG
+PRINTW それなりに力はあり、通常いるような怪異などよりは強力であるが、
+PRINTW それでもいまひとつ地味であるかもしくは力量不足な者たちがいた。
+PRINTW 当然、彼女らはその現状を打破すべく必死に努力とアピールをおこなっていた。
+PRINTFORMW その彼女らに転機が訪れた。だが、皮肉なことにそれをもたらしたのは……
+PRINTFORMW 彼女たちではない赤の他人であったはずの%CALLNAME:MASTER%によってであった。
+PRINTFORMW %CALLNAME:MASTER%は彼女たちから自由を剥奪し、愛欲を与え続けたのである。
+PRINTW そして、それがいつしか恋愛へと発展していくことになる。その結果がこの有様であった。
+PRINTW 
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW その部屋の中央で%CALLNAME:MASTER%の怒張を胸で挟む小悪魔と、
+	PRINTFORMW 股間の秘部に%CALLNAME:MASTER%の右手による刺激を受けつつ喘いでいる大妖精がいた
+	PRINTW 小悪魔の奉仕のよりやがて、白い噴火が起きると小悪魔の美しい裸身は白く彩られた
+	PRINTFORMW 一方、%CALLNAME:MASTER%の巧みな指により絶頂を何度も迎えている大妖精もまた
+	PRINTW そのかわいらしい裸身を桃色に染めていたのである。
+ELSE
+	PRINTFORMW その部屋の中央で%CALLNAME:MASTER%と小悪魔と大妖精の三人は絡み合っていた。
+	PRINTFORMW 時に相手を交代しつつ互いの秘部を愛撫しあったり、胸をもみ合ったり、舌を絡ませたり、
+	PRINTW できる限りの快楽を貪欲に堪能していたのである。
+ENDIF
+PRINTW その部屋の脇にはあまりにも深い快楽と酔いにより心地よく夢の世界に旅立っていたキスメと、
+PRINTW いまだに激しく絡み合うリリーとてゐがいた。
+PRINTW どうやらリリーとてゐにより桶の中に媚薬と酒を叩き込まれた挙句、
+PRINTW 身体を好き勝手に弄られたキスメが気絶したあと、
+PRINTW 全然物足りないリリーとてゐが互いに快楽を貪っているようだ。
+PRINTFORMW 小悪魔と大妖精とのセックスを堪能した%CALLNAME:MASTER%は今度はリリーとてゐを頂くことにした。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 激しく絡み合っていたリリーとてゐも%CALLNAME:MASTER%がやってくると、
+	PRINTW そのいきり立つモノをおねだりすべく擦り寄ってきた。
+	PRINTFORMW %CALLNAME:MASTER%はかわいい二人を優しくかわりばんこに何回も貫き、中に思う存分白いモノを放出した。
+	PRINTW 中に出されるたびにリリーもてゐも恍惚の表情を浮かべつつ天へと何度も昇っていった……
+ELSE
+	PRINTFORMW 激しく絡み合っていたリリーとてゐも%CALLNAME:MASTER%がやってきたので、
+	PRINTW 今度はこの三人でさらに深い快感を求めて交わるのである。
+	PRINTFORMW 最愛の%CALLNAME:MASTER%と何度も何度も深く絡み合い
+	PRINTW リリーもてゐも恍惚の表情を浮かべつつ天へと何度も昇っていった……
+ENDIF
+PRINTW リリーとてゐが満足してその部屋で心地よい眠りについた頃、
+PRINTW 妖怪の山から静葉と椛が戻ってきた。
+PRINTFORMW 彼女らはいまや幻想郷の一勢力になった%CALLNAME:MASTER%の代理として対外折衝にあたっていたのである。
+PRINTFORMW 用事を無事こなして戻ってきた二人を迎える%CALLNAME:MASTER%は、
+PRINTW 当然この二人にもご褒美を上げなければならないこととなる。
+PRINTW 妖怪の山で用事を済ませてる間にも二人それぞれ二つの穴にはローターが入ったままである。
+PRINTW 当然二人とも快感で既に全身の準備は完了していたのであった。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW まずは静葉から堪能することにした%CALLNAME:MASTER%は、
+	PRINTW 彼女の衣服を手早く脱がし、うなっている二本のローターを引き抜いてやった。
+	PRINTW 引き抜かれた瞬間にイってしまった静葉の中にマシンガンのごとく怒張を叩き込むと、
+	PRINTW 静葉はあまりの激しい責めに、白目をむいて気絶してしまった。
+	PRINTFORMW 仕方がないので、静葉の中に１回放出した%CALLNAME:MASTER%は、
+	PRINTW 静葉の様子を見ながらももじもじしつつ自らの身体をまさぐっている椛の衣装をも剥ぎ取ってやった。
+	PRINTW いきなり衣装を剥ぎ取られたはずの椛は自らローターを抜きだして、
+	PRINTFORMW %CALLNAME:MASTER%の怒張を膣にアナルに交互に激しく自ら出し入れし始めたのである。
+	PRINTW このエロ天狗の行為を苦笑しつつも、快感に抵抗せずに思う存分出してやると、
+	PRINTW 椛はそのたびごとに好きだと叫びながら激しい絶頂を好き勝手に味わうのであった……
+ELSE
+	PRINTFORMW 二人が完全にできあがっていることを目で確認した%CALLNAME:MASTER%は、
+	PRINTW 二人の衣装を優しく脱がしてやった。そして、無粋に振動するローターを引き抜き、
+	PRINTW 身体を合わせ、ふたりの美しい肉体を味わうことにした。
+	PRINTFORMW %CALLNAME:MASTER%の巧みな愛撫により何度も何度も絶頂する静葉と椛、
+	PRINTFORMW その二人の様子を堪能している%CALLNAME:MASTER%もまた何度も何度も絶頂するのであった……
+ENDIF
+PRINTW 
+PRINTFORMW このようにして、お互いの存在価値を発見した%CALLNAME:MASTER%とその奴隷たちは、
+PRINTW さらなる地位向上を目指すために、性の奥義を極めることにした。
+PRINTW 性の頂点に立てば、結果的に幻想郷の頂点に立てる。そして、その者の最愛の存在となれば、
+PRINTW もう誰も彼女らを中途半端な存在とはいえないであろう。
+PRINTFORMW %CALLNAME:MASTER%という強力な援軍を得て、中ボスたちの明日はきっと明るいに違いない……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.64 (中ボス連合エンド)
+FLAG:10064 |= 1
+CALL GAME_CONTINUE, 1, 64
+TSTR:4 = 中ボスの地位向上のため
+CALL GET_YARD
+
+;--------------------------------------------------
+;10人の貴婦人エンド～ The Big Ten.
+;--------------------------------------------------
+@ENDING_65, ARG
+PRINTFORMW %CALLNAME:MASTER%が幻想郷に来てから、彼はいろんな奴隷を調教し続けた
+PRINTW だが、そのよくない噂を聞きつけた者の中には、
+PRINTW 彼のことをよく思わないばかりか、侮る者までいたという。
+PRINTW そしてその中には、ちょっとのことでは決して堕ちないと自負する女どもがいたのである。
+PRINTFORMW 当然、そんなことを放置しておく%CALLNAME:MASTER%ではなかった。
+PRINTW おのれの性なる力により幻想郷を色欲の聖地にしてしまおうとするのに邪魔な女たちを
+PRINTFORMW 思う存分組み敷いてしまいたいと思った%CALLNAME:MASTER%は、
+PRINTW 長年の歳月と大量の資金と想像を絶するほどの艱難辛苦を経て、
+PRINTW ついに、10人の気高き嫁を組み敷いたのであった！
+PRINTW 一人目はレミリア・スカーレット。吸血鬼の中でも特に力のある真祖という存在であり、
+PRINTW その力は脅威であったが、いざ組み敷いてしまえばたんなる女の子である。
+PRINTW 二人目は蓬莱山輝夜。月の姫君であり、その能力もやはり脅威とも呼べるものであったが、
+PRINTW 組み敷いてしまうと、単なる夢見る姫君であった。
+PRINTW 三人目は藤原妹紅。炎の力を身にまとい決して死なないその生命は驚嘆すべきものであったが、
+PRINTW やはり組み敷いてしまえば、男の怒張をおねだりする牝に過ぎなかった。
+PRINTW 四人目は四季映姫ヤマザナドゥ。幻想郷の閻魔ということで強力な力があったらしいが、
+PRINTW 組み敷いた彼女は、穴という穴を貫かれてはよがりまくる存在になってしまっていた。
+PRINTW 五人目はレイラ・プリズムリバー。なんだかよく分からない貴族のお嬢様だそうだが、
+PRINTFORMW 組み敷いてしまったところ、自作のポエムを%CALLNAME:MASTER%に披露するようになった。
+PRINTW 六人目は里香。戦車技師とのことで、組み敷いたあとは、いろんな工作をさせている。
+PRINTW ちなみに彼女が手がけるとなぜかみんな戦車型になってしまうようだが、気にしたら負けである。
+PRINTW 七人目は明羅。サムライと自称しているのだが、そもそもそれがよく分からない。
+PRINTFORMW 仕方ないので組み敷いてみた%CALLNAME:MASTER%は、彼女を味わううちに
+PRINTW きっとサムライとは娼婦のことだろうと思うようになってしまった。
+PRINTW 八人目は朝倉理香子。白衣の似合う魔法嫌いな魔法使いである。
+PRINTFORMW まあ、魔法のことはどうでもいい%CALLNAME:MASTER%はそれについて考えることはやめて、
+PRINTW 肉欲に任せて組み敷いてみた。その結果、彼女も今では夜のテクニックをよく研究してくれるようになったという。
+PRINTW 九人目は神綺。魔界の神様にして創造主だそうだが、なんだかおっぱいがでかい人にしか見えない。
+PRINTW 組み敷いてみたら、積極的に母乳をだしたりかわいがってくれるようになった。
+PRINTW 最後の十人目は月から降りてきた綿月依姫。強力な力を持ち、当然敵にすると恐るべき存在であった。
+PRINTFORMW だが、%CALLNAME:MASTER%が興味あるのはあくまでその女性の肉体であったので、
+PRINTW 遠慮なく組み敷いてみたら、月も姉も皆捨ててきて、ただの忠犬になってしまったという。
+PRINTFORMW こうして特に強力だといわれ、反発もしていた十人を手に入れた%CALLNAME:MASTER%は、
+PRINTW 彼女らとの暮らしに満足してしまい、他の奴隷を手放してしまった。
+PRINTW こうして、彼女ら十人と一緒に今後も思う存分楽しむ人生を送ろうとするのは、
+PRINTW 他人から見ればもったいないことかもしれない。だが、
+PRINTFORMW %CALLNAME:MASTER%はこの十人になら一生を捧げても惜しくないと思うことにした。
+PRINTW なんやかんやいいつつも楽しいし、それに気持ちいい。それでいいじゃないか……
+PRINTW 
+PRINTW 　　　　　　　　―― Ending No.65 (10人の貴婦人エンド)
+FLAG:10065 |= 1
+CALL GAME_CONTINUE, 1, 65
+TSTR:3 = 10人の貴婦人との館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;淫魔エンド～ 
+;--------------------------------------------------
+@ENDING_66, ARG
+PRINTFORMW %CALLNAME:MASTER%はただ逃げようとしていた。なぜならば…
+PRINTW 自分の性欲を発散させるべく性奴隷を集めたはずなのに、
+PRINTW いつの間にか自分の性を次々に搾り取ろうとする淫魔どもを作り出してしまったがため、
+PRINTW その尽きない性欲の前に逃げ惑う哀れな子羊と化してしまったからだ！
+PRINTFORMW 今日も朝から晩まで逃げようとする%CALLNAME:MASTER%。だが…
+PRINTW 捕まってしまう。なぜならば、淫魔たちは主人の行動パターンや趣向などは
+PRINTW すべてしっかりと把握してしまっているからである。
+PRINTFORMW こうして今日も精を極限まで搾り取られて情けない悲鳴を上げる%CALLNAME:MASTER%。
+PRINTFORMW だが、\@(TALENT:MASTER:オトコ) ? 彼 # 彼女\@はいつも死ぬ寸前までで止められるのであった。
+PRINTFORMW そう、%CALLNAME:MASTER%はいつのまにか淫魔たちの欲望のはけ口になってしまっていたのである。
+PRINTFORMW なんでそうなってしまったのかと悔やむ%CALLNAME:MASTER%であるが、
+PRINTW もはや取り返しがつかない現状は変わらない。
+PRINTFORMW 今日も%CALLNAME:MASTER%の悲鳴と喘ぎが聞こえる楽しい楽しい地獄の館であった。
+PRINTW とはいえ、さすがにこれでは…と思ったのか？
+PRINTW ある日、淫魔たちは画期的な提案をしてきた。それは、一般の連中から遠ざかろうということだ。
+PRINTFORMW その提案を不思議に思った%CALLNAME:MASTER%は淫魔たちになぜか？と問うた。
+PRINTW その答えは……
+PRINTFORMW %CALLNAME:MASTER%は新たな奴隷を調達しそれを調教するとともに、日常生活を維持する役目を担う。
+PRINTW そして、淫魔たちはそのサポートの元、肉欲を貪ろうということだ。
+PRINTFORMW どう考えてもさかさまな気はする%CALLNAME:MASTER%であったが、
+PRINTW これ以上、淫魔たちの性欲をほぼひとりで捌くのはもうこりごりだったので、その提案に乗ることにした。
+PRINTW こうして幻想郷の歴史を変える性の一大拠点が誕生することになった。
+PRINTFORMW それを「%CALLNAME:MASTER%ゾーン」と言う。
+PRINTW いつしか、幻想郷の連中はそこに近づかないことが生きる道だと言い合うようになった。
+PRINTW 実際、そこに迷い込んだり送り込まれたものは二度と帰れなかったという……
+PRINTFORMW こうして、今日も%CALLNAME:MASTER%は淫魔たちのご機嫌を損ねないように、
+PRINTW 死ぬ気で調教と雑務をこなすのであった。淫魔はもうこりごりだ……。
+PRINTFORMW %CALLNAME:MASTER%は言葉にならない嘆息を吐きつつ、余生を過ごすことになるのである……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.66 (淫魔エンド)
+FLAG:10066 |= 1
+CALL GAME_CONTINUE, 1, 66
+TSTR:4 = 吸精王たちを隔離するため
+CALL GET_YARD
+
+;--------------------------------------------------
+;悪魔王エンド～ Nightmare Survival.
+;--------------------------------------------------
+@ENDING_67, ARG
+PRINTFORMW %CALLNAME:MASTER%は幻想郷では大した存在ではなかったのも今は昔。
+PRINTFORMW %CALLNAME:MASTER%はその悪魔的な所業によりいまや幻想郷屈指の悪夢の源になっていた。
+PRINTW 奴隷を次から次へと思うがままに造り変えていくその意志はまさに悪魔の中の悪魔である。
+PRINTFORMW 今日も\@(TALENT:MASTER:オトコ) ? 彼 # 彼女\@は精力的にその邪悪な活動を続けていた…
+PRINTFORMW %CALLNAME:MASTER%の手によりその存在そのものを変えられてしまった哀れな犠牲者は、
+PRINTW 少なくとも１０名を上回るとのことで、これは幻想郷はじまって以来の大事件いや異変となるはずであった。
+PRINTFORMW しかし%CALLNAME:MASTER%はその邪悪な所業の傍らで自らを守るスベもまた身に付けていたのである。
+PRINTFORMW いつかはきっと\@(TALENT:MASTER:オトコ) ? 彼 # 彼女\@を抹殺しに、
+PRINTW 超越者もしくは神などと呼ばれる者どもが介入しに来ることになるだろう。
+PRINTFORMW だが%CALLNAME:MASTER%は心配などしていない。
+PRINTW 自らの邪悪な意志が残る限り、この悪夢は続くのだ。
+PRINTW そして、悪夢を打ち破る勇者などは決して現れない。なぜなら、
+PRINTFORMW どのようなものであれ、堕落されられる手腕が\@(TALENT:MASTER:オトコ) ? 彼 # 彼女\@にはあるのだから……
+PRINTFORMW そうして今日も%CALLNAME:MASTER%の屋敷ではまた新たな奴隷たちの叫びが聞こえるのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.67 (悪魔王エンド)
+FLAG:10067 |= 1
+CALL GAME_CONTINUE, 1, 67
+TSTR:3 = 悪魔王が生き血を啜るための館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;無名エンド～ Nameless is the power.
+;--------------------------------------------------
+@ENDING_68, ARG
+PRINTFORMW %CALLNAME:MASTER%はなぜか、幻想郷でありふれており
+PRINTW 特に有力者とされてはいない存在をこよなく愛するものであった。
+PRINTW 幻想郷ではその辺によくいる普通のアヤカシだったり妖精だったり
+PRINTW 鬼だったり兎だったり亡霊だったり河童だったり人間たったり
+PRINTW そういうありふれた存在である。
+PRINTFORMW %CALLNAME:MASTER%の屋敷に中には色とりどりの妖精たちが
+PRINTW かわいらしくも淫らな嬌声を朝昼晩と響かせている。
+PRINTW 一方で地上の兎と玉兎との性の競艶もまた美しい。
+PRINTW 天人と死神が愛の逃走劇を演じ、
+PRINTW 鴉天狗と白狼天狗による白黒ショウは評判となり、
+PRINTW 旧都の鬼と地獄の鬼による飲み比べ（罰ゲームあり）も行われている。
+PRINTW 研究熱心な河童とここぁは毎晩、性のテクニックを磨き、
+PRINTFORMW 地獄鴉と夜雀による奉仕もまた%CALLNAME:MASTER%を極楽へと導くのである。
+PRINTW 里の人間はなぜか人形たちのおもちゃにされており、
+PRINTW 魔界人たちはその様子を眺めつつも時々えっちに参加したりしていた。
+PRINTW 妖怪鼠を追いかける妖怪猫、それを微笑ましく見守りつつ自慰している妖怪狐。
+PRINTW このように、好き勝手に欲望を貪りつつくらしている状況こそ、
+PRINTFORMW %CALLNAME:MASTER%が求めていた理想の姿であり、
+PRINTW そういう意味では満足ではあった。だが、
+PRINTW できたら、もう少し変わった種族のそれでいてありふれた存在はどこかにいないか？
+PRINTFORMW そう思う%CALLNAME:MASTER%の欲望が尽きるのはまだだいぶ先のことであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.68 (無名エンド)
+FLAG:10068 |= 1
+CALL GAME_CONTINUE, 1, 68
+TSTR:3 = 賑やかな嫁たちと楽しく暮らすための館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;山の神々エンド～Mountain of Faith.
+;--------------------------------------------------
+@ENDING_69, ARG
+PRINTW 妖怪の山の頂にある守矢神社……
+PRINTW 本来は清らかな空気漂うはずの敷地内は淫蕩な空気に包まれていた。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW %CALLNAME:MASTER%は雛を後ろから貫いている。
+	PRINTFORMW 幾度となく%CALLNAME:MASTER%に使われ、しかし雛の秘所は今でも%CALLNAME:MASTER%の棒をやわらかく包み込む。
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%は雛の秘所を下から責めている。
+	PRINTFORMW 幾度となく%CALLNAME:MASTER%に舐められ、雛の秘所はびしょびしょになっている。
+ENDIF
+PRINTFORMW 左右の静葉と穣子が片手で雛の胸をいじり、空いた手で互いの秘所を責めながら%CALLNAME:MASTER%の目の前で唇を合わせる。
+PRINTW 二人は以前のように相手に対して優越に浸るのではなく、相手とともに快楽に溺れるようになっていた。
+PRINTW 横では早苗が奇跡の力で創った剛直で神奈子を犯しつつ、諏訪子のアナルを責めている。
+PRINTFORMW 敬愛する神奈子も諏訪子も､%CALLNAME:MASTER%の命令の前では他の奴隷と変わらない。剛直で貫くだけである。
+PRINTW 最も本人たちも悦んでいるのだが。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 限界になった%CALLNAME:MASTER%は雛の中から肉棒を引き抜き、雛の背中と静葉と穣子の顔を白濁液で染め上げる。
+	PRINTW 穣子と静葉は互いの顔と雛の背中にかかった白濁を丁寧に舐めとる
+	PRINTFORMW さらに%CALLNAME:MASTER%のモノを綺麗にする為に穣子が先端部を咥え残った精液を吸い出し､静葉は竿の汚れを取る。
+	PRINTFORMW その奉仕に%CALLNAME:MASTER%のモノは力を取り戻したのでご褒美に姉妹仲良く一緒に貫いてやる。
+	PRINTFORMW 一度神奈子の中に出した早苗も諏訪子と雛を%CALLNAME:MASTER%の横で同じように貫く。
+ELSE
+	PRINTFORMW ある程度満足した%CALLNAME:MASTER%は雛の秘所から顔を離した。
+	PRINTW 一方、穣子と静葉もまた何度も絶頂に達し、心地よい疲労を堪能していた。
+	PRINTFORMW 一度神奈子の中に出した早苗も続けて諏訪子と雛を%CALLNAME:MASTER%の前で同じように貫いていくのであった。
+ENDIF
+PRINTFORMW %CALLNAME:MASTER%はしっかり命令をこなしたご褒美に早苗のアナルにバイブを挿れてやる。
+PRINTW 早苗は一瞬驚いたもののすぐに感謝の声を上げあなたに口づけをする。
+PRINTFORMW 早苗の口を%CALLNAME:MASTER%は味わいながら思う。
+PRINTW 神と呼ばれていようとも、女には違いない。
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW いずれこの神社でほかの神たちも犯しつくしてやろう。
+	PRINTFORMW そう思いながら%CALLNAME:MASTER%は全員を白く染めていった……
+ELSE
+	PRINTW いずれこの神社でほかの神たちも弄りつくしてやろう。
+	PRINTFORMW そう思いながら%CALLNAME:MASTER%は全員をさらなる絶頂へといざなっていった……
+ENDIF
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.69+ (神々の黄昏エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.69 (山の神々エンド)
+ENDIF
+FLAG:10069 |= 1
+CALL GAME_CONTINUE, 1, 69
+TSTR:3 = 山の神社
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;虹色エンド ～其は泡沫の夢なれど～
+;--------------------------------------------------
+@ENDING_70, ARG
+PRINTW 現世にあっては、それは人の幻想の拠所。
+PRINTW 雨上がりに掛かる虹の橋は幾人がその袂を目指そうとも決してたどり着ける事も無く
+PRINTW それでいて人を魅了して止まないそれは、確かにそこにある。
+PRINTW 幻想の支配する世界、幻想郷においてもそれは同じ事。
+PRINTW 如何な力を持つ妖怪や神でも誰も虹を手にすることはできない。
+PRINTFORMW …しかし、%CALLNAME:MASTER%はそれを別の形で手に入れた。
+PRINTW 　一人は七曜を司る魔女。
+PRINTW 　一人は七色の人形遣い。
+PRINTW 　一人は彩光を操る門番。
+PRINTW 　一人は煌く翼持つ悪魔。
+PRINTW 　そして虹の名を冠する騒霊とその主。
+PRINTW 彼女らは確かにそこに居て。
+PRINTW 彼女らと送る日常こそ、幻想的で他の誰も手にする事の無い日々。
+PRINTFORMW そう、%CALLNAME:MASTER%は遂に虹を手にしたのだ。
+PRINTW ……
+PRINTW …………
+PRINTFORMW しみじみと感傷に浸っていた%CALLNAME:MASTER%だったが、ふと少女らの声で我に返る。
+PRINTFORMW 肉欲に淀んだ目で%CALLNAME:MASTER%を見つめる少女達。
+PRINTFORMW %CALLNAME:MASTER%が苦笑しながら頷いた途端、
+PRINTFORM 彼女らは一斉に%CALLNAME:MASTER%の衣服を剥ぎ取り、争うように
+IF TALENT:MASTER:オトコ
+	PRINTW 男の体を貪りだした。
+ELSE
+	PRINTW 女の体を弄び執拗に快楽を与え続けた
+ENDIF
+PRINTW  
+PRINTW 幻想の日々はまだ、終らない。
+PRINTL  
+PRINTW 　　　　　　　　―― Ending No.70 (虹色エンド)
+FLAG:10070 |= 1
+CALL GAME_CONTINUE, 1, 70
+TSTR:3 = 雨上がりの館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;非売エンド～ This is the black hole.
+;--------------------------------------------------
+@ENDING_71, ARG
+PRINTFORMW %CALLNAME:MASTER%は独占欲がとても強かった。
+PRINTW そして、それは奴隷に対しても同様である。
+PRINTFORMW %CALLNAME:MASTER%は奴隷を売却したり解放したりするつもりは毛頭なかった。
+PRINTW ひたすら、手元で愛でつづけるのが彼の望みであった。
+PRINTW もちろん、奴隷売却をしない以上、他の手段で稼がないといけないのだが、
+;注意、儲けは通算のを見ています。わざわざこの周回だけのをフラグにする必要はないでしょう。
+SIF MONEY:995 || MONEY:996
+	PRINTW あるときは、弁当
+SIF MONEY:970
+	PRINTW あるときは、ビデオ
+SIF MONEY:972
+	PRINTW あるときは、ライブ
+SIF MONEY:971
+	PRINTW あるときは、写真
+SIF MONEY:981
+	PRINTW あるときは、聖水
+SIF MONEY:980
+	PRINTW あるときは、母乳
+SIF MONEY:983
+	PRINTW あるときは、陰毛
+SIF MONEY:984
+	PRINTW あるときは、愛液
+SIF MONEY:973
+	PRINTW あるときは、売春
+SIF MONEY:982
+	PRINTW あるときは、卵
+SIF MONEY:985 || MONEY:986 || MONEY:987
+	PRINTW あるときは、珍味
+SIF MONEY:975
+	PRINTW あるときは、錬金術
+PRINTW などなど…、様々な手段で儲けを出して生計を立てていたのであった。
+PRINTW こうして、かわいい奴隷たちといちゃいちゃしながら楽しく過ごしていく今の暮らしに、
+PRINTFORMW %CALLNAME:MASTER%は、大変満足しており、今後もこうしてやっていこうと思っている。
+PRINTW 
+PRINTW いつしか、幻想郷屈指の色キチガイにして変わり者と呼ばれていた
+PRINTFORMW %CALLNAME:MASTER%は、今日もまた調教に稼ぎに忙しい日々を送り続けるのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.71 (非売エンド)
+FLAG:10071 |= 1
+CALL GAME_CONTINUE, 1, 71
+TSTR:3 = 賑やかな嫁たちと忙しく暮らしていくための屋敷
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;大富豪エンド～ All money is mine.
+;--------------------------------------------------
+@ENDING_72, ARG
+PRINTFORMW %CALLNAME:MASTER%にとって、一番重要なのは愛でも色でもなく金だった。
+PRINTW とにかく、ひたすら稼ぐことが生きがいなのであった。
+PRINTW 幻想郷においても、それは変わることはなかった。
+PRINTFORMW 魅力的な肢体の奴隷も、%CALLNAME:MASTER%からすれば、ただの札束に過ぎなかった。
+PRINTW そうして、コツコツと財を積み上げていって…
+PRINTW いつしか、幻想郷においても、
+PRINTFORMW 並ぶことのない大富豪にのし上がった%CALLNAME:MASTER%であったが、
+PRINTW それでも、満足することはまったくなかったのである。
+PRINTFORMW 今日もまた、金儲けに奔走する%CALLNAME:MASTER%のことを、
+PRINTW 奴隷達も、半ば呆れつつも手伝うしかないのであった。
+PRINTFORMW こうして、金の亡者%CALLNAME:MASTER%は、今日もまた
+PRINTW 金稼ぎをするべく忙しく動き回るのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.72 (大富豪エンド)
+FLAG:10072 |= 1
+CALL GAME_CONTINUE, 1, 72
+TSTR:3 = 財産を安心して保管しておける豪邸
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;弁当屋エンド～ GENSOKYO food master Alive.
+;--------------------------------------------------
+@ENDING_73, ARG
+PRINTFORMW %CALLNAME:MASTER%の元に集った奴隷たちは、
+PRINTW みな料理の腕を磨き、いつしか幻想郷では知らぬもののない
+PRINTW 弁当屋の主力に育っていたのである。
+PRINTW 誰もがみな、自らの仕事に誇りを持ち、
+PRINTFORMW 食をもって幻想郷を制覇した%CALLNAME:MASTER%を師匠を崇め、
+PRINTW ともに、さらなる食の極みを目指して奮闘しているのであった。
+PRINTW  
+IF TARGET >= 0 && CFLAG:4 != 1 && (TALENT:恋慕 || TALENT:服従) && ABL:料理技能 >= 5 && EXP:調理経験 >= 500
+	PRINTFORMW 特に%CALLNAME:TARGET%の働きは、特筆すべきものであったという。
+	PRINTW  
+ELSEIF ASSI >= 0 && CFLAG:ASSI:4 != 1 && (TALENT:ASSI:恋慕 || TALENT:ASSI:服従) && ABL:ASSI:料理技能 >= 5 && EXP:ASSI:調理経験 >= 500
+	PRINTFORMW 特に%CALLNAME:ASSI%の働きは、特筆すべきものであったという。
+	PRINTW  
+ENDIF
+PRINTW こうして、弁当を作り続けている奴隷たちを見守りながら、
+PRINTFORMW %CALLNAME:MASTER%もまた、新メニューを考える仕事に忙しいのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.73 (弁当屋エンド)
+FLAG:10073 |= 1
+CALL GAME_CONTINUE, 1, 73
+TSTR:3 = 幻想郷弁当屋総本部
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;アイドルエンド～ You are the Idol master.
+;--------------------------------------------------
+@ENDING_74, ARG
+PRINTFORMW %CALLNAME:MASTER%が幻想郷の者どもを見た瞬間、ピンと来た！
+PRINTW こうして、いつしか奴隷調教のはずが、アイドル育成になってしまっていたのも
+PRINTW ある意味当然のことと言えるだろう
+PRINTW 実際、日頃のレッスンは苛酷であったが、それに耐え抜いたアイドルたちは
+PRINTW 幻想郷でも有数のアイドルとして次々と人気を博していった。
+PRINTFORMW もちろんプロデューサーとしての%CALLNAME:MASTER%の名声も跳ね上がっていき、
+PRINTFORMW いつしか、幻想郷の流行は%CALLNAME:MASTER%から始まるものとなっていたのである。
+PRINTW  
+IF TARGET >= 0 && CFLAG:4 != 1 && (TALENT:恋慕 || TALENT:服従) && TALENT:人気 && ABL:歌唱技能 >= 5 
+	PRINTFORMW 特に%CALLNAME:TARGET%の人気と働きは、特筆すべきものであったという。
+	PRINTW  
+ELSEIF ASSI >= 0 && CFLAG:ASSI:4 != 1 && (TALENT:ASSI:恋慕 || TALENT:ASSI:服従) && TALENT:ASSI:人気 && ABL:ASSI:歌唱技能 >= 5
+	PRINTFORMW 特に%CALLNAME:ASSI%の人気と働きは、特筆すべきものであったという。
+	PRINTW  
+ENDIF
+PRINTW こうして、次々とアイドルを育てていきながらも、
+PRINTFORMW %CALLNAME:MASTER%はまた、その次のアイドルの原石を求めて、
+PRINTW 幻想郷各地を渡り歩く毎日を送り続けていたのであった……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.74 (アイドルエンド)
+FLAG:10074 |= 1
+CALL GAME_CONTINUE, 1, 74
+TSTR:3 = 幻想郷トップアイドルプロダクション
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;宴会エンド ～永久に続く夢～
+;--------------------------------------------------
+@ENDING_75, ARG
+PRINTFORMW 周囲を包む喧騒に%CALLNAME:MASTER%が目を覚ますと
+PRINTW 途端に頭を鈍痛が襲ってきた。
+PRINTW 辺りを見回すと夜。酔って少し眠ってしまっていたようだ。
+PRINTW 　
+PRINTW 布団を抜け出し、一風呂浴びようかと湯殿へ足を向けると喧騒が大きくなる。
+PRINTW どうやら広間で騒いだ後、湯殿へ場所を替えて宴会を続けているようだ。
+PRINTW 風呂を焚く手間が省けたし…
+PRINTW 萃香や勇儀の事だ、どうせ酒風呂…つまり美女の浸かった極上の迎え酒にもありつける。
+PRINTFORMW そう思った%CALLNAME:MASTER%は脱衣所で衣服を脱ぎ捨てると、前を隠す事も無く湯殿へと入っていった。
+PRINTW  
+PRINTW …湯殿で萃香や勇儀と弄り合いながら聞いた話によると、少しどころではなく丸一日寝ていたらしい。
+PRINTW まあ、その程度どうでもいい事である…宴は毎日のように催されるし。
+PRINTW そして今日も萃香や勇儀と共に酒を飲み、運ばれてくるつまみに舌鼓を打つ。
+PRINTW 最近では里で醸造を学んで奴隷達に作らせてもいるのだが…。その酒が市場に出回る事は永遠に無いだろう。
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.75 (宴会エンド)
+FLAG:10075 |= 1
+CALL GAME_CONTINUE, 1, 75
+TSTR:3 = 大宴会場
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;夢想エンド ～Dream that exceeds fantasy. 
+;--------------------------------------------------
+@ENDING_76, ARG
+PRINTFORMW %CALLNAME:MASTER%が幻想郷でやってきたことは、
+PRINTW 誰もが思い出せないか思い出したくないようなものをほじくり返すことであった。
+PRINTW 実際、出番がいつの間にかなくなり、存在すら虚ろであった麒麟の娘(自称)だとか、
+PRINTW よく分からないうちに幻想郷の住人にされてしまった娘だとか…
+PRINTW 　
+PRINTFORMW まあ、%CALLNAME:MASTER%にとっては、そんな連中に対しても
+PRINTW 性調教を施して、立派な性奴隷にしてしまうという作業を繰り返すだけのことであるが。
+PRINTW 　
+PRINTW こうして、幻想郷でも屈指の存在が集ったその館が、
+PRINTW いつの間にか、「夢想館」と名付けられていたのを
+PRINTFORMW %CALLNAME:MASTER%も、最近になって知ったのである。
+PRINTW 　
+PRINTFORMW 賑やかで癖のある彼女達を交えて、%CALLNAME:MASTER%は大層ご機嫌であった。
+PRINTFORMW 「こういう夢なら…　悪くはない\@(TALENT:MASTER:オトコ) ? な # わ\@…」
+PRINTW 　
+PRINTW 麟の部屋から歌が聞こえてくる…
+PRINTFORMW 彼女の美声を堪能しつつ、%CALLNAME:MASTER%はその瞳を閉じていったのであった…
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.76 (夢想エンド)
+FLAG:10076 |= 1
+CALL GAME_CONTINUE, 1, 76
+TSTR:3 = 夢想館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;純愛エンド ～The ture pure love. 
+;--------------------------------------------------
+@ENDING_77, ARG
+PRINTFORMW %CALLNAME:MASTER%は、愛のない現実世界に嫌気が差し、
+PRINTW 真実の愛を求めて、この幻想郷にやってきた。
+PRINTW ところが何を間違えたのか、周囲の者達は、
+PRINTFORMW %CALLNAME:MASTER%が奴隷を調教しているなどと、
+PRINTW 根も葉もない噂を流すばかりであった。
+PRINTW 
+PRINTW 結局のところ、外の世界と何ら違いのない幻想郷で、
+PRINTFORMW 真実の愛を求めて足掻く%CALLNAME:MASTER%の元に、
+PRINTW いつしか多くの者たちが集うことになった。
+PRINTW 
+PRINTW その者たちも皆、奴隷商人に騙されて、性奴隷として
+PRINTW ここに売られてきたものたちであった。
+PRINTW そういう経緯のために、当初は頑なな姿勢を崩そうとはしなかったが、
+PRINTFORMW %CALLNAME:MASTER%は、決して欲に溺れ、
+PRINTW 愛を蔑ろにするようなことはしなかったために、
+PRINTW いつしか、そういう人柄に惹かれていくようになっていった。
+PRINTW 
+PRINTW こうして、いつしか、この館の中においては、
+PRINTW 真実の愛が溢れる、まさに純愛の世界が作り上げられていたのであった。
+PRINTFORMW きっと、%CALLNAME:MASTER%は、現状にも満足せず、
+PRINTW さらなる愛を求めることになるのであるだろうが、
+PRINTW きっと、それを優しく見守る麗しくも愛らしい同居人たちが
+PRINTW その後を付いて行くことになるのであろう…
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.77 (純愛エンド)
+FLAG:10077 |= 1
+CALL GAME_CONTINUE, 1, 77
+TSTR:3 = %CALLNAME:MASTER%の愛の館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;大図書館エンド ～The ture pure love. 
+;--------------------------------------------------
+@ENDING_78, ARG
+PRINTFORMW %CALLNAME:MASTER%は、幻想郷にて調教師として生計を立てていくうえで、
+PRINTW 手元に置いているお気に入りの奴隷の中に、
+PRINTW 暇があれば、屋敷の図書室に篭って読書ばかりしている者がいた。
+PRINTFORMW そういうのを眺めながら、%CALLNAME:MASTER%は、
+PRINTW パチュリーとの調教中にふと、大図書館みたいなのを作れるだろうか？と呟いてみた。
+PRINTW 
+PRINTW パチュリーにとっては、
+PRINTW 好きな本をいくらでも読むことができる場所ができるということは、
+PRINTW 彼女にとってまさに至福であると言えるのであった。
+PRINTW そんな経緯から、パチュリーはその呟きに強い興味を示してきたのである。
+PRINTW 
+PRINTFORMW こういう反応をされては、%CALLNAME:MASTER%は
+PRINTW 主人としての甲斐性を見せなければならないだろう。
+PRINTW 
+PRINTW とりあえず、パチュリーが以前にいた屋敷の図書室について知っている人材や
+PRINTW 書籍に関してある程度の知識のある連中を呼び寄せた。
+PRINTW 司書のように働いていたという小悪魔、
+PRINTW 魔法使い仲間で時々蔵書を借りに来ていたアリス、
+PRINTW 同じく魔法使いで、ときどき本を"借りていた"という魔理沙、
+PRINTW 本を読むのが楽しいと公言している朱鷺子、
+PRINTW 幻想郷の歴史を綴ることが生きがいといえる阿求、
+PRINTW 以上５人であった。
+PRINTW 
+PRINTW よくよく考えたら、不思議なものであった。
+PRINTFORMW 彼女らはもちろん、%CALLNAME:MASTER%の性奴隷として様々な調教を受けてはいたが、
+PRINTW 売却対象とはもはやされていなかった。
+PRINTW それどころか、行動の自由が保障されており、
+PRINTW お小遣いすら渡されて、時々人里などで買い物さえしているという。
+PRINTW 
+PRINTW 彼女らは基本的には、図書室などで読書などを楽しみつつ、
+PRINTFORMW %CALLNAME:MASTER%がどこぞから書籍の情報を得ると、
+PRINTW それを獲得するためのエージェント的な存在になっていたという。
+PRINTW こうして、多数の書籍を集めることにより蔵書が増加した屋敷には、
+PRINTW いつしか、巨大な図書館ができていたという。
+PRINTW 
+PRINTFORMW いつしか、%CALLNAME:MASTER%の屋敷は、幻想郷一の知の集積地となっていたのである。
+PRINTFORMW もちろん、これは%CALLNAME:MASTER%が当初望んだことではなかったが、
+PRINTW 今は、こういうのも悪くはないと思ったのである。
+IF ARG == 2
+	PRINTW すべてのSpell Cardを取り戻してくれた上に、
+	PRINTW これだけ多数の本に囲まれての暮らしを与えてくれた
+ELSE
+	PRINTW 何よりも、本に囲まれた幸せを享受しつつ
+ENDIF
+PRINTFORMW %CALLNAME:MASTER%に深い信頼を寄せているパチュリーの表情を眺めていると、
+PRINTW 今後とも、この大図書館をより充実させていこうと、
+PRINTFORMW %CALLNAME:MASTER%は深く心に誓うのであった…
+PRINTW  
+IF ARG == 2
+	PRINTW 　　　　　　　　―― Ending No.78+ (パチュリー大図書館エンド)
+	FLAG:599 |= 1
+ELSE
+	PRINTW 　　　　　　　　―― Ending No.78 (大図書館エンド)
+ENDIF
+FLAG:10078 |= 1
+CALL GAME_CONTINUE, 1, 78
+TSTR:3 = 幻想郷大図書館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;蓬莱人エンド ～Never ending of eternal life. 
+;--------------------------------------------------
+@ENDING_79, ARG
+;最初から[蓬莱人]持ちの主人の場合
+IF CSVTALENT(NO:MASTER, 49, 0)
+	PRINTFORMW 蓬莱人であった%CALLNAME:MASTER%は、この幻想郷において面白楽しくのんびりと過ごそうとしたが、
+	PRINTW 奴隷たちの中にも複数の蓬莱人を発見するに及んで、永遠に死ねない者たちのための楽園を作ろうと思うようになった。
+	PRINTW 実際、永遠の生命というのはそれだけでは拷問と言えるほどに辛いものでしかないと思っていた。
+	PRINTFORMW 一旦、そう決めた%CALLNAME:MASTER%は、以降は積極的に蓬莱人を保護し続けるとともに、
+	PRINTW その他の方法で永遠の命を宿したものも同様に救うことにしたのであった。
+;[蓬莱人]を後天的に獲得した主人の場合
+ELSE
+	PRINTFORMW 幻想郷にやってきて、色々と経験した%CALLNAME:MASTER%は、いつのまにか永遠の命を得ることになった。
+	PRINTFORMW 最初は死を免れて嬉しかった%CALLNAME:MASTER%であったが、
+	PRINTW いつしか、永遠と続くであろう退屈に恐怖するようになってしまった。
+	PRINTW しかし、奴隷の中のお気に入りを蓬莱人にして、ずっと一緒に過ごすというのも
+	PRINTFORMW 悪くないのではと思い直した%CALLNAME:MASTER%は、以降は積極的に蓬莱人を保護し続けるのであった。
+	PRINTW また、蓬莱人となっていないのに永遠の命に苦しむものがいるとのことであり、
+	PRINTW そういう者どもに関しても、蓬莱人同様に救ってやることにしたのであった。
+ENDIF
+PRINTW もちろん、あくまで主人は自分である。
+PRINTW 上下関係は最初からはっきりさせておくことこそが、集団生活を円滑に進めるための秘訣である。
+PRINTW 
+PRINTW こうして多数の蓬莱人などが集ったこの屋敷は、一般の妖怪から見ても目立つようになりつつあった。
+PRINTFORMW いつしか、不死の化け物が集うお化け屋敷とされてしまった%CALLNAME:MASTER%の屋敷の中で、
+PRINTFORMW 今日も%CALLNAME:MASTER%を悦ばせる大乱交が行われていたのである。
+PRINTW 
+PRINTW 時間はたっぷりある。何か面白いことが見つかるまでは、
+PRINTFORMW %CALLNAME:MASTER%とその下僕たちは、心行くまで交わり続けるのであった…
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.79 (蓬莱人エンド)
+FLAG:10079 |= 1
+CALL GAME_CONTINUE, 1, 79
+TSTR:3 = 不死の者たちと永遠に過ごすための館
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;魔法少女エンド ～Magical girl's goes on! 
+;--------------------------------------------------
+@ENDING_80, ARG
+PRINTFORMW %CALLNAME:MASTER%の屋敷はいつのまにか、よくわからない何かになってしまっていた。
+PRINTW 元々は、陥落した奴隷たちに、多少の自由を許そうとしただけのことであった。それがいつしか、
+PRINTW 奴隷たちの中で、魔法を使うことのできる者たちがそれぞれ、独自の魔術実験を行うようになった。
+PRINTFORMW そうして、いつしか魔女が集まっていた%CALLNAME:MASTER%の屋敷においては、
+PRINTW 魔法実験と不可思議な現象とセックスと爆発が日常茶飯事になっていたのである。
+PRINTW 
+PRINTW 魔理沙とアリスが一緒に実験をしている。ふたりはここにくる前からの知り合いのようで、
+PRINTW 結構息が合っているようだ。
+PRINTFORMW %CALLNAME:MASTER%がじっと見ていると、いつしかお互いの服を脱がし始めた。
+PRINTW よくわからんが、きっと重要な儀式なのだろうと思った。
+PRINTW 
+PRINTFORMW 実験に没頭している二人の邪魔をせずに、%CALLNAME:MASTER%は隣の部屋に行くと、
+PRINTFORMW ユキとマイも一緒に実験をしていたようだ。だが、ふたりは%CALLNAME:MASTER%を見つけると、
+PRINTW 顔を赤らめつつすり寄ってきた。せっかくなので、少し身体をまさぐってやることにする。
+PRINTW こうやっていると、魔法少女もやはり普通の女の子だなあとは思うが、
+IF TALENT:MASTER:オトコ
+	PRINTW ちょっと頑張りすぎてへにゃっとなったわが息子を魔法で勃たせるのは卑怯だとは思う。
+ELSEIF TALENT:MASTER:ふたなり
+	PRINTW ちょっと頑張りすぎてへにゃっとなった私の肉棒を魔法で勃たせたり、
+	PRINTW 膣穴を魔法で引っ掻き回して気持ちよくさせるのは卑怯だとは思う。
+
+ELSE
+	PRINTW 私の膣穴を魔法で引っ掻き回して気持ちよくさせるのは卑怯だとは思う。
+ENDIF
+PRINTW 
+PRINTFORMW ユキとマイを充分に満足させた%CALLNAME:MASTER%は、二人の部屋を出て廊下を歩くと、
+PRINTW 自室でオナニーを愉しんでいる幽香を見つけた。
+PRINTW 彼女は妖怪なのだが、きっかけがあって魔法を学んだという。
+PRINTFORMW もっとも、オナニーに魔法も何も関係ない気がする%CALLNAME:MASTER%は、
+PRINTW 幽香の邪魔をせずにそのまま立ち去ることにした。
+PRINTW 
+PRINTW フランドールは白蓮から色々と魔法に関する手ほどきを受けているようだ。
+PRINTW こうやって眺めているとまるで母娘のように見える二人であるが、これでも
+PRINTW フランドールの方が年上である。
+PRINTFORMW 二人の様子を眺めていると、%CALLNAME:MASTER%に気づいた白蓮に入ってくるように手招きされた。
+PRINTW 中に入ると、むわっとした刺激臭が立ち込めていた。しかし、外で覗いていたときには気づかなかったが、
+PRINTW 不思議に思うと、白蓮が部屋の中だけに広がるお香だと説明してくれた。
+PRINTFORMW 肝心の効能を聞こうとする%CALLNAME:MASTER%の口を、発情したフランドールの口が塞ぐ。
+PRINTFORMW それだけで理解した%CALLNAME:MASTER%は、ひたすら雄としての本能を二人にぶつけることにした。
+PRINTW 
+PRINTFORMW フランドールと白蓮をイカセ尽くしてしまった%CALLNAME:MASTER%は、まだ物足りないと思いつつ
+PRINTW 部屋を出て、欲望のはけ口を探しに行くことにした。
+PRINTW すると、廊下の向こう側からご機嫌なエレンが来たので、思わず飛び掛ろうとしたが、
+PRINTW そこで気を失う羽目になってしまった。
+PRINTFORMW いきなり、%CALLNAME:MASTER%に襲われそうになって驚いたエレンであったが、
+PRINTW その行動から、性欲をもてあましていることを察したのでとりあえず気絶させたのである。
+PRINTFORMW その後、エレンは、%CALLNAME:MASTER%をパチュリーが篭っている図書室に連れて行った。
+PRINTW 
+PRINTW 図書室では、パチュリーが読書に忙しいようであった。
+PRINTFORMW そこに、%CALLNAME:MASTER%を連れてきたエレンは、そのまま図書室を立ち去ったのである。
+PRINTFORMW それに気づいたパチュリーは、消極的に介抱すべく%CALLNAME:MASTER%を図書室奥のソファに連れていった。
+PRINTFORMW パチュリーに運ばれているうちに、目覚めた%CALLNAME:MASTER%は、
+PRINTW ソファに下ろされると、パチュリーを引きずりこんだ。
+PRINTW パチュリーは、軽い抗議の声を上げたもののなすがままに豊満な肉体を捧げるのであった。
+PRINTW 
+PRINTFORMW こうして、魔法少女たちをことごとく性的に従えた%CALLNAME:MASTER%は、
+PRINTW 「幻想郷の魔法少女たちの花婿」という異名で呼ばれることになったという。
+PRINTFORMW まあ、美少女ばかりであるので、%CALLNAME:MASTER%としても現状の生活には満足しているのであった…
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.80 (魔法少女エンド)
+FLAG:10080 |= 1
+CALL GAME_CONTINUE, 1, 80
+TSTR:3 = 魔法少女たちの本拠地
+CALL GET_HOUSE
+
+;--------------------------------------------------
+;黄昏酒場エンド ～Uwabami Breakers～ 
+;--------------------------------------------------
+@ENDING_83, ARG
+PRINTW 酒場は今日も満員御礼、死屍累々。
+PRINTW 酒に溺れた与太者どもが、酔って潰れて死屍累々。
+PRINTW 日暮れとともに岩戸を開く、ウワバミたちの別天地。
+PRINTW この世の楽園、黄昏酒場。一度と言わずにいつでもおいで。
+PRINTW 
+PRINTFORMW 奴隷たちの中に元・酒場の店主を多く抱えていた%CALLNAME:MASTER%が、副業として酒場を始めたのは自然な成り行きだった。
+PRINTW 彼らの放つ『特別メニュー』は、この地の住人たちに大いに受け入れられ、店はあっという間に軌道に乗った。
+PRINTW ……まあ、いくつかの想定外の出来事のせいで思ったよりは儲からなかったのだが。
+PRINTW 
+PRINTW 大衆居酒屋「八岐大蛇」。
+PRINTFORMW %CALLNAME:MASTER%がここを訪れると、店主の辰巳が酔客相手に新作料理を振舞っているところだった。
+PRINTW 創作料理の道に目覚めた辰巳にとって、珍しい食材が溢れるこの地はまさに楽園だったらしく、
+PRINTW 精力的に毎日様々な料理を拵えては、客に振舞っている。
+PRINTW それは良いのだが、珍しい食材を手に入れるにはやはりそれなりにお金がかかるわけで……。
+PRINTW かくして売り上げのわりに、儲けは微々たる物だったりする。
+PRINTW 
+PRINTW 夜の社交場、バー「C2H5OH」。
+PRINTFORMW 続いて%CALLNAME:MASTER%が訪れたこの店の中からは、何やら騒ぎ声が聞こえてきた。
+PRINTFORMW ああ、またいつものやつかとげんなりした%CALLNAME:MASTER%の目の前を、店主のルミに蹴り飛ばされた酔っ払いが転がって行く。
+PRINTW キツ目の性格のルミはツケを払わない客を罵倒して、それでも溜め込むような輩にはこうやってケリを入れる。
+PRINTW いつしかそれが話題になって、なんだかそっち方面が目当ての客が入り浸るようになってしまった。
+PRINTW 最近では、その手のお店と勘違いされているフシまである始末だ。
+PRINTW そういった訳だから、もちろん儲けはあんまりない。
+PRINTW 
+PRINTW 屋上の魔界「サタデーナイトガーデン」。
+PRINTFORMW 最後に%CALLNAME:MASTER%が訪れたこの店だが、働いているのはバイトばかりで店主の天治は見当たらない。
+PRINTW いや。天治は酒場の中央で、年齢を感じさせない見事な体のキレでダンスを繰り広げていた。
+PRINTW このダンスが目当てで通っている客も多いのであまり強くはいえないが、しかし店主がこれで良いのかと思わなくもない。
+PRINTW その間は客も手を止めて見惚れているものだから、売り上げにも響くし。
+PRINTW もちろんこんなのだから、儲けはわりとしょっぱい。
+PRINTW 
+PRINTW しかし最大の想定外は、そんな彼らがかわいらしく見える程なのた。
+PRINTW その想定外は、天治のダンスを眺めながら手にしたビールを一気に呑み干して、お代わりを所望していた。
+PRINTW そう、一気飲みしたピッチャーのお代わりを。
+PRINTW それだけでなく、その背後にもすでにいくつかのピッチャーや酒瓶や酒樽が転がっている。
+PRINTW ここにいるという事は、すでに辰巳とルミの店でもたっぷり呑んで来たのだろう。
+PRINTW 
+PRINTW 最大の想定外、その名は浅間 伊佐美。
+PRINTW 呑む為に起き、呑む為に奉仕し、呑む為に寝る黄昏の怪物。
+PRINTW そんな彼女にうっかりと、ここでは好きなだけ呑んで良いと言ってしまった日のことは今でも忘れられない。
+PRINTW 
+PRINTW 伊佐美は呑んだ。ありったけ呑んだ。ありったけ呑んでもまだ余裕そうに見えた。
+PRINTW 「八岐大蛇」、「C2H5OH」、「サタデーナイトガーデン」の３店舗で呑んだ総量は、金額に直すと100萬圓を超えた。
+PRINTW それでも店主たちによると、以前彼女が特別メニューに挑んだときは、まだこんな物じゃなかったそうなのだが……。
+PRINTW なんとか頼み込んで、今後はほどほどで抑えると約束してもらったのだが、それでもやっぱりこの有様。
+PRINTW もはや、金を稼ぐために営業しているのだか、伊佐美に呑ませるために営業しているのだかわかったもんじゃない状況だ。
+PRINTW 
+PRINTW やがて月がその身を隠し、太陽が顔を覗かせるころに黄昏酒場は営業を終える。
+PRINTFORMW そして、それと同時に%CALLNAME:MASTER%の本業の時間が始まる。
+PRINTW だが今日のところは、それよりも伊佐美に身体で払わせることにしよう。徹底的に。
+PRINTFORMW 二日酔いによる物ではない頭痛を抱え、%CALLNAME:MASTER%はそう決心したのだった。
+PRINTW 
+PRINTW 酒場は静かに眠りに落ちて、ウワバミどもが夢の跡。
+PRINTW 酒に溺れた与太者どもが、頭痛に呻いて夢の跡。
+PRINTW 日の出とともに岩戸は閉じて、次の夜までしばしの別れ。
+PRINTW 呑んべぇのレムリア、黄昏酒場。月が出たならまたおいで。
+PRINTW 
+PRINTW と言うか、お願いだから来てください。このままだと酒代で破産しかねないんです……。
+PRINTW 
+PRINTW 　　　　　　　　―― Ending No.83 (黄昏酒場エンド)
+FLAG:10083 |= 1
+CALL GAME_CONTINUE, 1, 83
+TSTR:3 = 黄昏酒場
+CALL GET_HOUSE
+

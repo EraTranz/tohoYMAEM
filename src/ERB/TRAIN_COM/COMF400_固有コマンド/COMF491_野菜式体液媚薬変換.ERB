@@ -1,0 +1,108 @@
+﻿;=============================================================================
+;野菜式体液媚薬変換
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE491
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:491 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が[野菜の錬金術師]じゃないとダメ
+SIF TALENT:PLAYER:野菜の錬金術師 == 0
+	RETURN 0
+;YASAIモードでないとダメ
+SIF TEQUIP:YASAIモードで使用 != 2
+	RETURN 0
+;潤滑が一定値未満だとダメ
+LOCAL = 5000
+;[薬毒耐性]
+SIF TALENT:薬毒耐性
+	TIMES LOCAL , 1.50
+;[機械]
+SIF TALENT:機械
+	TIMES LOCAL , 2.00
+SIF PALAM:潤滑 < LOCAL
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 491) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM491
+PRINTL 野菜式体液媚薬変換
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 491
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 野菜式体液媚薬変換
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+LOCAL:1 = 200
+;調教対象に媚薬中毒があれば消費を抑える
+SIF TALENT:媚薬中毒
+	LOCAL:1 /= 2
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1
+
+;媚薬効果で欲情のアップが2倍になるので実際には+10000
+SOURCE:欲情追加 = 5000
+SOURCE:薬物浸潤 = 2000
+SOURCE:逸脱 = 2000
+
+;媚薬中毒
+IF TALENT:媚薬中毒
+	SOURCE:中毒充足 = 500
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+	SOURCE:媚薬浸潤 = 100
+ELSE
+	SOURCE:媚薬浸潤 = 1 + RAND:3
+ENDIF
+
+;潤滑が一定値以上のとき
+LOCAL = 50000
+;[薬毒耐性]
+SIF TALENT:薬毒耐性
+	TIMES LOCAL , 1.50
+;[機械]
+SIF TALENT:機械
+	TIMES LOCAL , 2.00
+IF PALAM:潤滑 >= LOCAL
+	SOURCE:欲情追加 = PALAM:潤滑
+	PALAM:潤滑 = 0
+	SOURCE:逸脱 = 0
+ENDIF
+
+TEQUIP:媚薬 = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_491
+PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%の体についた液体を媚薬に変えた
+PRINTFORML %CALLNAME:TARGET%は荒い息をついて肌を紅潮させている…

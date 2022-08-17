@@ -1,0 +1,139 @@
+﻿;=============================================================================
+;ふぉーゆーっ！
+;=============================================================================
+;完全趣味コマンドなので実用性微妙
+;でもこぁに使うとパンデミック発生
+;しつこく使うと嫌われる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE349
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:349 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;勝手に実行する場合は別条件
+IF TFLAG:699 > 0
+	;実行者が陥落しているか奉仕経験がないとダメ
+	SIF TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0 && ABL:奉仕精神 <= 0
+		RETURN 0
+ELSE
+	;調教者が主人か[恋慕]か奉仕経験Lv3以上じゃないとダメ
+	SIF ASSIPLAY && TALENT:PLAYER:恋慕 == 0 && ABL:PLAYER:奉仕精神 < 3
+		RETURN 0
+	;調教者が[精神崩壊]、[傀儡]だとダメ
+	SIF TALENT:PLAYER:精神崩壊 || TALENT:PLAYER:傀儡
+		RETURN 0
+ENDIF
+;調教対象が[精神崩壊]、[傀儡]だとダメ
+SIF TALENT:精神崩壊 || TALENT:傀儡
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;目隠し、耳栓、暗闇展開をしていた場合効果は無し
+SIF TEQUIP:目装着器具 || TEQUIP:耳装着器具 || TEQUIP:暗闇
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 349) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM349
+PRINTL ふぉーゆーっ！
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 349
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ふぉーゆーっ！
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 40
+
+IF TFLAG:143 > 10
+	SOURCE:逸脱 = (TFLAG:143 - 10) * 10
+ELSE
+	SOURCE:中毒充足 = 50 - (TFLAG:143 * 5)
+ENDIF
+
+;こぁーっ！！
+IF NO:TARGET == 1007
+	;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:露出 = 1000
+		SOURCE:トラウマ = 800
+		SOURCE:反感追加 = 500
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:露出 = 500
+		SOURCE:トラウマ = 100
+		SOURCE:反感追加 = 200
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:露出 = 300
+		SOURCE:トラウマ = 20
+		SOURCE:反感追加 = 100
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:露出 = 150
+		SOURCE:反感追加 = 50
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:露出 = 100
+	ELSE
+		SOURCE:露出 = 50
+	ENDIF
+	;勝手に実行した場合
+	SIF TFLAG:699 > 0
+		SOURCE:羞恥扇情 = (1+ABL:奉仕精神)*500
+ELSEIF NO:PLAYER == 1007
+	;ABL:奉仕精神をみる
+	IF ABL:奉仕精神 == 0
+		SOURCE:情愛 = 10
+	ELSEIF ABL:奉仕精神 == 1
+		SOURCE:情愛 = 25
+	ELSEIF ABL:奉仕精神 == 2
+		SOURCE:情愛 = 50
+	ELSEIF ABL:奉仕精神 == 3
+		SOURCE:情愛 = 75
+	ELSEIF ABL:奉仕精神 == 4
+		SOURCE:情愛 = 100
+	ELSE
+		SOURCE:情愛 = 150
+	ENDIF
+	SOURCE:中毒充足 *= 2
+ENDIF
+
+;カウント(ただし勝手にした場合はカウントしない)
+SIF TFLAG:699 == 0
+	TFLAG:143 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_349
+IF TFLAG:699 > 0
+	PRINTFORML %CALLNAME:MASTER%が何もしないでいると、命令していないのに%CALLNAME:TARGET%は、
+	PRINTFORML 左手を腰に当て、右手の親指を真っすぐ立てつつ人差し指を%CALLNAME:PLAYER%に向けた
+	IF NO:TARGET == 1007
+		PRINTL そして満面の笑みを浮かべると「ふぉーゆーっ！」と叫び、ポーズを決めた…
+		PRINTFORML そして、自分のしでかしたことに気づいた%CALLNAME:TARGET%は、あまりの恥ずかしさに顔を真っ赤にしながら固まってしまった…
+	ELSE
+		PRINTL そして満面の笑みを浮かべると「ふぉーゆーっ！」と叫び、ポーズを決めた…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は左手を腰に当て、右手の親指を真っすぐ立てつつ人差し指を%CALLNAME:TARGET%に向けた
+	PRINTL そして満面の笑みを浮かべると「ふぉーゆーっ！」と叫び、ポーズを決めた…
+ENDIF

@@ -1,0 +1,197 @@
+﻿;=============================================================================
+;尻愛撫
+;=============================================================================
+;アナル狙いではなくてあくまでお尻を撫で回す
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE186
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:186 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 186) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM186
+PRINTL 尻愛撫
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 186
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 尻愛撫
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 15
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 700
+SOURCE:性行動 = 30
+SOURCE:逸脱 = 300
+SOURCE:接触 = 300
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 10
+	SOURCE:情愛 = 10
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 50
+	SOURCE:情愛 = 20
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 200
+	SOURCE:情愛 = 32
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 400
+	SOURCE:情愛 = 40
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 650
+	SOURCE:情愛 = 46
+ELSE
+	SOURCE:快Ｃ = 950
+	SOURCE:情愛 = 50
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 10
+	SOURCE:屈従 = 200
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 50
+	SOURCE:屈従 = 250
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 200
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 400
+	SOURCE:屈従 = 550
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 650
+	SOURCE:屈従 = 900
+ELSE
+	SOURCE:快Ａ = 950
+	SOURCE:屈従 = 1400
+ENDIF
+
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.30
+	TIMES SOURCE:屈従 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:屈従 , 1.30
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.60
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+IF TEQUIP:コスチュームプレイ == 2
+	;スク水装着中
+	TIMES SOURCE:接触 , 3.00
+	TIMES SOURCE:露出 , 0.80
+ENDIF
+
+;処女で貞操観念
+IF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+ELSEIF TALENT:処女 && TALENT:貞操観念
+	SOURCE:屈従 /= 2
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_186
+PRINTFORM %CALLNAME:PLAYER%は
+IF TEQUIP:Ａ系装着器具 == 1
+	PRINT 小刻みに震えるアナルバイブを眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 2
+	PRINT 肛門に刺さっている要石を眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 3
+	PRINT 音を立てて振動しているローターを眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 4
+	PRINT かすかに音を立てる電極を眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 5
+	PRINT ビーズの紐を眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 6
+	PRINT アナルを限界まで広げているバルーンを眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 7
+	PRINT 排泄感に震える菊穴を眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 8
+	PRINT 膨満感に震えるお尻を眺めつつ、
+ELSEIF TEQUIP:Ａ系装着器具 == 9
+	PRINT 菊門に深々と入り込んでいるブドウの蔓を眺めつつ、
+ELSEIF TEQUIP:氷柱 >= 4
+	PRINT お尻にでっかく鎮座する巨大な氷の塊を眺めつつ、
+ELSEIF TEQUIP:氷柱 == 3
+	PRINT 菊門から出ている太い氷柱を眺めつつ、
+ELSEIF TEQUIP:氷柱
+	PRINT 肛門に刺さっている氷柱を眺めつつ、
+ENDIF
+IF TEQUIP:焦らしプレイ
+	PRINTFORML %CALLNAME:TARGET%のお尻を軽く触ってみたりした…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%のお尻を撫で回したり揉み上げたりした…
+ENDIF

@@ -1,0 +1,585 @@
+﻿;=============================================================================
+;触手全穴洗浄
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE546
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:546 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;触手が[特殊ホルモン分泌]を得ていないとダメ
+SIF (FLAG:75 & 1024) == 0
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;妊娠中はダメ
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;触手強制回復中(口内)はダメ
+SIF TEQUIP:触手強制回復 == 1
+	RETURN 0
+;触手口辱中じゃないとダメ
+SIF TEQUIP:口装着器具 != 2
+	RETURN 0
+;触手挿入中じゃないとダメ
+SIF TEQUIP:Ｖ系装着器具 == 0
+	RETURN 0
+;触手が邪魔で膣内洗浄できない
+SIF TEQUIP:Ｖ系装着器具 == 3
+	RETURN 0
+;それ以外の触手挿入系は設定していないので排除
+SIF TEQUIP:Ｖ系装着器具 >= 4
+	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;卵が邪魔で膣内洗浄できない
+SIF TEQUIP:触手膣内産卵
+	RETURN 0
+;アナル触手中じゃないとダメ
+SIF TEQUIP:Ａ系装着器具 == 0
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 > 2
+	RETURN 0
+;卵が邪魔で腸内洗浄できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;触手カテーテル中じゃないとダメ
+SIF TEQUIP:Ｕ系装着器具 != 1
+	RETURN 0
+;鼻フック装着中だとダメ
+SIF TEQUIP:鼻装着器具 == 1
+	RETURN 0
+;触手鼻穴挿入中じゃないとダメ
+SIF TEQUIP:鼻装着器具 != 2
+	RETURN 0
+;耳栓中だとダメ
+SIF TEQUIP:耳装着器具 == 1
+	RETURN 0
+;触手耳穴責め中じゃないとダメ
+SIF TEQUIP:耳装着器具 != 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 546) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM546
+PRINTL 触手全穴洗浄
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 546
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手全穴洗浄
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+LOCAL:1 = 310
+
+;EXP:緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	LOCAL:1 += 60
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	LOCAL:1 += 30
+ELSE
+	LOCAL:1 += 20
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 1.00
+	LOCAL:2 = 340
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 0.90
+	LOCAL:2 = 570
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 1070
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 0.70
+	LOCAL:2 = 1840
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 2840
+ELSE
+	TIMES LOCAL:1 , 0.50
+	LOCAL:2 = 4400
+ENDIF
+
+DOWNBASE:0 += LOCAL:1 *2
+DOWNBASE:1 += LOCAL:1 *2
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+
+LOCAL:3 = 0
+SIF STAIN:ヴァギナ & 1
+	LOCAL:3 += 1
+SIF STAIN:ヴァギナ & 2
+	LOCAL:3 += 1
+SIF STAIN:ヴァギナ & 4
+	LOCAL:3 += 1
+SIF STAIN:ヴァギナ & 8
+	LOCAL:3 += 1
+SIF STAIN:ヴァギナ & 16
+	LOCAL:3 += 1
+
+SOURCE:達成感 = LOCAL:2
+SOURCE:不潔 = 7000-(600*LOCAL:3)
+SOURCE:液体追加 = 5600
+SOURCE:逸脱 = 22000
+SOURCE:支配 = 13000
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 60
+	SOURCE:中毒充足 = 150
+	SOURCE:屈従 = 150
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 180
+	SOURCE:中毒充足 = 250
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 420
+	SOURCE:中毒充足 = 350
+	SOURCE:屈従 = 600
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 900
+	SOURCE:中毒充足 = 500
+	SOURCE:屈従 = 1000
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1600
+	SOURCE:中毒充足 = 700
+	SOURCE:屈従 = 1800
+ELSE
+	SOURCE:快Ｃ = 2000
+	SOURCE:中毒充足 = 1000
+	SOURCE:屈従 = 2300
+ENDIF
+
+;EXP:尿道経験をみる
+IF EXP:尿道開発経験 < EXPLV:2
+	TIMES SOURCE:快Ｃ , 0.60
+	SOURCE:痛み = 400
+ELSEIF EXP:尿道開発経験 < EXPLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	SOURCE:痛み = 60
+ELSEIF EXP:尿道開発経験 < EXPLV:4
+	TIMES SOURCE:快Ｃ , 1.20
+	SOURCE:痛み = 12
+ELSEIF EXP:尿道開発経験 < EXPLV:5
+	TIMES SOURCE:快Ｃ , 1.30
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+	SOURCE:痛み = 0
+ENDIF
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 60
+	SOURCE:性行動 = 150
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 180
+	SOURCE:性行動 = 250
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 420
+	SOURCE:性行動 = 350
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 900
+	SOURCE:性行動 = 500
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1600
+	SOURCE:性行動 = 700
+ELSE
+	SOURCE:快Ｖ = 2000
+	SOURCE:性行動 = 1000
+ENDIF
+
+;EXP:Ｖ経験をみる(処女はあり得ない)
+IF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み += 450
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み += 75
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:痛み += 15
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.30
+	SOURCE:痛み += 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	SOURCE:痛み += 0
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ａ = 60
+	SOURCE:性行動 += 150
+	SOURCE:屈従 += 150
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ａ = 180
+	SOURCE:性行動 += 250
+	SOURCE:屈従 += 300
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ａ = 420
+	SOURCE:性行動 += 350
+	SOURCE:屈従 += 600
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ａ = 900
+	SOURCE:性行動 += 500
+	SOURCE:屈従 += 1000
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ａ = 1600
+	SOURCE:性行動 += 700
+	SOURCE:屈従 += 1800
+ELSE
+	SOURCE:快Ａ = 2000
+	SOURCE:性行動 += 1000
+	SOURCE:屈従 += 2300
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.60
+	SOURCE:痛み += 400
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 60
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み += 12
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.30
+	SOURCE:痛み += 0
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み += 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.10
+	TIMES SOURCE:快Ｖ , 0.10
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み += 3000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.40
+	TIMES SOURCE:快Ｖ , 0.40
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 900
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.40
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;貞操観念
+IF TALENT:貞操観念
+	TIMES SOURCE:性行動 , 0.60
+	TIMES SOURCE:中毒充足 , 0.60
+	SOURCE:反感追加 = 3000
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:性行動 , 0.50
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:達成感 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:達成感 , 2.00
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.60
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:性行動 , 0.30
+	TIMES SOURCE:中毒充足 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:性行動 , 0.60
+	TIMES SOURCE:中毒充足 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:中毒充足 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.20
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:中毒充足 , 1.50
+ELSE
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:快Ｖ , 1.50
+	TIMES SOURCE:快Ａ , 1.50
+	TIMES SOURCE:性行動 , 1.80
+	TIMES SOURCE:中毒充足 , 1.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｃ , 0.50
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:性行動 , 0.60
+	TIMES SOURCE:中毒充足 , 0.60
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:中毒充足 , 0.80
+	TIMES SOURCE:反感追加 , 1.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:中毒充足 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｃ , 1.30
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:中毒充足 , 1.20
+	TIMES SOURCE:反感追加 , 0.80
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｃ , 1.60
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:性行動 , 1.40
+	TIMES SOURCE:中毒充足 , 1.40
+	TIMES SOURCE:反感追加 , 0.60
+ELSE
+	TIMES SOURCE:快Ｃ , 2.00
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:性行動 , 1.60
+	TIMES SOURCE:中毒充足 , 1.60
+	TIMES SOURCE:反感追加 , 0.30
+ENDIF
+
+SOURCE:屈従 += LOCAL:2*3
+SOURCE:恭順追加 += LOCAL:2*3
+SOURCE:中毒充足 += LOCAL:2
+
+TCVAR:Ｖ経験 += 1
+
+;膣内の汚れがリセット
+STAIN:ヴァギナ = 0
+CALL MINUS_RAND_LOOP, TARGET, 5, 3, 1
+CFLAG:3666 = 0
+TFLAG:103 = 0
+;避妊膜解除
+SIF TEQUIP:87 == 2
+	TEQUIP:87 = 0
+
+TCVAR:Ａ経験 += 1
+
+;腸内(アナル)の汚れがリセット
+STAIN:アナル = 8
+
+;膀胱内圧力上昇（放尿レベル増加/尿意が催促されることで利尿剤効果）
+IF TALENT:おもらし癖 == 0
+	LOCAL:5 = 1 + (EXP:放尿経験 / 10)
+	SIF LOCAL:5 > 10
+		LOCAL:5 = 10
+	IF TEQUIP:利尿剤
+		CFLAG:放尿レベル += LOCAL:5*2
+	ELSE
+		CFLAG:放尿レベル += LOCAL:5
+	ENDIF
+ENDIF
+IF TEQUIP:利尿剤 == 0
+	PRINTFORML %CALLNAME:TARGET%は急激に尿意を催す様になった
+	TEQUIP:利尿剤 = 1
+ENDIF
+
+TCVAR:尿道開発経験 += 1
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_546
+IF TEQUIP:媚薬 == 3
+	PRINTFORML %CALLNAME:TARGET%の子宮に居座っていた触手は突如先端から洗浄液を放出した
+	PRINTFORML 大量の洗浄液を注ぎ込まれ、%CALLNAME:TARGET%の下腹部は異常なまでに大きく膨らんでいる…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の膣に鎮座していた触手から突如先端から洗浄液をまき散らた
+	PRINTFORML 勢いよく発射された洗浄液は子宮口を通り、%CALLNAME:TARGET%の子宮内にも流れ込んだ
+ENDIF
+
+IF STAIN:ヴァギナ & 4
+	PRINT その後触手は激しく身をくねらせ、
+	IF TEQUIP:媚薬 == 3
+		SIF TEQUIP:87 == 2
+			PRINT 塗られていた避妊膜ごと
+		PRINTL 膣と子宮内に溜まっていた精液を根こそぎかき出した
+	ELSE
+		PRINTL 膣内に残っていた精液を全てこそぎ取った
+	ENDIF
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 洗浄液と共に下の口から吐き出される様子を見た%CALLNAME:TARGET%は
+		IF ABL:精液中毒 >= 4
+			PRINTL 露骨にガッカリした表情を浮かべている…
+		ELSEIF TALENT:淫壷
+			PRINTL もっと膣内をかき回してほしいとねだってきた…
+		ELSEIF TALENT:淫乱
+			PRINTL どことなく残念そうな表情を浮かべている…
+		ELSEIF CFLAG:好感度 < 500
+			PRINTL 嫌悪感に満ちた表情でそっぽを向いた…
+		ELSE
+			PRINTL 反応に困っているのか完全に固まっている…
+		ENDIF
+	ENDIF
+ELSE
+	PRINT その後触手は激しく身をくねらせ、
+	IF TEQUIP:媚薬 == 3
+		PRINT 子宮内の
+	ELSE
+		PRINT 膣内の
+	ENDIF
+	PRINTL 襞を一つ一つまるで舐めるようなしぐさで汚れを落としていった
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 大量の洗浄液が下の口からごぽごぽと吐き出される様子を見た%CALLNAME:TARGET%は
+		IF TALENT:淫壷
+			PRINTL もっと膣内をかき回してほしいとねだってきた…
+		ELSEIF TALENT:淫乱
+			PRINTL どことなく残念そうな表情を浮かべている…
+		ELSEIF CFLAG:好感度 < 500
+			PRINTL 嫌悪感に満ちた表情でそっぽを向いた…
+		ELSE
+			PRINTL 反応に困っているのか完全に固まっている…
+		ENDIF
+	ENDIF
+ENDIF
+
+PRINTFORML 一方で%CALLNAME:TARGET%のアナルへと滑り込んでいた触手は軽く身震いすると、先端から大量の洗浄液が吐き出された
+PRINTFORM 勢いよく発射された洗浄液は%CALLNAME:TARGET%の腸内に溜まっていた
+SIF STAIN:アナル & 4
+	PRINT 精液と
+PRINTL 汚物を掻きとり、腸内の汚れを一掃していった
+
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM 大量の洗浄液で腸内を漱がれる感触に%CALLNAME:TARGET%は
+	IF TALENT:淫尻 && ABL:Ａ感覚 >= 5
+		PRINTL 快楽の余り思わず嬌声をあげてしまったようだ…
+	ELSEIF ABL:Ａ感覚 >= 5
+		PRINTL 快楽に満ちた笑顔を浮かべている…
+	ELSEIF ABL:Ａ感覚 >= 3
+		PRINTL 気持ち良さそうに身震いを一つした…
+	ELSEIF ABL:Ａ感覚 >= 1
+		PRINTL 僅かに快楽を感じていることに困惑しているようだ…
+	ELSE
+		PRINTL 嫌悪感に満ちた表情でそっぽを向いた…
+	ENDIF
+ENDIF
+
+PRINTFORML さらには、触手の先端から液体が%CALLNAME:TARGET%の鼻の穴や耳の中に流し込まれ、強制的に鼻や耳の中を濯がされた
+PRINTFORML 最後に、触手を通じて%CALLNAME:TARGET%の尿道から膀胱へ洗浄液を注ぎ込んだ
+PRINTL そして膀胱が限界まで膨らんだ瞬間、今度は逆に中の溶液が吸い出されていった…
+
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORML %CALLNAME:TARGET%は洗浄液を何度も膀胱内に出し入れされるうちにまるで放尿しているような錯覚に襲われた
+	PRINTL 
+	PRINTFORM %CALLNAME:TARGET%は
+	IF TALENT:尿道狂 && ABL:マゾっ気 >= 5
+		PRINTL 下腹部の鈍痛と尿意をおおいに悦しんでいる…
+		PRINTL 膀胱内に洗浄液が出し入れされる度に黄色い声をあげ、妖しげに腰を振っている…
+	ELSEIF ABL:マゾっ気 >= 5
+		PRINTL 大量の洗浄液を膀胱内に注がれる責めにも
+		PRINTL 快楽で満ちた笑顔を浮かべている…
+	ELSEIF ABL:マゾっ気 >= 3
+		PRINTL 強制的に尿意を催されたものの、
+		PRINTL それすら快楽を感じているのか切なげな声を上げて身震いしている…
+	ELSEIF ABL:マゾっ気 >= 1
+		PRINTL 僅かに快楽を感じているのか
+		PRINTL うめき声に交じって時折艶っぽい声をあげている…
+	ELSE
+		PRINTL 激しい尿意と下腹部の激痛に顔を歪ませ、
+		PRINTL 額には大粒の脂汗を浮かべている…
+	ENDIF
+ENDIF
+

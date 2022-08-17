@@ -1,0 +1,354 @@
+﻿;=============================================================================
+;たわし洗い
+;=============================================================================
+;調教者の足に跨って奴隷が陰毛で洗ってあげるプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE354
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:354 > 0
+	RETURN 0
+;お風呂場プレイ中でプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ == 0 || ITEM:プレイマット == 0
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)3未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 3
+		RETURN 0
+ENDIF
+;[パイパン]だと不可、生えそろっていないと無理
+SIF TALENT:パイパン || (CFLAG:36 && BASE:陰毛 < 250)
+	RETURN 0
+;テキストより[小柄体型]はデフォでツルツル。[小人体型]もそれに準じる
+SIF (TALENT:小柄体型 || TALENT:小人体型) && CFLAG:36 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具
+	RETURN 0
+;Ｂ系装着具使用中は不可
+SIF TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;アイマスク使用中は不可
+SIF TEQUIP:目装着器具
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;助手がスク水とビキニと褌以外のコスプレ中はだめ
+SIF ASSIPLAY && TEQUIP:PLAYER:コスチュームプレイ > 1 && TEQUIP:PLAYER:コスチュームプレイ != 2 && TEQUIP:PLAYER:コスチュームプレイ != 12 && TEQUIP:PLAYER:コスチュームプレイ != 17
+	RETURN 0
+;ビキニ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 12
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;人魚はダメ
+SIF TALENT:人魚 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 354) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM354
+PRINTL たわし洗い
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 354
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = たわし洗い
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 40
+DOWNBASE:1 += 160
+
+SOURCE:屈従 = 1800
+SOURCE:逸脱 = 1500
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 = 500
+	SOURCE:達成感 = 200
+	SOURCE:不潔 = 200
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 = 700
+	SOURCE:達成感 = 400
+	SOURCE:不潔 = 1500
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:性行動 = 900
+	SOURCE:達成感 = 650
+	SOURCE:不潔 = 100
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:性行動 = 1100
+	SOURCE:達成感 = 950
+	SOURCE:不潔 = 50
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:性行動 = 1300
+	SOURCE:達成感 = 1450
+	SOURCE:不潔 = 20
+ELSE
+	SOURCE:性行動 = 1500
+	SOURCE:達成感 = 1850
+	SOURCE:不潔 = 0
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 50
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 200
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 400
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1000
+ELSE
+	SOURCE:快Ｃ = 2000
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.30
+	TIMES SOURCE:達成感 , 1.30
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.60
+	TIMES SOURCE:達成感 , 1.60
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.90
+	TIMES SOURCE:達成感 , 1.90
+ELSE
+	TIMES SOURCE:性行動 , 2.30
+	TIMES SOURCE:達成感 , 2.30
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+
+;調教者の足←対象のＶの汚れが移動する
+STAIN:PLAYER:足 |= STAIN:ヴァギナ
+
+;口と胸以外の奴隷の汚れがリセット、このプレイでは調教者の汚れはリセットされない。
+STAIN:手 = 0
+STAIN:ペニス = 2
+STAIN:ヴァギナ = 1
+STAIN:アナル = 8
+;主人経験フラグ
+SIF ASSIPLAY == 0 && EXP:フェラ経験 >= EXPLV:3
+	TFLAG:50 += 1
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+
+;調教者がふたなり
+SIF TALENT:PLAYER:ふたなり
+	SOURCE:屈従 /= 2
+
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_354
+PRINTFORML %CALLNAME:TARGET%に陰毛に泡を塗ってそれをスポンジに見立てて身体を洗うように命令してみたが拒否された。
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_354
+IF TFLAG:699 > 0
+	PRINTFORM %CALLNAME:MASTER%が何もしないでいると、命令していないのに
+	IF TALENT:サド
+		PRINTL 男が喜ぶ行為を知り尽くしているかの様に
+	ELSE
+		PRINTL 思いついたかの様に
+	ENDIF
+ENDIF
+PRINTFORM %CALLNAME:TARGET%はソープを泡立たせて自分の陰毛に塗りたくり、
+SIF TALENT:恋慕
+	PRINT うっとりとした表情をしつつ
+IF TALENT:小人体型 || TALENT:小柄体型
+	PRINTFORML %CALLNAME:PLAYER%の足になんとか乗っかって、全身を揺らしながら自分の陰毛を目一杯擦りつけた…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の足に跨って、自分の陰毛を目一杯擦りつけた…
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_354, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:奉仕精神
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+ENDIF
+;男嫌い
+IF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
+;女嫌い
+ELSEIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
+ENDIF
+;汚臭鈍感
+IF TALENT:汚臭鈍感
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 1
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
+;汚臭敏感
+ELSEIF TALENT:汚臭敏感
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
+ENDIF
+;献身的
+IF TALENT:献身的
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 6
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
+ENDIF
+;快感の否定
+IF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;調教者がふたなり
+IF TALENT:PLAYER:ふたなり
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:PLAYER%が%TALENTNAME:121%({LOCAL:99})
+ENDIF
+
+;調教者の足の汚れ
+TFLAG:242 = COMORDER_STAIN_CALC(6, 0)
+
+;汚れあり
+IF TFLAG:242
+	RESULTS = %RESULTS% - 
+	TFLAG:240 -= TFLAG:242
+	RESULTS = %RESULTS% 汚れあり
+	;汚臭鈍感
+	IF TALENT:汚臭鈍感
+		RESULTS = %RESULTS%、%TALENTNAME:61%
+	ELSEIF TALENT:汚臭敏感
+		RESULTS = %RESULTS%、%TALENTNAME:62%
+	ENDIF
+	RESULTS = %RESULTS%({TFLAG:242})
+	LOCAL:99 = 1
+ENDIF
+
+TFLAG:241 = 30

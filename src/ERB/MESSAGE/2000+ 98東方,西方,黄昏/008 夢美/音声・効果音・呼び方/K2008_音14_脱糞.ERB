@@ -1,0 +1,58 @@
+﻿;YM→YMAEコンバータによって作成されました
+;=================================================
+;■脱糞（ランク分けなし）
+;-------------------------------------------------
+;ARGで表示長（反復回数）の指定が可能
+;=================================================
+@K2008FS_SE14_TEXT(ARG = 0)
+#FUNCTIONS
+#DIM _COUNT
+#DIM _REP
+#DIMS _SETEXT
+#DIM _RANK
+
+_RANK = K2008F_RANK()
+_SETEXT =
+
+SELECTCASE ARG
+	CASE 0
+		_REP = _RANK + RAND:(2 + _RANK)
+		_REP = MIN(5, _REP)
+		_REP = MAX(2, _REP)
+	CASE IS < 0
+		THROW 【K2008エラー】@K2008_SE14_TEXTの引数は正の値が必要です。
+	CASEELSE
+		_REP = ARG
+ENDSELECT
+
+FOR _COUNT, 0, _REP
+	;ランク分けで変えてみる
+	IF _RANK >= 3
+		;たまには放屁
+		IF RAND:3 == 0 && _COUNT >= 1
+			_SETEXT += K2008FS_SE("強放屁", 1)
+			CONTINUE
+		ELSE
+			_SETEXT += K2008FS_SPLITRANDS("にゅりゅにゅりゅっ,ニュリュニュリュッ,みぢみぢぃ,むりむりっ,ムリムリッ,ぶぼぉっ,ブボォッ,ぶぶりっ,ブブリッ,ぶりぶりぃっ,ブリブリィッ,ぶりゅぶりゅっ,ブリュブリュッ,ぶりゅぶりゅりゅーっ,ブリュブリュリューッ,ぶりりぃっ,ブリリィッ")
+		ENDIF
+	ELSE
+		;たまには放屁
+		IF RAND:3 == 0 && _COUNT >= 1
+			_SETEXT += K2008FS_SE("放屁", 1)
+			CONTINUE
+		ELSE
+			_SETEXT += K2008FS_SPLITRANDS("にゅぶぅっ,ニュリィッ,ニュリュッ,みぢぃ,ミヂィ,みちっ,ミチッ,みぢっ,ミヂッ,みぢみぢぃ,むりっ,ムリッ,ぶばっ,ブバッ,ぶびぃっ,ブビィッ,ぶぼっ,ブボッ,ぶぼりゅっ,ブボリュッ,ぶりっ,ブリッ,ぶりゅっ,ブリュッ")
+		ENDIF
+	ENDIF
+
+	SELECTCASE _COUNT
+		CASE _REP - 1
+			;文末
+			_SETEXT += K2008FS_SPLITRANDS("！,……")
+		CASEELSE
+			;区切り文字
+			_SETEXT += K2008FS_SPLITRANDS("、,！,!!,　,　,")
+	ENDSELECT
+NEXT
+
+RETURNF _SETEXT

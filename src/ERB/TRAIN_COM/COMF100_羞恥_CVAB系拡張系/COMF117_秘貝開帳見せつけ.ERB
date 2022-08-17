@@ -1,0 +1,157 @@
+﻿;=============================================================================
+;秘貝開帳見せつけ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE117
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:117 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;調教者の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(PLAYER) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;眼隠しと耳栓両方つけていた場合は意味がないので実行できない
+SIF TEQUIP:目装着器具 && TEQUIP:耳装着器具
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;助手が褌着用中の場合ダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 117) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM117
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;前回と今回の調教者同じかつ、前回が秘貝開帳もしくは相互秘貝開帳の場合、相互秘貝開帳へ
+IF (PREVCOM == 110 || PREVCOM == 631) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	SIF EXCOM_ABLE631() == 1
+		JUMP COM631
+ENDIF
+
+PRINTL 秘貝開帳見せつけ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 117
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 秘貝開帳見せつけ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 5
+DOWNBASE:1 += 15
+
+SOURCE:露出 = 120
+SOURCE:性行動 = 15
+SOURCE:屈従 = 10
+SOURCE:不潔 = 100
+SOURCE:逸脱 = 250
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:欲情追加 = 10
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:欲情追加 = 20
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:欲情追加 = 40
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:欲情追加 = 80
+ELSE
+	SOURCE:欲情追加 = 160
+ENDIF
+
+SIF ABL:PLAYER:露出癖 >= 3
+	TCVAR:PLAYER:自慰経験 += 1
+
+;調教者のＶ⇔指の汚れが移動
+STAIN:PLAYER:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:PLAYER:ヴァギナ
+
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_117
+IF ASSIPLAY
+	PRINTFORM %CALLNAME:MASTER%に命令され、%CALLNAME:ASSI%は
+	IF ABL:ASSI:露出癖 == 0
+		PRINTFORML 泣きそうな顔をしつつ%CALLNAME:MASTER%を睨んだが、
+		PRINTFORM 再度命令されるとしぶしぶといった様子で自分の
+		IF TALENT:ASSI:小柄体型
+			PRINT 幼いワレメに
+		ELSE
+			PRINT 縦筋に
+		ENDIF
+		PRINTL 指を突きいれ、左右に広げて見せた
+	ELSEIF ABL:ASSI:露出癖 == 1
+		PRINTFORML 顔を真っ赤にしながらもおずおずと自分の陰唇を拡げて見せた
+	ELSEIF ABL:ASSI:露出癖 == 2
+		PRINTFORML 下腹部に手を置き、人差し指と中指でチョキを作るようにして%CALLNAME:TARGET%に自分の秘所を曝した
+		SIF STAIN:ASSI:ヴァギナ & 6 == 0
+			PRINTFORML 広がりきった陰門からこちらを覗く膣口はまるで何かを待っているかのように怪しげに蠢いている……
+	ELSEIF ABL:ASSI:露出癖 == 3
+		PRINTFORML 慣れた様子で片手で陰唇を開き、空いた手で陰核を弄り始めた
+		PRINTFORML %CALLNAME:ASSI%の手が陰核に触れるたびに膣口から愛液を滴らせている……
+	ELSEIF ABL:ASSI:露出癖 == 4
+		PRINTFORML 両手の指を使って陰唇だけでなく、膣口も同時に拡げた
+		PRINTFORML 膣の中を見られていることに感じているのか%CALLNAME:ASSI%の頬は仄かに紅く染まっている
+	ELSE
+		PRINTFORML 両手の指を陰唇にひっかけ、膣口ごと%CALLNAME:TARGET%に見せつけるように大きく拡げた
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:MASTER%はみずから自分の
+	IF TALENT:MASTER:小柄体型
+		PRINT 幼いワレメに
+	ELSE
+		PRINT 縦筋に
+	ENDIF
+	PRINTFORML 指を突きいれ、左右に広げて%CALLNAME:TARGET%に見せた
+	SIF STAIN:MASTER:ヴァギナ & 6 == 0
+		PRINTFORML 広がりきった陰門からこちらを覗く膣口はまるで何かを待っているかのように怪しげに蠢いている……
+ENDIF
+IF TALENT:恥じらい
+	PRINTFORML %CALLNAME:PLAYER%の痴態を目の当たりにした%CALLNAME:TARGET%は
+	PRINTL 羞恥心を煽られ、朱に染まった顔を僅かにそむけてしまった
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の痴態を%CALLNAME:TARGET%はじっと見続けている……
+ENDIF

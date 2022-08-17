@@ -1,0 +1,205 @@
+﻿;=============================================================================
+;乳首クリップ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE195
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:195 > 0
+	RETURN 0
+;Ｂ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:豆つまみ == 0
+	RETURN 0
+;他のＢ系装着具使用中は不可
+SIF (TEQUIP:Ｂ系装着器具 && TEQUIP:Ｂ系装着器具 != 5) || TEQUIP:サラシ
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｂ系装着器具 == 5
+	RETURN 1
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 11 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;焦らしプレイ中は不可
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 195) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM195
+PRINTL 乳首クリップ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 195
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 乳首クリップ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 25
+DOWNBASE:1 += 10
+
+IF TEQUIP:Ｂ系装着器具 == 5
+	TEQUIP:Ｂ系装着器具 = 0
+	RETURN 1
+ENDIF
+
+;ABL:Ｂ感覚
+IF ABL:Ｂ感覚 == 0
+	SOURCE:痛み = 250
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:痛み = 350
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:痛み = 450
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:痛み = 550
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:痛み = 750
+ELSE
+	SOURCE:痛み = 900
+ENDIF
+SOURCE:逸脱 = 600
+
+TEQUIP:Ｂ系装着器具 = 5
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;洗濯バサミ(乳首)
+;-------------------------------------------------
+@EQUIP_COM195
+PRINTL ＜洗濯バサミ(乳首)＞
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 10
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL = 500
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL = 700
+ELSEIF ABL:Ｂ感覚 == 2
+	LOCAL = 900
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL = 1100
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL = 1300
+ELSE
+	LOCAL = 1800
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 140
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 280
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 560
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 1120
+ELSE
+	LOCAL:1 = 2240
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 1.40
+	TIMES LOCAL:1 , 0.20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 1.30
+ENDIF
+
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 1.50
+ENDIF
+;マゾ
+SIF TALENT:マゾ
+	TIMES LOCAL:1 , 1.20
+;Ｂ敏感
+IF TALENT:Ｂ敏感
+	TIMES LOCAL , 2.00
+;Ｂ鈍感
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL , 0.75
+ENDIF
+;ドＭ
+SIF TALENT:ドＭ
+	TIMES LOCAL:1 , 1.50
+
+SOURCE:快Ｂ += (LOCAL+LOCAL:1)/10
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:痛み += LOCAL
+SOURCE:屈従 += (LOCAL+LOCAL:1)/2
+SOURCE:逸脱 += LOCAL+LOCAL:1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_195
+IF TEQUIP:Ｂ系装着器具 == 5
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%が手を伸ばそうとする前に、%CALLNAME:TARGET%は乳首から洗濯バサミを外して放り投げた…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の乳首から洗濯バサミを外した…
+	ENDIF
+ELSE
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%は嫌がる%CALLNAME:TARGET%を無理やり押さえつけ、\@(TALENT:Ｂ敏感) ? 敏感な # \@乳首を洗濯バサミで挟んだ…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の\@(TALENT:Ｂ敏感) ? 敏感な # \@乳首を洗濯バサミで挟んだ…
+	ENDIF
+ENDIF

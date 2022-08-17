@@ -1,0 +1,2529 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;キャラ別口上を一括管理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;通常の調教でのキャラ口上処理
+;=============================================================================
+;--------------------------------------------------
+;調教開始時の口上関係
+;--------------------------------------------------
+;調教開始の時に呼び出されますが、それ以降その調教中で呼び出されることはありません
+;表示順序は、主人→助手→対象 となり、それぞれが排他ではありません
+@MESSAGE_TRAIN_START_MAIN
+IF EQUIP:戦闘中
+	CALL MESSAGE_BATTLE_START_MASTER
+	CALL MESSAGE_BATTLE_START_ASSI
+	CALL MESSAGE_BATTLE_START_SLAVE
+;REVERSALモードのときの逆口上を呼び出す
+ELSEIF FLAG:4 == 3
+	CALL MESSAGE_TRAIN_START_REV
+ELSE
+	CALL MESSAGE_TRAIN_START_MASTER
+	CALL MESSAGE_TRAIN_START_ASSI
+	CALL MESSAGE_TRAIN_START_SLAVE
+ENDIF
+
+;………………………………………………
+;主人の調教開始時の口上
+;………………………………………………
+;調教開始時の主人の口上を呼び出します
+@MESSAGE_TRAIN_START_MASTER
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:MASTER}
+		TRYCALLFORM KOJO_{NO:MASTER}_MASTER_MESSAGE_TRAIN_START
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;助手の調教開始時の口上
+;………………………………………………
+;調教開始時の助手の口上を呼び出します
+@MESSAGE_TRAIN_START_ASSI
+;助手が居ないなら弾く
+SIF ASSI < 0
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:ASSI:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:ASSI:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:ASSI}
+		TRYCALLFORM KOJO_{NO:ASSI}_ASSI_MESSAGE_TRAIN_START
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;奴隷の調教開始時の口上
+;………………………………………………
+@MESSAGE_TRAIN_START_SLAVE
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_SLAVE_MESSAGE_TRAIN_START
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_SLAVE_MESSAGE_TRAIN_START
+ENDIF
+
+;………………………………………………
+;主人の戦闘開始時の口上
+;………………………………………………
+;調教開始時の主人の口上を呼び出します
+@MESSAGE_BATTLE_START_MASTER
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:MASTER}
+		TRYCALLFORM KOJO_{NO:MASTER}_MASTER_MESSAGE_BATTLE_START
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;助手の戦闘開始時の口上
+;………………………………………………
+;調教開始時の助手の口上を呼び出します
+@MESSAGE_BATTLE_START_ASSI
+;助手が居ないなら弾く
+SIF ASSI < 0
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:ASSI:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:ASSI:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:ASSI}
+		TRYCALLFORM KOJO_{NO:ASSI}_ASSI_MESSAGE_BATTLE_START
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;奴隷の戦闘開始時の口上
+;………………………………………………
+@MESSAGE_BATTLE_START_SLAVE
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_SLAVE_MESSAGE_BATTLE_START
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_SLAVE_MESSAGE_BATTLE_START
+ENDIF
+
+;--------------------------------------------------
+;調教終了時の口上関係
+;--------------------------------------------------
+;調教終了の時に呼び出されます
+;表示順序は、主人→助手→対象 となり、それぞれが排他ではありません
+@MESSAGE_TRAIN_END_MAIN
+IF EQUIP:戦闘中
+	CALL MESSAGE_BATTLE_END_MASTER
+	CALL MESSAGE_BATTLE_END_ASSI
+	CALL MESSAGE_BATTLE_END_SLAVE
+;REVERSALモードのときの逆口上を呼び出す
+ELSEIF FLAG:4 == 3
+	CALL MESSAGE_TRAIN_END_REV
+ELSE
+	CALL MESSAGE_TRAIN_END_MASTER
+	CALL MESSAGE_TRAIN_END_ASSI
+	CALL MESSAGE_TRAIN_END_SLAVE
+ENDIF
+
+;………………………………………………
+;主人の調教終了時の口上
+;………………………………………………
+;調教終了時の主人の口上を呼び出します
+@MESSAGE_TRAIN_END_MASTER
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:MASTER}
+		TRYCALLFORM KOJO_{NO:MASTER}_MASTER_MESSAGE_TRAIN_END
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;助手の調教終了時の口上
+;………………………………………………
+;調教終了時の助手の口上を呼び出します
+@MESSAGE_TRAIN_END_ASSI
+;助手が居ないなら弾く
+SIF ASSI < 0
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:ASSI:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:ASSI:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:ASSI}
+		TRYCALLFORM KOJO_{NO:ASSI}_ASSI_MESSAGE_TRAIN_END
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;奴隷の調教終了時の口上
+;………………………………………………
+@MESSAGE_TRAIN_END_SLAVE
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 == 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_SLAVE_MESSAGE_TRAIN_END
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_SLAVE_MESSAGE_TRAIN_END
+ENDIF
+
+;………………………………………………
+;主人の戦闘終了時の口上
+;………………………………………………
+;調教終了時の主人の口上を呼び出します
+@MESSAGE_BATTLE_END_MASTER
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:MASTER}
+		TRYCALLFORM KOJO_{NO:MASTER}_MASTER_MESSAGE_BATTLE_END
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;助手の戦闘終了時の口上
+;………………………………………………
+;調教終了時の助手の口上を呼び出します
+@MESSAGE_BATTLE_END_ASSI
+;助手が居ないなら弾く
+SIF ASSI < 0
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:ASSI:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:ASSI:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:ASSI}
+		TRYCALLFORM KOJO_{NO:ASSI}_ASSI_MESSAGE_BATTLE_END
+	CATCH
+	ENDCATCH
+ENDIF
+
+;………………………………………………
+;奴隷の戦闘終了時の口上
+;………………………………………………
+@MESSAGE_BATTLE_END_SLAVE
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 == 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_SLAVE_MESSAGE_BATTLE_END
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_SLAVE_MESSAGE_BATTLE_END
+ENDIF
+
+;--------------------------------------------------
+;調教者変更時の助手の反応表示関係
+;--------------------------------------------------
+;助手切り替え時に出力されます。
+;助手に交代した時、助手から戻したときに助手がしゃべる為の機能
+@DISPLAY_KOJO_MESSAGE_PLAYERCHANGE
+;助手が居ないなら処理を中断(念のため)
+SIF ASSI < 0
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:ASSI:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:ASSI:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:ASSI}
+		TRYCALLFORM KOJO_{NO:ASSI}_MESSAGE_PLAYERCHANGE
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:ASSI:9 & 4
+	TRYCALL KOJO_X_MESSAGE_PLAYERCHANGE
+ENDIF
+
+;--------------------------------------------------
+;調教者変更時の奴隷の反応表示関係
+;--------------------------------------------------
+;助手切り替え時に出力されます。
+;助手に交代した時、助手から戻したときに対象がしゃべる為の機能
+;調教者変更時の助手の反応とは排他ではありません
+@DISPLAY_KOJO_MESSAGE_CHANGEASSI
+;助手が居ないなら処理を中断(念のため)
+SIF ASSI < 0
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_CHANGEASSI
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_CHANGEASSI
+ENDIF
+
+;--------------------------------------------------
+;調教コマンド実行拒否の表示関係
+;--------------------------------------------------
+;コマンド拒否時に地の文または口上を表示できます。
+;各コマンド実行拒否の関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+@DISPLAY_KOJO_DENIAL_MESSAGE_COM, ARG
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_DENIAL_MESSAGE_COM, ARG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+ENDIF
+;地の文
+IF CFLAG:9 & 2
+	TRYCCALLFORM SYSTXT_DENIAL_MESSAGE_COM_{ARG}
+		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_DENIAL_MESSAGE, ARG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_DENIAL_MESSAGE
+ENDIF
+
+;--------------------------------------------------
+;調教者の攻撃（セクハラ）が失敗した時のテキストの表示関係
+;--------------------------------------------------
+;コマンド拒否時に地の文または口上を表示できます。
+;各コマンド実行拒否の関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+@DISPLAY_KOJO_DODGE_MESSAGE_COM, ARG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;地の文
+IF CFLAG:9 & 2
+	TRYCCALLFORM SYSTXT_DODGE_MESSAGE_COM_{ARG}
+		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_DODGE_MESSAGE, ARG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_DODGE_MESSAGE
+ENDIF
+
+;--------------------------------------------------
+;奴隷の攻撃が失敗した時のテキストの表示関係
+;--------------------------------------------------
+;コマンド拒否時に地の文または口上を表示できます。
+;各コマンド実行拒否の関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+@DISPLAY_KOJO_MISS_MESSAGE_COM, ARG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;地の文
+IF CFLAG:9 & 2
+	TRYCCALLFORM SYSTXT_MISS_MESSAGE_COM_{ARG}
+		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MISS_MESSAGE, ARG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_MISS_MESSAGE
+ENDIF
+
+;--------------------------------------------------
+;調教コマンドの表示関係
+;--------------------------------------------------
+;コマンド実行時に地の文または口上を表示できます。
+;各コマンドの関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+;口上分岐用にTFLAG:99やTFLAG:201などを使ってる場合があります。
+;………………………………………………
+;調教コマンドの固有処理実行直前
+;………………………………………………
+;各調教コマンド(COMFxxx.ERB)呼び出し直後に呼び出されます
+;調教コマンドの結果が判明する前に表示したい場合、利用してください
+;地の分はここで表示
+@DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_TRAIN_MESSAGE_F_COM
+;口上を表示しない(コンフィグ設定)
+ELSEIF (FLAG:10 & 1) == 0
+	RETURN 0
+ENDIF
+
+;コマンド初回実行判定(TFLAG:95が1の時初回実行である)
+TFLAG:95 = (CHECK_COM_FIRST() == 1) ? 1 # 0
+
+;口上を表示しない(キャラ個別設定)
+SIF CFLAG:9 & 1
+	RETURN 0
+
+;地の文
+IF CFLAG:9 & 2
+	TRYCCALLFORM SYSTXT_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+		CATCH
+			TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_GENERAL
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	;口上を表示できるか判定
+	SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 1
+		TRYCALLFORM KOJO_X_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+ENDIF
+
+;………………………………………………
+;調教コマンドの固有処理実行直後
+;………………………………………………
+;調教コマンドの固有処理実行直後に呼び出される
+@DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+;コマンド初回判定を更新(PANCTION_YM.ERB参照)
+CALL COM_FLAG
+
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_TRAIN_MESSAGE_S_COM
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+ENDIF
+;地の文
+SIF CFLAG:9 & 2
+	CALL KOJO_X_TRAIN_MESSAGE_EQUIPTEXT
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_BEFORE
+			;@KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_BEFOREでRETURN 1をするとコマンド口上は表示しない
+			IF RESULT != 1
+				IF FLAG:10 & 64
+					TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+					TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_GENERAL
+				ELSE
+					TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+					CATCH
+						TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_GENERAL
+					ENDCATCH
+				ENDIF
+			ENDIF
+		CATCH
+			;そもそもBEFORE関数がなかった
+			IF FLAG:10 & 64
+				TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+				TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_GENERAL
+			ELSE
+				TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+				CATCH
+					TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_GENERAL
+				ENDCATCH
+			ENDIF
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	;口上を表示できるか判定
+	IF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 1
+		IF FLAG:10 & 64
+			TRYCALLFORM KOJO_X_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+			CALL KOJO_X_TRAINVOICE
+		ELSE
+			TRYCCALLFORM KOJO_X_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+			CATCH
+				CALL KOJO_X_TRAINVOICE
+			ENDCATCH
+		ENDIF
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;調教コマンドの固有処理実行直後における調教者側の口上表示
+;--------------------------------------------------
+;調教者→控え(調教者では無い方。主人のみの場合は飛ばされる)→奴隷の順で口上を表示
+;調教者側の口上なので関数の呼び出し自体は無条件
+;ただし、「REVERSALモード」や「口上非表示」に設定しているときはここで弾かれる
+;また、判定は「調教対象の口上」を用いるため、調教対象は専用口上を利用していないとこの機能も有効にならない
+;専用口上の利用が原則のため、表示する側も専用口上を利用する設定にする必要がある
+;
+;この機能を有効にするには調教対象の口上は判定用として以下の2つの関数を用意する必要がある
+;『@KOJO_{調教対象のキャラ番号}_TRAIN_MESSAGE_PLAYER_JUDGE, ARG』　……　現在の調教者(＝PLAYER)の口上を表示するための判定関数
+;『@KOJO_{調教対象のキャラ番号}_TRAIN_MESSAGE_RESERVE_JUDGE, ARG』　……　控えの口上を表示するための判定関数
+;表示を許可するキャラ番号がARGと合致していた時、RETURN 1を入れることで対象の口上が表示可能になる
+;
+;例）調教対象：霊夢(キャラ番号1番)　助手：魔理沙(キャラ番号2番)
+;この状態で魔理沙が調教者のとき、魔理沙が霊夢を調教している様子の口上をしゃべらせたいときは霊夢の口上ファイルに以下の関数を挿入する必要がある
+;@KOJO_0_TRAIN_MESSAGE_PLAYER_JUDGE, ARG
+;;調教者が魔理沙のとき
+;SIF ARG == 1
+;	RETURN 1
+;RETURN 0
+;
+;なお、魔理沙が控え(ここでは調教者では無いが、調教に参加している人物を指す。主人または助手が該当)の場合、新たに判定関数を用意しない限りしゃべらない
+@DISPLAY_KOJO_TRAIN_MESSAGE_TRAINER_COM
+;REVERSALモードのときは表示しない
+IF FLAG:4 == 3
+	RETURN 0
+;口上を表示しない(コンフィグ設定)
+ELSEIF (FLAG:10 & 1) == 0
+	RETURN 0
+;調教対象が専用口上を利用しない場合も表示しない
+ELSEIF (CFLAG:9 & 8) == 0 && (CFLAG:9 & 4) == 0
+	RETURN 0
+ENDIF
+
+;調教者が助手の場合
+IF PLAYER == ASSI
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_PLAYER_COM, ASSI
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_RESERVE_COM, MASTER
+;調教者が主人の場合
+ELSE
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_PLAYER_COM, MASTER
+	SIF ASSI >= 0
+		CALL DISPLAY_KOJO_TRAIN_MESSAGE_RESERVE_COM, ASSI
+ENDIF
+
+;………………………………………………
+;調教者の口上
+;………………………………………………
+@DISPLAY_KOJO_TRAIN_MESSAGE_PLAYER_COM, ARG
+;表示する側が専用口上を利用する場合のみ有効(キャラ個別設定)
+SIF (CFLAG:ARG:9 & 8) == 0
+	RETURN 0
+
+;調教対象の口上の存在判定
+;通す方面の修正
+TRYCCALLFORM TRY_{NO:TARGET}
+	;調教対象の口上が調教者の口上を表示するか否かを判定(キャラ番号基準)
+	TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_PLAYER_JUDGE, NO:ARG
+		SIF RESULT == 0
+			RETURN 0
+	CATCH
+		RETURN 0
+	ENDCATCH
+CATCH
+ENDCATCH
+
+;口上の存在判定
+TRYCCALLFORM TRY_{NO:ARG}
+	TRYCCALLFORM KOJO_{NO:ARG}_TRAIN_MESSAGE_PLAYER_COM_{SELECTCOM}
+	CATCH
+		TRYCALLFORM KOJO_{NO:ARG}_TRAIN_MESSAGE_PLAYER_GENERAL
+	ENDCATCH
+CATCH
+ENDCATCH
+
+;………………………………………………
+;控えの口上
+;………………………………………………
+@DISPLAY_KOJO_TRAIN_MESSAGE_RESERVE_COM, ARG
+;表示する側が専用口上を利用する場合のみ有効(キャラ個別設定)
+SIF (CFLAG:ARG:9 & 8) == 0
+	RETURN 0
+
+;調教対象の口上の存在判定
+TRYCCALLFORM TRY_{NO:TARGET}
+	;調教対象の口上が調教者の口上を表示するか否かを判定(キャラ番号基準)
+	TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_RESERVE_JUDGE, NO:ARG
+		SIF RESULT == 0
+			RETURN 0
+	CATCH
+		RETURN 0
+	ENDCATCH
+CATCH
+	RETURN 0
+ENDCATCH
+
+;口上の存在判定
+TRYCCALLFORM TRY_{NO:ARG}
+	TRYCCALLFORM KOJO_{NO:ARG}_TRAIN_MESSAGE_RESERVE_COM_{SELECTCOM}, ARG
+	CATCH
+		TRYCALLFORM KOJO_{NO:ARG}_TRAIN_MESSAGE_RESERVE_GENERAL, ARG
+	ENDCATCH
+CATCH
+ENDCATCH
+
+;--------------------------------------------------
+;調教コマンドの追加地の文の表示関係
+;--------------------------------------------------
+;調教コマンド実行時に追加地の文または口上を表示できます。
+;各コマンドの関数内に追加地の文の関数を呼び出すことで地の文を追加で表示できます。
+@DISPLAY_KOJO_TRAIN_TEXT_COM
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;地の文
+SIF CFLAG:9 & 2
+	TRYCALLFORM SYSTXT_TRAIN_TEXT_COM_{SELECTCOM}
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_TEXT_COM_{SELECTCOM}
+		CATCH
+			TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_TEXT_GENERAL
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	;口上を表示できるか判定
+	SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 1
+		TRYCALLFORM KOJO_X_TRAIN_TEXT_COM_{SELECTCOM}
+ENDIF
+
+;--------------------------------------------------
+;器具装着の表示関係
+;--------------------------------------------------
+;器具装着時に地の文または口上を表示できます。
+;各コマンドの関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+@DISPLAY_EQUIP_MESSAGE_COM, ARG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;地の文
+IF CFLAG:9 & 2
+	TRYCCALLFORM SYSTXT_EQUIP_MESSAGE_COM_{ARG}
+		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_EQUIP_MESSAGE_COM_{ARG}
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	;口上を表示できるか判定
+	SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 1
+		TRYCALLFORM KOJO_X_EQUIP_MESSAGE_COM_{ARG}
+ENDIF
+
+;-------------------------------------------------
+;パラメータ変動による口上の表示関係
+;-------------------------------------------------
+;パラメータ変動をトリガーにした口上
+@DISPLAY_KOJO_MESSAGE_PALAMCNG
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_MESSAGE_PALAMCNG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+ENDIF
+;地の文
+SIF CFLAG:9 & 2
+	TRYCALLFORM SYSTXT_MESSAGE_PALAMCNG
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_PALAMCNG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALLFORM KOJO_X_MESSAGE_PALAMCNG
+ENDIF
+
+;-------------------------------------------------
+;刻印変動による口上の表示関係
+;-------------------------------------------------
+;刻印変動をトリガーにした口上
+;気絶していない＆設定を地の文にしていない場合、刻印変動後に口上を発動します
+@DISPLAY_KOJO_MESSAGE_MARKCNG
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_MESSAGE_MARKCNG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_MARKCNG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	CALL KOJO_X_MESSAGE_MARKCNG
+ENDIF
+
+;--------------------------------------------------
+;コマンド実行後の個別イベント口上の表示関係
+;--------------------------------------------------
+;気絶していない＆設定を地の文にしていない場合、コマンド処理の最後に出力されます
+@DISPLAY_KOJO_MESSAGE_COMEVENT
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_COMEVENT
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_COMEVENT
+ENDIF
+
+;-------------------------------------------------
+;ビデオ鑑賞時の口上
+;-------------------------------------------------
+;FLAG:51～60を参照すれば何のコマンドかはわかる(中身が-1ならその回の撮影はされていない、コマンド名はVIDEO_COMF(FLAG:XXX)で取得可)
+@DISPLAY_KOJO_MESSAGE_LOOK_VIDEO
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_MESSAGE_LOOK_VIDEO
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_LOOK_VIDEO
+	CATCH
+	ENDCATCH
+ENDIF
+
+;--------------------------------------------------
+;夜イベント及び口上関係
+;--------------------------------------------------
+;コンフィグで設定されており、かつ口上内に実装されているときのみイベントが発生。
+@DISPLAY_KOJO_MESSAGE_NIGHT_EVENT
+;REVERSALモードのときは弾く
+IF FLAG:4 == 3
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+ENDIF
+
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		;夜イベントを利用する口上か否かの判定
+		TRYCCALLFORM KOJO_{NO:TARGET}_EVENT_NIGHT_SETTINGS
+			SIF RESULT == 1
+				TRYCALLFORM KOJO_{NO:TARGET}_EVENT_NIGHT
+		CATCH
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALLFORM KOJO_X_EVENT_NIGHT
+ENDIF
+
+;-------------------------------------------------
+;売春コマンドの口上の表示関係
+;-------------------------------------------------
+;売春コマンド実行時に出力します。口上表示時に地の文表示を制御できます。
+;また、SELECTCOMには該当の売春コマンド番号が、TFLAG:99にはコマンド内の細かい状況が入ります。
+;………………………………………………
+;コマンド実行時の表示処理
+;………………………………………………
+@DISPLAY_KOJO_MESSAGE_PROSTITUTION, ARG
+#LOCALSIZE 1
+;REVERSALモードのときは弾く
+IF FLAG:4 == 3
+	RETURN 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:ARG:9 & 1 || FLAG:1001 & 1
+	RETURN 0
+ENDIF
+
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL = TARGET
+TARGET = ARG
+;地の文
+IF CFLAG:9 & 2
+	TRYCCALLFORM SYSTXT_MESSAGE_PROSTITUTION_COM{SELECTCOM}
+;		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_PROSTITUTION_COM{SELECTCOM}
+	CATCH
+	ENDCATCH
+;汎用口上
+;ELSEIF CFLAG:9 & 4
+;	TRYCALLFORM KOJO_X_MESSAGE_PROSTITUTION_COM{SELECTCOM}
+ENDIF
+;売春コマンドの成否表示
+CALL SYSTXT_MESSAGE_PROSTITUTION_COM_JUDGE
+WAIT
+
+;調教対象を元に戻す
+TARGET = LOCAL
+
+;………………………………………………
+;売春コマンドの成否の表示
+;………………………………………………
+;娼館コンフィグの「売春描写スキップ」を有効にしていた場合は表示されない
+@SYSTXT_MESSAGE_PROSTITUTION_COM_JUDGE
+;客の評価を見る
+SELECTCASE TFLAG:404
+	;悪い・最低の場合
+	CASE IS < 0
+		PRINTL しかし残念ながら、顧客達の欲求を満たす事は出来なかったようだ。
+	;普通の場合
+	CASE 0
+		PRINTL 顧客は満足したようだ
+	;やや良い、良い
+	CASE 1, 2
+		PRINTL 顧客は十分に満足したようだ
+	;やや良い以上の場合
+	CASEELSE
+		PRINTFORML 顧客は%CALLNAME:TARGET%の接待に非常に満足したようだ
+ENDSELECT
+
+;--------------------------------------------------
+;サブイベントの口上関係
+;--------------------------------------------------
+;口上表示時に地の文表示を制御できます。
+;また、ARG:1には該当のイベント番号(イベント番号と中身最新版.txt参照)が、
+;ARG:2には各イベント毎の分岐用の値が入ります。
+@DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, ARG:1, ARG:2, ARG:3 = 0
+#LOCALSIZE 1
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+	JUMP DISPLAY_REVKOJO_MESSAGE_SUB_EVENT, ARG, ARG:1, ARG:2
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:ARG:9 & 1
+	RETURN 0
+ENDIF
+
+;TFLAG:99に分岐用の値を代入
+TFLAG:99 = ARG:2
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL = TARGET
+TARGET = ARG
+;地の文
+IF CFLAG:9 & 2 && TFLAG:500 < 1
+	TRYCALLFORM SYSTXT_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+	SIF ARG:3
+		WAIT
+ENDIF
+IF !TALENT:死亡
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_BEFORE
+			;@KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_BEFOREでRETURN 1をするとコマンド口上は表示しない
+			;また、調教中かつ失神中・失神回復時でも、失神中と失神回復時のイベント口上は必ず表示する
+			SIF RESULT != 1 || (ARG:1 == 11 && TFLAG:899 >= 1 && TFLAG:999) || (ARG:1 == 12 && TFLAG:898 == 1 && TFLAG:999)
+				TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+		CATCH
+			;そもそもBEFORE関数がなかった
+			TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALLFORM KOJO_X_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+ENDIF
+ENDIF
+;調教対象を元に戻す
+TARGET = LOCAL
+
+;--------------------------------------------------
+;日常イベントの口上関係
+;現在、使用していない
+;--------------------------------------------------
+;口上表示時に地の文表示を制御できます。
+;また、ARG:1には該当のイベント番号(イベント番号と中身最新版.txt参照)が、
+;ARG:2には各イベント毎の分岐用の値が入ります。
+@DISPLAY_KOJO_MESSAGE_DAILY_EVENT, ARG, ARG:1, ARG:2
+#LOCALSIZE 1
+;REVERSALモードのときは逆口上処理に移動
+IF FLAG:4 == 3
+;	JUMP DISPLAY_REVKOJO_MESSAGE_DAILY_EVENT, ARG, ARG:1, ARG:2
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+ELSEIF (FLAG:10 & 1) == 0 || CFLAG:ARG:9 & 1
+	RETURN 0
+ENDIF
+
+;TFLAG:99に分岐用の値を代入
+TFLAG:99 = ARG:2
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL = TARGET
+TARGET = ARG
+;	;地の文
+;	IF CFLAG:9 & 2 && TFLAG:500 < 1
+;		TRYCCALLFORM SYSTXT_MESSAGE_DAILY_EVENT_SCENE{ARG:1}
+;			WAIT
+;		CATCH
+;		ENDCATCH
+;	ENDIF
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_MESSAGE_DAILY_EVENT_BEFORE
+			;@KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_BEFOREでRETURN 1をするとコマンド口上は表示しない
+			;また、調教中かつ失神中・失神回復時でも、失神中と失神回復時のイベント口上は必ず表示する
+			SIF RESULT != 1 || (ARG:1 == 11 && TFLAG:899 >= 1 && TFLAG:999) || (ARG:1 == 12 && TFLAG:898 == 1 && TFLAG:999)
+				TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_DAILY_EVENT_SCENE{ARG:1}
+		CATCH
+			;そもそもBEFORE関数がなかった
+			TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_DAILY_EVENT_SCENE{ARG:1}
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALLFORM KOJO_X_MESSAGE_DAILY_EVENT_SCENE{ARG:1}
+ENDIF
+;調教対象を元に戻す
+TARGET = LOCAL
+
+;-------------------------------------------------
+;単体エンド
+;-------------------------------------------------
+@DISPLAY_KOJO_MESSAGE_SINGLE_ENDING
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SINGLE_ENDING
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_SINGLE_ENDING
+ENDIF
+
+;………………………………………………
+;単体エンドその後
+;………………………………………………
+;単体エンド後に「続ける」を選んだ時に出力します
+@DISPLAY_KOJO_MESSAGE_SINGLE_ENDING_AFTER
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SINGLE_ENDING_AFTER
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_SINGLE_ENDING_AFTER
+ENDIF
+
+;-------------------------------------------------
+;奴隷エンド
+;-------------------------------------------------
+@DISPLAY_KOJO_MESSAGE_SLAVE_ENDING
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SLAVE_ENDING
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_SLAVE_ENDING
+ENDIF
+
+;………………………………………………
+;奴隷エンドその後
+;………………………………………………
+;奴隷エンド後に「続ける」を選んだ時に出力します
+@DISPLAY_KOJO_MESSAGE_SLAVE_ENDING_AFTER
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SLAVE_ENDING_AFTER
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_SLAVE_ENDING_AFTER
+ENDIF
+
+;-------------------------------------------------
+;キャラ別売却後エピソード
+;-------------------------------------------------
+;………………………………………………
+;売却後エピソードの表示内容のセット
+;………………………………………………
+;ARG＝誰のエピソードか(キャラの登録番号)
+;口上参照用にTFLAG:710にも表示するキャラの登録番号を保存
+@SET_SLAVE_AFTERWARDS, ARG
+;RESULTを初期化しておかないと、専用口上で処理がない場合に0以外の値が返ってしまう可能性がある
+RESULT = 0
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:ARG:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:ARG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:ARG}
+		TRYCALLFORM KOJO_{NO:ARG}_SET_SLAVE_AFTERWARDS
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:ARG:9 & 4
+	CALL KOJO_X_SET_SLAVE_AFTERWARDS, ARG
+ELSE
+	RETURN 0
+ENDIF
+RETURN RESULT
+
+;………………………………………………
+;売却後エピソードの表示処理
+;………………………………………………
+;非表示の場合はセットの時点で弾かれるため、表示するかの判定は無い
+;また、売却後に使うのでNO:TARGETは使えない
+;ARG:0＝誰のエピソードか, ARG:1＝どのようなエピソードか, ARG:2＝見たエンディングは何か, ARG:3＝口上表示個別設定値の保存値
+@SHOW_SLAVE_AFTERWARDS, ARG, ARG:1, ARG:2, ARG:3
+#LOCALSIZE 1
+;専用口上
+IF ARG:3 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{ARG}
+		TRYCALLFORM KOJO_{ARG}_MESSAGE_SLAVE_AFTERWARDS, ARG:1, ARG:2
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF ARG:3 & 4
+	CALL KOJO_X_MESSAGE_SLAVE_AFTERWARDS, ARG, ARG:1, ARG:2
+ENDIF
+
+;--------------------------------------------------
+;一言口上関係
+;--------------------------------------------------
+;ステータス画面を見る時に出力されます
+@DISPLAY_KOJO_MESSAGE_IMPRESSION_MAIN, ARG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:ARG:9 & 1
+	RETURN 0
+
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL = TARGET
+TARGET = ARG
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_IMPRESSION
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4
+	TRYCALL KOJO_X_MESSAGE_IMPRESSION
+ENDIF
+;調教対象を元に戻す
+TARGET = LOCAL
+
+;-------------------------------------------------
+;キャラ加入時における特殊初期設定処理用
+;-------------------------------------------------
+;購入された時、連れて来られた時に呼び出される
+;口上で特殊な初期設定を行いたい場合に使用
+@CHARA_EXTRA_INITIALIZATION, ARG
+;専用口上を使用しない場合は弾く
+SIF (CFLAG:ARG:9 & 8) == 0
+	RETURN 0
+
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL = TARGET
+TARGET = ARG
+
+;口上の存在判定
+TRYCCALLFORM TRY_{NO:TARGET}
+	TRYCALLFORM KOJO_{NO:TARGET}_EXTRA_INITIALIZATION
+CATCH
+ENDCATCH
+;調教対象を元に戻す
+TARGET = LOCAL
+
+;--------------------------------------------------
+;システムメッセージの地の文関係
+;--------------------------------------------------
+;システムメッセージはキャラを介在しないイベントのため口上の呼び出しは行わず、コンフィグによる地の文表示をするかどうかのみ判断します。
+;なお、ARGには該当のイベント番号(変数資料参照)が入ります。
+@MESSAGE_SYSTEM_EVENT_MAIN, ARG
+;地の文を表示しない(コンフィグ設定)
+SIF (FLAG:10 & 1) == 0
+	RETURN 0
+
+TRYCALLFORM SYSTXT_MESSAGE_SYSTEM_EVENT_SCENE{ARG}
+
+;=============================================================================
+;逆調教でのキャラ口上処理
+;=============================================================================
+;--------------------------------------------------
+;調教開始時のセリフ
+;-------------------------------------------------
+@MESSAGE_TRAIN_START_REV
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:MASTER}
+		TRYCALLFORM REVKOJO_M{NO:MASTER}_MESSAGE_TRAIN_START
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:MASTER:9 & 4
+	CALL REVKOJO_MX_MESSAGE_TRAIN_START
+ENDIF
+
+;--------------------------------------------------
+;調教終了時のセリフ
+;-------------------------------------------------
+@MESSAGE_TRAIN_END_REV
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:MASTER}
+		TRYCALLFORM REVKOJO_M{NO:MASTER}_MESSAGE_TRAIN_END
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:MASTER:9 & 4
+	CALL REVKOJO_MX_MESSAGE_TRAIN_END
+ENDIF
+
+;--------------------------------------------------
+;調教コマンド実行拒否の表示関係
+;--------------------------------------------------
+;コマンド拒否時に地の文または口上を表示できます。
+;各コマンド実行拒否の関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+@DISPLAY_REVKOJO_DENIAL_MESSAGE_COM, ARG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:PLAYER:9 & 1
+	RETURN 0
+;地の文
+IF CFLAG:PLAYER:9 & 2
+	TRYCCALLFORM SYSTXT_DENIAL_MESSAGE_COM_{ARG}
+	WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+;専用口上
+IF CFLAG:PLAYER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:PLAYER}
+		TRYCALLFORM REVKOJO_M{NO:PLAYER}_DENIAL_MESSAGE, ARG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:PLAYER:9 & 4
+	CALL REVKOJO_MX_DENIAL_MESSAGE
+ENDIF
+
+;--------------------------------------------------
+;調教コマンドの表示関係
+;--------------------------------------------------
+;コマンド実行時に地の文または口上を表示できます。
+;各コマンドの関数内に地の文の関数を呼び出すことで地の文を追加で表示できます。
+;口上分岐用にTFLAG:99やTFLAG:201などを使ってる場合があります。
+;………………………………………………
+;調教コマンドの固有処理実行直前
+;………………………………………………
+;各調教コマンド(COMFxxx.ERB)呼び出し直後に呼び出されます
+;調教コマンドの結果が判明する前に表示したい場合、利用してください
+;地の分はここで表示
+@DISPLAY_REVKOJO_TRAIN_MESSAGE_F_COM
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:PLAYER:9 & 1
+	RETURN 0
+;地の文
+IF CFLAG:PLAYER:9 & 2
+	TRYCALLFORM SYSTXT_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+	WAIT
+ENDIF
+;専用口上
+IF CFLAG:PLAYER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:PLAYER}
+		TRYCALLFORM REVKOJO_M{NO:PLAYER}_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:PLAYER:9 & 4
+	;口上を表示できるか判定
+	SIF KOJO_X_MESSAGE_DISPLAYCHECK(PLAYER) == 1
+		TRYCALLFORM REVKOJO_MX_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+ENDIF
+
+;………………………………………………
+;調教コマンドの固有処理実行直後
+;………………………………………………
+;調教コマンドの固有処理実行直後に呼び出される
+@DISPLAY_REVKOJO_TRAIN_MESSAGE_S_COM
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:PLAYER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:PLAYER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:PLAYER}
+		TRYCALLFORM REVKOJO_M{NO:PLAYER}_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:PLAYER:9 & 4
+	;口上を表示できるか判定
+	IF KOJO_X_MESSAGE_DISPLAYCHECK(PLAYER) == 1
+		IF FLAG:10 & 64
+			TRYCALLFORM REVKOJO_MX_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+			CALL KOJO_X_TRAINVOICE
+		ELSE
+			TRYCCALLFORM REVKOJO_MX_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+			CATCH
+				CALL KOJO_X_TRAINVOICE
+			ENDCATCH
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;パラメータ変動による口上の表示関係
+;-------------------------------------------------
+;パラメータ変動をトリガーにした口上
+;気絶していない＆設定を地の文にしていない場合、口上を発動します
+@DISPLAY_REVKOJO_MESSAGE_PALAMCNG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:PLAYER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:PLAYER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:PLAYER}
+		TRYCALLFORM REVKOJO_M{NO:PLAYER}_MESSAGE_PALAMCNG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:PLAYER:9 & 4
+	CALL REVKOJO_MX_MESSAGE_PALAMCNG
+ENDIF
+
+;-------------------------------------------------
+;刻印変動による口上の表示関係
+;-------------------------------------------------
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を発動します
+@DISPLAY_REVKOJO_MESSAGE_MARKCNG
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:PLAYER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:PLAYER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:PLAYER}
+		TRYCALLFORM REVKOJO_M{NO:PLAYER}_MESSAGE_MARKCNG
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:PLAYER:9 & 4
+	CALL REVKOJO_MX_MESSAGE_MARKCNG
+ENDIF
+
+;-------------------------------------------------
+;ビデオ鑑賞時の口上
+;-------------------------------------------------
+;FLAG:51～60を参照すれば何のコマンドかはわかる(中身が-1ならその回の撮影はされていない、コマンド名はVIDEO_COMF(FLAG:XXX)で取得可)
+@DISPLAY_REVKOJO_MESSAGE_LOOK_VIDEO
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:PLAYER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:PLAYER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:PLAYER}
+		TRYCALLFORM KOJO_{NO:PLAYER}_MESSAGE_LOOK_VIDEO
+	CATCH
+	ENDCATCH
+ENDIF
+
+;--------------------------------------------------
+;サブイベントの口上関係
+;--------------------------------------------------
+;口上表示時に地の文表示を制御できます。
+;また、ARG:1には該当のイベント番号(変数資料参照)が、
+;ARG:2には各イベント毎の分岐用の値が入ります。
+@DISPLAY_REVKOJO_MESSAGE_SUB_EVENT, ARG, ARG:1, ARG:2
+#LOCALSIZE 1
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+SIF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+
+;TFLAG:99に分岐用の値を代入
+TFLAG:99 = ARG:2
+;一時的に口上を表示させるキャラに変更
+LOCAL = TARGET
+TARGET = ARG
+;地の文
+IF CFLAG:MASTER:9 & 2
+	TRYCCALLFORM SYSTXT_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+		WAIT
+	CATCH
+	ENDCATCH
+ENDIF
+IF !TALENT:MASTER:死亡
+;専用口上
+IF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:MASTER}
+		TRYCALLFORM REVKOJO_M{NO:MASTER}_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:MASTER:9 & 4
+	TRYCALLFORM REVKOJO_MX_MESSAGE_SUB_EVENT_SCENE{ARG:1}
+ENDIF
+ENDIF
+TARGET = LOCAL
+
+;-------------------------------------------------
+;単体エンド
+;-------------------------------------------------
+@DISPLAY_REVKOJO_MESSAGE_SINGLE_ENDING
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:MASTER}
+		TRYCALLFORM REVKOJO_M{NO:MASTER}_MESSAGE_SINGLE_ENDING
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:MASTER:9 & 4
+	TRYCALL REVKOJO_MX_MESSAGE_SINGLE_ENDING
+ENDIF
+
+;-------------------------------------------------
+;奴隷エンド
+;-------------------------------------------------
+@DISPLAY_REVKOJO_MESSAGE_SLAVE_ENDING
+;口上を表示しない(キャラ個別・コンフィグ設定問わず優先される)
+IF (FLAG:10 & 1) == 0 || CFLAG:MASTER:9 & 1
+	RETURN 0
+;専用口上
+ELSEIF CFLAG:MASTER:9 & 8
+	;口上の存在判定
+	TRYCCALLFORM TRY_M{NO:MASTER}
+		TRYCALLFORM REVKOJO_M{NO:MASTER}_MESSAGE_SLAVE_ENDING
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:MASTER:9 & 4
+	TRYCALL REVKOJO_MX_MESSAGE_SLAVE_ENDING
+ENDIF
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;汎用口上、汎用逆口上ジェネレーター用共用関数群
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;コマンド実行関連に関する処理
+;=============================================================================
+;--------------------------------------------------
+;コマンド初回実行関数
+;--------------------------------------------------
+;ARG＝コマンド初回判定のフラグ番号、ARG:1＝コマンド番号の1の位
+@FLAG_COM_FIRST, ARG, ARG:1
+IF ARG:1 == 0 && (CFLAG:ARG & 1p0) == 0
+	CFLAG:ARG |= 1p0
+ELSEIF ARG:1 == 1 && (CFLAG:ARG & 1p1) == 0
+	CFLAG:ARG |= 1p1
+ELSEIF ARG:1 == 2 && (CFLAG:ARG & 1p2) == 0
+	CFLAG:ARG |= 1p2
+ELSEIF ARG:1 == 3 && (CFLAG:ARG & 1p3) == 0
+	CFLAG:ARG |= 1p3
+ELSEIF ARG:1 == 4 && (CFLAG:ARG & 1p4) == 0
+	CFLAG:ARG |= 1p4
+ELSEIF ARG:1 == 5 && (CFLAG:ARG & 1p5) == 0
+	CFLAG:ARG |= 1p5
+ELSEIF ARG:1 == 6 && (CFLAG:ARG & 1p6) == 0
+	CFLAG:ARG |= 1p6
+ELSEIF ARG:1 == 7 && (CFLAG:ARG & 1p7) == 0
+	CFLAG:ARG |= 1p7
+ELSEIF ARG:1 == 8 && (CFLAG:ARG & 1p8) == 0
+	CFLAG:ARG |= 1p8
+ELSEIF ARG:1 == 9 && (CFLAG:ARG & 1p9) == 0
+	CFLAG:ARG |= 1p9
+ENDIF
+
+;自慰系派生
+IF SELECTCOM == 7
+	;読心
+	SIF TEQUIP:読心 && (CFLAG:9000 & 1p10) == 0
+		CFLAG:9000 |= 1p10
+	;公開
+	SIF TEQUIP:ビデオ撮影 && (CFLAG:9000 & 1p11) == 0
+		CFLAG:9000 |= 1p11
+	;両穴バイブ
+	IF TEQUIP:Ｖ系装着器具 == 1 && TEQUIP:Ａ系装着器具 == 1 && (CFLAG:9000 & 1p12) == 0
+		CFLAG:9000 |= 1p12
+	;バイブ
+	ELSEIF TEQUIP:Ｖ系装着器具 == 1 && (CFLAG:9000 & 1p13) == 0
+		CFLAG:9000 |= 1p13
+	;アナルバイブ
+	ELSEIF TEQUIP:Ａ系装着器具 == 1 && (CFLAG:9000 & 1p14) == 0
+		CFLAG:9000 |= 1p14
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;コマンド初回判定管理関数
+;--------------------------------------------------
+@CHECK_COM_FIRST
+#FUNCTION
+#LOCALSIZE 1
+;フラグ番号を求める
+LOCAL = (SELECTCOM / 10) + 9000
+SELECTCASE (SELECTCOM % 10)
+	CASE 0
+		RETURNF ((CFLAG:LOCAL & 1p0) == 0) ? 1 # 0
+	CASE 1
+		RETURNF ((CFLAG:LOCAL & 1p1) == 0) ? 1 # 0
+	CASE 2
+		RETURNF ((CFLAG:LOCAL & 1p2) == 0) ? 1 # 0
+	CASE 3
+		RETURNF ((CFLAG:LOCAL & 1p3) == 0) ? 1 # 0
+	CASE 4
+		RETURNF ((CFLAG:LOCAL & 1p4) == 0) ? 1 # 0
+	CASE 5
+		RETURNF ((CFLAG:LOCAL & 1p5) == 0) ? 1 # 0
+	CASE 6
+		RETURNF ((CFLAG:LOCAL & 1p6) == 0) ? 1 # 0
+	CASE 7
+		RETURNF ((CFLAG:LOCAL & 1p7) == 0) ? 1 # 0
+	CASE 8
+		RETURNF ((CFLAG:LOCAL & 1p8) == 0) ? 1 # 0
+	CASEELSE
+		RETURNF ((CFLAG:LOCAL & 1p9) == 0) ? 1 # 0
+ENDSELECT
+
+;=============================================================================
+;汎用口上、汎用逆口上常用関数部
+;=============================================================================
+;--------------------------------------------------
+;汎用口上を表示するかを判定する式中関数
+;--------------------------------------------------
+;ARG＝口上を表示するキャラ
+@KOJO_X_MESSAGE_DISPLAYCHECK(ARG)
+#FUNCTION
+
+;眠ってる・時止め中・失神中・口枷つき
+SIF EQUIP:ARG:睡眠薬 || TEQUIP:ARG:時間止め || (TFLAG:999 && TFLAG:899 >= 1 && ARG == TARGET) || KX_MOUSE_CHECK(ARG)
+	RETURNF 0
+;(元々)[オトコ]もしくはしゃべることができない[人形]
+SIF (TALENT:ARG:オトコ && CFLAG:ARG:4995 != 2) || TALENT:ARG:人形 == 1
+	RETURNF 0
+
+RETURNF 1
+
+;--------------------------------------------------
+;汎用逆口上を表示するかを判定する式中関数
+;--------------------------------------------------
+;ARG＝口上を表示するキャラ(通常はMASTERが代入される)
+@REVKOJO_X_MESSAGE_DISPLAYCHECK(ARG)
+#FUNCTION
+
+;助手調教時
+SIF ASSIPLAY
+	RETURNF 0
+;眠ってる・気絶中・口枷つき
+SIF EQUIP:ARG:睡眠薬 || TFLAG:899 >= 1 || KX_MOUSE_CHECK(ARG)
+	RETURNF 0
+;(元々)[オトコ]もしくはしゃべることができない[人形]
+SIF (TALENT:ARG:オトコ && CFLAG:ARG:4995 != 2) || TALENT:ARG:人形 == 1
+	RETURNF 0
+
+RETURNF 1
+
+;--------------------------------------------------
+;口がふさがっているかどうかを判定する式中関数
+;--------------------------------------------------
+;ARG＝口上を表示するキャラ
+@KX_MOUSE_CHECK(ARG)
+#FUNCTION
+RETURNF TEQUIP:ARG:口装着器具
+
+;--------------------------------------------------
+;対象が主人の子供かどうかを判定する式中関数
+;--------------------------------------------------
+;ARG＝判定するキャラ
+;0を返した場合＝主人の子供では無い、1を返した場合＝主人の娘、2を返した場合＝主人の息子
+@CHECK_MASTERS_CHILD(ARG)
+#FUNCTION
+IF (NO:ARG == 2048 || NO:ARG == 2049) && CFLAG:ARG:3107 == CFLAG:MASTER:3109
+	RETURNF (TALENT:ARG:オトコ) ? 2 # 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;--------------------------------------------------
+;対象が他人の子供かどうかを判定する式中関数
+;--------------------------------------------------
+;ARG＝判定するキャラ
+;0を返した場合＝主人の子供、または対象が子供ではない、1を返した場合＝誰かの娘、2を返した場合＝誰かの息子
+@CHECK_SOMEONES_CHILD(ARG)
+#FUNCTION
+IF (NO:ARG == 2048 || NO:ARG == 2049) && CFLAG:ARG:3107 != CFLAG:MASTER:3109
+	RETURNF (TALENT:ARG:オトコ) ? 2 # 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;--------------------------------------------------
+;対象にとって主人が父か母かを判定し、呼び名を返す式中文字列関数
+;--------------------------------------------------
+;ARG＝判定するキャラ
+@CHECK_PARENT(ARG)
+#FUNCTIONS
+;父
+IF (NO:ARG == 2048 || NO:ARG == 2049) && CFLAG:ARG:3107 == CFLAG:MASTER:3109
+	RETURNF CSTR:ARG:55
+;産みの母、育ての母
+ELSEIF (NO:ARG == 2048 || NO:ARG == 2049) && (CFLAG:ARG:3105 == CFLAG:MASTER:3109 || CFLAG:ARG:3106 == CFLAG:MASTER:3109)
+	RETURNF CSTR:ARG:54
+;必要条件を満たさなかったとき
+ELSE
+	RETURNF CSTR:ARG:53
+ENDIF
+
+;--------------------------------------------------
+;ARGとARG:1が親子関係かを判定する関数
+;--------------------------------------------------
+;ARG＝判定するキャラ
+@CHECK_IS_MY_CHILD(ARG, ARG:1)
+#FUNCTION
+;ARG:1が親
+IF CFLAG:ARG:3107 == CFLAG:(ARG:1):3109 || (CFLAG:ARG:3105 == CFLAG:(ARG:1):3109 || CFLAG:ARG:3106 == CFLAG:(ARG:1):3109)
+	RETURNF 2
+;ARGが親
+ELSEIF CFLAG:(ARG:1):3107 == CFLAG:ARG:3109 || (CFLAG:(ARG:1):3105 == CFLAG:ARG:3109 || CFLAG:(ARG:1):3106 == CFLAG:ARG:3109)
+	RETURNF 1
+ENDIF
+RETURNF 0
+
+;--------------------------------------------------
+;ARGとARG:1が子供で兄弟関係かを判定する関数
+;--------------------------------------------------
+@CHECK_IS_MY_SISTER(ARG, ARG:1)
+#FUNCTION
+SIF !( (NO:ARG == 2048 || NO:ARG == 2049) && (NO:(ARG:1) == 2048 || NO:(ARG:1) == 2049) )
+	RETURNF 0
+
+;ARG:1が妹
+SIF CHARA_SISTER_YOUNG(NO:ARG, NO:(ARG:1), ARG, ARG:1) > 0
+	RETURNF 3
+;ARG:1が姉
+SIF CHARA_SISTER_ELDER(NO:ARG, NO:(ARG:1), ARG, ARG:1) > 0
+	RETURNF 4
+RETURNF 0
+
+;--------------------------------------------------
+;対象の一人称を返す式中文字列関数
+;--------------------------------------------------
+;ARG＝言うキャラ、ARG:1＝言われるキャラ
+@CHECK_1ST(ARG, ARG:1)
+#FUNCTIONS
+;父
+IF (NO:ARG == 2048 || NO:ARG == 2049) && CFLAG:(ARG:1):3107 == CFLAG:ARG:3109
+	RETURNF CSTR:ARG:52
+;産みの母、育ての母
+ELSEIF (NO:ARG == 2048 || NO:ARG == 2049) && (CFLAG:(ARG:1):3105 == CFLAG:ARG:3109 || CFLAG:(ARG:1):3106 == CFLAG:ARG:3109)
+	RETURNF CSTR:ARG:51
+;必要条件を満たさなかったとき
+ELSE
+	RETURNF CSTR:ARG:50
+ENDIF
+
+;--------------------------------------------------
+;対象の二人称を返す式中文字列関数
+;--------------------------------------------------
+;ARG＝言うキャラ、ARG:1＝言われるキャラ
+@CHECK_2ND(ARG, ARG:1)
+#FUNCTIONS
+;父
+IF (NO:ARG == 2048 || NO:ARG == 2049) && CFLAG:ARG:3107 == CFLAG:(ARG:1):3109
+	RETURNF CSTR:ARG:55
+;産みの母、育ての母
+ELSEIF (NO:ARG == 2048 || NO:ARG == 2049) && (CFLAG:ARG:3105 == CFLAG:(ARG:1):3109 || CFLAG:ARG:3106 == CFLAG:(ARG:1):3109)
+	RETURNF CSTR:ARG:54
+;必要条件を満たさなかったとき
+ELSE
+	RETURNF CSTR:ARG:53
+ENDIF
+
+;--------------------------------------------------
+;らぶらぶ口上の表示を判定する式中関数
+;--------------------------------------------------
+;ARG＝判定するキャラ
+@KOJO_X_MESSAGE_LOVELY_CHECK(ARG)
+#FUNCTION
+RETURNF ((TALENT:ARG:恋慕 || TALENT:ARG:親愛 || TALENT:ARG:相愛 || TALENT:ARG:隷属) && MARK:ARG:反発刻印 == 0) ? 1 # 0
+
+;=============================================================================
+;汎用口上、汎用逆口上ジェネレーター人格決定の処理
+;=============================================================================
+;--------------------------------------------------
+;汎用口上か汎用逆口上の判別
+;--------------------------------------------------
+@DEFINE_JINKAKU_SELECT, ARG
+;REVERSALモードのときは逆口上用の処理に移動
+IF FLAG:4 == 3
+	CALL DEFINE_JINKAKU_REVERSE, ARG
+;それ以外のゲームモードの時は通常の処理に移動
+ELSE
+	CALL DEFINE_JINKAKU_NORMAL, ARG
+ENDIF
+
+;--------------------------------------------------
+;汎用口上の人格の決定処理
+;--------------------------------------------------
+@DEFINE_JINKAKU_NORMAL, ARG
+;………………………………………………
+;一人称(CSTR:11)を決定
+;………………………………………………
+;性転換でオトコになった存在の場合元の性別の人格を見る、あと元々オトコの場合は性転換してもオトコ扱い
+IF (TALENT:ARG:オトコ && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
+	;わし(キャラ由来)
+	IF NO:ARG == 1070 || NO:ARG == 1074
+		CSTR:ARG:11 = わし
+	;僕(キャラ由来)
+	ELSEIF NO:ARG == 1069
+		CSTR:ARG:11 = 僕
+	;俺([反抗的]、[生意気])
+	ELSEIF TALENT:ARG:反抗的 || TALENT:ARG:生意気
+		CSTR:ARG:11 = 俺
+	;我輩([プライド高い]、[吸血鬼])
+	ELSEIF TALENT:ARG:プライド高い || TALENT:ARG:吸血鬼
+		CSTR:ARG:11 = 我輩
+	;わし([保守的]、[貞操観念]、[鬼]、[天狗])
+	ELSEIF TALENT:ARG:保守的 || TALENT:ARG:貞操観念 || TALENT:ARG:鬼 || TALENT:ARG:天狗
+		CSTR:ARG:11 = わし
+	;僕([臆病]、[大人しい]、[幼児]、[幼児退行]、[河童])
+	ELSEIF TALENT:ARG:臆病 || TALENT:ARG:大人しい || TALENT:ARG:幼児 || TALENT:ARG:幼児退行 || TALENT:ARG:河童
+		CSTR:ARG:11 = 僕
+	;私
+	ELSE
+		CSTR:ARG:11 = 私
+	ENDIF
+
+	SELECTCASE CFLAG:ARG:43
+		CASE 11
+			CSTR:ARG:51 = 母
+			CSTR:ARG:52 = 父
+		CASE 12, 13
+			CSTR:ARG:51 = 母さん
+			CSTR:ARG:52 = 父さん
+		CASE 14
+			CSTR:ARG:51 = お母さん
+			CSTR:ARG:52 = お父さん
+	ENDSELECT
+ELSE
+	;あたい
+	IF NO:ARG == 1005 || NO:ARG == 1035 || NO:ARG == 1062
+		CSTR:ARG:11 = あたい
+	;リリー
+	ELSEIF NO:ARG == 1015
+		CSTR:ARG:11 = リリー
+	;僕
+	ELSEIF NO:ARG == 3003 || NO:ARG == 3010 || NO:ARG == 4014
+		CSTR:ARG:11 = 僕
+	;あたし
+	ELSEIF NO:ARG == 3002 || NO:ARG == 3009
+		CSTR:ARG:11 = あたし
+	;私
+	ELSE
+		CSTR:ARG:11 = 私
+	ENDIF
+
+	SELECTCASE CFLAG:ARG:43
+		CASE 1
+			CSTR:ARG:51 = お母さん
+			CSTR:ARG:52 = お父さん
+		CASE 2
+			CSTR:ARG:51 = 母さん
+			CSTR:ARG:52 = 父さん
+		CASE 3
+			CSTR:ARG:51 = 母さん
+			CSTR:ARG:52 = 父さん
+		CASE 4
+			CSTR:ARG:51 = おとーさん
+			CSTR:ARG:52 = おかーさん
+		CASE 5
+			CSTR:ARG:51 = おかあさん
+			CSTR:ARG:52 = おとうさん
+		CASE 6
+			CSTR:ARG:51 = お母さん
+			CSTR:ARG:52 = お父さん
+	ENDSELECT
+ENDIF
+CSTR:ARG:50 = %CSTR:ARG:11%
+;………………………………………………
+;一般的な二人称(CSTR:53)と人格(CFLAG:43)を決定
+;………………………………………………
+CFLAG:ARG:43 = 0
+IF (TALENT:ARG:オトコ && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
+	;貴様(キャラ由来)
+	IF NO:ARG == 1070
+		CSTR:ARG:53 = 貴様
+		CFLAG:ARG:43 = 11
+	;お主(キャラ由来)
+	ELSEIF NO:ARG == 1074
+		CSTR:ARG:53 = お主
+		CFLAG:ARG:43 = 11
+	;君(キャラ由来)
+	ELSEIF NO:ARG == 1069
+		CSTR:ARG:53 = 君
+		CFLAG:ARG:43 = 13
+	;貴様([鬼]、[天狗])
+	ELSEIF TALENT:ARG:鬼 || TALENT:ARG:天狗
+		CSTR:ARG:53 = 貴様
+		CFLAG:ARG:43 = 11
+	;お主([保守的]、[貞操観念])
+	ELSEIF TALENT:ARG:保守的 || TALENT:ARG:貞操観念
+		CSTR:ARG:53 = お主
+		CFLAG:ARG:43 = 11
+	;そなた([プライド高い]、[吸血鬼])
+	ELSEIF TALENT:ARG:プライド高い || TALENT:ARG:吸血鬼
+		CSTR:ARG:53 = そなた
+		CFLAG:ARG:43 = 11
+	;お前([反抗的]、[生意気]、[抵抗])
+	ELSEIF TALENT:ARG:反抗的 || TALENT:ARG:生意気 || TALENT:ARG:抵抗
+		CSTR:ARG:53 = お前
+		CFLAG:ARG:43 = 12
+	;君([気丈]、[教育者])
+	ELSEIF TALENT:ARG:気丈 || TALENT:ARG:教育者
+		CSTR:ARG:53 = 君
+		CFLAG:ARG:43 = 13
+	;あなた
+	ELSE
+		CSTR:ARG:53 = あなた
+		CFLAG:ARG:43 = 14
+	ENDIF
+
+	;恋慕後
+	;お主
+	SIF CFLAG:ARG:5201 >= 5 && CFLAG:ARG:43 == 11
+		CSTR:ARG:53 = お主
+
+	;(あなたを含む)誰かの子ども
+	IF NO:ARG == 2049 || NO:ARG == 2048
+		IF CFLAG:ARG:43 == 1
+			CSTR:ARG:55 = お父さん
+			CSTR:ARG:54 = お母さん
+		ELSEIF CFLAG:ARG:43 == 2
+			CSTR:ARG:55 = 父上
+			CSTR:ARG:54 = 母上
+		ELSEIF CFLAG:ARG:43 == 3
+			CSTR:ARG:55 = お父様
+			CSTR:ARG:54 = お母様
+		ELSEIF CFLAG:ARG:43 == 4
+			CSTR:ARG:55 = おとーさん
+			CSTR:ARG:54 = おかーさん
+		ELSEIF CFLAG:ARG:43 == 5
+			CSTR:ARG:55 = おとうさん
+			CSTR:ARG:54 = おかあさん
+		ELSEIF CFLAG:ARG:43 == 6
+			CSTR:ARG:55 = お父さん
+			CSTR:ARG:54 = お母さん
+		ENDIF
+	ENDIF
+ELSE
+	;あんた
+	IF TALENT:ARG:プライド高い && TALENT:ARG:中毒しやすい
+		CSTR:ARG:53 = あんた
+		CFLAG:ARG:43 = 1
+	;お前
+	ELSEIF (TALENT:ARG:プライド高い && (TALENT:ARG:楽観的 || TALENT:ARG:反抗的 || TALENT:ARG:動物耳) && TALENT:ARG:サド == 0) || (TALENT:ARG:自制心 && TALENT:ARG:保守的) || NO:ARG == 1002
+		CSTR:ARG:53 = お前
+		CFLAG:ARG:43 = 2
+	;貴方
+	ELSEIF TALENT:ARG:プライド高い && NO:ARG != 1037
+		CSTR:ARG:53 = 貴方
+		CFLAG:ARG:43 = 3
+	;お兄さん・お姉さん
+	ELSEIF TALENT:ARG:幼稚 && TALENT:ARG:生意気 == 0 && TALENT:ARG:反抗的 == 0 && NO:ARG != 1045
+		CSTR:ARG:53 = \@(TALENT:MASTER:オトコ) ? お兄さん # お姉さん\@
+		CFLAG:ARG:43 = 4
+	;あなた
+	ELSEIF TALENT:ARG:幼稚 == 0 && TALENT:ARG:幼児退行 == 0 && TALENT:ARG:抵抗 == 0 && TALENT:ARG:生意気 == 0 && TALENT:ARG:反抗的 == 0 && TALENT:ARG:無関心 == 0 && TALENT:ARG:抑圧 == 0 && (TALENT:ARG:解放 || TALENT:ARG:快感に素直 || TALENT:ARG:鼓舞)
+		CSTR:ARG:53 = あなた
+		CFLAG:ARG:43 = 6
+	;あなた([臆病]、[大人しい]、[恥じらい]、[献身的]、[小悪魔])
+	ELSEIF TALENT:ARG:臆病 || TALENT:ARG:大人しい || TALENT:ARG:恥じらい || TALENT:ARG:献身的 || TALENT:ARG:小悪魔
+		CSTR:ARG:53 = あなた
+		CFLAG:ARG:43 = 5
+	;あんた
+	ELSE
+		CSTR:ARG:53 = あんた
+		CFLAG:ARG:43 = 1
+	ENDIF
+
+	;恋慕後
+	;◎◎ちゃん(キャラ由来)＋恋慕＋主人が「あなた」ではない
+	IF CFLAG:ARG:5201 >= 5 && NO:ARG == 2019 && CALLNAME:MASTER != "あなた"
+		CSTR:ARG:53 = %CALLNAME:MASTER%ちゃん
+	;マスター([妖精])
+	ELSEIF CFLAG:ARG:5201 >= 5 && TALENT:ARG:妖精
+		CSTR:ARG:53 = マスター
+	;ご主人様
+	ELSEIF CFLAG:ARG:5201 >= 5
+		CSTR:ARG:53 = ご主人様
+	ENDIF
+
+	;てゐ・お燐限定
+	IF NO:ARG == 1027 || NO:ARG == 1062
+		CSTR:ARG:53 = \@(TALENT:MASTER:オトコ) ? お兄さん # お姉さん\@
+	;綿月姉妹限定
+	ELSEIF NO:ARG == 1053 || (NO:ARG == 1054 && TALENT:ARG:恋慕)
+		CSTR:ARG:53 = 貴方
+	;ナズーリン限定
+	ELSEIF NO:ARG == 1070
+		CSTR:ARG:53 = 君
+	;小傘限定
+	ELSEIF NO:ARG == 1072
+		CSTR:ARG:53 = \@(CFLAG:ARG:5225) ? 師匠 # あなた\@
+		CFLAG:ARG:43 = 4
+	ENDIF
+
+	;(あなたを含む)誰かの子ども
+	IF NO:ARG == 2049 || NO:ARG == 2048
+		IF CFLAG:ARG:43 == 1
+			CSTR:ARG:55 = お父さん
+			CSTR:ARG:54 = お母さん
+		ELSEIF CFLAG:ARG:43 == 2
+			CSTR:ARG:55 = 父上
+			CSTR:ARG:54 = 母上
+		ELSEIF CFLAG:ARG:43 == 3
+			CSTR:ARG:55 = お父様
+			CSTR:ARG:54 = お母様
+		ELSEIF CFLAG:ARG:43 == 4
+			CSTR:ARG:55 = おとーさん
+			CSTR:ARG:54 = おかーさん
+		ELSEIF CFLAG:ARG:43 == 5
+			CSTR:ARG:55 = おとうさん
+			CSTR:ARG:54 = おかあさん
+		ELSEIF CFLAG:ARG:43 == 6
+			CSTR:ARG:55 = お父さん
+			CSTR:ARG:54 = お母さん
+		ENDIF
+	ENDIF
+ENDIF
+
+;………………………………………………
+;特殊語尾(CSTR:13、CSTR:14)を決定
+;………………………………………………
+;だぜ
+IF NO:ARG == 1002 || NO:ARG == 2007
+	CSTR:ARG:13 = くれ
+	CSTR:ARG:14 = ぜ
+;古風
+ELSEIF NO:ARG == 1019 || NO:ARG == 1026 || NO:ARG == 1070 || NO:ARG == 1074
+	CSTR:ARG:13 = くれ
+	CSTR:ARG:14 = 
+	;調教済みみょん
+	IF NO:ARG == 1019 && MARK:ARG:屈服刻印 > 1
+		CSTR:ARG:53 = あなた
+		CFLAG:ARG:43 = 5
+		;ご主人様
+		SIF CFLAG:ARG:5201 >= 5
+			CSTR:ARG:53 = ご主人様
+	ENDIF
+;里香
+ELSEIF NO:ARG == 2001
+	CSTR:ARG:13 = です
+	CSTR:ARG:14 = わ
+;よ
+ELSEIF CFLAG:ARG:43 == 2
+	CSTR:ARG:13 = よね
+	CSTR:ARG:14 = よ
+;わ
+ELSEIF CFLAG:ARG:43 < 10
+	CSTR:ARG:13 = ね
+	CSTR:ARG:14 = わ
+ENDIF
+
+IF STRLENS(MASTERNAME:ARG) > 0
+	;指定した呼び方があるならば変更
+	;[素直]、[恋慕]、[妄信]、[親愛]、[相愛]、[服従]、[烙印]、[隷属]、[使い魔]、[傀儡]、[壊造人格]、[即落ち]、反発刻印Lv0かつ屈服刻印Lv2以上、[臆病]かつ恐怖刻印及び屈服刻印取得済み
+	SIF TALENT:ARG:素直 || TALENT:ARG:恋慕 || TALENT:ARG:妄信 || TALENT:ARG:親愛 || TALENT:ARG:相愛 || TALENT:ARG:服従 || TALENT:ARG:烙印 || TALENT:ARG:隷属 || TALENT:ARG:使い魔 || TALENT:ARG:傀儡 || TALENT:ARG:壊造人格 || TALENT:ARG:即落ち || (MARK:屈服刻印 > 1 && MARK:反発刻印 == 0) || (TALENT:ARG:臆病 && MARK:屈服刻印 && MARK:恐怖刻印)
+		CSTR:ARG:53 = %MASTERNAME:ARG%
+	;実父にのみ有効
+	SIF CFLAG:ARG:3107 == CFLAG:MASTER:3109
+		CSTR:ARG:55 = %MASTERNAME:ARG%
+	;実母にのみ有効
+	SIF CFLAG:ARG:3105 == CFLAG:MASTER:3109 || CFLAG:ARG:3106 == CFLAG:MASTER:3109
+		CSTR:ARG:54 = %MASTERNAME:ARG%
+ENDIF
+
+;--------------------------------------------------
+;汎用逆口上の人格の決定処理
+;--------------------------------------------------
+@DEFINE_JINKAKU_REVERSE, ARG
+;………………………………………………
+;一人称(CSTR:ARG:16)を決定
+;………………………………………………
+;性転換でオトコになった存在の場合元の性別の人格を見る、あと元々オトコの場合は性転換してもオトコ扱い
+IF (TALENT:MASTER:オトコ && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
+	;俺([反抗的]、[生意気])
+	IF TALENT:MASTER:反抗的 || TALENT:MASTER:生意気
+		CSTR:ARG:16 = 俺
+	;我輩([プライド高い]、[吸血鬼])
+	ELSEIF TALENT:MASTER:プライド高い || TALENT:MASTER:吸血鬼
+		CSTR:ARG:16 = 我輩
+	;わし([保守的]、[貞操観念]、[鬼]、[天狗])
+	ELSEIF NO:MASTER == 1070 || NO:MASTER == 1074 || TALENT:MASTER:保守的 || TALENT:MASTER:貞操観念 || TALENT:MASTER:鬼 || TALENT:MASTER:天狗
+		CSTR:ARG:16 = わし
+	;僕([臆病]、[大人しい]、[幼児]、[幼児退行]、[河童])
+	ELSEIF NO:MASTER == 1069 || TALENT:MASTER:臆病 || TALENT:MASTER:大人しい || TALENT:MASTER:幼児 || TALENT:MASTER:幼児退行 || TALENT:MASTER:河童
+		CSTR:ARG:16 = 僕
+	;私
+	ELSE
+		CSTR:ARG:16 = 私
+	ENDIF
+ELSE
+	;あたい
+	IF NO:MASTER == 1005 || NO:MASTER == 1035 || NO:MASTER == 1062
+		CSTR:ARG:16 = あたい
+	;リリー
+	ELSEIF NO:MASTER == 1015
+		CSTR:ARG:16 = リリー
+	;僕
+	ELSEIF NO:MASTER == 3003 || NO:MASTER == 3010 || NO:MASTER == 4014
+		CSTR:ARG:16 = 僕
+	;あたし
+	ELSEIF NO:MASTER == 3002 || NO:MASTER == 3009
+		CSTR:ARG:16 = あたし
+	;私
+	ELSE
+		CSTR:ARG:16 = 私
+	ENDIF
+ENDIF
+;………………………………………………
+;二人称(CSTR:ARG:17)と人格(CFLAG:ARG:44)を決定
+;………………………………………………
+CFLAG:ARG:44 = 0
+IF (TALENT:MASTER:オトコ && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
+	;貴様([鬼]、[天狗])
+	IF NO:MASTER == 1070 || TALENT:MASTER:鬼 || TALENT:MASTER:天狗
+		CSTR:ARG:17 = 貴様
+		CFLAG:ARG:44 = 11
+	;お主([保守的]、[貞操観念])
+	ELSEIF NO:MASTER == 1074 || TALENT:MASTER:保守的 || TALENT:MASTER:貞操観念
+		CSTR:ARG:17 = お主
+		CFLAG:ARG:44 = 11
+	;そなた([プライド高い]、[吸血鬼])
+	ELSEIF TALENT:MASTER:プライド高い || TALENT:MASTER:吸血鬼
+		CSTR:ARG:17 = そなた
+		CFLAG:ARG:44 = 11
+	;お前([反抗的]、[生意気]、[抵抗])
+	ELSEIF TALENT:MASTER:反抗的 || TALENT:MASTER:生意気 || TALENT:MASTER:抵抗
+		CSTR:ARG:17 = お前
+		CFLAG:ARG:44 = 12
+	;君([気丈]、[教育者])
+	ELSEIF NO:MASTER == 1069 || TALENT:MASTER:気丈 || TALENT:MASTER:教育者
+		CSTR:ARG:17 = 君
+		CFLAG:ARG:44 = 13
+	;あなた
+	ELSE
+		CSTR:ARG:17 = あなた
+		CFLAG:ARG:44 = 14
+	ENDIF
+ELSE
+	;あんた
+	IF TALENT:MASTER:プライド高い && TALENT:MASTER:中毒しやすい
+		CSTR:ARG:17 = あんた
+		CFLAG:ARG:44 = 1
+	;お前
+	ELSEIF (TALENT:MASTER:プライド高い && (TALENT:MASTER:楽観的 || TALENT:MASTER:反抗的 || TALENT:MASTER:動物耳) && TALENT:MASTER:サド == 0) || (TALENT:MASTER:自制心 && TALENT:MASTER:保守的) || NO:MASTER == 1002
+		CSTR:ARG:17 = お前
+		CFLAG:ARG:44 = 2
+	;貴方
+	ELSEIF TALENT:MASTER:プライド高い && NO:MASTER != 37
+		CSTR:ARG:17 = 貴方
+		CFLAG:ARG:44 = 3
+	;お兄さん・お姉さん
+	ELSEIF TALENT:MASTER:幼稚 && TALENT:MASTER:生意気 == 0 && TALENT:MASTER:反抗的 == 0 && NO:MASTER != 1045
+		CSTR:ARG:17 = \@(TALENT:ARG:オトコ) ? お兄さん # お姉さん\@
+		CFLAG:ARG:44 = 4
+	;あなた
+	ELSEIF TALENT:MASTER:幼稚 == 0 && TALENT:MASTER:幼児退行 == 0 && TALENT:MASTER:抵抗 == 0 && TALENT:MASTER:生意気 == 0 && TALENT:MASTER:反抗的 == 0 && TALENT:MASTER:無関心 == 0 && TALENT:MASTER:抑圧 == 0 && (TALENT:MASTER:解放 || TALENT:MASTER:快感に素直 || TALENT:MASTER:鼓舞)
+		CSTR:ARG:17 = あなた
+		CFLAG:ARG:44 = 6
+	;あなた([臆病]、[大人しい]、[恥じらい]、[献身的]、[小悪魔])
+	ELSEIF TALENT:MASTER:臆病 || TALENT:MASTER:大人しい || TALENT:MASTER:恥じらい || TALENT:MASTER:献身的 || TALENT:MASTER:小悪魔
+		CSTR:ARG:17 = あなた
+		CFLAG:ARG:44 = 5
+	;あんた
+	ELSE
+		CSTR:ARG:17 = あんた
+		CFLAG:ARG:44 = 1
+	ENDIF
+
+	;お燐・てゐ限定
+	SIF NO:MASTER == 1027 || NO:MASTER == 1062
+		CSTR:ARG:17 = \@(TALENT:ARG:オトコ) ? お兄さん # お姉さん\@
+
+	;綿月姉妹限定(つまり依姫の恋慕だからまあ…ね)
+	SIF NO:MASTER == 1053 || (NO:MASTER == 1054 && TALENT:MASTER:恋慕)
+		CSTR:ARG:17 = 貴方
+	;ナズーリン限定
+	SIF NO:MASTER == 1070
+		CSTR:ARG:17 = 君
+	;小傘限定
+	IF NO:MASTER == 1072
+		CSTR:ARG:17 = あなた
+		CFLAG:ARG:44 = 4
+	ENDIF
+ENDIF
+
+;………………………………………………
+;特殊語尾(CSTR:ARG:18、CSTR:ARG:19)を決定
+;………………………………………………
+;だぜ
+IF NO:MASTER == 1002 || NO:MASTER == 2007
+	CSTR:ARG:18 = くれ
+	CSTR:ARG:19 = ぜ
+;古風
+ELSEIF NO:MASTER == 1019 || NO:MASTER == 1026 || NO:MASTER == 1070 || NO:MASTER == 1074
+	CSTR:ARG:18 = くれ
+	CSTR:ARG:19 = 
+;里香
+ELSEIF NO:MASTER == 2001
+	CSTR:ARG:18 = です
+	CSTR:ARG:19 = わ
+;よ
+ELSEIF CFLAG:ARG:44 == 2
+	CSTR:ARG:18 = よね
+	CSTR:ARG:19 = よ
+;わ
+ELSEIF CFLAG:ARG:44 < 10
+	CSTR:ARG:18 = ね
+	CSTR:ARG:19 = わ
+ENDIF
+
+;-------------------------------------------------
+;キャラ間関係諸関数
+;-------------------------------------------------
+;ARGとARG:1に登録番号を入れて二人の関係を調査し、結果を返す。
+;ARGから見てARG:1は何？
+;返り値(-1=なら前提が違う, 0=特に深い関係は無い, 1=姉, 2=主人か師匠もしくは頭が上がらない相手, 3=密接ではある, 4=部下か弟子, 5=妹)
+@CHARA_RELATION(ARG, ARG:1)
+#FUNCTION
+#LOCALSIZE 3
+SIF ARG < 0 || ARG:1 < 0 || ARG == ARG:1
+	RETURNF (-1)
+
+LOCAL:1 = NO:ARG
+LOCAL:2 = NO:(ARG:1)
+;お姉さんチェック
+SIF CHARA_SISTER_ELDER(LOCAL:1, LOCAL:2, ARG, ARG:1) == 1
+	RETURNF 1
+;目上・上司・師匠・ご主人様チェック
+SIF CHARA_MASTER(LOCAL:1, LOCAL:2, ARG, ARG:1) == 1
+	RETURNF 2
+;友達・知り合いチェック
+SIF CHARA_UNISON(LOCAL:1, LOCAL:2, ARG, ARG:1) == 1
+	RETURNF 3
+;目下・部下・弟子・奴隷チェック
+SIF CHARA_SLAVE(LOCAL:1, LOCAL:2, ARG, ARG:1) == 1
+	RETURNF 4
+;妹チェック
+SIF CHARA_SISTER_YOUNG(LOCAL:1, LOCAL:2, ARG, ARG:1) == 1
+	RETURNF 5
+RETURNF 0
+
+;………………………………………………
+;妹かどうかの判定
+;………………………………………………
+;ARGから見てARG:1が妹であるなら1、そうでないなら0を返す関数
+@CHARA_SISTER_YOUNG(ARG, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+;スカーレット姉妹
+IF ARG == 1010
+	RETURNF (ARG:1 == 1011) ? 1 # 0
+;プリズムリバー三姉妹
+ELSEIF ARG == 1018
+	RETURNF (ARG:1 == 1016 || ARG:1 == 1017) ? 1 # 0
+ELSEIF ARG == 1017
+	RETURNF (ARG:1 == 1016) ? 1 # 0
+;秋姉妹
+ELSEIF ARG == 1037
+	RETURNF (ARG:1 == 1038) ? 1 # 0
+;綿月姉妹
+ELSEIF ARG == 1053
+	RETURNF (ARG:1 == 1054) ? 1 # 0
+;古明地姉妹
+ELSEIF ARG == 1061
+	RETURNF (ARG:1 == 1064) ? 1 # 0
+;夢幻姉妹
+ELSEIF ARG == 2013
+	RETURNF (ARG:1 == 2012) ? 1 # 0
+;あなたの子
+ELSEIF (ARG == 2048 || ARG == 2049) && (ARG:1 == 2048 || ARG:1 == 2049) && CFLAG:(ARG:2):3108 == CFLAG:(ARG:3):3108
+	;二人とも、引き継ぎ同士、または、今周で生まれた
+	IF ((CFLAG:(ARG:2):3105 == CFLAG:(ARG:3):3105 && CFLAG:(ARG:2):3102 < CFLAG:(ARG:3):3102) || (CFLAG:(ARG:2):3107 == CFLAG:(ARG:3):3107 && CFLAG:(ARG:2):3104 < CFLAG:(ARG:3):3104)) && ((CFLAG:(ARG:2):18 > 0 && CFLAG:(ARG:3):18 > 0) || (CFLAG:(ARG:2):18 == 0 && CFLAG:(ARG:3):18 == 0))
+		RETURNF 1
+	;ARGは引き継ぎなら無条件で姉
+	ELSEIF (CFLAG:(ARG:2):3105 == CFLAG:(ARG:3):3105 || CFLAG:(ARG:2):3107 == CFLAG:(ARG:3):3107) && CFLAG:(ARG:2):18 > 0
+		RETURNF 1
+	ENDIF
+;みとりはにとりの姉だが二次なので片道
+ELSEIF ARG == 4007
+	RETURNF (ARG:1 == 1040) ? 1 # 0
+ENDIF
+RETURNF 0
+
+;………………………………………………
+;姉かどうかの判定
+;………………………………………………
+;ARGから見てARG:1が姉であるなら1、そうでないなら0を返す関数
+@CHARA_SISTER_ELDER(ARG, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+;スカーレット姉妹
+IF ARG == 1011
+	RETURNF (ARG:1 == 1010) ? 1 # 0
+;プリズムリバー三姉妹
+ELSEIF ARG == 1016
+	RETURNF (ARG:1 == 1017 || ARG:1 == 1018) ? 1 # 0
+ELSEIF ARG == 1017
+	RETURNF (ARG:1 == 1018) ? 1 # 0
+;秋姉妹
+ELSEIF ARG == 1038
+	RETURNF (ARG:1 == 1037) ? 1 # 0
+;綿月姉妹
+ELSEIF ARG == 1054
+	RETURNF (ARG:1 == 1053) ? 1 # 0
+;古明地姉妹
+ELSEIF ARG == 1064
+	RETURNF (ARG:1 == 1061) ? 1 # 0
+;夢幻姉妹
+ELSEIF ARG == 2012
+	RETURNF (ARG:1 == 2013) ? 1 # 0
+;あなたの子
+ELSEIF (ARG == 2048 || ARG == 2049) && (ARG:1 == 2048 || ARG:1 == 2049) && CFLAG:(ARG:2):3108 == CFLAG:(ARG:3):3108
+	IF ( (CFLAG:(ARG:2):3105 == CFLAG:(ARG:3):3105 && CFLAG:(ARG:2):3102 > CFLAG:(ARG:3):3102) || (CFLAG:(ARG:2):3107 == CFLAG:(ARG:3):3107 && CFLAG:(ARG:2):3104 > CFLAG:(ARG:3):3104) ) && ((CFLAG:(ARG:2):18 > 0 && CFLAG:(ARG:3):18 > 0) || (CFLAG:(ARG:2):18 == 0 && CFLAG:(ARG:3):18 == 0))
+		RETURNF 1
+	;ARG:1は引き継ぎなら無条件で姉
+	ELSEIF (CFLAG:(ARG:2):3105 == CFLAG:(ARG:3):3105 || CFLAG:(ARG:2):3107 == CFLAG:(ARG:3):3107) && CFLAG:(ARG:3):18 > 0
+		RETURNF 1
+	ENDIF
+;リンボクザンにとってパチュリーは姉だが二次なので片道
+ELSEIF ARG == 4006
+	RETURNF (ARG:1 == 1008) ? 1 # 0
+;天則にとって天子は姉だが二次なので片道
+ELSEIF ARG == 4009
+	RETURNF (ARG:1 == 1052) ? 1 # 0
+;映華にとって映姫は姉だが二次なので片道
+ELSEIF ARG == 4014
+	RETURNF (ARG:1 == 1036) ? 1 # 0
+ENDIF
+RETURNF 0
+
+;………………………………………………
+;目上かどうかの判定
+;………………………………………………
+;ARGから見てARG:1が主人・上司・師匠・頭が上がらない相手であるなら1、そうでないなら0を返す関数
+@CHARA_MASTER(ARG, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+;美鈴からだとレミリアは雇い主、フランは雇い主の妹、パチェは雇い主の親友
+IF ARG == 1006
+	RETURNF (ARG:1 == 1010 || ARG:1 == 1011 || ARG:1 == 1008) ? 1 # 0
+;小悪魔にとってパチェは主人、レミリアは主人の盟友にして屋敷の長、フランはその妹
+ELSEIF ARG == 1007
+	RETURNF (ARG:1 == 1008 || ARG:1 == 1010 || ARG:1 == 1011) ? 1 # 0
+;咲夜にとってレミリアは全て、パチェにも一目置く、フランは大切なレミリアお嬢様の妹
+ELSEIF ARG == 1009
+	RETURNF (ARG:1 == 1010 || ARG:1 == 1008 || ARG:1 == 1011) ? 1 # 0
+;橙にとってゆかりんとらんしゃまは大切な主人なの
+ELSEIF ARG == 1013
+	RETURNF (ARG:1 == 1021 || ARG:1 == 1022) ? 1 # 0
+;みょんにとって幽々子様は主、妖忌はお爺様にして師匠、ゆかりんは主の親友
+ELSEIF ARG == 1019
+	RETURNF (ARG:1 == 1020 || ARG:1 == 1070 || ARG:1 == 1022) ? 1 # 0
+;らんしゃまにとってはゆかりんは大切なご主人様、幽々子様は主人の親友
+ELSEIF ARG == 1021
+	RETURNF (ARG:1 == 1022 || ARG:1 == 1020) ? 1 # 0
+;うどんげの師匠が永琳、飼い主は輝夜
+ELSEIF ARG == 1028
+	RETURNF (ARG:1 == 1029 || ARG:1 == 1030) ? 1 # 0
+;永琳が全てを賭して仕えるのが輝夜
+ELSEIF ARG == 1029
+	RETURNF (ARG:1 == 1030) ? 1 # 0
+;こまっちゃんだって上司には一目置いてますよ
+ELSEIF ARG == 1035
+	RETURNF (ARG:1 == 1036) ? 1 # 0
+;椛の上司があややなんだけど、セクション違ってないか？
+ELSEIF ARG == 1041
+	RETURNF (ARG:1 == 1032) ? 1 # 0
+;二人の神様にお仕えする早苗っち
+ELSEIF ARG == 1042
+	RETURNF (ARG:1 == 1043 || ARG:1 == 1044) ? 1 # 0
+;衣玖さんにとって天子は上司の娘さん
+ELSEIF ARG == 1051
+	RETURNF (ARG:1 == 1052) ? 1 # 0
+;綿月姉妹の師匠が永琳先生
+ELSEIF ARG == 1053 || ARG == 1054
+	RETURNF (ARG:1 == 1029) ? 1 # 0
+;レイセン２号の今の主人は綿月姉妹
+ELSEIF ARG == 1055
+	RETURNF (ARG:1 == 1053 || ARG:1 == 1054) ? 1 # 0
+;おりんりんの飼い主はさどりん
+ELSEIF ARG == 1062
+	RETURNF (ARG:1 == 1061) ? 1 # 0
+;お空の飼い主もさどりん、あと守矢の二柱にも感謝の意味で
+ELSEIF ARG == 1063 && CFLAG:(ARG:2):0 == 0
+	RETURNF (ARG:1 == 1061 || ARG:1 == 1043 || ARG:1 == 1044) ? 1 # 0
+;太陽の力を授かる前のお空は守矢の二柱のことは知らない
+ELSEIF ARG == 1063 && CFLAG:(ARG:2):0 == 1
+	RETURNF (ARG:1 == 1061) ? 1 # 0
+;上海人形の創造主はアリス(ロリスのときは認識せず)
+ELSEIF ARG == 1066
+	RETURNF (ARG:1 == 1014 && CFLAG:(ARG:3):0 == 0) ? 1 # 0
+;蓬莱人形の創造主はアリス(ロリスのときは認識せず)
+ELSEIF ARG == 1067
+	RETURNF (ARG:1 == 1014 && CFLAG:(ARG:3):0 == 0) ? 1 # 0
+;妖忌の主はゆゆ様
+ELSEIF ARG == 1070
+	RETURNF (ARG:1 == 1020) ? 1 # 0
+;ナズーリンは頼りない星さんを支えている、また白蓮さまに一目置いている
+ELSEIF ARG == 1071
+	RETURNF (ARG:1 == 1076 || ARG:1 == 1077) ? 1 # 0
+;一輪は白蓮さまを尊敬している
+ELSEIF ARG == 1073
+	RETURNF (ARG:1 == 1077) ? 1 # 0
+;雲山は一輪に使役されている
+ELSEIF ARG == 1074
+	RETURNF (ARG:1 == 1073) ? 1 # 0
+;ムラサ船長は白蓮さまを尊敬している
+ELSEIF ARG == 1075
+	RETURNF (ARG:1 == 1077) ? 1 # 0
+;星は白蓮さまを尊敬している
+ELSEIF ARG == 1076
+	RETURNF (ARG:1 == 1077) ? 1 # 0
+;ぬえは白蓮さまにツンデレです
+ELSEIF ARG == 1078
+	RETURNF (ARG:1 == 1077) ? 1 # 0
+;大江戸人形の創造主はアリス(ロリスのときは認識せず)
+ELSEIF ARG == 1088
+	RETURNF (ARG:1 == 1014 && CFLAG:(ARG:3):0 == 0) ? 1 # 0
+;ゴリアテ人形の創造主はアリス(ロリスのときは認識せず)
+ELSEIF ARG == 1089
+	RETURNF (ARG:1 == 1014 && CFLAG:(ARG:3):0 == 0) ? 1 # 0
+;魔理沙は魅魔さまの弟子
+ELSEIF ARG == 1002
+	RETURNF (ARG:1 == 2000) ? 1 # 0
+;アリスにとって神綺は　大切（諸説あるしなあ…)
+ELSEIF ARG == 1014
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;ちゆりの指導教官は夢美？
+ELSEIF ARG == 2007
+	RETURNF (ARG:1 == 2008) ? 1 # 0
+;くるみは幽香にいじめられてます
+ELSEIF ARG == 2010
+	RETURNF (ARG:1 == 1034) ? 1 # 0
+;エリーも幽香にいじめられてます
+ELSEIF ARG == 2011
+	RETURNF (ARG:1 == 1034) ? 1 # 0
+;サラは魔界人なので神綺さまの娘です
+ELSEIF ARG == 2014
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;ルイズは魔界人なので神綺さまの娘です
+ELSEIF ARG == 2015
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;ユキは魔界人なので神綺さまの娘です
+ELSEIF ARG == 2016
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;マイは魔界人なので神綺さまの娘です
+ELSEIF ARG == 2017
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;夢子は神綺さまに仕えていますし、娘でもあります
+ELSEIF ARG == 2018
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;メイド妖精の上司はレミリアさまと咲夜さん
+ELSEIF ARG == 3001 || ARG == 3008
+	RETURNF (ARG:1 == 1009 || ARG:1 == 1010) ? 1 # 0
+;地上の兎たちのリーダーはてゐ
+ELSEIF ARG == 3014
+	RETURNF (ARG:1 == 1027) ? 1 # 0
+;アリスの人形たちの創造主はアリス(ロリスのときは認識せず)
+ELSEIF ARG == 3016
+	RETURNF (ARG:1 == 1014 && CFLAG:(ARG:3):0 == 0) ? 1 # 0
+;魔界人はみんな神綺さまの娘です
+ELSEIF ARG == 3017
+	RETURNF (ARG:1 == 2019) ? 1 # 0
+;ここぁの主はパチェ
+ELSEIF ARG == 3020
+	RETURNF (ARG:1 == 1008)
+;キナコの親は永琳(二次キャラなので片道ということにします)
+ELSEIF ARG == 4003
+	RETURNF (ARG:1 == 1029) ? 1 # 0
+ENDIF
+RETURNF 0
+
+;………………………………………………
+;目下かどうかの判定
+;………………………………………………
+;ARGから見てARG:1が奴隷・部下・弟子であるなら1、そうでないなら0を返す関数
+@CHARA_SLAVE(ARG, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+;パチェにとって小悪魔って使い魔ってことか？、ここぁもそうかも？
+IF ARG == 1008
+	RETURNF (ARG:1 == 1007 || ARG:1 == 3020) ? 1 # 0
+;咲夜はメイド妖精たちを指揮する
+ELSEIF ARG == 1009
+	RETURNF (ARG:1 == 3001 || ARG:1 == 3008) ? 1 # 0
+;レミリアお嬢様のカリスマが美鈴・小悪魔・咲夜・メイド妖精に及ぶ
+ELSEIF ARG == 1010
+	RETURNF (ARG:1 == 1006 || ARG:1 == 1007 || ARG:1 == 1009 || ARG:1 == 3001 || ARG:1 == 3008) ? 1 # 0
+;アリス(ロリスではなくて)にとって人形は大切な作品
+ELSEIF ARG == 1014 && CFLAG:(ARG:2):0 == 0
+	RETURNF (ARG:1 == 1066 || ARG:1 == 1067 || ARG:1 == 1088 || ARG:1 == 1089 || ARG:1 == 3016) ? 1 # 0
+;幽々子様はみょんと妖忌の主
+ELSEIF ARG == 1020
+	RETURNF (ARG:1 == 1019 || ARG:1 == 1070) ? 1 # 0
+;らんしゃまは橙を溺愛中
+ELSEIF ARG == 1021
+	RETURNF (ARG:1 == 1013) ? 1 # 0
+;星にとってナズは頼りになる部下
+ELSEIF ARG == 1076
+	RETURNF (ARG:1 == 1071) ? 1 # 0
+;ゆかりんにとって式は貴重な手足
+ELSEIF ARG == 1022
+	RETURNF (ARG:1 == 1013 || ARG:1 == 1021) ? 1 # 0
+;てゐは地上の兎たちのリーダー
+ELSEIF ARG == 1027
+	RETURNF (ARG:1 == 3014) ? 1 # 0
+;永琳の弟子がうどんげ,綿月姉妹
+ELSEIF ARG == 1029
+	RETURNF (ARG:1 == 1028 || ARG:1 == 1053 || ARG:1 == 1054) ? 1 # 0
+;輝夜にとってうどんげと永琳は大切な家族
+ELSEIF ARG == 1030
+	RETURNF (ARG:1 == 1028 || ARG:1 == 1029) ? 1 # 0
+;あややにとって椛もみもみは大切な欲望発散の…
+ELSEIF ARG == 1032
+	RETURNF (ARG:1 == 1041) ? 1 # 0
+;ゆうかりんにとってくるみとエリーは…誰だっけ？
+ELSEIF ARG == 1034
+	RETURNF (ARG:1 == 2010 || ARG:1 == 2011) ? 1 # 0
+;映姫様はいつも小町のことで悩んでます
+ELSEIF ARG == 1036
+	RETURNF (ARG:1 == 1035) ? 1 # 0
+;神奈子にとって早苗は大切な「家族」です
+ELSEIF ARG == 1043
+	RETURNF (ARG:1 == 1042) ? 1 # 0
+;諏訪子にとって早苗は大切な「家族」です
+ELSEIF ARG == 1044
+	RETURNF (ARG:1 == 1042) ? 1 # 0
+;天子は衣玖さんを部下だと勘違いしている
+ELSEIF ARG == 1052
+	RETURNF (ARG:1 == 1051) ? 1 # 0
+;豊姫にとってレイセン2号はからかいがいがあるようだ
+ELSEIF ARG == 1053
+	RETURNF (ARG:1 == 1055) ? 1 # 0
+;依姫にとってレイセン2号の現状は情けないかもなあ？
+ELSEIF ARG == 1054
+	RETURNF (ARG:1 == 1055) ? 1 # 0
+;さどりんはペットを飼っている
+ELSEIF ARG == 1061
+	RETURNF (ARG:1 == 1062 || ARG:1 == 1063) ? 1 # 0
+;妖忌は孫娘のことが気に掛かっている
+ELSEIF ARG == 1070
+	RETURNF (ARG:1 == 1019) ? 1 # 0
+;一輪は雲山を使役している
+ELSEIF ARG == 1073
+	RETURNF (ARG:1 == 1074) ? 1 # 0
+;白蓮はナズリン、一輪、ムラサ、星、ぬえを気に掛けている
+ELSEIF ARG == 1077
+	RETURNF (ARG:1 == 1071 || ARG:1 == 1073 || ARG:1 == 1075 || ARG:1 == 1076 || ARG:1 == 1078) ? 1 # 0
+;魅魔にとって魔理沙は最愛の弟子
+ELSEIF ARG == 2000
+	RETURNF (ARG:1 == 102) ? 1 # 0
+;夢美にとってちゆりは助手である
+ELSEIF ARG == 2008
+	RETURNF (ARG:1 == 107) ? 1 # 0
+;神綺ママは魔界人たちの尊敬を集めているアホ毛神様です
+ELSEIF ARG == 2019
+	RETURNF (ARG:1 == 1014 || ARG:1 == 2014 || ARG:1 == 2015 || ARG:1 == 2016 || ARG:1 == 2017 || ARG:1 == 2018 || ARG:1 == 2017) ? 1 # 0
+ENDIF
+RETURNF 0
+
+;………………………………………………
+;友人・知り合いかどうかの判定
+;………………………………………………
+;二次ネタ満載かもしれない。利用するなら自己責任で。
+;ARGから見てARG:1が密接な関係があるなら1、そうでないなら0を返す関数
+@CHARA_UNISON(ARG, ARG:1, ARG:2, ARG:3)
+#FUNCTION
+;ダブルリリー
+IF ARG == 1015
+	RETURNF (ARG:1 == 1056) ? 1 # 0
+ELSEIF ARG == 1056
+	RETURNF (ARG:1 == 1015) ? 1 # 0
+;てゐと永遠亭
+ELSEIF ARG == 1027
+	RETURNF (ARG:1 == 1028 || ARG:1 == 1029 || ARG:1 == 1030) ? 1 # 0
+ELSEIF ARG == 1028
+	RETURNF (ARG:1 == 1027) ? 1 # 0
+ELSEIF ARG == 1029
+	RETURNF (ARG:1 == 1027) ? 1 # 0
+ELSEIF ARG == 1030
+	RETURNF (ARG:1 == 1027) ? 1 # 0
+;三月精
+ELSEIF ARG == 1045
+	RETURNF (ARG:1 == 1046 || ARG:1 == 1047) ? 1 # 0
+ELSEIF ARG == 1046
+	RETURNF (ARG:1 == 1045 || ARG:1 == 1047) ? 1 # 0
+ELSEIF ARG == 1047
+	RETURNF (ARG:1 == 1045 || ARG:1 == 1046) ? 1 # 0
+;秘封倶楽部
+ELSEIF ARG == 1049
+	RETURNF (ARG:1 == 1050) ? 1 # 0
+ELSEIF ARG == 1050
+	RETURNF (ARG:1 == 1049) ? 1 # 0
+;鬼の四天王
+ELSEIF ARG == 1023
+	RETURNF (ARG:1 == 1060) ? 1 # 0
+ELSEIF ARG == 1060
+	RETURNF (ARG:1 == 1023) ? 1 # 0
+;ユキマイ
+ELSEIF ARG == 2016
+	RETURNF (ARG:1 == 2017) ? 1 # 0
+ELSEIF ARG == 2017
+	RETURNF (ARG:1 == 2016) ? 1 # 0
+;レイラとプリズムリバー
+ELSEIF ARG == 1090
+	RETURNF (ARG:1 == 1016 || ARG:1 == 1017 || ARG:1 == 1018) ? 1 # 0
+ELSEIF ARG == 1016
+	RETURNF (ARG:1 == 1090) ? 1 # 0
+ELSEIF ARG == 1017
+	RETURNF (ARG:1 == 1090) ? 1 # 0
+ELSEIF ARG == 1018
+	RETURNF (ARG:1 == 1090) ? 1 # 0
+;Ｗ美鈴なんだけど二次なので片道にしておきます
+ELSEIF ARG == 4004
+	RETURNF (ARG:1 == 1006) ? 1 # 0
+;シュガーから三月精（片道）
+ELSEIF ARG == 4015
+	RETURNF (ARG:1 == 1045 || ARG:1 == 1046 || ARG:1 == 1047) ? 1 # 0
+ENDIF
+RETURNF 0

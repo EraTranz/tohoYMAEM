@@ -1,0 +1,49 @@
+﻿;YM→YMAEコンバータによって作成されました
+;=================================================
+;RANK = 3
+;=================================================
+@K2008_RANK3_START1(ARGS = "")
+;条件を記入する
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+PRINTFORMW 「――そんな脱ぎ方しないとダメなの？」
+PRINTFORMW 「ほんと変態なご主人様を持つと苦労するわ」
+PRINTFORMW 「ほーらほら、これでご満足？　うふふ」
+
+
+;-------------------------------------------------
+@K2008_RANK3_START2(ARGS = "")
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+PRINTFORMW 「――また来たのね。%CALLNAME:PLAYER%も懲りない人だこと」
+PRINTFORMW 「もっとも……　ちょっとだけ楽しみにしてる私も私、ね」
+PRINTFORMW 「まぁ、今日の講義もよろしく御願いするわ」
+
+
+;-------------------------------------------------
+@K2008_RANK3_START11(ARGS = "")
+SIF __K2008N_CAN_CALL__
+	RETURN MARK:屈服刻印 >= 2 && ABL:従順 >= 2
+
+PRINTFORMW 「ふふふ、また来るなんて%CALLNAME:PLAYER%もいい心がけね」
+PRINTFORML
+PRINTFORMW 「何よ、ずっと黙ったまま待ちぼうけ？」
+PRINTFORMW 「ほらほら、さっさと入って私に『脱げ』って命令してよ」
+PRINTFORMW 「早くしないと機嫌損ねて追い出すかもしれないわね」
+
+
+;-------------------------------------------------
+@K2008_RANK3_START12(ARGS = "")
+SIF __K2008N_CAN_CALL__
+	RETURN MARK:快楽刻印 >= 2 && ABL:欲望 >= 2
+
+PRINTFORMW 「んっ……　すぅ――　んぅ、んっ、あっ……　すぅ」
+PRINTFORML
+PRINTFORMW 部屋に入ると、夢美は横になってうたた寝をしていた。
+PRINTFORMW 時折、艶かしい声を上げて身じろぎをしているが、欲求不満なのだろうか。
+PRINTFORML
+PRINTFORMW 内股をすり合わせて一人悶える夢美を起こさないように服を脱がせていった……
+
+

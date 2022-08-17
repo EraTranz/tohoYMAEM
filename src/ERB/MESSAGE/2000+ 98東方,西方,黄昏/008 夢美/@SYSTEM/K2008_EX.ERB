@@ -1,0 +1,88 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;絶頂／寸止め絶頂の呼び出し
+;	絶頂の有無は確認せず、システムから呼び出されます
+;========================================================
+@K2008_EX
+#DIM _COUNT
+;RESULT > 0のときは射精口上を呼び出さない
+RESULT = 0
+
+;寸止め絶頂
+FOR _COUNT, 20, 49+1
+	SELECTCASE _COUNT
+		CASE 41, 42
+			;寸止め失敗は含まない（通常ここまでこないはずだけど弾く）
+			CONTINUE
+	ENDSELECT
+	
+	IF NOWEX:_COUNT > 0
+		;ランク指定の寸止め絶頂口上があればそちらを優先
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_STAY_ORGASM_COM_{SELECTCOM}
+		CATCH
+			;ない場合は未指定に飛ばす
+			TRYCCALLFORM K2008_STAY_ORGASM_COM_{SELECTCOM}
+			CATCH
+				;未指定もない場合は汎用口上を呼び出し
+				CALL K2008_STAY_ORGASM_GENERAL
+			ENDCATCH
+		ENDCATCH
+		BREAK
+	ENDIF
+NEXT
+
+SIF RESULT > 0
+	RETURN 1
+
+;特殊絶頂口上
+FOR _COUNT, 10, 19+1
+	;精飲絶頂は「口に射精」の追加構文に飛ばす
+	SIF _COUNT == 13
+		CONTINUE
+	
+	IF NOWEX:_COUNT > 0
+		;ランク指定の絶頂口上があればそちらを優先
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_SPEX_COM_{SELECTCOM}
+		CATCH
+			;ない場合は未指定に飛ばす
+			TRYCCALLFORM K2008_SPEX_COM_{SELECTCOM}
+			CATCH
+				;未指定もない場合は汎用口上を呼び出し
+				CALL K2008_SP_ORGASM_GENERAL
+			ENDCATCH
+		ENDCATCH
+		BREAK
+	ENDIF
+NEXT
+
+SIF RESULT > 0
+	RETURN 1
+
+;絶頂口上
+FOR _COUNT, 0, 9+1
+	IF NOWEX:_COUNT > 0
+		;ランク指定の絶頂口上があればそちらを優先
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_EX_COM_{SELECTCOM}
+		CATCH
+			;ない場合は未指定に飛ばす
+			TRYCCALLFORM K2008_EX_COM_{SELECTCOM}
+			CATCH
+				;未指定もない場合は汎用口上を呼び出し
+				CALL K2008_ORGASM_GENERAL
+			ENDCATCH
+		ENDCATCH
+		BREAK
+	ENDIF
+NEXT
+
+SIF RESULT > 0
+	RETURN 1
+
+;おねだり口上ができたらここで呼び出す
+;CALL K2008_NO_ORGASM
+
+;SIF RESULT > 0
+;	RETURN 1
+
+;RESULT == 0 しかここには来ない。射精口上まで表示させる
+RETURN 0

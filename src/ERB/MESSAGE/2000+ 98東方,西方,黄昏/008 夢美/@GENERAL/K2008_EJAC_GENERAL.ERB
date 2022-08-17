@@ -1,0 +1,21 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;汎用射精（させた）口上
+;	ARG = 射精先
+;================================================
+@K2008_EJAC_GENERAL(ARG)
+
+;ランク指定、射精箇所指定
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_EJAC_GENERAL_{ARG}
+CATCH
+	;射精箇所指定
+	TRYCCALLFORM K2008_EJAC_GENERAL_{ARG}
+	CATCH
+		;ランク指定、汎用射精口上
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_EJAC_GENERAL_0
+		CATCH
+			;汎用射精口上
+			TRYCALLFORM K2008_EJAC_GENERAL_0
+		ENDCATCH
+	ENDCATCH
+ENDCATCH

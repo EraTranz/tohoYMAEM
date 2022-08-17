@@ -1,0 +1,166 @@
+﻿;=============================================================================
+;ザーメンキス
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE293
+;直前にフェラするで射精させていないとダメ
+;もしくはコンドーム精飲で助手が精液を口に含んでいるのが条件
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:293 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;直前がフェラかコンドーム精飲(助手)じゃないとダメ
+SIF PREVCOM != 5 && PREVCOM != 292
+	RETURN 0
+;直前のコマンドがフェラの場合
+IF PREVCOM == 5
+	;コンドーム装着中はダメ
+	SIF TEQUIP:コンドーム
+		RETURN 0
+	;直前のフェラするで射精してないとダメ
+	SIF TFLAG:145 < 1
+		RETURN 0
+;直前のコマンドがフェラするで直前の行動者と今の行動者が同じ場合
+ELSEIF PREVCOM == 5 && TFLAG:94 == PLAYER
+	;コンドーム装着中はダメ
+	SIF TEQUIP:コンドーム
+		RETURN 0
+	;直前のフェラするで射精してないとダメ
+	SIF TFLAG:145 < 1
+		RETURN 0
+ELSEIF PREVCOM == 292
+	;コンドーム精飲直後にレズっ気3以上の助手が調教者でないとダメ
+	SIF ASSIPLAY == 0 || ((TALENT:ASSI:オトコ && ABL:ASSI:ＢＬっ気 < 3) || (TALENT:ASSI:オトコ == 0 && ABL:ASSI:レズっ気 < 3))
+		RETURN 0
+ENDIF
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 293) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM293
+PRINTL ザーメンキス
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 293
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ザーメンキス
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;PLAYERが無理矢理するので実行はいつでも可能
+
+;汚れの計算
+TFLAG:242 = 0
+;愛液の汚れ
+SIF STAIN:PLAYER:ペニス & 1
+	TFLAG:242 += 1
+;精液の汚れ
+SIF STAIN:PLAYER:ペニス & 4
+	TFLAG:242 += 3
+;アナルの汚れ
+SIF STAIN:PLAYER:ペニス & 8
+	TFLAG:242 += 7
+SIF STAIN:PLAYER:ペニス & 16
+	TFLAG:242 += 15
+
+SIF TALENT:汚臭鈍感
+	TFLAG:242 /= 3
+SIF TALENT:汚臭敏感
+	TFLAG:242 *= 2
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 80
+
+SOURCE:屈従 = 1500
+SOURCE:逸脱 = 500
+
+;上のほうで計算した汚れデータ
+SOURCE:不潔 = TFLAG:242*40 + 100
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 = 420
+	SOURCE:達成感 = 150
+	TIMES SOURCE:不潔 , 4.00
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 = 500
+	SOURCE:達成感 = 300
+	TIMES SOURCE:不潔 , 2.50
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:性行動 = 580
+	SOURCE:達成感 = 600
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:性行動 = 660
+	SOURCE:達成感 = 900
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:性行動 = 740
+	SOURCE:達成感 = 1500
+	TIMES SOURCE:不潔 , 0.50
+ELSE
+	SOURCE:性行動 = 820
+	SOURCE:達成感 = 2200
+	TIMES SOURCE:不潔 , 0.10
+ENDIF
+
+;調教者の口の汚れと奴隷の口の汚れを処理
+LOCAL = STAIN:PLAYER:口
+STAIN:PLAYER:口 |= STAIN:口
+STAIN:口 |= LOCAL
+
+;キス経験
+TCVAR:キス経験 += 1
+TCVAR:PLAYER:キス経験 += 1
+CFLAG:主人と調教キス数 += (ASSIPLAY == 0) ? 1 # 0
+
+;精液を飲んだフラグ
+TFLAG:3 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_293
+IF PREVCOM == 5
+	PRINTFORML %CALLNAME:PLAYER%は口に含んだ精液を唾液と混ぜ、キスで口移しした……
+ELSE
+	PRINTFORML %CALLNAME:ASSI%は口に含んだ精液を唾液と混ぜ、キスで口移しした……
+ENDIF
+;精液中毒なし
+IF ABL:精液中毒 == 0
+	PRINTFORML %CALLNAME:TARGET%は涙目で逃れようとするが、%CALLNAME:PLAYER%はそれを許さず、両手で頭を掴み、舌で唇をこじ開けた……
+;精液中毒1以上3未満
+ELSEIF ABL:精液中毒 < 3
+	PRINTFORML %CALLNAME:TARGET%は精液を飲まされ、屈辱に満ちた表情をしている……
+;精液中毒3以上5未満
+ELSEIF ABL:精液中毒 < 5
+	PRINTFORML %CALLNAME:TARGET%は恍惚としながら、精液を%CALLNAME:PLAYER%の舌と絡め合っている……
+;精液中毒5以上
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の唾液ごと貪欲に吸引し、さらに%CALLNAME:PLAYER%の口内を舐め回して残り香を愉しんでいる……
+ENDIF

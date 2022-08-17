@@ -1,0 +1,222 @@
+﻿;=============================================================================
+;電極オナホール
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE17
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:17 > 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中、○○風呂入浴中はダメ
+SIF TEQUIP:お風呂場プレイ || TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;触手服が先に責めてるときはダメ
+SIF TEQUIP:触手服 & 2
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｃ系装着器具 == 6
+	RETURN 1
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:電極オナホール == 0
+	RETURN 0
+;調教対象が[小人体型]の場合は主人が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;調教者が助手の場合、技巧3以上じゃないと使えない。
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;他のＣ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 6
+	RETURN 0
+;コンドーム装着中はダメ
+SIF TEQUIP:コンドーム
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 17) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM17
+PRINTL 電極オナホール
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 17
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 電極オナホール
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 160
+
+SOURCE:露出 = 120
+SOURCE:逸脱 = 470
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 500
+	SOURCE:痛み = 1000
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 1000
+	SOURCE:痛み = 1000
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 2250
+	SOURCE:痛み = 1000
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 4000
+	SOURCE:痛み = 1200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 6000
+	SOURCE:痛み = 1500
+ELSE
+	SOURCE:快Ｃ = 7500
+	SOURCE:痛み = 1800
+ENDIF
+
+;電極オナホールの着脱
+IF TEQUIP:Ｃ系装着器具
+	TEQUIP:Ｃ系装着器具 = 0
+ELSE
+	TEQUIP:Ｃ系装着器具 = 6
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+SIF PLAYER == MASTER && TEQUIP:Ｃ系装着器具 == 6
+	TCVAR:Ｃ調律経験 += (TALENT:オトコ) ? 1 # 2
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;電極オナホール装備中
+;-------------------------------------------------
+@EQUIP_COM17
+IF TEQUIP:触手調教 || TEQUIP:触手服 & 2
+	PRINTL ＜触手放電ペニス責め中＞
+ELSE
+	PRINTL ＜電極オナホール装備中＞
+ENDIF
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 40
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 100
+	LOCAL:1 = 1000
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 300
+	LOCAL:1 = 1000
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL = 625
+	LOCAL:1 = 1000
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL = 1125
+	LOCAL:1 = 1200
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL = 1500
+	LOCAL:1 = 1500
+ELSE
+	LOCAL = 1875
+	LOCAL:1 = 1800
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+SOURCE:快Ｃ += LOCAL
+SOURCE:痛み += LOCAL:1
+SOURCE:露出 += 50
+SOURCE:欲情追加 += 50
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_17
+IF TEQUIP:Ｃ系装着器具
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%から電極オナホールを外した…
+	ELSE
+		IF MARK:反発刻印 > 1
+			PRINTFORML %CALLNAME:PLAYER%は、電撃による刺激でふらついている%CALLNAME:TARGET%から電極オナホールを外した
+			PRINTFORML %CALLNAME:TARGET%は息を整えつつ%CALLNAME:PLAYER%を厳しい表情で睨みつけた…
+		ELSEIF TALENT:相愛 && ASSIPLAY == 0
+			PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のペニスから電極オナホールを外した
+			PRINTFORML %CALLNAME:TARGET%は、次にどこを責めてくれるのかを期待しつつ%CALLNAME:PLAYER%を熱い視線で見つめてきた…
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%から電極オナホールを外した…
+		ENDIF
+	ENDIF
+ELSE
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のペニスを電極オナホールに挿入した…
+	ELSE
+		IF MARK:反発刻印 > 1
+			PRINTFORML %CALLNAME:PLAYER%は、嫌がる%CALLNAME:TARGET%を無理やり押さえつけた
+			PRINTFORML そして、%CALLNAME:TARGET%のペニスを電極オナホールに挿入した…
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のペニスを電極オナホールに挿入した…
+		ENDIF
+	ENDIF
+ENDIF

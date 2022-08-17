@@ -1,0 +1,143 @@
+﻿;=============================================================================
+;ツボを突く
+;=============================================================================
+;気力は大きく消耗するものの、そのターンでの体力の消耗具合が軽減、あるいは回復する効果を持つ(道具複数装着時に威力を発揮?)
+;調教者がサドまたはドＳの場合、コマンドが大幅に弱体化する
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE236
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:236 > 0
+	RETURN 0
+;針を持っていないとダメ
+SIF ITEM:針 == 0
+	RETURN 0
+;デバッグモードでない限り連続で使えない
+SIF PREVCOM == 236 && TALENT:MASTER:998 == 0
+	RETURN 0
+;主人の場合技巧3以上ないとダメ
+SIF ABL:PLAYER:技巧 < 3
+	RETURN 0
+;助手調教の場合、従順5・技巧4・針さばきでないとダメ
+SIF ASSIPLAY && (ABL:PLAYER:従順 < 5 || ABL:PLAYER:技巧 < 4 || TALENT:PLAYER:針さばき == 0)
+	RETURN 0
+;従順が3未満のときは緊縛中じゃないとダメ
+SIF ABL:Ｃ感覚 < 3 && TEQUIP:緊縛関連 == 0
+	RETURN 0
+;気力800未満はダメ
+SIF BASE:気力 < 800
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 236) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM236
+PRINTL ツボを突く
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 236
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ツボを突く
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	DOWNBASE:1 += 180
+ELSE
+	DOWNBASE:1 += 80
+ENDIF
+
+SOURCE:逸脱 = 800
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 500
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 550
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 800
+ELSE
+	SOURCE:痛み = 900
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+SIF ASSIPLAY
+	TFLAG:55 = 2
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_236
+;調教者がサドがドＳ
+IF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のツボを針で刺激し始めたが、
+	PRINTFORML %CALLNAME:TARGET%はその激しい攻撃による痛みに呻き声を上げていた…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のツボを針で刺激し始めた…
+ENDIF
+
+;--------------------------------------------------
+;ツボを突くの消耗減少処理
+;--------------------------------------------------
+@EQUIP_COM236
+;調教者がサドまたはドＳの場合、体力回復の効果は無し＋消耗の割合が減少
+LOCAL = 0
+IF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	TIMES DOWNBASE:0 , 0.80
+	LOCAL = 0
+ELSEIF ABL:PLAYER:技巧 <= 3
+	DOWNBASE:0 /= 2
+	LOCAL = 100
+ELSEIF ABL:PLAYER:技巧 == 4
+	DOWNBASE:0 /= 3
+	LOCAL = 150
+	;主人調教時に対象が[恋慕][服従][使い魔]のいずれかを持っている場合は気力の消耗も少し軽減
+	SIF PLAYER == MASTER && (TALENT:恋慕 || TALENT:服従 || TALENT:使い魔)
+		TIMES DOWNBASE:1 , 0.90
+ELSE
+	DOWNBASE:0 = 0
+	LOCAL = 250
+	;主人調教時に対象が[恋慕][服従][使い魔]のいずれかを持っている場合は気力の消耗も少し軽減
+	SIF PLAYER == MASTER && (TALENT:恋慕 || TALENT:服従 || TALENT:使い魔)
+		TIMES DOWNBASE:1 , 0.75
+ENDIF
+SIF LOCAL
+	BASE:体力 = MIN(BASE:体力 + LOCAL, MAXBASE:0)
+
+RETURN 1

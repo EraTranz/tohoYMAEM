@@ -1,0 +1,239 @@
+﻿;=============================================================================
+;強制放尿
+;=============================================================================
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM620
+PRINTL 強制放尿
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 620
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 強制放尿
+SELECTCOM = 620
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 10
+DOWNBASE:1 += 150
+
+SOURCE:逸脱 = 5000
+SOURCE:反感追加 = 500
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 10
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 120
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 500
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2000
+ELSE
+	SOURCE:快Ｃ = 3000
+ENDIF
+
+;ABL:プレイヤーの技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	SOURCE:達成感 = 30
+ELSEIF ABL:PLAYER:技巧 == 1
+	SOURCE:達成感 = 100
+ELSEIF ABL:PLAYER:技巧 == 2
+	SOURCE:達成感 = 300
+ELSEIF ABL:PLAYER:技巧 == 3
+	SOURCE:達成感 = 700
+ELSEIF ABL:PLAYER:技巧 == 4
+	SOURCE:達成感 = 1500
+ELSE
+	SOURCE:達成感 = 2400
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:露出 = 1800
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:露出 = 2000
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:露出 = 2400
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:露出 = 2800
+ELSE
+	SOURCE:露出 = 3600
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:屈従 = 6000
+	SOURCE:不潔 = 1000
+ELSEIF ABL:露出癖 == 1
+	SOURCE:屈従 = 5000
+	SOURCE:不潔 = 800
+ELSEIF ABL:露出癖 == 2
+	SOURCE:屈従 = 4000
+	SOURCE:不潔 = 600
+ELSEIF ABL:露出癖 == 3
+	SOURCE:屈従 = 3000
+	SOURCE:不潔 = 400
+ELSEIF ABL:露出癖 == 4
+	SOURCE:屈従 = 2000
+	SOURCE:不潔 = 200
+ELSE
+	SOURCE:屈従 = 1000
+	SOURCE:不潔 = 50
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:露出 , 0.80
+	SOURCE:欲情追加 = 100
+	SOURCE:液体追加 = 100
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:露出 , 1.00
+	SOURCE:欲情追加 = 300
+	SOURCE:液体追加 = 200
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:露出 , 1.20
+	SOURCE:欲情追加 = 700
+	SOURCE:液体追加 = 400
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:露出 , 1.40
+	SOURCE:液体追加 = 700
+	SOURCE:欲情追加 = 1200
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:露出 , 1.50
+	SOURCE:欲情追加 = 1800
+	SOURCE:液体追加 = 1100
+ELSE
+	TIMES SOURCE:露出 , 1.70
+	SOURCE:欲情追加 = 2500
+	SOURCE:液体追加 = 1500
+ENDIF
+
+;場所をみる
+IF TEQUIP:野外プレイ
+	TIMES SOURCE:逸脱 , 2.50
+ELSEIF TEQUIP:お風呂場プレイ
+	TIMES SOURCE:逸脱 , 0.50
+ELSEIF TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0)
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TEQUIP:羞恥プレイ == 1
+	TIMES SOURCE:逸脱 , 1.20
+ENDIF
+
+LOCAL:1 = 100
+;EXP:放尿経験をみる
+IF EXP:放尿経験 < EXPLV:1
+	TIMES LOCAL:1, 3.00
+ELSEIF EXP:放尿経験 < EXPLV:2
+	TIMES LOCAL:1, 2.50
+ELSEIF EXP:放尿経験 < EXPLV:3
+	TIMES LOCAL:1, 2.00
+ELSEIF EXP:放尿経験 < EXPLV:4
+	TIMES LOCAL:1, 1.00
+ELSEIF EXP:放尿経験 < EXPLV:5
+	TIMES LOCAL:1, 0.80
+ELSE
+	TIMES LOCAL:1, 0.60
+ENDIF
+
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL:1, 2.00
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:1, 2.00
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:1, 0.80
+ENDIF
+;自制心
+SIF TALENT:自制心
+	TIMES LOCAL:1, 1.50
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1, 0.60
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1, 0.80
+;抑圧
+SIF TALENT:抑圧
+	TIMES LOCAL:1, 3.00
+;抵抗
+SIF TALENT:抵抗
+	TIMES LOCAL:1, 3.00
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL:1, 3.50
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:1, 0.50
+ENDIF
+
+SOURCE:トラウマ += LOCAL:1 * 3
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1, 1.20
+
+SOURCE:反感追加 += LOCAL:1 * 2
+SOURCE:達成感 += 3000
+SOURCE:逸脱 += LOCAL:1 * 5
+
+;蒐集品イベント(黄金水入手)
+SIF FLAG:12 & 8 && BASE:尿意 > 3000
+	CALL SWEET_POTATO_GW
+
+TCVAR:放尿経験 += 2
+;放尿レベル増加
+IF TALENT:おもらし癖 == 0
+	LOCAL:2 = 1 + (EXP:放尿経験 / 10)
+	LOCAL:2 = MIN(LOCAL:2 *2, 10)
+	CFLAG:放尿レベル += LOCAL:2
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+
+TEQUIP:利尿剤 = 0
+
+TFLAG:32 = 1
+EX:12 += 1
+NOWEX:12 += 1
+BASE:尿意 = 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_620
+;前回と今回の調教者が同じで、調教対象が女性で前回の調教が顔面騎乗もしくは顔面騎乗アナルである場合
+IF TALENT:オトコ == 0 && (PREVCOM == 126 || PREVCOM == 187) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTFORML %CALLNAME:PLAYER%は間近に見える尿道口を口で刺激した
+	PRINTFORML %CALLNAME:TARGET%は我慢できずに、そのまま尿を%CALLNAME:PLAYER%にぶっかけてしまった…
+ELSEIF TEQUIP:野外プレイ
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の足を持ち上げ、尿道口を刺激した
+	PRINTFORML %CALLNAME:TARGET%は我慢できずに、犬のような格好で尿を迸らせてしまった…
+ELSEIF TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0) || TEQUIP:お医者さんプレイ
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の性器に口付け、尿道口をすすりあげた
+	PRINTFORML %CALLNAME:TARGET%は我慢できず%CALLNAME:PLAYER%の目の前で水流を迸らせてしまった…
+ELSEIF (TALENT:小人体型 || TALENT:小柄体型) && (TALENT:絶壁 || TALENT:貧乳)
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の両足を抱え上げ、おしっこの穴を指先でくすぐった
+	PRINTFORML %CALLNAME:TARGET%は小さな身体を震わせて尿を迸らせてしまった…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の尿道口を指先で刺激した
+	PRINTFORML %CALLNAME:TARGET%は我慢できずに尿を迸らせてしまった…
+ENDIF

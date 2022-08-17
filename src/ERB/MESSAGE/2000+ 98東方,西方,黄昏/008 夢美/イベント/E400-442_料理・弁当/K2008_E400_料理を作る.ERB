@@ -1,0 +1,118 @@
+﻿;YM→YMAEコンバータによって作成されました
+;=================================================
+;弁当作成
+;TFLAG:99で料理の種類の番号を取得可能
+;
+;デフォルトの位置づけ（ランダム、ただし0、7～9は発現条件あり）
+;	TFLAG	基礎額	料理
+;	0		350		キャラ固有料理（苺タルト　苺ミルク）
+;	1, 15	320		蕎麦
+;	2, 14	480		肉じゃが
+;	3, 13	390		ケーキ
+;	4, 12	300		素麺
+;	5, 11	230		サラダ
+;	6, 10	270		ハンバーグ
+;	7		350		母乳料理（母乳体質のときのみ）
+;	8				欠番
+;	9		350		オムレツ（産卵可のときのみ）
+;	その他	210		オニギリ
+;=================================================
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE400
+TRYCALLFORM K2008_RANK{K2008F_RANK()}_BENTO_MAKE
+
+;-------------------------------------------------
+;RANK0
+;-------------------------------------------------
+@K2008_RANK0_BENTO_MAKE
+;とりあえずRANK1に飛ばす
+CALL K2008_RANK1_BENTO_MAKE
+
+;-------------------------------------------------
+;RANK1
+;-------------------------------------------------
+@K2008_RANK1_BENTO_MAKE
+;とりあえずRANK2に飛ばす
+CALL K2008_RANK2_BENTO_MAKE
+
+;-------------------------------------------------
+;RANK2
+;-------------------------------------------------
+@K2008_RANK2_BENTO_MAKE
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORML 「ちょ、ちょっと何よそのゲテモノ料理！」
+		PRINTFORMW 「作る、作るから！　そんなの持ってこないでよ！」
+	CASE 1
+		PRINTFORML 「は？　食事を作れ？」
+		PRINTFORMW 「別に構わないけど、%CALLNAME:MASTER%の分はないからね」
+	CASEELSE
+		PRINTFORMW 「言っておくけど、味も見た目も保障は出来ないわよ？」
+ENDSELECT
+
+
+;-------------------------------------------------
+;RANK3
+;-------------------------------------------------
+@K2008_RANK3_BENTO_MAKE
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORML 「……これなに？　まさか食事なの？」
+		PRINTFORMW 「はぁ、いいわ、今回は作ってあげるから待ってなさい」
+	CASE 1
+		PRINTFORML 「料理？　え、ええ。いいわよ」
+		PRINTFORMW （大丈夫、大丈夫よ。化学実験と同じようなものだし）
+	CASEELSE
+		PRINTFORMW 「言っておくけど、味の保障は出来ないわよ？」
+ENDSELECT
+
+
+;-------------------------------------------------
+;RANK4
+;-------------------------------------------------
+@K2008_RANK4_BENTO_MAKE
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORMW 「たまにはお手製料理も素敵よね」
+	CASEELSE
+		PRINTFORML 「お料理？　いいわよ」
+		PRINTFORMW 「科学の力、見せてあげるわ！」
+ENDSELECT
+
+PRINTFORML 
+PRINTFORMW （少女調理中）
+PRINTFORML …
+PRINTFORML ……
+PRINTFORML ………
+PRINTFORMW 
+
+;料理の種類に応じて追加口上
+SELECTCASE TFLAG:99
+	CASE 0
+		;苺タルトまたは苺ミルク
+		PRINTFORML 「じゃんじゃじゃーん！！」
+		PRINTFORMW 「ねんがんの　イチゴタルトをてにいれたぞ！」
+		PRINTFORML 
+		PRINTFORML 　┌----------------------------------┐
+		PRINTFORML 　｜［０］　そう　かんけいないね　　　｜
+		PRINTFORML 　｜［１］　殺してでも　うばいとる　　｜
+		PRINTFORML 　｜［２］　ゆずってくれ　たのむ！！　｜
+		PRINTFORMW 　└----------------------------------┘
+		PRINTFORML 
+		PRINTFORMW 【%TOFULL(TOSTR(RAND:3))%】
+		PRINTFORMW 
+		PRINTFORMW 「って、なんなの！　変な選択肢出さないでよ」
+	CASE 7
+		;母乳料理
+		PRINTFORMW 「母乳でケーキ焼いてみたんだけど……どうかしら？」
+	CASEELSE
+		;未指定
+		PRINTFORMW 「できあがり～♪」
+ENDSELECT
+
+
+;=================================================
+;RANK5
+;=================================================
+@K2008_RANK5_BENTO_MAKE
+;RANK4に飛ばす
+CALL K2008_RANK4_BENTO_MAKE

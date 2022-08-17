@@ -1,0 +1,559 @@
+﻿;=============================================================================
+;調教中に行われる特殊な処理
+;=============================================================================
+;--------------------------------------------------
+;調教中のターン開始時に行われる処理
+;--------------------------------------------------
+;TFLAG:0～100・UP・DOWN・SOURCEのリセット
+@EVENTCOM
+#ONLY
+;ザーメンキス判定用に前ターンのTFLAG:30をTFLAG:145に
+TFLAG:145 = TFLAG:30
+;念のため組み合わせを示すTFLAGもリセット
+TFLAG:175 = 0
+;前回コマンドが素股、ダブル素股、サンドウィッチ以外
+SIF PREVCOM != 43 && PREVCOM != 306 && PREVCOM != 629
+	TFLAG:157 = 0
+;前ターンにおける情報をTFLAGに代入する処理を呼び出す
+CALL PRE_TFLAG_SET
+;以下フラグリセット
+VARSET TFLAG, 0, 0, 101
+VARSET UP, 0
+VARSET DOWN, 0
+VARSET SOURCE, 0
+VARSET TCVAR:TARGET:Ｖ経験, 0, 0, 100
+VARSET TCVAR:MASTER:Ｖ経験, 0, 0, 100
+SIF ASSI >= 0
+	VARSET TCVAR:ASSI:Ｖ経験, 0, 0, 100
+
+;「人格設定」
+SIF CFLAG:9 & 4
+	CALL DEFINE_JINKAKU_SELECT, TARGET
+
+;ぱんくしょん側の処理呼び出し
+;CALL PANCTION_EVENTCOM
+CALL CHANGE_PANCTION_TSTR
+
+;対象の先攻
+IF EQUIP:戦闘中 && 距離:TARGET > 距離:PLAYER
+	LOCAL = SELECTCOM
+	DRAWLINE
+	;蹂躙されている少女
+	IF EQUIP:睡眠薬 || TEQUIP:緊縛関連 || TEQUIP:三角木馬乗馬中 || TEQUIP:時間止め || TFLAG:899 >= 1
+		IF TEQUIP:緊縛関連 == 8 && TEQUIP:MASTER:緊縛関連 == 8
+			CALL SELECT_BATTLE_ACTION, TARGET, MASTER
+		ELSEIF TEQUIP:緊縛関連 == 8 && ASSI > 0 && TEQUIP:ASSI:緊縛関連 == 8
+			CALL SELECT_BATTLE_ACTION, TARGET, ASSI
+		ELSE
+			CALL SELECT_BATTLE_ACTION, TARGET, PLAYER
+		ENDIF
+	ELSEIF PLAYER == MASTER && ASSI > 0 && RAND:10 == 0
+		CALL SELECT_BATTLE_ACTION, TARGET, ASSI
+	ELSEIF ASSI > 0 && PLAYER == ASSI && RAND:10 == 0
+		CALL SELECT_BATTLE_ACTION, TARGET, MASTER
+	ELSE
+		CALL SELECT_BATTLE_ACTION, TARGET, PLAYER
+	ENDIF
+	DRAWLINE
+	SELECTCOM = LOCAL
+	;以下フラグリセット
+	VARSET TFLAG, 0, 0, 101
+	VARSET UP, 0
+	VARSET DOWN, 0
+	VARSET SOURCE, 0
+	VARSET TCVAR:TARGET:Ｖ経験, 0, 0, 100
+	VARSET TCVAR:MASTER:Ｖ経験, 0, 0, 100
+	SIF ASSI >= 0
+		VARSET TCVAR:ASSI:Ｖ経験, 0, 0, 100
+ENDIF
+
+
+;--------------------------------------------------
+;前調教ターンにおける情報の一部をTFLAGに代入する処理
+;--------------------------------------------------
+;専用口上による利用を想定している。
+@PRE_TFLAG_SET
+;前ターンの汚れ系転写
+FOR PC_VAR1, 0, 8
+	TFLAG:(910+PC_VAR1) = STAIN:PC_VAR1
+NEXT
+;前ターンに変動した好感度および各種経験のTFLAGの転写
+TFLAG:903 = TFLAG:97
+TFLAG:904 = TFLAG:53
+TFLAG:905 = TFLAG:54
+TFLAG:906 = TFLAG:55
+TFLAG:907 = TFLAG:56
+TFLAG:908 = TFLAG:62
+TFLAG:909 = TFLAG:63
+;前ターンに取得した刻印関連のTFLAGの転写
+FOR PC_VAR1, 40, 47
+	TFLAG:(878+PC_VAR1) = TFLAG:PC_VAR1
+NEXT
+
+;--------------------------------------------------
+;調教中のターン終了時に行われる処理
+;--------------------------------------------------
+@EVENTCOMEND
+#ONLY
+;コンドームに主人／助手／調教対象が射精したなら、主人／助手／調教対象のペニスからコンドームが外れる
+IF TEQUIP:MASTER:コンドーム && TFLAG:35
+	TEQUIP:MASTER:コンドーム = 0
+ELSEIF ASSI >= 0 && TEQUIP:ASSI:コンドーム && TFLAG:36
+	TEQUIP:ASSI:コンドーム = 0
+ELSEIF TEQUIP:TARGET:コンドーム && TFLAG:30
+	TEQUIP:TARGET:コンドーム = 0
+ENDIF
+
+;陰核肥大関連
+SIF BASE:陰核 > 0 && BASE:陰核 < 250
+	CALL CHECK_CLITORIS_GROWTH
+
+BASE:体力 = MAX(BASE:体力, 0)
+
+;底力
+CALL FORCE_DOWN, TARGET
+SIF ASSI > 0
+	CALL FORCE_DOWN, ASSI
+CALL FORCE_DOWN, MASTER
+
+;デバッグモードかつ自動レベルアップ機能オンの場合、体力が500を切った時全快する
+IF TALENT:MASTER:998 && TALENT:998 && BASE:体力 < 500 && !(FLAG:16 & 32) && !EQUIP:戦闘中
+	;元ネタ：言わずと知れたWIZ
+	;元ネタ：セ○クションきとうしのセリフより
+	PRINTFORMW \@(BASE:体力 <= 0) ? ささやき　－　えいしょう　－　いのり　－　ねんじろ！ # 「ハ・ン・ド・パ・ワ・－！！」\@
+	BASE:体力 = MAXBASE:0
+	BASE:気力 = MAXBASE:1
+	BASE:底力 = MAXBASE:20
+ENDIF
+;戦いに勝利した
+IF !IF_ALIVE(TARGET) && EQUIP:戦闘中
+	EQUIP:戦闘中 = 99
+	BASE:体力 = MAX(BASE:体力, 500)
+	BASE:底力 = MAX(BASE:底力, 500)
+	JUMP EVENT_LIFEOUT, TARGET
+ENDIF
+;同化刻印処理(蓬莱人や呪精よりも先に処理する)
+IF MARK:同化刻印 && !IF_ALIVE(TARGET)
+	CALL TENTACLIC_REVIVAL
+	SIF IF_ALIVE(TARGET) && FLAG:16 & 32 && !EQUIP:戦闘中
+		JUMP EVENT_LIFEOUT, TARGET
+ENDIF
+IF !IF_ALIVE(TARGET)
+	;[蓬莱人]用
+	IF TALENT:蓬莱人
+		CALL IMMORTAL_REVIVAL, TARGET
+	;[呪精]用
+	ELSEIF TALENT:呪精
+		CALL ZOMBIE_REVIVAL, TARGET
+	;YASAIリバイバルで救えるか！
+	ELSEIF TALENT:MASTER:野菜の錬金術師
+		CALL YASAI_REVIVAL
+	ENDIF
+	IF IF_ALIVE(TARGET) && FLAG:16 & 32 && !EQUIP:戦闘中
+		JUMP EVENT_LIFEOUT, TARGET
+	ENDIF
+	;手を尽くしたのですが…無念です。
+	SIF !IF_ALIVE(TARGET) && !TALENT:死亡
+		JUMP EVENT_CHARA_DIE, TARGET
+ENDIF
+;助手がいる場合、最初に死亡判定(助手を捕獲しているわけではないので同化刻印は効果を発揮しない)
+IF ASSI >= 0 && !IF_ALIVE(ASSI)
+	;[蓬莱人]用
+	IF TALENT:ASSI:蓬莱人
+		CALL IMMORTAL_REVIVAL, ASSI
+	;[呪精]用
+	ELSEIF TALENT:ASSI:呪精
+		CALL ZOMBIE_REVIVAL, ASSI
+	ENDIF
+	SIF IF_ALIVE(ASSI) && FLAG:16 & 32 && !EQUIP:戦闘中
+		JUMP EVENT_LIFEOUT, ASSI
+	SIF !IF_ALIVE(ASSI) && !TALENT:ASSI:死亡
+		JUMP EVENT_CHARA_DIE, ASSI
+ENDIF
+;難易度LUNATIC以上の場合、主人が死亡したらゲームオーバー
+IF (FLAG:3 >= 4 || EQUIP:戦闘中) && !IF_ALIVE(MASTER)
+	;[蓬莱人]用
+	IF TALENT:MASTER:蓬莱人
+		CALL IMMORTAL_REVIVAL, MASTER
+	;[呪精]用
+	ELSEIF TALENT:MASTER:呪精
+		CALL ZOMBIE_REVIVAL, MASTER
+	ENDIF
+	SIF !IF_ALIVE(MASTER)
+		JUMP EVENT_CHARA_DIE, MASTER
+ELSEIF !IF_ALIVE(MASTER)
+	BASE:MASTER:体力 = 1
+	SIF IF_ALIVE(MASTER) && FLAG:16 & 32 && !EQUIP:戦闘中
+		CALL EVENT_LIFEOUT, MASTER
+ENDIF
+;奴隷の体力が切れ掛かっていると調教終了する処理へ
+SIF BASE:体力 < 500 && !(FLAG:16 & 32) && !EQUIP:戦闘中
+	CALL EVENT_LIFEOUT, TARGET
+;助手の体力が切れ掛かっていると調教終了する処理へ
+SIF ASSI >= 0 && BASE:ASSI:体力 < 500 && !(FLAG:16 & 32) && !EQUIP:戦闘中
+	CALL EVENT_LIFEOUT, ASSI
+;主人の体力が切れ掛かっているので調教終了する処理へ
+SIF BASE:MASTER:体力 < 500 && !(FLAG:16 & 32) && !EQUIP:戦闘中
+	CALL EVENT_LIFEOUT, MASTER
+
+;以下どのようかな形で実装するか検討中
+;奴隷の気力が切れているので調教終了する処理へ
+;SIF BASE:気力 < 1
+;	CALL EVENT_VITALOUT, TARGET
+;助手の気力が切れていると調教終了する処理へ
+;SIF ASSI >= 0 && BASE:ASSI:気力 < 1
+;	CALL EVENT_VITALOUT, ASSI
+;主人の気力が切れているので調教終了する処理へ
+;SIF BASE:MASTER:気力 < 1
+;	CALL EVENT_VITALOUT, MASTER
+
+;奴隷の酔いをチェックする
+IF BASE:酔い > MAXBASE:8 * 2
+	BASE:体力 = 1
+	BASE:気力 = 1
+	BASE:底力 = 1
+	BASE:酔い = MIN(BASE:酔い, MAXBASE:8 * 3)
+	;酔いが回って調教終了するときの口上
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 34
+	IF EQUIP:戦闘中
+		EQUIP:戦闘中 = 99
+		BASE:体力 = MAX(BASE:体力, 500)
+		BASE:底力 = MAX(BASE:底力, 500)
+		PRINTFORMW （体調不良のため%CALLNAME:TARGET%との戦闘に勝利した）
+	ELSE
+		PRINTFORMW （体調不良のため%CALLNAME:TARGET%の調教を終了します）
+	ENDIF
+	BEGIN AFTERTRAIN
+ENDIF
+;薀蓄語りによる時間切れ
+IF SELECTCOM == 445 && (!EQUIP:戦闘中 || !TFLAG:552)
+	PRINTL 
+	IF EQUIP:戦闘中
+		IF NO:TARGET == 1069
+			PRINTFORML %CALLNAME:TARGET%が延々長々薀蓄を語ったため、%CALLNAME:PLAYER%は時間の経過を忘れてしまった
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%が延々長々薀蓄を語ったため、%CALLNAME:TARGET%は逃げてしまった
+		ENDIF
+	ELSE
+		PRINTFORML \@(NO:TARGET == 1069) ? %CALLNAME:TARGET% # %CALLNAME:PLAYER%\@が延々長々薀蓄を語ったため、調教時間が終了してしまった
+	ENDIF
+	CALL EVENT_TIMEOUT
+;映姫様の説教による時間切れ
+ELSEIF SELECTCOM == 446 && (!EQUIP:戦闘中 || !TFLAG:552)
+	PRINTL 
+	IF EQUIP:戦闘中
+		IF NO:TARGET == 1036
+			PRINTFORML %CALLNAME:TARGET%のありがたい説教が続いたため、%CALLNAME:PLAYER%は時間の経過を忘れてしまった
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%のありがたい説教が続いたため、%CALLNAME:TARGET%は逃げてしまった
+		ENDIF
+	ELSE
+		PRINTFORML \@(NO:TARGET == 1036) ? %CALLNAME:TARGET% # %CALLNAME:PLAYER%\@のありがたい説教が続いたため、調教時間が終了してしまった
+	ENDIF
+	CALL EVENT_TIMEOUT
+;鉄の乙女に閉じ込められたことによる時間切れ
+ELSEIF SELECTCOM == 252 && (!EQUIP:戦闘中 || !TFLAG:552)
+	PRINTL 
+	IF EQUIP:戦闘中
+		EQUIP:戦闘中 = 99
+		BASE:体力 = 1
+		BASE:底力 = 1
+		PRINTFORML %CALLNAME:TARGET%をアイアンメイデンに閉じ込めることにより、お仕置きの時間が始まった
+		CALL EVENT_LIFEOUT
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%がアイアンメイデンに閉じ込められたことにより、調教時間が終了してしまった
+		CALL EVENT_TIMEOUT
+	ENDIF
+;コマンド実行回数一定数超えたことによる時間切れ
+ELSEIF TFLAG:107 >= 100
+	CALL EVENT_TIMEOUT
+ENDIF
+
+;ぱんくしょん側呼び出し
+;CALL PANCTION_EVENTCOMEND
+
+;[処女]（乙女でなくて)でＡ経験が0以上で快Ａのパラが0以上で貞操観念持ちで体力がある場合一度だけ「貞操を守れるなら～」イベント発生。
+IF TALENT:処女 == 1 && EXP:Ａ経験 > 0 && PALAM:快Ａ > 0 && TALENT:貞操観念 && (CFLAG:20 & 1) == 0 && IF_ALIVE(TARGET) && !TALENT:死亡
+	CFLAG:20 |= 1
+	;貞操を守れるなら後ろを攻められてもよいと思ったときの口上
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 30
+ENDIF
+
+;狂気の目発動のチェック(被調教時)
+IF TFLAG:152 < 1 && TALENT:狂気の目
+	;相愛、隷属、精神崩壊、傀儡、壊造人格、淫魔持ちの時は発動しない
+	IF TALENT:相愛 == 0 && TALENT:隷属 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0 && TALENT:淫魔 == 0
+		;失神中・睡眠中・催眠中・目隠し中は発動できない(調教側の狂気の目は防衛側の狂気の目発動を阻害しない)
+		IF TFLAG:899 <= 0 && EQUIP:睡眠薬 <= 0 && TEQUIP:触手催眠 <= 0 && TEQUIP:目装着器具 <= 0
+			LOCAL = RAND:50 + 1
+			LOCAL %= 12
+			IF LOCAL < 2 || LOCAL > 10
+				PRINTFORMW %CALLNAME:TARGET%の＜狂気の目＞発動
+				TFLAG:152 = 1
+				;調教防衛用狂気の目発動時の口上
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 31
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;射精箇所タイプと射精箇所選択の可・不可をリセット
+TFLAG:703 = 0
+TFLAG:704 = 0
+
+;--------------------------------------------------
+;調教中の体力切れ汎用処理
+;--------------------------------------------------
+@EVENT_LIFEOUT, ARG
+IF EQUIP:戦闘中
+	PRINTFORMW （%CALLNAME:ARG%の体力が限界に来ています。戦闘に勝利した）
+ELSE
+	PRINTFORMW （%CALLNAME:ARG%の体力が限界に来ています。調教を終了します）
+ENDIF
+BEGIN AFTERTRAIN
+
+;--------------------------------------------------
+;調教中の気力切れ汎用処理
+;--------------------------------------------------
+@EVENT_VITALOUT, ARG
+IF EQUIP:戦闘中
+	PRINTFORMW （%CALLNAME:ARG%の気力が限界に来ています。戦闘を終了します）
+ELSE
+	PRINTFORMW （%CALLNAME:ARG%の気力が限界に来ています。調教を終了します）
+ENDIF
+BEGIN AFTERTRAIN
+
+;--------------------------------------------------
+;調教中の時間切れ汎用処理
+;--------------------------------------------------
+@EVENT_TIMEOUT
+IF EQUIP:戦闘中
+	PRINTW (時間切れになりました。戦闘を終了します）
+ELSE
+	PRINTW (時間切れになりました。調教を終了します）
+ENDIF
+BEGIN AFTERTRAIN
+
+;--------------------------------------------------
+;調教者の特定素質所持による[母乳体質]付加処理
+;--------------------------------------------------
+@YOUJI
+;調教者が[幼稚]、[幼児]、[幼児退行]以外は弾かれる
+SIF TALENT:PLAYER:幼児 == 0 && TALENT:PLAYER:幼稚 == 0 && TALENT:PLAYER:壊造人格 == 0
+	RETURN 0
+
+;母乳が出るようになったときの口上
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 33
+PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:134%]を得た
+TALENT:母乳体質 = 1
+CALL CALC_GAUGE3_SLAVE, TARGET, 1
+
+;--------------------------------------------------
+;助手の素質付加処理
+;--------------------------------------------------
+@ASSI_CHANGE
+;[不思議な根]である
+IF EXIST_PENIS(ASSI) == 0 && TALENT:ASSI:不思議な根 && (CFLAG:ASSI:42 & 1) == 0
+	;Ｃ感覚LV5、精液中毒LV3以上
+	IF ABL:ASSI:Ｃ感覚 == 5 && ABL:ASSI:精液中毒 >= 3 && (FLAG:14 & 128) == 0
+		DRAWLINE
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ASSI, 101
+		PRINTFORML %CALLNAME:ASSI%は[ふたなり]となった。
+		DRAWLINE
+		WAIT
+		TALENT:ASSI:ふたなり = 1
+		TALENT:ASSI:不思議な根 = 0
+		TALENT:ASSI:顕在化 |= 1
+	ENDIF
+ENDIF
+
+IF NO:ASSI == 5001 && ISASSI:ASSI == 0
+	IF TALENT:MASTER:触手使役術 == 0
+		TALENT:MASTER:触手使役術 = 1
+		SIF FLAG:571 > 0
+			ABL:MASTER:触手使役 = FLAG:571
+		FLAG:570 |= 16
+	ELSEIF ABL:MASTER:触手使役 < FLAG:571
+		FLAG:572 = ABL:MASTER:触手使役
+		ABL:MASTER:触手使役 = FLAG:571
+		FLAG:570 |= 32
+	ENDIF
+ENDIF
+;助手がドリアードである時の処理（IRCネタ注意）
+IF NO:ASSI == 5002 && FLAG:570 & 2
+	FLAG:570 |= 4
+	FLAG:570 &= 61
+ENDIF
+CFLAG:ASSI:初助手被任命日 = (CFLAG:ASSI:初助手被任命日 > 0) ? CFLAG:ASSI:初助手被任命日 # DAY
+
+ISASSI:ASSI = 1
+RETURN 0
+
+;--------------------------------------------------
+;[蓬莱人]のリザレクション処理
+;--------------------------------------------------
+@IMMORTAL_REVIVAL, ARG
+PRINTW ＜リザレクション＞
+;蓬莱人リザレクション回数フラグ
+CFLAG:ARG:蓬莱力での復活回数 += 1
+;リザレクション共通処理
+CALL COMMON_REVIVAL, ARG
+
+;--------------------------------------------------
+;[呪精]のリザレクション処理
+;--------------------------------------------------
+@ZOMBIE_REVIVAL, ARG
+PRINTW ＜その場のノリで復活！＞
+;呪精リザレクション回数フラグ
+CFLAG:ARG:呪精での復活回数 += 1
+;リザレクション共通処理
+CALL COMMON_REVIVAL, ARG
+;体力・気力の最大値が1000より大きい場合は50下がる(1000未満にはならない)
+REPEAT 2
+	IF MAXBASE:ARG:COUNT > 1000
+		MAXBASE:ARG:COUNT = MAX(MAXBASE:ARG:COUNT - 50, 1000)
+		PRINTFORMW %CALLNAME:ARG%の\@(COUNT == 0) ? 体力 # 気力\@の最大値が{MAXBASE:ARG:COUNT}に下がった
+	ENDIF
+REND
+;[恋慕]・[服従]・[壊造人格]なしの場合反発刻印取得履歴が1下がる(最低0）
+SIF ARG != MASTER && MARK:ARG:97 > 0 && TALENT:ARG:恋慕 == 0 && TALENT:ARG:服従 == 0 && TALENT:ARG:壊造人格 == 0
+	MARK:ARG:97 -= 1
+
+BASE:ARG:気力 = 0
+
+;--------------------------------------------------
+;リザレクション共通処理
+;--------------------------------------------------
+@COMMON_REVIVAL, ARG
+;異常経験
+;IF TFLAG:999 != 1
+	CALL COMMON_UP_EXP, ARG, 50, 1, 1
+;ELSE
+;	TCVAR:ARG:異常経験 += 1
+;ENDIF
+;[恋慕]・[服従]・[壊造人格]なしの場合は従順Lvが1下がる（最低Lv0）
+IF ARG != MASTER && TALENT:ARG:恋慕 == 0 && TALENT:ARG:服従 == 0 && TALENT:ARG:壊造人格 == 0
+	IF MARK:ARG:反発刻印 < 3 && MARK:ARG:97 < MARK:ARG:反発刻印 + 1
+		MARK:ARG:反発刻印 += 1
+		MARK:ARG:97 = MARK:ARG:反発刻印
+		PRINTFORM %CALLNAME:ARG%は、
+		FONTBOLD
+		PRINTFORM %MARKNAME:9%LV{MARK:ARG:反発刻印}
+		FONTREGULAR
+		PRINTW を取得した
+	ENDIF
+	IF ABL:ARG:従順 > 0
+		ABL:ARG:従順 -= 1
+		PRINTFORMW %CALLNAME:ARG%の%ABLNAME:10%が{ABL:ARG:従順}に下がった
+	ENDIF
+	SIF CFLAG:ARG:好感度 > 0
+		TIMES CFLAG:ARG:好感度, 0.70
+	CALL ACCEPTANCE_UP, ARG, -300
+ENDIF
+;[寄生]した触手は消える
+IF TALENT:ARG:寄生
+	TALENT:ARG:寄生 = 0
+	BASE:ARG:触手 = 0
+	MAXBASE:ARG:6 = 0
+	PRINTFORMW %CALLNAME:ARG%に寄生した触手は消滅してしまった
+ENDIF
+EQUIP:2 = 0
+BASE:ARG:体力 = 1
+BASE:ARG:底力 = 1
+
+;--------------------------------------------------
+;調教中にキャラが死亡した時の処理
+;--------------------------------------------------
+@EVENT_CHARA_DIE, ARG
+;キャラ死亡時のイベント口上呼び出し
+IF ARG != MASTER
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 98
+ENDIF
+IF ARG != MASTER
+	;地の文章カット
+	IF CFLAG:ARG:99 == 0
+		PRINTFORMW %CALLNAME:ARG%の虚ろな視線は天上を見たまま、微動だにしていない。
+		PRINTW あなたは得難い原石が輝く前に、その光を吹き消してしまったのだ。
+		PRINTL 
+	ENDIF
+	PRINTFORMW %CALLNAME:ARG%は逝ってしまった……
+	PRINTL 
+ELSEIF ARG == MASTER
+	PRINTL 
+	PRINTFORMW ―――%CALLNAME:ARG%の体力が尽きました―――
+	PRINTL 
+ENDIF
+PRINTW  
+IF FLAG:16 & 32 && ARG != MASTER
+	IF TALENT:ARG:妊娠 || TALENT:ARG:抱卵中 || (TALENT:ARG:育児中 && CFLAG:ARG:79 == 0)
+		MAXBASE:ARG:0 += 500
+		CALL RESET_ASSI_PREGNANT , ARG
+	;懐卵時の体力の最大値低下を戻す処理
+	ELSEIF TALENT:ARG:懐卵
+		MAXBASE:ARG:0 += 500
+	ENDIF
+	CALL LOST_TALENTS, ARG, 140, 0
+	CALL LOST_TALENTS, ARG, 141, RESULT
+	CALL LOST_TALENTS, ARG, 143, RESULT
+	CALL LOST_TALENTS, ARG, 145, RESULT
+	CALL LOST_TALENTS, ARG, 500, RESULT
+	SIF RESULT != 0
+		PRINTFORMW を失った
+	BASE:ARG:理性 = 0
+	MAXBASE:ARG:9 = 0
+	TALENT:ARG:死亡 = 1
+	IF ARG == ASSI
+		IF EQUIP:戦闘中
+			;★拘束
+			IF TEQUIP:緊縛関連 == 8 && TEQUIP:ASSI:緊縛関連 == 8
+				TEQUIP:緊縛関連 = 0
+				TEQUIP:ASSI:緊縛関連 = 0
+			ENDIF
+		ENDIF
+		PLAYER = MASTER
+		ASSIPLAY = 0
+		ASSI = -1
+	ENDIF
+	;リザレクション共通処理
+	CALL COMMON_REVIVAL, ARG
+	BASE:ARG:体力 = 0
+	SIF TFLAG:999 == 1
+		TFLAG:899 = 1
+ELSE
+	PRINTW  
+	PRINTW  
+	DRAWLINE
+	PRINTL ------------------------------------GAMEOVER-----------------------------------
+	DRAWLINE
+	WAIT
+	JUMP EVENT_RETRY
+ENDIF
+
+;--------------------------------------------------
+;調教中にゲームオーバーした時のリトライ処理
+;--------------------------------------------------
+@EVENT_RETRY
+;折角だから[Debug]時は遊んでみる。
+IF TALENT:MASTER:998
+	CALLFORM SYSTXT_FUN_EVENT_RETRY_SCENE{RAND:8}
+ELSE
+	PRINTL 次からはくれぐれも気を付けてくださいね？
+	SIF !(FLAG:8669 & 2)
+		PRINTL [0] ロード
+	PRINTL [1] タイトルに戻る
+	PRINTL [2] ゲームを終了します
+ENDIF
+$INPUT_LOOP
+INPUT
+IF RESULT == 0 && !(FLAG:8669 & 2)
+	CALL QUICKLOAD
+ELSEIF RESULT == 1
+	RESETDATA
+	JUMP SYSTEM_TITLE
+ELSEIF RESULT == 2
+	QUIT
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF

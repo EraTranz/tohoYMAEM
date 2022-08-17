@@ -1,0 +1,23 @@
+﻿#DIM PC_VAR1			;Private Counter VARiable(プライベートカウンター変数)
+#DIM PC_VAR2			;Private Counter VARiable(プライベートカウンター変数)入れ子エラーが怖いので
+#DIM PC_VAR3			;Private Counter VARiable(プライベートカウンター変数)入れ子エラーが怖いので
+#DIM PC_VAR4			;Private Counter VARiable(プライベートカウンター変数)入れ子エラーが怖いので
+#DIM PC_VAR5			;Private Counter VARiable(プライベートカウンター変数)入れ子エラーが怖いので
+#DIM D_L_NUM, 1			;日常イベントで活動可能なキャラの総数
+#DIM PL_VAR_I, 1		;Private Local(Iはローマ数字の1の意味)
+#DIM PL_VAR_X, 10		;Private Local(Xはローマ数字の10の意味)
+#DIM PL_VAR_L, 50		;Private Local(Lはローマ数字の50の意味)
+#DIM ライン数, 10		;ラインを数えるためだけの変数
+#DIMS PL_STR_I, 1		;Private Locals(Iはローマ数字の1の意味)
+#DIMS PL_STR_X, 10		;Private Locals(Xはローマ数字の10の意味)
+#DIM C_NUMBER
+
+;#DIMS MYCHILD, 1000, 1000		;子供の名前を格納する文字列変数,
+
+#DIM 距離, 300		;戦闘用
+#DIM 戦場			;戦闘用
+#DIM 残存PALAM, 33	;戦闘用
+#DIM 残存TEQUIP, 100	;戦闘用
+#DIM 残存汚れ, 8		;戦闘用
+
+#DIM D_L_VAR		;日常イベント改行用

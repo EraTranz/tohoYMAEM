@@ -1,0 +1,257 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;デバッグモード専用の関数群
+;--------------------------------------------------------
+;デバッグモード用関数名は @K2008D_ から始まる
+;@K2008D_PRINTFORML以外は、デバッグモード以外で呼んではいけない（THROWされる）
+;--------------------------------------------------------
+;本ファイル中にある関数以外で、デバッグモード限定の処理を記載してはいけない
+;必ず関数に切り出し、デバッグモード限定で呼び出すこと
+;--------------------------------------------------------
+;呼び出すときの例【推奨】
+;	SIF __LINE__
+;		CALL K2008D_DEBUG_FUNCTION
+;理由：IF分岐なので、構文初心者でも理解しやすい
+;　　　__LINE__ がデバッグモード以外なら0になることを知っていること前提だが
+;　　　間違ってもTHROWされて終わりなので、わりと安心できる
+;--------------------------------------------------------
+;呼び出すときの例【お勧めしません】
+;	[IF_DEBUG]
+;		CALL K2008D_DEBUG_FUNCTION
+;	[ENDIF]
+;理由：口上分岐の統一感が失われ、可読性が落ちる。
+;　　　コピペする際に謝るとひどい目にあう可能性がある。
+;--------------------------------------------------------
+;本ファイルはデバッグモードでのみ使用するため[IF_DEBUG]を使用しているが、
+;この手の特殊ブロックは、コアなシステムを記述する部分に限定したい。
+;========================================================
+
+;-------------------------------------------------
+;1行メッセージ表示用
+;-------------------------------------------------
+@K2008D_PRINTFORML(ARGS)
+[IF_DEBUG]
+	CALL K2008D_SET
+	PRINTFORML %ARGS%
+	CALL K2008D_RESET
+[ENDIF]
+
+;-------------------------------------------------
+;デバッグ用に色を変える
+;-------------------------------------------------
+@K2008D_SET
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+SETCOLOR 255, 127, 0
+
+;-------------------------------------------------
+;デバッグ用から色を戻す
+;-------------------------------------------------
+@K2008D_RESET
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+RESETCOLOR
+
+
+
+;-------------------------------------------------
+;デバッグ用のステータス解析表示
+;KOJO_2008_MESSAGE_SUB_EVENT_SCENE99から飛んでくる
+;-------------------------------------------------
+;コマンド選択欄の上に表示
+;-------------------------------------------------
+@K2008_DEBUG_STATUS
+
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+
+CALL K2008D_SET
+
+PRINTFORM RANK{K2008F_RANK()}　
+
+PRINTFORM 精（
+SIF K2008F_SAMENCOUNT("GET", 1) > 0
+	PRINTFORM 膣{K2008F_SAMENCOUNT("GET", 1)}
+SIF K2008F_SAMENCOUNT("GET", 2) > 0
+	PRINTFORM 腸{K2008F_SAMENCOUNT("GET", 2)}
+SIF K2008F_SAMENCOUNT("GET", 3) > 0
+	PRINTFORM 尿{K2008F_SAMENCOUNT("GET", 3)}
+SIF K2008F_SAMENCOUNT("GET", 4) > 0
+	PRINTFORM 口{K2008F_SAMENCOUNT("GET", 4)}
+SIF K2008F_SAMENCOUNT("GET", 5) > 0
+	PRINTFORM 髪{K2008F_SAMENCOUNT("GET", 5)}
+SIF K2008F_SAMENCOUNT("GET", 6) > 0
+	PRINTFORM 顔{K2008F_SAMENCOUNT("GET", 6)}
+SIF K2008F_SAMENCOUNT("GET", 7) > 0
+	PRINTFORM 体{K2008F_SAMENCOUNT("GET", 7)}
+PRINTFORM ）　
+
+PRINTFORM 快履歴（
+SIF (CFLAG:__K2008N_CFLAG_SOURCEHISTORY__ & 0b1111) == 0
+	PRINTFORM 無
+SIF GETBIT(CFLAG:__K2008N_CFLAG_SOURCEHISTORY__, 0) > 0
+	PRINTFORM Ｃ
+SIF GETBIT(CFLAG:__K2008N_CFLAG_SOURCEHISTORY__, 1) > 0
+	PRINTFORM Ｖ
+SIF GETBIT(CFLAG:__K2008N_CFLAG_SOURCEHISTORY__, 2) > 0
+	PRINTFORM Ａ
+SIF GETBIT(CFLAG:__K2008N_CFLAG_SOURCEHISTORY__, 3) > 0
+	PRINTFORM Ｂ
+PRINTFORM ）　
+
+PRINTFORM 開発Lv（
+PRINTFORM Ｃ{K2008F_DEVRANK("Ｃ")}
+PRINTFORM Ｖ{K2008F_DEVRANK("Ｖ")}
+PRINTFORM Ａ{K2008F_DEVRANK("Ａ")}
+PRINTFORM Ｂ{K2008F_DEVRANK("Ｂ")}
+PRINTFORM Ｕ{K2008F_DEVRANK("Ｕ")}
+PRINTFORM 毛{K2008F_DEVRANK("陰毛")}
+PRINTFORM 慰{K2008F_DEVRANK("自慰")}
+PRINTFORM 尿{K2008F_DEVRANK("放尿")}
+PRINTFORM 便{K2008F_DEVRANK("排泄")}
+PRINTFORM ）　
+
+PRINTFORM 陰毛密度：Lv{K2008F_PUBIC_HAIR_DENSITY()}/5
+PRINTFORML
+
+
+IF K2008F_COMCOUNT() >= 1
+	PRINTFORM 前回（{K2008F_COMCOUNT()}回目）の行為［
+	;コマンド選択前なので"GETNOW"が正しい
+	SELECTCASE K2008F_COMHISTORY_GENERAL("GETNOW")
+		CASE 0
+			PRINT 無
+		CASE 1
+			PRINT 快
+		CASE 2
+			PRINT 好
+		CASE 3
+			PRINT 拒
+		CASE 4
+			PRINT 痛
+		CASEELSE
+			THROW 【K2008エラー】 パラメータ不良 {K2008F_COMHISTORY_GENERAL("GETPREV")} は不明なパラメータでした
+	ENDSELECT
+	PRINTFORM ］（
+	PRINTFORM 快{K2008F_HOWMANY_SOURCE_PLEASURE("GETNOW")}
+	PRINTFORM 好{K2008F_HOWMANY_SOURCE_FAVOR("GETNOW")}
+	PRINTFORM 拒{K2008F_HOWMANY_SOURCE_REFUSAL("GETNOW")}
+	PRINTFORM 痛{K2008F_HOWMANY_SOURCE_PAIN("GETNOW")}
+	PRINTFORM ）　
+ELSE
+	PRINTFORM 初回行為選択中...
+ENDIF
+
+PRINTFORM 睡眠強度Lv{K2008F_SLEEPLV("GET")}
+
+PRINTFORML 
+CALL K2008D_RESET
+DRAWLINE
+
+
+;-------------------------------------------------
+;実行コマンドのソース解析結果
+;-------------------------------------------------
+@K2008_DEBUG_SHOW_ANALYZE
+#DIM _COUNT
+
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+
+CALL K2008D_SET
+
+PRINTFORM RANK{K2008F_RANK()}
+PRINTFORM 快{K2008F_HOWMANY_SOURCE_PLEASURE("GETNOW")}
+PRINTFORM 好{K2008F_HOWMANY_SOURCE_FAVOR("GETNOW")}
+PRINTFORM 拒{K2008F_HOWMANY_SOURCE_REFUSAL("GETNOW")}
+PRINTFORM 痛{K2008F_HOWMANY_SOURCE_PAIN("GETNOW")}
+PRINTFORML
+
+CALL K2008D_RESET
+
+;-------------------------------------------------
+;デバッグ用のSOURCE解析表示
+;-------------------------------------------------
+@K2008_DEBUG_SHOW_SOURCE
+#DIM _COUNT
+
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+
+CALL K2008D_SET
+
+PRINTFORML 【DEBUG】 SOURCELV:
+FOR _COUNT, 0, VARSIZE("SOURCE")
+	SIF SOURCENAME:_COUNT == ""
+		CONTINUE
+	PRINTFORM %SOURCENAME:_COUNT%Lv{K2008F_HOWLV_SOURCE(_COUNT)}　
+	SIF _COUNT % 5 == 4
+		PRINTFORML 
+NEXT
+PRINTFORML 
+
+CALL K2008D_RESET
+
+;-------------------------------------------------
+;デバッグ用のSOURCELV解析表示
+;-------------------------------------------------
+@K2008_DEBUG_SHOW_SOURCELV
+#DIM _COUNT
+
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+
+CALL K2008D_SET
+
+PRINTFORML 【DEBUG】 SOURCE:
+FOR _COUNT, 0, VARSIZE("SOURCE")
+	SIF SOURCENAME:_COUNT == ""
+		CONTINUE
+	PRINTFORM %SOURCENAME:_COUNT%{SOURCE:_COUNT}　
+	SIF _COUNT % 5 == 4
+		PRINTFORML 
+NEXT
+PRINTFORML 
+
+CALL K2008D_RESET
+
+;-------------------------------------------------
+;デバッグ用の調教終了画面
+;-------------------------------------------------
+@K2008D_MESSAGE_END
+#DIM _COUNT
+#DIM _DEBUG_COM
+
+[IF_NDEBUG]
+	THROW 【K2008エラー】デバッグモード以外で呼び出してはいけません。
+[ENDIF]
+
+CALL K2008D_SET
+
+PRINTFORMW 【DEBUG】 調教コマンドを振り返る（{K2008F_COMCOUNT()}回）
+FOR _COUNT, 1, K2008F_COMCOUNT() + 1
+	_DEBUG_COM = K2008F_COMHISTORY("GET", _COUNT)
+	SELECTCASE _DEBUG_COM
+		CASE -1
+			;終わり
+			;BREAK
+		CASE IS > -1
+			PRINTFORM {_COUNT}回目　
+			PRINTFORM COM{_DEBUG_COM}　
+			PRINTFORM 快{K2008F_HOWMANY_SOURCE_PLEASURE("GET", _COUNT)}
+			PRINTFORM 好{K2008F_HOWMANY_SOURCE_FAVOR("GET", _COUNT)}
+			PRINTFORM 拒{K2008F_HOWMANY_SOURCE_REFUSAL("GET", _COUNT)}
+			PRINTFORM 痛{K2008F_HOWMANY_SOURCE_PAIN("GET", _COUNT)}
+			PRINTFORM 　
+			PRINTFORM %TRAINNAME:_DEBUG_COM%
+			PRINTFORML 
+	ENDSELECT
+NEXT
+
+CALL K2008D_RESET

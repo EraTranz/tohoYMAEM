@@ -1,0 +1,190 @@
+﻿;=============================================================================
+;指でＶを撫でる
+;=============================================================================
+;技巧Lv3以上の主人が処女相手に純愛モード有効のときに指挿入れすると派生する。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE605
+#FUNCTION
+;オトコだとダメ
+SIF TALENT:オトコ
+	RETURNF 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURNF 0
+;調教者の技巧が3未満はダメ
+SIF ABL:PLAYER:技巧 < 3
+	RETURNF 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURNF 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURNF 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURNF 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURNF 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 605) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM605
+PRINTL 指でＶを撫でる
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 605
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 指でＶを撫でる
+
+SELECTCOM = 605
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 25
+DOWNBASE:1 += 70
+
+SOURCE:情愛 = 150
+SOURCE:露出 = 280
+SOURCE:性行動 = 150
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 8
+	SOURCE:屈従 = 75
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 40
+	SOURCE:屈従 = 125
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 200
+	SOURCE:屈従 = 200
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 480
+	SOURCE:屈従 = 350
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 960
+	SOURCE:屈従 = 650
+ELSE
+	SOURCE:快Ｖ = 1440
+	SOURCE:屈従 = 1000
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	SOURCE:痛み = 100
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:屈従 , 0.50
+	SOURCE:痛み = 60
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:屈従 , 0.80
+	SOURCE:痛み = 20
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:痛み = 5
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:屈従 , 1.50
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 100
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み += 50
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:痛み , 0.80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.50
+	SOURCE:液体追加 += 5
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	SOURCE:液体追加 += 30
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:液体追加 += 150
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.50
+	SOURCE:液体追加 += 350
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	SOURCE:液体追加 += 600
+ENDIF
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ENDIF
+
+;親愛・相愛
+IF TALENT:親愛 || TALENT:相愛
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:液体追加 , 1.50
+ENDIF
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	TIMES SOURCE:屈従 , 2.00
+
+;奴隷のＶ⇔調教者の指の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:ヴァギナ
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_605
+PRINTFORM %CALLNAME:TARGET%の
+IF TALENT:処女 == 1
+	PRINT 男を知らない
+ELSEIF PALAM:潤滑 >= PALAMLV:4
+	PRINT 濡れそぼった
+ENDIF
+PRINTFORML \@(TALENT:小柄体型) ? 幼いワレメ # 秘裂\@を、%CALLNAME:PLAYER%は指で念入りかつ優しく撫でた…

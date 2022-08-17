@@ -1,0 +1,138 @@
+﻿;=============================================================================
+;恐怖刻印
+;=============================================================================
+;未完成……というより未調整
+@ABLUP98
+DRAWLINE
+IF MARK:恐怖刻印 <= 0
+	PRINTW 恐怖刻印はありません
+	RETURN 0
+ENDIF
+;恐怖刻印Lvと同じLvの快楽刻印と恐怖刻印Lv+2Lvの従順が必要
+PRINTFORML %MARKNAME:1%{MARK:恐怖刻印}LV以上（現在{MARK:快楽刻印}）かつ、%ABLNAME:10%{COST98(2)}LV以上
+
+PRINTFORM [0] - %PALAMNAME:12%の珠×{COST98(0)}\@(COST98(1) > 0) ? 、%PALAMNAME:13%の珠×{COST98(1)} # \@……
+CALL SHOW_ISABLUP_COMMON, CAN98(0)
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && CAN98(0) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:恭順 -= COST98(0)
+	JUEL:欲情 -= COST98(1)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+MARK:恐怖刻印 -= 1
+PRINTFORMW %MARKNAME:8%のレベルが{MARK:恐怖刻印}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP98
+SIF MARK:恐怖刻印 <= 0
+	RETURN 0
+
+CALLF CALC_COST98, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP98("CHECK")
+
+@COST98(ARG)
+#FUNCTION
+RETURNF CALC_COST98("GET", ARG)
+
+@CALC_COST98(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF MARK:恐怖刻印 == 1
+	LOCAL:0 = 5000
+	LOCAL:1 = 1000
+ELSEIF MARK:恐怖刻印 == 2
+	LOCAL:0 = 10000
+	LOCAL:1 = 2000
+ELSEIF MARK:恐怖刻印 == 3
+	LOCAL:0 = 50000
+	LOCAL:1 = 5000
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:0 , 3.00
+;気丈
+IF TALENT:気丈
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 1.50
+ENDIF
+;素直
+IF TALENT:素直
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+ENDIF
+;生意気
+SIF TALENT:生意気
+	TIMES LOCAL:0 , 1.50
+;楽観的
+IF TALENT:楽観的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+;悲観的
+ELSEIF TALENT:悲観的
+	TIMES LOCAL:0 , 1.25
+	TIMES LOCAL:1 , 1.25
+ENDIF
+;恋慕、服従
+IF TALENT:恋慕 || TALENT:服従
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+ENDIF
+
+;恐怖刻印Lv+2Lvの従順が必要
+LOCAL:2 = MARK:恐怖刻印 + 2
+
+;難易度HARD以上の場合、必要な恭順の珠は減るが、欲情の珠も必要になってくる
+IF FLAG:3 > 2
+	TIMES LOCAL:0 , 0.75
+ELSE
+	LOCAL:1 = 0
+ENDIF
+
+RETURNF 0
+
+@CAN98(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP98("GET", ARG)
+
+@CAN_ABLUP98(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;恐怖刻印Lvと同じLvの快楽刻印が必要
+SIF MARK:恐怖刻印 > MARK:快楽刻印
+	LOCAL:0 |= 8
+
+SIF COST98(2) > ABL:従順
+	LOCAL:0 |= 4
+
+;恭順の珠で減らす
+SIF JUEL:恭順 < COST98(0)
+	LOCAL:0 |= 1
+;欲情の珠で減らす
+SIF JUEL:欲情 < COST98(1)
+	LOCAL:0 |= 1
+
+RETURNF (LOCAL:0 == 0)

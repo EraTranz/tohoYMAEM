@@ -1,0 +1,643 @@
+﻿;=============================================================================
+;首筋耳裏責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE328
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:328 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;直前が助手によるセックス系でありかつその助手がオトコではない場合
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && TFLAG:102 && ASSIPLAY && TALENT:PLAYER:オトコ == 0
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)3未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 3
+		RETURN 0
+ENDIF
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 328) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM328
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;直前が正常位の場合、正常位首筋耳裏責めに派生
+IF TFLAG:102 && (PREVCOM == 20 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 20)) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTL 正常位首筋耳裏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 328
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 正常位首筋耳裏責め
+	LOCAL:1 = 1
+;直前が後背位の場合、対面座位首筋耳裏責めに派生
+ELSEIF TFLAG:102 && (PREVCOM == 21 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 21)) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTL 後背位首筋耳裏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 328
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 後背位首筋耳裏責め
+	LOCAL:1 = 2
+;直前が対面座位の場合、対面座位首筋耳裏責めに派生
+ELSEIF TFLAG:102 && (PREVCOM == 22 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 22)) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTL 対面座位首筋耳裏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 328
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 対面座位首筋耳裏責め
+	LOCAL:1 = 3
+;直前が背面座位の場合、背面座位首筋耳裏責めに派生
+ELSEIF TFLAG:102 && (PREVCOM == 23 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 23)) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTL 背面座位首筋耳裏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 328
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 背面座位首筋耳裏責め
+	LOCAL:1 = 4
+;主人調教時で直前が助手の首筋耳裏責めの場合、または
+;助手調教時で直前が主人の首筋耳裏責めの場合、ダブル首筋耳裏責めに派生
+ELSEIF PREVCOM == 328 && ((ASSIPLAY == 0 && TFLAG:133) || (ASSIPLAY && TFLAG:133 == 0))
+	IF EXCOM_ABLE337() == 1
+		JUMP COM337
+	ELSE
+		LOCAL:1 = 0
+	ENDIF
+;通常の首筋耳裏責め
+ELSE
+	LOCAL:1 = 0
+ENDIF
+IF LOCAL:1 == 0
+	PRINTL 首筋耳裏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 328
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 首筋耳裏責め
+ENDIF
+;口上用
+TFLAG:99 = LOCAL:1
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+IF LOCAL:1 > 0
+	LOCAL = 0
+
+	;ABL:技巧をみる
+	IF ABL:技巧 == 0
+		LOCAL = 1500
+	ELSEIF ABL:技巧 == 1
+		LOCAL = 1600
+	ELSEIF ABL:技巧 == 2
+		LOCAL = 1800
+	ELSEIF ABL:技巧 == 3
+		LOCAL = 2000
+	ELSEIF ABL:技巧 == 4
+		LOCAL = 2400
+	ELSE
+		LOCAL = 3000
+	ENDIF
+
+	;従順をみる
+	LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+	;欲望をみる
+	LOCAL = EJACULATIONCHECK_ABL_11_1(TARGET, LOCAL)
+	;睡眠薬で寝ているor失神している場合
+	SIF EQUIP:睡眠薬 || TFLAG:899 > 0
+		TIMES LOCAL, 0.7
+	;潤滑をみる
+	LOCAL = EJACULATIONCHECK_PALAM_10_1(TARGET, LOCAL)
+
+	;調教者のＣ感覚をみる
+	LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+	SIF EXIST_PENIS(PLAYER)
+		BASE:PLAYER:射精 += LOCAL
+ENDIF
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:1 += 40
+
+;快Ｃ
+SOURCE:快Ｃ = 0
+;快Ｖ
+SOURCE:快Ｖ = 0
+;情愛
+SOURCE:情愛 = 100
+;性行動
+SOURCE:性行動 = 50
+;痛み
+SOURCE:痛み = 0
+;接触
+SOURCE:接触 = 200
+;液体追加
+SOURCE:液体追加 = 50
+;欲情追加
+SOURCE:欲情追加 = 80
+;逸脱
+SOURCE:逸脱 = 0
+;反感追加
+SOURCE:反感追加 = 0
+;恭順追加
+SOURCE:恭順追加 = 50
+;快Ｂ
+SOURCE:快Ｂ = 0
+
+;コマンド派生をみる
+;正常位
+IF LOCAL:1 == 1
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:欲情追加 , 2.00
+	TIMES SOURCE:恭順追加 , 2.00
+;後背位
+ELSEIF LOCAL:1 == 2
+	TIMES SOURCE:情愛 , 1.50
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:欲情追加 , 2.00
+	TIMES SOURCE:恭順追加 , 1.50
+;対面座位
+ELSEIF LOCAL:1 == 3
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:欲情追加 , 2.00
+	TIMES SOURCE:恭順追加 , 2.00
+;背面座位
+ELSEIF LOCAL:1 == 4
+	TIMES SOURCE:情愛 , 1.50
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:欲情追加 , 2.00
+	TIMES SOURCE:恭順追加 , 1.50
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:液体追加 , 1.00
+	TIMES SOURCE:欲情追加 , 1.00
+	TIMES SOURCE:恭順追加 , 1.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:液体追加 , 1.40
+	TIMES SOURCE:欲情追加 , 1.40
+	TIMES SOURCE:恭順追加 , 1.10
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:液体追加 , 2.20
+	TIMES SOURCE:欲情追加 , 2.20
+	TIMES SOURCE:恭順追加 , 1.30
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:情愛 , 2.20
+	TIMES SOURCE:液体追加 , 3.40
+	TIMES SOURCE:欲情追加 , 3.40
+	TIMES SOURCE:恭順追加 , 1.60
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:情愛 , 3.00
+	TIMES SOURCE:液体追加 , 5.00
+	TIMES SOURCE:欲情追加 , 5.00
+	TIMES SOURCE:恭順追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 4.00
+	TIMES SOURCE:液体追加 , 7.00
+	TIMES SOURCE:欲情追加 , 7.00
+	TIMES SOURCE:恭順追加 , 2.50
+ENDIF
+
+;ABL:欲望をみる
+IF ABL:欲望 == 0
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:液体追加 , 1.00
+	TIMES SOURCE:欲情追加 , 1.00
+ELSEIF ABL:欲望 == 1
+	TIMES SOURCE:情愛 , 1.10
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:液体追加 , 1.10
+	TIMES SOURCE:欲情追加 , 1.10
+ELSEIF ABL:欲望 == 2
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:性行動 , 1.60
+	TIMES SOURCE:液体追加 , 1.30
+	TIMES SOURCE:欲情追加 , 1.30
+ELSEIF ABL:欲望 == 3
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:性行動 , 2.20
+	TIMES SOURCE:液体追加 , 1.60
+	TIMES SOURCE:欲情追加 , 1.60
+ELSEIF ABL:欲望 == 4
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:性行動 , 3.00
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:欲情追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:性行動 , 4.00
+	TIMES SOURCE:液体追加 , 2.50
+	TIMES SOURCE:欲情追加 , 2.50
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 >= 3
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:恭順追加 , 1.50
+ENDIF
+
+;TALENT:淫乱をみる
+IF TALENT:淫乳
+	TIMES SOURCE:液体追加 , 1.50
+	TIMES SOURCE:欲情追加 , 1.20
+ENDIF
+
+;調教者のTALENT:舌使いをみる
+IF TALENT:PLAYER:舌使い
+	TIMES SOURCE:液体追加 , 1.20
+	TIMES SOURCE:欲情追加 , 1.50
+ENDIF
+
+;媚薬による欲情ボーナス
+SIF TEQUIP:媚薬
+	TIMES SOURCE:欲情追加 , 1.50
+
+;挿入時限定の処理
+IF LOCAL:1 > 0
+	;ABL:Ｖ感覚をみる
+	IF ABL:Ｖ感覚 == 0
+		SOURCE:快Ｖ = 50
+		SOURCE:情愛 += 50
+	ELSEIF ABL:Ｖ感覚 == 1
+		SOURCE:快Ｖ = 150
+		SOURCE:情愛 += 100
+	ELSEIF ABL:Ｖ感覚 == 2
+		SOURCE:快Ｖ = 300
+		SOURCE:情愛 += 200
+	ELSEIF ABL:Ｖ感覚 == 3
+		SOURCE:快Ｖ = 600
+		SOURCE:情愛 += 300
+	ELSEIF ABL:Ｖ感覚 == 4
+		SOURCE:快Ｖ = 1000
+		SOURCE:情愛 += 500
+	ELSE
+		SOURCE:快Ｖ = 1500
+		SOURCE:情愛 += 700
+	ENDIF
+
+	;EXP:Ｖ経験をみる
+	IF EXP:Ｖ経験 < EXPLV:1
+		TIMES SOURCE:快Ｖ , 0.20
+		SOURCE:痛み = 3500
+		SIF ASSIPLAY && TALENT:PLAYER:オトコ == 0
+			TCVAR:異常経験 += 1
+	ELSEIF EXP:Ｖ経験 < EXPLV:2
+		TIMES SOURCE:快Ｖ , 0.60
+		SOURCE:痛み = 250
+	ELSEIF EXP:Ｖ経験 < EXPLV:3
+		TIMES SOURCE:快Ｖ , 1.00
+		SOURCE:痛み = 50
+	ELSEIF EXP:Ｖ経験 < EXPLV:4
+		TIMES SOURCE:快Ｖ , 1.10
+		SOURCE:痛み = 10
+	ELSEIF EXP:Ｖ経験 < EXPLV:5
+		TIMES SOURCE:快Ｖ , 1.20
+		SOURCE:痛み = 0
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.30
+		SOURCE:痛み = 0
+	ENDIF
+
+	;正常位首筋耳裏責め
+	IF LOCAL:1 == 1
+		;快Ｖにボーナス
+		TIMES SOURCE:快Ｖ , 1.50
+	;後背位首筋耳裏責め
+	ELSEIF LOCAL:1 == 2
+		;快Ｂが入る
+		;ABL:Ｂ感覚をみる
+		IF ABL:Ｂ感覚 == 0
+			SOURCE:快Ｂ = 40
+			SOURCE:情愛 += 50
+		ELSEIF ABL:Ｂ感覚 == 1
+			SOURCE:快Ｂ = 150
+			SOURCE:情愛 += 200
+		ELSEIF ABL:Ｂ感覚 == 2
+			SOURCE:快Ｂ = 400
+			SOURCE:情愛 += 400
+		ELSEIF ABL:Ｂ感覚 == 3
+			SOURCE:快Ｂ = 700
+			SOURCE:情愛 += 600
+		ELSEIF ABL:Ｂ感覚 == 4
+			SOURCE:快Ｂ = 1000
+			SOURCE:情愛 += 1000
+		ELSE
+			SOURCE:快Ｂ = 1600
+			SOURCE:情愛 += 1400
+		ENDIF
+	;対面座位首筋耳裏責め
+	ELSEIF LOCAL:1 == 3
+		;快Ｃが入る
+		;ABL:Ｃ感覚をみる
+		IF ABL:Ｃ感覚 == 0
+			SOURCE:快Ｃ = 40
+		ELSEIF ABL:Ｃ感覚 == 1
+			SOURCE:快Ｃ = 160
+		ELSEIF ABL:Ｃ感覚 == 2
+			SOURCE:快Ｃ = 500
+		ELSEIF ABL:Ｃ感覚 == 3
+			SOURCE:快Ｃ = 900
+		ELSEIF ABL:Ｃ感覚 == 4
+			SOURCE:快Ｃ = 1400
+		ELSE
+			SOURCE:快Ｃ = 2100
+		ENDIF
+	;背面座位首筋耳裏責め
+	ELSEIF LOCAL:1 == 4
+		;快Ｂが入る
+		;ABL:Ｂ感覚をみる
+		IF ABL:Ｂ感覚 == 0
+			SOURCE:快Ｂ = 50
+			LOCAL:2 = 50
+		ELSEIF ABL:Ｂ感覚 == 1
+			SOURCE:快Ｂ = 200
+			LOCAL:2 = 150
+		ELSEIF ABL:Ｂ感覚 == 2
+			SOURCE:快Ｂ = 500
+			LOCAL:2 = 250
+		ELSEIF ABL:Ｂ感覚 == 3
+			SOURCE:快Ｂ = 900
+			LOCAL:2 = 350
+		ELSEIF ABL:Ｂ感覚 == 4
+			SOURCE:快Ｂ = 1300
+			LOCAL:2 = 600
+		ELSE
+			SOURCE:快Ｂ = 1800
+			LOCAL:2 = 850
+		ENDIF
+
+		;TALENT:淫乳をみる
+		IF TALENT:淫乳
+			TIMES SOURCE:快Ｂ , 1.20
+			TIMES LOCAL:2 , 1.20
+		ENDIF
+		SOURCE:情愛 += LOCAL:2
+	ENDIF
+
+	;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+	TFLAG:1 = 1
+	SIF TALENT:処女 && TALENT:恋慕 && ASSIPLAY == 0
+		TFLAG:2 = TALENT:処女
+
+	TCVAR:Ｖ経験 += 1
+	IF PLAYER == MASTER
+		TCVAR:Ｖ調律経験 += 1
+		SIF EXIST_BAR(MASTER)
+			CFLAG:主人にＶ捧げ回数 += 1
+	ENDIF
+
+	;-------------------------------------------------
+	;射精チェック
+	;-------------------------------------------------
+	TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+	;射精時の処理
+	IF TFLAG:91 >= 1
+		IF ABL:従順 >= 3 && ABL:欲望 >= 3 && CFLAG:9 & 2 && FLAG:10 & 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+			IF LOCAL:1 == 1 || LOCAL:1 == 2
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の肩にしがみ付くように抱き付いてきた…
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は背を仰け反らせて%CALLNAME:PLAYER%にしなだれかかった…
+			ENDIF
+		PRINTL 
+		ENDIF
+ 
+		;射精した人物を設定
+		TFLAG:92 = PLAYER
+		;射精された人物を設定
+		TFLAG:94 = TARGET
+		;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+		CALL COM_SHOOT_328
+		;汎用的な処理はこの関数で行う
+		;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+		CALL SAMEN_SHOOT
+	ENDIF
+
+	;射精に関係なく行われる処理はここから
+	;奴隷のＶ⇔調教者のＰの汚れが移動
+	STAIN:ヴァギナ |= STAIN:PLAYER:ペニス
+	STAIN:PLAYER:ペニス |= STAIN:ヴァギナ
+ENDIF
+
+;反発刻印によるペナルティ
+IF MARK:反発刻印 >= 2
+	TIMES SOURCE:情愛 , 0.50
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:反感追加 , 2.00
+	TIMES SOURCE:恭順追加 , 0.20
+ENDIF
+
+;調教時メッセージ表示
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_328
+PRINTFORM %CALLNAME:PLAYER%は
+
+;意識のない相手にやると途端にヤンデレっぽくなる不思議
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	;正常位
+	IF TFLAG:99 == 1
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま覆いかぶさるようにして%CALLNAME:TARGET%の首筋に口付けし、
+		PRINTFORM 腰をゆっくりと動かしながら%CALLNAME:TARGET%の
+		IF MARK:屈服刻印 >= 2 || MARK:反発刻印 < 2 || TALENT:恋慕
+			PRINTL 耳元で甘く囁いた…
+		ELSE
+			PRINTL 耳の穴にそっと舌先を這わせた…
+		ENDIF
+	;後背位
+	ELSEIF TFLAG:99 == 2
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま後ろから抱きつくようにして%CALLNAME:TARGET%の首筋や耳たぶに口付けし、
+		PRINTFORM 腰をゆっくりと動かしつつ、%CALLNAME:TARGET%の
+		IF TALENT:巨乳 || TALENT:爆乳
+			PRINT 掌から溢れそうな巨乳を揉みしだい
+		ELSEIF TALENT:貧乳
+			PRINT 小振りの胸の先端を指で捏ね繰り回し
+		ELSEIF TALENT:絶壁
+			PRINT 平らな胸の小さな突起を指で捏ね繰り回し
+		ELSE
+			PRINT 柔らかな胸を両掌で撫で回し
+		ENDIF
+		PRINTL た…
+	;対面座位
+	ELSEIF TFLAG:99 == 3
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま%CALLNAME:TARGET%を抱き締めると、
+		PRINTFORML 腰を動かしながら%CALLNAME:TARGET%の首筋に吸い付いて、耳の裏の方まで舐め上げた…
+	;背面座位
+	ELSEIF TFLAG:99 == 4
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま%CALLNAME:TARGET%を抱き寄せ、
+		IF TALENT:巨乳 || TALENT:爆乳
+			PRINT その掌から溢れそうな巨乳を揉みしだき、
+		ELSEIF TALENT:貧乳
+			PRINT その小振りの胸の先端を指で捏ね繰り回し、
+		ELSEIF TALENT:絶壁
+			PRINT その平らな胸の小さな突起を指で捏ね繰り回し、
+		ELSE
+			PRINT その柔らかな胸を両掌で撫で回し、
+		ENDIF
+		PRINTL 同時に腰も動かしながら首筋や耳たぶの裏に何度もキスをした…
+	;通常
+	ELSE
+		SIF MARK:屈服刻印 >= 2 || MARK:反発刻印 < 2 || TALENT:恋慕
+			PRINTFORM %CALLNAME:TARGET%を抱き締め、
+		PRINTL 首筋をそっと舐め上げて耳たぶを甘噛みした…
+	ENDIF
+ELSE
+	;正常位
+	IF TFLAG:99 == 1
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま覆いかぶさるようにして%CALLNAME:TARGET%の首筋に口付けし、
+		PRINTFORM 腰をゆっくりと動かしながら%CALLNAME:TARGET%の
+		IF MARK:屈服刻印 >= 2 || MARK:反発刻印 < 2 || TALENT:恋慕
+			PRINTL 耳元で甘く囁いた…
+		ELSE
+			PRINTL 耳の穴にそっと舌先を這わせた…
+		ENDIF
+	;後背位
+	ELSEIF TFLAG:99 == 2
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま後ろから抱きつくようにして%CALLNAME:TARGET%の首筋や耳たぶに口付けし、
+		PRINTFORM 腰をゆっくりと動かしつつ、%CALLNAME:TARGET%の
+		IF TALENT:巨乳 || TALENT:爆乳
+			PRINT 掌から溢れそうな巨乳を揉みしだい
+		ELSEIF TALENT:貧乳
+			PRINT 小振りの胸の先端を指で捏ね繰り回し
+		ELSEIF TALENT:絶壁
+			PRINT 平らな胸の小さな突起を指で捏ね繰り回し
+		ELSE
+			PRINT 柔らかな胸を両掌で撫で回し
+		ENDIF
+		PRINTL た…
+	;対面座位
+	ELSEIF TFLAG:99 == 3
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま%CALLNAME:TARGET%を抱き締めると、
+		PRINTFORML 腰を動かしながら%CALLNAME:TARGET%の首筋に吸い付いて、耳の裏の方まで舐め上げた…
+	;背面座位
+	ELSEIF TFLAG:99 == 4
+		IF EXIST_PENIS(PLAYER)
+			PRINT ペニスを
+		ELSE
+			PRINT ペニスバンドを
+		ENDIF
+		PRINTFORML 挿入したまま%CALLNAME:TARGET%を抱き寄せ、
+		IF TALENT:巨乳 || TALENT:爆乳
+			PRINT その掌から溢れそうな巨乳を揉みしだき、
+		ELSEIF TALENT:貧乳
+			PRINT その小振りの胸の先端を指で捏ね繰り回し、
+		ELSEIF TALENT:絶壁
+			PRINT その平らな胸の小さな突起を指で捏ね繰り回し、
+		ELSE
+			PRINT その柔らかな胸を両掌で撫で回し、
+		ENDIF
+		PRINTL 同時に腰も動かしながら首筋や耳たぶの裏に何度もキスをした…
+	;通常
+	ELSE
+		IF MARK:屈服刻印 >= 2 || MARK:反発刻印 < 2 || TALENT:恋慕
+			PRINTFORM %CALLNAME:TARGET%を抱き締め、
+		ELSE
+			PRINTFORM 暴れる%CALLNAME:TARGET%を押さえつけ、
+		ENDIF
+		PRINTL 首筋をそっと舐め上げて耳たぶを甘噛みした…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_328
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 1
+;射精箇所選択の可・不可
+TFLAG:704 = 0

@@ -1,0 +1,98 @@
+﻿;=============================================================================
+;ローション
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE60
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:60 > 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:ローション == 0
+	RETURN 0
+;潤滑が20000以上の時は使えない
+SIF PALAM:潤滑 > 20000
+	RETURN 0
+;シャワー中、○○風呂入浴中はダメ
+SIF TEQUIP:シャワープレイ || TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 60) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM60
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;調教対象が小人体型かつ特定の条件を満たした場合、ローションプレイに変化
+IF TALENT:小人体型
+	SIF EXCOM_ABLE625() == 1
+		JUMP COM625
+ENDIF
+
+PRINTL ローション
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 60
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ローション
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 0
+
+SOURCE:露出 = 300
+SOURCE:液体追加 = 10000
+
+;潤滑が5000以上の時は効果減衰
+SIF PALAM:潤滑 > 20000
+	TIMES SOURCE:液体追加 , 0.75
+
+LOCAL:1 = 0
+;既に塗られている場合は効果減衰
+IF TEQUIP:ローション
+	TIMES SOURCE:露出 , 0.60
+	TIMES SOURCE:液体追加 , 0.75
+	;陥落してない奴隷は既に効果あるのに塗られると反感をおぼえる
+	SIF TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+		LOCAL:1 = 100
+ENDIF
+;調教者の手に汚れが付いている
+SIF STAIN:PLAYER:手
+	LOCAL:1 += 100
+;反発刻印持ち奴隷は反感をおぼえる
+LOCAL:1 += 50 * MARK:反発刻印
+
+SOURCE:反感追加 = LOCAL:1
+
+;ローション1つ消費
+CALL USE_PLURAL_ITEM, 60, 1
+
+TEQUIP:ローション = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_60
+PRINTFORML %CALLNAME:PLAYER%は、\@(TEQUIP:ローション) ? さらに # \@%CALLNAME:TARGET%の身体にローションをぬりたくった…

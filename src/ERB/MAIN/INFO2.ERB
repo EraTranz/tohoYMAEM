@@ -1,0 +1,462 @@
+﻿;=============================================================================
+;能力表示(弐型表示)
+;=============================================================================
+;表示順は@PRINT_ABL_COUNTのコメント参照
+@NEW_PRINT_ABL, ARG
+PRINTL □ 能力
+LOCAL:1 = 0
+REPEAT 26
+	LOCAL = PRINT_ABL_COUNT(ARG)
+	IF LOCAL < 0
+		CONTINUE
+	ELSEIF ABL:ARG:LOCAL > 0
+		PRINTFORM %ABLNAME:LOCAL, 8%:LV{ABL:ARG:LOCAL}
+		LOCAL:1 += 1
+		;改行するのか？ 続けて出力するのか？
+		IF LOCAL:1 >= 5
+			PRINTL 
+			LOCAL:1 = 0
+		ELSE
+			PRINT 　
+		ENDIF
+	ENDIF
+REND
+SIF LOCAL:1 != 0
+	PRINTL 
+CUSTOMDRAWLINE ･
+
+;=============================================================================
+;素質表示(弐型表示)
+;=============================================================================
+;PRINT_TALENT （素質）との入れ替え
+@NEW_PRINT_TALENT, ARG
+PRINTL □ 素質
+LOCAL = 0
+;リピート回数-1 の番号までの素質が表示される
+;リピート回数をあらかじめ大きめに設定（最大1000）しておくと、
+;素質の最大番号が増えたときに書き換える手間が減るが、
+;増やしすぎると処理速度に影響するので要注意
+REPEAT 249
+	IF TALENT:ARG:COUNT
+		CALL SHOW_INFO_EACH_TALENT, ARG
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+REND
+IF TALENT:ARG:常時発情
+		PRINTFORM [%TALENTNAME:501%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+ELSEIF TALENT:ARG:発情可
+		PRINTFORM [%TALENTNAME:502%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+ENDIF
+IF TALENT:ARG:理性
+		PRINTFORM [%TALENTNAME:500%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+ENDIF
+REPEAT 4
+	IF TALENT:ARG:(250+COUNT)
+		PRINTFORM [%TALENTNAME:(250+COUNT)%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+REND
+REPEAT 50
+	IF TALENT:ARG:(558 + COUNT)
+		COUNT += 558
+		CALL SHOW_INFO_EACH_TALENT, ARG
+		COUNT -= 558
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+REND
+
+; 追加外見定義出力は、[1000:あなた]以外
+LOCALS = %PARSE_IMAGE_NO(ARG)%
+IF NO:ARG != 1000 && LOCALS == ""
+	;外見定義：瞳色
+	IF GET_EYE_COLOR_STR(ARG) != ""
+		PRINTFORM [%GET_EYE_COLOR_STR(ARG)%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+
+	;外見定義：服色
+	IF GET_CLOTH_COLOR_STR(ARG) != ""
+		PRINTFORM [%GET_CLOTH_COLOR_STR(ARG)%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+ENDIF
+
+REPEAT 3
+	IF TALENT:ARG:(610+COUNT)
+		COUNT += 610
+		CALL SHOW_INFO_EACH_TALENT, ARG
+		COUNT -= 610
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+REND
+REPEAT 10
+	IF TALENT:ARG:(830+COUNT)
+		PRINTFORM [%TALENTNAME:(830+COUNT)%] 
+		SIF (++LOCAL % 6) == 0
+			PRINTL 
+	ENDIF
+REND
+IF TALENT:ARG:998
+	PRINTFORM [%TALENTNAME:998%] 
+	SIF (++LOCAL % 6) == 0
+		PRINTL 
+ENDIF
+IF CFLAG:ARG:0
+	PRINTFORM [\@(EQUIP:ARG:桃の飴玉 == 1) ? ｅｘ # ＥＸ\@] 
+	SIF (++LOCAL % 6) == 0
+		PRINTL 
+ENDIF
+
+SIF LOCAL % 6 != 0
+	PRINTL 
+CUSTOMDRAWLINE ･
+
+;=============================================================================
+;素質表示(弐型表示)
+;=============================================================================
+;PRINT_TALENT （素質）との入れ替え
+@NEW_PRINT_TALENT_CLASSIFICATION, ARG
+PRINTL □ 素質
+LOCAL = 0
+TFLAG:545 = 0
+;リピート回数-1 の番号までの素質が表示される
+;リピート回数をあらかじめ大きめに設定（最大1000）しておくと、
+;素質の最大番号が増えたときに書き換える手間が減るが、
+;増やしすぎると処理速度に影響するので要注意
+PRINT 性  別：
+IF TALENT:ARG:ふたなり
+	PRINTFORM [ふたなり\@(TALENT:ARG:ふたなり == 2) ? (玉あり) # \@] 
+ELSEIF TALENT:ARG:オトコ
+	PRINT [男] 
+ELSE
+	PRINT [女] 
+ENDIF
+TFLAG:545 = 0
+REPEAT 10
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT, 0, 1, 9)
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+TFLAG:545 = 0
+REPEAT 170
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,61,62,63,64,70,71,131,142,158,169)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 性  格：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+TFLAG:545 = 0
+REPEAT 255
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT,48,49,110,111,112,113,114,115,116,117,127,128,129,130,250,251,252,253)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 体  質：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+REPEAT 550
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT,40,41,42,43,44,45,46,47,54,65,66,100,101,102,103,104,105,106,107,132,133,134,135,136,137,138,140,143,145,146)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 体  質：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+TFLAG:545 = 0
+REPEAT 300
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT,50,51,52,53,55,56,57,58,59,86,90,91,92,93,95,96,97,98,122,123,124,125,126,139,149,189,190,191,192,193,194,195,196,197,198)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 技  術：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+TFLAG:545 = 0
+REPEAT 550
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT,60,80,81,82,83,84,85,150,151,152,153,159,160,161,162,163,164,167,168,170,171,172,173,174,175,176,501)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 性  癖：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+REPEAT 270
+	IF TALENT:ARG:COUNT && GROUPMATCH(COUNT,177,178,179,180,260,261,262)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 性  癖：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+;LOCAL = 0
+;PRINTL 
+;PRINT 戦  闘：
+TFLAG:545 = 0
+REPEAT 250
+	IF TALENT:ARG:COUNT && COUNT >= 200 & COUNT < 230
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 特  徴：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+REPEAT 50
+	IF TALENT:ARG:(558 + COUNT)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 特  徴：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		COUNT += 558
+		CALL SHOW_INFO_EACH_TALENT, ARG
+		COUNT -= 558
+	ENDIF
+REND
+
+; 追加外見定義出力は、[1000:あなた]以外
+LOCALS = %PARSE_IMAGE_NO(ARG)%
+IF NO:ARG != 1000 && LOCALS == ""
+	;外見定義：瞳色
+	IF GET_EYE_COLOR_STR(ARG) != ""
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 特  徴：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		PRINTFORM [%GET_EYE_COLOR_STR(ARG)%] 
+	ENDIF
+
+	;外見定義：服色
+	IF GET_CLOTH_COLOR_STR(ARG) != ""
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 特  徴：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		PRINTFORM [%GET_CLOTH_COLOR_STR(ARG)%] 
+	ENDIF
+ENDIF
+
+REPEAT 3
+	IF TALENT:ARG:(610+COUNT)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT 特  徴：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		COUNT += 610
+		CALL SHOW_INFO_EACH_TALENT, ARG
+		COUNT -= 610
+	ENDIF
+REND
+TFLAG:545 = 0
+IF ARG == MASTER
+	IF TFLAG:545 == 0
+		LOCAL = 0
+		PRINTL 
+		PRINT その他：
+		TFLAG:545 = 1
+	ENDIF
+	IF (++LOCAL % 7) == 0
+		PRINTL 
+		PRINT         
+	ENDIF
+	PRINTFORM [調教師の誇り] 
+ENDIF
+REPEAT 999
+	IF TALENT:ARG:COUNT && !(GROUPMATCH(COUNT,0,1,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,61,62,63,64,70,71,131,142,158,169,48,49,110,111,112,113,114,115,116,117,127,128,129,130,250,251,252,253,40,41,42,43,44,45,46,47,54,65,66,100,101,102,103,104,105,106,107,132,133,134,135,136,137,138,140,143,145,146,50,51,52,53,55,56,57,58,59,86,90,91,92,93,95,96,97,98,122,123,124,125,126,139,149,189,190,191,192,193,194,195,196,197,198,60,80,81,82,83,84,85,150,151,152,153,159,160,161,162,163,164,167,168,170,171,172,173,174,175,176,501,177,178,179,180,260,261,262,120,121,510,511,512,610,611,612)) && (COUNT < 200 || COUNT >= 230) && !(COUNT > 558 && COUNT < 620)
+		IF TFLAG:545 == 0
+			LOCAL = 0
+			PRINTL 
+			PRINT その他：
+			TFLAG:545 = 1
+		ENDIF
+		IF (++LOCAL % 7) == 0
+			PRINTL 
+			PRINT         
+		ENDIF
+		CALL SHOW_INFO_EACH_TALENT, ARG
+	ENDIF
+REND
+
+SIF LOCAL % 7 != 0
+	PRINTL 
+CUSTOMDRAWLINE ･
+
+;=============================================================================
+;刻印表示(弐型表示)
+;=============================================================================
+;PRINT_MARK （刻印）との入れ替え
+@NEW_PRINT_MARK, ARG
+PRINTL □ 刻印
+LOCAL = 0
+REPEAT 11
+	SIF COUNT >= 5 && COUNT < 8
+		CONTINUE
+	IF (FLAG:10 & 8) && ((COUNT == 8 && MARK:ARG:96) || (COUNT == 9 && MARK:ARG:97))
+		FONTBOLD
+		PRINTFORM %MARKNAME:COUNT%:LV{MARK:ARG:COUNT} 
+		CALL PRINT_COLORBAR, MARK:ARG:COUNT, 3, 3, UNICODE(0x2584), UNICODE(0x2584), BARCOLORSET("青"), RESULT:1
+		;%BARSTR(MARK:ARG:COUNT, 3, 3)%
+		FONTREGULAR
+	ELSE
+		PRINTFORM %MARKNAME:COUNT%:LV{MARK:ARG:COUNT} 
+		CALL PRINT_COLORBAR, MARK:ARG:COUNT, 3, 3, UNICODE(0x2584), UNICODE(0x2584), BARCOLORSET("青"), RESULT:1
+		;%BARSTR(MARK:ARG:COUNT, 3, 3)%
+	ENDIF
+
+	LOCAL += 1
+	;最後のループ以外では間隔をあける
+	IF LOCAL%3 == 0
+		PRINTL 
+	ELSE
+		PRINT 　
+	ENDIF
+REND
+
+;Debugモード（無条件）もしくは主人が[超常目算]持ちで難易度EASY～HARDのときは刻印取得履歴も表示
+IF TALENT:MASTER:998 || (TALENT:MASTER:超常目算 && (FLAG:3 >= 1 && FLAG:3 <= 3)) 
+	FOR PC_VAR1, 96, 98
+		PRINTFORM \@(PC_VAR1 == 96) ? 恐怖履歴 # 反発履歴\@:LV{MARK:ARG:PC_VAR1} 
+		CALL PRINT_COLORBAR, MARK:ARG:PC_VAR1, 3, 3, UNICODE(0x2584), UNICODE(0x2584), BARCOLORSET("青"), RESULT:1
+		;%BARSTR(MARK:ARG:PC_VAR1, 3, 3)%
+
+		LOCAL += 1
+		;最後のループ以外では間隔をあける
+		IF LOCAL%3 == 0
+			PRINTL 
+		ELSE
+			PRINT 　
+		ENDIF
+	NEXT
+ENDIF
+
+;最後のループで改行してなかったら、ここで改行しておく
+SIF LOCAL%3 != 0
+	PRINTL 
+CUSTOMDRAWLINE ･
+
+;=============================================================================
+;経験表示(弐型表示)
+;=============================================================================
+;表示順は@PRINT_EXP_COMMONのコメント参照
+@NEW_PRINT_EXP, ARG
+PRINTL □ 経験
+CALL PRINT_EXP_COMMON, ARG
+CUSTOMDRAWLINE ･
+
+;=============================================================================
+;珠表示(弐型表示)
+;=============================================================================
+;表示順
+; 2,快Ａ　 3,快Ｂ　 0,快Ｃ　 1,快Ｖ
+;12,恭順　13,欲情　14,屈服　11,習得
+;15,恥情　16,苦痛　17,恐怖　30,薬毒
+;31,侵蝕　32,先導 100,否定 198,触手(主人のみ)
+;SHOW_JUEL の珠表示部分を独立した関数に
+@NEW_PRINT_JUEL, ARG
+PRINTL □ 珠
+VARSET LOCALS,""
+SPLIT "2,3,0,1,12,13,14,11,15,16,17,30,31,32,100,198", ",", LOCALS
+REPEAT 15 + (ARG == MASTER)
+	LOCAL = TOINT(LOCALS:COUNT)
+	PRINTFORM 　%PALAMNAME:LOCAL%の珠:{JUEL:ARG:LOCAL, 7}
+
+	;改行or表示位置あけ
+	IF COUNT%4 == 3
+		PRINTL 
+	ELSE
+		PRINT  
+	ENDIF
+REND
+
+;最後のループで改行してなかったら、ここで改行しておく
+SIF COUNT%4 != 0
+	PRINTL 
+CUSTOMDRAWLINE ･

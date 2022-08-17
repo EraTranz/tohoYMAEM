@@ -1,0 +1,65 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;日常イベントの自慰イベント（快Cのみ）
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE604
+CALL K2008_SELECT_CALLABLE_FUNCTION("KOJO_2008_MESSAGE_SUB_EVENT_SCENE604_#")
+RETURN RESULT
+
+;-------------------------------------------------
+;通常
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE604_1
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+	
+PRINTFORML 休憩を与えたが、夢美は寂しそうに「一緒に居たい」と部屋までやってきた
+PRINTFORML いいことを思いついたので、官能小説を片手に椅子に座った
+PRINTFORMW 夢美をさらに膝上に座らせ、%CALLNAME:MASTER%が持つ官能小説を音読しながら自慰をさせた
+PRINTFORML
+PRINTFORMW ・・・
+PRINTFORML 「『―に、肉棒が秘裂に差し込まれッ、こまれる度に少女があ、あえ・・・』」
+PRINTFORMW 「『喘ぎ声を上げッ、んぁあ！？　恥水がお、音をたてては、はぜッ！』」
+CALL K2008_ORGASM("並")
+
+
+;-------------------------------------------------
+;オナばれ
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE604_2
+#DIM _RANK
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+;強度を乱数で作る
+_RANK = ( RAND:5 + RAND:7 + RAND:10 ) /3
+
+PRINTFORML 休憩中の夢美の部屋を訪れたが、中から甘い喘ぎ声が聞こえる
+PRINTFORML 気づかれないよう、そっとドアを開けると……
+PRINTFORMW 
+CALL K2008_COM("快楽", _RANK)
+PRINTFORMW 「あはぁ♪　んひっ、いひぃ……　ふぇ！？　な、なんで%CALLNAME:MASTER%が！？」
+PRINTFORM 「あ、だめっ　止まんない！　見られてるのに
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORMW 手が勝手に動いちゃう！」
+		PRINTFORML 
+		PRINTFORML ぐちゅぐちゅと水音を立てながら、必死に恥部をまさぐり続けている
+	CASEELSE
+		PRINTFORMW 腰止まんないよぉ」
+		PRINTFORML 
+		PRINTFORML 机の角に股間を押し付け、ぐりぐりと体重をかけながら腰を揺らしている
+ENDSELECT
+PRINTFORML 目線はこちらに合わせたまま、動きがどんどん加速している
+PRINTFORMW 体も小刻みに痙攣しており絶頂が近いことをこちらに教えてくれている
+PRINTFORML
+
+_RANK *= 2
+CALL K2008_COM("快楽", _RANK)
+
+_RANK = MIN(_RANK / 3, 1)
+CALL K2008_ORGASM_GENERAL(_RANK)
+
+PRINTFORML
+PRINTFORMW 絶頂した姿を見てひとまず満足したので、そのまま部屋を後にした
+

@@ -1,0 +1,765 @@
+﻿;=============================================================================
+;○○売却関連
+;=============================================================================
+;--------------------------------------------------
+;写真の値段を決定する処理
+;--------------------------------------------------
+;写真の値段はコマンド中でも処理を行ったTFLAG:124でを使用。
+;HARDとそれ以外では金額制限処理の仕方が若干異なる(HARDのほうが厳しい)
+@GET_PICTURE
+;HARDモード以上
+IF FLAG:3 >= 3
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 2500, 2)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 5000, 5)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 10000, 10)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 50000, 25)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 100000, 50)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 250000, 100)
+	TFLAG:124 = MIN(TFLAG:124, 500000)
+ELSE
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 5000, 2)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 10000, 3)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 50000, 5)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 100000, 10)
+	TFLAG:124 = TABLE_CALC(TFLAG:124, 500000, 25)
+ENDIF
+TFLAG:124 = MAX(TFLAG:124, 5)
+PRINTFORM %SHOW_CALLNAME(MASTER)%は
+PRINTFORML %SHOW_CALLNAME(TARGET)%の写真を現像した
+;展示室有効時は写真の保存が可能
+IF FLAG:12 & 8
+	CALL SELECT_PICTURE
+ELSE
+	CALL SELL_PICTURE
+ENDIF
+;フラグリセット。これで調教メニュー以外でも再利用できるように
+TFLAG:124 = 0
+
+;--------------------------------------------------
+;写真売却処理
+;--------------------------------------------------
+@SELL_PICTURE
+;写真売却のイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 132
+PRINTFORML %CALLNAME:TARGET%の写真には{TFLAG:124}圓の買値が付いた。
+MONEY:1 = TFLAG:124
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;写真で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:971
+	CALL NEW_HIGH_INCOME_ALL, 971
+SIF MONEY:1 > CFLAG:最高金額_写真
+	CALL NEW_HIGH_INCOME_SLAVE, 83
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+
+;--------------------------------------------------
+;写真の売却or保存処理
+;--------------------------------------------------
+@SELECT_PICTURE
+PRINTFORML この写真なら{TFLAG:124}圓の値が付きそうだ……
+PRINTW どうする？売る？手元に残す？それとも破棄する？
+DRAWLINE
+PRINTL [0] - 売る
+;そのキャラの陰毛が蒐集されていない場合
+IF (CFLAG:10 & 64) == 0
+	PRINTL [1] - 手元に残す
+ELSE
+	PRINTFORML [1] - 手元に残す（既に展示室には%CALLNAME:TARGET%の写真はあります）
+ENDIF
+;PRINTFORML \@(CFLAG:10 & 64) ? (既に展示室には%CALLNAME:TARGET%の写真があります) # (まだ展示室には%CALLNAME:TARGET%の写真がありません)\@
+PRINTL [2] - 破棄する
+DRAWLINE
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	;写真売却のイベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 132
+	TFLAG:202 = 0
+	PRINTFORML %CALLNAME:TARGET%の写真には{TFLAG:124}圓の買値が付いた。
+	MONEY:1 = TFLAG:124
+	CALL SHOW_MONEY_INCREACE
+	;--------------------------------------------------
+	;写真で稼いだ最高金額判定処理
+	SIF MONEY:1 > MONEY:971
+		CALL NEW_HIGH_INCOME_ALL, 971
+	SIF MONEY:1 > CFLAG:最高金額_写真
+		CALL NEW_HIGH_INCOME_SLAVE, 83
+	CALL TOTAL_INCOME_SLAVE, MONEY:1
+	;--------------------------------------------------
+	WAIT
+ELSEIF RESULT == 1
+	CALL KEEP_PICTURE
+ELSEIF RESULT == 2
+	PRINTFORMW %CALLNAME:TARGET%の写真を破棄しました。
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;母乳売却の処理
+;--------------------------------------------------
+;搾乳機を使っていない場合はAFTERTRA.ERBの時点でこっちに来ないように
+@SELL_MILK
+;難易度がPHANTASM以上
+IF FLAG:3 >= 5
+	LOCAL:1 = TFLAG:126 * 5
+;難易度がLUNATIC
+ELSEIF FLAG:3 == 4
+	LOCAL:1 = TFLAG:126 * 20
+ELSE
+	LOCAL:1 = TFLAG:126 * 25
+ENDIF
+;噴乳経験をみる
+GETEXPLV EXP:噴乳経験, 6
+LOCAL = (RESULT + 1) * LOCAL:1
+
+;脱水症状ならぬ脱水少女もいいところなので○○ccの表示のみ修正
+;値段が高いのはおいしいと評判だったって解釈で
+LOCAL:1 = TABLE_CALC(LOCAL, 50, 2)
+LOCAL:1 = TABLE_CALC(LOCAL, 100, 5)
+LOCAL:1 = TABLE_CALC(LOCAL, 200, 10)
+LOCAL:1 = MIN(LOCAL:1, 300)
+
+
+;生娘で難易度HARD以上
+IF TALENT:処女 == 1 && EXP:Ｖ経験 == 0 && FLAG:3 >= 3
+	TIMES LOCAL , 2.50
+;生娘もしくはＶ経験なし
+ELSEIF TALENT:処女 == 1 || EXP:Ｖ経験 == 0
+	TIMES LOCAL , 1.50
+;乙女
+ELSEIF TALENT:処女
+	TIMES LOCAL , 1.20
+ENDIF
+;淫乳
+SIF TALENT:淫乳
+	TIMES LOCAL , 1.50
+LOCAL:2 = NO:TARGET
+;雛っちの母乳は厄ルト
+IF LOCAL:2 == 39
+	TIMES LOCAL , 1.50
+;その他母乳に固有の名前付き
+ELSEIF LOCAL:2 == 1005 || LOCAL:2 == 1045 || LOCAL:2 == 2008
+	TIMES LOCAL , 1.30
+ENDIF
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 250000, 25)
+	LOCAL = MIN(LOCAL, 500000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 5)
+ENDIF
+
+;母乳売却のイベント口上呼び出し(母乳量はTFLAG:99で)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 133, LOCAL:1
+
+PRINTFORML %CALLNAME:TARGET%の母乳には{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;母乳で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:980
+	CALL NEW_HIGH_INCOME_ALL, 980
+SIF MONEY:1 > CFLAG:最高金額_母乳
+	CALL NEW_HIGH_INCOME_SLAVE, 87
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+
+;--------------------------------------------------
+;聖水売却の処理
+;--------------------------------------------------
+;採尿器を使っていない場合はAFTERTRA.ERBの時点でこっちに来ないように
+@SELL_PEE
+;難易度PHANTASM以上
+IF FLAG:3 >= 5
+	LOCAL:1 = TFLAG:127 * 2
+;難易度LUNATIC
+ELSEIF FLAG:3 == 4
+	LOCAL:1 = TFLAG:127 * 4
+ELSE
+	LOCAL:1 = TFLAG:127 * 8
+ENDIF
+;放尿経験をみる
+SELECTCASE EXP:放尿経験
+	CASE IS < EXPLV:1
+		LOCAL = 1
+	CASE IS < EXPLV:2
+		LOCAL = 2
+	CASE IS < EXPLV:3
+		LOCAL = 5
+	CASE IS < EXPLV:4
+		LOCAL = 10
+	CASE IS < EXPLV:5
+		LOCAL = 15
+	CASEELSE
+		LOCAL = 30
+ENDSELECT
+LOCAL *= LOCAL:1
+
+;脱水症状ならぬ脱水少女もいいところなので○○ccの表示のみ修正
+;値段が高いのはおいしい(!?)と評判だったって解釈で
+LOCAL:1 = TABLE_CALC(LOCAL, 50, 2)
+LOCAL:1 = TABLE_CALC(LOCAL, 100, 5)
+LOCAL:1 = TABLE_CALC(LOCAL, 200, 10)
+LOCAL:1 = MIN(LOCAL:1, 300)
+
+;おもらし癖＋幼児or幼稚or幼児退行
+IF TALENT:おもらし癖 && (TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行)
+	TIMES LOCAL , 2.50
+;幼児or幼稚or幼児退行
+ELSEIF TALENT:幼児 || TALENT:幼稚 || TALENT:肥大陰核
+	TIMES LOCAL , 1.80
+;おもらし癖
+ELSEIF TALENT:おもらし癖
+	TIMES LOCAL , 1.20
+ENDIF
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES LOCAL , 1.50
+
+;フ　ラ　ン　ち　ゃ　ん　ウ　フ　フ
+SIF NO:TARGET == 1011
+	TIMES LOCAL , 1.50
+;もみもみもみもみもみぴったん
+SIF NO:TARGET == 1041
+	TIMES LOCAL , 1.50
+;ルナ茶！　ルナ茶！
+SIF NO:TARGET == 1046
+	TIMES LOCAL , 1.50
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 250000, 25)
+	LOCAL = MIN(LOCAL, 500000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 5)
+ENDIF
+
+;聖水売却のイベント口上呼び出し(聖水量はTFLAG:99で)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 134, LOCAL:1
+
+PRINTFORML %CALLNAME:TARGET%の聖水には{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;聖水で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:981
+	CALL NEW_HIGH_INCOME_ALL, 981
+SIF MONEY:1 > CFLAG:最高金額_聖水
+	CALL NEW_HIGH_INCOME_SLAVE, 88
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+
+;--------------------------------------------------
+;愛液売却の処理
+;--------------------------------------------------
+;愛液採集器を使っていない場合はAFTERTRA.ERBの時点でこっちに来ないように
+@SELL_LOVERWATER
+;難易度PHANTASM以上
+IF FLAG:3 >= 5
+	LOCAL:1 = TFLAG:129 * 2
+;難易度LUNATIC
+ELSEIF FLAG:3 == 4
+	LOCAL:1 = TFLAG:129 * 4
+ELSE
+	LOCAL:1 = TFLAG:129 * 8
+ENDIF
+;Ｖ調律経験をみる
+SELECTCASE EXP:Ｖ調律経験
+	CASE IS < EXPLV:1
+		LOCAL = 1
+	CASE IS < EXPLV:2
+		LOCAL = 2
+	CASE IS < EXPLV:3
+		LOCAL = 5
+	CASE IS < EXPLV:4
+		LOCAL = 10
+	CASE IS < EXPLV:5
+		LOCAL = 15
+	CASEELSE
+		LOCAL = 30
+ENDSELECT
+LOCAL *= LOCAL:1
+
+;脱水症状ならぬ脱水少女もいいところなので○○ccの表示のみ修正
+;値段が高いのはおいしい(!?)と評判だったって解釈で
+LOCAL:1 = TABLE_CALC(LOCAL, 50, 2)
+LOCAL:1 = TABLE_CALC(LOCAL, 100, 5)
+LOCAL:1 = TABLE_CALC(LOCAL, 200, 10)
+LOCAL:1 = MIN(LOCAL:1, 300)
+
+;ただし愛液はさほど出ないので
+TIMES LOCAL:1 , 0.50
+TIMES LOCAL , 0.70
+
+;幼児or幼稚or幼児退行
+SIF TALENT:幼児 || TALENT:幼稚 || TALENT:肥大陰核
+	TIMES LOCAL , 2.00
+;淫壷
+SIF TALENT:淫壷
+	TIMES LOCAL , 1.50
+
+LOCAL:2 = NO:TARGET
+;フ　ラ　ン　ち　ゃ　ん　ウ　フ　フ
+IF LOCAL:2 == 1011
+	TIMES LOCAL , 1.50
+;その他愛液に固有の名前付き
+ELSEIF LOVERWATER_SPECAIL_PRICE(LOCAL:2) > 0
+	TIMES LOCAL , 1.30
+ENDIF
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 250000, 25)
+	LOCAL = MIN(LOCAL, 500000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 5)
+ENDIF
+
+;愛液売却のイベント口上呼び出し(愛液量はTFLAG:99で)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 138, LOCAL:1
+
+PRINTFORML %CALLNAME:TARGET%の愛液には{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;愛液で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:984
+	CALL NEW_HIGH_INCOME_ALL, 984
+SIF MONEY:1 > CFLAG:最高金額_愛液
+	CALL NEW_HIGH_INCOME_SLAVE, 95
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+
+;--------------------------------------------------
+;固有愛液による金額修正用式中関数
+;--------------------------------------------------
+@LOVERWATER_SPECAIL_PRICE(ARG)
+#FUNCTION
+;その他愛液に固有の名前付き
+SIF ARG == 8 || ARG == 10 || ARG == 14 || ARG == 15 || ARG == 37 || ARG == 38 || ARG == 39 || ARG == 40 || ARG == 44 || ARG == 52 || ARG == 56 || ARG == 59 || ARG == 109 || ARG == 110
+	RETURNF 1
+RETURNF 0
+
+;--------------------------------------------------
+;陰毛売却or保存の処理
+;--------------------------------------------------
+;オトコなら底値。でも処女のお守りはいいよね。
+@GET_PUBLIC_HAIR
+;基本価格100圓にランダムで0～50圓を加算
+LOCAL = RAND(100,151)
+
+;難易度PHANTASM以上
+IF FLAG:3 >= 5
+	TIMES LOCAL , 0.80
+;難易度LUNATIC
+ELSEIF FLAG:3 == 4
+	TIMES LOCAL , 1.00
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;露出癖をみる
+IF ABL:露出癖 == 0
+	TIMES LOCAL , 2.00
+ELSEIF ABL:露出癖 == 1
+	TIMES LOCAL , 1.50
+ELSEIF ABL:露出癖 == 2
+	TIMES LOCAL , 1.20
+ELSEIF ABL:露出癖 == 3
+	TIMES LOCAL , 1.00
+ELSEIF ABL:露出癖 == 4
+	TIMES LOCAL , 0.80
+ELSE
+	TIMES LOCAL , 0.60
+ENDIF
+
+;本物の処女
+IF TALENT:処女 == 1
+	TIMES LOCAL , 3.00
+;再生処女
+ELSEIF TALENT:処女 == 2
+	TIMES LOCAL , 2.00
+ENDIF
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL , 1.10
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL , 1.10
+;生意気
+SIF TALENT:生意気
+	TIMES LOCAL , 1.10
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL , 1.10
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL , 0.90
+ENDIF
+;自制心
+SIF TALENT:自制心
+	TIMES LOCAL , 1.10
+;保守的
+SIF TALENT:保守的
+	TIMES LOCAL , 1.10
+;一線越えない
+SIF TALENT:一線越えない
+	TIMES LOCAL , 1.10
+;抵抗
+SIF TALENT:抵抗
+	TIMES LOCAL , 1.10
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL , 1.30
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL , 0.80
+ENDIF
+;蓬莱人
+SIF TALENT:蓬莱人
+	TIMES LOCAL , 1.80
+;魅力
+SIF TALENT:魅力
+	TIMES LOCAL , 1.50
+;謎の魅力
+SIF TALENT:謎の魅力
+	TIMES LOCAL , 1.50
+;人気
+SIF TALENT:人気
+	TIMES LOCAL , 1.50
+;オトコ
+SIF TALENT:オトコ
+	TIMES LOCAL , 0.30
+;フタナリ
+SIF TALENT:ふたなり
+	TIMES LOCAL , 1.20
+;幼児
+SIF TALENT:幼児
+	TIMES LOCAL , 2.50
+;妖精
+SIF TALENT:妖精
+	TIMES LOCAL , 1.70
+;吸血鬼
+SIF TALENT:吸血鬼
+	TIMES LOCAL , 1.50
+;鬼
+SIF TALENT:鬼
+	TIMES LOCAL , 1.50
+;巫女さん修正
+SIF NO:TARGET == 1001 || NO:TARGET == 1042 || TALENT:博麗の巫女 || TALENT:風祝
+	TIMES LOCAL , 1.20
+
+;脱毛状態（もう生えてこない）
+SIF CFLAG:36 == 1
+	TIMES LOCAL , 2.00
+
+;主人の技巧による修正
+SELECTCASE ABL:MASTER:技巧
+	CASE 0
+		TIMES LOCAL , 0.50
+	CASE 1
+		TIMES LOCAL , 0.80
+	CASE 2
+		TIMES LOCAL , 1.00
+	CASE 3
+		TIMES LOCAL , 1.20
+	CASE 4
+		TIMES LOCAL , 1.50
+	CASEELSE
+		TIMES LOCAL , 2.00
+ENDSELECT
+
+;主人の工作名人
+SIF TALENT:MASTER:工作名人
+	TIMES LOCAL , 1.50
+;主人の謎の魅力
+SIF TALENT:MASTER:謎の魅力
+	TIMES LOCAL , 1.20
+;主人の人気
+SIF TALENT:MASTER:人気
+	TIMES LOCAL , 1.20
+
+;陰毛お守り作成のイベント口上呼び出し(金額はTFLAG:99で)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 136, LOCAL
+
+PRINTFORML %SHOW_CALLNAME(TARGET)%から陰毛を採取した。
+PRINTFORML この陰毛をお守りに加工して売れば{LOCAL}圓の値が付きそうだ……
+PRINTW どうする？売る？瓶詰めにして手元に残す？それとも破棄する？
+DRAWLINE
+PRINTL [0] - 売る
+;そのキャラの陰毛が蒐集されていない場合
+IF (CFLAG:10 & 1024) == 0
+	PRINTL [1] - 手元に残す
+ELSE
+	PRINTFORML [1] - 手元に残す（既に棚には%CALLNAME:TARGET%の陰毛はあります）
+ENDIF
+PRINTL [2] - 破棄する
+DRAWLINE
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	;陰毛お守り売却のイベント口上呼び出し(金額はTFLAG:99で)
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 137, LOCAL
+	TFLAG:202 = 0
+	PRINTFORML %CALLNAME:TARGET%の陰毛で作られたお守りには{LOCAL}圓の買値が付いた。
+	MONEY:1 = LOCAL
+	CALL SHOW_MONEY_INCREACE
+	;--------------------------------------------------
+	;陰毛守りで稼いだ最高金額判定処理
+	SIF MONEY:1 > MONEY:983
+		CALL NEW_HIGH_INCOME_ALL, 983
+	SIF MONEY:1 > CFLAG:最高金額_陰毛
+		CALL NEW_HIGH_INCOME_SLAVE, 94
+	CALL TOTAL_INCOME_SLAVE, MONEY:1
+	;--------------------------------------------------
+	WAIT
+ELSEIF RESULT == 1
+	CALL KEEP_PUBLIC_HAIR
+ELSEIF RESULT == 2
+	PRINTFORMW %CALLNAME:TARGET%の陰毛を破棄しました。
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;卵売却の処理
+;--------------------------------------------------
+;卵を展示室に飾った場合はAFTERTRA.ERBの時点でこっちに来ないように
+;母乳よりも出にくいかつ産卵促進剤そのものが高価なので補正は高め
+;産卵促進剤なしでの売却に対応、ただし1個だけなので大したお金にはならない
+@SELL_EGG
+;産卵個数をLOCAL:1で再定義しておく（産卵促進剤なしに対応するため）
+LOCAL:1 = (TFLAG:128 > 0) ? TFLAG:128 # 1
+;難易度PHANTASM以上
+IF FLAG:3 >= 5
+	LOCAL:2 = LOCAL:1 * 50
+;難易度LUNATIC
+ELSEIF FLAG:3 == 4
+	LOCAL:2 = LOCAL:1 * 100
+ELSE
+	LOCAL:2 = LOCAL:1 * 250
+ENDIF
+;産卵経験をみる
+SELECTCASE EXP:産卵経験
+	CASE IS < EXPLV:1
+		LOCAL = 1
+	CASE IS < EXPLV:2
+		LOCAL = 2
+	CASE IS < EXPLV:3
+		LOCAL = 4
+	CASE IS < EXPLV:4
+		LOCAL = 6
+	CASE IS < EXPLV:5
+		LOCAL = 8
+	CASEELSE
+		LOCAL = 10
+ENDSELECT
+LOCAL *= LOCAL:2
+
+;淫壷
+SIF TALENT:淫壷
+	TIMES LOCAL , 1.50
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 50000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 500000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 1000000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 2500000, 25)
+	LOCAL = MIN(LOCAL, 5000000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 50000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 500000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 1000000, 5)
+ENDIF
+
+;卵売却のイベント口上呼び出し(産卵個数はTFLAG:99で)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 135, LOCAL:1
+
+PRINTFORML %CALLNAME:TARGET%の卵には{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;卵で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:982
+	CALL NEW_HIGH_INCOME_ALL, 982
+SIF MONEY:1 > CFLAG:最高金額_卵
+	CALL NEW_HIGH_INCOME_SLAVE, 89
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+
+;ディナーパッチ関連
+;野菜性活調教(焼き芋挿入、巨峰挿入、石勺柏挿入)で出来あがった料理(?)を売却
+;HARDモードの補正の強さは母乳よりも少しぬるい代わり、より低価格帯でも多く調整が入る様に
+;--------------------------------------------------
+;焼芋編
+;--------------------------------------------------
+@SELL_DINNER_POTATO
+LOCAL:1 = TFLAG:163 * 15
+;Ｖ経験をみる
+GETEXPLV EXP:Ｖ経験, 6
+LOCAL = (RESULT + 1) * LOCAL:1
+
+;淫壷
+SIF TALENT:淫壷
+	LOCAL *= 3
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 25000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 8)
+	LOCAL = TABLE_CALC(LOCAL, 75000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 15)
+	LOCAL = MIN(LOCAL, 50000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 5)
+ENDIF
+
+PRINTFORM 焼芋と
+PRINTFORML %CALLNAME:TARGET%の性器を使ってスイートポテトを作った。
+PRINTFORML %CALLNAME:TARGET%のスイートポテトに{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;スイートポテトで稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:985
+	CALL NEW_HIGH_INCOME_ALL, 985
+SIF MONEY:1 > CFLAG:最高金額_焼芋
+	CALL NEW_HIGH_INCOME_SLAVE, 92
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+SIF TFLAG:164 > 0 || TFLAG:165 > 0
+	PRINTL 
+
+;--------------------------------------------------
+;巨峰編
+;--------------------------------------------------
+@SELL_DINNER_WINE
+LOCAL:1 = TFLAG:164 * 15
+;Ａ経験をみる
+GETEXPLV EXP:Ａ経験, 6
+LOCAL = (RESULT + 1) * LOCAL:1
+
+;淫尻
+SIF TALENT:淫尻
+	LOCAL *= 3
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 25000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 8)
+	LOCAL = TABLE_CALC(LOCAL, 75000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 15)
+	LOCAL = MIN(LOCAL, 50000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 5)
+ENDIF
+
+PRINTFORM 巨峰と
+PRINTFORML %CALLNAME:TARGET%の菊門を使ってワインを作った。
+PRINTFORML %CALLNAME:TARGET%のワインに{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;ワインで稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:986
+	CALL NEW_HIGH_INCOME_ALL, 986
+SIF MONEY:1 > CFLAG:最高金額_ワイン
+	CALL NEW_HIGH_INCOME_SLAVE, 91
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+SIF TFLAG:165 > 0
+	PRINTL 
+
+;--------------------------------------------------
+;石勺柏編
+;--------------------------------------------------
+@SELL_DINNER_ASPARAGUS
+LOCAL:1 = TFLAG:165 * 15
+;尿道開発経験をみる
+GETEXPLV EXP:尿道開発経験, 6
+LOCAL = (RESULT + 1) * LOCAL:1
+
+;尿道狂
+SIF TALENT:尿道狂
+	LOCAL *= 3
+
+;難易度HARD以上
+IF FLAG:3 >= 3
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 25000, 5)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 8)
+	LOCAL = TABLE_CALC(LOCAL, 75000, 10)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 15)
+	LOCAL = MIN(LOCAL, 50000)
+ELSE
+	LOCAL = TABLE_CALC(LOCAL, 5000, 2)
+	LOCAL = TABLE_CALC(LOCAL, 10000, 3)
+	LOCAL = TABLE_CALC(LOCAL, 50000, 4)
+	LOCAL = TABLE_CALC(LOCAL, 100000, 5)
+ENDIF
+
+PRINTFORM アスパラガスと
+PRINTFORML %CALLNAME:TARGET%の尿道を使ったアスパラの尿浸しを作った。
+PRINTFORML %CALLNAME:TARGET%のアスパラの尿浸しに{LOCAL}圓の買値が付いた。
+MONEY:1 = LOCAL
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;アスパラの尿浸しで稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:987
+	CALL NEW_HIGH_INCOME_ALL, 987
+SIF MONEY:1 > CFLAG:最高金額_アスパラ
+	CALL NEW_HIGH_INCOME_SLAVE, 90
+CALL TOTAL_INCOME_SLAVE, MONEY:1
+;--------------------------------------------------
+WAIT
+PRINTL 

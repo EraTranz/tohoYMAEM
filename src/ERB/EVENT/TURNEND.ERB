@@ -1,0 +1,1121 @@
+﻿;=============================================================================
+;時間経過時の処理
+;=============================================================================
+;--------------------------------------------------
+;時間が進行したときのイベント
+;--------------------------------------------------
+;回復処理や各種チェック(ヤンデレモード、媚薬中毒など)をここで行う
+@EVENTTURNEND
+#ONLY
+;[中毒扇動]効果終了
+TFLAG:995 = 0
+;調教終了
+TFLAG:999 = 0
+;その他のBASE操作用の変数(LOCAL:10～19)
+;ヤンデレモード用の変数(LOCAL:20～21)
+;仕送り人数総数カウント用(LOCAL:50～)
+VARSET LOCAL, 0
+
+;嫉妬と狂気のチェック(CONFIGのヤンデレモードが有効なときのみ)
+IF FLAG:14 & 4
+	REPEAT CHARANUM
+		;主人自身は判定しない
+		SIF COUNT == MASTER
+			CONTINUE
+		;既に失踪しているわけではない理由でその場にいない場合はスルーする。
+		SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1
+			CONTINUE
+		;現在、調教対象でなく、[服従][使い魔]のいずれでもなくて、[嫉妬]と[狂気]を併せ持つならヤンデレキャラカウントに１を加算する。
+		SIF COUNT != TARGET && TALENT:COUNT:嫉妬 && TALENT:COUNT:狂気 && TALENT:COUNT:服従 == 0 && TALENT:COUNT:使い魔 == 0
+			LOCAL:20 += 1
+		;嫉妬ポイントが充分に高まっていて、[服従][使い魔][死亡]のいずれでもなくて、睡眠薬の影響にないキャラがいるならばヤンデレバッドフラグを立てる
+		SIF CFLAG:COUNT:嫉妬ポイント >= 130 && TALENT:COUNT:服従 == 0 && TALENT:COUNT:使い魔 == 0 && TALENT:COUNT:死亡 == 0 && EQUIP:COUNT:睡眠薬 == 0
+			LOCAL:21 = 1
+	REND
+	;主人が[大甲斐性]を持っている場合、ヤンデレキャラカウントは半減する。
+	SIF TALENT:MASTER:大甲斐性 && LOCAL:20 > 0
+		LOCAL:20 /= 2
+ENDIF
+
+;体力・気力・理性の回復（午後の調教後は夜の休みが入るので回復大きい）
+;口上によるCOUNT:0破壊対策としてメインカウンターをTFLAG化
+FOR TFLAG:900, 0, CHARANUM
+	;体力・気力回復用の変数(LOSEBASE:0～1)
+	LOSEBASE:0 = 0
+	LOSEBASE:1 = 0
+	LOSEBASE:9 = 0
+	
+	;理性上限が0以下だと[理性]を失うイベント判定へ
+	SIF TALENT:(TFLAG:900):500 && MAXBASE:(TFLAG:900):9 <= 0
+		CALL EVENT_REASON_FREE2 , TFLAG:900
+	
+	;調教対象の場合は、売却判定
+	SIF TFLAG:900 == TARGET
+		CALL CAN_SELL_SLAVE
+
+	;CONFIGで子供調教が有効な場合は、仕送り人数カウントを必要なら増やす
+	SIF FLAG:11 & 8
+		LOCAL:50 += CFLAG:(TFLAG:900):3002
+
+	;睡眠薬の効果は時間経過で半減。夜の休みを経由した場合は解除
+	IF EQUIP:(TFLAG:900):14
+		EQUIP:(TFLAG:900):14 -= (TIME == 0) ? 25000 # EQUIP:(TFLAG:900):14
+		EQUIP:(TFLAG:900):14 = MAX(EQUIP:(TFLAG:900):14, 0)
+	ENDIF
+
+	LOSEBASE:0 = MAXBASE:(TFLAG:900):0
+	LOSEBASE:1 = MAXBASE:(TFLAG:900):1
+	LOSEBASE:9 = LIMIT(MAXBASE:(TFLAG:900):9 , 3000, 9000)
+	;理性の底力発揮
+	SELECTCASE BASE:(TFLAG:900):9 * 100 / MAX(MAXBASE:(TFLAG:900):9, 1)
+		CASE IS <= 20
+			TIMES LOSEBASE:9 , 1.40
+		CASE IS <= 40
+			TIMES LOSEBASE:9 , 1.25
+		CASE IS <= 60
+			TIMES LOSEBASE:9 , 1.10
+		CASE IS <= 80
+			TIMES LOSEBASE:9 , 0.95
+		CASE IS < 100
+			TIMES LOSEBASE:9 , 0.85
+		CASEELSE
+			TIMES LOSEBASE:9 , 0.75
+	ENDSELECT
+	
+	CALL CALCULATE_LIMIT, TFLAG:900
+	
+	IF TIME == 0
+		TIMES LOSEBASE:0 , 0.15
+		TIMES LOSEBASE:1 , 0.60
+		TIMES LOSEBASE:9 , 0.20
+		
+		CALL MINUS_RAND_LOOP, TFLAG:900, 4, 3, 0
+		CFLAG:(TFLAG:900):3666 = MAX(CFLAG:(TFLAG:900):3666 - 3, 0)
+	ELSE
+		TIMES LOSEBASE:0 , 0.40
+		TIMES LOSEBASE:1 , 0.80
+		TIMES LOSEBASE:9 , 0.40
+		
+		CALL MINUS_RAND_LOOP, TFLAG:900, 5, 4, 0
+		CFLAG:(TFLAG:900):3666 = MAX(CFLAG:(TFLAG:900):3666 - 4, 0)
+	ENDIF
+
+	;回復早い、回復遅い
+	IF TALENT:(TFLAG:900):137
+		TIMES LOSEBASE:0 , 1.50
+	ELSEIF TALENT:(TFLAG:900):138
+		TIMES LOSEBASE:0 , 0.75
+	ENDIF
+
+	;吸血鬼、蓬莱人、呪精
+	IF TALENT:(TFLAG:900):49
+		LOSEBASE:0 *= 3
+	ELSEIF TALENT:(TFLAG:900):48 || (TIME == 1 && TALENT:(TFLAG:900):205)
+		LOSEBASE:0 *= 2
+	ENDIF
+	;半白澤(変身中)
+	IF TALENT:(TFLAG:900):212 == 2
+		TIMES LOSEBASE:0 , 1.50
+		TIMES LOSEBASE:1 , 1.50
+	ENDIF
+	;神霊、半神
+	IF TALENT:(TFLAG:900):222 || TALENT:(TFLAG:900):223
+		TIMES LOSEBASE:0 , 1.20
+		TIMES LOSEBASE:1 , 1.20
+		TIMES LOSEBASE:9 , 1.20
+	ENDIF
+	;精神崩壊
+	IF TALENT:(TFLAG:900):167
+		TIMES LOSEBASE:1 , 0.50
+		TIMES LOSEBASE:9 , 0.20
+	;傀儡
+	ELSEIF TALENT:(TFLAG:900):168
+		TIMES LOSEBASE:1 , 0.75
+		TIMES LOSEBASE:9 , 0.30
+	;気丈
+	ELSEIF TALENT:(TFLAG:900):12
+		TIMES LOSEBASE:1 , 1.50
+		TIMES LOSEBASE:9 , 1.50
+	ENDIF
+
+	;日光浴、月光浴
+	IF (TIME == 0 && TALENT:(TFLAG:900):114) || (TIME == 1 && TALENT:(TFLAG:900):115)
+		LOSEBASE:0 += 200
+		LOSEBASE:1 = MAXBASE:(TFLAG:900):1
+	ENDIF
+
+	;治療(酔いつぶれていなければ)
+	SIF TALENT:MASTER:治療 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+		LOSEBASE:0 += 200
+		LOSEBASE:9 += 200
+	SIF ASSI >= 0 && TALENT:ASSI:治療 && BASE:ASSI:酔い <= MAXBASE:ASSI:8
+		LOSEBASE:0 += 160
+		LOSEBASE:9 += 160
+	;鼓舞(酔いつぶれていなければ)
+	SIF ASSI >= 0 && TALENT:ASSI:鼓舞 && BASE:ASSI:酔い <= MAXBASE:ASSI:8
+		LOSEBASE:1 += 100
+		LOSEBASE:9 += 100
+	;魔術技能(酔いつぶれていなければ)
+	SIF TALENT:MASTER:魔術技能 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+		LOSEBASE:0 += 100
+	SIF ASSI >= 0 && TALENT:ASSI:魔術技能 && BASE:ASSI:酔い <= MAXBASE:ASSI:8
+		LOSEBASE:0 += 75
+
+	;休憩フラグ（「何もしない」を選択、もしくは調教対象でない）
+	IF FLAG:0 || TARGET != TFLAG:900
+		;家によって体力の回復量が増加
+		IF FLAG:90 == 4
+			LOSEBASE:0 += 300
+			LOSEBASE:1 += 500
+			LOSEBASE:9 += 500
+		ELSEIF FLAG:90 == 3
+			LOSEBASE:0 += 250
+			LOSEBASE:1 += 400
+			LOSEBASE:9 += 400
+		ELSEIF FLAG:90 == 2
+			LOSEBASE:0 += 200
+			LOSEBASE:1 += 300
+			LOSEBASE:9 += 300
+		ELSEIF FLAG:90 == 1
+			LOSEBASE:0 += 150
+			LOSEBASE:1 += 200
+			LOSEBASE:9 += 200
+		ELSE
+			LOSEBASE:0 += 100
+			LOSEBASE:1 += 150
+			LOSEBASE:9 += 150
+		ENDIF
+	ENDIF
+
+	;ボンデージ装着中
+	;体力・気力の回復量が低下し、代わりに苦痛快楽経験と緊縛経験が増加(くどくなるので表示は無し)
+	IF CFLAG:(TFLAG:900):42 & 8
+		TIMES LOSEBASE:0 , 0.75
+		TIMES LOSEBASE:1 , 0.90
+		EXP:(TFLAG:900):30 += 3
+		EXP:(TFLAG:900):31 += 6
+	ENDIF
+
+	;妊娠・懐卵
+	IF TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):145
+		TIMES LOSEBASE:0 , 0.70
+		TIMES LOSEBASE:1 , 0.75
+		TIMES LOSEBASE:9 , 0.75
+	ENDIF
+
+	;寄生(栄養が一部取られているので体力回復量は低下）
+	IF TALENT:(TFLAG:900):146
+		TIMES LOSEBASE:0 , 0.70
+		TIMES LOSEBASE:1 , 0.75
+		TIMES LOSEBASE:9 , 0.85
+		IF BASE:(TFLAG:900):6 < MAXBASE:(TFLAG:900):6
+			;寄生している触手は触手中毒によって若干成長
+			IF ABL:(TFLAG:900):35 == 0
+				LOCAL:16 = 1
+			ELSEIF ABL:(TFLAG:900):35 <= 2
+				LOCAL:16 = 2
+			ELSEIF ABL:(TFLAG:900):35 <= 4
+				LOCAL:16 = 3
+			ELSE
+				LOCAL:16 = 4
+			ENDIF
+			BASE:(TFLAG:900):6 = LIMIT(BASE:(TFLAG:900):6 + LOCAL:16, 0, MAXBASE:(TFLAG:900):6)
+		ENDIF
+	ENDIF
+
+	;時間経過における陰毛成長処理
+	SIF CFLAG:(TFLAG:900):36 == 2 && BASE:(TFLAG:900):5 < 1000 && !TALENT:(TFLAG:900):800
+		CALL CHECK_DAY_PUBIC_HAIR
+
+	;時間経過における陰核成長処理
+	SIF BASE:(TFLAG:900):7 > 0 && BASE:(TFLAG:900):7 < 250 && !TALENT:(TFLAG:900):800
+		CALL CHECK_DAY_CLITORIS
+
+	;使い魔
+	;強い絆で結ばれているため、主人の体調が悪いと回復力が一気に低下
+	IF TALENT:(TFLAG:900):164
+		IF BASE:MASTER:体力 < MAXBASE:MASTER:0 / 4
+			TIMES LOSEBASE:0 , 0.50
+		ELSEIF BASE:MASTER:体力 < MAXBASE:MASTER:0 / 3
+			TIMES LOSEBASE:0 , 0.66
+		ELSEIF BASE:MASTER:体力 < MAXBASE:MASTER:0 / 2
+			TIMES LOSEBASE:0 , 0.75
+		ELSE
+			TIMES LOSEBASE:0 , 0.90
+		ENDIF
+	ENDIF
+
+	;睡眠薬の効果があると、若干体力・理性の回復量が低下する
+	IF EQUIP:(TFLAG:900):14
+		TIMES LOSEBASE:0 , 0.90
+		TIMES LOSEBASE:9 , 0.90
+	ENDIF
+
+	;薬毒耐性以外のキャラが媚薬中毒になっていると体力・気力・理性の回復量が低下する
+	;また、日が経つと禁断症状も出てくる
+	IF TEQUIP:(TFLAG:900):11 == 0 && TALENT:(TFLAG:900):44 == 0 && TALENT:(TFLAG:900):46
+		LOSEBASE:0 = (LOSEBASE:0 * MAX(10 - CFLAG:(TFLAG:900):32, 0)) / 10
+		TIMES LOSEBASE:1 , 0.80
+		TIMES LOSEBASE:9 , 0.80
+		SIF TIME != 0 && CFLAG:(TFLAG:900):32 < 7
+			CFLAG:(TFLAG:900):32 += 1
+	ELSEIF TIME != 0 && TALENT:(TFLAG:900):46 == 0 && CFLAG:(TFLAG:900):32 > 0
+		CFLAG:(TFLAG:900):32 -= RAND:2
+	ENDIF
+
+	;精飲絶頂ゲージ低下
+	IF CFLAG:(TFLAG:900):64 && !TALENT:(TFLAG:900):800
+		;[精愛味覚]なら精飲絶頂ゲージ初期化
+		IF TALENT:(TFLAG:900):66
+			CFLAG:(TFLAG:900):64 = 0
+		ELSE
+			CFLAG:(TFLAG:900):64 = MAX(CFLAG:(TFLAG:900):64 - ((TIME == 0) ? 10 # 50), 0)
+		ENDIF
+	ENDIF
+
+	;酒が入っている場合回復スピードが低下
+	IF BASE:(TFLAG:900):8 > 0
+		SIF MAXBASE:(TFLAG:900):8 <= 0
+			CALL CALC_GAUGE8, TFLAG:900, 0
+		SELECTCASE ((BASE:(TFLAG:900):8 *100) / MAXBASE:(TFLAG:900):8)
+			;微酔
+			CASE IS < 40
+				LOSEBASE:0 -= 50
+				LOSEBASE:9 -= 25
+			;酩酊
+			CASE IS < 80
+				LOSEBASE:0 -= 100
+				LOSEBASE:1 -= 50
+				LOSEBASE:9 -= 50
+			;泥酔
+			CASE IS < 120
+				CFLAG:(TFLAG:900):155 |= 1
+				LOSEBASE:0 -= 150
+				LOSEBASE:1 -= 100
+				LOSEBASE:9 -= 100
+			;狂酔
+			CASE IS < 160
+				CFLAG:(TFLAG:900):155 |= 1
+				LOSEBASE:0 -= 200
+				LOSEBASE:1 -= 150
+				LOSEBASE:9 -= 150
+			;極酔
+			CASEELSE
+				CFLAG:(TFLAG:900):155 |= 1
+				LOSEBASE:0 -= 300
+				LOSEBASE:1 -= 200
+				LOSEBASE:9 -= 200
+		ENDSELECT
+		;時間経過により酔いが醒める
+		LOCAL:18 = (TIME == 0) ? (MAXBASE:(TFLAG:900):8) / 20 # (MAXBASE:(TFLAG:900):8 / 5)
+		;鬼
+		SIF TALENT:(TFLAG:900):214
+			LOCAL:18 *= 2
+		;河童・天狗・神霊
+		SIF TALENT:(TFLAG:900):210 || TALENT:(TFLAG:900):215 || TALENT:(TFLAG:900):222
+			TIMES LOCAL:18 , 1.50
+		;黄昏の怪物
+		SIF TALENT:(TFLAG:900):221
+			LOCAL:18 *= 2
+		BASE:(TFLAG:900):8 = MAX(BASE:(TFLAG:900):8 - LOCAL:18, 0)
+	ENDIF
+
+	;触手漬けの直後は回復不能
+	IF TFLAG:900 == TFLAG:156 && TFLAG:900 != MASTER
+		LOSEBASE:0 = 0
+		LOSEBASE:1 = 0
+		LOSEBASE:9 = 0
+		TFLAG:156 = 0
+		GOTO HEAL_END
+	ENDIF
+
+	;難易度による回復量の違い
+	IF FLAG:3 == 1
+		;EASYは回復量が増加
+		LOSEBASE:0 += 200
+		LOSEBASE:1 += 200
+	ELSEIF FLAG:3 != 6 && FLAG:3 >= 5
+		;PHANTASM/OVERDRIVEは回復量が低下
+		TIMES LOSEBASE:0 , 0.75
+		TIMES LOSEBASE:1 , 0.80
+	ENDIF
+	
+	;食事量による体型変化の処理。
+	CALL BODYTLANS,TFLAG:900
+	
+	;助手
+	;助手は色々と手伝うので回復力低下(酔いつぶれていたら手伝わない)
+	;そのかわり手伝いをすれば宝珠を獲得できる。
+	IF ASSI >= 0 && TFLAG:900 == ASSI && BASE:ASSI:酔い <= MAXBASE:ASSI:8 && EQUIP:ASSI:睡眠薬 == 0 && CFLAG:ASSI:4 == 0
+		TIMES LOSEBASE:0 , 0.80
+		TIMES LOSEBASE:1 , 0.80
+		CFLAG:ASSI:ストレス += (12 + MARK:ASSI:反発刻印 * 2 - ABL:ASSI:従順 - ABL:ASSI:奉仕精神) * (8 + MARK:ASSI:反発刻印 * 2)
+		;1度だけ口上・地の文の表示
+		IF LOCAL:99 == 0
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ASSI, 110
+			EXP:ASSI:助手経験 += 1
+			LOCAL:99 = 1
+		ENDIF
+		;否定の珠獲得(恐怖刻印と反発刻印に依存)
+		SIF !TALENT:ASSI:傀儡 && !TALENT:ASSI:壊造人格
+			JUEL:ASSI:否定 += (MARK:ASSI:恐怖刻印 + (MARK:ASSI:反発刻印 * 2)) * 10
+	;助手可能な場合、吹っ切れているので気力の回復はやや早くなる
+	ELSEIF CFLAG:(TFLAG:900):1 == 2
+		TIMES LOSEBASE:1 , 1.20
+	ENDIF
+
+	;CONFIGのヤンデレモードが有効な場合のみ、嫉妬関連で体力・気力回復に悪影響が出る
+	IF FLAG:14 & 4
+		;嫉妬
+		IF TALENT:(TFLAG:900):157 && BASE:(TFLAG:900):8 <= MAXBASE:(TFLAG:900):8
+			;酔いつぶれていなければ自慰経験が増える(主人には知らせない)
+			TIMES LOSEBASE:0 , 0.80
+			TIMES LOSEBASE:1 , 0.80
+			TIMES LOSEBASE:9 , 0.80
+			EXP:(TFLAG:900):10 += ABL:(TFLAG:900):11 * 2
+		ENDIF
+		;嫉妬＆狂気だと体力・気力・理性の回復が遅れる
+		IF TALENT:(TFLAG:900):157 && TALENT:(TFLAG:900):158 && LOCAL:20 > 0
+			LOSEBASE:0 -= (LOCAL:20 - 1) * 100
+			LOSEBASE:1 -= (LOCAL:20 - 1) * 50
+			LOSEBASE:9 -= (LOCAL:20 - 1) * 50
+		;ヤンデレキャラカウントが1以上の場合(つまり、誰かがヤンデレしておればみんなに悪影響が出る)
+		ELSEIF LOCAL:20 > 0
+			LOSEBASE:0 -= LOCAL:20 * 100
+			LOSEBASE:1 -= LOCAL:20 * 20
+			LOSEBASE:9 -= LOCAL:20 * 20
+		ENDIF
+		;嫉妬判定を呼び出す(必然的に触手漬けにより回復できないときは判定しない)
+		CALL EVENTCHECK_Y, TFLAG:900
+	ENDIF
+
+	;料理技能による回復量の違い(EASYの場合は修整なし)
+	;主人と(もしおれば)助手のうち高い方の料理技能が基準(ただし助手が反発持ちの場合は修整には考慮しない)、当然酔いつぶれていては…。
+	LOCAL:13 = (BASE:MASTER:酔い > MAXBASE:MASTER:8) ? 0 # ABL:MASTER:料理技能
+	SIF ASSI >= 0 && ABL:ASSI:料理技能 > ABL:MASTER:料理技能 && MARK:ASSI:反発刻印 == 0 && EQUIP:ASSI:睡眠薬 == 0 && BASE:ASSI:酔い <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
+		LOCAL:13 = ABL:ASSI:料理技能
+	;NORMALの場合当該奴隷(ただしその場におり、睡眠薬の影響がなく、酔いつぶれていないこと)の料理技能が高ければそっちが基準になる
+	SIF FLAG:3 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):70 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):8 <= MAXBASE:(TFLAG:900):8 && !TALENT:(TFLAG:900):800
+		LOCAL:13 = ABL:(TFLAG:900):70
+	;料理技能別の修整(EASYおよび技能Lv4以上およびコンフィグで弁当ライブOFFなら修整なし)
+	IF FLAG:3 > 1 && FLAG:12 & 16
+		IF LOCAL:13 == 3
+			TIMES LOSEBASE:0 , 0.90
+			TIMES LOSEBASE:1 , 0.90
+			TIMES LOSEBASE:9 , 0.90
+		ELSEIF LOCAL:13 == 2
+			TIMES LOSEBASE:0 , 0.80
+			TIMES LOSEBASE:1 , 0.85
+			TIMES LOSEBASE:9 , 0.85
+		ELSEIF LOCAL:13 == 1
+			TIMES LOSEBASE:0 , 0.75
+			TIMES LOSEBASE:1 , 0.80
+			TIMES LOSEBASE:9 , 0.80
+		ELSEIF LOCAL:13 == 0
+			TIMES LOSEBASE:0 , 0.70
+			TIMES LOSEBASE:1 , 0.75
+			TIMES LOSEBASE:9 , 0.75
+		ENDIF
+	ENDIF
+
+	;庭園による効果(REPEATを２回回す不合理さを解消するために移動した)
+	SIF FLAG:71 & 4 || FLAG:71 & 8 || FLAG:71 & 16 || FLAG:71 & 32 || FLAG:71 & 64 || FLAG:71 & 128 || FLAG:71 & 256
+		CALL GARDEN_EFFECT, TFLAG:900
+	
+	;触手幽閉中や死亡中は回復しない
+	IF CFLAG:(TFLAG:900):4 & 4
+		LOSEBASE:0 = 0
+		LOSEBASE:1 = 0
+		LOSEBASE:9 = 0
+		SIF TIME == 1
+			CALL TENTACLE_PRIVATEROOM_TRAINING, TFLAG:900
+	ELSEIF TALENT:(TFLAG:900):800
+		LOSEBASE:0 = 0
+		LOSEBASE:1 = 0
+		LOSEBASE:9 = 0
+	;地下牢収監中は回復効果激減で特殊効果あり
+	ELSEIF CFLAG:(TFLAG:900):4 & 16
+		TIMES LOSEBASE:0 , 0.10
+		TIMES LOSEBASE:1 , 0.15
+		TIMES LOSEBASE:9 , 0.50
+		CALL TORTURE_FACILITIES_EFFECT, TFLAG:900
+	;娼館で就労中の時は回復しない
+	ELSEIF CFLAG:(TFLAG:900):4 & 1024
+		LOSEBASE:0 = 0
+		LOSEBASE:1 = 0
+		LOSEBASE:9 = 0
+		;※実装中
+;		CALL PROSTITUTION_TURNEND_EVENT, TFLAG:900
+	;ハーブ開発中は回復効果激減で作業中
+	ELSEIF CFLAG:(TFLAG:900):4 & 2048
+		TIMES LOSEBASE:0 , 0.25
+		TIMES LOSEBASE:1 , 0.10
+		TIMES LOSEBASE:9 , 0.15
+		CALL DEVELOP_HARB_TURNEND, TFLAG:900
+	;ハーブ生産中も回復効果激減で作業中
+	ELSEIF CFLAG:(TFLAG:900):4 & 4096
+		TIMES LOSEBASE:0 , 0.10
+		TIMES LOSEBASE:1 , 0.25
+		TIMES LOSEBASE:9 , 0.15
+		CALL MAKE_HARB_TURNEND, TFLAG:900
+	;調教で媚薬を使用した後は回復しない([媚薬中毒]持ちは回復量が低下)
+	ELSEIF TEQUIP:(TFLAG:900):11
+		IF TALENT:(TFLAG:900):46
+			TIMES LOSEBASE:0 , 0.75
+			TIMES LOSEBASE:1 , 0.75
+		ELSE
+			LOSEBASE:0 = 0
+			LOSEBASE:1 = 0
+			TIMES LOSEBASE:9 , 0.50
+		ENDIF
+	ENDIF
+	TEQUIP:(TFLAG:900):11 = 0
+
+	;ストレス履歴フラグ
+	SIF CFLAG:(TFLAG:900):65 >= 1000
+		CFLAG:(TFLAG:900):155 |= 2
+
+	;ストレス低下
+	SIF CFLAG:(TFLAG:900):65 && CFLAG:(TFLAG:900):4 == 0
+		CALL STRESS_DOWN, TFLAG:900
+
+	;HARD以上では休憩フラグが立ってなくて、ストレスがあると気力回復に悪影響がある
+	IF FLAG:3 > 2 && FLAG:0 == 0 && CFLAG:(TFLAG:900):65 && !TALENT:(TFLAG:900):800
+		LOSEBASE:1 = STRESS_VITAL(TFLAG:900, LOSEBASE:1)
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TFLAG:900, 111
+	ENDIF
+
+	LOSEBASE:0 = MAX(LOSEBASE:0, 0)
+	LOSEBASE:1 = MAX(LOSEBASE:1, 0)
+	LOSEBASE:9 = MAX(LOSEBASE:9, 0)
+
+	;EASYは回復する条件に当てはまる場合は気力が全回復する
+	SIF FLAG:3 == 1 && LOSEBASE:1
+		LOSEBASE:1 = MAXBASE:(TFLAG:900):1
+
+	;体力の回復と数値是正
+	BASE:(TFLAG:900):0 = LIMIT(BASE:(TFLAG:900):0 + LOSEBASE:0, 0, MAXBASE:(TFLAG:900):0)
+	;気力の回復と数値是正
+	BASE:(TFLAG:900):1 = LIMIT(BASE:(TFLAG:900):1 + LOSEBASE:1, 0, MAXBASE:(TFLAG:900):1)
+	;理性の回復と数値是正
+	BASE:(TFLAG:900):9 = LIMIT(BASE:(TFLAG:900):9 + LOSEBASE:9, 0, 12000)
+	
+	;死亡処理
+	IF TALENT:(TFLAG:900):800 == 1
+		LOCAL = 0
+		MAXBASE:(TFLAG:900):1 = MAX(MAXBASE:(TFLAG:900):1 - 100, 1)
+		SIF MAXBASE:(TFLAG:900):1 > 1
+			LOCAL += 1
+		IF MAXBASE:(TFLAG:900):1 <= 1
+			MAXBASE:(TFLAG:900):0 = MAX(MAXBASE:(TFLAG:900):0 - 75, 1)
+			LOCAL += 2
+		ENDIF
+		;デバッグモード時のみ各キャラごとに回復した量を表示する
+		IF LOCAL == 3 && TALENT:MASTER:998
+			PRINTFORML %CALLNAME:(TFLAG:900), 14, LEFT%　体力上限－75   気力上限－100 
+		ELSEIF LOCAL == 2 && TALENT:MASTER:998
+			PRINTFORML %CALLNAME:(TFLAG:900), 14, LEFT%　体力上限－75  
+		ELSEIF LOCAL == 1 && TALENT:MASTER:998
+			PRINTFORML %CALLNAME:(TFLAG:900), 14, LEFT%　気力上限－100 
+		ENDIF
+		IF MAXBASE:(TFLAG:900):0 == 1 && !TALENT:(TFLAG:900):222 && !TALENT:(TFLAG:900):224 && !TALENT:(TFLAG:900):226
+			;口上・地の文表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TFLAG:900, 900
+			PRINTFORMW %CALLNAME:(TFLAG:900)%復活できません……
+			TALENT:(TFLAG:900):800 = 2
+		ENDIF
+	;デバッグモード時のみ各キャラごとに回復した量を表示する
+	ELSEIF TALENT:MASTER:998
+		PRINTFORML %CALLNAME:(TFLAG:900), 14, LEFT%　体力＋{LOSEBASE:0, 4, LEFT} 気力＋{LOSEBASE:1, 4, LEFT} 理性＋{LOSEBASE:9, 4, LEFT}
+	ENDIF
+
+	$HEAL_END
+
+	;難易度がHARD以上ではの時、時間経過による好感度低下が発生
+	IF FLAG:3 > 2 && !TALENT:(TFLAG:900):800
+		;育児中以外でその場にいない(失踪中や触手幽閉中など)なら好感度は時間が経過するごとに1下がる
+		IF CFLAG:(TFLAG:900):4 && CFLAG:(TFLAG:900):4 != 2 && CFLAG:(TFLAG:900):2 > 0
+			CFLAG:(TFLAG:900):2 = MAX(CFLAG:(TFLAG:900):2 - 1, 0)
+		;夜→朝のみ[大甲斐性]がないと調教中のキャラ以外の好感度が1下がる
+		ELSEIF TFLAG:900 != MASTER && TFLAG:900 != TARGET && CFLAG:(TFLAG:900):2 > 0 && TALENT:MASTER:大甲斐性 == 0 && TIME != 0
+			CFLAG:(TFLAG:900):2 = MAX(CFLAG:(TFLAG:900):2 - 1, 0)
+		ENDIF
+	ENDIF
+
+	;珠限界突破防止処理(イベント等で珠が1000万以上溜まっている場合、それ未満に抑えるようにする)
+	;体力・気力が負の数であるときそれを是正する処理
+	CALL EVENT_EXP_MAXIMUM, TFLAG:900
+	CALL EVENT_JUEL_MAXIMUM, TFLAG:900
+	CALL EVENT_LIFE_MINIMUM, TFLAG:900
+
+	;バグの原因になりやすいのでコメントアウト
+	;IF CFLAG:(TFLAG:900):3667 == 1
+	;	CFLAG:(TFLAG:900):3667 = 0
+	;ELSE
+	;	;妊娠するかの判定(主人)
+	;	IF TALENT:(TFLAG:900):120 == 0 && TALENT:(TFLAG:900):135 == 0 && TALENT:(TFLAG:900):136 == 0 && TALENT:(TFLAG:900):140 == 0 && TALENT:(TFLAG:900):145 == 0 && !TALENT:(TFLAG:900):800
+	;		;普段から初期化してるが念のため
+	;		CFLAG:(TFLAG:900):70 = 0
+	;		;まず、主人との間で判定
+	;		;中だしされているならチェックへ
+	;		SIF CFLAG:(TFLAG:900):71 > 0
+	;			CALL NAKADASHI_CHECK_2, TFLAG:900, 1
+	;	ENDIF
+	;	IF TALENT:(TFLAG:900):140 == 0 && CFLAG:(TFLAG:900):70 > 0
+	;		;妊娠時の口上をイベント口上でやってみるのはいいとして分岐どうしよう…
+	;		;基本的には口上側で分岐してもらう方向で
+	;		;TFLAG:222 を口上分岐用父親関連＋グッドバッド判定用に使用
+	;		TFLAG:222 = NO:MASTER + 10000
+	;		CALL DETERMINE_N_FLAG, TFLAG:900
+	;		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TFLAG:900, 170, MASTER
+	;		PRINTFORMW %CALLNAME:(TFLAG:900)%は[妊娠]した。
+	;		TALENT:(TFLAG:900):140 = 1
+	;		;妊娠時のステータスの変化
+	;		CALL CHANGE_N_STATUS, TFLAG:900
+	;	ENDIF
+	;ENDIF
+	
+	;潤滑、欲情蓄積の減少処理
+	;異常経験数が多いと徐々に減らなくなる。
+	REPEAT 2
+		CFLAG:(TFLAG:900):(58+COUNT) = MAX(CFLAG:(TFLAG:900):(58+COUNT) - 10 * (1 + RAND:3) + MIN(EXP:(TFLAG:900):50 / 10 , 10), 0)
+	REND
+	
+	;固定ファン関連イベント
+	CALL SUBPLAYER_EVENT, TFLAG:900
+NEXT
+LOSEBASE:0 = 0
+LOSEBASE:1 = 0
+LOSEBASE:9 = 0
+
+
+;市場関連
+IF FLAG:17 & 4
+	CALL SELLED_CHARA_STACK
+	SAVEGLOBAL
+ENDIF
+
+;YASAIMODE時の処理
+SIF FLAG:570
+	CALL EVENTTURNEND_YASAI
+
+;CONFIGで子供調教が有効な場合は、仕送り判定を行う。
+SIF FLAG:11 & 8 && LOCAL:50 > 0
+	CALL REMITTANCE, LOCAL:50
+;調教対象が存在し、休憩フラグが立っていないならば、陥落素質獲得判定や妊娠判定などを行う。
+IF TARGET >= 0 && FLAG:0 == 0
+	SIF !TALENT:死亡
+		CALL EVENTCHECK_M
+ENDIF
+FLAG:0 = 0
+
+;助手が[妖狐]持ちで媚薬の在庫が無ければ媚薬を入手できる
+IF ASSI >= 0 && TALENT:ASSI:妖狐 && ITEM:媚薬 == 0
+	;妖狐の効果で媚薬を入手できたときの口上
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ASSI, 47
+	ITEM:媚薬 = 1
+	CFLAG:ASSI:20 |= 2048
+	PRINTW [妖狐]の効果で媚薬を手に入れました。
+;助手が[化け狸]持ちで媚薬の在庫が無ければ媚薬を入手できる
+ELSEIF ASSI >= 0 && TALENT:ASSI:化け狸 && ITEM:媚薬 == 0
+	;化け狸の効果で媚薬を入手できたときの口上
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ASSI, 48
+	ITEM:媚薬 = 1
+	CFLAG:ASSI:20 |= 2048
+	PRINTW [化け狸]の効果で媚薬を手に入れました。
+ENDIF
+
+;午後なら次の日、午前なら午後にする
+IF TIME == 1
+	;日付変更時のイベント呼び出し
+	CALL EVENT_NEXTDAY
+	LOCAL = 0
+	;CONFIGの「夜イベント拡張」が有効な場合、夜イベントの発生が1/10に
+	SIF FLAG:12 & 32768
+		LOCAL = RAND:10
+	TFLAG:210 = TARGET
+	TFLAG:211 = ASSI
+	;調教対象が存在し、CONFIGの「夜イベント」が有効な場合、夜イベントが発生する
+	IF TARGET >= 0 && FLAG:12 & 128 && LOCAL == 0
+		SIF !TALENT:死亡
+			CALL DISPLAY_KOJO_MESSAGE_NIGHT_EVENT
+	ENDIF
+	;夜イベント
+	SIF FLAG:12 & 32768 && LOCAL > 0
+		CALL NIGHT_ATTACK
+	DRAWLINE
+	PRINTW 一日が終わった……
+	DAY += 1
+	TIME = 0
+	CALL CALENDAR_CHECK
+ELSE
+	DRAWLINE
+	PRINTW 夜になった……
+	TIME = 1
+ENDIF
+
+;先にヤンデレモード側の処理
+IF FLAG:14 & 4
+	;デッドエンド
+	IF LOCAL:21
+		CALL BADEND_10
+	;嫉妬＆狂気がいて、調教対象の体力が回復していなければ……
+	ELSEIF TARGET >= 0 && BASE:体力 < 500 && LOCAL:20 > 0 && !TALENT:死亡
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%が行方不明になった……
+		PRINTFORMW 前回の調教で体力が落ちていたので、脱走する元気があるとも思えないのだが……
+		DELCHARA TARGET
+		TARGET = -1
+	ENDIF
+ENDIF
+
+;通常のエンディング判定
+CALL CHECK_GOTO_ENDING
+
+;自動回復の実行
+SIF (FLAG:13 & 32 || FLAG:13 & 64) && MONEY >= 100
+	CALL USE_AUTOHEAL
+
+BEGIN SHOP
+
+;--------------------------------------------------
+;売却判定
+;--------------------------------------------------
+@CAN_SELL_SLAVE
+;調教対象がいないなら帰る
+SIF TARGET < 0
+	RETURN 0
+;売却や助手化が可能になったか
+;ＣＶＡＢの各感覚Lvがいずれも3未満なら帰る
+SIF ABL:Ｃ感覚 < 3 && ABL:Ｖ感覚 < 3 && ABL:Ａ感覚 < 3 && ABL:Ｂ感覚 < 3
+	RETURN 0
+;従順と欲望Lvを合計して6未満なら帰る
+SIF ABL:従順 + ABL:欲望 < 6
+	RETURN 0
+;反抗的か気丈を持っているなら従順Lvが4未満でも帰る
+SIF ABL:従順 < 4 && (TALENT:反抗的 || TALENT:気丈)
+	RETURN 0
+;自制心か抑圧か抵抗を持っているなら欲望Lvが4未満でも帰る
+SIF ABL:欲望 < 4 && (TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗)
+	RETURN 0
+;調教度不足
+;SIF CFLAG:3668 <= 0
+;	RETURN 0
+;既に助手可能なら帰る
+SIF CFLAG:1 == 2
+	RETURN 0
+
+LOCAL = 0
+;売却可能になったかをチェック
+SIF (ABL:技巧 >= 3 && ABL:奉仕精神 >= 3) || (ABL:露出癖 >= 3 && ABL:自慰中毒 >= 2) || ABL:マゾっ気 >= 3 || (ABL:Ｃ感覚 + ABL:Ｖ感覚 + ABL:Ａ感覚 + ABL:Ｂ感覚 >= 13) || ABL:従順 >= 5 || ABL:欲望 >= 5
+	LOCAL |= 1
+;助手可能になったかをチェック
+SIF (ABL:Ｃ感覚 >= 3 && ABL:従順 >= 3 && ABL:欲望 >= 3 && ABL:技巧 >= 3 && ABL:(22 + TALENT:オトコ) >= 3) || (ABL:従順 >= 5 && ABL:欲望 >= 4)
+	LOCAL |= 2
+;売却可能か助手可能であると判定され、今まで売却可能でなかった場合
+IF (LOCAL & 1 || LOCAL & 2) && CFLAG:1 < 1
+	;売却可能になったイベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 122
+	PRINTFORMW %CALLNAME:TARGET%が売却可能になりました
+	CFLAG:1 = 1
+;助手可能であると判定され、今まで助手可能でなかった場合
+ELSEIF LOCAL & 2 && CFLAG:1 < 2
+	;助手可能になったイベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 123
+	PRINTFORMW %CALLNAME:TARGET%が助手可能になりました
+	CFLAG:1 = 2
+ELSE
+	RETURN 0
+ENDIF
+RETURN 0
+
+;--------------------------------------------------
+;ストレスによる気力回復低下処理
+;--------------------------------------------------
+@STRESS_VITAL(ARG, ARG:1)
+#FUNCTION
+SELECTCASE CFLAG:ARG:ストレス
+	;少し気が重い
+	CASE IS < 100
+		TIMES ARG:1 , 0.95
+	;ちょっと気が重い
+	CASE IS < 250
+		TIMES ARG:1 , 0.90
+	;ある程度重い
+	CASE IS < 500
+		TIMES ARG:1 , 0.80
+	;結構参ってる
+	CASE IS < 1000
+		TIMES ARG:1 , 0.75
+	;明らかに様子がおかしい
+	CASE IS < 3000
+		TIMES ARG:1 , 0.70
+	;重症
+	CASE IS < 6000
+		TIMES ARG:1 , 0.60
+	;押し潰されそう
+	CASEELSE
+		TIMES ARG:1 , 0.55
+ENDSELECT
+RETURNF ARG:1
+
+;--------------------------------------------------
+;ストレス低下処理
+;--------------------------------------------------
+@STRESS_DOWN, ARG
+#LOCALSIZE 1
+LOCAL = BASE:ARG:気力 / 100
+
+;休憩フラグ（「何もしない」を選択、もしくは調教対象でも助手でもない）
+SIF FLAG:0 || TARGET != ARG || ASSI != ARG
+	TIMES LOCAL , 1.50
+
+;反発刻印
+IF MARK:ARG:反発刻印 >= 3
+	TIMES LOCAL , 0.25
+ELSEIF MARK:ARG:反発刻印 == 2
+	TIMES LOCAL , 0.50
+ELSEIF MARK:ARG:反発刻印 == 1
+	TIMES LOCAL , 0.75
+ENDIF
+
+;恐怖刻印
+IF MARK:ARG:恐怖刻印 >= 3
+	TIMES LOCAL , 0.25
+ELSEIF MARK:ARG:恐怖刻印 == 2
+	TIMES LOCAL , 0.50
+ELSEIF MARK:ARG:恐怖刻印 == 1
+	TIMES LOCAL , 0.75
+ENDIF
+
+;[自制心][悲観的]はストレスが下がりにくい
+SIF TALENT:ARG:自制心
+	TIMES LOCAL , 0.75
+SIF TALENT:ARG:悲観的
+	TIMES LOCAL , 0.50
+;恋慕系素質取得時はストレスが大きく下がる
+IF TALENT:ARG:相愛
+	TIMES LOCAL , 2.50
+ELSEIF TALENT:ARG:親愛
+	TIMES LOCAL , 2.00
+ELSEIF TALENT:ARG:妄信
+	TIMES LOCAL , 1.75
+ELSEIF TALENT:ARG:恋慕
+	TIMES LOCAL , 1.50
+ENDIF
+;服従系素質や[使い魔]取得時はストレスがやや大きく下がる
+IF TALENT:ARG:隷属 || TALENT:ARG:烙印
+	TIMES LOCAL , 1.50
+ELSEIF TALENT:ARG:服従
+	TIMES LOCAL , 1.25
+ENDIF
+SIF TALENT:ARG:使い魔
+	TIMES LOCAL , 1.20
+;[嫉妬][狂気][幼児退行][精神崩壊]取得時はストレスが下がりにくくなる
+SIF TALENT:ARG:嫉妬
+	TIMES LOCAL , 0.50
+SIF TALENT:ARG:狂気
+	TIMES LOCAL , 0.75
+IF TALENT:ARG:精神崩壊
+	TIMES LOCAL , 0.25
+ELSEIF TALENT:ARG:幼児退行
+	TIMES LOCAL , 0.50
+ENDIF
+
+;調教度
+IF CFLAG:ARG:3668 <= -600
+	TIMES LOCAL , 0.8
+ELSEIF CFLAG:ARG:3668 <= -300
+	TIMES LOCAL , 0.9
+ENDIF
+
+;[死亡]
+SIF TALENT:ARG:死亡
+	LOCAL = 0
+
+CFLAG:ARG:ストレス -= LOCAL
+;[傀儡][壊造人格]はストレスがたまらない(毎回リセット)
+SIF CFLAG:ARG:ストレス < 0 || TALENT:ARG:傀儡 || TALENT:ARG:壊造人格
+	CFLAG:ARG:ストレス = 0
+
+;LUNATIC以上ではストレスによる過負荷状態(3000以上)にあるターンを記録しておく
+IF FLAG:3 > 3 && CFLAG:ARG:ストレス >= PALAMLV:3
+	CFLAG:ARG:38 += 1
+	;超過負荷状態(30000以上)ならさらに記録しておく
+	SIF CFLAG:ARG:ストレス >= PALAMLV:5
+		CFLAG:ARG:38 += 1
+
+	;[解放]があり、過負荷状態が1000を越えたら[解放]消失イベント発生。
+	SIF TALENT:ARG:解放 && CFLAG:ARG:38 > 1000
+		CALL DOWN_LIBERATION, ARG
+ENDIF
+
+;--------------------------------------------------
+;素質[解放]消失処理
+;--------------------------------------------------
+@DOWN_LIBERATION, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 183
+;解放消失
+PRINTFORML %CALLNAME:ARG%は[%TALENTNAME:33%]を失った
+TALENT:ARG:解放 = 0
+;フラグ
+CFLAG:ARG:13 |= 2048
+
+;--------------------------------------------------
+;調教終了直後のイベント
+;--------------------------------------------------
+@EVENT_CHECK_AFTER
+IF CFLAG:36 == 1 && BASE:陰毛
+	PRINTFORML %CALLNAME:TARGET%の下の毛はきれいさっぱりに抜け落ちました
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:65%]になった
+	TALENT:パイパン = 1
+	BASE:陰毛 = 0
+ENDIF
+
+;--------------------------------------------------
+;庭園による癒し処理
+;--------------------------------------------------
+;主にストレスの低下、否定の珠の低下、好感度の上昇、体力・気力の回復量の増加効果
+@GARDEN_EFFECT, ARG
+;主人やその場にいないもの（娼婦やハーブ作業中もだめ、育児中はOK）や睡眠薬が効いている者は対象外
+SIF ARG == MASTER || CFLAG:ARG:4 == 1 || CFLAG:ARG:4 == 4 || CFLAG:ARG:4 == 16 || CFLAG:ARG:4 == 1024 || CFLAG:ARG:4 == 2048 || CFLAG:ARG:4 == 4096 || CFLAG:ARG:4 == 8192 || EQUIP:ARG:睡眠薬
+	RETURN 0
+;添水の効果(気力回復量上昇、ストレス低下または上昇)
+IF FLAG:71 & 4
+	;動物耳がない場合は気力回復量上昇、ストレス低下
+	IF TALENT:ARG:動物耳 == 0
+		TIMES LOSEBASE:1 , 1.50
+		TIMES LOSEBASE:9 , 1.50
+		CFLAG:ARG:ストレス = MAX(CFLAG:ARG:ストレス - RAND:11, 0)
+	;気丈と感情乏しいと嫉妬と狂気と精神崩壊をもたなくて…
+	ELSEIF TALENT:ARG:気丈 == 0 && TALENT:ARG:感情乏しい == 0 && TALENT:ARG:嫉妬 == 0 && TALENT:ARG:狂気 == 0 && TALENT:ARG:精神崩壊 == 0
+		;臆病か悲観的か動物耳（本来動物を追い払うためのもの）か恐怖刻印持ちならばストレス上昇
+		SIF TALENT:ARG:臆病 || TALENT:ARG:悲観的 || TALENT:ARG:動物耳 || MARK:ARG:恐怖刻印
+			CFLAG:ARG:ストレス += RAND:5
+	ENDIF
+ENDIF
+;茶室の効果(好感度上昇もしくはストレス低下)
+IF FLAG:71 & 8
+	;昼であるか、石燈籠がある
+	IF TIME == 0 || FLAG:71 & 2
+		;好奇心もしくは習得早いもしくは教育者もしくは博麗の巫女もしくは風祝の場合は体力・気力回復量上昇、好感度上昇
+		IF TALENT:ARG:好奇心 || TALENT:ARG:習得早い || TALENT:ARG:教育者 || TALENT:ARG:博麗の巫女 || TALENT:ARG:風祝
+			TIMES LOSEBASE:0 , 1.50
+			TIMES LOSEBASE:1 , 1.50
+			TIMES LOSEBASE:9 , 1.50
+			CFLAG:ARG:好感度 += RAND:6
+		ENDIF
+		;素直もしくは大人しいもしくは保守的もしくは恥じらいもしくは献身的もしくは陥落している場合はストレス低下
+		SIF TALENT:ARG:素直 || TALENT:ARG:大人しい || TALENT:ARG:保守的 || TALENT:ARG:恥じらい || TALENT:ARG:献身的 || TALENT:ARG:恋慕 || TALENT:ARG:服従 || TALENT:ARG:淫乱
+			CFLAG:ARG:ストレス = MAX(CFLAG:ARG:ストレス - RAND:6, 0)
+	ENDIF
+ENDIF
+;池の効果(否定の珠低下)
+IF FLAG:71 & 16
+	;昼であるか、石燈籠がある
+	IF TIME == 0 || FLAG:71 & 2
+		;寄生でも嫉妬でも狂気でも精神崩壊でもない場合否定の珠低下
+		IF TALENT:ARG:寄生 == 0 && TALENT:ARG:嫉妬 == 0 && TALENT:ARG:狂気 == 0 && TALENT:ARG:精神崩壊 == 0
+			;河童の場合は効果が強くなる
+			IF TALENT:ARG:河童
+				JUEL:ARG:否定 = MAX(JUEL:ARG:否定 - RAND:21, 0)
+			ELSE
+				JUEL:ARG:否定 = MAX(JUEL:ARG:否定 - RAND:6, 0)
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;魚の効果(好感度上昇)
+IF FLAG:71 & 32
+	;昼であるか、石燈籠がある
+	IF TIME == 0 || FLAG:71 & 2
+		;恐怖刻印と反発刻印がなく精神崩壊でない場合好感度上昇
+		IF MARK:ARG:恐怖刻印 == 0 && MARK:ARG:反発刻印 == 0 && TALENT:ARG:精神崩壊 == 0
+			;河童の場合は効果が強くなる
+			IF TALENT:ARG:河童
+				CFLAG:ARG:好感度 += RAND:16
+			ELSE
+				CFLAG:ARG:好感度 += RAND:6
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;噴水の効果(否定の珠低下または放尿経験上昇)
+IF FLAG:71 & 64
+	;昼であるか、石燈籠がある
+	IF TIME == 0 || FLAG:71 & 2
+		;冬ならば水が凍る
+		IF DAY:5 == 12 || DAY:5 == 1 || DAY:5 == 2
+			;チルノ、レティのみ(子孫はNG)は精神崩壊してなければ凍った噴水に癒されて否定の珠低下(ってか氷精とか雪女の種族フラグないんやね？)
+			SIF (NO:ARG == 1005 || NO:ARG == 1012) && TALENT:ARG:精神崩壊 == 0
+				JUEL:ARG:否定 = MAX(JUEL:ARG:否定 - RAND:21, 0)
+		;冬でなければ水が流れる
+		ELSE
+			;自制心と恥薄いを持たず、おもらし癖か排泄中毒Lv持ちならば放尿経験上昇(放尿と噴水を混同している)
+			IF TALENT:ARG:自制心 == 0 && TALENT:ARG:恥薄い == 0 && (TALENT:ARG:おもらし癖 || ABL:ARG:排泄中毒)
+				EXP:ARG:放尿経験 += RAND:3
+			ELSE
+				JUEL:ARG:否定 = MAX(JUEL:ARG:否定 - RAND:3, 0)
+			ENDIF
+			;河童の場合、体力・気力回復量上昇
+			IF TALENT:ARG:河童
+				TIMES LOSEBASE:0 , 1.50
+				TIMES LOSEBASE:1 , 1.50
+				TIMES LOSEBASE:9 , 1.50
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;築山の効果(ストレス低下)
+IF FLAG:71 & 128
+	;昼であるか、石燈籠がある
+	IF TIME == 0 || FLAG:71 & 2
+		;恐怖刻印がなく、幼児か幼稚か動物耳である場合ストレス低下(昼間の場合は吸血鬼は日傘ないとNG)
+		IF MARK:ARG:恐怖刻印 <= 0 && (TALENT:ARG:幼児 || TALENT:ARG:幼稚 || TALENT:ARG:動物耳) && (TALENT:ARG:吸血鬼 == 0 || TIME == 1 || ITEM:特注日傘)
+			;鬼や天狗の場合は効果が強くなる
+			IF TALENT:ARG:鬼 || TALENT:ARG:天狗
+				CFLAG:ARG:ストレス = MAX(CFLAG:ARG:ストレス - RAND:26, 0)
+			ELSE
+				CFLAG:ARG:ストレス = MAX(CFLAG:ARG:ストレス - RAND:6, 0)
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;大樹の効果(対妖精兵器。否定の珠低下、好感度上昇、ストレス低下)
+IF FLAG:71 & 256
+	;昼であるか、石燈籠がある
+	IF TIME == 0 || FLAG:71 & 2
+		;恐怖刻印がなく、精神崩壊していない
+		IF MARK:ARG:恐怖刻印 <= 0 && TALENT:ARG:精神崩壊 == 0
+			;妖精の場合は体力・気力回復量上昇、否定の珠が低下し、好感度も増加する
+			IF TALENT:ARG:妖精
+				;体力回復量上昇
+				TIMES LOSEBASE:0 , 1.50
+				;気力回復量上昇
+				TIMES LOSEBASE:1 , 1.50
+				;理性回復量上昇
+				TIMES LOSEBASE:9 , 1.50
+				;否定の珠低下
+				JUEL:ARG:否定 = MAX(JUEL:ARG:否定 - RAND:11, 0)
+				;好感度上昇
+				CFLAG:ARG:好感度 += RAND(1, 6)
+				;ストレス低下
+				CFLAG:ARG:ストレス = MAX(CFLAG:ARG:ストレス - (10 * RAND(1, 6)), 0)
+			;それ以外の場合は体力・気力回復量上昇
+			ELSE
+				TIMES LOSEBASE:0 , 1.25
+				TIMES LOSEBASE:1 , 1.25
+				TIMES LOSEBASE:9 , 1.25
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;休憩フラグ（「何もしない」を選択、もしくは調教対象でない）で庭園フル改造の場合、体力・気力回復量が上昇、否定の珠が低下
+IF (FLAG:0 || TARGET != ARG) && FLAG:71 == 511
+	TIMES LOSEBASE:0 , 1.50
+	TIMES LOSEBASE:1 , 1.50
+	TIMES LOSEBASE:9 , 1.50
+	JUEL:ARG:否定 = MAX(JUEL:ARG:否定 - RAND:11, 0)
+ENDIF
+
+;--------------------------------------------------
+;食糧による体型変化処理
+;--------------------------------------------------
+@BODYTLANS,ARG
+	IF TALENT:ARG:死亡
+		CFLAG:(ARG):201 -= 40
+	ELSEIF CFLAG:ARG:食事量 == 2
+		TIMES LOSEBASE:0 , 1.35
+		TIMES LOSEBASE:1 , 1.35
+		CFLAG:ARG:体型数値置き場 += 50
+		SIF BASE:(ARG):0 < 500
+			CFLAG:(ARG):201 -= 30
+	ELSEIF CFLAG:(ARG):200 == 1
+		TIMES LOSEBASE:0 , 1.20
+		TIMES LOSEBASE:1 , 1.20
+		CFLAG:(ARG):201 += 30
+		SIF BASE:(ARG):0 < 500
+			CFLAG:(ARG):201 -= 20
+	ELSEIF CFLAG:(ARG):200 == -1
+		TIMES LOSEBASE:0 , 0.80
+		TIMES LOSEBASE:1 , 0.80
+		CFLAG:(ARG):201 -= 10
+		SIF BASE:(ARG):0 < 500
+			CFLAG:(ARG):201 -= 10
+	ELSEIF CFLAG:(ARG):200 == -2
+		TIMES LOSEBASE:0 , 0.65
+		TIMES LOSEBASE:1 , 0.65
+		CFLAG:(ARG):201 -= 20
+		SIF BASE:(ARG):0 < 500
+			CFLAG:(ARG):201 -= 10
+	ENDIF
+	
+	;カロリーが500溜まったら体型が１個上がる。ぽっちゃりからは500を超してカロリーがどんどん溜まっていきます。れっつだいえっと
+	IF CFLAG:ARG:体型数値置き場 > 500
+		IF TALENT:ARG:ぽっちゃり == 1
+			SIF CFLAG:ARG:体型数値置き場 > 5000
+			CFLAG:ARG:体型数値置き場 = 5000
+		
+		ELSEIF TALENT:ARG:ムチムチ == 1
+		PRINTFORML %CALLNAME:ARG%は日ごろの生活が祟って横に大分大きくなってしまったようだ…
+		PRINTFORML %CALLNAME:ARG%の体型は[ぽっちゃり]になった
+			TALENT:ARG:ムチムチ = 0
+			TALENT:ARG:ぽっちゃり = 1
+			CFLAG:ARG:体型数値置き場 -= 500
+			
+		ELSEIF TALENT:ARG:スレンダー == 1
+		PRINTFORML %CALLNAME:ARG%は健康的な体になったようだ…
+		PRINTFORML %CALLNAME:ARG%の体型は普通になった
+			TALENT:ARG:スレンダー = 0
+			CFLAG:ARG:体型数値置き場 -= 500
+			
+		ELSEIF TALENT:ARG:がりがり == 1
+		PRINTFORML %CALLNAME:ARG%の体はだいぶ健康的な見た目になってきた…
+		PRINTFORML %CALLNAME:ARG%の体型は[スレンダー]になった
+			TALENT:ARG:がりがり = 0
+			TALENT:ARG:スレンダー = 1
+			CFLAG:ARG:体型数値置き場 -= 500
+		ELSE
+		PRINTFORML %CALLNAME:ARG%は駄肉が付いてきたようだ…
+		PRINTFORML %CALLNAME:ARG%の体型は[ムチムチ]になった
+			TALENT:ARG:ムチムチ = 1
+			CFLAG:ARG:体型数値置き場 -= 500
+		ENDIF
+	ENDIF
+	
+	;カロリーが500減ったら体型が１個下がる。ガリガリからは-500で固定。たらふく食べさせてええんやで
+	IF CFLAG:ARG:体型数値置き場 < -500
+		IF TALENT:ARG:がりがり == 1
+			SIF CFLAG:ARG:体型数値置き場 < -500
+			CFLAG:ARG:体型数値置き場 = -500
+		
+		ELSEIF TALENT:ARG:ぽっちゃり == 1
+		PRINTFORML %CALLNAME:ARG%の肉がだいぶ削ぎ落とされたようだ…
+		PRINTFORML %CALLNAME:ARG%の体型は[ムチムチ]になった
+			TALENT:ARG:ぽっちゃり = 0
+			TALENT:ARG:ムチムチ = 1
+			CFLAG:ARG:体型数値置き場 += 500
+			
+		ELSEIF TALENT:ARG:ムチムチ == 1
+		PRINTFORML %CALLNAME:ARG%は普通な肉付きに絞れたようだ…
+		PRINTFORML %CALLNAME:ARG%の体型は普通になった
+			TALENT:ARG:ムチムチ = 0
+			CFLAG:ARG:体型数値置き場 += 500
+		
+		ELSEIF TALENT:ARG:スレンダー == 1
+		PRINTFORML %CALLNAME:ARG%の体は病人のように痩せこけてしまっている…
+		PRINTFORML %CALLNAME:ARG%の体型は[がりがり]になった
+			TALENT:ARG:スレンダー = 0
+			TALENT:ARG:がりがり = 1
+			CFLAG:ARG:体型数値置き場 += 500
+		
+		ELSE
+		PRINTFORML %CALLNAME:ARG%は体を絞ってモデルのような体型になったようだ…
+		PRINTFORML %CALLNAME:ARG%の体型は[スレンダー]になった
+			TALENT:ARG:スレンダー = 1
+			CFLAG:ARG:体型数値置き場 += 500
+		ENDIF
+	ENDIF
+	

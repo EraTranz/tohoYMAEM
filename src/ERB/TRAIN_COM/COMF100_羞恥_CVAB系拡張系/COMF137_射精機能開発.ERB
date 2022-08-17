@@ -1,0 +1,184 @@
+﻿;=============================================================================
+;射精機能開発
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE137
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:137 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;注射系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 64) == 0
+	RETURN 0
+;注射セットを持っていないとダメ
+SIF ITEM:注射セット == 0
+	RETURN 0
+;調教者の技巧が3以上じゃないとダメ
+SIF ABL:PLAYER:技巧 < 3
+	RETURN 0
+;助手調教の場合、技巧4以上か[針さばき]じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4 && TALENT:PLAYER:針さばき == 0
+	RETURN 0
+;肥大陰核じゃないとダメ
+SIF TALENT:肥大陰核 == 0
+	RETURN 0
+;オトコまたはふたなりだとダメ
+SIF EXIST_PENIS(TARGET)
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;クリトリスリングをはめているとダメ
+SIF CFLAG:42 & 1
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 137) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM137
+PRINTL 射精機能開発
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 137
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 射精機能開発
+
+;調合知識があれば消費を抑える
+LOCAL:3 = (TALENT:MASTER:調合知識) ? 1 # 0
+SIF ASSI >= 0 && TALENT:ASSI:調合知識
+	LOCAL:3 = 1
+
+LOCAL:1 = (LOCAL:3) ? 750 # 1000
+LOCAL:2 = (LOCAL:3) ? 600 # 800
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+SOURCE:中毒充足 = 500
+SOURCE:不潔 = 10000
+SOURCE:逸脱 = 20000
+
+;ABL:調教者の技巧をみる
+IF ABL:PLAYER:技巧 == 4
+	SOURCE:快Ｃ = 5000
+ELSEIF ABL:PLAYER:技巧 >= 5
+	SOURCE:快Ｃ = 2000
+ENDIF
+
+;ABL:従順をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:逸脱 += 10000
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:逸脱 += 8000
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:逸脱 += 6000
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:逸脱 += 4000
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:逸脱 += 2000
+ELSE
+	SOURCE:逸脱 += 500
+ENDIF
+
+;淫核／淫茎判定
+SIF TALENT:淫核／淫茎
+	SOURCE:欲情追加 = 300
+
+IF (ABL:PLAYER:技巧 >= 5 || ABL:従順 >= 5) 
+	IF TALENT:Ｃ敏感
+		LOCAL:4 = RAND:2
+	ELSEIF TALENT:Ｃ鈍感
+		LOCAL:4 = RAND:8
+	ELSE
+		LOCAL:4 = RAND:4
+	ENDIF
+	SIF TALENT:淫核／淫茎 && LOCAL:4 > 0
+		LOCAL:4 = RAND:2
+ELSE
+	LOCAL:4 = RAND:6
+ENDIF
+;口上用
+TFLAG:99 = (LOCAL:4 == 0) ? 1 # 0
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+IF TFLAG:99 == 1
+	PRINTFORML %CALLNAME:TARGET%は[ふたなり]になった
+	CALL EVENT_FUTA_PLUS_COMMON, TARGET
+	IF (CFLAG:37 & 8) == 0
+		TCVAR:異常経験 += 1
+		CFLAG:37 |= 8
+	ENDIF
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_137
+PRINTFORML %CALLNAME:PLAYER%は怪しい薬液の入った注射器で%CALLNAME:TARGET%のクリトリスから、精液が出るようにしようとした
+IF TFLAG:99 == 1
+	PRINTFORML 怪しい薬が効いたのか%CALLNAME:TARGET%のクリトリスから精液が出るようになった…
+ELSE
+	PRINTFORML 技巧が足りないのか、%CALLNAME:TARGET%の陰核を開発しきれなかった…
+ENDIF

@@ -1,0 +1,290 @@
+﻿;=============================================================================
+;蜘蛛脚愛撫
+;=============================================================================
+;スカートの中に蜘蛛の脚を仕込んでいるver.のヤマメさん
+;たくさんある脚で全身いたる所を撫でまわします
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE410
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:410 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者がヤマメでないとダメ
+SIF NO:PLAYER != 1058
+	RETURN 0
+;調教者は[蜘蛛の脚]を所有してないとダメ
+SIF TALENT:PLAYER:蜘蛛の脚 == 0
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;グルグル巻きにしないとダメ
+SIF TEQUIP:緊縛関連 != 6 && TEQUIP:緊縛関連 != 7
+	RETURN 0
+;ボールギャグ装着中はダメ
+SIF TEQUIP:口装着器具
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手がコスプレ中はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ > 1
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 410) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM410
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;前回のコマンドが蜘蛛脚愛撫か蜘蛛脚六点責めのとき、蜘蛛脚六点責めに変化
+IF PREVCOM == 410 || PREVCOM == 654
+	SIF EXCOM_ABLE654() == 1
+		JUMP COM654
+ENDIF
+PRINTL 蜘蛛脚愛撫
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 410
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 蜘蛛脚愛撫
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 120
+
+SOURCE:性行動 = 120
+SOURCE:不潔 = 50
+SOURCE:露出 = 950
+SOURCE:逸脱 = 1000
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 20
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 100
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 500
+	SOURCE:情愛 = 160
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1200
+	SOURCE:情愛 = 200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2000
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:快Ｃ = 2800
+	SOURCE:情愛 = 250
+ENDIF
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 25
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 125
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 650
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 1500
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 2300
+ELSE
+	SOURCE:快Ｂ = 3200
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 20
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 75
+	SOURCE:屈従 = 350
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 300
+	SOURCE:屈従 = 400
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 700
+	SOURCE:屈従 = 650
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1100
+	SOURCE:屈従 = 1000
+ELSE
+	SOURCE:快Ａ = 1500
+	SOURCE:屈従 = 1500
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	SOURCE:情愛 += 0
+	TIMES SOURCE:逸脱, 2.50
+	LOCAL:1 = 3000
+ELSEIF ABL:マゾっ気 == 1
+	SOURCE:情愛 += 60
+	TIMES SOURCE:逸脱, 2.00
+	LOCAL:1 = 2500
+ELSEIF ABL:マゾっ気 == 2
+	SOURCE:情愛 += 120
+	TIMES SOURCE:逸脱, 1.40
+	LOCAL:1 = 2000
+ELSEIF ABL:マゾっ気 == 3
+	SOURCE:情愛 += 180
+	TIMES SOURCE:逸脱, 1.00
+	LOCAL:1 = 1500
+ELSEIF ABL:マゾっ気 == 4
+	SOURCE:情愛 += 240
+	TIMES SOURCE:逸脱, 0.70
+	LOCAL:1 = 1000
+ELSE
+	SOURCE:情愛 += 300
+	TIMES SOURCE:逸脱, 0.30
+	LOCAL:1 = 500
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:屈従, 0.20
+	SOURCE:痛み = 500
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:屈従, 0.50
+	SOURCE:痛み = 400
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従, 1.00
+	SOURCE:痛み = 300
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従, 1.20
+	SOURCE:痛み = 200
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従, 1.60
+	SOURCE:痛み = 100
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:屈従, 1.80
+	SOURCE:痛み = 50
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.10
+	TIMES SOURCE:快Ａ , 0.10
+	TIMES SOURCE:逸脱 , 0.10
+	TIMES SOURCE:屈従 , 0.10
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.20
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:逸脱 , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	TIMES SOURCE:痛み , 2.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 0.60
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+	TIMES SOURCE:屈従 , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ｃ , 2.00
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:逸脱 , 2.00
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.30
+	TIMES SOURCE:快Ａ , 0.30
+	TIMES SOURCE:屈従 , 0.30
+	TIMES SOURCE:逸脱 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.60
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従, 1.00
+	TIMES SOURCE:逸脱, 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.30
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:屈従 , 1.30
+	TIMES SOURCE:逸脱 , 1.30
+ELSE
+	TIMES SOURCE:快Ｃ , 1.60
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.60
+	TIMES SOURCE:逸脱 , 1.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+SOURCE:トラウマ += LOCAL:1
+
+IF ABL:PLAYER:レズっ気 > 0
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:性行動 , 1.20
+
+	;キス経験
+	TCVAR:キス経験 += 1
+	TCVAR:PLAYER:キス経験 += 1
+	CFLAG:主人と調教キス数 += (ASSIPLAY == 0) ? 1 # 0
+ENDIF
+
+TCVAR:Ａ経験 += 1
+
+LOCAL:2 = 21 + RAND:10
+TFLAG:142 -= LOCAL:2
+SIF TFLAG:142 <= 0
+	CALL SPIDER_SILK_TEAR
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_410
+PRINTFORM %CALLNAME:PLAYER%は
+SIF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	PRINT 嗜虐的な笑みを浮かべ、
+PRINTFORML 無数の脚で%CALLNAME:TARGET%の体を撫でまわした…

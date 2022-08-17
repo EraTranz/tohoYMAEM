@@ -1,0 +1,378 @@
+﻿;=============================================================================
+;優しくする
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE320
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:320 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURN 0
+ENDIF
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 320) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM320
+PRINTL 優しくする
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 320
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 優しくする
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 30
+
+SOURCE:性行動 = 100
+SOURCE:接触 = 80
+
+;奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:情愛 = 10
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:情愛 = 30
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:情愛 = 80
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:情愛 = 150
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:情愛 = 200 + (ABL:奉仕精神 * 20)
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:接触 , 0.80
+	TIMES SOURCE:情愛 , 0.80
+	SOURCE:欲情追加 = 10
+	SOURCE:液体追加 = 10
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:接触 , 1.00
+	TIMES SOURCE:情愛 , 1.00
+	SOURCE:欲情追加 = 60
+	SOURCE:液体追加 = 40
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:接触 , 1.20
+	TIMES SOURCE:情愛 , 1.30
+	SOURCE:欲情追加 = 120
+	SOURCE:液体追加 = 80
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:接触 , 1.40
+	TIMES SOURCE:情愛 , 1.40
+	SOURCE:欲情追加 = 240
+	SOURCE:液体追加 = 140
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:接触 , 1.50
+	TIMES SOURCE:情愛 , 1.70
+	SOURCE:欲情追加 = 360
+	SOURCE:液体追加 = 220
+ELSE
+	SOURCE:接触 = SOURCE:接触 * (ABL:マゾっ気 * 10 + 120) / 100
+	SOURCE:情愛 = SOURCE:情愛 * (ABL:マゾっ気 * 15 + 125) / 100
+	SOURCE:欲情追加 = 150 + (ABL:マゾっ気 * 35)
+	SOURCE:液体追加 = 100 + (ABL:マゾっ気 * 20)
+ENDIF
+
+;[傀儡]と[精神崩壊]と[壊造人格]を持っておらず、[恋慕]持ちだと愛情経験が加算
+SIF TALENT:恋慕 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0
+	TCVAR:愛情経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_320
+;口上用フラグ
+TFLAG:144 = 0
+PRINTFORM %CALLNAME:PLAYER%は
+IF RAND:17 == 0
+	TFLAG:144 = 17
+	PRINTFORML %CALLNAME:TARGET%の頭をなでた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は上目づかいに%CALLNAME:PLAYER%を見つめ、熱い息を吐いている…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は少し嬉しそうに身を委ねている…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしてうつむいている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%から離れた…
+	ENDIF
+	;対象の髪の汚れ⇔調教者の指の汚れが相互に移動
+	STAIN:髪 |= STAIN:PLAYER:手
+	STAIN:PLAYER:手 |= STAIN:髪
+ELSEIF RAND:16 == 0
+	TFLAG:144 = 16
+	PRINTFORML %CALLNAME:TARGET%の部屋を片付け始めた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は積極的に%CALLNAME:PLAYER%を手伝った…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は慌てた様子で%CALLNAME:PLAYER%を手伝った…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は仕方なさそうに%CALLNAME:PLAYER%を手伝った…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は何もしないでいる…
+	ENDIF
+ELSEIF RAND:15 == 0 && TEQUIP:羞恥プレイ == 1
+	TFLAG:144 = 15
+	PRINTFORML %CALLNAME:TARGET%の目を手で覆ってあげた…
+	IF TALENT:恋慕 && TALENT:吸血鬼 == 0 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の手をそっと外し、鏡に向かってほほ笑んだ…
+	ELSEIF MARK:薬物刻印 >= 1 && TALENT:吸血鬼 == 0
+		PRINTFORML %CALLNAME:TARGET%は鏡を見ずに済んで少し安心しているようだ…
+	ELSEIF TALENT:恋慕 && TALENT:吸血鬼
+		PRINTFORML %CALLNAME:TARGET%は写らない鏡を見ながらも、優しくほほ笑んだ…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%はされるがままになっている…
+	ENDIF
+ELSEIF RAND:14 == 0 && TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0
+	TFLAG:144 = 14
+	PRINTFORML 鏡の中の%CALLNAME:TARGET%をじっと見つめた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は少し拗ねたように%CALLNAME:PLAYER%の顔を自分の方に向けた…
+	ELSEIF ABL:従順 >= 3
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしそうに目をそらした…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は睨みつけてきた…
+	ENDIF
+ELSEIF RAND:13 == 0 && TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0
+	TFLAG:144 = 13
+	PRINTFORML %CALLNAME:TARGET%を後ろから抱きしめた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は鏡に映った自分と%CALLNAME:PLAYER%の姿を幸せそうに眺めている…
+	ELSEIF ABL:従順 >= 3
+		PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしながらも、薄眼で鏡を見ている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は鏡から目をそらしている…
+	ENDIF
+ELSEIF RAND:12 == 0
+	TFLAG:144 = 12
+	PRINTFORML %CALLNAME:TARGET%の目を舐めた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML お返しとばかりに%CALLNAME:TARGET%も%CALLNAME:PLAYER%の目にキスをしてきた…
+		TCVAR:キス経験 += 1
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は舐められた目をそっと撫でた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は小さく悲鳴をあげた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%はのけぞるように%CALLNAME:PLAYER%から離れた…
+	ENDIF
+ELSEIF RAND:11 == 0
+	TFLAG:144 = 11
+	PRINTFORML %CALLNAME:TARGET%のお臍を舌でねぶった…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は優しく%CALLNAME:PLAYER%の頭をなでている…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%はお腹まで真っ赤にして照れている…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は慣れない感覚に呻き声をあげている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%をなんとか引き離そうとしている…
+	ENDIF
+ELSEIF RAND:10 == 0
+	TFLAG:144 = 10
+	PRINTFORML %CALLNAME:TARGET%の背筋を舐めあげた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は体をのけぞらせると、%CALLNAME:PLAYER%にもたれかかってきた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%の口から艶めかしい吐息が漏れた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は体を縮こまらせ、歯を食いしばっている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は暴れだし、%CALLNAME:PLAYER%から離れた…
+	ENDIF
+ELSEIF RAND:9 == 0
+	TFLAG:144 = 9
+	PRINTFORML %CALLNAME:TARGET%の腋に舌を這わせた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の髪に顔を埋めた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしそうにしているが、同時に悦びも感じているようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は必死で%CALLNAME:PLAYER%から逃げようとしている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は肘を振り落とし、%CALLNAME:PLAYER%を引き剥がした…
+	ENDIF
+ELSEIF RAND:8 == 0
+	TFLAG:144 = 8
+	PRINTFORML %CALLNAME:TARGET%に膝枕をしてあげた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を見上げると、にっこりとほほ笑んだ…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は太腿の感覚を確かめるように、すりすりと頭を動かしている…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%はおとなしくしている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の顔を見ないようにしている…
+	ENDIF
+ELSEIF RAND:7 == 0
+	TFLAG:144 = 7
+	PRINTFORML %CALLNAME:TARGET%の首筋やうなじに舌を這わせた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は後ろに手をまわし、%CALLNAME:PLAYER%の頭を抱き寄せた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は体を%CALLNAME:PLAYER%に預け、されるがままになっている…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にして、いやいやをするように首を振った…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は逃げる機会をうかがっているようだ…
+	ENDIF
+ELSEIF RAND:6 == 0
+	TFLAG:144 = 6
+	PRINTFORML %CALLNAME:TARGET%を後ろから抱き締め、髪の香りを堪能した…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は前に回された%CALLNAME:PLAYER%の手を握りしめている…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:PLAYER%に抱きしめられて、%CALLNAME:TARGET%が安心しているように見えた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は少し震えている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は嫌そうに顔をしかめている…
+	ENDIF
+ELSEIF RAND:5 == 0
+	TFLAG:144 = 5
+	PRINTFORML %CALLNAME:TARGET%の耳元で愛をささやいた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は目をとろんとさせ、うっとりと%CALLNAME:PLAYER%にしなだれかかった…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は何も言わず、%CALLNAME:PLAYER%に抱きついた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしている。まんざらでもなさそうだ…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は白けたような顔で%CALLNAME:PLAYER%の話を聞き流している…
+	ENDIF
+ELSEIF RAND:4 == 0
+	TFLAG:144 = 4
+	PRINTFORML %CALLNAME:TARGET%の耳に息を吹きかけ、軽く舐めてから耳たぶを甘噛みした…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の頭をなでると、そのままキスをしてきた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%にとって、その感覚は不快ではないようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:PLAYER%の舌が動くたび、%CALLNAME:TARGET%は小さく身を震わせた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は不愉快だと言わんばかりに%CALLNAME:PLAYER%を睨んでいる…
+	ENDIF
+ELSEIF RAND:3 == 0
+	TFLAG:144 = 3
+	PRINTFORM %CALLNAME:TARGET%の全身を
+	IF PALAM:潤滑 >= PALAMLV:4 && ITEM:ローション > 0
+		PRINT ローションまみれにして、
+		;ローション1つ消費
+		CALL USE_PLURAL_ITEM, 60, 1
+		SOURCE:液体追加 += 10000
+	ENDIF
+	PRINTFORML 優しく撫でさすった…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は慈しむような表情で、%CALLNAME:PLAYER%に抱きついてきた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は気持ち良さそうにしている…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は怯えたように自分の体を抱きしめている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の手を払った…
+	ENDIF
+	;対象の手の汚れ⇔調教者の指の汚れが相互に移動
+	STAIN:手 |= STAIN:PLAYER:手
+	STAIN:PLAYER:手 |= STAIN:手
+	;対象の胸の汚れ⇔調教者の指の汚れが相互に移動
+	STAIN:胸 |= STAIN:PLAYER:手
+	STAIN:PLAYER:手 |= STAIN:胸
+	;対象の足の汚れ⇔調教者の指の汚れが相互に移動
+	STAIN:足 |= STAIN:PLAYER:手
+	STAIN:PLAYER:手 |= STAIN:足
+	;対象の髪の汚れ⇔調教者の指の汚れが相互に移動
+	STAIN:髪 |= STAIN:PLAYER:手
+	STAIN:PLAYER:手 |= STAIN:髪
+ELSEIF RAND:2 == 0
+	TFLAG:144 = 2
+	PRINTFORM %CALLNAME:TARGET%の体に
+	IF PALAM:潤滑 >= PALAMLV:4 && ITEM:ローション > 0
+		PRINT ローションを垂らすと、
+		;ローション1つ消費
+		CALL USE_PLURAL_ITEM, 60, 1
+		SOURCE:液体追加 += 10000
+	ENDIF
+	PRINTFORM 自分の体を擦りつけ
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 、一緒にヌルヌルになっ
+	PRINTL た…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の首に手を回すと、そのまま唇を奪った…
+		;対象の口の汚れ⇔調教者の口の汚れが相互に移動
+		STAIN:口 |= STAIN:PLAYER:口
+		STAIN:PLAYER:口 |= STAIN:口
+		TCVAR:キス経験 += 1
+		TCVAR:PLAYER:キス経験 += 1
+		CFLAG:主人と調教キス数 += (ASSIPLAY == 0) ? 1 # 0
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%も積極的に体を擦りつけている…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は石のように硬直していたが、やがておずおずと%CALLNAME:PLAYER%の体に触れてきた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%はじたばたと暴れ、%CALLNAME:PLAYER%を振り払った…
+	ENDIF
+	;対象の胸の汚れ⇔調教者の胸の汚れが相互に移動
+	STAIN:胸 |= STAIN:PLAYER:胸
+	STAIN:PLAYER:胸 |= STAIN:胸
+ELSE
+	TFLAG:144 = 1
+	PRINTFORML %CALLNAME:TARGET%をくすぐった…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は楽しそうにキャッキャッと笑っている…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%もわずかにやり返してきた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は必死に笑いをこらえているのか、顔を赤くしたり青くしたりしている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は露骨に嫌そうな顔をして、%CALLNAME:PLAYER%から距離を取った…
+	ENDIF
+ENDIF

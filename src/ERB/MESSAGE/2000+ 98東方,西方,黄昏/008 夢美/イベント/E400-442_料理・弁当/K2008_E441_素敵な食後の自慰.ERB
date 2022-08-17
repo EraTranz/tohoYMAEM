@@ -1,0 +1,30 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;素敵な食後の自慰
+;TFLAG:99で分岐可能、詳しくはSHOP_LUNCH0.ERB参照
+;TFLAG:99 = 1でオナニー、2でアナニー
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE441
+SELECTCASE K2008F_RANK()
+	CASE IS < 4
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORML 「……お腹が一杯になると別の欲求が出てくるのは、自然なことよね」
+				PRINTFORMW 「ちょっとだけだから、一人だけでもいいわよね、うん」
+			CASEELSE
+				PRINTFORMW ……
+				PRINTFORMW 「やだ、何だか体が……　んっ、我慢できないなんて」
+		ENDSELECT
+	CASE 4 TO 5
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「衣食足りて礼節を知る、とは言うけど」
+				PRINTFORML 「食が足りるとムラムラしてくるのは、何が足りないのかしら」
+				PRINTFORMW 「……ま、いっか。　一人で食後を楽しむのも素敵だし」
+			CASEELSE
+				PRINTFORML 「ご飯を食べた。　後片付けは終わった。　このあとやる事は特にない」
+				PRINTFORMW 「……ちょっと食後の研究をしてみようかしら」
+		ENDSELECT
+ENDSELECT
+PRINTFORML 
+CALL K2008_COM("快楽")

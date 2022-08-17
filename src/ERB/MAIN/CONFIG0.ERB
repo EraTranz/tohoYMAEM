@@ -1,0 +1,433 @@
+﻿;=============================================================================
+;ゲーム開始時用
+;=============================================================================
+@START_CONFIGURATION
+#LOCALSIZE 1
+LOADGLOBAL
+LOCAL = RESULT
+DRAWLINE
+PRINTL ★★追加機能はどうしますか？★★
+PRINTL ※設定は後でも変更できます
+SIF FLAG:4 == 4
+	PRINTL ※“PROSTITUTE”モードでは、娼館機能を無効にすることはできません
+DRAWLINE
+PRINTL [0] いらない　　　：追加機能を設定しないでスタート
+PRINTL [1] 基本セット　　：初めてeratohoYMに触れる方向け
+PRINTL [2] wikiセット　　：wiki内のページで紹介されている設定
+PRINTL [3] 愛情セット　　：奴隷と愛情をもって接したい方向け
+PRINTL [4] 自虐セット　　：悲惨な結末を迎えたい方向け
+PRINTL [5] 非周回セット　：周回プレイを考慮しない方向け
+PRINTL [6] おすすめセット：eratohoYMAEMの最新機能を欲しい方向け（なおヤンデレもーど）
+SIF LOCAL
+	PRINTL [7] データ読込　　：既にあるコンフィグデータを読み込む
+PRINTL [8] 個別に設定　　：項目ごとに細かく設定する方向け
+;PRINTL [9] 全部解放　　　：かなりゲームに慣れて何でもありな方向け
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTW 追加機能を有効にしないままゲームを始めます
+ELSEIF RESULT == 1
+	PRINTW 基本セットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_NOVICE
+ELSEIF RESULT == 2
+	PRINTW wikiセットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_WIKI
+ELSEIF RESULT == 3
+	PRINTW 愛情セットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_LOVER
+ELSEIF RESULT == 4
+	PRINTW 自虐セットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_SUICIDE
+ELSEIF RESULT == 5
+	PRINTW 非周回セットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_NONCYCLE
+ELSEIF RESULT == 6
+	PRINTW おすすめセットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_AUTHOR
+ELSEIF RESULT == 7 && LOCAL
+	PRINTW コンフィグデータを読み込んで設定しました
+	CALL CONFIGURATION_LOAD
+	CALL CONFIGURATION_8_CHANGE_DEFAULT
+ELSEIF RESULT == 8
+	PRINTW コンフィグを各項目ごとに設定します
+	TFLAG:201 = 555
+	CALL SWEET_POTATO_CONFIGURATION
+ELSEIF RESULT == 9
+	PRINTW 追加機能を全て使えるように設定しました
+	CALL CONFIGURATION_MODE_ALL
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+;Ｓパッチ追加分
+SIF FLAG:4 == 4
+	FLAG:17 |= 1
+
+;=============================================================================
+;強くてニューゲーム開始時の再設定用
+;=============================================================================
+@NEWGAME_CONFIGURATION_RESET
+#LOCALSIZE 1
+$PRINT_LOOP
+LOADGLOBAL
+LOCAL = RESULT
+PRINTL 変更したい内容を選択してください　※設定は後でも変更できます
+DRAWLINE
+REPEAT 9
+	SIF STRLENS(CONFIGURATION_ARTICLE_NAME(COUNT)) > 0
+		PRINTFORML  [ {COUNT}] %CONFIGURATION_ARTICLE_NAME(COUNT)%
+REND
+PRINTL  [95] カスタムコマンドフィルタ
+PRINTL  [96] 基本セット
+PRINTL  [97] 全部解放
+SIF LOCAL
+	PRINTL  [98] コンフィグデータ読込
+PRINTL  [99] CONFIG解説
+PRINTL [100] ＯＫ
+DRAWLINE
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT >= 0 && RESULT < 10 && STRLENS(CONFIGURATION_ARTICLE_NAME(RESULT)) > 0
+	PRINTFORML %CONFIGURATION_ARTICLE_NAME(RESULT)%の設定を変更します
+	CALLFORM CONFIGURATION_{RESULT}
+ELSEIF RESULT == 95
+	PRINTL コマンドフィルタの個別設定を変更します
+	CALL CUSTOM_COMMAND_FILTER
+ELSEIF RESULT == 96
+	PRINTFORMW 基本セットの追加機能を使えるように設定しました
+	CALL CONFIGURATION_MODE_NOVICE
+	RETURN 0
+ELSEIF RESULT == 97
+	PRINTFORMW 追加機能を全て使えるように設定しました
+	CALL CONFIGURATION_MODE_ALL
+	RETURN 0
+ELSEIF RESULT == 98 && LOCAL
+	PRINTFORMW コンフィグデータを読み込んで設定しました
+	CALL CONFIGURATION_LOAD
+	RETURN 0
+ELSEIF RESULT == 99
+	CALL DICTIONARY_CONFIG_MAIN
+	GOTO PRINT_LOOP
+ELSEIF RESULT != 100
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+PRINT 他に
+GOTO PRINT_LOOP
+
+;=============================================================================
+;ショップメニューからの呼び出し用
+;=============================================================================
+;ロード時にアイテムが消滅するなどのエラーを引き起こしかねないので外部からのロード機能はオミットしました
+@SWEET_POTATO_CONFIGURATION
+PRINTL 追加機能の設定を変更します。
+ライン数:0 = LINECOUNT
+$PRINT_LOOP_0
+LOADGLOBAL
+LOCAL = RESULT
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+REPEAT 9
+	SIF STRLENS(CONFIGURATION_ARTICLE_NAME(COUNT)) > 0
+		PRINTFORML  [{COUNT, 2}] %CONFIGURATION_ARTICLE_NAME(COUNT)%
+REND
+PRINTL  [96] カスタムコマンドフィルタ
+SIF TFLAG:201 == 0
+	PRINTL  [97] 現状のコンフィグを保存する
+SIF LOCAL
+	PRINTL  [98] 保存のコンフィグを読込する
+PRINTL  [99] CONFIG解説
+PRINTFORML [100] \@(TFLAG:201 == 0) ? やめる # 設定を終了する\@
+DRAWLINE
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT >= 0 && RESULT < 10 && STRLENS(CONFIGURATION_ARTICLE_NAME(RESULT)) > 0
+	PRINTFORML %CONFIGURATION_ARTICLE_NAME(RESULT)%の設定を変更します
+	CALLFORM CONFIGURATION_{RESULT}
+ELSEIF RESULT == 10
+	PRINTL 画像設定を変更します
+	CALLFORM CONFIGURATION_IMAGE
+ELSEIF RESULT == 96
+	PRINTL コマンドフィルタの個別設定を変更します
+	CALL CUSTOM_COMMAND_FILTER
+ELSEIF RESULT == 97 && TFLAG:201 == 0
+	PRINTL 現状のコンフィグをデータとして保存します
+	CALL CONFIGURATION_SAVE
+ELSEIF RESULT == 98 && LOCAL
+	PRINTL コンフィグデータを読み込します
+	CALL CONFIGURATION_LOAD_2
+ELSEIF RESULT == 99
+	CALL DICTIONARY_CONFIG_MAIN
+	GOTO PRINT_LOOP_0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINT 他に
+GOTO PRINT_LOOP_0
+
+;=============================================================================
+;コンフィグの項目名称表示処理
+;=============================================================================
+@CONFIGURATION_ARTICLE_NAME(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		RETURNF "画面・テキストの表示"
+	CASE 1
+		RETURNF "射精箇所選択・妊娠出産関係"
+	CASE 2
+		RETURNF "ＳＨＯＰ・イベント拡張"
+	CASE 3
+		RETURNF "アイテム拡張"
+	CASE 4
+		RETURNF "調教モード拡張"
+	CASE 5
+		RETURNF "コマンド拡張"
+	CASE 6
+		RETURNF "特殊調教モード"
+	CASE 7
+		RETURNF "機能拡張"
+	CASE 8
+		RETURNF "画像設定"
+	CASEELSE
+		RETURNF ""
+ENDSELECT
+
+;=============================================================================
+;各種一括解放・封印処理
+;=============================================================================
+;-------------------------------------------------
+;全部解放
+;-------------------------------------------------
+@CONFIGURATION_MODE_ALL
+FLAG:10 = 127
+FLAG:11 = 127
+FLAG:12 = 524287
+FLAG:13 = 127
+FLAG:14 = 511
+FLAG:15 = 32767
+FLAG:16 = 63
+FLAG:17 = 229
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;-------------------------------------------------
+;全部封印
+;-------------------------------------------------
+@CONFIGURATION_MODE_NONE
+FLAG:10 = 1
+FLAG:11 = 0
+FLAG:12 = 0
+FLAG:13 = 0
+FLAG:14 = 0
+FLAG:15 = 0
+FLAG:16 = 0
+FLAG:17 = 0
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+FLAG:画像設定 = 0
+;調教フィルタリセット
+FLAG:2 = 0
+
+;-------------------------------------------------
+;基本セット
+;-------------------------------------------------
+@CONFIGURATION_MODE_NOVICE
+FLAG:10 = 61
+FLAG:11 = 0
+FLAG:12 = 274450
+FLAG:13 = 0
+FLAG:14 = 64
+FLAG:15 = 0
+FLAG:16 = 0
+FLAG:17 = 0
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;-------------------------------------------------
+;wikiセット一括処理
+;-------------------------------------------------
+@CONFIGURATION_MODE_WIKI
+FLAG:10 = 63
+FLAG:11 = 0
+FLAG:12 = 276279
+FLAG:13 = 0
+FLAG:14 = 64
+FLAG:15 = 15
+FLAG:16 = 0
+FLAG:17 = 0
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;-------------------------------------------------
+;愛情セット一括処理
+;-------------------------------------------------
+@CONFIGURATION_MODE_LOVER
+FLAG:10 = 61
+FLAG:11 = 0
+FLAG:12 = 275827
+FLAG:13 = 2
+FLAG:14 = 83
+FLAG:15 = 2568
+FLAG:16 = 0
+FLAG:17 = 0
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;-------------------------------------------------
+;自虐セット一括処理
+;-------------------------------------------------
+@CONFIGURATION_MODE_SUICIDE
+FLAG:10 = 61
+FLAG:11 = 6
+FLAG:12 = 270339
+FLAG:13 = 0
+FLAG:14 = 4
+FLAG:15 = 16
+FLAG:16 = 35
+FLAG:17 = 0
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;-------------------------------------------------
+;非周回セット一括処理
+;-------------------------------------------------
+@CONFIGURATION_MODE_NONCYCLE
+FLAG:10 = 61
+FLAG:11 = 126
+FLAG:12 = 294911
+FLAG:13 = 3
+FLAG:14 = 112
+FLAG:15 = 19087
+FLAG:16 = 15
+FLAG:17 = 0
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;-------------------------------------------------
+;おすすめセット一括処理
+;-------------------------------------------------
+@CONFIGURATION_MODE_AUTHOR
+FLAG:10 = 127
+FLAG:11 = 111
+FLAG:12 = 260095
+FLAG:13 = 3
+FLAG:14 = 374
+FLAG:15 = 32767
+FLAG:16 = 47
+FLAG:17 = 229
+CALL CONFIGURATION_8_CHANGE_DEFAULT
+
+;=============================================================================
+;コンフィグデータ関連処理
+;=============================================================================
+;-------------------------------------------------
+;コンフィグデータを保存する
+;-------------------------------------------------
+@CONFIGURATION_SAVE
+LOADGLOBAL
+LOCAL = RESULT
+PRINTL CONFIGデータをグローバルデータにして保存しますか？
+SIF LOCAL
+	PRINTL なお、それまでのグローバルデータファイルは書きかえられます
+PRINTL [0] はい、保存します
+PRINTL [1] いいえ、保存せずに戻ります
+$INPUT_LOOP_GLOBAL_SAVE
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_GLOBAL_SAVE
+ENDIF
+
+LOADGLOBAL
+;コマンドフィルタの設定を保存
+FOR LOCAL, 0, 690
+	GLOBAL:LOCAL = DITEMTYPE:999:LOCAL
+NEXT
+;コンフィグの設定を保存
+FOR LOCAL, 10, 30
+	GLOBAL:(LOCAL + 700) = FLAG:LOCAL
+NEXT
+
+GLOBAL:4000 = FLAG:画像設定
+GLOBAL:4010 = FLAG:通常画面画像：表示
+GLOBAL:4011 = FLAG:通常画面画像：X座標
+GLOBAL:4012 = FLAG:通常画面画像：Y座標
+GLOBAL:4013 = FLAG:通常画面画像：画像サイズ
+GLOBAL:4020 = FLAG:調教画面画像：表示
+GLOBAL:4021 = FLAG:調教画面画像：X座標
+GLOBAL:4022 = FLAG:調教画面画像：Y座標
+GLOBAL:4023 = FLAG:調教画面画像：画像サイズ
+GLOBAL:4030 = FLAG:能力画面画像：表示
+GLOBAL:4031 = FLAG:能力画面画像：X座標
+GLOBAL:4032 = FLAG:能力画面画像：Y座標
+GLOBAL:4033 = FLAG:能力画面画像：画像サイズ
+
+SAVEGLOBAL
+PRINTL CONFIGデータをグローバルデータとして保存しました
+
+;-------------------------------------------------
+;コンフィグデータを読み込む
+;-------------------------------------------------
+@CONFIGURATION_LOAD_2
+PRINTL CONFIGデータをグローバルデータにして読込しますか？
+PRINTL [0] はい、読込します
+PRINTL [1] いいえ、読込せずに戻ります
+$INPUT_LOOP_GLOBAL_LOAD_2
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_GLOBAL_LOAD_2
+ENDIF
+
+LOADGLOBAL
+;コマンドフィルタの設定をロード
+FOR LOCAL, 0, 600
+	DITEMTYPE:999:LOCAL = GLOBAL:LOCAL
+NEXT
+;コンフィグの設定をロード
+FOR LOCAL, 10, 30
+	FLAG:LOCAL = GLOBAL:(LOCAL + 700) 
+NEXT
+
+FLAG:画像設定 = GLOBAL:4000
+FLAG:通常画面画像：表示 = GLOBAL:4010
+FLAG:通常画面画像：X座標 = GLOBAL:4011
+FLAG:通常画面画像：Y座標 = GLOBAL:4012
+FLAG:通常画面画像：画像サイズ = GLOBAL:4013
+FLAG:調教画面画像：表示 = GLOBAL:4020
+FLAG:調教画面画像：X座標 = GLOBAL:4021
+FLAG:調教画面画像：Y座標 = GLOBAL:4022
+FLAG:調教画面画像：画像サイズ = GLOBAL:4023
+FLAG:能力画面画像：表示 = GLOBAL:4030
+FLAG:能力画面画像：X座標 = GLOBAL:4031
+FLAG:能力画面画像：Y座標 = GLOBAL:4032
+FLAG:能力画面画像：画像サイズ = GLOBAL:4033
+
+PRINTL CONFIGデータをグローバルデータとして読込しました
+
+;-------------------------------------------------
+;コンフィグデータを読み込む
+;-------------------------------------------------
+@CONFIGURATION_LOAD
+LOADGLOBAL
+;コマンドフィルタの設定をロード
+FOR LOCAL, 0, 600
+	DITEMTYPE:999:LOCAL = GLOBAL:LOCAL
+NEXT
+;コンフィグの設定をロード
+FOR LOCAL, 10, 30
+	FLAG:LOCAL = GLOBAL:(LOCAL + 700) 
+NEXT

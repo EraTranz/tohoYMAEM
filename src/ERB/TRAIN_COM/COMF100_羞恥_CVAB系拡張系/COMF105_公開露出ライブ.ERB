@@ -1,0 +1,1001 @@
+﻿;=============================================================================
+;公開露出ライブ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE105
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:105 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;すでに実行しているとダメ
+SIF TFLAG:140 & 2
+	RETURN 0
+;アイテム｢マイク｣を持っていないとダメ
+SIF ITEM:マイク == 0
+	RETURN 0
+;[音感]持ち以外は歌唱技能が2以上ないとダメ
+SIF TALENT:音感 == 0 && ABL:歌唱技能 < 2
+	RETURN 0
+;露出癖が2以下だとダメ。ただし持っている素質によって値が変動
+LOCAL = 3
+;臆病
+SIF TALENT:臆病
+	LOCAL += 1
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	LOCAL -= 1
+;抑圧
+SIF TALENT:抑圧
+	LOCAL += 1
+;解放
+SIF TALENT:解放
+	LOCAL -= 1
+;恥じらい
+SIF TALENT:恥じらい
+	LOCAL += 1
+;恥薄い
+SIF TALENT:恥薄い
+	LOCAL -= 1
+;求められる露出癖が0～5となるように
+LOCAL = LIMIT(LOCAL, 0, 5)
+SIF ABL:露出癖 < LOCAL
+	RETURN 0
+;恋慕を持っていないまたは従順が5未満だとダメ
+SIF ABL:従順 < 5 && TALENT:恋慕 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;クスコ着けているとダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;緊縛しているとダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;猿轡しているとダメ
+SIF TEQUIP:口装着器具
+	RETURN 0
+;野外プレイ中でないとダメ
+SIF TEQUIP:野外プレイ == 0
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 105) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM105
+PRINTL 公開露出ライブ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 105
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+;-------------------------------------------------
+;中庭以外なら、成功失敗に関わらず、集団視姦モードへ
+;-------------------------------------------------
+IF FLAG:15 & 256
+	SIF TFLAG:150 != 0
+		TFLAG:151 = 4
+ENDIF
+;地の文(共通)呼び出し、この時点では成功失敗は不明
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+;-------------------------------------------------
+;成功できるかの判定
+;-------------------------------------------------
+TFLAG:240 = 0
+
+;ABL:欲望
+SIF ABL:欲望
+	TFLAG:240 += ABL:欲望
+;ABL:露出癖
+SIF ABL:露出癖
+	TFLAG:240 += ABL:露出癖 * 2
+;ABL:歌唱技能
+SIF ABL:歌唱技能
+	TFLAG:240 += ABL:歌唱技能 * 3
+;MARK:快楽刻印
+SIF MARK:快楽刻印
+	TFLAG:240 += MARK:快楽刻印 * 2
+;MARK:恐怖刻印
+SIF MARK:恐怖刻印
+	TFLAG:240 -= MARK:恐怖刻印 * 3
+;MARK:反発刻印
+SIF MARK:反発刻印
+	TFLAG:240 -= MARK:反発刻印 * 5
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+SIF LOCAL:2
+	TFLAG:240 += LOCAL:2 * 2
+
+;EXP:歌唱経験(相当高くないと＋にならない)
+IF EXP:歌唱経験 < EXPLV:1
+	TFLAG:240 -= 2
+ELSEIF EXP:歌唱経験 < EXPLV:2
+	TFLAG:240 -= 1
+ELSEIF EXP:歌唱経験 < EXPLV:3
+	TFLAG:240 += 0
+ELSEIF EXP:歌唱経験 < EXPLV:4
+	TFLAG:240 += 1
+ELSEIF EXP:歌唱経験 < EXPLV:5
+	TFLAG:240 += 2
+ELSE
+	TFLAG:240 += 4
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TFLAG:240 -= 5
+;自制心
+SIF TALENT:自制心
+	TFLAG:240 -= 5
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TFLAG:240 += 5
+;恥じらい
+SIF TALENT:恥じらい
+	TFLAG:240 -= 5
+;恥薄い
+SIF TALENT:恥薄い
+	TFLAG:240 += 2
+;音感持ち
+SIF TALENT:音感
+	TFLAG:240 += 5
+;音痴持ち
+SIF TALENT:音痴
+	TFLAG:240 -= 2
+;喘息か求聞持持ち
+SIF TALENT:喘息 || TALENT:求聞持
+	TFLAG:240 -= 3
+
+;合計を表示(37以上で成功、未満で失敗イベントへ)
+;難易度上昇
+;ビデオで+10、Ｃ系またはカテーテル系道具装着で＋4、
+;Ｖ系やＡ系の道具で+5、拡張系道具装着でさらに＋3
+TFLAG:241 = 37
+SIF TEQUIP:ビデオ撮影
+	TFLAG:241 += 10
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:Ｕ系装着器具
+	TFLAG:241 += 4
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	TFLAG:241 += 5
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	TFLAG:241 += 5
+SIF TEQUIP:Ｖ系装着器具 == 2 || TEQUIP:Ｖ系装着器具 == 5 || TEQUIP:Ｖ系装着器具 == 6 || TEQUIP:Ｖ系装着器具 == 8 || TEQUIP:Ａ系装着器具 == 2 || TEQUIP:Ａ系装着器具 == 5 || TEQUIP:Ａ系装着器具 == 6 || TEQUIP:Ａ系装着器具 == 8 || TEQUIP:氷柱 > 2
+	TFLAG:241 += 3
+
+;ランダム要素
+TFLAG:241 += RAND:41
+SELECTCASE RAND:10
+	CASE IS < 5
+		LOCAL = 1
+	CASE 5, 6, 7
+		LOCAL = 1 + RAND(1, 3)
+	CASEELSE
+		LOCAL = 1 + RAND(1, 5)
+ENDSELECT
+
+TFLAG:240 /= LOCAL
+
+
+;成功、失敗
+IF TFLAG:240 < TFLAG:241
+	CALL COM105_FAIL
+ELSE
+	CALL COM105_SUCCESS
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+TFLAG:140 |= 2
+RETURN 1
+
+;-------------------------------------------------
+;実行決定(成功)ソース計算のみ
+;-------------------------------------------------
+@COM105_SUCCESS
+#LOCALSIZE 10
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 500
+DOWNBASE:1 += 500
+
+LOCAL:1 = 750
+LOCAL:2 = 900
+LOCAL:3 = 0
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+	LOCAL:3 += 0
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+	LOCAL:3 += 1
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 += 2
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+	LOCAL:3 += 4
+ELSE
+	TIMES LOCAL:1 , 1.20
+	LOCAL:3 += 8
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	LOCAL:3 += 0
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 50
+	SOURCE:液体追加 += 50
+	LOCAL:3 += 1
+	TIMES LOCAL:1, 1.20
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 100
+	SOURCE:液体追加 += 100
+	LOCAL:3 += 2
+	TIMES LOCAL:1, 1.40
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 200
+	SOURCE:液体追加 += 200
+	LOCAL:3 += 3
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 400
+	SOURCE:液体追加 += 400
+	LOCAL:3 += 4
+	TIMES LOCAL:1, 2.00
+ELSE
+	SOURCE:中毒充足 += 800
+	SOURCE:液体追加 += 800
+	LOCAL:3 += 5
+	TIMES LOCAL:1, 3.00
+ENDIF
+;ABL:歌唱技能をみる
+IF ABL:歌唱技能 == 0
+	LOCAL:3 += 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:歌唱技能 == 1
+	LOCAL:3 += 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:歌唱技能 == 2
+	LOCAL:3 += 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:歌唱技能 == 3
+	LOCAL:3 += 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:歌唱技能 == 4
+	LOCAL:3 += 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	LOCAL:3 += 5
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;目立ちたがり
+IF TALENT:目立ちたがり
+	TIMES LOCAL:1 , 1.50
+	LOCAL:3 += 10
+ENDIF
+;解放
+IF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+	LOCAL:3 += 5
+ENDIF
+;臆病
+IF TALENT:臆病
+	TIMES LOCAL:2 , 2.00
+	LOCAL:3 -= 10
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL:2 , 2.00
+	LOCAL:3 -= 7
+;恥じ薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:2 , 0.80
+	LOCAL:3 += 7
+ENDIF
+;魅力
+SIF TALENT:魅力
+	LOCAL:3 += 20
+;魅惑
+SIF TALENT:魅惑
+	LOCAL:3 += 10
+;謎の魅力
+SIF TALENT:謎の魅力
+	LOCAL:3 += 25
+;人気
+SIF TALENT:人気
+	LOCAL:3 += 30
+;鼓舞
+SIF TALENT:鼓舞
+	LOCAL:3 += 50
+;音感持ち
+SIF TALENT:音感
+	LOCAL:3 += 50
+;音痴持ち
+SIF TALENT:音痴
+	LOCAL:3 -= 20
+;喘息か求聞持持ち
+SIF TALENT:喘息 || TALENT:求聞持
+	LOCAL:3 -= 30
+
+SOURCE:露出 += LOCAL:1 /2
+SOURCE:屈従 += LOCAL:1 /4
+SOURCE:トラウマ += LOCAL:2 /5
+SOURCE:羞恥扇情 += LOCAL:1 /4
+SOURCE:性技学習 += LOCAL:1 /3
+SOURCE:逸脱 += LOCAL:2
+
+;アイマスク
+SIF TEQUIP:目装着器具
+	LOCAL:3 += 10
+;Ｃ装備
+SIF TEQUIP:Ｃ系装着器具
+	LOCAL:3 += 13
+;Ｂ装備
+SIF TEQUIP:Ｂ系装着器具
+	LOCAL:3 += 15
+;Ｖ装備
+IF TEQUIP:Ｖ系装着器具
+	SELECTCASE TEQUIP:Ｖ系装着器具
+		;バイブ
+		CASE 1
+			LOCAL:3 += 5
+		;要石
+		CASE 2
+			LOCAL:3 += 6
+		;ローター
+		CASE 3
+			LOCAL:3 += 5
+		;電極
+		CASE 4
+			LOCAL:3 += 6
+		;バーベル
+		CASE 5
+			LOCAL:3 += 6
+		;焼芋
+		CASE 9
+			LOCAL:3 += 9
+	ENDSELECT
+	LOCAL:3 += 20
+ENDIF
+;Ａ装備
+IF TEQUIP:Ａ系装着器具
+	SELECTCASE TEQUIP:Ａ系装着器具
+		CASE 2
+			LOCAL:3 += 5
+		CASE 6
+			LOCAL:3 += 5
+		CASE 7 TO 8
+			LOCAL:3 += 5
+		CASE 9
+			LOCAL:3 += 5
+		CASE 10
+			LOCAL:3 += 5
+	ENDSELECT
+	LOCAL:3 += 20
+ENDIF
+;氷柱
+SIF TEQUIP:氷柱
+	LOCAL:3 += 5
+
+IF TEQUIP:コスチュームプレイ
+	LOCAL:3 += 20
+ELSEIF TEQUIP:サラシ
+	LOCAL:3 += 15
+ENDIF
+
+LOCAL:4 = (ABL:歌唱技能 + LOCAL:3 + RAND:6) / 5
+
+LOCAL:3 /= 1 + RAND:3
+IF RAND:3 != 0
+	LOCAL:3 += RAND:21
+ELSE
+	LOCAL:3 -= RAND:21
+	LOCAL:3 = MAX(LOCAL:3, 0)
+ENDIF
+
+;淫乱
+SIF TALENT:淫乱 && RAND:3 == 0
+	LOCAL:3 = 1000
+
+;ここで成功の地の文呼び出し
+SIF CFLAG:9 & 2 || CFLAG:9 & 1
+	CALL SYSTXT_TRAIN_MESSAGE_F_COM_105_SUCCESS, LOCAL:3
+
+IF LOCAL:3 >= 60
+	TFLAG:99 = 1
+	LOCAL:5 = 1
+	CALL COM105_CHAOS, LOCAL:3, LOCAL:5
+ELSE
+	SOURCE:達成感 += 7500
+	;呼び出せるならば、ここで口上側の乱交中、後の口上呼び出し関数を呼び出す
+	;専用口上
+	IF CFLAG:9 & 8 || CFLAG:9 & 1
+		;口上の存在判定
+		TRYCCALLFORM TRY_{NO:TARGET}
+			TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_COM_{SELECTCOM}_SUCCESS
+			CATCH
+				TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_GENERAL
+			ENDCATCH
+		CATCH
+		ENDCATCH
+	;汎用口上
+	ELSEIF CFLAG:9 & 4 || CFLAG:9 & 1
+		;口上を表示できるか判定
+		SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 1
+			TRYCALLFORM KOJO_X_TRAIN_MESSAGE_F_COM_{SELECTCOM}_SUCCESS
+	ENDIF
+ENDIF
+
+LOCAL:4 += RAND:5
+LOCAL:4 = MAX(LOCAL:4, 1)
+TCVAR:歌唱経験 += LOCAL:4
+
+;調教対象の公開露出ライブ成功回数
+CFLAG:51 += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;実行決定(失敗)
+;-------------------------------------------------
+@COM105_FAIL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 500
+DOWNBASE:1 += 500
+
+LOCAL:1 = 1500
+LOCAL:2 = 1000
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 50
+	SOURCE:液体追加 += 50
+	TIMES LOCAL:1, 1.20
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 100
+	SOURCE:液体追加 += 100
+	TIMES LOCAL:1, 1.40
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 200
+	SOURCE:液体追加 += 200
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 400
+	SOURCE:液体追加 += 400
+	TIMES LOCAL:1, 2.00
+ELSE
+	SOURCE:中毒充足 += 800
+	SOURCE:液体追加 += 800
+	TIMES LOCAL:1, 3.00
+ENDIF
+;ABL:歌唱技能をみる
+IF ABL:歌唱技能 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:歌唱技能 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:歌唱技能 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:歌唱技能 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:歌唱技能 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 2.00
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1 , 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 2.00
+;恥薄い
+SIF TALENT:恥薄い
+	TIMES LOCAL:2 , 0.80
+
+SOURCE:露出 += LOCAL:1 /2
+SOURCE:屈従 += LOCAL:1 /4
+SOURCE:トラウマ += LOCAL:2 /10
+SOURCE:羞恥扇情 += LOCAL:1 /4
+SOURCE:性技学習 += LOCAL:1 /3
+SOURCE:逸脱 += LOCAL:2
+
+LOCAL:3 = RAND:5
+
+SIF TEQUIP:目装着器具
+	LOCAL:3 += 10
+SIF TEQUIP:Ｃ系装着器具
+	LOCAL:3 += 13
+SIF TEQUIP:Ｂ系装着器具
+	LOCAL:3 += 15
+
+IF TEQUIP:Ｖ系装着器具
+	SELECTCASE TEQUIP:Ｖ系装着器具
+		;バイブ
+		CASE 1
+			LOCAL:3 += 5
+		;要石
+		CASE 2
+			LOCAL:3 += 6
+		;ローター
+		CASE 3
+			LOCAL:3 += 5
+		;電極
+		CASE 4
+			LOCAL:3 += 6
+		;バーベル
+		CASE 5
+			LOCAL:3 += 6
+		;焼芋
+		CASE 9
+			LOCAL:3 += 9
+	ENDSELECT
+	LOCAL:3 += 20
+ENDIF
+IF TEQUIP:Ａ系装着器具
+	SELECTCASE TEQUIP:Ａ系装着器具
+		CASE 2
+			LOCAL:3 += 5
+		CASE 6
+			LOCAL:3 += 5
+		CASE 7 TO 8
+			LOCAL:3 += 5
+		CASE 9
+			LOCAL:3 += 5
+		CASE 10
+			LOCAL:3 += 5
+	ENDSELECT
+	LOCAL:3 += 20
+ENDIF
+
+SIF TEQUIP:氷柱
+	LOCAL:3 += 5
+
+IF TEQUIP:コスチュームプレイ
+	LOCAL:3 += 20
+ELSEIF TEQUIP:サラシ
+	LOCAL:3 += 15
+ENDIF
+
+LOCAL:4 = (ABL:歌唱技能 / 2 + LOCAL:3) / 3
+
+LOCAL:5 = 0
+;後悔乱交
+CALL COM105_CHAOS, LOCAL:3, LOCAL:5
+
+LOCAL:4 += RAND:3
+LOCAL:4 = MAX(LOCAL:4, 1)
+TCVAR:歌唱経験 += LOCAL:4
+
+;調教対象の公開露出ライブ失敗回数
+CFLAG:52 += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;ライブ中の乱交イベント
+;-------------------------------------------------
+;ARG   = (旧C) 調教対象が誘うような仕草をしたか？
+;ARG:1 = (旧S) 0:失敗、1:成功
+@COM105_CHAOS, ARG, ARG:1
+VARSET LOCAL,0
+LOCAL:8 = 2 + RAND:9
+SIF ARG > 999
+	LOCAL:8 *= (2+RAND:4)
+LOCAL:6 = 3 + RAND:5
+LOCAL:7 = RAND:16
+
+IF LOCAL:7 > 6 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:氷柱 == 0
+;Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		LOCAL = 40
+	ELSEIF ABL:Ａ感覚 == 1
+		LOCAL = 60
+	ELSEIF ABL:Ａ感覚 == 2
+		LOCAL = 90
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL = 130
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL = 180
+	ELSE
+		LOCAL = 240
+	ENDIF
+	LOCAL:4 = 2 + RAND:5
+	LOCAL *= LOCAL:4
+ENDIF
+
+;Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL:1 = 50
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL:1 = 80
+ELSEIF ABL:Ｂ感覚 == 2
+	LOCAL:1 = 160
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL:1 = 240
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL:1 = 320
+ELSE
+	LOCAL:1 = 480
+ENDIF
+LOCAL:1 *= LOCAL:8
+
+;Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:2 = 100
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:2 = 130
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:2 = 170
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:2 = 250
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:2 = 360
+ELSE
+	LOCAL:2 = 500
+ENDIF
+LOCAL:2 *= LOCAL:8
+
+IF LOCAL:7 < 10 && TEQUIP:Ｖ系装着器具 == 0 && TEQUIP:クスコ == 0 && TALENT:オトコ == 0
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+	TFLAG:1 = 1
+;Ｖ感覚をみる
+	IF ABL:Ｖ感覚 == 0
+		LOCAL:3 = 100
+	ELSEIF ABL:Ｖ感覚 == 1
+		LOCAL:3 = 120
+	ELSEIF ABL:Ｖ感覚 == 2
+		LOCAL:3 = 150
+	ELSEIF ABL:Ｖ感覚 == 3
+		LOCAL:3 = 180
+	ELSEIF ABL:Ｖ感覚 == 4
+		LOCAL:3 = 200
+	ELSE
+		LOCAL:3 = 250
+	ENDIF
+	LOCAL:5 = 2 + RAND:5
+	SIF TALENT:処女
+		LOCAL:3 *= LOCAL:5
+ENDIF
+
+LOCAL:9 = LOCAL:4+LOCAL:5+LOCAL:6+(LOCAL:8/2)
+
+;乱交地の文呼び出し
+SIF CFLAG:9 & 2 || CFLAG:9 & 1
+	CALL SYSTXT_TRAIN_MESSAGE_F_COM_105_RAPE, ARG:1, LOCAL:5, LOCAL:4, LOCAL:6
+
+
+;呼び出せるならば、ここで口上側の乱交中、後の口上呼び出し関数を呼び出す
+;専用口上
+IF CFLAG:9 & 8 || CFLAG:9 & 1
+	;口上の存在判定
+	;ARG:1は成功時の乱交(1)か、失敗時の乱交か(0)、無理矢理か能動的かは、以下の地の文の分岐を参照されたし
+	;実を言うと、能動的か無理矢理かは、成功失敗は関与しない
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_COM_{SELECTCOM}_RAPE, ARG:1
+		CATCH
+			TRYCALLFORM KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_GENERAL
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSEIF CFLAG:9 & 4 || CFLAG:9 & 1
+	;口上を表示できるか判定
+	SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 1
+		TRYCALLFORM KOJO_X_TRAIN_MESSAGE_F_COM_{SELECTCOM}_RAPE, ARG:1
+ENDIF
+
+
+IF LOCAL:5 > 0
+	TCVAR:Ｖ経験 += LOCAL:5
+	SIF TALENT:処女 == 1
+		TCVAR:異常経験 += 3
+	STAIN:ヴァギナ |= 2
+	STAIN:ヴァギナ |= 4
+ENDIF
+IF LOCAL:4 > 0
+	TCVAR:Ａ経験 += LOCAL:4
+	STAIN:アナル |= 2
+	STAIN:アナル |= 4
+ENDIF
+TCVAR:フェラ経験 += LOCAL:6
+SOURCE:性行動 += 310 * LOCAL:8
+SOURCE:達成感 += 370 * LOCAL:8
+SOURCE:恭順追加 += 150 * LOCAL:8
+SOURCE:痛み += 150 * LOCAL:8
+SOURCE:逸脱 += 150 * LOCAL:8
+STAIN:口 |= 2
+STAIN:口 |= 4
+SIF (LOCAL:4+LOCAL:5+LOCAL:6)/2 > 0
+	TCVAR:精液経験 += (LOCAL:4+LOCAL:5+LOCAL:6)/2
+TCVAR:被強姦経験 += 1
+TCVAR:被輪姦経験 += 1
+SOURCE:快Ｃ += LOCAL:2
+SOURCE:快Ｖ += LOCAL:3
+SOURCE:快Ａ += LOCAL
+SOURCE:快Ｂ += LOCAL:1
+SOURCE:屈従 += 750 * LOCAL:9
+SOURCE:トラウマ += 280 * LOCAL:9
+
+;調教対象の公開露出ライブ中の乱交回数
+CFLAG:53 += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;地の文(共通)
+;-------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_105
+PRINTFORM %CALLNAME:TARGET%は
+SIF TEQUIP:目装着器具
+	PRINT アイマスクを被ったまま
+IF TEQUIP:Ｃ系装着器具
+	IF TEQUIP:Ｃ系装着器具 == 1
+		PRINT クリキャップ
+	ELSEIF TEQUIP:Ｃ系装着器具 == 2
+		PRINT オナホール
+	ELSEIF TEQUIP:Ｃ系装着器具 == 4
+		PRINT クリ電極
+	ELSEIF TEQUIP:Ｃ系装着器具 == 6
+		PRINT 電極オナホール
+	ENDIF
+	IF TEQUIP:Ｂ系装着器具
+		PRINT と、
+	ELSE
+		PRINT を着けて
+	ENDIF
+ENDIF
+IF TEQUIP:Ｂ系装着器具
+	IF TEQUIP:Ｂ系装着器具 == 1
+		PRINT ニプルキャップ
+	ELSEIF TEQUIP:Ｂ系装着器具 == 2
+		PRINT 搾乳機
+	ELSEIF TEQUIP:Ｂ系装着器具 == 4
+		PRINT テープ付き電極
+	ENDIF
+	PRINT を着けて
+ENDIF
+IF TEQUIP:Ｖ系装着器具
+	PRINT 秘唇には
+	IF TEQUIP:Ｖ系装着器具 == 1
+		PRINT バイブ
+	ELSEIF TEQUIP:Ｖ系装着器具 == 2
+		PRINT 要石
+	ELSEIF TEQUIP:Ｖ系装着器具 == 3
+		PRINT ローター
+	ELSEIF TEQUIP:Ｖ系装着器具 == 4
+		PRINT 電極
+	ELSEIF TEQUIP:Ｖ系装着器具 == 5
+		PRINT バーベル
+	ELSEIF TEQUIP:Ｖ系装着器具 == 6
+		PRINT 風船
+	ELSEIF TEQUIP:Ｖ系装着器具 == 7
+		PRINT 愛液採集器
+	ELSEIF TEQUIP:Ｖ系装着器具 == 9
+		PRINT 焼芋
+	ENDIF
+	IF TEQUIP:コスチュームプレイ || TEQUIP:サラシ
+		PRINT が深々と咥えこまれ、
+	ELSE
+		PRINT を咥えたまま
+	ENDIF
+ENDIF
+IF TEQUIP:Ａ系装着器具
+	PRINT お尻の穴には
+	IF TEQUIP:Ａ系装着器具 == 1
+		PRINT アナルバイブ
+	ELSEIF TEQUIP:Ａ系装着器具 == 2
+		PRINT 要石
+	ELSEIF TEQUIP:Ａ系装着器具 == 3
+		PRINT ローター
+	ELSEIF TEQUIP:Ａ系装着器具 == 4
+		PRINT 電極
+	ELSEIF TEQUIP:Ａ系装着器具 == 5
+		PRINT ビーズ
+	ELSEIF TEQUIP:Ａ系装着器具 == 6
+		PRINT バルーン
+	ELSEIF TEQUIP:Ａ系装着器具 == 7 || TEQUIP:Ａ系装着器具 == 8
+		PRINT プラグ
+	ELSEIF TEQUIP:Ａ系装着器具 == 9
+		PRINT 巨峰
+	ELSEIF TEQUIP:Ａ系装着器具 == 10
+		PRINT バーベル
+	ELSEIF TEQUIP:氷柱
+		PRINT 氷柱
+	ENDIF
+	IF TEQUIP:コスチュームプレイ || TEQUIP:サラシ
+		PRINT を飲み込まされ、さらには
+	ELSE
+		PRINT を飲み込んだまま
+	ENDIF
+ENDIF
+IF TEQUIP:コスチュームプレイ == 2
+	PRINT スクール水着を着た状態で
+ELSEIF TEQUIP:コスチュームプレイ
+	PRINT 羞恥心を煽るような衣装を着けた状態で
+ELSEIF TEQUIP:サラシ
+	PRINT サラシを着た状態で
+ENDIF
+PRINTFORML 聴衆の前で歌った
+IF FLAG:15 & 256
+	IF TFLAG:150 == 1
+		PRINTFORML 神社の境内に、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 2
+		PRINTFORML 大きな屋敷の中に、歌声が響き渡る
+	ELSEIF TFLAG:150 == 3
+		PRINTFORML 長い階段の隅々まで、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 4
+		PRINTFORML 広い竹林の隅々まで、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 5
+		PRINTFORML 三途の川の対岸まで、歌声が響き渡る。
+;	ELSEIF TFLAG:150 == 6
+;		PRINTFORML 
+	ELSEIF TFLAG:150 == 7
+		PRINTFORML 小さな路地裏に、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 8
+		PRINTFORML 森の中に、歌声が響き渡る。
+;	ELSEIF TFLAG:150 == 9
+;		PRINTFORML 
+	ELSEIF TFLAG:150 == 10
+		PRINTFORML ひまわり畑に、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 11
+		PRINTFORML 都の裏道に、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 12
+		PRINTFORML 異界の空の下、歌声が響き渡る。
+	ELSEIF TFLAG:150 == 99
+		PRINTFORML 森の中に、歌声が響き渡る。
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;地の文(成功)
+;-------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_105_SUCCESS, ARG
+;称号取得に関係あるのでこの字句を変える場合、SOURCE2.ERBも参照のこと。
+TSTR:0 = 公開露出ライブ
+PRINTL 
+PRINTW   「♪～」
+PRINTW  「♪♪～」
+PRINTW 「♪～♪～」
+PRINTW ………………
+PRINTW      !
+PRINTL 
+
+;淫乱
+SIF TALENT:淫乱 && RAND:3 == 0
+	PRINTFORMW %CALLNAME:TARGET%は艶めかしい笑みを浮かべ、まるで誘うようなしぐさで踊っている……
+
+IF ARG >= 60
+	IF FLAG:15 & 256
+		PRINTFORMW %OUTDOOR_GALLERY_NAME()%達は%CALLNAME:TARGET%の歌に聴き惚れている
+	ELSE
+		PRINTFORMW 聴衆は%CALLNAME:TARGET%の歌に聴き惚れている
+	ENDIF
+ELSE
+	PRINTFORMW 歌い終わった%CALLNAME:TARGET%に盛大な拍手が送られた
+ENDIF
+
+;-------------------------------------------------
+;地の文(失敗)
+;-------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_105_FAILE
+;この後乱交
+
+;-------------------------------------------------
+;地の文(乱交)
+;-------------------------------------------------
+;ARG=0:失敗乱交、1:成功乱交、ARG:1=Ｖの回数、ARG:2=Ａの回数、ARG:3=口の回数
+@SYSTXT_TRAIN_MESSAGE_F_COM_105_RAPE, ARG, ARG:1, ARG:2, ARG:3
+;ARGが1だと成功乱交、ARG=0だと失敗乱交
+IF ARG == 1
+	PRINTFORMW %CALLNAME:TARGET%の魅力と歌声に魅せられたのか
+	PRINTFORMW 興奮した聴衆達が一斉に%CALLNAME:TARGET%のもとへなだれ込んだ……
+ELSE
+	;失敗したら基本的に犯されるみたいなんで
+	TSTR:0 = 後悔野外ライブ
+	PRINTL 
+	PRINTW   「♪～」
+	PRINTW  「♪♪～」
+	PRINTW 「♪～♪～」
+	PRINTW 「…………」
+	PRINTW ………………
+	PRINTL 
+	PRINTFORMW %CALLNAME:TARGET%は恥ずかしさのためか、それとも緊張したせいか
+	PRINTFORMW 歌っている最中にもかかわらず完全に凍りついてしまった……
+	PRINTFORMW 何のスイッチが入ったのか突然聴衆達は%CALLNAME:TARGET%に向かってなだれ込んだ……
+ENDIF
+
+PRINTW           ･
+PRINTW           ･
+PRINTW           ･
+PRINTL
+;淫魔、処女でない＋淫乱＋解放、処女でない＋淫乱＋快感に素直なら地の文が異なる
+IF TALENT:淫魔 || ((TALENT:処女 == 0) && TALENT:淫乱 && TALENT:解放) || ((TALENT:処女 == 0 ) && TALENT:淫乱 && TALENT:快感に素直)
+	PRINTFORM %CALLNAME:TARGET%は向かって来る聴衆をみると嬉しそうに飛び掛り
+	SIF ARG:1 > 0
+		PRINTFORM ヴァギナで{ARG:1}本
+	SIF ARG:2 > 0
+		PRINTFORM 、アヌスで{ARG:2}本
+	PRINTFORM 、口で{ARG:3}本
+	PRINTW もの肉棒を積極的かつおいしそうに貪り犯した……
+	;乱交されたフラグ
+	TFLAG:176 = 2
+ELSE
+	PRINTFORM %CALLNAME:TARGET%は群がった聴衆に
+	SIF ARG:1 > 0
+		PRINTFORM ヴァギナを{ARG:1}回
+	SIF ARG:2 > 0
+		PRINTFORM 、アヌスを{ARG:2}回
+	PRINTFORM 、口を{ARG:3}回
+	PRINTW 犯されてしまった……
+	;乱交されたフラグ
+	TFLAG:176 = 1
+ENDIF
+PRINTL 
+PRINTL 
+

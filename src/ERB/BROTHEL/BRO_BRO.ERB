@@ -1,0 +1,1316 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;売春関係の各種計算処理など
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;売春関係の処理を纏めています。
+;R：セット売春時に使用		→TFLAG:420～421
+
+;=============================================================================
+;売春イベントのメイン処理
+;=============================================================================
+;売春では、「店の人気に応じた客」＋「キャラの人気に応じた客」＋「常連客」のお客さんが訪れます。
+;「(プレイ内容＋キャラ補正＋館の人気＋娼婦人気)*客の人数」のお金が手に入ります。
+;
+;満足度は代表となるお客さん一人によって計算されます。
+;
+;ちなみに、常連客人数×10％の確率で常連客の人が来ます
+;常連客じゃない人が来たときに高い満足度を叩き出すと常連客が増えます。
+;
+;満足度に応じて、店の人気と、キャラの人気が増減します。
+;店の人気は全キャラの合計分でもあるので、増加率、下降率共に低めです。
+;なお、店の人気は「あなた」の人気として扱います。
+@EVENT_NEXTDAY_PROSTITUTE
+#LOCALSIZE 1
+DRAWLINE
+VARSET TFLAG, -1, 430, 440
+TFLAG:413 = 0
+TFLAG:414 = 0
+TFLAG:415 = 0
+TFLAG:440 = 0
+;;セット売春を行うキャラの登録番号を保存
+;TFLAG:420 = -1
+;TFLAG:421 = -1
+FOR LOCAL, 0, CHARANUM
+	;主人は弾く
+	SIF LOCAL == MASTER
+		CONTINUE
+	;売春を行っている場合は専用処理に飛ぶ
+	IF CFLAG:LOCAL:401
+		CALL PROSTITUTE_MAIN, LOCAL
+		SELECTCOM = -1
+	ENDIF
+NEXT
+;集団ストリップするとき
+SIF TFLAG:440 > 0
+	CALL PROSTITUTE_STRIP_MAIN
+;セット売春が実行可能な場合
+;SIF TFLAG:420 > -1 && TFLAG:421 > -1
+;	CALL SPRING_7TH
+;夜のパーティを実行する場合
+;SIF FLAG:3004
+;	CALL SPRING_8TH
+
+;体力が尽きた時のキャラ消滅チェック
+FOR LOCAL, 0, CHARANUM
+	SIF BASE:LOCAL:体力 > 0 || TALENT:LOCAL:死亡
+		CONTINUE
+
+	;キャラ死亡時のイベント口上呼び出し
+	IF LOCAL != MASTER
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, LOCAL, 98
+	ENDIF
+	;地の文章カット
+	IF CFLAG:LOCAL:99 == 0
+		PRINTFORMW %CALLNAME:LOCAL%の虚ろな視線は天上を見たまま、微動だにしていない。
+		PRINTW あなたは得難い原石が輝く前に、その光を吹き消してしまったのだ。
+		PRINTL 
+		PRINTFORMW %CALLNAME:LOCAL%は逝ってしまった……
+		PRINTL 
+	ENDIF
+	PRINTW  
+	IF FLAG:16 & 32 && LOCAL != MASTER
+		IF TALENT:LOCAL:妊娠 || TALENT:LOCAL:抱卵中 || (TALENT:LOCAL:育児中 && CFLAG:LOCAL:79 == 0)
+			MAXBASE:LOCAL:0 += 500
+			CALL RESET_ASSI_PREGNANT , LOCAL
+		;懐卵時の体力の最大値低下を戻す処理
+		ELSEIF TALENT:LOCAL:懐卵
+			MAXBASE:LOCAL:0 += 500
+		ENDIF
+		CALL LOST_TALENTS, LOCAL, 140, 0
+		CALL LOST_TALENTS, LOCAL, 141, RESULT
+		CALL LOST_TALENTS, LOCAL, 143, RESULT
+		CALL LOST_TALENTS, LOCAL, 145, RESULT
+		CALL LOST_TALENTS, LOCAL, 500, RESULT
+		SIF RESULT != 0
+			PRINTFORMW を失った
+		BASE:LOCAL:理性 = 0
+		MAXBASE:LOCAL:9 = 0
+		TALENT:LOCAL:死亡 = 1
+		SIF LOCAL == ASSI
+			ASSI = -1
+		;リザレクション共通処理
+		CALL COMMON_REVIVAL, LOCAL
+		BASE:LOCAL:体力 = 0
+		SIF TFLAG:999 == 1
+			TFLAG:899 = 1
+	ELSE
+		CALL SPRING_CHARA_GONE, LOCAL, TARGET, ASSI
+	ENDIF
+
+NEXT
+
+;キャラ変数のオーバーフロー回避
+FOR LOCAL, 0, CHARANUM
+	BASE:LOCAL:体力 = MAX(BASE:LOCAL:体力, 1)
+	BASE:LOCAL:気力 = MAX(BASE:LOCAL:気力, 0)
+
+	CALL EVENT_EXP_MAXIMUM, LOCAL
+	CALL EVENT_JUEL_MAXIMUM, LOCAL
+NEXT
+
+IF FLAG:1001 > 0
+	;スキップ時の詳細まとめ
+	SIF (TFLAG:413 + TFLAG:414) > 0
+		PRINTFORML 今日は、{TFLAG:413 + TFLAG:414}人が休みに入ります。
+	SIF TFLAG:413 > 0
+		PRINTFORML うち、{TFLAG:413}人が産休に入ります。
+ENDIF
+;維持費
+CALL BROTHEL_RUNNING_COST
+;娼館の人気自然減少
+CALL BROTHEL_WELKNOWN
+
+DRAWLINE
+
+;-------------------------------------------------
+;売春時におけるキャラの消滅処理
+;-------------------------------------------------
+;ARG=消したい奴の登録番号, ARG:1=調教対象の登録番号, ARG:2=助手の登録番号
+@SPRING_CHARA_GONE, ARG, ARG:1, ARG:2
+IF CFLAG:ARG:4 == 1024
+	CALL IRC_CHARA_GONE, ARG
+	DELCHARA ARG
+ENDIF
+
+;IF ARG:1 < 0 || ARG:1 == ARG
+;	TARGET = -1
+;ELSE
+;	TARGET = (ARG:1 > ARG) ? (ARG:1 - 1) # ARG:1
+;ENDIF
+;
+;IF ARG:2 < 0 || ARG:2 == ARG
+;	ASSI = -1
+;ELSE
+;	ASSI = (ARG:2 > ARG) ? (ARG:2 - 1) # ARG:2
+;ENDIF
+
+;=============================================================================
+;売春処理
+;=============================================================================
+;ここが売春の根幹部分です。ここから各関数へ飛びます。
+@PROSTITUTE_MAIN, ARG
+#LOCALSIZE 5
+;………………………………………………
+;ステータス変動数値リセット
+;………………………………………………
+;体力・気力・理性減少量
+VARSET DOWNBASE:ARG:0, 0
+VARSET DOWNBASE:ARG:1, 0
+VARSET DOWNBASE:ARG:9, 0
+;経験の変動数
+VARSET TCVAR:ARG:Ｖ経験, 0, 0, 100
+;宝珠変動数
+VARSET GOTJUEL:ARG:0, 0
+;TFLAG:400~413まですべて初期化
+VARSET TFLAG, 0, 400, 413
+;TFLAG:400~413まですべて初期化
+VARSET TFLAG, 0, 417, 422
+
+;妊娠判定
+TFLAG:416 = 0
+
+;売春コマンドの設定
+LOCAL = -1
+
+;集団ストリップのキャラは、別処理
+IF CFLAG:ARG:401 == 2 && TFLAG:440 < 10
+	;ここでリストを使えばよかったかな？
+	TFLAG:(430 + TFLAG:440) = ARG
+	TFLAG:440++
+	RETURN 0
+ELSEIF TFLAG:440 >= 10
+	RETURN 0
+ENDIF
+;………………………………………………
+;売春コマンドの実行の可否
+;………………………………………………
+;SELECTCASE CFLAG:ARG:401
+;	;ソフト売春、ＢＣ売春、Ａ売春、Ｖ売春を行う場合、売春可能判定を行い、可能なら実行
+;	CASE 0 TO 8
+;		;コマンド実行判定
+;		TRYCCALLFORM PROSTITUTE_ABLE_COM{CFLAG:ARG:401 * 10}, ARG
+;			SIF RESULT == 1
+;				LOCAL = CFLAG:ARG:401 * 10
+;		CATCH
+;		ENDCATCH
+;	;集団視姦、乱交売春は一時凍結
+;	CASE 5, 6
+;		RETURN 0
+;	;セット売春を行う場合、対応変数にキャラ登録番号を入れて処理を中断
+;	CASE 7
+;		IF TFLAG:420 == -1
+;			TFLAG:420 = ARG
+;		ELSEIF TFLAG:421 == -1
+;			TFLAG:421 = ARG
+;		ENDIF
+;		RETURN 0
+;	;夜のパーティを行う場合、処理を中断
+;	CASE 8
+;		RETURN 0
+;	CASEELSE
+;		RETURN 0
+;ENDSELECT
+
+LOCAL = (CFLAG:ARG:401 - 1) * 10
+
+;売春コマンドが実行できない場合はここで処理を中断
+SIF LOCAL < 0
+	RETURN 0
+
+DRAWLINE
+PRINTFORML %SHOW_CALLNAME(ARG)%
+TRYCCALLFORM PROSTITUTE_COM{LOCAL}, ARG
+	SIF RESULT == 0
+		RETURN 0
+CATCH
+	RETURN 0
+ENDCATCH
+;コマンドの口上・地の文表示
+CALL DISPLAY_KOJO_MESSAGE_PROSTITUTION, ARG
+
+LOCAL:2 = ABS(TFLAG:404)
+SIF LOCAL:2 == 0
+	LOCAL:2 = 1
+
+;売春コマンドが成功した場合、売春経験増加
+TCVAR:ARG:売春経験 += TFLAG:401 + LOCAL:2
+
+;売春による処女喪失の口上表示
+SIF (TFLAG:403 & 8 || TFLAG:403 & 4) && !TALENT:ARG:死亡
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 1400
+
+;売春による妊娠判定
+SIF TFLAG:416 != 0
+	CALL PROSTITUTION_PREGNANCY_CHECK, ARG
+
+;売春によるその他の判定
+CALL PROSTITUTION_FLAG_CHECK, ARG
+
+;売春の結果を清算、表示
+CALL PROSTITUTE_RESULT_CHECK, ARG
+
+
+;-------------------------------------------------
+;集団ストリップ処理
+;-------------------------------------------------
+@PROSTITUTE_STRIP_MAIN
+#DIM C_LOCAL
+DRAWLINE
+PRINTL 		ストリップショー
+DRAWLINE
+PRINTW 
+PRINTW 
+PRINTL ～本日のストリッパー～
+PRINTL 　
+;ソートの断念、トリを人気者にしたかった
+;CALL PROSTITUTE_STRIP_SORT_TFLAG, 0, TFLAG:440 - 1
+FOR LOCAL, 0, TFLAG:440
+	PRINTFORM %SHOW_CALLNAME(TFLAG:(430 + LOCAL))%
+	IF (LOCAL + 1) % 5 == 0 || LOCAL + 1 == TFLAG:440
+		PRINTL 
+	ELSE
+		PRINT  , 
+	ENDIF
+NEXT
+PRINTW 
+FOR C_LOCAL, 430, 430 + TFLAG:440
+	;………………………………………………
+	;ステータス変動数値リセット
+	;………………………………………………
+	;体力・気力・理性減少量
+	VARSET DOWNBASE:(TFLAG:C_LOCAL):0, 0
+	VARSET DOWNBASE:(TFLAG:C_LOCAL):1, 0
+	VARSET DOWNBASE:(TFLAG:C_LOCAL):9, 0
+	;経験の変動数
+	VARSET TCVAR:(TFLAG:C_LOCAL):0, 0, 0, 100
+	;宝珠変動数
+	VARSET GOTJUEL:(TFLAG:C_LOCAL):0, 0
+	;TFLAG:400~421まですべて初期化
+	VARSET TFLAG, 0, 400, 422
+	;妊娠判定
+	TFLAG:416 = 0
+	;売春コマンドの設定
+	LOCAL = -1
+;	SIF TALENT:MASTER:998
+;		PRINTFORML 
+	LOCAL = (CFLAG:(TFLAG:C_LOCAL):401 - 1) * 10
+
+	;売春コマンドが実行できない場合はここで処理を中断、たぶんないけど
+	SIF LOCAL < 0
+		RETURN 0
+	
+	
+	
+	
+	DRAWLINE
+	TRYCCALLFORM PROSTITUTE_COM{LOCAL}, (TFLAG:C_LOCAL)
+		SIF RESULT == 0
+			RETURN 0
+	CATCH
+		RETURN 0
+	ENDCATCH
+	;コマンドの口上・地の文表示
+	CALL DISPLAY_KOJO_MESSAGE_PROSTITUTION, (TFLAG:C_LOCAL)
+
+	LOCAL:2 = ABS(TFLAG:404)
+	SIF LOCAL:2 == 0
+		LOCAL:2 = 1
+
+	;売春コマンドが成功した場合、売春経験増加
+	TCVAR:(TFLAG:C_LOCAL):76 += TFLAG:401 + LOCAL:2
+
+	;売春による処女喪失の口上表示
+	SIF (TFLAG:403 & 8 || TFLAG:403 & 4) && !TALENT:(TFLAG:C_LOCAL):800
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, (TFLAG:C_LOCAL), 1400
+
+	;売春による妊娠判定
+	SIF TFLAG:416 != 0
+		CALL PROSTITUTION_PREGNANCY_CHECK, (TFLAG:C_LOCAL)
+
+	;売春によるその他の判定
+	CALL PROSTITUTION_FLAG_CHECK, (TFLAG:C_LOCAL)
+
+	;売春の結果を清算、表示
+	CALL PROSTITUTE_RESULT_CHECK, (TFLAG:C_LOCAL)
+NEXT
+
+
+;即席クイックソート、誰が使うんだ？
+;ARG:0 = 0 ,ARG:1 = ソートする個数 - 1
+@PROSTITUTE_STRIP_SORT_TFLAG, ARG:0, ARG:1
+#DIM LEFT_NUM
+#DIM RIGHT_NUM
+#DIM ERA_PIVOT
+LEFT_NUM = ARG:0
+RIGHT_NUM = ARG:1
+ERA_PIVOT = CFLAG:(TFLAG:(430 + ARG:1)):66
+WHILE ARG:0 < ARG:1
+	WHILE CFLAG:(TFLAG:(430 + ARG:1)):66 >= ERA_PIVOT && ARG:0 < ARG:1
+		ARG:1--
+	WEND
+	IF ARG:0 != ARG:1
+		TFLAG:(430 + ARG:0) = TFLAG:(430 + ARG:1)
+		ARG:0++
+	ENDIF
+	WHILE CFLAG:(TFLAG:(430 + ARG:0)):66 <= ERA_PIVOT && ARG:0 < ARG:1
+		ARG:0++
+	WEND
+	IF ARG:0 != ARG:1
+		TFLAG:(430 + ARG:1) = TFLAG:(430 + ARG:0)
+		ARG:1--
+	ENDIF
+	CFLAG:(TFLAG:(430 + ARG:0)):66 = ERA_PIVOT
+	ERA_PIVOT = ARG:0
+	ARG:0 = LEFT_NUM
+	ARG:1 = RIGHT_NUM
+	SIF ARG:0 < ERA_PIVOT
+		CALL PROSTITUTE_STRIP_SORT_TFLAG, ARG:0, ERA_PIVOT - 1
+	SIF ARG:1 > ERA_PIVOT
+		CALL PROSTITUTE_STRIP_SORT_TFLAG, ERA_PIVOT + 1, ARG:1
+WEND
+
+;-------------------------------------------------
+;売春での体力・気力・理性や経験等の変動処理
+;-------------------------------------------------
+@PROSTITUTE_RESULT_CHECK, ARG
+#LOCALSIZE 2
+
+;売春メンバーから外すか否かの判定(値に1が入ると売春メンバーから外れる)
+LOCAL:1 = 0
+CFLAG:ARG:403++
+CFLAG:ARG:404 = 0
+
+;ストレスの増加
+CALL CHECK_PROSTITUTION_STRESS, ARG
+
+;体力・気力の減少
+CALL CHECK_PROSTITUTION_LIFE, ARG
+
+;娼婦人気度の変動
+SIF TALENT:ARG:売春中毒 == 0
+	CFLAG:ARG:66 += TFLAG:406
+;娼館人気度の変動
+FLAG:3005 += TFLAG:407
+;累計来客数の加算
+FLAG:3006 += TFLAG:401
+;この周での来客数
+FLAG:3007 += TFLAG:401
+;売春中毒
+;[求愛依存]と[看板娘]所持の時、または、[求愛依存]所持で75%で、または、[看板娘]所持時50%で、または、[娼婦]所持時25%で、中毒度上昇
+IF (TALENT:ARG:求愛依存 == 1 && TALENT:ARG:看板娘 == 1) || (TALENT:ARG:求愛依存 == 1 && RAND:4 > 0) || (TALENT:ARG:求愛依存 == 0 && TALENT:ARG:看板娘 == 1 && RAND:2 == 0) || (TALENT:ARG:看板娘 == 0 && TALENT:ARG:娼婦 == 1 && RAND:4 == 0)
+	LOCAL = MAX(TALENT:ARG:求愛依存 * 3 + TALENT:ARG:看板娘 * 2 + TALENT:ARG:娼婦 + RAND:(TALENT:ARG:常連客 + 1), 2)
+	CFLAG:ARG:402 = LIMIT(CFLAG:ARG:402 + RAND(1, LOCAL), 0, 100)
+ENDIF
+
+;経験の入手
+FOR LOCAL, 0, 100
+	SIF TCVAR:ARG:LOCAL <= 0
+		CONTINUE
+
+	;Ｖ経験、Ａ経験、異常経験の変動を記録
+	IF LOCAL == 0 && (CFLAG:ARG:11 & 1) == 0
+		CFLAG:ARG:11 |= 1
+	ELSEIF LOCAL == 1 && (CFLAG:ARG:11 & 2) == 0
+		CFLAG:ARG:11 |= 2
+	ELSEIF LOCAL == 50 && (CFLAG:ARG:11 & 4) == 0
+		CFLAG:ARG:11 |= 4
+	ENDIF
+	EXP:ARG:LOCAL += TCVAR:ARG:LOCAL
+NEXT
+
+;売春で変動した宝珠
+CALL PROSTITUTION_CHECK_JUELGET, ARG
+
+;売春で得たお金
+CALL PROSTITUTION_CHECK_INCOME, ARG
+
+;売春結果表示スキップが無効の時、体力・気力や経験変動分等を表示する
+SIF (FLAG:1001 & 2) == 0
+	CALL PROSTITUTE_RESULT_SHOW, ARG
+
+;表示の関係上、宝珠入手の処理は後回し
+FOR LOCAL, 0, 101
+	SIF GOTJUEL:ARG:LOCAL == 0
+		CONTINUE
+	IF JUEL:ARG:LOCAL >= 9999999
+		GOTJUEL:ARG:LOCAL = 0
+	ELSEIF (JUEL:ARG:LOCAL + GOTJUEL:ARG:LOCAL) >= 9999999
+		GOTJUEL:ARG:LOCAL = 9999999 - JUEL:ARG:LOCAL
+	ENDIF
+
+	JUEL:ARG:LOCAL = LIMIT(JUEL:ARG:LOCAL + GOTJUEL:ARG:LOCAL, 0, 9999999)
+NEXT
+
+;売春関連素質取得イベント
+CALL PROSTITUTION_SUBEVENT, ARG
+
+IF TALENT:ARG:妊娠
+	PRINTFORM 妊娠中の売春行為は非常に危険です・
+	PRINTFORML %SHOW_CALLNAME(ARG)%が売春メンバーから外れました
+	CALL PROSTITUTION_LAYOFF_GENERAL, ARG
+	CFLAG:ARG:403 = 0
+	TFLAG:413++
+	IF TALENT:MASTER:998
+		PRINTFORML 
+		PRINTFORM 外された人:
+		PRINTFORML %SHOW_CALLNAME(ARG)%
+		PRINTFORML CFLAG:401 = {CFLAG:ARG:401}
+		PRINTFORML 
+	ENDIF
+ELSEIF BASE:ARG:体力 <= 500 && !(FLAG:16 & 32)
+	PRINTFORM 体力に限界が来ています。
+	PRINTFORML %SHOW_CALLNAME(ARG)%が売春メンバーから外れました
+	CALL PROSTITUTION_LAYOFF_GENERAL, ARG
+	CFLAG:ARG:403 = 0
+	TFLAG:414++
+	IF TALENT:MASTER:998
+		PRINTFORML 
+		PRINTFORM 外された人:
+		PRINTFORML %SHOW_CALLNAME(ARG)%
+		PRINTFORML CFLAG:401 = {CFLAG:ARG:401}
+		PRINTFORML 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;売春での体力・気力や経験等の変動分の表示処理
+;-------------------------------------------------
+@PROSTITUTE_RESULT_SHOW, ARG
+#LOCALSIZE 2
+;キャラ名及び売春で変動した体力・気力
+PRINTL 
+PRINTFORM ◇
+PRINTFORML %SHOW_CALLNAME(ARG)%◇
+PRINTFORM 体力 \@(DOWNBASE:ARG:0 >= 0) ? － # ＋\@{ABS(DOWNBASE:ARG:0), 3, LEFT}　気力 \@(DOWNBASE:ARG:1 >= 0) ? － # ＋\@{ABS(DOWNBASE:ARG:1), 3, LEFT}
+IF TALENT:ARG:死亡
+	PRINTFORM 　★死亡★
+ELSE
+	SIF TALENT:ARG:理性
+		PRINTFORM 　理性 \@(DOWNBASE:ARG:9 >= 0) ? － # ＋\@{ABS(DOWNBASE:ARG:9), 3, LEFT}
+	PRINTFORM 　\@(BASE:ARG:体力 < 500) ? ★瀕死★ # \@
+	PRINTFORM 　\@(BASE:ARG:気力 <= 0) ? ★気力０★ # \@
+ENDIF
+PRINTL 
+
+;人気度の変動
+
+IF TALENT:ARG:売春中毒 == 0
+	PRINTFORML \@(GROUPMATCH(NO:ARG, 1037, 1038, 1039, 1042, 1043, 1044, 2000, 2019)) ? 信仰心　 # 娼婦人気\@	\@(TFLAG:406 >= 0) ? ＋ # －\@{ABS(TFLAG:406), 3, LEFT}(現在{CFLAG:ARG:66})
+;	PRINTFORML 娼婦人気	\@(TFLAG:406 >= 0) ? ＋ # －\@{ABS(TFLAG:406), 3, LEFT}(現在{CFLAG:ARG:66})
+ELSE
+	PRINTFORML \@(GROUPMATCH(NO:ARG, 1037, 1038, 1039, 1042, 1043, 1044, 2000, 2019)) ? 信仰心　 # 娼婦人気\@	{ABS(TFLAG:417), 3, LEFT}(現在{CFLAG:ARG:66})
+ENDIF
+PRINTFORML 娼館人気	\@(TFLAG:407 >= 0) ? ＋ # －\@{ABS(TFLAG:407), 3, LEFT}(現在{FLAG:3005})
+
+;売春で変動した経験
+LOCAL:1 = 0
+FOR LOCAL, 0, 100
+	SIF TCVAR:ARG:LOCAL <= 0
+		CONTINUE
+	PRINTFORM 　%EXPNAME:LOCAL, 12, LEFT%＋{TCVAR:ARG:LOCAL, 4}
+
+	LOCAL:1 += 1
+	;改行するのか？ 続けて出力するのか？
+	IF LOCAL:1%3 == 0
+		PRINTL 
+	ELSE
+		PRINT 　
+	ENDIF
+NEXT
+SIF LOCAL:1%3 != 0
+	PRINTL 
+
+;売春で変動した宝珠
+FOR LOCAL, 0, 101
+	SIF GOTJUEL:ARG:LOCAL == 0
+		CONTINUE
+	IF JUEL:ARG:LOCAL >= 9999999
+		GOTJUEL:ARG:LOCAL = 0
+	ELSEIF (JUEL:ARG:LOCAL + GOTJUEL:ARG:LOCAL) >= 9999999
+		GOTJUEL:ARG:LOCAL = 9999999 - JUEL:ARG:LOCAL
+	ENDIF
+
+	SIF (JUEL:ARG:LOCAL + GOTJUEL:ARG:LOCAL) != 0
+		PRINTFORML %PALAMNAME:LOCAL%の珠×({JUEL:ARG:LOCAL, 7} \@(GOTJUEL:ARG:LOCAL >= 0) ? ＋ # －\@ {ABS(GOTJUEL:ARG:LOCAL), 7} -> {(JUEL:ARG:LOCAL + GOTJUEL:ARG:LOCAL), 7})
+NEXT
+
+;売春で得たお金
+PRINTFORML 今日は{TFLAG:401}人\@(CFLAG:ARG:401 == 5 || CFLAG:ARG:401 == 6) ? を一度に相手にし # の顧客が訪れ\@ました。
+SIF TFLAG:404 < 0
+	PRINTL サービスの悪さにクレームがよせられ、一部の料金を払い戻す羽目になりました。
+IF TFLAG:410 > 0
+	PRINTFORML %SHOW_CALLNAME(ARG)%は売春によって{TFLAG:410}圓を稼ぎました。
+ELSEIF TFLAG:410 == 0
+	
+ELSE
+	PRINTFORML %SHOW_CALLNAME(ARG)%は賠償金として{ABS(TFLAG:410)}圓を支払いました。
+ENDIF
+IF TFLAG:411 > 0
+	IF TFLAG:403 & 4 && TFLAG:403 & 8
+		PRINTFORML さらに、処女を破られてしまった賠償金として{TFLAG:411}圓を得た。
+	ELSEIF TFLAG:403 & 8
+		PRINTFORML さらに、規定外のサービスの代金として{TFLAG:411}圓を得た。
+	ELSEIF TFLAG:403 & 4
+		PRINTFORML さらに、処女を売った事で{TFLAG:411}圓を得た。
+	ENDIF
+ENDIF
+SIF TFLAG:412 > 0
+	PRINTFORML おまけに、売春の内容をビデオで撮影したものが{TFLAG:412}圓で売れました。
+
+DRAWLINE
+
+
+;=============================================================================
+;売春による収入の計算処理
+;=============================================================================
+;-------------------------------------------------
+;売春による収入
+;-------------------------------------------------
+;計算式は次の通り
+;「その人の元値」×「買った人数補正」×「プレイ内容補正」×「満足度補正」
+@PROSTITUTION_CHECK_INCOME, ARG
+DRAWLINE
+;キャラの元値、プレイ内容補正、買った人数、で基礎値を計算
+TFLAG:410 = (CALC_PROSTITUTION_INCOME_BASIC(ARG) + CALC_PROSTITUTION_COMMAND_BONUS(TFLAG:405) * TFLAG:409 / 100) * CALC_PROSTITUTION_CUSTOMER_BONUS(TFLAG:406)
+
+IF TALENT:MASTER:998
+	PRINTFORML キャラの元値:{CALC_PROSTITUTION_INCOME_BASIC(ARG)}
+	PRINTFORML プレイ内容補正:{CALC_PROSTITUTION_COMMAND_BONUS(TFLAG:405)}
+	PRINTFORML 買った人数:{CALC_PROSTITUTION_CUSTOMER_BONUS(TFLAG:406)}
+ENDIF
+;「1ダースなら安くなる」ということなので、人数が多いと補正
+;しかし、安くなるのはよい評価の時のみ
+IF TFLAG:404 > 0
+	SELECTCASE CALC_PROSTITUTION_CUSTOMER_BONUS(TFLAG:406)
+		CASE IS >= 6
+			TIMES TFLAG:410 , 0.90
+		CASE IS >= 12
+			TIMES TFLAG:410 , 0.75
+		CASE IS >= 15
+			TIMES TFLAG:410 , 0.50
+	ENDSELECT
+ENDIF
+;満足度補正
+SELECTCASE TFLAG:404
+	CASE 1
+		TIMES TFLAG:410 , 1.10
+	CASE 2
+		TIMES TFLAG:410 , 1.20
+	CASE IS >= 3
+		TIMES TFLAG:410 , 1.30
+ENDSELECT
+
+;罰金関連、[売春中毒]持ちはオミット
+IF TALENT:ARG:売春中毒 == 0
+	;処女を奪った等の場合の追加料金
+	IF TFLAG:403 & 4 && TFLAG:403 & 8
+		TFLAG:411 = (CALC_PROSTITUTION_INCOME_BASIC(ARG) + MIN(CFLAG:ARG:66, 900) + RAND(1, 100)) * 250
+		CFLAG:ARG:408++
+	ELSEIF TFLAG:403 & 8
+		TFLAG:411 = (CALC_PROSTITUTION_INCOME_BASIC(ARG) + MIN(CFLAG:ARG:66, 900) + RAND(1, 100)) * 50
+		CFLAG:ARG:408++
+	ELSEIF TFLAG:403 & 4
+		TFLAG:411 = (CALC_PROSTITUTION_INCOME_BASIC(ARG) + MIN(CFLAG:ARG:66, 900) + RAND(1, 100)) * 150
+	ELSE
+		TFLAG:411 = 0
+	ENDIF
+ENDIF
+
+;お客さんによるビデオのお買い上げ処理
+;娼婦人気でロイヤリティを付けたい
+SIF FLAG:3000 & 4 && TFLAG:400 >= 3 && TFLAG:403 & 16
+	TFLAG:412 = (CALC_PROSTITUTION_INCOME_BASIC(ARG) + CALC_PROSTITUTION_COMMAND_BONUS(TFLAG:405)) / 2 + CFLAG:ARG:66
+;今回来たのが常連客
+IF TFLAG:402 && TFLAG:410 > 0 && TFLAG:411 > 0 && TFLAG:412 > 0
+	TIMES TFLAG:410 , 1.20
+	TIMES TFLAG:411 , 1.20
+	TIMES TFLAG:412 , 1.20
+ENDIF
+
+SIF TALENT:MASTER:998 && TALENT:ARG:売春中毒
+	PRINTFORML 補正前値段：基本=　{TFLAG:410}、罰金=　{TFLAG:411}、ビデオ=　{TFLAG:412}
+
+;[売春中毒]持ちは、本人が好きでヤっているため安くなる。でも賠償金は安くならないよ！
+IF TALENT:ARG:売春中毒 && TFLAG:410 >= 0 && TFLAG:411 >= 0 && TFLAG:412 >= 0
+	TIMES TFLAG:410 , 0.20
+	TIMES TFLAG:411 , 0.20
+	TIMES TFLAG:412 , 0.20
+ENDIF
+;客が来なかった場合、収入は0
+IF TFLAG:401 == 0
+	TFLAG:410 = 0
+	TFLAG:411 = 0
+	TFLAG:412 = 0
+ENDIF
+
+;………………………………………………
+;娼館で稼いだ最高金額判定処理
+;………………………………………………
+MONEY:1 = (TFLAG:410 + TFLAG:411 + TFLAG:412)
+SIF MONEY:1 > MONEY:973
+	CALL NEW_HIGH_INCOME_ALL, 973
+SIF MONEY:1 > CFLAG:ARG:最高金額_売春
+	CALL NEW_HIGH_INCOME_COMMON, ARG, 80
+;各奴隷の売春による稼ぎの累計
+CALL TOTAL_INCOME_BY_BROTHEL, ARG
+;各奴隷の稼ぎの累計
+CALL TOTAL_INCOME_COMMON, ARG, MONEY:1
+;MONEY:977に娼館で稼いだ累計
+CALL INCOME_SLAVE_SALE, 977
+TFLAG:415 += MONEY:1
+MONEY += MONEY:1
+FLAG:3008 += MONEY:1
+;-------------------------------------------------
+;売春による収入の基準値の計算処理
+;-------------------------------------------------
+@CALC_PROSTITUTION_INCOME_BASIC(ARG)
+#FUNCTION
+#LOCALSIZE 1
+;元の値段によって基準値を決定
+SELECTCASE ITEMPRICE:(NO:ARG)
+	CASE IS < 500
+		LOCAL = 50
+		TFLAG:409 = 100
+	CASE IS < 1000
+		LOCAL = 100
+		TFLAG:409 = 105
+	CASE IS < 2000
+		LOCAL = 150
+		TFLAG:409 = 110
+	CASE IS < 5000
+		LOCAL = 200
+		TFLAG:409 = 115
+	CASE IS < 10000
+		LOCAL = 250
+		TFLAG:409 = 120
+	CASEELSE
+		LOCAL = 300
+		TFLAG:409 = 125
+ENDSELECT
+TFLAG:409 = MAX(TFLAG:409 - RAND:50, 100)
+LOCAL += RAND:50
+
+;汎用キャラ及びオリキャラは値打ちが下がる
+SIF (NO:ARG >= 3000 && NO:ARG < 4000) || NO:ARG == 2048 || NO:ARG == 2049
+	LOCAL -= 10
+
+;素質補正
+LOCAL = (LOCAL * SPRING_TALENTCHECK(ARG)) / 100
+
+SIF LOCAL > 2000
+	LOCAL = 1501 + RAND:500
+;[看板娘]
+SIF TALENT:ARG:看板娘
+	TIMES LOCAL , 1.50
+
+;難易度補正
+SELECTCASE FLAG:3
+	CASE 1
+		TIMES LOCAL , 2.0
+	CASE 2
+		TIMES LOCAL , 1.0
+	CASE 3
+		TIMES LOCAL , 1.0
+	CASE 4
+		TIMES LOCAL , 0.8
+	CASE 5
+		TIMES LOCAL , 0.5
+	CASE 6
+		TIMES LOCAL , 0.8
+	CASE 7
+		TIMES LOCAL , 0.5
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+
+;売春経験補正
+SELECTCASE EXP:ARG:売春経験
+	CASE IS <= 50
+	
+	CASE IS <= 100
+		TIMES LOCAL , 1.1
+	CASE IS <= 250
+		TIMES LOCAL , 1.2
+	CASE IS <= 500
+		TIMES LOCAL , 1.3
+	CASE IS <= 1000
+		TIMES LOCAL , 1.4
+	CASEELSE
+		TIMES LOCAL , 1.5
+ENDSELECT
+
+
+;エンドレスモードじゃない場合はプラス補正
+SIF FLAG:5 == 0
+	TIMES LOCAL , 1.20
+
+;キャップ処理。16未満の場合は16に底上げ
+LOCAL = MAX(LOCAL, 16)
+
+;[理性]
+SIF TALENT:ARG:狂気
+	TIMES LOCAL, 1.10
+
+;[狂気]
+SIF TALENT:ARG:狂気
+	LOCAL /= 2
+;売り物という事で隷属系素質持ちは売却額が激減
+SIF TALENT:ARG:烙印 || TALENT:ARG:傷物 || TALENT:ARG:精神崩壊 || TALENT:ARG:傀儡 || TALENT:ARG:壊造人格
+	LOCAL /= 8
+;[死亡]
+SIF TALENT:ARG:死亡
+	LOCAL /= 10
+
+;日曜日はサービスデー
+SIF DAY:7 == 1
+	TIMES LOCAL, 0.9
+
+RETURNF MAX(LOCAL, 1)
+
+;-------------------------------------------------
+;顧客人数の補正レベル計算処理
+;-------------------------------------------------
+@CALC_PROSTITUTION_CUSTOMER_BONUS(ARG)
+#FUNCTION
+#LOCALSIZE 3
+LOCAL = 1
+SELECTCASE ARG
+		;悪い全般
+		CASE IS < 0
+			SELECTCASE TFLAG:404
+				CASE -6
+					LOCAL = TFLAG:401 * -2
+				CASE -3
+					LOCAL = TFLAG:401 * -1
+				CASE -2
+					LOCAL = TFLAG:401 / -2
+				CASE -1
+					LOCAL = TFLAG:401 / -4
+			ENDSELECT
+		;普通
+		CASE 1
+			LOCAL = TFLAG:401
+		;まあ良い
+		CASE 3
+			LOCAL = TFLAG:401
+		;良い
+		CASE 5
+			LOCAL = TFLAG:401
+		;最高
+		CASE 10
+			LOCAL = TFLAG:401 + RAND:3
+		;また来たい
+		CASE 15
+			LOCAL = TFLAG:401 + RAND:6
+		;毎日来たい
+		CASE 25
+			LOCAL = TFLAG:401 * 3 / 2
+		;貢いでもいい
+		CASE 50
+			LOCAL = TFLAG:401 * 2
+ENDSELECT
+
+RETURNF LOCAL
+
+;-------------------------------------------------
+;プレイ内容補正
+;-------------------------------------------------
+@CALC_PROSTITUTION_COMMAND_BONUS(ARG)
+#FUNCTION
+SELECTCASE ARG
+	;キャバ and GrolyHole
+	CASE 0
+		RETURNF 100
+	CASE 1
+		RETURNF 100
+	CASE 2
+		RETURNF 110
+	CASE 3
+		RETURNF 130
+	;ストリップ
+	CASE 10
+		RETURNF 150
+	;AV
+	CASE 20
+		RETURNF 5000
+	;BCソープ
+	CASE 30
+		RETURNF 1500
+	;セット売春
+	CASE 60
+		RETURNF 30000
+	;Vゴム
+	CASE 120
+		RETURNF 2500
+	;セット売春ゴム
+	CASE 160
+		RETURNF 15000
+	;異常
+	CASE 80
+		RETURNF 10000
+	;触手
+	CASE 90
+		RETURNF 50000
+	
+	CASEELSE
+		RETURNF 180
+ENDSELECT
+
+;=============================================================================
+;売春におけるその他の判定処理
+;=============================================================================
+;-------------------------------------------------
+;売春における体力・気力・理性の処理
+;-------------------------------------------------
+@CHECK_PROSTITUTION_LIFE, ARG
+#LOCALSIZE 1
+;顧客人数に応じて減少量を補正
+SELECTCASE TFLAG:401
+	CASE 1
+		LOCAL = 1
+	CASE IS < 5
+		LOCAL = 5
+	CASE IS < 15
+		LOCAL = 10
+	CASE IS < 25
+		LOCAL = 14
+	CASE IS < 35
+		LOCAL = 17
+	CASE IS < 45
+		LOCAL = 19
+	CASEELSE
+		LOCAL = 20
+ENDSELECT
+
+DOWNBASE:ARG:0 = MAX(DOWNBASE:ARG:0 * LOCAL, 0)
+DOWNBASE:ARG:1 = MAX(DOWNBASE:ARG:1 * LOCAL, 0)
+DOWNBASE:ARG:9 = MAX((DOWNBASE:ARG:0 + DOWNBASE:ARG:1) * LOCAL * 3 / 2, 0)
+
+;処女喪失の処理
+IF TFLAG:403 & 4
+	DOWNBASE:ARG:0 += 10
+	DOWNBASE:ARG:1 += 50
+	DOWNBASE:ARG:9 += 500
+ENDIF
+
+;ストレスが多いと、より体力気力が減る
+SELECTCASE CFLAG:ARG:ストレス
+	CASE IS <= 100
+		
+	CASE IS <= 200
+		DOWNBASE:ARG:0 += 1
+		DOWNBASE:ARG:1 += 3
+		DOWNBASE:ARG:9 += 30
+	CASE IS <= 400
+		DOWNBASE:ARG:0 += 2
+		DOWNBASE:ARG:1 += 6
+		DOWNBASE:ARG:9 += 60
+	CASE IS <= 800
+		DOWNBASE:ARG:0 += 4
+		DOWNBASE:ARG:1 += 12
+		DOWNBASE:ARG:9 += 120
+	CASEELSE
+		DOWNBASE:ARG:0 += 10
+		DOWNBASE:ARG:1 += 25
+		DOWNBASE:ARG:9 += 250
+ENDSELECT
+
+;連続5日以上勤務すると、より体力気力が減る
+IF CFLAG:ARG:403 > 5 && TALENT:ARG:売春中毒 == 0
+	DOWNBASE:ARG:0 *= CFLAG:ARG:403
+	DOWNBASE:ARG:0 /= 5
+	DOWNBASE:ARG:1 *= CFLAG:ARG:403
+	DOWNBASE:ARG:1 /= 5
+	DOWNBASE:ARG:9 *= CFLAG:ARG:403
+	DOWNBASE:ARG:9 /= 5
+ENDIF
+;体力・気力・理性の減少の補正・減少処理は調教時の処理を利用する
+CALL CHECK_TRAIN_LIFE, ARG
+;リザレクション処理
+SIF MARK:ARG:同化刻印 || TALENT:ARG:蓬莱人 || TALENT:ARG:呪精 || TALENT:MASTER:野菜の錬金術師
+	BASE:ARG:体力 = MAX(BASE:ARG:体力, 1)
+
+;-------------------------------------------------
+;売春におけるストレスの処理
+;-------------------------------------------------
+@CHECK_PROSTITUTION_STRESS, ARG
+;顧客人数に応じて増加量を補正
+SELECTCASE TFLAG:401
+	CASE IS < 5
+		LOCAL = 5
+	CASE IS < 15
+		LOCAL = 10
+	CASE IS < 25
+		LOCAL = 14
+	CASE IS < 35
+		LOCAL = 17
+	CASE IS < 45
+		LOCAL = 19
+	CASEELSE
+		LOCAL = 20
+ENDSELECT
+
+;奉仕精神が高いと変化なし
+SELECTCASE ABL:ARG:奉仕精神
+	CASE IS <= 3
+		TIMES LOCAL, 5.0
+	CASE 4
+		TIMES LOCAL, 2.0
+ENDSELECT
+;売春経験が多いと変化なし
+SELECTCASE EXP:ARG:売春経験
+	CASE IS <= 200
+		TIMES LOCAL, 5.0
+	CASE IS <= 500
+		TIMES LOCAL, 4.0
+	CASE IS <= 1000
+		TIMES LOCAL, 3.0
+	CASE IS <= 2500
+		TIMES LOCAL, 2.0
+ENDSELECT
+;看板娘はやっぱり負荷がかかるよね
+SIF TALENT:ARG:看板娘 && TALENT:ARG:売春中毒 == 0
+	TIMES LOCAL, 2.5
+
+;連続5日以上勤務すると、もりもり溜まる
+SIF CFLAG:ARG:403 > 5 && TALENT:ARG:売春中毒 == 0
+	LOCAL *= CFLAG:ARG:403 - 4
+
+;服従関連素質所持は溜まりにくい補正
+SIF TALENT:ARG:服従
+	TIMES LOCAL, 0.8
+;隷属
+SIF TALENT:ARG:隷属
+	TIMES LOCAL, 0.75
+
+;調教度
+IF CFLAG:ARG:3668 <= -700
+	TIMES LOCAL , 1.3
+ELSEIF CFLAG:ARG:3668 <= -350
+	TIMES LOCAL , 1.2
+ELSEIF CFLAG:ARG:3668 <= 0
+	TIMES LOCAL , 1.1
+ENDIF
+
+IF !TALENT:ARG:理性
+	TIMES LOCAL , 0.7
+ELSE
+	SELECTCASE (BASE:ARG:理性 / 100)
+		;理性が0以下
+		CASE IS <= 0
+			TIMES LOCAL , 0.75
+		;理性が20未満
+		CASE IS < 20
+			TIMES LOCAL , 0.8
+		;理性が40未満
+		CASE IS < 40
+			TIMES LOCAL , 0.85
+		;理性が60未満
+		CASE IS < 60
+			TIMES LOCAL , 0.9
+		;理性が100未満
+		CASE IS < 100
+			TIMES LOCAL , 1.0
+		;理性が100以上
+		CASEELSE
+			TIMES LOCAL , 1.1
+	ENDSELECT
+ENDIF
+
+;發情
+SIF TALENT:ARG:常時発情 || (TALENT:ARG:危険日 && TALENT:ARG:発情可)
+	TIMES LOCAL:1 , 0.9
+
+;死亡
+SIF TALENT:ARG:死亡
+	LOCAL = 0
+
+;[売春中毒]持ちだとストレスは激減
+SIF TALENT:ARG:売春中毒
+	TIMES LOCAL, 0.1
+
+CFLAG:ARG:ストレス += LOCAL
+
+;-------------------------------------------------
+;売春によるその他の判定
+;-------------------------------------------------
+@PROSTITUTION_FLAG_CHECK, ARG
+IF TALENT:ARG:処女 && TFLAG:403 & 4
+	SETCOLOR 0xF06050
+	PRINTL 【純潔喪失】
+	RESETCOLOR
+	TCVAR:ARG:異常経験 += 1
+	TALENT:ARG:処女 = 0
+ELSEIF TALENT:ARG:処女 == 2 && TFLAG:403 & 32
+	SETCOLOR 0xF06050
+	PRINTL 【処女膜喪失】
+	RESETCOLOR
+	SIF CFLAG:ARG:405 < 3
+		TCVAR:ARG:異常経験 += 1
+	TALENT:ARG:処女 = 0
+	CFLAG:ARG:405++
+ENDIF
+PL_VAR_X:0 = 0
+PL_VAR_X:1 = 0
+SIF CFLAG:ARG:66 > 100
+	PL_VAR_X:0 = 1
+SIF FLAG:3005 > 1000
+	PL_VAR_X:1 = 1
+
+;娼婦人気度、娼館人気の計算
+IF EXP:ARG:売春経験 == 0
+	TCVAR:ARG:異常経験 += 1
+	TFLAG:406 = CALC_PROSTITUTION_POPULARITY_BASIC(ARG)
+	TFLAG:407 = 1
+	;デビュー時は、もらえるお金に一定のプラス補正がかかります。
+	TFLAG:405 += 1
+ELSE
+	SELECTCASE TFLAG:404
+		;二度と来ない
+		CASE -6
+			TFLAG:406 = (PL_VAR_X:0 == 1) ? -1 * CFLAG:ARG:66 / 3 # -100
+			TFLAG:407 = (PL_VAR_X:1 == 1) ? -1 * FLAG:3005 / (10 - RAND:6) # -100
+		;かなり悪い
+		CASE -3
+			TFLAG:406 = (PL_VAR_X:0 == 1) ? -1 * CFLAG:ARG:66 / 5 # -50
+			TFLAG:407 = (PL_VAR_X:1 == 1) ? -1 * FLAG:3005 / 20 # -50
+		;悪い
+		CASE -2
+			TFLAG:406 = (PL_VAR_X:0 == 1) ? -1 * CFLAG:ARG:66 / 10 # -10
+			TFLAG:407 = (PL_VAR_X:1 == 1) ? -1 * FLAG:3005 / 50 # -20
+		;少し悪い
+		CASE -1
+			TFLAG:406 = (PL_VAR_X:0 == 1) ? -1 * CFLAG:ARG:66 / 50 # -2
+			TFLAG:407 = (PL_VAR_X:1 == 1) ? -1 * FLAG:3005 / 100 # -10
+		;普通
+		CASE 0
+			TFLAG:406 = 1
+			TFLAG:407 = 0
+		;まあ良い
+		CASE 1
+			TFLAG:406 = 3
+			TFLAG:407 = 0
+		;良い
+		CASE 2
+			TFLAG:406 = 5
+			TFLAG:407 = 0
+		;最高
+		CASE 3
+			TFLAG:406 = 10
+			TFLAG:407 = 1
+		;また来たい
+		CASE 4
+			TFLAG:406 = 15
+			TFLAG:407 = 2
+		;毎日来たい
+		CASE 5
+			TFLAG:406 = 25
+			TFLAG:407 = 3
+		;貢いでもいい
+		CASE 6
+			TFLAG:406 = 50
+			TFLAG:407 = 5
+			;常連客ゲット
+			SIF TFLAG:402 == 0 && TALENT:ARG:一線越えない == 0 && RAND:(TALENT:ARG:常連客 + 1) == 0
+				TFLAG:403 |= 512
+	ENDSELECT
+	;[売春中毒]持ちだと評価関係なく[娼婦人気]が上昇
+	;娼婦人気度の変動
+	TFLAG:417 = 75 + RAND(1, 25)
+	SIF TALENT:ARG:売春中毒
+		CFLAG:ARG:66 += TFLAG:417
+ENDIF
+
+;………………………………………………
+;娼館人気度初期値(デビュー時)計算処理
+;………………………………………………
+@CALC_PROSTITUTION_POPULARITY_BASIC(ARG)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL = TFLAG:404 * 10
+SIF LOCAL < 0
+	LOCAL = 0
+;[人気]
+SIF TALENT:ARG:人気 && LOCAL < 40
+	LOCAL += 40
+;[謎の魅力]、[魅力]、[魅惑]
+SIF TALENT:ARG:謎の魅力 || TALENT:ARG:魅力 || TALENT:ARG:魅惑
+	LOCAL += 10
+
+RETURNF LOCAL
+
+;--------------------------------------------------
+;売春における素質補正
+;--------------------------------------------------
+;ここでは、素質による否定の珠、体力、収入の増加減少を計算します
+;収入が増えると同時に否定の珠が増えるので、素質の選択が難しい……
+@SPRING_TALENTCHECK(ARG)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL = 85
+
+;[反抗的]
+SIF TALENT:ARG:反抗的
+	TIMES LOCAL , 1.20
+;[プライド高い]
+SIF TALENT:ARG:プライド高い
+	TIMES LOCAL , 1.50
+;[無関心]
+SIF TALENT:ARG:無関心
+	TIMES LOCAL , 0.90
+;[感情乏しい]
+SIF TALENT:ARG:感情乏しい
+	TIMES LOCAL , 0.90
+;[保守的]
+SIF TALENT:ARG:保守的
+	TIMES LOCAL , 1.20
+;[貞操観念]
+SIF TALENT:ARG:貞操観念
+	TIMES LOCAL , 1.80
+;[抑圧]
+SIF TALENT:ARG:抑圧
+	TIMES LOCAL , 1.50
+;[恥じらい]
+SIF TALENT:ARG:恥じらい
+	TIMES LOCAL , 1.20
+;[理性]
+SIF TALENT:ARG:理性
+	TIMES LOCAL , 1.10
+;[幼児]、ただし、成長することが前提
+SIF TALENT:ARG:幼児 && ((FLAG:11 & 32) != 0)
+	TIMES LOCAL , 5.00
+RETURNF LOCAL
+
+;-------------------------------------------------
+;珠取得処理
+;-------------------------------------------------
+;従順が高くないとガンガン溜まっていきます
+;従順が高くても溜まるのは溜まります
+@PROSTITUTION_CHECK_JUELGET, ARG
+;[求愛依存]または[売春中毒]だと「反転する」
+IF TALENT:ARG:求愛依存 || TALENT:ARG:売春中毒
+	GOTJUEL:ARG:12 += CALC_PROSTITUTION_JUELGET_BASIC(ARG) / 100
+;否定の珠
+ELSE
+	GOTJUEL:ARG:100 += CALC_PROSTITUTION_JUELGET_BASIC(ARG)
+ENDIF
+
+;………………………………………………
+;珠の入手量計算
+;………………………………………………
+@CALC_PROSTITUTION_JUELGET_BASIC(ARG)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL = TFLAG:401 * 5
+LOCAL *= MAX(6 - ABL:ARG:従順, 1)
+LOCAL *= MAX(6 - ABL:ARG:従順, 1)
+
+;対多人数補正
+SIF TFLAG:401 >= 10
+	TIMES LOCAL , 1.25
+;プレイ補正
+SELECTCASE TFLAG:405
+	;ストリップ
+	CASE 10
+		LOCAL *= 5
+	;AV
+	CASE 20, 120
+		LOCAL *= 10
+	;BCソープ
+	CASE 30
+		LOCAL *= 7
+	;セット売春
+	CASE 60, 160
+		LOCAL *= 50
+	;異常
+	CASE 80, 90
+		LOCAL *= 100
+ENDSELECT
+;[恋慕]
+SIF TALENT:ARG:恋慕
+	TIMES LOCAL , 1.20
+;[相愛]
+SIF TALENT:ARG:相愛
+	TIMES LOCAL , 2.50
+;[嫉妬]
+SIF TALENT:ARG:嫉妬
+	LOCAL *= 100
+
+;予定外の性行為に及ばれると増える
+SIF TFLAG:403 & 8
+	TIMES LOCAL , 1.50
+
+;処女を襲って奪われた場合
+SIF TFLAG:403 & 4 && TALENT:ARG:娼婦 == 0
+	LOCAL *= 3
+;娼婦状態で処女を売った場合
+SIF TFLAG:403 & 4 && TALENT:ARG:娼婦
+	LOCAL *= 2
+;カメラ撮影時は被写経験が少ないと増える
+SIF TFLAG:403 & 16 && EXP:ARG:被写経験 <= 100
+	TIMES LOCAL , 1.25
+;かなり異常な売春の場合
+SIF TFLAG:403 & 32
+	TIMES LOCAL , 2.50
+
+;周回プレイである
+SIF FLAG:6 > 1
+	TIMES LOCAL , 1.25
+;エンドレスモードじゃない場合はマイナス補正
+SIF FLAG:5 == 0
+	TIMES LOCAL , 0.80
+
+;素質補正
+LOCAL = (LOCAL * SPRING_TALENTCHECK(ARG)) / 100
+
+;[娼婦]
+SIF TALENT:ARG:娼婦
+	TIMES LOCAL , 0.80
+;[春の人]
+SIF TALENT:ARG:春の人
+	TIMES LOCAL , 0.75
+;[看板娘]
+SIF TALENT:ARG:看板娘
+	TIMES LOCAL , 0.80
+;服従関連素質所持は溜まりにくい補正
+SIF TALENT:ARG:服従
+	TIMES LOCAL, 0.8
+;隷属
+SIF TALENT:ARG:隷属
+	TIMES LOCAL, 0.75
+;場数が多いと何とやら
+SELECTCASE EXP:ARG:売春経験
+	CASE IS >= 2500
+		TIMES LOCAL , 0.25
+	CASE IS >= 1000
+		TIMES LOCAL , 0.50
+	CASE IS >= 500
+		TIMES LOCAL , 0.75
+	CASE IS >= 200
+		TIMES LOCAL , 0.90
+ENDSELECT
+;死亡
+SIF TALENT:ARG:死亡
+	TIMES LOCAL, 0.00
+
+RETURNF LIMIT(LOCAL, 0, 100000)
+
+;-------------------------------------------------
+;売春をやめる汎用処理
+;-------------------------------------------------
+@PROSTITUTION_LAYOFF_GENERAL, ARG
+SIF CFLAG:ARG:401 == 0 || (CFLAG:ARG:4 & 1024) == 0
+	RETURN 0
+
+FLAG:3001 = MAX(FLAG:3001 - 1, 0)
+CFLAG:ARG:401 = 0
+CFLAG:ARG:4 -= 1024
+
+;-------------------------------------------------
+;売春を任命する汎用処理
+;-------------------------------------------------
+@PROSTITUTION_APPOINT_GENERAL, ARG, ARG:1
+SIF CFLAG:ARG:401 == 0
+	FLAG:3001 = LIMIT(FLAG:3001 + 1, 0, ITEM:娼館)
+
+CFLAG:ARG:401 = ARG:1
+CFLAG:ARG:4 |= 1024

@@ -1,0 +1,402 @@
+﻿;---------------------------------------------------------------------------------------------------
+;テスト　カラーコールネーム
+;正式な使い方でなく、無理やり表示しているので今後変更の可能性も
+;利用する際は必ず、PRINTFORM文の一番最初に置くこと
+;---------------------------------------------------------------------------------------------------
+@SHOW_CALLNAME4, ARG, ARG:1, ARG:2
+#FUNCTIONS
+IF FLAG:10 & 16
+IF TALENT:ARG:ふたなり
+	SETCOLOR 0x00FF00
+ELSEIF TALENT:ARG:オトコ
+	SETCOLOR 0x0080FF
+ELSE
+	SETCOLOR 0xFF80FF
+ENDIF
+ENDIF
+PRINTFORM %SUBSTRING(CALLNAME:ARG,ARG:1,ARG:2)%
+RESETCOLOR
+RETURNF
+;---------------------------------------------------------------------------------------------------
+;テスト　カラーコールネーム
+;正式な使い方でなく、無理やり表示しているので今後変更の可能性も
+;利用する際は必ず、PRINTFORM文の一番最初に置くこと
+;引数は　キャラ登録番号,文字数,（0:LEFT 1:RIGHT)　
+;---------------------------------------------------------------------------------------------------
+@SHOW_CALLNAME3, ARG, ARG:1, ARG:2 = 0
+#FUNCTIONS
+IF FLAG:10 & 16
+IF TALENT:ARG:ふたなり
+	SETCOLOR 0x00FF00
+ELSEIF TALENT:ARG:オトコ
+	SETCOLOR 0x0080FF
+ELSE
+	SETCOLOR 0xFF80FF
+ENDIF
+ENDIF
+IF ARG:2 == 1
+	PRINTFORM %CALLNAME:ARG, ARG:1, RIGHT%
+ELSE
+	PRINTFORM %CALLNAME:ARG, ARG:1, LEFT%
+ENDIF
+RESETCOLOR
+RETURNF
+;---------------------------------------------------------------------------------------------------
+;テスト　カラーコールネーム
+;正式な使い方でなく、無理やり表示しているので今後変更の可能性も
+;利用する際は必ず、PRINTFORM文の一番最初に置くこと
+;---------------------------------------------------------------------------------------------------
+@SHOW_CALLNAME2, ARG, ARG:1 = 0
+#FUNCTIONS
+IF FLAG:10 & 16
+IF TALENT:ARG:ふたなり
+	SETCOLOR 0x00FF00
+ELSEIF TALENT:ARG:オトコ
+	SETCOLOR 0x0080FF
+ELSE
+	SETCOLOR 0xFF80FF
+ENDIF
+ENDIF
+PRINTFORM %CALLNAME:ARG, ARG:1%
+RESETCOLOR
+RETURNF
+;---------------------------------------------------------------------------------------------------
+;テスト　カラーコールネーム
+;正式な使い方でなく、無理やり表示しているので今後変更の可能性も
+;利用する際は必ず、PRINTFORM文の一番最初に置くこと
+;---------------------------------------------------------------------------------------------------
+@SHOW_CALLNAME, ARG, ARG:1 = 0
+#FUNCTIONS
+IF FLAG:10 & 16
+IF TALENT:ARG:ふたなり
+	SETCOLOR 0x00FF00
+ELSEIF TALENT:ARG:オトコ
+	SETCOLOR 0x0080FF
+ELSE
+	SETCOLOR 0xFF80FF
+ENDIF
+ENDIF
+PRINTFORM %CALLNAME:ARG, ARG:1%
+RESETCOLOR
+RETURNF
+
+;-------------------------------------------------------------------------------
+;    BARの魔改版
+;-------------------------------------------------------------------------------
+;    例  PRINTFORM %PRINT_COLORBAR(40,100,8,%UNICODE(0x2584)%,%UNICODE(0x2584)%,,0x404040)% 
+;        [===     ]
+;    引数はBARとほぼ一緒 + ARGSで描写文字の変更が可能(指定しない場合はBARと同じ仕様)
+;    ARG:3はバーの色(0xFFFFFF形式で指定),ARG:4はバーの背景色(0xFFFFFF形式で指定)
+;    ARG:5は底力の値,ARG:6は底力の色(0xFFFFFF形式で指定)
+;===============================================================================
+@PRINT_COLORBARM(ARG, ARG:1, ARG:2, ARGS = "*", ARGS:1 = ".", ARG:3, ARG:4, ARG:5, ARG:6)
+#LOCALSIZE 7
+ARG:3 = ARG:3 < 0 ? GETCOLOR() # ARG:3
+ARG:4 = ARG:4 < 0 ? GETCOLOR() # ARG:4
+ARG:6 = ARG:6 < 0 ? GETCOLOR() # ARG:6
+LOCAL:1 = ARG * ARG:2 / ARG:1
+LOCAL:2 = GETCOLOR()
+LOCAL:5 = ARG:5 * ARG:2 / ARG:1
+FOR LOCAL, 1, ARG:2 + 1
+	IF LOCAL:1 >= LOCAL
+		IF !LOCAL:3
+			SETCOLOR ARG:3
+			LOCAL:3 = 1
+		ENDIF
+		PRINTFORM %ARGS%
+	ELSEIF LOCAL:5 >= LOCAL
+		IF !LOCAL:6
+			SETCOLOR ARG:6
+			LOCAL:6 = 1
+		ENDIF
+		PRINTFORM %ARGS%
+	ELSE
+		IF !LOCAL:4
+			SETCOLOR ARG:4
+			LOCAL:4 = 1
+		ENDIF
+		PRINTFORM %ARGS:1%
+	ENDIF
+NEXT
+SETCOLOR LOCAL:2
+VARSET LOCAL
+
+;-------------------------------------------------------------------------------
+;    BARカラー化 (eramegatenより一部参照)
+;-------------------------------------------------------------------------------
+;    例  PRINTFORM %PRINT_COLORBAR(40,100,8,%UNICODE(0x2584)%,%UNICODE(0x2584)%,,0x404040,)% 
+;        [===     ]
+;	引数はBARとほぼ一緒 + ARGSで描写文字の変更が可能(指定しない場合はBARと同じ仕様)
+;	ARG:6はバー色(0xFFFFFF形式で指定),
+;	ARG:7はバー背景色(0xFFFFFF形式で指定),
+;	ARG:8はバーグラデーション幅(バー色数値に10進で四則演算)
+;===============================================================================
+@PRINT_COLORBAR2(ARG, ARG:1, ARG:2, ARGS = "*", ARGS:1 = ".", ARG:3, ARG:4, ARG:5 = 0, ARG:6)
+IF ARG:6 == 1
+	LOCAL:1 = ARG:1 / ARG:2
+ELSE
+	LOCAL:1 = ARG:1 / (ARG:2+ARG:2/32)
+ENDIF
+LOCAL:2 = GETCOLOR()
+LOCAL:3 = COUNT
+
+REPEAT ARG:2
+ARG = ARG - LOCAL:1
+IF ARG >= 0
+	SETCOLOR ARG:3 - (ARG:5 * COUNT)
+	PRINTFORM %ARGS%
+ELSE
+	SETCOLOR ARG:4
+	PRINTFORM %ARGS:1%
+ENDIF
+REND
+COUNT = LOCAL:3
+SETCOLOR LOCAL:2
+
+;-------------------------------------------------------------------------------
+;幅設定版カラーバー
+;ARG　変動ステータス現在値
+;ARG:1 変動ステータス最大値
+;ARG:2 表示数（バー長さ全角マス数）
+;ARG:3 文字色ベース
+;ARG:4 文字色暗部
+;ARG:5 文字色変動値
+;ARG:6 1:特殊バー延長
+;ARG:7 特殊スペース
+;ARG:8 PRINT_RECT x
+;ARG:9 PRINT_RECT y
+;ARG:10 PRINT_RECT 横幅
+;ARG:11 PRINT_RECT 縦幅
+;ARG:12 グラデーション間隔倍率(2なら2メモリ毎に変動)
+;-------------------------------------------------------------------------------
+@PRINTS_COLORBAR(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5 = 0, ARG:6, ARG:7, ARG:8 = 0, ARG:9 = 30, ARG:10 = 10, ARG:11 = 20, ARG:12 = 1)
+;最大値設定補強
+ARG:0 *= 100
+ARG:1 *= 100
+
+IF ARG:6 == 1
+	LOCAL:1 = ARG:1 / ARG:2
+ELSE
+	LOCAL:1 = ARG:1 / ARG:2
+ENDIF
+LOCAL:2 = GETCOLOR()
+LOCAL:3 = COUNT
+
+REPEAT ARG:2
+	ARG = ARG - LOCAL:1
+	IF ARG >= 0
+		SETCOLOR ARG:3 - (ARG:5 * (COUNT / ARG:12))
+		PRINT_RECT ARG:8, ARG:9, ARG:10, ARG:11
+	ELSE
+		SETCOLOR ARG:4
+		PRINT_RECT ARG:8, ARG:9, ARG:10, ARG:11
+	ENDIF
+REND
+IF ARG:7 > ARG:2
+	SETCOLOR 0x000000
+	FOR LOCAL, 0, ARG:7 - ARG:2
+		PRINT_RECT ARG:8, ARG:9, ARG:10, ARG:11
+	NEXT
+ENDIF
+COUNT = LOCAL:3
+SETCOLOR LOCAL:2
+
+;-------------------------------------------------------------------------------
+;(右から左)
+@PRINT_COLORBARL(ARG, ARG:1, ARG:2, ARGS = "*", ARGS:1 = ".", ARG:3, ARG:4, ARG:5 = 0)
+#DIM check
+LOCAL:1 = ARG:1 / (ARG:2-ARG:2/32)
+LOCAL:2 = GETCOLOR()
+check = 0
+
+FOR LOCAL, 0, ARG:2
+	ARG = ARG - LOCAL:1
+	SIF ARG >= 0
+		check += 1
+NEXT
+
+SETCOLOR ARG:4
+PRINTFORM %ARGS:1 * (ARG:2 - check)%
+FOR LOCAL, 0, check
+	SETCOLOR ARG:3 + (ARG:5 * (ARG:2 - LOCAL))
+	PRINTFORM %ARGS%
+NEXT
+
+SETCOLOR LOCAL:2
+
+;----------------------------------------------------------
+;@COLOR(ARGS)
+;----------------------------------------------------------
+@COLOR, ARGS
+#FUNCTION
+SELECTCASE TOUPPER(ARGS)
+	CASE "RED", "赤"
+		RETURNF 0xFF0000
+	CASE "DARKRED"
+		RETURNF 0x990000
+	CASE "BLUE"
+		RETURNF 0x0000FF
+	CASE "P-RED", "PASTEL-RED", "パ赤"
+		RETURNF 0xC07070
+	CASE "P-BLUE", "PASTEL-BLUE", "パ青"
+		RETURNF 0x7070C0
+	CASE "P-GREEN", "PASTEL-GREEN", "パ緑"
+		RETURNF 0x70C070
+	CASE "GREEN","緑"
+		RETURNF 0x00FF00
+	CASE "P-PURPLE", "PASTEL-PURPLE", "パ紫"
+		RETURNF 0xC070C0
+	CASE "P-YELLOW", "PASTEL-YELLOW", "パ黄"
+		RETURNF 0x505020
+	CASE "P-BGREEN", "P-BLUEGREEN", "PASTEL-BLUEGREEN", "パ青緑"
+		RETURNF 0x205050
+	CASE "WHITE", "白"
+		RETURNF 0xC0C0C0
+	CASE "BLACK", "黒"
+		RETURNF 0x000000
+	CASE "AQUA", "水色"
+		RETURNF 0x66FFFF
+	CASE "AQUA2", "水色2"
+		RETURNF 0x5090FF
+	CASE "GRAY", "灰色"
+		RETURNF 0x404040
+	CASE "LIGHT-GRAY", "明灰色"
+		RETURNF 0x777777
+	CASE "PINK", "桃"
+		RETURNF 0xFFCCFF
+	CASE "DARK-PINK", "黒桃"
+		RETURNF 0x990099
+	CASE "YELLOW", "黄"
+		RETURNF 0xFFFF00
+	CASE "ORANGE","橙"
+		RETURNF 0xFFA500
+	CASE "CREAM"
+		RETURNF 0xFFFFCC
+ENDSELECT
+
+;-------------------------------------------------------------------------------
+;    BARの色違え版
+;-------------------------------------------------------------------------------
+;    例  PRINTFORM %PRINT_COLORBAR(40,100,8,%UNICODE(0x2584)%,%UNICODE(0x2584)%,,0x404040)% 
+;        [===     ]
+;    引数はBARとほぼ一緒 + ARGSで描写文字の変更が可能(指定しない場合はBARと同じ仕様)
+;    ARG:3はバーの色(0xFFFFFF形式で指定),ARG:4はバーの背景色(0xFFFFFF形式で指定)
+;===============================================================================
+@PRINT_COLORBAR(ARG, ARG:1, ARG:2, ARGS = "*", ARGS:1 = ".", ARG:3, ARG:4)
+#LOCALSIZE 5
+ARG:3 = ARG:3 < 0 ? GETCOLOR() # ARG:3
+ARG:4 = ARG:4 < 0 ? GETCOLOR() # ARG:4
+LOCAL:1 = ARG * ARG:2 / ARG:1
+LOCAL:2 = GETCOLOR()
+FOR LOCAL, 1, ARG:2 + 1
+	IF LOCAL:1 >= LOCAL
+		IF !LOCAL:3
+			SETCOLOR ARG:3
+			LOCAL:3 = 1
+		ENDIF
+		PRINTFORM %ARGS%
+	ELSE
+		IF !LOCAL:4
+			SETCOLOR ARG:4
+			LOCAL:4 = 1
+		ENDIF
+		PRINTFORM %ARGS:1%
+	ENDIF
+NEXT
+SETCOLOR LOCAL:2
+VARSET LOCAL
+
+;-------------------------------------------------
+;カスタムバー用色セット関数@BARCOLORSET
+;PRINT_COLORBARのARG:3に利用し、ARG;4にRESULTを使う
+;-------------------------------------------------
+@BARCOLORSET, ARGS
+#FUNCTION
+ ;LOCALに色を代入
+SELECTCASE ARGS
+	CASE "濃赤"
+		RESULT:1 = 0x701000
+		RETURNF 0xF06050
+	CASE "紺"
+		RESULT:1 = 0x000000
+		RETURNF 0x6666FF
+	CASE "黄"
+		RESULT:1 = 0x505020
+		RETURNF 0xC0B050
+	CASE "桃"
+		RESULT:1 = 0x300020
+		RETURNF 0xFFCCFF
+	CASE "灰"
+		RESULT:1 = 0x333333
+		RETURNF 0x666666
+	CASE "赤"
+		RESULT:1 = 0x502020
+		RETURNF 0xC07070
+	CASE "薄赤"
+		RESULT:1 = 0x803040
+		RETURNF 0xF07090
+	CASE "青"
+		RESULT:1 = 0x202050
+		RETURNF 0x7070C0
+	CASE "緑"
+		RESULT:1 = 0x205020
+		RETURNF 0x70C070
+	CASE "紫"
+		RESULT:1 = 0x502050
+		RETURNF 0xC070C0
+	CASE "黄色"
+		RESULT:1 = 0x505020
+		RETURNF 0xC0C070
+	CASE "青緑"
+		RESULT:1 = 0x205050
+		RETURNF 0x70C0C0
+	CASE "白"
+		RESULT:1 = 0x202020
+		RETURNF 0xC0C0C0
+	CASE "オレンジ"
+		RESULT:1 = 0x504010
+		RETURNF 0xFF8000
+	CASE "水色"
+		RESULT:1 = 0x203030
+		RETURNF 0x5090FF
+	CASE "EXTRA"
+		RESULT:1 = 0x505020
+		RETURNF 0xFFFFDD
+	CASE "EXTRA2"
+		RESULT:1 = 0x505020
+		RETURNF 0xFFFFDD
+	 ;白
+	 CASEELSE
+		RESULT:1 = 0x202020
+		RETURNF 0xCCFFCC
+ENDSELECT
+
+;-------------------------------------------------
+;ハートマーク関数@HEART
+;	引数0：ハートの数（省略すると1つ）
+;	引数1：使用するフォント名（省略するとVerdana）
+;中抜きのハートマークを表示します
+;-------------------------------------------------
+@HEART(ARG = 1, ARGS)
+LOCALS = %GETFONT()%
+SETFONT "Times New Roman"
+PRINTFORM %UNICODE(0x2665)*ARG%
+;PRINTFORM %UNICODE(0x2661)*ARG%
+SETFONT LOCALS
+
+
+;ハート文字を返す
+;フォントは考慮していない
+@GET_HEART()
+#FUNCTIONS
+RETURNF UNICODE(0x2665)
+
+
+;ハート文字で挟む
+@CLIP_HEART(文字列)
+#FUNCTIONS
+#DIMS 文字列
+文字列 = %GET_HEART() + 文字列 + GET_HEART()%
+RETURNF 文字列
+
+

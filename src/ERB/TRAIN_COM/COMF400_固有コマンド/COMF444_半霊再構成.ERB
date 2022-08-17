@@ -1,0 +1,419 @@
+﻿;=============================================================================
+;半霊再構成
+;=============================================================================
+;半人前の妖夢ですら半霊で自身の分身を作れるのだから、師匠ならもっと自由自在だろう
+;というわけで作ってみた。ショタでもロリでも自由自在。さすが師匠
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE444
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:444 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;対象、または調教者が妖忌でないとダメ
+SIF NO:TARGET != 1070 && NO:PLAYER != 1070
+	RETURN 0
+;半霊(忌)が現在調教可能
+LOCAL:1 = 0
+FOR LOCAL, 0, CHARANUM
+	;主人や助手や調教対象なら除外
+	SIF LOCAL == MASTER || LOCAL == ASSI || LOCAL == TARGET
+		CONTINUE
+	;妊娠していたら除外
+	SIF TALENT:LOCAL:妊娠 == 1
+		CONTINUE
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:LOCAL:4
+		CONTINUE
+	;半霊(忌)だったらLOCAL:1に+1
+	SIF NO:LOCAL == 1091
+		LOCAL:1 += 1
+NEXT
+SIF LOCAL:1 == 0
+	RETURN 0
+;妖忌が対象のとき、助手可または恋慕または服従または調教者が幽々子
+IF NO:TARGET == 1070
+	SIF CFLAG:1 < 2 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && NO:PLAYER != 1020
+		RETURN 0
+ENDIF
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 444) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM444
+PRINTL 半霊再構成
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 444
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 半霊再構成
+
+IF NO:TARGET == 1070
+	DOWNBASE:0 += 200
+	DOWNBASE:1 += 1000
+ENDIF
+DRAWLINE
+PRINTL 再構成するキャラクターを選んでください
+REPEAT CHARANUM
+	;妊娠していたら除外
+	SIF TALENT:COUNT:妊娠 == 1
+		CONTINUE
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	SIF NO:COUNT == 1091
+		CALL ARRANGE_CHARALIST, COUNT
+REND
+
+$INPUT_LOOP_SELECT_CHARA
+INPUT
+IF RESULT < 0 || RESULT >= CHARANUM
+	GOTO INPUT_LOOP_SELECT_CHARA
+ENDIF
+
+LOCAL = TARGET
+TARGET = RESULT
+PRINTFORML 妖忌は%CALLNAME:TARGET%の姿を変えようとしている……
+
+PRINTL 性別はどうしますか？
+PRINTL [0]♂
+PRINTL [1]♀
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 0
+	TALENT:オトコ = 1
+ELSEIF RESULT == 1
+	TALENT:オトコ = 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+PRINTL 体型は？
+PRINTL [0]普通で
+PRINTL [1]小柄かな
+PRINTL [2]人形サイズだ！
+$INPUT_LOOP_2
+INPUT
+IF RESULT == 0
+	TALENT:小人体型 = 0
+	TALENT:小柄体型 = 0
+ELSEIF RESULT == 1
+	TALENT:小人体型 = 0
+	TALENT:小柄体型 = 1
+ELSEIF RESULT == 2
+	TALENT:小人体型 = 1
+	TALENT:小柄体型 = 1
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_2
+ENDIF
+
+IF TALENT:オトコ == 0
+	PRINTL 胸は……どうするべきか？
+	PRINTL [0]ぺったんこ！
+	PRINTL [1]掌にすっぽりと入るくらいがベター
+	PRINTL [2]普通でよくね？
+	PRINTL [3]大きいは正義
+	PRINTL [4]爆乳！　爆乳！！
+	$INPUT_LOOP_3
+	INPUT
+	IF RESULT == 0
+		TALENT:絶壁 = 1
+		TALENT:貧乳 = 0
+		TALENT:巨乳 = 0
+		TALENT:爆乳 = 0
+	ELSEIF RESULT == 1
+		TALENT:絶壁 = 0
+		TALENT:貧乳 = 1
+		TALENT:巨乳 = 0
+		TALENT:爆乳 = 0
+	ELSEIF RESULT == 2
+		TALENT:絶壁 = 0
+		TALENT:貧乳 = 0
+		TALENT:巨乳 = 0
+		TALENT:爆乳 = 0
+	ELSEIF RESULT == 3
+		TALENT:絶壁 = 0
+		TALENT:貧乳 = 0
+		TALENT:巨乳 = 1
+		TALENT:爆乳 = 0
+	ELSEIF RESULT == 4
+		TALENT:絶壁 = 0
+		TALENT:貧乳 = 0
+		TALENT:巨乳 = 0
+		TALENT:爆乳 = 1
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_3
+	ENDIF
+
+	PRINTL は、生やそうか？
+	PRINTL [0]ちんことかいらないから
+	PRINTL [1]ふたなりイズ正義！　英語で言うとJASUTEWISU!
+	$INPUT_LOOP_4
+	INPUT
+	IF RESULT == 0
+		TALENT:ふたなり = 0
+	ELSEIF RESULT == 1
+		TALENT:ふたなり = 1
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_4
+	ENDIF
+ENDIF
+
+PRINTL せっかくだ、ケモ耳とかは？
+PRINTL [0]さすがの俺もそれは引くわ……
+PRINTL [1]ひゃっはあ、やっちまいな！！
+$INPUT_LOOP_5
+INPUT
+IF RESULT == 0
+	TALENT:動物耳 = 0
+ELSEIF RESULT == 1
+	TALENT:動物耳 = 1
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_5
+ENDIF
+
+PRINTL 付いたところで利点はないけど、猫舌とか如何かな？
+PRINTL [0]せっかくだけど　【いりません】
+PRINTL [1]にゃーーん！　にゃんにゃんにゃにゃーん！！
+$INPUT_LOOP_6
+INPUT
+IF RESULT == 0
+	TALENT:猫舌 = 0
+ELSEIF RESULT == 1
+	TALENT:猫舌 = 1
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_6
+ENDIF
+
+;主人か助手が禁断の知識持ちの場合、種族選択も追加
+IF TALENT:MASTER:禁断の知識 || (ASSI > 0 && TALENT:ASSI:禁断の知識)
+	PRINTL 種族すらも操ってやんよ！
+	PRINT [0]え、普通でよくね？
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	PRINT [1]妖精さん！
+	IF (TALENT:小人体型 && TALENT:小柄体型) || (TALENT:小人体型 == 0 && TALENT:小柄体型 == 0)
+		PRINTFORM 　　　　　　　　　　　　*%TALENTNAME:128%になり
+		IF TALENT:感情乏しい
+			PRINTFORML 、%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL ます*
+		ENDIF
+	ELSEIF TALENT:小人体型 == 0 && TALENT:小柄体型
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	ENDIF
+	PRINT [2]ゾンビフェアリー！！！
+	IF (TALENT:小人体型 && TALENT:小柄体型) || (TALENT:小人体型 == 0 && TALENT:小柄体型 == 0)
+		PRINTFORM 　　　　　　*%TALENTNAME:128%になり
+		IF TALENT:感情乏しい == 0
+			PRINTFORML 、%TALENTNAME:22%を得ます*
+		ELSE
+			PRINTL ます*
+		ENDIF
+	ELSEIF TALENT:小人体型 == 0 && TALENT:小柄体型
+		IF TALENT:感情乏しい == 0
+			PRINTFORML 　　　　　　*%TALENTNAME:22%を得ます*
+		ELSE
+			PRINTL 
+		ENDIF
+	ENDIF
+	PRINT [3]吸血鬼って良いよね
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	PRINT [4]サイボーグ燃え！
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	PRINT [5]霊体って神秘的だよな
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	PRINT [6]うふふふふ　自律人形　うふふふふ
+		IF TALENT:感情乏しい
+			PRINTFORML 　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	PRINT [7]かっぱっぱ！
+	IF TALENT:動物耳
+		PRINTFORM 　　　　　　　　　　　*%TALENTNAME:116%
+		IF TALENT:感情乏しい
+			PRINTFORML と%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL を失います*
+		ENDIF
+	ELSE
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	ENDIF
+	PRINT [8]狐っ子、最強！
+	IF TALENT:動物耳 == 0
+		PRINTFORM 　　　　　　　　　　*%TALENTNAME:116%になり
+		IF TALENT:感情乏しい
+			PRINTFORML 、%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL ます*
+		ENDIF
+	ELSE
+		IF TALENT:感情乏しい
+			PRINTFORML 　　　　　　　　　　*%TALENTNAME:22%を失います*
+		ELSE
+			PRINTL 
+		ENDIF
+	ENDIF
+	$INPUT_LOOP_7
+	INPUT
+	;感情乏しいを失う
+	IF RESULT == 0
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;小柄体型・妖精を得て、感情乏しいを失う
+	ELSEIF RESULT == 1
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:小人体型 = 0
+		TALENT:小柄体型 = 1
+		TALENT:妖精 = 1
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;小柄体型・妖精・呪精・感情乏しいを得る
+	ELSEIF RESULT == 2
+		TALENT:感情乏しい = 1
+		TALENT:呪精 = 1
+		TALENT:小人体型 = 0
+		TALENT:小柄体型 = 1
+		TALENT:妖精 = 1
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;吸血鬼を得て、感情乏しいを失う
+	ELSEIF RESULT == 3
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 1
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;機械を得て、感情乏しいを失う
+	ELSEIF RESULT == 4
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 1
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;霊体を得て、感情乏しいを失う
+	ELSEIF RESULT == 5
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 1
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;人形を得て、感情乏しいを失う
+	ELSEIF RESULT == 6
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 1
+		TALENT:河童 = 0
+		TALENT:妖狐 = 0
+	;河童を得て、動物耳・感情乏しいを失う
+	ELSEIF RESULT == 7
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:動物耳 = 0
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 1
+		TALENT:妖狐 = 0
+	;妖狐・動物耳を得て、感情乏しいを失う
+	ELSEIF RESULT == 8
+		TALENT:感情乏しい = 0
+		TALENT:呪精 = 0
+		TALENT:動物耳 = 1
+		TALENT:妖精 = 0
+		TALENT:吸血鬼 = 0
+		TALENT:機械 = 0
+		TALENT:霊体 = 0
+		TALENT:人形 = 0
+		TALENT:河童 = 0
+		TALENT:妖狐 = 1
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_7
+	ENDIF
+ENDIF
+
+PRINTFORML %CALLNAME:TARGET%は妖忌の力で、その姿を変えた
+TARGET = LOCAL
+RETURN 1

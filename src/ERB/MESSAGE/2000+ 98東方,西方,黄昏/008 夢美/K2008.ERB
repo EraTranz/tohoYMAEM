@@ -1,0 +1,340 @@
+﻿;YM→YMAEコンバータによって作成されました
+;==============================================================
+;【No.2008　岡崎夢美】口上
+;==============================================================
+
+;========================================================
+;■システムから呼び出される関数は、原則このファイルに記述する
+;========================================================
+
+
+
+;========================================================
+;エキストラモード構文
+;自らの理想の嫁を表現するのに使う
+;========================================================
+@KOJO_2008_EXTRA_INITIALIZATION
+;PRINTFORML エキストラモードの選択
+;PRINTL [0]はい
+;PRINTL [1]いいえ
+;$INPUT_LOOP_1
+;INPUT
+;IF RESULT == 0
+	;PRINTFORMW エキストラモード実行
+;ELSEIF RESULT == 1
+	;PRINTFORMW エキストラモード無視
+;ELSE
+	;GOTO INPUT_LOOP_1
+;ENDIF
+
+;========================================================
+;口上ファイルの存在判定
+;========================================================
+;口上の存在判定（YM版）
+@TRY_2008
+RETURN 1
+
+;========================================================
+;専用口上表示の固定化判定
+;どれか1個のRETURNのみ有効にする
+;========================================================
+@KOJO_2008_DISPLAY_SETTINGS
+;専用口上＋地の文　or　専用口上のみ　をプレイヤーに選択させる
+;RETURN 1
+
+;専用口上のみを強要
+RETURN 2
+
+;専用口上＋地の文を強要
+;RETURN 3
+
+;========================================================
+;@KOJO_X_MESSAGE_LOOK_VIDEO
+;ビデオを一緒に鑑賞する時の口上
+;売却前の選択肢で鑑賞を選んだ場合に呼び出される
+;========================================================
+@KOJO_2008_MESSAGE_LOOK_VIDEO
+
+
+;========================================================
+;調教開始時の口上
+;========================================================
+@KOJO_2008_SLAVE_MESSAGE_TRAIN_START
+;開始時点での評価ランク設定
+CFLAG:__K2008N_CFLAG_STARTRANK__ = K2008F_RANK()
+
+;調教コマンド回数を初期化
+CALLF K2008F_COMCOUNT("RESET")
+
+;拒否リストの初期化
+CALLF K2008F_WAS_DENIED("RESET")
+
+;実施履歴の初期化
+CALLF K2008F_COMHISTORY("RESET")
+
+;SOUCE解析履歴の初期化
+CALL K2008_ANALYZE_SOURCES("RESET")
+
+;精液カウント処理の初期化
+CALLF K2008F_SAMENCOUNT("RESET")
+
+;コマンド固有の処理を呼び出す
+CALL K2008_COMSYSTEM("START")
+
+DRAWLINE
+
+;調教開始口上分岐
+IF CFLAG:__K2008N_CFLAG_FIRST__ == 0
+	SIF K2008F_CAN_TALK()
+		CALL K2008_MESSAGE_START_FIRST
+	CFLAG:__K2008N_CFLAG_FIRST__ = 1
+ELSE
+	;２回目以降
+	SIF K2008F_CAN_TALK()
+		CALL K2008_MESSAGE_START
+ENDIF
+
+;========================================================
+;調教終了時の口上
+;========================================================
+@KOJO_2008_SLAVE_MESSAGE_TRAIN_END
+
+;コマンド固有の処理を呼び出す
+CALL K2008_COMSYSTEM("END")
+
+DRAWLINE
+
+SIF K2008F_CAN_TALK()
+	CALL K2008_MESSAGE_END
+;調教日付を格納
+CFLAG:__K2008N_CFLAG_LASTTRAINDAY__ = DAY:0
+
+;調教コマンド回数を初期化
+CALLF K2008F_COMCOUNT("RESET")
+
+;拒否リストの初期化
+CALLF K2008F_WAS_DENIED("RESET")
+
+;実施履歴の初期化
+CALLF K2008F_COMHISTORY("RESET")
+
+;SOUCE解析履歴の初期化
+CALL K2008_ANALYZE_SOURCES("RESET")
+
+;========================================================
+;@DISPLAY_KOJO_MESSAGE_PLAYERCHANGE
+;調教者切り替え時の口上
+;========================================================
+@KOJO_2008_MESSAGE_CHANGEASSI
+
+
+;========================================================
+;@DISPLAY_KOJO_DENIAL_MESSAGE_COM
+;コマンド実行拒否の口上
+;========================================================
+@KOJO_2008_DENIAL_MESSAGE(ARG)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+
+;実行可能までの距離？を取得（正値が大きいほど遠い。0以下で実行可能）
+_DIST = TFLAG:241 - TFLAG:240
+ASSERT _DIST > 0
+
+;今回の調教中に、この命令を拒否したなら1、してないなら0
+_DENIED = K2008F_WAS_DENIED("GET", ARG)
+
+;今回の調教中に、この命令が実行できた回数。一度もできていないなら0
+_DONE = K2008F_HOWTIMES_COM(ARG)
+
+
+;ランク・コマンド指定の拒否口上があればそちらを優先
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_DENY_COM_{ARG}, _DIST, _DENIED, _DONE
+CATCH
+	;ない場合は、ランク未指定・コマンド指定の拒否口上に飛ばす
+	TRYCCALLFORM K2008_DENY_COM_{ARG}, _DIST, _DENIED, _DONE
+	CATCH
+		;ない場合は汎用拒否口上に飛ばす
+		CALL K2008_DENY_GENERAL, _DIST, _DENIED, _DONE
+	ENDCATCH
+ENDCATCH
+
+;拒否コマンドを登録
+CALLF K2008F_WAS_DENIED("SET", ARG)
+
+
+
+;========================================================
+;地の文に相当する場所
+;========================================================
+@KOJO_2008_TRAIN_MESSAGE_F_GENERAL
+
+;コマンド用CFLAG番号を指定
+__K2008N_CFLAG_SELECTCOM__ = 8000 + SELECTCOM
+ASSERT INRANGE(__K2008N_CFLAG_SELECTCOM__, 8000, 8999)
+
+;調教コマンド回数を加算
+CALLF K2008F_COMCOUNT("COUNTUP")
+
+;コマンド固有の処理を呼び出す
+CALL K2008_COMSYSTEM("SELECT")
+
+;地の文を表示しない設定の場合のみ、代替で口上側の地の文を呼び出す
+SIF (CFLAG:9 & 2) == 0
+	CALL K2008_COMMAND_TEXT
+
+
+;========================================================
+;コマンド口上前の共通関数
+;特定の条件下でコマンド口上を表示させないようにする場合はRETURN 1
+;1以外を返した場合はコマンド口上は表示される
+;========================================================
+@KOJO_2008_TRAIN_MESSAGE_S_BEFORE
+
+;ソースの事前解析処理をする
+CALL K2008_ANALYZE_SOURCES("PRESET")
+
+;ペニスとの接触回数を加算する
+CALL K2008_COUNT_P_TOUCH
+
+;========================================================
+;COM指定のコマンド口上がない場合はここに来る
+;	ソース解析口上を使うため、PALAMCNGで全口上を動かす
+;========================================================
+@KOJO_2008_TRAIN_MESSAGE_S_GENERAL
+
+RETURN 1
+
+;========================================================
+;@KOJO_X_MESSAGE_PALAMCNG
+;パラメータ変動をトリガーにした口上
+;パラメータ変動後に口上を発動します
+;========================================================
+@KOJO_2008_MESSAGE_PALAMCNG
+
+;ソース解析処理をする
+CALL K2008_ANALYZE_SOURCES("SET")
+
+;発言不可の場合は戻る
+SIF K2008F_CAN_TALK() == 0
+	RETURN 0
+
+;パラメータ変動口上
+CALL K2008_PALAMCNG
+
+;コマンド口上
+CALL K2008_COMMAND
+
+;絶頂口上
+CALL K2008_EX
+
+;射精口上（絶頂表示でRETURN 1の時は表示しない）
+SIF RESULT == 0
+	CALL K2008_EJAC
+
+RETURN 0
+
+
+;========================================================
+;@KOJO_X_MESSAGE_MARKCNG
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を出力されます
+;========================================================
+@KOJO_2008_MESSAGE_MARKCNG
+;とりあえず飛ばす（刻印変動がなければ無処理で帰ってくる）
+CALL K2008_MARKCNG
+
+;========================================================
+;調教コマンド口上の最後に呼ばれる
+;　注意：失神中は呼ばれない
+;========================================================
+@KOJO_2008_MESSAGE_COMEVENT
+;SOURCEが入ったことがあるかの経験管理
+CALL K2008_SETSOURCE
+
+
+;========================================================
+;追加口上
+;PALAM変化の表示後、ステータス表示前の間に挿入する
+;========================================================
+@KOJO_2008_TRAIN_TEXT_GENERAL
+
+;========================================================
+;@KOJO_X_MESSAGE_IMPRESSION関係
+;ステータス画面を見る時に出力されます
+;一言表示なのでセリフを一行で収めること
+;========================================================
+@KOJO_2008_MESSAGE_IMPRESSION
+CALL K2008_ONEWORD_SHOW_STATUS
+
+;==============================================================
+;特殊引き継ぎ処理
+;==============================================================
+@KOJO_2008_EVENT_ASSI_TAKEOVER(ARG)
+CALL K2008_ASSI_TAKEOVER(ARG)
+
+
+
+
+;==============================================================
+;■執筆メモ
+;コマンド実行の口上順（@SOURCE_CHECK関数からの呼び出し）
+;==============================================================
+;実行直後
+;各COMF内から、コマンド名表示直後に呼び出し
+;
+;DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+	;KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_COM_{SELECTCOM}
+		;COM指定がない場合
+		;KOJO_{NO:TARGET}_TRAIN_MESSAGE_F_GENERAL
+;
+;装着アイテム類のSOURCE変動処理中...
+;
+;DISPLAY_KOJO_TRAIN_MESSAGE_S_COM
+	;実行処理直後に
+	;KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_BEFORE
+		;RETURN 1されない場合
+		;KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_COM_{SELECTCOM}
+			;COM指定がない場合
+			;KOJO_{NO:TARGET}_TRAIN_MESSAGE_S_GENERAL
+;
+;浣腸プラグのイベント口上に回る（テンプレ内）
+;DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 4, 0
+	;KOJO_X1_MESSAGE_SUB_EVENT_SCENE4
+;
+;パラメータ計算中...
+;
+;パラメータ計算終了後
+;DISPLAY_KOJO_MESSAGE_PALAMCNG
+	;KOJO_{NO:TARGET}_MESSAGE_PALAMCNG
+;
+;刻印取得判定中...
+;
+;刻印判定後
+;DISPLAY_KOJO_MESSAGE_MARKCNG
+	;KOJO_{NO:TARGET}_MESSAGE_MARKCNG
+;
+;コマンドの最後（パラメータ変化よりは前）
+;DISPLAY_KOJO_MESSAGE_COMEVENT
+	;KOJO_{NO:TARGET}_MESSAGE_COMEVENT
+;
+;ここでパラメータ変動完了
+;以下、状態により1～3分岐
+;
+;1.失神継続のイベント口上
+;DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 11
+	;KOJO_X1_MESSAGE_SUB_EVENT_SCENE11
+;
+;2.失神復活のイベント口上
+;DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 12
+	;KOJO_X1_MESSAGE_SUB_EVENT_SCENE12
+;
+;3.失神無関係時は通常処理（追加地の文など）
+;DISPLAY_KOJO_TRAIN_TEXT_COM
+	;KOJO_{NO:TARGET}_TRAIN_TEXT_COM_{SELECTCOM}
+			;COM指定がない場合
+		;KOJO_{NO:TARGET}_TRAIN_TEXT_GENERAL
+;
+;開発度の計算結果後
+;DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 19
+	;KOJO_X1_MESSAGE_SUB_EVENT_SCENE19

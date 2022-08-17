@@ -1,0 +1,1828 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;キャラのＥＸ化に関する特殊処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;引き継ぎ時の通常キャラの巻き戻し処理や、黒い飴玉、XEXTRAモードの素質変動キャラ個別処理をここで行う
+;=============================================================================
+;引き継ぎ時のＥＸ化キャラ個別巻き戻し汎用処理
+;=============================================================================
+@RESET_EX_COMMON, ARG
+;名前も元に戻す
+NAME:ARG = %CSVNAME(NO:ARG,0)%
+CALLNAME:ARG = %CSVCALLNAME(NO:ARG,0)%
+;種族文字列も元に戻す
+CSTR:ARG:32 = %CSVCSTR(NO:ARG, 32, 0)%
+CSTR:ARG:33 = %CSVCSTR(NO:ARG, 33, 0)%
+;体力,気力の最大値は初期値に戻す
+MAXBASE:ARG:0 = CSVBASE(NO:ARG, 0, 0)
+MAXBASE:ARG:1 = CSVBASE(NO:ARG, 1, 0)
+;相性初期化・各種素質も初期値に戻す(最悪、整合性については問わない)
+FOR COUNT,1000, 5999
+	RELATION:ARG:COUNT = CSVRELATION(NO:ARG, COUNT, 0)
+NEXT
+FOR COUNT,0, 999
+	SIF COUNT != 0
+		TALENT:ARG:COUNT = CSVTALENT(NO:ARG, COUNT, 0)
+NEXT
+
+
+;何らかの方法で種族を変えられたフラグ、体力上昇・気力上昇の累積分を記憶しているCFLAG初期化
+CFLAG:ARG:5 = 0
+CFLAG:ARG:体力上昇累積分 = 0
+CFLAG:ARG:気力上昇累積分 = 0
+;身体測定フラグを寝せる(次回身体測定を行うため)
+CFLAG:ARG:8 = 0
+;素質変動を記憶しているCFLAG初期化
+CFLAG:ARG:12 = 0
+CFLAG:ARG:13 = 0
+;肥大陰核フラグリセット([肥大陰核]の時は除く)
+IF TALENT:ARG:肥大陰核 == 0
+	BASE:ARG:陰核 = 0
+	MAXBASE:ARG:7 = 0
+ENDIF
+;汎用口上(逆口上)の性格設定CFLAG初期化
+CFLAG:ARG:43 = 0
+CFLAG:ARG:44 = 0
+;行き先可能フラグもリセット
+CFLAG:ARG:300 = CSVCFLAG(NO:ARG, 300, 0)
+;日常生活フラグの一部をリセット(体力気力上昇分)
+CFLAG:ARG:1600 = 0
+CFLAG:ARG:1601 = 0
+;種族値を初期値にリセット
+FOR COUNT , 3200 , 3400
+	CFLAG:ARG:COUNT = CSVCFLAG(NO:ARG, COUNT, 0)
+NEXT
+;性格反転刻印リセット(というのは上の処理で明らかに性格反転処理が巻き戻っているので)
+MARK:ARG:80 = 0
+;妖精化フラグリセット(これも巻き戻ってるので)
+MARK:ARG:87 = 0
+;SPキャラフラグ削除
+CFLAG:ARG:0 = 0
+
+;=============================================================================
+;黒い飴玉のキャラ別素質変動処理
+;=============================================================================
+;--------------------------------------------------
+;黒い飴玉：霊夢様のイベント関数
+;--------------------------------------------------
+;IRCネタ。eratohoLやeratohoJの霊夢様csvの能力を擬似的に再現
+;黒い飴玉発のＥＸキャラでは多分最高の難易度を誇る
+@EX_CHARA01
+PRINTFORMW ＜%CALLNAME:TARGET%の封印を解除した＞
+PRINTFORMW ＜%CALLNAME:TARGET%は霊夢様になった＞
+NAME:TARGET = 霊夢様
+CALLNAME:TARGET = 霊夢
+NICKNAME:TARGET = 鬼巫女
+CFLAG:0 = 2
+;記念日、結婚・契約・陥落(これは淫乱がないときだけ)の日時を抹消
+CFLAG:結婚記念日 = 0
+CFLAG:契約記念日 = 0
+SIF TALENT:淫乱 == 0
+	CFLAG:陥落した日 = 0
+;体力+500,気力+300
+MAXBASE:0 += 500
+MAXBASE:1 += 300
+;一線越えないを消していたフラグを消す
+SIF CFLAG:13 & 64
+	CFLAG:13 -= 64
+;消滅素質：楽観的,一線越えない,貞操無頓着,痛みに強い,弱味,淫乱と淫魔以外の淫乱系,恋慕系,服従系,崩壊系,○敏感
+TALENT:楽観的 = 0
+TALENT:一線越えない = 0
+TALENT:貞操無頓着 = 0
+TALENT:解放 = 0
+TALENT:恥じらい = 0
+TALENT:弱味 = 0
+TALENT:痛みに強い = 0
+TALENT:濡れやすい = 0
+TALENT:Ｃ敏感 = 0
+TALENT:Ｖ敏感 = 0
+TALENT:Ａ敏感 = 0
+TALENT:Ｂ敏感 = 0
+REPEAT 4
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	IF TALENT:(150+COUNT)
+		CFLAG:14 -= LOCAL
+		TALENT:(150+COUNT) = 0
+	ENDIF
+REND
+SIF TALENT:服従
+	CFLAG:15 -= 1
+TALENT:服従 = 0
+IF TALENT:烙印
+	TALENT:烙印 = 0
+	TALENT:傷物 = 1
+	SIF CFLAG:15 & 2
+		CFLAG:15 -= 2
+ENDIF
+SIF TALENT:隷属
+	CFLAG:15 -= 4
+TALENT:隷属 = 0
+SIF TALENT:精神崩壊
+	CFLAG:17 -= 4
+TALENT:精神崩壊 = 0
+SIF TALENT:傀儡
+	CFLAG:17 -= 8
+TALENT:傀儡 = 0
+SIF TALENT:壊造人格
+	CFLAG:17 -= 32
+TALENT:壊造人格 = 0
+FOR COUNT,1, 10
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	IF TALENT:(170+COUNT)
+		CFLAG:16 -= LOCAL
+		TALENT:(170+COUNT) = 0
+	ENDIF
+NEXT
+;追加の素質:反抗的,気丈,生意気,プライド高い,抑圧,抵抗,恥薄い,濡れにくい,薬毒耐性,汚れ無視,
+;快感の否定,淫乱,倒錯的,サド,Ｃ鈍感,Ｖ鈍感,Ａ鈍感,Ｂ鈍感,狂気
+TALENT:反抗的 = 1
+IF TALENT:素直
+	TALENT:素直 = 0
+	SIF CFLAG:12 & 2048
+		CFLAG:12 -= 2048
+ENDIF
+TALENT:気丈 = 1
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:抑圧 = 1
+TALENT:抵抗 = 1
+TALENT:恥薄い = 1
+TALENT:濡れにくい = 1
+TALENT:薬毒耐性 = 1
+TALENT:汚れ無視 = 1
+TALENT:快感の否定 = 1
+TALENT:倒錯的 = 1
+TALENT:サド = 1
+TALENT:Ｃ鈍感 = 1
+TALENT:Ｖ鈍感 = 1
+TALENT:Ａ鈍感 = 1
+TALENT:Ｂ鈍感 = 1
+TALENT:狂気 = 1
+SIF TALENT:淫乱 == 0
+	CFLAG:16 |= 1
+TALENT:淫乱 = 1
+;共通イベントも含め、従順消滅
+ABL:従順 = (ABL:従順 > 0) ? 1 # 0
+;技巧1追加
+ABL:技巧 = MIN(ABL:技巧 + 1, 5)
+;好感度大幅減少
+CFLAG:好感度 = MIN(CFLAG:好感度, 5000) / 10
+;恐怖の相性10
+VARSET RELATION:TARGET:1000, 10, 2, 200
+;移動可能場所にあなた館追加
+CFLAG:300 |= 524288
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：魔梨沙のイベント関数
+;--------------------------------------------------
+;旧作魔理沙化
+;名前は区別がつきやすいように「魔梨沙」を採用
+@EX_CHARA02
+PRINTFORMW ＜封印されていた%CALLNAME:TARGET%の記憶を解いた＞
+PRINTFORMW ＜%CALLNAME:TARGET%は魔梨沙になった＞
+NAME:TARGET = 魔梨沙
+CALLNAME:TARGET = 魔梨沙
+NICKNAME:TARGET = 魔法と紅夢からなる存在
+;体力-400(ただし最低値600),気力-200(ただし最低値600)
+MAXBASE:0 = MAX(MAXBASE:0 - 400, 600)
+MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+;消滅素質:快感に素直
+TALENT:快感に素直 = 0
+;追加の素質:気丈,舌使い
+TALENT:気丈 = 1
+TALENT:舌使い = 1
+;能力の変動
+ABL:Ｃ感覚 = MAX(ABL:Ｃ感覚, 1)
+ABL:技巧 = MAX(ABL:技巧, 1)
+;絶頂経験が5未満なら5に増加
+EXP:絶頂経験 = MAX(EXP:絶頂経験, 5)
+;自慰経験が60未満なら60に増加
+EXP:自慰経験 = MAX(EXP:自慰経験, 60)
+;相性変動
+RELATION:1009 = 0
+RELATION:1069 = 0
+RELATION:2000 = 200
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸルーミアのイベント関数
+;--------------------------------------------------
+;ロダにあったＥＸルーミアcsvとＥＸルーミア追加パッチの能力を擬似的に再現
+;魅惑的なお姉さん風?
+@EX_CHARA03
+PRINTFORMW ＜%CALLNAME:TARGET%の封印を解除した＞
+PRINTFORMW ＜%CALLNAME:TARGET%はＥＸルーミアになった＞
+NAME:TARGET = ＥＸルーミア
+;体力+200,気力+500
+MAXBASE:0 += 200
+MAXBASE:1 += 500
+;幼稚を消していたフラグを消す
+SIF CFLAG:13 & 128
+	CFLAG:13 -= 128
+;消滅素質:プライド低い,好奇心,貞操無頓着,恥薄い,快感に素直,小柄体型,貧乳(絶壁),幼稚
+TALENT:プライド低い = 0
+TALENT:好奇心 = 0
+TALENT:貞操無頓着 = 0
+TALENT:恥薄い = 0
+TALENT:快感に素直 = 0
+TALENT:絶壁 = 0
+TALENT:貧乳 = 0
+TALENT:小人体型 = 0
+TALENT:小柄体型 = 0
+TALENT:幼稚 = 0
+;追加の素質:気丈,プライド高い,自制心,保守的,貞操観念,痛みに強い,汚臭敏感,献身的,サド,中毒しやすい,魅力,月光浴
+TALENT:気丈 = 1
+TALENT:プライド高い = 1
+TALENT:自制心 = 1
+TALENT:保守的 = 1
+TALENT:貞操観念 = 1
+TALENT:痛みに強い = 1
+TALENT:汚臭敏感 = 1
+TALENT:献身的 = 1
+TALENT:サド = 1
+TALENT:中毒しやすい = 1
+TALENT:魅力 = 1
+TALENT:月光浴 = 1
+IF TALENT:短髪
+	TALENT:短髪 = 0
+	TALENT:長髪 = 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸ大妖精のイベント関数
+;--------------------------------------------------
+;IRCネタの巨大妖精。
+;書き込みを元にいくつかの素質を独断と偏見で追加・削除
+;ちなみに最初に巨大妖精と言いだしたのも自分だったｒ(ｒｙ
+@EX_CHARA04
+PRINTFORMW ＜%CALLNAME:TARGET%の体は急激に成長した＞
+PRINTFORMW ＜%CALLNAME:TARGET%はＥＸ大妖精になった＞
+NAME:TARGET = ＥＸ大妖精
+;体力+500
+MAXBASE:0 += 500
+BASE:体力 = MAXBASE:0
+BASE:気力 = MAXBASE:1
+;消滅素質：素直,プライド低い(あった場合),絶壁,貧乳,小人体型,小柄体型
+TALENT:素直 = 0
+TALENT:プライド低い = 0
+TALENT:絶壁 = 0
+TALENT:貧乳 = 0
+TALENT:小人体型 = 0
+TALENT:小柄体型 = 0
+;追加の素質:生意気,プライド高い,Ｃ敏感,巨乳(爆乳以外)
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:Ｃ敏感 = 1
+SIF TALENT:爆乳 == 0
+	TALENT:巨乳 = 1
+;経験追加:Ｖ拡張経験,Ａ拡張経験,Ｕ拡張経験(10未満の場合、それぞれ10まで増加)
+EXP:Ｖ拡張経験 = MAX(EXP:Ｖ拡張経験, 10)
+EXP:Ａ拡張経験 = MAX(EXP:Ａ拡張経験, 10)
+EXP:Ｕ拡張経験 = MAX(EXP:Ｕ拡張経験, 10)
+;相性変動
+RELATION:1005 = 300
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸチルノのイベント関数(アドベントチルノ)
+;--------------------------------------------------
+;ロダに上がっていたアドベントチルノの能力を元に作成
+;元ネタに関してはググればすぐに分かるはず
+;ちょっとたくましくなった?
+@EX_CHARA05_1
+PRINTFORMW ＜%CALLNAME:TARGET%の見た目が凛々しくなった＞
+PRINTFORMW ＜%CALLNAME:TARGET%はアドベントチルノになった＞
+NAME:TARGET = アドベントチルノ
+;体力+500,気力+200
+MAXBASE:0 += 500
+MAXBASE:1 += 200
+;幼稚を消していたフラグを消す
+SIF CFLAG:13 & 128
+	CFLAG:13 -= 128
+;消滅素質：習得遅い,幼稚,回復遅い,妖精
+TALENT:習得遅い = 0
+TALENT:幼稚 = 0
+TALENT:回復遅い = 0
+TALENT:妖精 = 0
+;追加の素質:楽観的,抵抗,痛みに強い,献身的,両刀(武器的な意味合いで),人気,鼓舞,回復早い
+TALENT:楽観的 = 1
+TALENT:抵抗 = 1
+TALENT:痛みに強い = 1
+TALENT:献身的 = 1
+TALENT:両刀 = 1
+TALENT:人気 = 1
+TALENT:鼓舞 = 1
+TALENT:回復早い = 1
+;種族変数変更
+CSTR:32 = 人間
+CSTR:33 = 人間
+;相性変動
+RELATION:1006 = 150
+RELATION:1015 = 0
+RELATION:1025 = 150
+RELATION:1028 = 150
+;種族値を人間100%にセット
+FOR LOCAL , 3200 , 3400
+	IF LOCAL == 3201
+		CFLAG:LOCAL = 100
+	ELSE
+		CFLAG:LOCAL = 0
+	ENDIF
+NEXT
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸチルノのイベント関数(倍チルノ)
+;--------------------------------------------------
+;ロダに上がっていた⑱(倍チルノ)の能力を元に作成
+;ちなみに元ネタは(多分)クーリエ様の絵板にて一時期投稿された赤っぽいチルノである
+;原作通り、少しえろい
+@EX_CHARA05_2
+PRINTFORMW ＜%CALLNAME:TARGET%の姿が赤っぽく変化した＞
+PRINTFORMW ＜%CALLNAME:TARGET%は倍チルノになった＞
+NAME:TARGET = 倍チルノ
+CFLAG:0 = 2
+;体力+200,気力+500
+MAXBASE:0 += 200
+MAXBASE:1 += 500
+;消滅素質：習得遅い
+TALENT:習得遅い = 0
+;追加の素質:解放,恥薄い,習得早い,舌使い,禁断の知識,汚臭鈍感,汚れ無視,サド,両刀,中毒しやすい,小悪魔,鼓舞,回復早い
+TALENT:解放 = 1
+TALENT:恥薄い = 1
+TALENT:習得早い = 1
+TALENT:舌使い = 1
+TALENT:禁断の知識 = 1
+TALENT:汚臭鈍感 = 1
+TALENT:汚れ無視 = 1
+TALENT:サド = 1
+TALENT:両刀 = 1
+TALENT:中毒しやすい = 1
+TALENT:小悪魔 = 1
+TALENT:鼓舞 = 1
+TALENT:回復早い = 1
+;能力の変動
+ABL:欲望 = MAX(ABL:欲望, 3)
+ABL:技巧 = MAX(ABL:技巧, 2)
+ABL:露出癖 = MAX(ABL:露出癖, 1)
+ABL:レズっ気 = MAX(ABL:レズっ気, 3)
+ABL:自慰中毒 = MAX(ABL:自慰中毒, 1)
+;相性変動
+RELATION:1040 = 150
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸ小悪魔のイベント関数(ラヴォスこぁ)
+;--------------------------------------------------
+;IRCで上がっていた案を採用。素質はお嬢様と勇儀姐さんを足して2で割った感じに
+;弱点は左の乳首だ！でも防御(ガード)が堅いから気をつけろ！
+@EX_CHARA07_1
+PRINTFORMW ＜%CALLNAME:TARGET%から怪しげな気配を感じるようになった＞
+PRINTFORMW ＜%CALLNAME:TARGET%はラヴォスこぁになった＞
+NAME:TARGET = ラヴォスこぁ
+;体力+28000,気力+9000(体力：30000　気力：10000は某ラスボスのHPより)
+MAXBASE:0 += 28000
+MAXBASE:1 += 9000
+;消滅素質：Ｖ敏感
+TALENT:Ｖ敏感 = 0
+;追加の素質:反抗的,プライド高い,楽観的,痛みに強い,汚臭鈍感,Ｖ鈍感,Ｂ敏感,具現,回復早い
+TALENT:反抗的 = 1
+TALENT:プライド高い = 1
+TALENT:楽観的 = 1
+TALENT:痛みに強い = 1
+TALENT:汚臭敏感 = 1
+TALENT:Ｖ鈍感 = 1
+TALENT:Ｂ敏感 = 1
+TALENT:具現 = 1
+TALENT:回復早い = 1
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸ小悪魔のイベント関数(ビッグこぁ)
+;--------------------------------------------------
+;IRCで上がっていた案を独自解釈。モチーフはもちろん、某巨大戦艦
+;色々ビッグになります。さらに遮蔽板も復活します
+@EX_CHARA07_2
+PRINTFORMW ＜%CALLNAME:TARGET%はどことなくビッグになったようだ＞
+PRINTFORMW ＜%CALLNAME:TARGET%はビッグこぁになった＞
+NAME:TARGET = ビッグこぁ
+CFLAG:0 = 2
+;気力+500
+MAXBASE:1 += 500
+;消滅素質：小悪魔
+TALENT:小悪魔 = 0
+;追加の素質:処女,大乳導,人気,大甲斐性,Ｂ敏感,巨乳,巨躯
+;強制的に巨乳,巨躯にする
+TALENT:処女 = 1
+TALENT:小悪魔 = 1
+TALENT:人気 = 1
+TALENT:大甲斐性 = 1
+TALENT:Ｂ敏感 = 1
+TALENT:絶壁 = 0
+TALENT:貧乳 = 0
+TALENT:巨乳 = 1
+TALENT:爆乳 = 0
+TALENT:小人体型 = 0
+TALENT:小柄体型 = 0
+TALENT:巨躯 = 1
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸ小悪魔のイベント関数(クリスタルこぁ)
+;--------------------------------------------------
+;触手使えないかというロクでも無い思いつきによって誕生。モチーフはもちろん、某巨大戦艦
+;もちろん遮蔽板は復活します。さらに触手使役術を覚えています。さりげなく触手使役もLv3です
+;意味があるのかは不明です
+@EX_CHARA07_3
+PRINTFORMW ＜%CALLNAME:TARGET%の心は水晶のように透き通っている……＞
+PRINTFORMW ＜%CALLNAME:TARGET%はクリスタルこぁになった＞
+NAME:TARGET = クリスタルこぁ
+CFLAG:0 = 3
+;体力+500,気力+500
+MAXBASE:0 += 500
+MAXBASE:1 += 500
+;消滅素質：Ｃ鈍感
+TALENT:Ｃ鈍感 = 0
+;追加の素質:処女,Ｃ敏感,触手使役術
+TALENT:処女 = 1
+TALENT:Ｃ敏感 = 1
+TALENT:触手使役術 = 1
+;触手使役Lv3
+ABL:触手使役 = MAX(ABL:触手使役, 3)
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ＥＸアリスのイベント関数
+;--------------------------------------------------
+;csvファイルにあったちびアリスを擬似的に再現
+@EX_CHARA14
+PRINTFORMW ＜%CALLNAME:TARGET%は子供の姿になった＞
+PRINTFORMW ＜%CALLNAME:TARGET%はちびアリスになった＞
+NAME:TARGET = ちびアリス
+NICKNAME:TARGET = 死の少女
+;体力-500(ただし最低値600),気力+300
+MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
+MAXBASE:1 += 300
+;消滅素質1：調合知識,倒錯的,Ｃ敏感,Ｂ敏感,小人体型,大柄
+TALENT:調合知識 = 0
+TALENT:倒錯的 = 0
+TALENT:Ｃ敏感 = 0
+TALENT:Ｂ敏感 = 0
+TALENT:小人体型 = 0
+TALENT:巨躯 = 0
+;消滅素質2：淫乱,淫核,淫壷,淫尻,淫乳,キス魔,マゾ,妊娠,懐卵,恋慕,妄信,親愛,相愛,服従,烙印,隷属
+TALENT:妊娠 = 0
+TALENT:懐卵 = 0
+REPEAT 4
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	IF TALENT:(150+COUNT)
+		CFLAG:14 -= LOCAL
+		TALENT:(150+COUNT) = 0
+	ENDIF
+REND
+SIF TALENT:服従
+	CFLAG:15 -= 1
+TALENT:服従 = 0
+IF TALENT:烙印
+	TALENT:烙印 = 0
+	TALENT:傷物 = 1
+	SIF CFLAG:15 & 2
+		CFLAG:15 -= 2
+ENDIF
+SIF TALENT:隷属
+	CFLAG:15 -= 4
+TALENT:隷属 = 0
+FOR COUNT,0, 9
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	IF TALENT:(170+COUNT)
+		CFLAG:16 -= LOCAL
+		TALENT:(170+COUNT) = 0
+	ENDIF
+NEXT
+;追加の素質:処女,好奇心,習得早い,禁断の知識,小柄体型,貧乳,幼稚
+;強制的に貧乳にする
+TALENT:処女 = 1
+TALENT:好奇心 = 1
+TALENT:習得早い = 1
+TALENT:禁断の知識 = 1
+TALENT:小柄体型 = 1
+TALENT:幼稚 = 1
+TALENT:絶壁 = 0
+TALENT:貧乳 = 1
+TALENT:巨乳 = 0
+TALENT:爆乳 = 0
+;能力と経験をリセット
+REPEAT 100
+	IF COUNT == 10 && ABL:従順 > 0
+		ABL:従順 = 1
+	ELSE
+		ABL:COUNT = 0
+	ENDIF
+	EXP:COUNT = 0
+REND
+;欲望、技巧、レズっ気の数値を調整
+ABL:欲望 = 1
+ABL:技巧 = 1
+ABL:レズっ気 = 3
+;好感度リセット
+CFLAG:好感度 = 0
+;相性(win東方)を変化
+FOR COUNT, 1000, 1120
+	IF COUNT == 1001 || COUNT == 1002 || COUNT == 119
+		RELATION:COUNT = 200
+	ELSEIF COUNT == 1034 || COUNT == 100
+		RELATION:COUNT = 80
+	ELSE
+		RELATION:COUNT = 0
+	ENDIF
+NEXT
+;相性(98東方)を変化、二つにした方が処理回数も減るし…
+FOR COUNT, 2000, 2050
+	IF COUNT == 2019
+		RELATION:COUNT = 200
+	ELSEIF COUNT == 2000
+		RELATION:COUNT = 80
+	ELSE
+		RELATION:COUNT = 0
+	ENDIF
+NEXT
+;記念日、結婚・契約・陥落の日時を抹消
+CFLAG:結婚記念日 = 0
+CFLAG:契約記念日 = 0
+CFLAG:陥落した日 = 0
+
+;種族値を魔界人100%にセット
+FOR LOCAL , 3200 , 3400
+	IF LOCAL == 3240
+		CFLAG:LOCAL = 100
+	ELSE
+		CFLAG:LOCAL = 0
+	ENDIF
+NEXT
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：生前ゆゆ様のイベント関数
+;--------------------------------------------------
+;ささやき　―　えいしょう　―　いのり　―　ねんじろ！
+;ゆゆこ　は　げんきになりました。
+@EX_CHARA20
+PRINTFORMW ＜心なしか%CALLNAME:TARGET%の顔が生気を帯びたようだ……＞
+PRINTFORMW ＜%CALLNAME:TARGET%は人間に戻った＞
+;体力-400(ただし最低値600),気力-200(ただし最低値600)
+MAXBASE:0 = MAX(MAXBASE:0 - 400, 600)
+MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+;無関心を純愛モードで消していたフラグを消す
+SIF CFLAG:13 & 4
+	CFLAG:13 -= 4
+;消滅素質：プライド高い,無関心,貞操無頓着,痛みに強い,濡れにくい,魅力,魅惑,小悪魔,霊体
+TALENT:プライド高い = 0
+TALENT:無関心 = 0
+TALENT:貞操無頓着 = 0
+TALENT:痛みに強い = 0
+TALENT:濡れにくい = 0
+TALENT:魅力 = 0
+TALENT:魅惑 = 0
+TALENT:小悪魔 = 0
+TALENT:霊体 = 0
+;追加の素質:処女,臆病,プライド低い,好奇心,悲観的,一線越えない,貞操観念,抑圧,恥じらい,濡れやすい,禁断の知識,献身的,謎の魅力,回復遅い
+TALENT:処女 = 1
+TALENT:臆病 = 1
+TALENT:プライド低い = 1
+TALENT:好奇心 = 1
+TALENT:悲観的 = 1
+TALENT:一線越えない = 1
+TALENT:貞操観念 = 1
+TALENT:抑圧 = 1
+TALENT:恥じらい = 1
+TALENT:濡れやすい = 1
+TALENT:禁断の知識 = 1
+TALENT:献身的 = 1
+TALENT:謎の魅力 = 1
+TALENT:回復遅い = 1
+;種族変数変更
+CSTR:32 = 人間
+CSTR:33 = 人間
+;能力の変動
+;感覚系の能力をリセット
+VARSET ABL:TARGET:Ｃ感覚, 0, 0, 10
+ABL:従順 = MAX(ABL:従順, 1)
+ABL:欲望 = MAX(ABL:欲望 - 1, 0)
+;異常経験が2未満なら2に引き上げ
+EXP:異常経験 = MAX(EXP:異常経験, 2)
+;相性を変化
+FOR COUNT, 1000, 1120
+	IF COUNT == 1019
+		RELATION:COUNT = 110
+	ELSEIF COUNT == 1022
+		RELATION:COUNT = 120
+	ELSEIF COUNT == 1070
+		RELATION:COUNT = 200
+	ELSE
+		RELATION:COUNT = 0
+	ENDIF
+NEXT
+;相性を変化
+FOR COUNT, 2000, 2050
+	RELATION:COUNT = 0
+NEXT
+;種族値を人間100%にセット
+FOR LOCAL , 3200 , 3400
+	IF LOCAL == 3201
+		CFLAG:LOCAL = 100
+	ELSE
+		CFLAG:LOCAL = 0
+	ENDIF
+NEXT
+
+;--------------------------------------------------
+;黒い飴玉：貴族の娘の妹紅のイベント関数
+;--------------------------------------------------
+;蓬莱の薬を飲む前…まだ貴族として暮らしていたころの妹紅を再現してみた
+@EX_CHARA31
+PRINTFORMW ＜%CALLNAME:TARGET%の髪が美しい黒に染まり、何か雰囲気がやわらかくなったようだ……＞
+PRINTFORMW ＜%CALLNAME:TARGET%は蓬莱人でなくなった＞
+;体力-500(ただし最低値600),気力-200(ただし最低値600)
+MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
+MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+;反抗的を純愛モードで消していたフラグを消す
+SIF CFLAG:13 & 8
+	CFLAG:13 -= 8
+;抵抗を純愛モードで消していたフラグを消す
+SIF CFLAG:13 & 2
+	CFLAG:13 -= 2
+;消滅素質：反抗的、抵抗、蓬莱人、倒錯的、具現
+TALENT:反抗的 = 0
+TALENT:抵抗 = 0
+TALENT:蓬莱人 = 0
+TALENT:倒錯的 = 0
+TALENT:具現 = 0
+;追加の素質:処女,気丈,貞操観念,恥じらい
+TALENT:処女 = 1
+TALENT:気丈 = 1
+TALENT:貞操観念 = 1
+TALENT:恥じらい = 1
+
+;白髪＋ロングヘア → 黒髪＋ロングヘア
+REPEAT 50
+	TALENT:(560 + COUNT) = 0
+REND
+TALENT:黒髪 = 1
+CFLAG:元の髪色 = 2050
+TALENT:ロングヘア = 1
+CFLAG:元の髪型 = 2021
+
+;能力の変動
+;感覚系の能力をリセット
+VARSET ABL:TARGET:Ｃ感覚, 0, 0, 10
+ABL:従順 = MAX(ABL:従順, 1)
+ABL:欲望 = MAX(ABL:欲望 - 1, 0)
+;異常経験が3未満なら3に引き上げ
+EXP:異常経験 = MAX(EXP:異常経験, 3)
+;相性を変化
+VARSET RELATION:TARGET:1000, 0, 0, 200
+
+;--------------------------------------------------
+;黒い飴玉：稔子のイベント関数
+;--------------------------------------------------
+;某誤植ネタより
+;名前を間違えられたせいか拗ねてしまったようです
+@EX_CHARA38
+PRINTFORMW ＜%CALLNAME:TARGET%は名前を呼び間違えられて拗ねてしまった＞
+PRINTFORMW ＜%CALLNAME:TARGET%の名前は稔子に固定された＞
+NAME:TARGET = 稔子
+CALLNAME:TARGET = 稔子
+;解放を消していたフラグを消す
+SIF CFLAG:13 & 2048
+	CFLAG:13 -= 2048
+;消滅素質：解放,楽観的,快感に素直,絶壁,貧乳
+TALENT:楽観的 = 0
+TALENT:解放 = 0
+TALENT:快感に素直 = 0
+TALENT:絶壁 = 0
+TALENT:貧乳 = 0
+;追加の素質:反抗的,悲観的,中毒しやすい
+TALENT:反抗的 = 1
+TALENT:悲観的 = 1
+TALENT:中毒しやすい = 1
+;共通イベントも含め、従順消滅
+ABL:従順 = (ABL:従順 > 0) ? 1 # 0
+;奉仕精神も低下
+ABL:奉仕精神 = 0
+;異常経験が2未満なら2に引き上げ
+EXP:異常経験 = MAX(EXP:異常経験, 2)
+;相性変動
+RELATION:1037 = 150
+RELATION:MASTER = 50
+
+;--------------------------------------------------
+;黒い飴玉：ぐりんだむのイベント関数
+;--------------------------------------------------
+;某ネット検閲ソフトの萌え擬人化がにとりそっくりだったというネタより。流石○国。
+;外部パッチのものを参考。風紀
+@EX_CHARA40
+;地の文表示
+IF CFLAG:9 & 1
+	PRINTW ……
+	PRINTW 『あ、あー……うん、日本語喋れる』
+	PRINTW ……
+	PRINTW 『エッチなのはいくないと思います！』
+	PRINTW あんた誰？
+	PRINTW …………
+ENDIF
+PRINTFORMW ＜%CALLNAME:TARGET%は謎のプログラムに侵蝕された＞
+PRINTFORMW ＜%CALLNAME:TARGET%はぐりんだむになった＞
+NAME:TARGET = ぐりんだむ
+CALLNAME:TARGET = ぐりんだむ
+;体力+400
+MAXBASE:0 += 400
+;消滅素質：臆病,好奇心,濡れやすい,習得早い,自慰しやすい,汚臭鈍感,快感に素直,Ａ敏感,河童
+TALENT:臆病 = 0
+TALENT:好奇心 = 0
+TALENT:濡れやすい = 0
+TALENT:習得早い = 0
+TALENT:自慰しやすい = 0
+TALENT:汚臭鈍感 = 0
+TALENT:快感に素直 = 0
+TALENT:Ａ敏感 = 0
+TALENT:河童 = 0
+;追加の素質:反抗的,プライド高い,ツンデレ,保守的,一線越えない,目立ちたがり,男嫌い,習得遅い,汚臭敏感,快感の否定Ｖ敏感
+TALENT:処女 = 1
+TALENT:反抗的 = 1
+TALENT:プライド高い = 1
+TALENT:ツンデレ = 1
+TALENT:保守的 = 1
+TALENT:一線越えない = 1
+TALENT:目立ちたがり = 1
+TALENT:男嫌い = 1
+TALENT:習得遅い = 1
+TALENT:汚臭敏感 = 1
+TALENT:快感の否定 = 1
+TALENT:Ｖ敏感 = 1
+;相性変動
+FOR COUNT, 1000, 1120
+	SIF COUNT != NO:MASTER
+		RELATION:COUNT = 0
+NEXT
+;相性変動
+FOR COUNT, 2000, 2050
+	SIF COUNT != NO:MASTER
+		RELATION:COUNT = 0
+NEXT
+RELATION:1040 = 80
+
+;--------------------------------------------------
+;黒い飴玉：早苗様のイベント関数
+;--------------------------------------------------
+;IRCネタ。とっても淫乱で酒豪な早苗様(後者に関してはいろんな要素があってあまり特徴を出せず…
+;能力はeratohoJ用早苗様口上のものを擬似的に再現
+@EX_CHARA42
+PRINTFORMW ＜%CALLNAME:TARGET%は囚われていた常識から解放された＞
+PRINTFORMW ＜%CALLNAME:TARGET%は早苗様になった＞
+NAME:TARGET = 早苗様
+CALLNAME:TARGET = 早苗
+CFLAG:0 = 2
+;恋慕も淫乱もない場合陥落の日時を抹消
+SIF TALENT:恋慕 == 0 && TALENT:淫乱 == 0
+	CFLAG:陥落した日 = 0
+;気力+250
+MAXBASE:1 += 250
+;解放を消していたフラグを消す
+SIF CFLAG:13 & 2048
+	CFLAG:13 -= 2048
+;消滅素質1：大人しい,献身的,魅力,Ｃ敏感,Ｖ敏感
+TALENT:大人しい = 0
+TALENT:献身的 = 0
+TALENT:魅力 = 0
+TALENT:Ｃ敏感 = 0
+TALENT:Ｖ敏感 = 0
+;消滅素質2：素直,プライド低い,解放,弱味,痛みに強い,濡れやすい,習得早い,服従系
+TALENT:素直 = 0
+TALENT:プライド低い = 0
+TALENT:解放 = 0
+TALENT:弱味 = 0
+TALENT:痛みに強い = 0
+TALENT:濡れやすい = 0
+TALENT:習得早い = 0
+SIF TALENT:服従
+	CFLAG:15 -= 1
+TALENT:服従 = 0
+IF TALENT:烙印
+	TALENT:烙印 = 0
+	TALENT:傷物 = 1
+	SIF CFLAG:15 & 2
+		CFLAG:15 -= 2
+ENDIF
+SIF TALENT:隷属
+	CFLAG:15 -= 4
+TALENT:隷属 = 0
+;追加の素質:臆病,反抗的,気丈,生意気,プライド高い,ツンデレ,自制心,悲観的,抑圧,抵抗,痛みに弱い,濡れにくい,習得遅い,中毒しやすい,黄昏の怪物
+TALENT:臆病 = 1
+TALENT:反抗的 = 1
+TALENT:気丈 = 1
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:ツンデレ = 1
+TALENT:自制心 = 1
+TALENT:悲観的 = 1
+TALENT:抑圧 = 1
+TALENT:抵抗 = 1
+TALENT:痛みに弱い = 1
+TALENT:濡れにくい = 1
+TALENT:習得遅い = 1
+TALENT:中毒しやすい = 1
+TALENT:黄昏の怪物 = 1
+;能力の変動
+ABL:技巧 = (ABL:技巧 < 1) ? 1 # ABL:技巧
+ABL:欲望 = 0
+ABL:奉仕精神 = 0
+ABL:レズっ気 = MAX(ABL:レズっ気 - 1 ,0)
+ABL:従順 = MAX(ABL:従順, 1)
+;自慰経験が40未満なら40に増加
+EXP:自慰経験 = MAX(EXP:自慰経験, 40)
+;相性変動
+RELATION:1001 = 10
+RELATION:1043 = 200
+RELATION:1044 = 200
+RETURN 1
+
+;--------------------------------------------------
+;黒い飴玉：ただの地獄鴉のお空のイベント関数
+;--------------------------------------------------
+;八咫烏を取り込む前のお空。もっともあんまり変わらないが。
+@EX_CHARA63
+PRINTFORMW ＜%CALLNAME:TARGET%の胸の模様？が消え去り、身体から発する熱量が小さくなったようだ……＞
+PRINTFORMW ＜%CALLNAME:TARGET%は八咫烏の力を失なった＞
+;体力-500(ただし最低値600),気力-200(ただし最低値600)
+MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
+MAXBASE:0 = MAX(MAXBASE:1 - 200, 600)
+;反抗的を純愛モードで消していたフラグを消す
+SIF CFLAG:13 & 8
+	CFLAG:13 -= 8
+;消滅素質：反抗的、日光浴、具現
+TALENT:反抗的 = 0
+TALENT:日光浴 = 0
+TALENT:具現 = 0
+;追加の素質:素直
+TALENT:素直 = 1
+;能力の変動
+;感覚系の能力をリセット
+VARSET ABL:TARGET:Ｃ感覚, 0, 0, 10
+ABL:従順 = MAX(ABL:従順, 1)
+ABL:欲望 = MAX(ABL:欲望 - 1, 0)
+;異常経験が1未満なら1に引き上げ
+EXP:異常経験 = MAX(EXP:異常経験, 1)
+;相性を変化
+FOR COUNT, 1000, 1120
+	IF COUNT == 1061
+		RELATION:COUNT = 120
+	ELSEIF COUNT == 1062
+		RELATION:COUNT = 150
+	ELSEIF COUNT == 1064
+		RELATION:COUNT = 110
+	ELSE
+		RELATION:COUNT = 0
+	ENDIF
+NEXT
+;相性を変化
+FOR COUNT, 2000, 2050
+	RELATION:COUNT = 0
+NEXT
+;相性を変化
+FOR COUNT, 3000, 3050
+	RELATION:COUNT = 0
+NEXT
+
+;種族値を地獄鴉100%にセット
+FOR LOCAL , 3200 , 3400
+	IF LOCAL == 3242
+		CFLAG:LOCAL = 100
+	ELSE
+		CFLAG:LOCAL = 0
+	ENDIF
+NEXT
+
+;--------------------------------------------------
+;黒い飴玉：比良乃(新Ver.)のイベント関数
+;--------------------------------------------------
+;新Ver.のツンデレを再現…できるのか？
+;なお、従順さがるけど、恋慕や服従系素質は消えない。
+@EX_CHARA129
+PRINTFORMW ＜%CALLNAME:TARGET%の雰囲気が変わってきた気がする……＞
+PRINTFORMW ＜%CALLNAME:TARGET%は心の中に封じていたツンデレ精神を表出させた＞
+NAME:TARGET = 比良乃(新)
+;消滅素質：楽観的、貞操無頓着
+TALENT:楽観的 = 0
+TALENT:痛みに強い = 0
+;追加の素質:反抗的、プライド高い、ツンデレ
+TALENT:反抗的 = 1
+TALENT:プライド高い = 1
+TALENT:ツンデレ = 1
+;能力の変動
+;共通イベントも含め、従順消滅
+ABL:従順 = (ABL:従順 > 0) ? 1 # 0
+;奉仕精神も低下
+ABL:奉仕精神 = 0
+;異常経験が1未満なら1に引き上げ
+EXP:異常経験 = MAX(EXP:異常経験, 1)
+
+;=============================================================================
+;XEXTRAモードのＥＸ化キャラ個別処理
+;=============================================================================
+;-------------------------------------------------
+;XEXTRAモード：罪袋
+;-------------------------------------------------
+@EXTRA_MASTER_00_1
+NO:TARGET = 1000
+NAME:TARGET = 罪袋
+CALLNAME:TARGET = 罪袋
+MAXBASE:0 = 2500
+MAXBASE:1 = 2000
+MAXBASE:2 = 10000
+ABL:欲望 = 2
+ABL:技巧 = 2
+ABL:奉仕精神 = 5
+ABL:露出癖 = 2
+ABL:マゾっ気 = 5
+TALENT:マゾ = 1
+TALENT:オトコ = 1
+TALENT:ドＭ = 1
+RELATION:1022 = 500
+
+;-------------------------------------------------
+;XEXTRAモード：カドケシさん
+;-------------------------------------------------
+@EXTRA_MASTER_00_2
+NO:TARGET = 1000
+NAME:TARGET = カドケシ
+CALLNAME:TARGET = カドケシ
+MAXBASE:0 = 1600
+MAXBASE:1 = 1300
+ABL:技巧 = 1
+TALENT:処女 = 1
+TALENT:反抗的 = 1
+TALENT:生意気 = 1
+TALENT:好奇心 = 1
+TALENT:楽観的 = 1
+TALENT:目立ちたがり = 1
+TALENT:貞操観念 = 1
+TALENT:濡れやすい = 1
+TALENT:習得早い = 1
+TALENT:舌使い = 1
+TALENT:汚臭鈍感 = 1
+TALENT:倒錯的 = 1
+TALENT:Ｃ敏感 = 1
+TALENT:小柄体型 = 1
+
+;-------------------------------------------------
+;XEXTRAモード：タカヒロ
+;-------------------------------------------------
+@EXTRA_MASTER_00_3
+NO:TARGET = 1000
+NAME:TARGET = タカヒロ
+CALLNAME:TARGET = タカヒロ
+MAXBASE:0 = 2500
+MAXBASE:1 = 2000
+MAXBASE:2 = 10000
+ABL:技巧 = 2
+ABL:奉仕精神 = 1
+ABL:歌唱技能 = 3
+EXP:歌唱経験 = 50
+TALENT:目立ちたがり = 1
+TALENT:オトコ = 1
+RELATION:1016 = 150
+RELATION:1017 = 150
+RELATION:1018 = 150
+RELATION:1025 = 120
+
+;-------------------------------------------------
+;XEXTRAモード：ジャミ
+;-------------------------------------------------
+@EXTRA_MASTER_00_4
+NO:TARGET = 1000
+NAME:TARGET = ジャミ
+CALLNAME:TARGET = ジャミ
+MAXBASE:0 = 1200
+MAXBASE:1 = 3800
+MAXBASE:2 = 10000
+ABL:欲望 = 2
+ABL:技巧 = 2
+EXP:自慰経験 = 30
+TALENT:貞操無頓着 = 1
+TALENT:汚れ無視 = 1
+TALENT:サド = 1
+TALENT:動物耳 = 1
+TALENT:オトコ = 1
+
+;-------------------------------------------------
+;XEXTRAモード：霊夢様
+;-------------------------------------------------
+@EXTRA_MASTER_01_2
+NO:TARGET = 1001
+NAME:TARGET = 霊夢様
+CALLNAME:TARGET = 霊夢様
+MAXBASE:0 = 2500
+MAXBASE:1 = 1500
+ABL:技巧 = 1
+EXP:異常経験 = 255
+TALENT:処女 = 1
+TALENT:反抗的 = 1
+TALENT:気丈 = 1
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:抑圧 = 1
+TALENT:抵抗 = 1
+TALENT:恥薄い = 1
+TALENT:濡れにくい = 1
+TALENT:薬毒耐性 = 1
+TALENT:針さばき = 1
+TALENT:汚れ無視 = 1
+TALENT:快感の否定 = 1
+TALENT:倒錯的 = 1
+TALENT:サド = 1
+TALENT:謎の魅力 = 1
+TALENT:人気 = 1
+TALENT:Ｃ鈍感 = 1
+TALENT:Ｖ鈍感 = 1
+TALENT:Ａ鈍感 = 1
+TALENT:Ｂ鈍感 = 1
+TALENT:狂気 = 1
+TALENT:淫乱 = 1
+VARSET RELATION:TARGET:1000, 10, 2, 200
+
+;-------------------------------------------------
+;XEXTRAモード：魔梨沙
+;-------------------------------------------------
+@EXTRA_MASTER_02_1
+NO:TARGET = 1002
+NAME:TARGET = 魔梨沙
+CALLNAME:TARGET = 魔梨沙
+MAXBASE:0 = 1900
+MAXBASE:1 = 1300
+ABL:Ｃ感覚 = 1
+ABL:欲望 = 1
+ABL:技巧 = 1
+EXP:絶頂経験 = 5
+EXP:自慰経験 = 60
+TALENT:処女 = 1
+TALENT:気丈 = 1
+TALENT:生意気 = 1
+TALENT:好奇心 = 1
+TALENT:目立ちたがり = 1
+TALENT:習得早い = 1
+TALENT:舌使い = 1
+TALENT:調合知識 = 1
+TALENT:治療 = 1
+TALENT:貧乳 = 1
+RELATION:1001 = 200
+RELATION:2000 = 200
+
+;-------------------------------------------------
+;XEXTRAモード：超魔理沙
+;-------------------------------------------------
+@EXTRA_MASTER_02_2
+NO:TARGET = 1002
+NAME:TARGET = 超魔理沙
+CALLNAME:TARGET = 魔理沙
+MAXBASE:0 = 3000
+MAXBASE:1 = 1000
+;ABL:従順 = 1
+EXP:異常経験 = 255
+TALENT:処女 = 1
+TALENT:気丈 = 1
+TALENT:大人しい = 1
+TALENT:自制心 = 1
+TALENT:保守的 = 1
+TALENT:楽観的 = 1
+TALENT:一線越えない = 1
+TALENT:貞操観念 = 1
+TALENT:痛みに強い = 1
+TALENT:濡れにくい = 1
+TALENT:習得早い = 1
+TALENT:治療 = 1
+TALENT:献身的 = 1
+TALENT:快感の否定 = 1
+TALENT:Ｃ鈍感 = 1
+TALENT:Ｖ鈍感 = 1
+TALENT:Ａ鈍感 = 1
+TALENT:Ｂ鈍感 = 1
+TALENT:回復早い = 1
+RELATION:1001 = 200
+RELATION:2000 = 200
+
+;-------------------------------------------------
+;XEXTRAモード：ＥＸルーミア
+;-------------------------------------------------
+@EXTRA_MASTER_03_1
+NO:TARGET = 1003
+NAME:TARGET = ＥＸルーミア
+CALLNAME:TARGET = ルーミア
+MAXBASE:0 = 2200
+MAXBASE:1 = 1500
+TALENT:処女 = 1
+TALENT:気丈 = 1
+TALENT:自制心 = 1
+TALENT:保守的 = 1
+TALENT:貞操観念 = 1
+TALENT:痛みに強い = 1
+TALENT:汚臭敏感 = 1
+TALENT:献身的 = 1
+TALENT:中毒しやすい = 1
+TALENT:魅力 = 1
+TALENT:月光浴 = 1
+CFLAG:0 = 1
+
+;-------------------------------------------------
+;XEXTRAモード：ＥＸ大妖精
+;-------------------------------------------------
+@EXTRA_MASTER_04_1
+NO:TARGET = 1004
+NAME:TARGET = ＥＸ大妖精
+CALLNAME:TARGET = 大妖精
+MAXBASE:0 = 2500
+MAXBASE:1 = 1000
+ABL:Ｃ感覚 = 1
+;ABL:従順 = 1
+ABL:欲望 = 1
+EXP:絶頂経験 = 1
+EXP:自慰経験 = 3
+EXP:Ｖ拡張経験 = 10
+EXP:Ａ拡張経験 = 10
+EXP:Ｕ拡張経験 = 10
+TALENT:処女 = 1
+TALENT:臆病 = 1
+TALENT:大人しい = 1
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:好奇心 = 1
+TALENT:恥じらい = 1
+TALENT:男嫌い = 1
+TALENT:Ｃ敏感 = 1
+TALENT:巨乳 = 1
+TALENT:妖精 = 1
+RELATION:1005 = 300
+
+;-------------------------------------------------
+;XEXTRAモード：Ｂ大妖精
+;-------------------------------------------------
+@EXTRA_MASTER_04_2
+NO:TARGET = 1004
+NAME:TARGET = Ｂ大妖精
+CALLNAME:TARGET = 大妖精
+MAXBASE:0 = 2200
+MAXBASE:1 = 1200
+ABL:Ｃ感覚 = 1
+ABL:欲望 = 1
+ABL:技巧 = 1
+ABL:サドっ気 = 5
+EXP:絶頂経験 = 5
+EXP:自慰経験 = 30
+EXP:苦痛快楽経験 = 20
+EXP:緊縛経験 = 20
+EXP:ＳＭ教育経験 = 100
+TALENT:処女 = 1
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:好奇心 = 1
+TALENT:解放 = 1
+TALENT:男嫌い = 1
+TALENT:痛みに強い = 1
+TALENT:舌使い = 1
+TALENT:針さばき = 1
+TALENT:快感の否定 = 1
+TALENT:倒錯的 = 1
+TALENT:サド = 1
+TALENT:中毒しやすい = 1
+TALENT:小悪魔 = 1
+TALENT:Ｃ敏感 = 1
+TALENT:狂気 = 1
+TALENT:ドＳ = 1
+TALENT:妖精 = 1
+RELATION:1005 = 300
+
+;-------------------------------------------------
+;XEXTRAモード：アドベントチルノ
+;-------------------------------------------------
+@EXTRA_MASTER_05_1
+NO:TARGET = 1005
+NAME:TARGET = アドベントチルノ
+CALLNAME:TARGET = チルノ
+MAXBASE:0 = 2500
+MAXBASE:1 = 1300
+TALENT:処女 = 1
+TALENT:生意気 = 1
+TALENT:好奇心 = 1
+TALENT:楽観的 = 1
+TALENT:目立ちたがり = 1
+TALENT:抵抗 = 1
+TALENT:痛みに強い = 1
+TALENT:濡れやすい = 1
+TALENT:献身的 = 1
+TALENT:両刀 = 1
+TALENT:人気 = 1
+TALENT:鼓舞 = 1
+TALENT:Ｖ敏感 = 1
+TALENT:小柄体型 = 1
+TALENT:回復早い = 1
+RELATION:1004 = 200
+RELATION:1006 = 150
+RELATION:1012 = 200
+RELATION:1024 = 200
+RELATION:1025 = 150
+RELATION:1028 = 150
+RELATION:1031 = 50
+RELATION:1045 = 150
+RELATION:1046 = 150
+RELATION:1047 = 150
+FOR COUNT , 3200 , 3400
+	IF COUNT == 3201
+		CFLAG:COUNT = 100
+	ELSE
+		CFLAG:COUNT = 0
+	ENDIF
+NEXT
+
+;-------------------------------------------------
+;XEXTRAモード：倍チルノ
+;-------------------------------------------------
+@EXTRA_MASTER_05_2
+NO:TARGET = 1005
+NAME:TARGET = 倍チルノ
+CALLNAME:TARGET = チルノ
+MAXBASE:0 = 2200
+MAXBASE:1 = 1600
+ABL:Ｖ感覚 = 3
+ABL:Ａ感覚 = 2
+ABL:Ｂ感覚 = 2
+;ABL:従順 = 1
+ABL:欲望 = 2
+ABL:露出癖 = 1
+ABL:マゾっ気 = 3
+EXP:絶頂経験 = 100
+EXP:自慰経験 = 100
+EXP:薬物経験 = 25
+EXP:異常経験 = 1
+TALENT:処女 = 1
+TALENT:生意気 = 1
+TALENT:好奇心 = 1
+TALENT:目立ちたがり = 1
+TALENT:解放 = 1
+TALENT:恥薄い = 1
+TALENT:濡れやすい = 1
+TALENT:習得早い = 1
+TALENT:舌使い = 1
+TALENT:禁断の知識 = 1
+TALENT:汚臭鈍感 = 1
+TALENT:汚れ無視 = 1
+TALENT:サド = 1
+TALENT:両刀 = 1
+TALENT:中毒しやすい = 1
+TALENT:小悪魔 = 1
+TALENT:鼓舞 = 1
+TALENT:Ｖ敏感 = 1
+TALENT:貧乳 = 1
+TALENT:小柄体型 = 1
+TALENT:幼稚 = 1
+TALENT:回復早い = 1
+TALENT:妖精 = 1
+RELATION:1004 = 200
+RELATION:1012 = 200
+RELATION:1015 = 50
+RELATION:1024 = 200
+RELATION:1031 = 50
+RELATION:1040 = 150
+RELATION:1045 = 150
+RELATION:1046 = 150
+RELATION:1047 = 150
+
+;-------------------------------------------------
+;XEXTRAモード：ちびアリス
+;-------------------------------------------------
+@EXTRA_MASTER_14_1
+NO:TARGET = 1014
+NAME:TARGET = ちびアリス
+CALLNAME:TARGET = アリス
+MAXBASE:0 = 1500
+MAXBASE:1 = 1500
+ABL:欲望 = 1
+ABL:技巧 = 1
+ABL:レズっ気 = 3
+TALENT:処女 = 1
+TALENT:反抗的 = 1
+TALENT:プライド高い = 1
+TALENT:好奇心 = 1
+TALENT:習得早い = 1
+TALENT:禁断の知識 = 1
+TALENT:自慰しやすい = 1
+TALENT:中毒しやすい = 1
+TALENT:絶壁 = 1
+TALENT:小柄体型 = 1
+TALENT:幼稚 = 1
+RELATION:1001 = 200
+RELATION:1002 = 200
+RELATION:1034 = 80
+RELATION:2000 = 80
+RELATION:2019 = 200
+FOR COUNT , 3200 , 3400
+	IF COUNT == 3240
+		CFLAG:COUNT = 100
+	ELSE
+		CFLAG:COUNT = 0
+	ENDIF
+NEXT
+
+;-------------------------------------------------
+;XEXTRAモード：生前ゆゆ様
+;-------------------------------------------------
+@EXTRA_MASTER_20_1
+NO:TARGET = 1020
+NAME:TARGET = 幽々子
+CALLNAME:TARGET = 幽々子
+MAXBASE:0 = 1600
+MAXBASE:1 = 1300
+;ABL:従順 = 1
+EXP:異常経験 = 2
+TALENT:処女 = 1
+TALENT:臆病 = 1
+TALENT:大人しい = 1
+TALENT:プライド低い = 1
+TALENT:好奇心 = 1
+TALENT:悲観的 = 1
+TALENT:一線越えない = 1
+TALENT:貞操観念 = 1
+TALENT:抑圧 = 1
+TALENT:恥じらい = 1
+TALENT:濡れやすい = 1
+TALENT:禁断の知識 = 1
+TALENT:献身的 = 1
+TALENT:謎の魅力 = 1
+TALENT:巨乳 = 1
+TALENT:回復遅い = 1
+RELATION:1019 = 110
+RELATION:1022 = 120
+RELATION:1070 = 200
+FOR COUNT , 3200 , 3400
+	IF COUNT == 3201
+		CFLAG:COUNT = 100
+	ELSE
+		CFLAG:COUNT = 0
+	ENDIF
+NEXT
+
+;-------------------------------------------------
+;XEXTRAモード：てゐ師匠
+;-------------------------------------------------
+@EXTRA_MASTER_27_2
+NO:TARGET = 1027
+NAME:TARGET = てゐ師匠
+CALLNAME:TARGET = てゐ
+MAXBASE:0 = 2000
+MAXBASE:1 = 1000
+ABL:技巧 = 2
+TALENT:処女 = 1
+TALENT:生意気 = 1
+TALENT:自制心 = 1
+TALENT:無関心 = 1
+TALENT:一線越えない = 1
+TALENT:抵抗 = 1
+TALENT:恥薄い = 1
+TALENT:男嫌い = 1
+TALENT:濡れにくい = 1
+TALENT:習得遅い = 1
+TALENT:禁断の知識 = 1
+TALENT:汚臭敏感 = 1
+TALENT:快感に素直 = 1
+TALENT:サド = 1
+TALENT:魅力 = 1
+TALENT:謎の魅力 = 1
+TALENT:小悪魔 = 1
+TALENT:人気 = 1
+TALENT:鼓舞 = 1
+TALENT:Ｃ鈍感 = 1
+TALENT:Ｖ鈍感 = 1
+TALENT:Ａ鈍感 = 1
+TALENT:Ｂ鈍感 = 1
+TALENT:貧乳 = 1
+TALENT:動物耳 = 1
+TALENT:小柄体型 = 1
+TALENT:回復遅い = 1
+TALENT:狂気 = 1
+
+;-------------------------------------------------
+;XEXTRAモード：稔子
+;-------------------------------------------------
+@EXTRA_MASTER_38_1
+NO:TARGET = 1038
+NAME:TARGET = 稔子
+CALLNAME:TARGET = 稔子
+MAXBASE:0 = 2000
+MAXBASE:1 = 1000
+ABL:Ｖ感覚 = 1
+ABL:欲望 = 1
+ABL:技巧 = 1
+ABL:レズっ気 = 1
+EXP:Ｖ経験 = 50
+EXP:絶頂経験 = 20
+EXP:精液経験 = 10
+EXP:奉仕快楽経験 = 10
+EXP:フェラ経験 = 10
+TALENT:反抗的 = 1
+TALENT:悲観的 = 1
+TALENT:目立ちたがり = 1
+TALENT:貞操無頓着 = 1
+TALENT:両刀 = 1
+TALENT:中毒しやすい = 1
+TALENT:人気 = 1
+RELATION:1037 = 150
+
+;-------------------------------------------------
+;XEXTRAモード：ぐりんだむ
+;-------------------------------------------------
+@EXTRA_MASTER_40_1
+NO:TARGET = 1040
+NAME:TARGET = ぐりんだむ
+CALLNAME:TARGET = ぐりんだむ
+MAXBASE:0 = 2400
+MAXBASE:1 = 1000
+TALENT:処女 = 1
+TALENT:反抗的 = 1
+TALENT:プライド高い = 1
+TALENT:ツンデレ = 1
+TALENT:保守的 = 1
+TALENT:一線越えない = 1
+TALENT:目立ちたがり = 1
+TALENT:男嫌い = 1
+TALENT:習得遅い = 1
+TALENT:汚臭敏感 = 1
+TALENT:快感の否定 = 1
+TALENT:Ｖ敏感 = 1
+RELATION:1040 = 80
+
+;-------------------------------------------------
+;XEXTRAモード：早苗様
+;-------------------------------------------------
+@EXTRA_MASTER_42_2
+NO:TARGET = 1042
+NAME:TARGET = 早苗様
+CALLNAME:TARGET = 早苗
+MAXBASE:0 = 2000
+MAXBASE:1 = 1750
+ABL:技巧 = 1
+ABL:自慰中毒 = 1
+EXP:自慰経験 = 50
+EXP:レズ経験 = 10
+EXP:異常経験 = 1
+TALENT:処女 = 1
+TALENT:臆病 = 1
+TALENT:反抗的 = 1
+TALENT:気丈 = 1
+TALENT:生意気 = 1
+TALENT:プライド高い = 1
+TALENT:ツンデレ = 1
+TALENT:自制心 = 1
+TALENT:保守的 = 1
+TALENT:悲観的 = 1
+TALENT:一線越えない = 1
+TALENT:貞操観念 = 1
+TALENT:抑圧 = 1
+TALENT:抵抗 = 1
+TALENT:恥じらい = 1
+TALENT:痛みに弱い = 1
+TALENT:濡れにくい = 1
+TALENT:習得遅い = 1
+TALENT:中毒しやすい = 1
+RELATION:1001 = 10
+RELATION:1043 = 200
+RELATION:1044 = 200
+
+;-------------------------------------------------
+;XEXTRAモード：むっつりさとりん
+;-------------------------------------------------
+@EXTRA_MASTER_61_2
+NO:TARGET = 1061
+NAME:TARGET = むっつりさとりん
+CALLNAME:TARGET = さとり
+MAXBASE:0 = 1300
+MAXBASE:1 = 2000
+ABL:欲望 = 2
+ABL:露出癖 = 2
+ABL:マゾっ気 = 2
+ABL:レズっ気 = 1
+EXP:異常経験 = 1
+TALENT:処女 = 1
+TALENT:素直 = 1
+TALENT:生意気 = 1
+TALENT:好奇心 = 1
+TALENT:貞操無頓着 = 1
+TALENT:解放 = 1
+TALENT:恥薄い = 1
+TALENT:習得早い = 1
+TALENT:自慰しやすい = 1
+TALENT:快感に素直 = 1
+TALENT:倒錯的 = 1
+TALENT:サド = 1
+TALENT:両刀 = 1
+TALENT:中毒しやすい = 1
+TALENT:貧乳 = 1
+TALENT:小柄体型 = 1
+RELATION:1062 = 200
+RELATION:1063 = 120
+RELATION:1064 = 200
+
+;-------------------------------------------------
+;XEXTRAモード：ジュリアン
+;-------------------------------------------------
+@EXTRA_MASTER_156_2
+NO:TARGET = 3006
+NAME:TARGET = ジュリアン
+CALLNAME:TARGET = ジュリアン
+MAXBASE:0 = 2000
+MAXBASE:1 = 1000
+;ABL:従順 = 1
+ABL:奉仕精神 = 1
+TALENT:処女 = 1
+TALENT:素直 = 1
+TALENT:大人しい = 1
+TALENT:自制心 = 1
+TALENT:保守的 = 1
+TALENT:貞操観念 = 1
+TALENT:恥じらい = 1
+TALENT:痛みに弱い = 1
+TALENT:濡れやすい = 1
+TALENT:呪精 = 1
+TALENT:針さばき = 1
+TALENT:汚臭敏感 = 1
+TALENT:献身的 = 1
+TALENT:魅力 = 1
+TALENT:小柄体型 = 1
+TALENT:妖精 = 1
+RELATION:1001 = 150
+
+;=============================================================================
+;ＥＸキャラの初期相性計算用参照関数群
+;EVENT_DAILY_LIFE.ERBより
+;CALLFORMF EX_RELATION_{NO:ARG}_{CFLAG:ARG:0}, NO:(ARG:1)
+;が呼ばれる。以下の関数全て数字を書き換える必要がある。ひぇ～
+;=============================================================================
+;霊夢様の初期相性参照関数
+@EX_RELATION_1001_2, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1000 || ARG == 1001
+	RESULT = 0
+ELSE
+	RESULT = 10
+ENDIF
+RETURNF RESULT
+
+;魔梨沙の初期相性参照関数
+@EX_RELATION_1002_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 2000
+	RESULT = 200
+ELSE
+	RESULT = CSVRELATION(1002,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;EXルーミアの初期相性参照関数
+@EX_RELATION_1003_1, ARG
+#FUNCTION
+RESULT = CSVRELATION(1003,ARG,0)
+RETURNF RESULT
+
+;EX大妖精の初期相性参照関数
+@EX_RELATION_1004_1, ARG
+#FUNCTION
+IF ARG == 1005
+	RESULT = 300
+ELSE
+	RESULT = CSVRELATION(1004,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;アドベントチルノの初期相性参照関数
+@EX_RELATION_1005_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1006 || ARG == 1025 || ARG == 1028
+	RESULT = 150
+ELSEIF ARG == 1015
+	RESULT = 0
+ELSE
+	RESULT = CSVRELATION(1005,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;倍チルノの初期相性参照関数
+@EX_RELATION_1005_2, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1040
+	RESULT = 150
+ELSE
+	RESULT = CSVRELATION(1005,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;ラヴォスこぁの初期相性参照関数
+@EX_RELATION_1007_1, ARG
+#FUNCTION
+RESULT = CSVRELATION(1007,ARG,0)
+RETURNF RESULT
+
+;ビッグこぁの初期相性参照関数
+@EX_RELATION_1007_2, ARG
+#FUNCTION
+RESULT = CSVRELATION(1007,ARG,0)
+RETURNF RESULT
+
+;クリスタルこぁの初期相性参照関数
+@EX_RELATION_1007_3, ARG
+#FUNCTION
+RESULT = CSVRELATION(1007,ARG,0)
+RETURNF RESULT
+
+;EXアリスの初期相性参照関数
+@EX_RELATION_1014_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1001 || ARG == 1002 || ARG == 2019
+	RESULT = 200
+ELSEIF ARG == 1034 || ARG == 2000
+	RESULT = 80
+ELSE
+	RESULT = 0
+ENDIF
+RETURNF RESULT
+
+;生前ゆゆ様の初期相性参照関数
+@EX_RELATION_1020_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1019
+	RESULT = 110
+ELSEIF ARG == 1022
+	RESULT = 120
+ELSEIF ARG == 1070
+	RESULT = 200
+ELSE
+	RESULT = 0
+ENDIF
+RETURNF RESULT
+
+;貴族の娘の妹紅の初期相性参照関数
+@EX_RELATION_1031_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG < 3999
+	RESULT = 100
+ELSE
+	RESULT = CSVRELATION(1031,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;稔子の初期相性参照関数
+@EX_RELATION_1038_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == NO:MASTER
+	RESULT = 50
+ELSEIF ARG == 1037
+	RESULT = 150
+ELSE
+	RESULT = CSVRELATION(1038,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;ぐりんだむの初期相性参照関数
+@EX_RELATION_1040_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1040
+	RESULT = 80
+ELSEIF ARG < 2999 && ARG != NO:MASTER
+	RESULT = 0
+ELSE
+	RESULT = CSVRELATION(1040,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;早苗様の初期相性参照関数
+@EX_RELATION_1042_2, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1001
+	RESULT = 10
+ELSEIF ARG == 1043 || ARG == 1044
+	RESULT = 200
+ELSE
+	RESULT = CSVRELATION(1042,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;ただの地獄鴉のお空の初期相性参照関数
+@EX_RELATION_1063_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1061
+	RESULT = 120
+ELSEIF ARG == 1062
+	RESULT = 150
+ELSEIF ARG == 1064
+	RESULT = 110
+ELSEIF ARG < 3999
+	RESULT = 100
+ELSE
+	RESULT = CSVRELATION(1031,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;比良乃(新Ver.)の初期相性参照関数
+@EX_RELATION_2029_1, ARG
+#FUNCTION
+RESULT = CSVRELATION(2029,ARG,0)
+RETURNF RESULT
+
+;罪袋の初期相性参照関数
+@EX_RELATION_1000_1, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1022
+	RESULT = 500
+ELSE
+	RESULT = CSVRELATION(1000,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;カドケシさんの初期相性参照関数
+@EX_RELATION_1000_2, ARG
+#FUNCTION
+RESULT = CSVRELATION(1000,ARG,0)
+RETURNF RESULT
+
+;タカヒロの初期相性参照関数
+@EX_RELATION_1000_3, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 1016 || ARG == 1017 || ARG == 1018
+	RESULT = 150
+ELSEIF ARG == 1025
+	RESULT = 120
+ELSE
+	RESULT = CSVRELATION(1000,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;ジャミの初期相性参照関数
+@EX_RELATION_1000_4, ARG
+#FUNCTION
+RESULT = CSVRELATION(1000,ARG,0)
+RETURNF RESULT
+
+;超魔理沙の初期相性参照関数
+@EX_RELATION_1002_2, ARG
+#FUNCTION
+RESULT = 0
+IF ARG == 2000
+	RESULT = 200
+ELSE
+	RESULT = CSVRELATION(1002,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;Ｂ大妖精の初期相性参照関数
+@EX_RELATION_1004_2, ARG
+#FUNCTION
+IF ARG == 1005
+	RESULT = 300
+ELSE
+	RESULT = CSVRELATION(1004,ARG,0)
+ENDIF
+RETURNF RESULT
+
+;てゐ師匠の初期相性参照関数
+@EX_RELATION_1027_2, ARG
+#FUNCTION
+RESULT = CSVRELATION(1027,ARG,0)
+RETURNF RESULT
+
+;むっつりさとりんの初期相性参照関数
+@EX_RELATION_1061_2, ARG
+#FUNCTION
+RESULT = CSVRELATION(1061,ARG,0)
+RETURNF RESULT
+
+;ジュリアンの初期相性参照関数
+@EX_RELATION_3006_2, ARG
+#FUNCTION
+IF ARG == 1001
+	RESULT = 150
+ELSE
+	RESULT = CSVRELATION(3006, ARG,0)
+ENDIF
+RETURNF RESULT

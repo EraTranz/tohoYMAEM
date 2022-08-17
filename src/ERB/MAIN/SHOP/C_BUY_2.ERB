@@ -1,0 +1,834 @@
+﻿;=============================================================================
+;奴隷市場
+;=============================================================================
+;-----------------------------------------------
+;奴隷市場
+;recount(&1再登録キャラ、&2レンタル指示キャラ、&4レンタル中キャラ、&8妊娠中)
+;-----------------------------------------------
+@CHARA_LISTBUY
+#DIM check
+#DIM choice
+#DIM total
+#DIM maxtotal
+#DIM tline
+#DIM allflag
+#DIM recount
+#DIM nobody
+#DIMS numbers, 10
+#DIMS str_base, 200
+#DIMS str_mbase, 200
+#DIM cst, 2
+check = 0
+P = 1
+
+FLAG:2000 = 0
+VARSET R, 0
+
+$MODE_LOOP
+REDRAW 0
+total = 0
+maxtotal = 0
+tline = 0
+nobody = 0
+DRAWLINE
+IF check == 1
+	;登録削除
+	PRINTL どの登録を削除しますか？
+ELSEIF check == 2
+	;取り置き
+	PRINTL 対象をそのままに保管し続ける事ができる
+	PRINTPLAINFORM 誰を保管し続けますか？%"　"*14%
+	;SETCOLOR 0x998866
+	LOCALS = 全選択[999]　
+	PRINTFORML %LOCALS, 20, RIGHT%
+	;RESETCOLOR
+ELSEIF check == 3
+	PRINTL 一定期間顧客へ自由に貸し、対象が必ず戻るようにします
+	PRINTFORML 誰を選択しますか？
+ELSEIF check == 4
+	PRINT 理性復活薬を投与し、理性を取り戻させます 
+	PRINTFORM 　　治療費:70000圓
+	PRINTFORM 　　所持金:{MONEY}圓
+	PRINTL 
+	PRINTFORML 誰を選択しますか？
+ELSE
+	PRINTL ここでは登録されている奴隷を購入することが出来る
+	PRINTL 二度と顔も見たくないならばその旨を伝える事も可能だろう
+ENDIF
+
+SELECTCASE check
+	;CASE 0
+	;	SETCOLOR 0x888888
+	CASE 1
+		SETCOLOR 0x6666CC
+	CASE 2
+		SETCOLOR 0xDDBB99
+	CASE 3
+		SETCOLOR 0xEEAA99
+	CASE 4
+		SETCOLOR 0xBB99CC
+ENDSELECT
+DRAWLINE
+RESETCOLOR
+
+LOADGLOBAL
+
+FOR LOCAL, 101, 151
+	SIF STRLENS(GLOBALS:LOCAL)
+		maxtotal += 1
+NEXT
+GLOBAL:2200 = 0
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+;『禁断の知識』、『調合知識』を持っている
+;主人と助手全体から禁断の知識と調合知識を検索
+;ビット演算でLOCAL:3=1が有効のときは調合知識を、LOCAL:3=2が有効のときは禁断の知識を所持していることを示す
+REPEAT CHARANUM
+	;失踪中なら除外
+	SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1024
+		CONTINUE
+	IF COUNT == 0
+		;主人が禁断の知識か調合知識を持っている
+		SIF TALENT:MASTER:調合知識
+			LOCAL:3 |= 1
+		SIF TALENT:MASTER:禁断の知識
+			LOCAL:3 |= 2
+	ELSE
+		;現助手＋元助手のキャラ数の確認
+		IF CFLAG:COUNT:1 > 1
+			LOCAL:0 += 1
+			;助手の誰かが禁断の知識か調合知識を持っている
+			SIF TALENT:COUNT:調合知識
+				LOCAL:3 |= 1
+			SIF TALENT:COUNT:禁断の知識
+				LOCAL:3 |= 2
+		ENDIF
+	ENDIF
+REND
+
+FOR LOCAL, 101+((P-1)*20), 151
+	SIF LOCAL == 151 && maxtotal > 20
+		GOTO DRAW_PAGE
+	SIF STRLENS(GLOBALS:LOCAL) == 0
+		CONTINUE
+
+	recount = 0
+	cst:0 = 0
+	cst:1 = 0
+	
+	;ここで各区分毎にLOCALS分割
+	SPLIT GLOBALS:LOCAL, "_", LOCALS
+	
+	SPLIT LOCALS:3, "/", str_base
+	FOR LOCAL:1, 0, RESULT-1
+		;BASEチェック
+		SPLIT str_base:(LOCAL:1), ",", numbers
+	NEXT
+	SPLIT LOCALS:4, "/", str_mbase
+	FOR LOCAL:1, 0, RESULT-1
+		;MAXBASEチェック
+		SPLIT str_mbase:(LOCAL:1), ",", numbers
+		IF TOINT(numbers) == 9 && TOINT(numbers:1) > 0
+			cst:0 = TOINT(numbers:1)
+		ENDIF
+	NEXT
+	
+	SPLIT LOCALS:7, "/", RESULTS
+	FOR LOCAL:1, 0, RESULT-1
+		;CFLAGチェック
+		SPLIT RESULTS:(LOCAL:1), ",", numbers
+		SIF TOINT(numbers) == 99 && TOINT(numbers:1) % 10 > 0
+			SETCOLOR 0xAA99FF
+		SIF TOINT(numbers) == 99 && TOINT(numbers:1) % 100 / 10 == 1
+			recount |= 1
+		IF TOINT(numbers) == 99 && TOINT(numbers:1) / 100 > 0
+			recount |= 2
+			GLOBAL:2200 += 1
+			IF TOINT(numbers) == 99 && TOINT(numbers:1) / 200 == 1
+				SETCOLOR 0x443322
+				recount |= 4
+			ELSE
+				SETCOLOR 0xEE9988
+			ENDIF
+		ENDIF
+		SIF TOINT(numbers) == 140 && TOINT(numbers:1) > 0
+			recount |= 8
+	NEXT
+	IF TOINT(LOCALS:13) == 1 && (recount & 4) == 0
+		SETCOLOR 0xEECC99
+	ENDIF
+	
+	PRINTFORM [{LOCAL - 100, 2}] 
+	PRINTFORM %LOCALS:0, 22, LEFT%
+	RESETCOLOR
+	PRINTPLAINFORM %LOCALS:2, 10, RIGHT%
+	PRINT 圓
+	
+	PRINT 　
+	cst:1 = MAX(10000, cst:0)
+	PRINTFORM 理性：
+	IF (100 * (cst:0) / (cst:1)) > 99
+		SETCOLOR 0xBBBBDD
+	ELSEIF (100 * (cst:0) / (cst:1)) > 90
+		SETCOLOR 0xBBBBDD
+	ELSEIF (100 * (cst:0) / (cst:1)) > 80
+		SETCOLOR 0xAAAADD
+	ELSEIF (100 * (cst:0) / (cst:1)) > 65
+		SETCOLOR 0xAAAADD
+	ELSEIF (100 * (cst:0) / (cst:1)) < 45
+		SETCOLOR 0x8855BB
+	ELSEIF (100 * (cst:0) / (cst:1)) < 25
+		SETCOLOR 0xDDAAAA
+	ENDIF
+	PRINTFORM {100 * (cst:0) / (cst:1)}
+	RESETCOLOR
+	PRINT ％
+	PRINT 　
+	IF TOINT(LOCALS:13) == 1
+		SETCOLOR 0xDDCC99
+		PRINTFORM 貸.
+	ENDIF
+	IF recount & 1
+		SETCOLOR 0xBBAAFF
+		PRINTFORM 済.
+	ENDIF
+	IF recount & 2
+		SETCOLOR 0xEE9988
+		PRINTFORM 貸.
+	ENDIF
+	IF recount & 8
+		SETCOLOR 0xFF88FF
+		PRINTFORM 妊.
+	ENDIF
+	RESETCOLOR
+	total += 1
+	IF LOCAL % 20 == 0 || (maxtotal > 20 && LOCAL == 100 + maxtotal)
+		PRINTL 
+		$DRAW_PAGE
+		ALIGNMENT RIGHT
+		SETCOLOR 0x666677
+		SIF P > 1
+			SETCOLOR 0xAABBEE
+		PRINTBUTTON "[111]前のページ ", 111
+		SETCOLOR 0x666677
+		PRINTPLAINFORM page. {P}/{((maxtotal -1)/20)+1}
+		SIF (P*20) < maxtotal
+			SETCOLOR 0xAABBEE
+		PRINTBUTTON " 次のページ[333]　　　", 333
+		RESETCOLOR
+		PRINTL 
+		total += 1
+		ALIGNMENT LEFT
+		BREAK
+	ELSE
+		PRINTL 
+	ENDIF
+NEXT
+
+ALIGNMENT RIGHT
+PRINTFORM [888]履歴 : 
+RESETCOLOR
+IF FLAG:2001 == 1
+	PRINTFORM  ON
+ELSE
+	PRINTFORM OFF
+ENDIF
+PRINTPLAINFORM 　　
+PRINTL 
+ALIGNMENT LEFT
+
+;note
+IF FLAG:2001 == 1
+	ALIGNMENT RIGHT
+	PRINTFORM [890]履歴ログ
+	IF FLAG:2000 == 1
+		PRINTPLAIN wide
+	ELSE
+		PRINTPLAIN --  
+	ENDIF
+	PRINTPLAINFORM 　
+	PRINTL 
+	ALIGNMENT LEFT
+	CALL CHARABUY_NOTE, FLAG:2000
+	tline = RESULT
+ENDIF
+
+SELECTCASE check
+	;CASE 0
+	;	SETCOLOR 0x888888
+	CASE 1
+		SETCOLOR 0x6666CC
+	CASE 2
+		SETCOLOR 0xDDBB99
+	CASE 3
+		SETCOLOR 0xEEAA99
+	CASE 4
+		SETCOLOR 0xBB99CC
+ENDSELECT
+
+DRAWLINE
+RESETCOLOR
+
+IF total
+	SIF check == 2
+		SETCOLOR 0xEECC99
+	PRINTLC [500]取り置き
+	RESETCOLOR
+ELSE
+	PRINTLC  
+ENDIF
+PRINTLC [1000]戻る
+RESETCOLOR
+IF total
+	SIF check == 1
+		SETCOLOR 0x6666FF
+	PRINTLC [900]登録削除
+ENDIF
+RESETCOLOR
+PRINTL 
+IF total
+	SIF check == 3
+		SETCOLOR 0xEE9988
+	PRINTLC [600]登録指示
+	RESETCOLOR
+	IF LOCAL:3 && SEARCH_CHARA_WISDOM() & 1
+		SIF check == 4
+			SETCOLOR 0xBB99CC
+		PRINTLC [700]精神治療
+	ENDIF
+ENDIF
+RESETCOLOR
+
+SIF !total
+	nobody = 1
+
+total += tline
+total += 1
+SIF FLAG:2001 == 1
+	total += 1
+
+$SELECT_LOOP
+INPUT
+CLEARLINE 1
+IF RESULT > 0 && RESULT < 51 && STRLENS(GLOBALS:(RESULT +100)) > 0
+	LOCAL:1 = RESULT
+	choice = RESULT + 100
+	SPLIT GLOBALS:choice, "_", LOCALS
+	IF check == 0
+		;Pの一時退避
+		LOCAL:1 = P
+		
+		;キャラの追加
+		CALL CHARA_EXTRACTION, choice
+		TFLAG:201 = NO:(CHARANUM -1)
+		TFLAG:213 = 1
+		TFLAG:214 = CHARANUM -1
+		TFLAG:215 = TOINT(LOCALS:2)
+		TFLAG:216 = choice
+		CALL CHARA_MANUAL, CFLAG:(CHARANUM -1):99
+		TFLAG:213 = 0
+		TFLAG:214 = 0
+		TFLAG:215 = 0
+		TFLAG:216 = 0
+		
+		
+		IF RESULT == 0
+			;キャラ購入
+			;キャラ追加時のGLOBAL削除詰め
+			FOR LOCAL, choice, 150
+				GLOBALS:LOCAL = %GLOBALS:(LOCAL +1)%
+			NEXT
+			CFLAG:(CHARANUM -1):99 = 0
+			IF CALC_SLAVE_CAPACITY() - CHARANUM < 0
+				PRINTW ＜これ以上奴隷を購入することはできません＞
+				CLEARLINE 1
+			ELSEIF MONEY > TOINT(LOCALS:2)
+				;解凍追加処理
+				MONEY -= TOINT(LOCALS:2)
+				;市場note
+				LOCALS = @s@%CALLNAME:(CHARANUM -1)%@e@が%CALLNAME:MASTER%に購入されました0x999999
+				CALL SET_CHARABUYNOTE (LOCALS)
+				PRINTFORML ＜%CALLNAME:(CHARANUM -1)%を購入しました＞
+				;非主人
+				IF MASTER_CHECK(CHARANUM -1) == 0
+					;別人調教経験+前回主人調教経験
+					SIF TRAINER_CHECK(CHARANUM -1) == 0 && CFLAG:(CHARANUM -1):3675
+						EXP:(CHARANUM -1):90 += EXP:(CHARANUM -1):98
+					;別人調教経験+元主人調教経験
+					EXP:(CHARANUM -1):90 += CFLAG:(CHARANUM -1):3670
+					;主人調教経験戻る
+					SIF TRAINER_CHECK(CHARANUM -1) == 0
+						EXP:(CHARANUM -1):98 = 0
+					;元好感度転換
+					SIF TRAINER_CHECK(CHARANUM -1) == 0
+						CFLAG:(CHARANUM -1):2 = MIN(CFLAG:(CHARANUM -1):3672 / 3 * -1, 0)
+					;元陥落転換
+					IF TRAINER_CHECK(CHARANUM -1) == 0
+						IF TALENT:(CHARANUM -1):153
+							CFLAG:(CHARANUM -1):3673 = 3
+							IF TALENT:(CHARANUM -1):旦那あり
+								CFLAG:(CHARANUM -1):3674 = 3
+							ELSE
+								TALENT:(CHARANUM -1):旦那あり = 1
+							ENDIF
+						ELSEIF TALENT:(CHARANUM -1):152
+							IF TALENT:(CHARANUM -1):旦那あり || TALENT:(CHARANUM -1):彼氏あり
+								CFLAG:(CHARANUM -1):3674 = 2
+							ELSE
+								TALENT:(CHARANUM -1):彼氏あり = 1
+							ENDIF
+							CFLAG:(CHARANUM -1):3673 = 2
+						ELSEIF TALENT:(CHARANUM -1):150
+							IF TALENT:(CHARANUM -1):旦那あり || TALENT:(CHARANUM -1):彼氏あり || TALENT:(CHARANUM -1):思い人あり
+								CFLAG:(CHARANUM -1):3674 = 1
+							ELSE
+								TALENT:(CHARANUM -1):思い人あり = 1
+							ENDIF
+							CFLAG:(CHARANUM -1):3673 = 1
+						ENDIF
+					ENDIF
+					IF TRAINER_CHECK(CHARANUM -1) == 0
+						;主人と口同士でキスした回数戻る
+						CFLAG:(CHARANUM -1):172 = 0
+						;主人にペニスでＶを犯された回数戻る
+						CFLAG:(CHARANUM -1):173 = 0
+						;主人にペニスでＡを犯された回数戻る
+						CFLAG:(CHARANUM -1):174 = 0
+						;主人のＶをペニスで犯した回数戻る
+						CFLAG:(CHARANUM -1):175 = 0
+						;主人のＡをペニスで犯した回数戻る
+						CFLAG:(CHARANUM -1):176 = 0
+					ENDIF
+					TALENT:(CHARANUM -1):150 = 0
+					TALENT:(CHARANUM -1):152 = 0
+					TALENT:(CHARANUM -1):153 = 0
+					CFLAG:(CHARANUM -1):3675 ++
+				;主人
+				ELSEIF MASTER_CHECK(CHARANUM -1) == 1
+					;別人調教経験+主人調教経験-元主人調教経験
+					IF TRAINER_CHECK(CHARANUM -1) == 0 && CFLAG:(CHARANUM -1):3675
+						EXP:(CHARANUM -1):90 += EXP:(CHARANUM -1):98
+						EXP:(CHARANUM -1):90 -= CFLAG:(CHARANUM -1):3670
+					ENDIF
+					;主人調教経験戻る
+					EXP:(CHARANUM -1):98 = CFLAG:(CHARANUM -1):3670
+					;好感度転換
+					IF TRAINER_CHECK(CHARANUM -1) == 0 && CFLAG:(CHARANUM -1):3675
+						LOCAL = CFLAG:(CHARANUM -1):3672 - MAX(CFLAG:(CHARANUM -1):2 / 3, 0)
+						CFLAG:(CHARANUM -1):2 = LIMIT(LOCAL, -999999, 999999)
+					ENDIF
+					;反発刻印転換
+					IF TRAINER_CHECK(CHARANUM -1) == 0 && MARK:(CHARANUM -1):9 > CFLAG:(CHARANUM -1):3676
+						MARK:(CHARANUM -1):9 = LIMIT(CFLAG:(CHARANUM -1):3676, 0, 3)
+					ENDIF
+					;調教度転換
+					CFLAG:(CHARANUM -1):3668 = LIMIT(CFLAG:(CHARANUM -1):3668 + CFLAG:(CHARANUM -1):3672 / 4, -1000, 1000)
+					;元陥落転換
+					IF CFLAG:(CHARANUM -1):3673 == 3
+						SIF CFLAG:(CHARANUM -1):3674 < 3
+							TALENT:(CHARANUM -1):旦那あり = 0
+						TALENT:(CHARANUM -1):153 = 1
+						TALENT:(CHARANUM -1):152 = 1
+						TALENT:(CHARANUM -1):150 = 1
+					ELSEIF CFLAG:(CHARANUM -1):3673 == 2
+						SIF CFLAG:(CHARANUM -1):3674 < 2
+							TALENT:(CHARANUM -1):彼氏あり = 0
+						TALENT:(CHARANUM -1):152 = 1
+						TALENT:(CHARANUM -1):150 = 1
+					ELSEIF CFLAG:(CHARANUM -1):3673 == 1
+						SIF CFLAG:(CHARANUM -1):3674 < 1
+							TALENT:(CHARANUM -1):思い人あり = 0
+						TALENT:(CHARANUM -1):150 = 1
+					ENDIF
+					;元主人と口同士でキスした回数戻る
+					CFLAG:(CHARANUM -1):172 = CFLAG:(CHARANUM -1):3680
+					;元主人にペニスでＶを犯された回数戻る
+					CFLAG:(CHARANUM -1):173 = CFLAG:(CHARANUM -1):3681
+					;元主人にペニスでＡを犯された回数戻る
+					CFLAG:(CHARANUM -1):174 = CFLAG:(CHARANUM -1):3682
+					;元主人のＶをペニスで犯した回数戻る
+					CFLAG:(CHARANUM -1):175 = CFLAG:(CHARANUM -1):3683
+					;元主人のＡをペニスで犯した回数戻る
+					CFLAG:(CHARANUM -1):176 = CFLAG:(CHARANUM -1):3684
+					CFLAG:(CHARANUM -1):3673 = 0
+					CFLAG:(CHARANUM -1):3674 = 0
+					CFLAG:(CHARANUM -1):3675 = 0
+					CFLAG:(CHARANUM -1):3676 = 0
+					CFLAG:(CHARANUM -1):3680 = 0
+					CFLAG:(CHARANUM -1):3681 = 0
+					CFLAG:(CHARANUM -1):3682 = 0
+					CFLAG:(CHARANUM -1):3683 = 0
+					CFLAG:(CHARANUM -1):3684 = 0
+				ENDIF
+				
+				TFLAG:209 = 0
+				TFLAG:213 = 1
+				CALL CHARA_INIT, NO:(CHARANUM -1)
+				TFLAG:213 = 0
+				RESULT = 2
+			ELSE
+				;キャラ参照後削除
+				DELCHARA CHARANUM -1
+				PRINTW 所持金が足りません
+				CLEARLINE 1
+			ENDIF
+		ELSE
+			;キャラ参照後削除
+			DELCHARA CHARANUM -1
+		ENDIF
+		SAVEGLOBAL
+		P = LOCAL:1
+		IF RESULT == 2
+			PRINTL 
+			IF FLAG:570 & 8
+				FLAG:570 &= 55
+				FLAG:0 = 1
+				BEGIN TURNEND
+			ENDIF
+			RETURN 0
+		ELSE
+			GOTO MODE_LOOP
+		ENDIF
+	ELSEIF check == 1
+	;登録削除
+		PRINTL 
+		PRINTFORML %LOCALS:0% を削除しますか？
+		PRINTL 
+		PRINTL [0] はい
+		PRINTL [1] いいえ
+		$INPUT_LOOP_DEL
+		INPUT
+		CLEARLINE 1
+		IF RESULT == 0
+			PRINTL 
+			PRINTFORMW ＜%LOCALS:0% を削除しました＞
+			
+			;市場note
+			LOCALS = @s@%LOCALS:0%は削除されました@e@0x665555
+			CALL SET_CHARABUYNOTE (LOCALS)
+			
+			FOR LOCAL:1, choice, 151
+				GLOBALS:(LOCAL:1) = %GLOBALS:(LOCAL:1 +1)%
+			NEXT
+			GLOBALS:150 = 
+			SAVEGLOBAL
+		ELSEIF RESULT != 1
+			GOTO INPUT_LOOP_DEL
+		ENDIF
+		;check = 0
+		SAVEGLOBAL
+		CLEARLINE total + 13
+		SIF maxtotal % 20 == 1 && total == 2 && P > 1
+			P -= 1
+		GOTO MODE_LOOP
+	ELSEIF check == 2
+	;取り置き(LOCALS:13)
+		;一時キャラ解凍追加
+		CALL CHARA_EXTRACTION, choice
+		LOCAL = CHARANUM -1
+		CFLAG:LOCAL:909 = (CFLAG:LOCAL:909) ? 0 # 1
+		GLOBALS:choice = 
+		CALL CHARA_RESERVE, LOCAL
+
+		DELCHARA LOCAL
+		SAVEGLOBAL
+		CLEARLINE total + 7
+		GOTO MODE_LOOP
+		
+	ELSEIF check == 3
+	;制限売却（帰還制限）
+		;一時キャラ解凍追加
+			CALL CHARA_EXTRACTION, choice
+			LOCAL = CHARANUM -1
+		IF GLOBAL:2200 > 4 && CFLAG:LOCAL:99 / 100 == 0
+			PRINTL 
+			PRINTW ＜指示可能な人数を超えています＞
+			CLEARLINE 2
+		ELSEIF CFLAG:LOCAL:99 / 100 == 2
+			PRINTL 
+			PRINTW ＜貸し出し中につき変更出来ません＞
+			CLEARLINE 2
+		ELSE
+			IF CFLAG:LOCAL:99 / 100 == 0
+				CFLAG:LOCAL:99 += 100
+			ELSEIF CFLAG:LOCAL:99 / 100 == 1
+				CFLAG:LOCAL:99 -= 100
+			ENDIF
+			GLOBALS:choice = 
+			CALL CHARA_RESERVE, LOCAL
+		ENDIF
+		DELCHARA LOCAL
+		SAVEGLOBAL
+		CLEARLINE total + 7
+		GOTO MODE_LOOP
+	ELSEIF check == 4
+	;精神治療
+		;一時キャラ解凍追加
+		CALL CHARA_EXTRACTION, choice
+		LOCAL = CHARANUM -1
+		PRINTL 
+		;[機械]の体には通じない
+		IF TALENT:LOCAL:機械
+			PRINTW 機械には通じない
+			CLEARLINE 1
+		ELSEIF MONEY < 70000
+			PRINTW 所持金が足りません
+			CLEARLINE 1
+		ELSEIF MAXBASE:LOCAL:9 > 0
+			MONEY -= 70000
+			MAXBASE:LOCAL:9 = MIN(MAXBASE:LOCAL:9 + 2500, 12000)
+			BASE:LOCAL:理性 = MIN(BASE:LOCAL:理性, MAXBASE:LOCAL:9)
+			;薬物経験
+			CALL COMMON_UP_EXP, LOCAL, 40, 1, 1, 1
+		ELSE
+			PRINTW 尽きた理性は回復できません
+			CLEARLINE 1
+		ENDIF
+		GLOBALS:choice = 
+		CALL CHARA_RESERVE, LOCAL
+		DELCHARA LOCAL
+		SAVEGLOBAL
+		CLEARLINE total + 8
+		GOTO MODE_LOOP
+	ENDIF
+ELSEIF RESULT == 500 && total
+	REDRAW 0
+	check = (check == 2) ? 0 # 2
+	CLEARLINE total + 8
+	PRINTL 
+	GOTO MODE_LOOP
+ELSEIF RESULT == 600 && total
+	REDRAW 0
+	check = (check == 3) ? 0 # 3
+	CLEARLINE total + 8
+	PRINTL 
+	GOTO MODE_LOOP
+ELSEIF RESULT == 700 && total && LOCAL:3 && SEARCH_CHARA_WISDOM() & 1
+	REDRAW 0
+	check = (check == 4) ? 0 # 4
+	CLEARLINE total + 8
+	PRINTL 
+	GOTO MODE_LOOP
+ELSEIF RESULT == 900 && total
+	check = (check == 1) ? 0 # 1
+	IF check == 1
+		CLEARLINE total + 7
+	ELSE
+		CLEARLINE total + 8
+	ENDIF
+	PRINTL 
+	GOTO MODE_LOOP
+ELSEIF RESULT == 888
+	;note ON/OFF
+	FLAG:2001 = (FLAG:2001 == 0) ? 1 # 0
+	IF !nobody
+		IF check == 1
+			CLEARLINE total + 7
+		ELSE
+			CLEARLINE total + 8
+		ENDIF
+	ENDIF
+	PRINTL 
+	GOTO MODE_LOOP
+ELSEIF RESULT == 890
+	;note wide
+	FLAG:2000 = (FLAG:2000 == 0) ? 1 # 0
+	IF !nobody
+		IF check == 1
+			CLEARLINE total + 7
+		ELSE
+			CLEARLINE total + 8
+		ENDIF
+	ENDIF
+	PRINTL 
+	GOTO MODE_LOOP
+ELSEIF RESULT == 111
+	IF P == 1
+		P = ((maxtotal -1) / 20) + 1
+	ELSE
+		P -= 1
+	ENDIF
+	IF check == 1
+		CLEARLINE total + 6
+	ELSE
+		CLEARLINE total + 7
+	ENDIF
+	GOTO MODE_LOOP
+ELSEIF RESULT == 333
+	IF maxtotal > P*20
+		P += 1
+	ELSE
+		P = 1
+	ENDIF
+	IF check == 1
+		CLEARLINE total + 6
+	ELSE
+		CLEARLINE total + 7
+	ENDIF
+	GOTO MODE_LOOP
+ELSEIF RESULT == 999 && check == 2
+	;全取り置き
+	FOR choice, 100, 151
+		SIF STRLENS(GLOBALS:choice) < 1
+			CONTINUE
+		;一時キャラ解凍追加
+		CALL CHARA_EXTRACTION, choice
+		LOCAL = CHARANUM -1
+		CFLAG:LOCAL:909 = (allflag) ? 0 # 1
+		GLOBALS:choice = 
+		CALL CHARA_RESERVE, LOCAL
+
+		DELCHARA LOCAL
+	NEXT
+		allflag = (allflag) ? 0 # 1
+		SAVEGLOBAL
+		CLEARLINE total + 7
+		GOTO MODE_LOOP
+ELSEIF RESULT == 1000
+	PRINTL 
+	IF FLAG:570 & 8
+		FLAG:570 &= 55
+		FLAG:0 = 1
+		BEGIN TURNEND
+	ENDIF
+	RETURN 0
+ELSE
+	IF check == 1
+		CLEARLINE total + 6
+	ELSE
+		CLEARLINE total + 7
+	ENDIF
+	GOTO MODE_LOOP
+ENDIF
+
+;=============================================================================
+;市場関連の表示とメモ
+;=============================================================================
+;--------------------------------------------------
+;特定色変え式中関数？
+;--------------------------------------------------
+@inset, ARGS, ARG
+
+STRFINDU ARGS, "@s@"
+LOCAL:1 = RESULT:0
+STRFINDU ARGS, "@e@"
+LOCAL:2 = RESULT:0
+
+SUBSTRINGU ARGS, 0, LOCAL:1
+PRINTFORM %RESULTS:0%
+
+STRLENSU RESULTS:0
+SUBSTRINGU ARGS, RESULT:0 +3, LOCAL:2 - (RESULT:0 +3)
+SETCOLOR (ARG > 0) ? ARG # GETCOLOR()
+PRINTFORM %RESULTS:0%
+
+RESETCOLOR
+IF LOCAL:2 > 0
+	SUBSTRINGU ARGS, LOCAL:2 +3, -1
+	PRINTFORM %RESULTS:0%
+ENDIF
+
+RETURN 0
+
+;--------------------------------------------------
+;市場note表示
+;--------------------------------------------------
+@CHARABUY_NOTE, ARG:1
+#DIM ccount
+#DIM setnum
+#DIM line
+#DIM setcl
+LOCALS = 
+ccount = 0
+LOCALS:1 = 
+
+IF ARG:1 == 1
+	setnum = 401
+ELSE
+	setnum = 386
+ENDIF
+
+FOR LOCAL, 380, setnum
+	line = (379 + setnum) - LOCAL
+	STRFINDU GLOBALS:line, "0x"
+	IF RESULT:0 > 0
+	ccount += 1
+	LOCAL:1 = RESULT:0
+	LOCALS:1 = %SUBSTRINGU(GLOBALS:line, LOCAL:1,-1)%
+	LOCAL:2 = TOINT(LOCALS:1)
+	LOCAL:3 = STRLENSU(GLOBALS:line)
+	LOCALS = %SUBSTRINGU(GLOBALS:line, 15, LOCAL:3 - (15 + 8))%
+	setcl = (LOCAL - 360) * 5 + 40
+	SETCOLOR (setcl + (512 * setcl) + (65536 * setcl))
+	PRINT  ・
+	SETCOLOR 0x666666
+	PRINTFORM %SUBSTRINGU(GLOBALS:line, 0, 14)% 
+	RESETCOLOR
+	CALL inset(LOCALS, LOCAL:2)
+	PRINTL 
+	ENDIF
+NEXT
+RETURN ccount
+;--------------------------------------------------
+;市場noteメモライズ部
+;--------------------------------------------------
+@SET_CHARABUYNOTE, ARGS
+#DIM memorize
+memorize = 0
+
+;一時履歴保持(履歴20行)
+FOR LOCAL, 0, 21
+	IF STRLENS(GLOBALS:(380 + LOCAL)) > 0
+		memorize += 1
+	ELSE
+		BREAK
+	ENDIF
+NEXT
+
+;代入されている場合は上へ履歴を移す
+IF memorize > 0
+	FOR LOCAL, 1, memorize +1
+		IF STRLENS(GLOBALS:(380+memorize - LOCAL)) > 0
+			GLOBALS:(380+memorize +1 - LOCAL) = %GLOBALS:(380+memorize - LOCAL)%
+		ENDIF
+	NEXT
+ENDIF
+
+GETTIME
+LOCALS = %TOSTR(RESULT:0)%
+LOCALS = %SUBSTRINGU(LOCALS, 4, 2)%/%SUBSTRINGU(LOCALS, 6, 2)% %SUBSTRINGU(LOCALS, 8, 2)%:%SUBSTRINGU(LOCALS, 10, 2)%:%SUBSTRINGU(LOCALS, 12, 2)%
+LOCALS = %LOCALS%　
+GLOBALS:380 = %LOCALS%%ARGS%
+
+;--------------------------------------------------
+;特定観衆、ステータス参照
+;--------------------------------------------------
+@SUBPLAYER_CHECK, ARG
+#FUNCTIONS
+LOCALS = 
+LOCALS:3 = 
+LOCAL = ARG
+
+RETURNF LOCALS
+
+@SUBPLAYER_CHECK_2, ARG
+#FUNCTIONS
+;5桁目
+SELECTCASE ARG
+	CASE 0
+		LOCALS = 知らない男性
+	CASE 1
+		LOCALS = 知らない女性
+	CASE 2
+		LOCALS = 浮浪者
+	CASE 3
+		LOCALS = 資産家
+	CASE 4
+		LOCALS = 調教師
+	CASEELSE
+		LOCALS = 
+ENDSELECT
+
+LOCALS = %LOCALS%
+
+RETURNF LOCALS

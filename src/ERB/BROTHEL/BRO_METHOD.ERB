@@ -1,0 +1,163 @@
+﻿;-------------------------------------------------
+;娼婦のノウハウ指導処理関数
+;-------------------------------------------------
+@BROTHEL_LECTURE_TEACHER, ARG:1
+DRAWLINE
+IF CHARANUM <= 2
+	PRINTW まず奴隷がいません。
+	RETURN 0
+ENDIF
+;表示させるキャラを抽出
+VARSET LOCAL, 0
+PL_VAR_X:0 = 0
+PL_VAR_X:2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:98 = 0
+	;この場にいること
+	SIF CFLAG:PC_VAR1:4
+		CONTINUE
+	SIF BROTHEL_LECTURE_SKILL(ARG, ARG:1) == 0
+		CONTINUE
+	CALLF SET_LIST, PL_VAR_X:0, PC_VAR1
+	PL_VAR_X:0++
+	MARK:PC_VAR1:98 = 1
+NEXT
+IF PL_VAR_X:0 == 0
+	PRINTW 指導可能な奴隷がいません。
+	RETURN 0
+ENDIF
+LOCALS:1 = カメラの使い方・写り方
+LOCALS:2 = 「大人の玩具」
+LOCALS:3 = ボイストレーニング
+LOCALS:4 = 教え上手になるための７つの秘訣
+PL_VAR_X:1 = PL_VAR_X:0 / 20
+
+$PRINT_LIST
+PRINTFORML 誰を『%LOCALS:(ARG:1)%』の指導者にさせますか？ ＜page.{PL_VAR_X:2+1}＞
+CALL BROTHEL_LECTURE_CHARA_LIST, PL_VAR_X:1
+DRAWLINE
+PRINTFORMLC \@(PL_VAR_X:2 <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(PL_VAR_X:2 >= PL_VAR_X:1) ? %" " * 16% # [1009]次のページ\@
+
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && PL_VAR_X:2 > 0
+	PL_VAR_X:2 -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && PL_VAR_X:2 < PL_VAR_X:1
+	PL_VAR_X:2 += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	GOTO INPUT_LOOP_0
+ENDIF
+PL_VAR_X:3 = RESULT
+DRAWLINE
+PRINTFORML %CALLNAME:RESULT%を指導者にさせます。
+PRINTFORML よろしいですか？
+DRAWLINE
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1
+	RESTART
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_1
+ENDIF
+CFLAG:(PL_VAR_X:3):4 = 8
+PRINTFORMW %CALLNAME:(PL_VAR_X:3)%を指導者にさせました。
+PRINTFORMW 次に、指導を受ける奴隷を選択します。
+DRAWLINE
+
+;表示させるキャラを抽出
+VARSET LOCAL, 0
+PL_VAR_X:0 = 0
+PL_VAR_X:2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:98 = 0
+	;この場にいること
+	SIF CFLAG:PC_VAR1:4
+		CONTINUE
+	;よく調教されていること
+	SIF MARK:PC_VAR1:2 < 3 || MARK:PC_VAR1:8 > 0 || MARK:PC_VAR1:9 > 0
+		CONTINUE
+	FOR PC_VAR2, 10, 14
+		SIF ABL:PC_VAR1:PC_VAR2 < 5 - (TALENT:PC_VAR1:150 || TALENT:PC_VAR1:160)
+			CONTINUE
+	NEXT
+	CALLF SET_LIST, PL_VAR_X:0, PC_VAR1
+	PL_VAR_X:0++
+	MARK:PC_VAR1:98 = 1
+NEXT
+IF PL_VAR_X:0 == 0
+	PRINTW 指導される奴隷がいません。
+	RETURN 0
+ENDIF
+PL_VAR_X:1 = PL_VAR_X:0 / 20
+
+$PRINT_LIST3
+PRINTFORML 誰に『%LOCALS:(ARG:1)%』の指導を受けさせますか？ ＜page.{PL_VAR_X:2+1}＞
+CALL BROTHEL_LECTURE_CHARA_LIST, PL_VAR_X:1
+DRAWLINE
+PRINTFORMLC \@(PL_VAR_X:2 <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(PL_VAR_X:2 >= PL_VAR_X:1) ? %" " * 16% # [1009]次のページ\@
+
+
+
+
+
+
+
+@BROTHEL_LECTURE_SKILL, ARG, ARG:1
+#FUNCTION
+;よく調教された奴隷じゃないと無理
+;まずは、屈服刻印が3、恐怖刻印、反発刻印がない
+;次に、従順、欲望、技巧、奉仕精神がいずれも5(陥落系素質があれば1少なくなる)
+SIF MARK:ARG:屈服刻印 < 3 || MARK:ARG:恐怖刻印 > 0 || MARK:ARG:反発刻印 > 0
+	RETURNF 0
+FOR PC_VAR1, 10, 14
+	SIF ABL:ARG:PC_VAR1 < 5 - (TALENT:ARG:恋慕 || TALENT:ARG:服従)
+		RETURNF 0
+NEXT
+SELECTCASE ARG:1
+	CASE 1
+		;撮影経験が80以上、撮影技能が4以上、家電使役知識、工作名人、報道者、いずれかを満たしていれば、指導可能。
+		SIF EXP:ARG:撮影経験 >= 80 || ABL:ARG:撮影技能 >= 4 || TALENT:ARG:家電使役知識 || TALENT:ARG:工作名人 || TALENT:ARG:報道者
+			RETURNF 1
+	CASE 2
+		;淫具知識持ち
+		SIF TALENT:ARG:淫具知識
+			RETURNF 1
+	CASE 3
+		;歌唱経験が80以上、歌唱技能が4以上([音感]なら幾分か減り、[音痴]なら幾分か増える)
+		SIF EXP:ARG:歌唱経験 >= 80 - 40 * (TALENT:ARG:音感 - 2 * TALENT:ARG:音痴) || ABL:ARG:撮影技能 >= 4 - (TALENT:ARG:音感 - TALENT:ARG:音痴)
+			RETURNF 1
+	CASE 4
+		;[教育者]を持ち、教育経験が150以上
+		SIF TALENT:ARG:教育者 && EXP:ARG:教育経験 >= 150
+			RETURNF 1
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+RETURNF 0
+
+;キャラリスト
+@BROTHEL_LECTURE_CHARA_LIST, ARG
+DRAWLINE
+FOR PC_VAR1, 0, 20
+	LOCAL = GET_LIST(PC_VAR1 + ARG * 20)
+	SIF LOCAL == 0
+		CONTINUE
+	CALL ARRANGE_CHARALIST, LOCAL
+	CALL ARRANGE_CHARALIFE, LOCAL
+	PRINTL 
+NEXT
+
+
+

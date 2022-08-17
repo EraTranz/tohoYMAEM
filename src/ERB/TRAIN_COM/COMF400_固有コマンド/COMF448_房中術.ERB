@@ -1,0 +1,135 @@
+﻿;=============================================================================
+;房中術
+;=============================================================================
+;5ターン継続、使用中性交に対してマイナスソース軽減効果と、気力消費減少効果あり
+;ただし、性交以外の調教時に気力消費増加効果もあり
+;TEQUIP:房中術を使わせてもらいました
+;幽明の苦輪中のを魔改造。中国四千年の神秘がついに解禁
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE448
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:448 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;対象、または調教者が美鈴でないとダメ
+SIF NO:TARGET != 1006 && NO:PLAYER != 1006
+	RETURN 0
+;助手プレイ中はダメ
+SIF ASSIPLAY
+	RETURN 0
+;美鈴が対象の場合は、助手可または恋慕または奉仕精神４以上または従順・技巧・奉仕精神が全て3以上
+IF NO:TARGET == 1006
+	SIF CFLAG:1 < 2 && TALENT:恋慕 == 0 && ABL:奉仕精神 < 4 && (ABL:従順 < 3 || ABL:技巧 < 3 || ABL:奉仕精神 < 3)
+		RETURN 0
+ENDIF
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 448) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM448
+PRINTL 房中術
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 448
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 房中術
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+
+IF TEQUIP:房中術 > 0
+	DOWNBASE:1 += 50
+	TEQUIP:房中術 = 0
+ELSE
+	DOWNBASE:1 += 70
+	TEQUIP:房中術 = 6
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;房中術発動中
+;--------------------------------------------------
+@EQUIP_COM448
+PRINTFORML ＜房中術発動中＞
+
+SOURCE:情愛 += 300
+IF (SELECTCOM >= 20 && SELECTCOM <= 39) || (SELECTCOM >= 323 && SELECTCOM <= 325) || (SELECTCOM >= 332 && SELECTCOM <= 334) || SELECTCOM == 430 || SELECTCOM == 431 || (SELECTCOM >= 612 && SELECTCOM <= 619) || SELECTCOM == 651 || SELECTCOM == 652 || SELECTCOM == 655 || SELECTCOM == 656
+	PRINTFORML 美鈴の気の力による影響が起こっている…
+	TIMES DOWNBASE:1 , 0.80
+	TIMES SOURCE:痛み , 0.80
+	TIMES SOURCE:痒み , 0.80
+	TIMES SOURCE:不潔 , 0.80
+	TIMES SOURCE:逸脱 , 0.80
+	TIMES SOURCE:反感追加 , 0.80
+ELSE
+	TIMES DOWNBASE:1 , 1.20
+ENDIF
+
+TEQUIP:房中術 -= 1
+SIF TEQUIP:房中術 == 0
+	PRINTFORML ＜房中術の効果が終了しました＞
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_448
+IF TEQUIP:房中術 > 0
+	IF NO:MASTER == 1006
+		PRINTFORML %CALLNAME:MASTER%は体内の気を発散させることにより、房中術の効果を中断した…
+	;恋慕でなおかつ主人調教
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の命令を受け、気を発散させ房中術の効果を中断した
+		PRINTFORML %CALLNAME:TARGET%は、なぜかこころもち寂しそうにみえた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の命令を受け、気を発散させ房中術の効果を中断した…
+	ENDIF
+ELSE
+	IF NO:MASTER == 1006
+		PRINTFORML %CALLNAME:MASTER%は気を練ることにより、房中術の効果を発現させた…
+	;恋慕でなおかつ主人調教
+	ELSEIF TALENT:恋慕 && ASSIPLAY == 0
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の命令を受け、気を練り房中術の効果を発現させた
+		PRINTFORML %CALLNAME:TARGET%は、これから%CALLNAME:MASTER%に犯されるという期待感に胸を躍らせているようだ…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の命令を受け、気を練り房中術の効果を発現させた…
+	ENDIF
+ENDIF

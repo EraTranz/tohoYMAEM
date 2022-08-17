@@ -1,0 +1,31 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;素敵な食後の運動
+;TFLAG:99で分岐可能、詳しくはSHOP_LUNCH0.ERB参照
+;TFLAG:99 = 1でセックス、2でアナルセックス、3でレズ
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE440
+SELECTCASE K2008F_RANK()
+	CASE IS < 4
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORML 「……お腹が一杯になると別の欲求が出てくるのは、自然なことよね」
+				PRINTFORMW 「それは%CALLNAME:MASTER%も同じでしょ？　ほら、いいのよ」
+			CASEELSE
+				PRINTFORMW ……
+				PRINTFORML 「やだ、何だか体が……　んっ、%CALLNAME:MASTER%も？」
+				PRINTFORMW 「……いっしょに消化するのも素敵ね」
+		ENDSELECT
+	CASE 4 TO 5
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「衣食足りて礼節を知る、とは言うけど」
+				PRINTFORML 「食が足りてすぐ衣を脱いで色欲に染まるなんて」
+				PRINTFORMW 「……これはこれで素敵ね」
+			CASEELSE
+				PRINTFORML 「ご飯を食べた。　後片付けは終わった。　このあとやる事は特にない」
+				PRINTFORMW 「……食後に運動のデザートはいかが？　いっしょに食べてくれると嬉しいわ」
+		ENDSELECT
+ENDSELECT
+PRINTFORML 
+CALL K2008_COM("快楽")

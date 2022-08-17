@@ -1,0 +1,22 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝の一言口上テンプレ
+;-------------------------------------------------
+@K2008_ONEWORD_WELCOME_MORNING_0
+SIF __K2008N_CAN_CALL__
+	RETURN 0
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTDATAL
+			DATA %CALLNAME:TARGET%「」
+		ENDDATA
+	CASE 2 TO 3
+		PRINTDATAL
+			DATA %CALLNAME:TARGET%「」
+		ENDDATA
+	CASE 4 TO 5
+		PRINTDATAL
+			DATA %CALLNAME:TARGET%「」
+		ENDDATA
+ENDSELECT
+

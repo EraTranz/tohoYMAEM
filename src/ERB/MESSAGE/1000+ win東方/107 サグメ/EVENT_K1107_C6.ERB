@@ -1,0 +1,878 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;X1をキャラ番号に置換して使用してください(霊夢なら1、蓮子なら49、魅魔なら100)。
+;
+;このファイルでは600～699番のコマンド（派生コマンド）の口上用関数が置いてあります。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;○○口上
+;==============================================================
+;========================================================
+;コマンド口上
+;CFLAG:9000～9099までの100個を使用して、
+;選んだコマンドを対象に初めて使ったかどうかを判別できる
+;「IF TFLAG:95 == 1」で初回か2回目以降なのかで表示内容を変えることが出来る
+;========================================================
+;-------------------------------------------------
+;Ｇスポット刺激
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_600
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「……んひっ…！？」
+		PRINTFORMW 「そこ…ん…強いの…」
+	;その他
+	ELSE
+		PRINTFORMW 「……っ…」
+		PRINTFORMW サグメは快感をこらえてbこちらを睨みつけている
+	ENDIF
+
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+		PRINTFORMW 「…っ…ん…！」
+		PRINTFORMW 「…あっ……そこ…気持ちいいの…！」
+	ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+		PRINTFORMW 「……あ…そこ…！」
+		PRINTFORMW 「や…ぁあっ…！」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「……指…ん…！」
+		PRINTFORMW 「…駄目…あんまり強く…しないで…」
+	;その他
+	ELSEIF ABL:Ｖ感覚 >= 5
+		PRINTFORMW 「……あっ……っ…！」
+		PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+	ELSEIF ABL:Ｖ感覚 >= 3
+		PRINTFORMW 「…ぁ…くっ…！」
+		PRINTFORMW サグメは口を押さえて声を出さないようにしている
+	ELSE
+		PRINTFORMW 「………」
+		PRINTFORMW サグメは口を押さえて声を出さないようにしている
+	ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;潜望鏡
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_601
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「…ん…出てるわね…」
+		PRINTFORMW 「じゅぷっ…じゅるっ！」
+	;その他
+	ELSE
+		PRINTFORMW 「……れろ…」
+		PRINTFORMW サグメはこちらを睨みつけながら大人しく陰茎をくわえ込んだ
+	ENDIF
+ELSE
+	;精液中毒Lv5+精愛味覚
+	IF ABL:精液中毒 >= 5 && TALENT:精愛味覚 == 1
+		PRINTFORMW 「…丸見えよ…」
+		PRINTFORMW 「ん…ちゅずぶっずずっ…」
+	;精愛味覚
+	ELSEIF TALENT:TARGET:精愛味覚 == 1
+		PRINTFORMW 「……ちゅっんっ！」
+	;精液中毒Lv5
+	ELSEIF ABL:精液中毒 >= 5
+		PRINTFORMW 「…んっ…ちゅ…！」
+	;精液中毒Lv3
+	ELSEIF ABL:精液中毒 >= 3
+		PRINTFORMW 「んっ…んむ！」
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「…れろ…あむっ…！」
+	;それ以外
+	ELSE 
+		PRINTFORMW 「…っちゅ… 」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;シックスナイン
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_602
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ん…ちゅ…れろ…っ…！」
+		PRINTFORMW 「…あ…そこ…！」
+	;その他
+	ELSE
+		PRINTFORMW 「……ん…」
+		PRINTFORMW サグメは不快そうに陰茎を舐めながらクリトリスを舐められている
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+		PRINTFORMW 「…じゅる…ん…」
+		PRINTFORMW 「…これ…気持ちいい？」
+	ELSEIF TALENT:恋慕 && ABL:奉仕精神 >= 3 
+		PRINTFORMW 「…っ…」
+		PRINTFORMW 「ん…あ…これ…」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「…」
+		PRINTFORMW 「ん…」
+	;その他
+	ELSEIF ABL:奉仕精神 >= 5
+		PRINTFORMW 「…ん…あっ…！」
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「…ん…っ…！」
+	ELSE
+		PRINTFORMW 「………」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;６９パイズリ
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_603
+;恋慕
+IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+	PRINTFORMW 「…れろ…あ…」
+	PRINTFORMW 「…気持ちいい？」
+ELSEIF TALENT:恋慕 && ABL:奉仕精神 >= 3 
+	PRINTFORMW 「…っ…」
+	PRINTFORMW 「ん…これ…」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…っ…」
+	PRINTFORMW 「ん…」
+;その他
+ELSEIF ABL:奉仕精神 >= 5
+	PRINTFORMW 「…れろ…あっ…！」
+ELSEIF ABL:奉仕精神 >= 3
+	PRINTFORMW 「…ん…っ…！」
+ELSE
+	PRINTFORMW 「………」
+ENDIF
+
+;-------------------------------------------------
+;雁が首
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_604
+;恋慕
+IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+	PRINTFORMW 「…んちゅ…あ…」
+	PRINTFORMW 「…もう…ん…」
+ELSEIF TALENT:恋慕 && ABL:奉仕精神 >= 3 
+	PRINTFORMW 「…っ…」
+	PRINTFORMW 「ん…あ…」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…っ…」
+	PRINTFORMW 「ん…ちゅ…」
+;その他
+ELSEIF ABL:奉仕精神 >= 5
+	PRINTFORMW 「…じゅぶ…っ…！」
+ELSEIF ABL:奉仕精神 >= 3
+	PRINTFORMW 「…んあ…っ…！」
+ELSE
+	PRINTFORMW 「……れろ…」
+ENDIF
+
+;-------------------------------------------------
+;指でＶを撫でる
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_605
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…っ…ん…！」
+	PRINTFORMW 「…あっ…」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「……あ…！」
+	PRINTFORMW 「やっ…駄目…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…指…ん…！」
+	PRINTFORMW 「…っ…」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…っ…んっ…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「…ぁ…っ…！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;ペッティング
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_606
+;恋慕
+IF TALENT:恋慕
+	IF RAND:3 == 0
+		PRINTFORMW 「……優しくしてくださいね…」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「…濡れているかしら…」
+	ELSE
+		PRINTFORMW 「………」
+	ENDIF
+;その他
+ELSE
+	IF RAND:3 == 0
+		PRINTFORMW 「………」
+		PRINTFORMW サグメは黙って行為を見つめている
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「…っ…」
+		PRINTFORMW サグメは気丈に睨みつけている
+	ELSE
+		PRINTFORMW 「………！」
+		PRINTFORMW サグメはこちらを睨みつけているた
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;二人で犯す
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_610
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…二人とも…あ…！」
+	PRINTFORMW 「…んっ…っ…！」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「…ん…そこ…！」
+	PRINTFORMW 「や…ぁあっ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…あんっ！…うぅ…ん…！」
+	PRINTFORMW 「…あぁ…くんんっ！」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…ぐあっ…んっ…！」
+	PRINTFORMW サグメは必死に抵抗している
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「……ぁ…くっ…！」
+	PRINTFORMW サグメは必死に抵抗している
+ELSE
+	PRINTFORMW 「……っ…！」
+	PRINTFORMW サグメは必死に抵抗している
+ENDIF
+
+;-------------------------------------------------
+;岩清水
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_611
+;恋慕
+IF TALENT:恋慕 && ABL:Ｃ感覚 >= 5
+	PRINTFORMW 「…ふあっ…ん…！」
+	PRINTFORMW 「…あっんっ！」
+ELSEIF TALENT:恋慕 && ABL:Ｃ感覚 >= 3 
+	PRINTFORMW 「…ん…！」
+	PRINTFORMW 「や…いっぱい…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…っ…ん…」
+	PRINTFORMW 「…そんなに…！」
+;その他
+ELSEIF ABL:Ｃ感覚 >= 5
+	PRINTFORMW 「……くっ…ん…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｃ感覚 >= 3
+	PRINTFORMW 「…あ……ん…！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;乱れ牡丹
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_612
+;PRINTFORMW 
+
+;-------------------------------------------------
+;騎乗乳房自慰
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_613
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…んっ！これ…うまく…！」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「……あっ…胸…気持ち…いい…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…く…ふぅ…！」
+	PRINTFORMW 「…これで…どう…？」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「……うう……っ！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「…ぁ………ううぅ………！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;挿入Ｇスポ責め
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_614
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…んっ！そこ…弱いの…！」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「……あっ…そこ…気持ち…いい…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…く…！」
+	PRINTFORMW 「…これ…ダメになる…！」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「……くう……っ！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「…ぁ…あうぅ………！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;挿入子宮口責め
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_615
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…んっ！そんなとこ…！」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「……あっ…そこ…気持ちいいの…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…くぅ…！」
+	PRINTFORMW 「…中で…出して…」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「………っ！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「…ぁぅ……！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;後背位愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_616
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…あんっ！胸…強いの…」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「……っ…そこ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…くぅ…！」
+	PRINTFORMW 「…胸…あんまり揉まないで…」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「……く…っ！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「…くぅ……！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;対面愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_617
+;恋慕
+IF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「…んっ！…あんまり見ないで…」
+ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3 
+	PRINTFORMW 「…っ…そこ……！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…くぅ…！」
+	PRINTFORMW 「…強くて…んっ…」
+;その他
+ELSEIF ABL:Ｖ感覚 >= 5
+	PRINTFORMW 「………っ！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｖ感覚 >= 3
+	PRINTFORMW 「…ぁぅ……！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;後背位アナル胸愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_618
+;恋慕
+IF TALENT:恋慕 && ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…んっ！…ぁっ…！」
+	PRINTFORMW 「…ぅあ……はぁ…！」
+ELSEIF TALENT:恋慕 && ABL:Ａ感覚 >= 3 
+	PRINTFORMW 「…ぐ…んっ…！」
+	PRINTFORMW 「…ぐっ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…えぅ…ぐ…！」
+	PRINTFORMW 「…ぁ……！」
+;その他
+ELSEIF ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…ぐぁあ！…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ａ感覚 >= 3
+	PRINTFORMW 「…っあ！…く……！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「……ぐ…ぁ…」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;対面アナル胸愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_619
+;恋慕
+IF TALENT:恋慕 && ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…あぁっ…！」
+	PRINTFORMW 「…あぅあ…はぁ…！」
+ELSEIF TALENT:恋慕 && ABL:Ａ感覚 >= 3 
+	PRINTFORMW 「…ひぐ…んっ…！」
+	PRINTFORMW 「…あっ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…ぐ…！」
+	PRINTFORMW 「…ぁ…ん…！」
+;その他
+ELSEIF ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…ひぁあ！…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ａ感覚 >= 3
+	PRINTFORMW 「…っあ！……！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………ぁ…」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;強制放尿
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_620
+;恋慕
+IF TALENT:恋慕 && ABL:排泄中毒 >= 5
+	PRINTFORMW 「…ふぅ…ん…」
+	PRINTFORMW 「…はぁ…」
+ELSEIF TALENT:恋慕 && ABL:排泄中毒 >= 3 
+	PRINTFORMW 「……あんまり…」
+	PRINTFORMW 「…見ないで…恥ずかしいから…」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「……あ…」
+	PRINTFORMW 「…あんまり…見ないでよ…」
+;その他
+ELSEIF ABL:排泄中毒 >= 5
+	PRINTFORMW 「……ん…ふぅ…」
+	PRINTFORMW サグメは恥ずかしげもなく放尿している
+ELSEIF ABL:排泄中毒 >= 3
+	PRINTFORMW 「……ふぅ…」
+	PRINTFORMW サグメは大人しく放尿している
+ELSE
+	PRINTFORMW 「……見ないで…」
+	PRINTFORMW サグメは恥ずかしそうに放尿している
+ENDIF
+
+;-------------------------------------------------
+;口移し
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_621
+;PRINTFORMW 
+
+;-------------------------------------------------
+;四肢緊縛
+;解除口上は縄コマンドに書くこと
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_622
+;恋慕
+IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+	PRINTFORMW 「…ん…」
+	PRINTFORMW 「…あ…このまま…」
+ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3 
+	PRINTFORMW 「…あ…ん…」
+	PRINTFORMW 「…好きにしたいの？」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ぐ…抵抗できない…」
+	PRINTFORMW 「…こういうの好きなの？」
+;その他
+ELSEIF ABL:マゾっ気 >= 5
+	PRINTFORMW 「……んっ…く…！」
+	PRINTFORMW サグメは縛られたまま少しばかり嬌声を上げている
+ELSEIF ABL:マゾっ気 >= 3
+	PRINTFORMW 「…あぐ…ん…！」
+	PRINTFORMW サグメは縛られたまま少し感じている
+ELSE
+	PRINTFORMW 「……っ…この…！」
+	PRINTFORMW サグメは縄で縛られながらも抵抗している
+ENDIF
+
+;-------------------------------------------------
+;亀甲縛り
+;解除口上は縄コマンドに書くこと
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_623
+;恋慕
+IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+	PRINTFORMW 「…ん…」
+	PRINTFORMW 「…あ…これ…」
+ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3 
+	PRINTFORMW 「…あ…ん…」
+	PRINTFORMW 「…好きにして…」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ぐ…これ…」
+	PRINTFORMW 「…こういうの好きなの？」
+;その他
+ELSEIF ABL:マゾっ気 >= 5
+	PRINTFORMW 「……あんっ…くっ…！」
+	PRINTFORMW サグメは縛られたまま少しばかり嬌声を上げている
+ELSEIF ABL:マゾっ気 >= 3
+	PRINTFORMW 「…あっ…ん…！」
+	PRINTFORMW サグメは縛られたまま少し感じている
+ELSE
+	PRINTFORMW 「……っ…この…！」
+	PRINTFORMW サグメは縄で縛られながらも抵抗している
+ENDIF
+
+;-------------------------------------------------
+;吊り下げ
+;解除口上は縄コマンドに書くこと
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_624
+;恋慕
+IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+	PRINTFORMW 「…ん…」
+	PRINTFORMW 「…あ…これ…食い込んで…」
+ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3 
+	PRINTFORMW 「…あ…ん…」
+	PRINTFORMW 「…もう…無理やり…」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ぐ…これ…」
+	PRINTFORMW 「…キツ…い…」
+;その他
+ELSEIF ABL:マゾっ気 >= 5
+	PRINTFORMW 「……あっ…くっ…！」
+	PRINTFORMW サグメは縛られたまま少しばかり嬌声を上げている
+ELSEIF ABL:マゾっ気 >= 3
+	PRINTFORMW 「…あっ…んぐ…！」
+	PRINTFORMW サグメは縛られたまま少し感じている
+ELSE
+	PRINTFORMW 「……っ……！」
+	PRINTFORMW サグメは縄で縛られながらも抵抗している
+ENDIF
+
+;-------------------------------------------------
+;ローションプレイ
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_625
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「…ん…ぬるぬる…」
+;その他
+ELSE
+	PRINTFORMW 「………」
+ENDIF
+
+;-------------------------------------------------
+;搾乳
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_626
+;恋慕
+IF TALENT:恋慕 && ABL:Ｂ感覚 >= 5
+	PRINTFORMW 「…あ…ん…そんなに…あああ！」
+ELSEIF TALENT:恋慕 && ABL:Ｂ感覚 >= 3 
+	PRINTFORMW 「や…あ…ん…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…私…牛じゃないのだけれど…ん…！」
+;その他
+ELSEIF ABL:Ｂ感覚 >= 5
+	PRINTFORMW 「…っ…あっ…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｂ感覚 >= 3
+	PRINTFORMW 「……んっ…！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;乳首甘噛み
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_627
+;恋慕
+IF TALENT:恋慕 && ABL:Ｂ感覚 >= 5
+	PRINTFORMW 「…そこ…弱いの…ん！」
+ELSEIF TALENT:恋慕 && ABL:Ｂ感覚 >= 3 
+	PRINTFORMW 「や…あ…ひん…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…私…そこ…ん…！」
+;その他
+ELSEIF ABL:Ｂ感覚 >= 5
+	PRINTFORMW 「…っ…くっ…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ｂ感覚 >= 3
+	PRINTFORMW 「……ひんっ…！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;相互自慰
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_628
+;恋慕
+IF TALENT:恋慕 && Exp:10 >= 100
+	PRINTFORMW 「……う…ん…！」
+	PRINTFORMW 「私の…見て…あ…」
+ELSEIF TALENT:恋慕 && Exp:10 >= 50 
+	PRINTFORMW 「…そんなに勃てて…」
+	PRINTFORMW 「やっ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん…！」
+	PRINTFORMW 「…ふふ…可愛い…」
+;その他
+ELSEIF Exp:10 >= 100
+	PRINTFORMW 「……ひっ…ん…！」
+	PRINTFORMW サグメは必死に片手で口を押さえて声を出さないようにしている
+ELSEIF Exp:10 >= 50
+	PRINTFORMW 「……ふぇ…んっ…！」
+	PRINTFORMW サグメは片手で口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………っ」
+	PRINTFORMW サグメは片手で口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;サンドイッチ
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_629
+IF NO:ASSI == 1106
+	IF CFLAG:5202 == 1
+		;2人に恋慕
+		IF TALENT:恋慕 && TALENT:ASSI:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 『ん…あ…もっと…』
+				PRINTFORMW 「………気持よくして…」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 『…中に挿れてもいいのですよ…？』
+				PRINTFORMW 「……別に…こういうのも…ん…」
+			ELSE
+				PRINTFORMW 「……気持よくなって…」
+				PRINTFORMW 『…いっぱい…出して！』
+			ENDIF
+		;サグメのみ恋慕
+		ELSEIF TALENT:恋慕 && TALENT:ASSI:恋慕 == 0
+			IF RAND:3 == 0
+				PRINTFORMW 「…ん…あ……」
+				PRINTFORMW 『…あ…やめて…』
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「……あ…」
+				PRINTFORMW 『…中に…だけは…！』
+			ELSE
+				PRINTFORMW 『ん…く…』
+				PRINTFORMW 「…っあ……」
+				PRINTFORMW 『…駄目…』
+			ENDIF
+		;ドレミーのみ恋慕
+		ELSEIF TALENT:恋慕 == 0 && TALENT:ASSI:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 「…こんなの…」
+				PRINTFORMW 『…いい加減慣れましょうよ、気持ちいいですよ？』
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 『ふふ、二人とも孕ませる気ですか？』
+				PRINTFORMW 「………」
+			ELSE
+				PRINTFORMW 『美女二人におちんちん突っ込むの羨ましいですね』
+				PRINTFORMW 「……っ…」
+			ENDIF
+		;その他
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「…………」
+				PRINTFORMW 『……ん…』
+			ELSE
+				PRINTFORMW 『…大きくなってる…』
+				PRINTFORMW 「………」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位手淫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_630
+;PRINTFORMW 
+
+;-------------------------------------------------
+;相互秘貝開帳
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_631
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面座位胸愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_632
+;恋慕
+IF TALENT:恋慕 && ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…ひっ！…っ…！」
+	PRINTFORMW 「…くぅあ……はぁ…！」
+ELSEIF TALENT:恋慕 && ABL:Ａ感覚 >= 3 
+	PRINTFORMW 「…いぐ…んっ…！」
+	PRINTFORMW 「…っ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「……えぅ…ぐ…！」
+	PRINTFORMW 「…あぁ……！」
+;その他
+ELSEIF ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…ぐぁあ！…っ！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ａ感覚 >= 3
+	PRINTFORMW 「…っあ！…っ…！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「………ぁ…」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;背面座位アナル胸愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_633
+;恋慕
+IF TALENT:恋慕 && ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…んっ！…っ…！」
+	PRINTFORMW 「…あ……はぁ…はぁ…！」
+ELSEIF TALENT:恋慕 && ABL:Ａ感覚 >= 3 
+	PRINTFORMW 「…あぐ…んっ…！」
+	PRINTFORMW 「…ひっ…！」
+ELSEIF TALENT:恋慕
+	PRINTFORMW 「…ん……ぐ…！」
+	PRINTFORMW 「……っ…！」
+;その他
+ELSEIF ABL:Ａ感覚 >= 5
+	PRINTFORMW 「…ひぁあ！…！」
+	PRINTFORMW サグメは必死に口を押さえて声を出さないようにしている
+ELSEIF ABL:Ａ感覚 >= 3
+	PRINTFORMW 「…っぐ！…く……！」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ELSE
+	PRINTFORMW 「……っ…」
+	PRINTFORMW サグメは口を押さえて声を出さないようにしている
+ENDIF
+
+;-------------------------------------------------
+;イきつけ三杯
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_649
+;PRINTFORMW 
+
+;-------------------------------------------------
+;浄玻璃の鏡
+;TEQUIP:羞恥プレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_650
+;終了時
+IF TEQUIP:羞恥プレイ == 0
+	;PRINTFORMW 
+;開始時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;御所車(逆レイプ)
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_651
+;PRINTFORMW 
+
+;-------------------------------------------------
+;フォーオブアカインド(ふたなり)
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_652
+;PRINTFORMW 
+
+;-------------------------------------------------
+;蜘蛛の巣
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_653
+;PRINTFORMW 
+
+;-------------------------------------------------
+;蜘蛛脚六点責め
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_654
+;PRINTFORMW 
+
+;-------------------------------------------------
+;蜘蛛の巣姦
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_655
+;PRINTFORMW 
+
+;-------------------------------------------------
+;蜘蛛の巣肛門姦
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_656
+;PRINTFORMW 
+
+;-------------------------------------------------
+;蓑虫プレイ
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_657
+;PRINTFORMW 
+
+;-------------------------------------------------
+;拘束∇
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_658
+;PRINTFORMW 
+
+;-------------------------------------------------
+;性感槍ぐんぐにる
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_660
+;PRINTFORMW 
+
+;-------------------------------------------------
+;触手撫で回し
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_680
+;PRINTFORMW 
+
+;-------------------------------------------------
+;触手アナル愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_682
+;PRINTFORMW 
+
+;-------------------------------------------------
+;触手胸愛撫
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_683
+;PRINTFORMW 
+
+;========================================================
+;コマンド口上一括関数
+;個別の関数が無かった場合に呼び出される
+;========================================================
+;-------------------------------------------------
+;コマンド一括関数
+;-------------------------------------------------
+@KOJO_1107_TRAIN_MESSAGE_S_COM_GENERAL
+;PRINTFORMW 

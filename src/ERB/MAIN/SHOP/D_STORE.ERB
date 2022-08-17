@@ -1,0 +1,462 @@
+﻿;==================================================================================================
+;体質変化薬の購入処理
+;==================================================================================================
+@BUY_DRUG
+;『禁断の知識』、『調合知識』を持っているか判定
+;主人と助手全体から禁断の知識と調合知識を検索
+;ビット演算でLOCAL:8=1が有効のときは調合知識を、LOCAL:8=2が有効のときは禁断の知識を所持していることを示す
+
+;ネタ帳
+;〔１ＵＰマッシュルーム〕が原材料の薬(エリクサーみたいなやつとか)
+LOCAL:9 = 0
+LOCAL:8 = SEARCH_CHARA_WISDOM()
+DRAWLINE
+PRINTL どの薬を購入しますか？
+PRINTFORML 所持金:{MONEY}圓
+DRAWLINE
+PRINTLC [ 9]〔鎮静茶〕(100圓)
+PRINTLC [10]〔栄養剤〕(1000圓)
+PRINTLC [11]〔ふたなり薬〕(2萬圓)
+;オプションで特殊な薬ONが必要
+IF FLAG:13 & 1
+	SIF FLAG:14 & 32
+		PRINTLC [12]〔ふたたま薬〕(3萬圓)
+	SIF FLAG:15 & 1
+		PRINTLC [13]〔性露錠〕(1萬5000圓)
+	PRINTLC [14]〔根素勃乳〕(2000圓)
+	PRINTLC [20]〔豊胸剤〕(2萬圓)
+	PRINTLC [21]〔縮胸剤〕(1萬圓)
+	PRINTLC [22]〔止乳剤〕(5000圓)
+	PRINTLC [23]〔尿漏れ改善薬〕(5000圓)
+	PRINTLC [24]〔記憶消去薬〕(10萬圓)
+	SIF TARGET >= 0 && LOCAL:8 & 1
+		PRINTLC [25]〔睡眠薬〕(2000圓)
+	SIF TARGET >= 0 && TALENT:人魚
+		PRINTLC [26]〔人魚姫の薬〕(10萬圓)
+ENDIF
+SIF LOCAL:8 & 1
+	PRINTLC [27]〔理性復活薬〕(7萬圓)
+SIF FLAG:16 & 32 && LOCAL:8 & 1
+	PRINTLC [28]〔復活薬〕(14萬圓)
+PRINTLC [30]〔赤の飴玉〕(2萬圓)
+PRINTLC [31]〔青の飴玉〕(2萬圓)
+IF FLAG:13 & 1
+	PRINTLC [32]〔黄の飴玉〕(2萬圓)
+	PRINTLC [33]〔緑の飴玉〕(18萬圓)
+	PRINTLC [34]〔白の飴玉〕(10萬圓)
+	PRINTLC [35]〔黒の飴玉〕(5萬圓)
+	SIF FLAG:5 & 1 && TALENT:MASTER:調合知識
+		PRINTLC [36]〔灰の飴玉〕(5萬圓)
+	SIF TALENT:MASTER:禁断の知識
+		PRINTLC [37]〔金の飴玉〕(15萬圓)
+	PRINTLC [38]〔銀の飴玉〕(12萬圓)
+	SIF LOCAL:8 & 1 && TALENT:MASTER:禁断の知識
+		PRINTLC [39]〔虹の飴玉〕(50萬圓)
+	PRINTLC [40]〔翠の飴玉〕(10萬圓)
+	SIF FLAG:11 & 2
+		PRINTLC [41]〔紺の飴玉〕(20萬圓)
+	PRINTLC [42]〔桃の飴玉〕(10萬圓)
+	SIF TALENT:MASTER:禁断の知識
+		PRINTLC [43]〔鈍の飴玉〕(10萬圓)
+ENDIF
+;PRINT [0]〔〕(0圓) 
+PRINTL 
+PRINTL [100]やめる
+DRAWLINE
+$INPUT_LOOP_SELECT_DRUG
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 9
+	PRINTL 〔鎮静茶〕：ストレスを低下させます
+	PRINTL 飲めば心が落ち着き、ストレスを解消してくれる。
+	PRINTL 数種類のハーブと【花の妖怪の唾液】が使われているらしい。
+	LOCAL:9 = 100
+ELSEIF RESULT == 10
+	PRINTL 〔栄養剤〕：体力を回復します
+	PRINTL 飲めばたちまち元気になる甘い液剤。
+	PRINTL 【巫女の脇汗】で淹れた緑茶に蜜を加えたものと言われている。
+	LOCAL:9 = 1000
+ELSEIF RESULT == 11
+	PRINTL 〔ふたなり薬〕：生えたり縮んだりします
+	PRINTL 微妙な臭いを放つ萌葱色の丸薬。
+	PRINTL 【厄草】を磨り潰したものに【イカ臭い乳】を混ぜたものがベースとされている。
+	LOCAL:9 = 20000
+ELSEIF RESULT == 12 && FLAG:13 & 1 && FLAG:14 & 32
+	PRINTL 〔ふたたま薬〕：付いたり消えたりします
+;	PRINTL 
+	LOCAL:9 = 30000
+ELSEIF RESULT == 13 && FLAG:13 & 1 && FLAG:15 & 1
+	PRINTL 〔性露錠〕：陰核を少しずつ肥大化させる効果があります
+	PRINTL 【テストステロン改】が主成分。味はかなり苦い。
+	PRINTL 元はただの精力剤だったが、近年は誤った使い方が主流になっているようである。
+	LOCAL:9 = 15000
+ELSEIF RESULT == 14 && FLAG:13 & 1
+	PRINTL 〔根素勃乳〕：[不思議な根]の機能を復活させます
+	PRINTL 読みは『こんすたっち』らしい。乳白色をした謎の液体である。
+	PRINTL 薬効…もとい厄効は中に含まれている【姦狂ホルモン】によるものだとか……
+	LOCAL:9 = 2000
+ELSEIF RESULT == 20 && FLAG:13 & 1
+	PRINTL 〔豊胸剤〕：胸が大きくなります
+	PRINTL ミラクル成分が胸に爆発的な成長を促す。
+	PRINTL 【奇跡の果実】から取った果汁が原料らしい。
+	LOCAL:9 = 20000
+ELSEIF RESULT == 21 && FLAG:13 & 1
+	PRINTL 〔縮胸剤〕：胸が小さくなります
+	PRINTL 禁忌の成分が虚乳化の作用をもたらしている。
+	PRINTL 【禁断の果実】から抽出されたエキスを濃縮させたものだとか。
+	LOCAL:9 = 10000
+ELSEIF RESULT == 22 && FLAG:13 & 1
+	PRINTL 〔止乳剤〕：母乳が出なくなります
+	PRINTL 抑プロラクチン薬と呼ばれる薬の一種。
+	PRINTL 【人形の卵】(無精卵)から作られたメレンゲで味を調えている。
+	LOCAL:9 = 5000
+ELSEIF RESULT == 23 && FLAG:13 & 1
+	PRINTL 〔尿漏れ改善薬〕：[お漏らし癖]が治ります
+	PRINTL 夜尿病の治療などにも使われる三環系抗鬱薬の一種。
+	PRINTL 人妖問わず服薬できるように【少女臭】でコーティングされているらしい。
+	LOCAL:9 = 5000
+ELSEIF RESULT == 24 && FLAG:13 & 1
+	PRINTL 〔記憶消去薬〕：調教の記憶を消去します
+	PRINTL 飲めば最近起きたことの記憶が消し飛ぶ危険な薬。
+	PRINTL 【厄の結晶】が材料だとまことしやかに言われている。
+	LOCAL:9 = 100000
+ELSEIF RESULT == 25 && TARGET >= 0 && FLAG:13 & 1 && LOCAL:8 & 1
+	CALL SLEEP_DRUG
+	RESTART
+ELSEIF RESULT == 26 && FLAG:13 & 1
+	PRINTL 〔人魚姫の薬〕：＜人魚＞が＜人間＞に転生します
+	PRINTL 飲むと[音痴]になってしまう副作用がある薬。
+	PRINTL おとぎ話では【人魚の声】が代償だと語られている。
+	LOCAL:9 = 100000
+ELSEIF RESULT == 27 && LOCAL:8 & 1
+	PRINTL 〔理性復活薬〕：[理性]が再生します
+	LOCAL:9 = 70000
+ELSEIF RESULT == 28 && (FLAG:16 & 32) && LOCAL:8 & 1
+	PRINTL 〔復活薬〕：[死亡]でなくなります
+	LOCAL:9 = 140000
+ELSEIF RESULT == 30
+	PRINTL 〔赤の飴玉〕：＜処女膜＞が再生します
+	PRINTL 体が少しだけ若返る赤色の飴玉。
+	PRINTL 見た目からかいつの間にか【少女の破瓜血】が原材料という噂が立つようになった。
+	LOCAL:9 = 20000
+ELSEIF RESULT == 31
+	PRINTL 〔青の飴玉〕：[母乳体質]になります
+	PRINTL 体が少しだけ成長する青色の飴玉。
+	PRINTL 【蒼色壱號】と呼ばれている着色料が使われているとか。
+	LOCAL:9 = 20000
+ELSEIF RESULT == 32 && FLAG:13 & 1
+	PRINTL 〔黄の飴玉〕：[産卵体質]になります
+	PRINTL ホルモンの分泌をかき乱し、卵を産む体に変えてしまう黄色い飴玉。
+	PRINTL 【吸血鬼(少女)の小水】を凝縮したものが使われているらしい。
+	LOCAL:9 = 20000
+ELSEIF RESULT == 33 && FLAG:13 & 1
+	PRINTL 〔緑の飴玉〕：[小柄体型]になります
+	PRINTL 体が一気に若返る緑色の飴玉。
+	PRINTL 緑黄色野菜が原料らしい。見た目に反して味は甘め。
+	LOCAL:9 = 180000
+ELSEIF RESULT == 34 && FLAG:13 & 1
+	PRINTL 〔白の飴玉〕：あの娘が＜妖精＞に転生します
+	PRINTL 真珠のような輝きを持っている飴玉。
+	PRINTL 噂によると原料に【妖精の母乳】や【妖精の鱗粉】、【妖精の唾液】が使われているとか。
+	LOCAL:9 = 100000
+ELSEIF RESULT == 35 && FLAG:13 & 1
+	PRINTL 〔黒の飴玉〕：あの娘が＜ＥＸ化＞します
+	PRINTL 夜の色に染まった艶のない飴玉。
+	PRINTL 【妖怪の愛液】を結晶化させたものが主原料らしい。
+	LOCAL:9 = 50000
+ELSEIF RESULT == 36 && FLAG:13 & 1 && FLAG:5 & 1 && TALENT:MASTER:調合知識
+	PRINTL 〔灰の飴玉〕：あの娘の性格が反転します
+	PRINTL 精神に強い影響を及ぼす濁った色の飴玉。
+	PRINTL [調合知識]を持っていない者は取り扱えないGEKI物指定。
+	LOCAL:9 = 50000
+ELSEIF RESULT == 37 && FLAG:13 & 1 && TALENT:MASTER:禁断の知識
+	PRINTL 〔金の飴玉〕：体の大きさを1段階成長させます
+	PRINTL 生物をはぐくむ太陽をイメージした飴玉。
+	PRINTL その材料については未だに謎につつまれているという……
+	LOCAL:9 = 150000
+ELSEIF RESULT == 38 && FLAG:13 & 1
+	PRINTL 〔銀の飴玉〕：[卵生][産卵体質]でなくなります
+	PRINTL 生物を見守る満月をイメージした飴玉。どんな人妖でも胎生にしてしまう。
+	PRINTL 【ＵＦＯ】の出汁を何十回も蒸留して作られたと言われている。
+	LOCAL:9 = 120000
+ELSEIF RESULT == 39 && FLAG:13 & 1 && LOCAL:8 & 1 && TALENT:MASTER:禁断の知識
+	PRINTL 〔虹の飴玉〕：性別が反転します
+	PRINTL 全ての光の要素が個々に見える虹をモチーフにした模様の飴玉。
+	PRINTL 材料にはホルモンだとか、何かのエキスとか諸説がある。
+	LOCAL:9 = 500000
+ELSEIF RESULT == 40 && FLAG:13 & 1
+	PRINTL 〔翠の飴玉〕：小柄体型や小人体型の者に陰毛が生えるようになります
+	PRINTL 若菜が芽吹くがごとく髪が生えるのをイメージしての少し青に近い緑色の飴玉。
+	PRINTL 材料に植物由来の樹液と妖精たちの愛液が使われているという噂があるらしい。
+	LOCAL:9 = 100000
+ELSEIF RESULT == 41 && FLAG:13 & 1 && FLAG:11 & 2
+	PRINTL 〔紺の飴玉〕：妊娠中の赤子もしくは卵が生まれたあとの成長が加速します。
+	PRINTL 子供たちがすくすく育っていくために必要となるであろう、
+	PRINTL 爽やかな青空のさまをイメージしての少し紫に近い青色の飴玉。
+	PRINTL 材料に子煩悩だった【魔女の愛液】が使われているという噂があるらしい。
+	LOCAL:9 = 200000
+ELSEIF RESULT == 42 && FLAG:13 & 1
+	PRINTL 〔桃の飴玉〕：あの娘の＜ＥＸ化＞を擬似的に解除します
+	PRINTL 鮮やかな桃色が特徴的で、【人面魚の卵巣】が材料だとまことしやかに囁かれる一品。
+	LOCAL:9 = 100000
+ELSEIF RESULT == 43 && FLAG:13 & 1 && TALENT:MASTER:禁断の知識
+	PRINTL 〔鈍の飴玉〕：[小人体型]になります
+	PRINTL 銀とも灰色ともつかない不思議な色を顕す飴玉。
+	PRINTL 材料には【生きた人形の魂の欠片】が使われているという噂があるらしい。
+	LOCAL:9 = 100000
+;ELSEIF RESULT == 0
+;	PRINTL 〔〕
+;	PRINTL 
+;	LOCAL:9 = 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_SELECT_DRUG
+ENDIF
+IF MONEY < LOCAL:9
+	PRINTW 必要な資金が不足しています
+	RESTART
+ENDIF
+PRINTL 
+LOCAL = RESULT
+;表示させるキャラを抽出（LOCAL:2に人数）
+LOCAL:1 = 0
+LOCAL:2 = 0
+LOCAL:3 = 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人に調合知識がないと自分に薬系アイテムを使うことができない(栄養剤のみ除く)
+	SIF COUNT == MASTER && TALENT:MASTER:調合知識 == 0 && LOCAL != 10 && LOCAL:8 & 1 == 0
+		CONTINUE
+	;その場にいないキャラは排除
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;[薬毒耐性]には通じない(鎮静茶・栄養剤・理性復活薬・桃の飴玉は除く)
+	SIF LOCAL != 9 && LOCAL != 10 && LOCAL != 27 && LOCAL != 42 && TALENT:COUNT:薬毒耐性
+		CONTINUE
+	;[機械]の体には通じない
+	SIF TALENT:COUNT:機械
+		CONTINUE
+	;[死亡]には通じない
+	SIF TALENT:COUNT:死亡 && LOCAL != 28
+		CONTINUE
+	;ストレスが無い子には鎮静茶は使えないのよ
+	IF LOCAL == 9 && CFLAG:COUNT:ストレス == 0
+		CONTINUE
+	;体力全快の子には栄養剤は使えないのよ
+	ELSEIF LOCAL == 10 && BASE:COUNT:体力 == MAXBASE:COUNT:0
+		CONTINUE
+	;ふたなり薬の場合
+	ELSEIF LOCAL == 11
+		;対象がオトコもしくは雌雄可変である場合、またはクリトリスリングをはめている場合は使用できない
+		SIF TALENT:COUNT:オトコ || TALENT:COUNT:雌雄可変 || CFLAG:COUNT:42 & 1
+			CONTINUE
+		;誰かが禁断の知識を持っている必要がある。ない場合、対象に調合知識か不思議な根か具現か顕在化が必要
+		SIF (LOCAL:8 & 2) == 0 && TALENT:COUNT:調合知識 == 0 && TALENT:COUNT:不思議な根 == 0 && TALENT:COUNT:具現 == 0 && TALENT:COUNT:顕在化 == 0
+			CONTINUE
+		;対象が調合知識を持っている場合、助手可能になる必要がある(主人のときは除外)
+		SIF TALENT:COUNT:調合知識 && CFLAG:COUNT:1 < 2 && COUNT != MASTER
+			CONTINUE
+	;ふたたま薬の場合
+	ELSEIF LOCAL == 12
+		;対象がふたなり前提。また対象がオトコか雌雄可変であるかクリトリスリングをはめている場合は使用できない
+		SIF TALENT:COUNT:ふたなり == 0 || TALENT:COUNT:オトコ || TALENT:COUNT:雌雄可変 || CFLAG:COUNT:42 & 1
+			CONTINUE
+		;誰かが禁断の知識を持っている必要がある。ない場合、対象に調合知識か不思議な根か具現か顕在化が必要
+		SIF (LOCAL:8 & 2) == 0 && TALENT:COUNT:調合知識 == 0 && TALENT:COUNT:不思議な根 == 0 && TALENT:COUNT:具現 == 0 && TALENT:COUNT:顕在化 == 0
+			CONTINUE
+		;対象が調合知識を持っている場合、助手可能になる必要がある(主人のときは除外)
+		SIF TALENT:COUNT:調合知識 && CFLAG:COUNT:1 < 2 && COUNT != MASTER
+			CONTINUE
+	;性露錠の場合
+	ELSEIF LOCAL == 13
+		;主人には使えない
+		SIF COUNT == MASTER
+			CONTINUE
+		;対象がオトコかふたなりか雌雄可変であるかクリトリスリングをはめている場合、あるいは既に成長しきっている場合は使用できない
+		SIF TALENT:COUNT:ふたなり || TALENT:COUNT:オトコ || TALENT:COUNT:雌雄可変 || CFLAG:COUNT:42 & 1 || BASE:COUNT:陰核 >= 250
+			CONTINUE
+	;根素勃乳の場合
+	ELSEIF LOCAL == 14
+		;主人には使えない
+		SIF COUNT == MASTER
+			CONTINUE
+		;対象が機能を失っていない不思議な根を持っていないかクリトリスリングをはめている場合は使用できない
+		SIF TALENT:COUNT:不思議な根 != 2 || CFLAG:COUNT:42 & 1
+			CONTINUE
+	;豊胸剤は対象が既に爆乳かオトコの場合は使えない
+	ELSEIF LOCAL == 20 && (TALENT:COUNT:爆乳 || TALENT:COUNT:オトコ)
+		CONTINUE
+	;縮胸剤は対象が既に絶壁かオトコの場合は使えない
+	ELSEIF LOCAL == 21 && (TALENT:COUNT:絶壁 || TALENT:COUNT:オトコ)
+		CONTINUE
+	;止乳剤は対象が母乳体質じゃないかオトコの場合、さらに妊娠中か育児中、抱卵中の場合は使えない
+	ELSEIF LOCAL == 22 && (TALENT:COUNT:オトコ || TALENT:COUNT:母乳体質 == 0 || TALENT:COUNT:妊娠 || TALENT:COUNT:育児中 || TALENT:COUNT:抱卵中)
+		CONTINUE
+	;尿漏れ改善薬は対象がおもらし癖ではない場合は使えない
+	ELSEIF LOCAL == 23 && TALENT:COUNT:おもらし癖 == 0
+		CONTINUE
+	;記憶消去薬は対象が主人もしくは対象が妊娠中か抱卵中か懐卵中だと使えない
+	ELSEIF LOCAL == 24 && (COUNT == MASTER || TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵)
+		CONTINUE
+	;人魚姫の薬
+	ELSEIF LOCAL == 26
+		;主人に禁断の知識がないか、主人も助手も調合知識がなければ使えない
+		SIF TALENT:MASTER:禁断の知識 == 0 || LOCAL:8 & 1 == 0
+			CONTINUE
+		;当然、対象が人魚じゃないとオミット
+		SIF TALENT:COUNT:人魚 == 0
+			CONTINUE
+		;対象が[抱卵中]、[懐卵]のときは使えない
+		SIF TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵
+			CONTINUE
+	;理性復活薬
+	ELSEIF LOCAL == 27 && (TALENT:COUNT:理性 || TALENT:COUNT:精神崩壊 || TALENT:COUNT:傀儡)
+		CONTINUE
+	;復活薬
+	ELSEIF LOCAL == 28 && (TALENT:COUNT:死亡 == 0 || TALENT:COUNT:死亡 == 2)
+		CONTINUE
+	;赤の飴玉は対象に処女膜がある、あるいはオトコ、妊娠中、抱卵中、懐卵中または奴隷管理用貞操帯を装着していると使えない
+	ELSEIF LOCAL == 30 && (TALENT:COUNT:処女 || TALENT:COUNT:オトコ || TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵 || CFLAG:COUNT:42 & 2)
+		CONTINUE
+	;青の飴玉は対象が絶壁、オトコ、既に母乳体質だと使えない
+	ELSEIF LOCAL == 31 && (TALENT:COUNT:絶壁 || TALENT:COUNT:オトコ || TALENT:COUNT:母乳体質)
+		CONTINUE
+	;黄の飴玉は対象がオトコ、卵生、既に産卵体質である、妊娠中、懐卵中、現在体力が1000未満だと使えない
+	ELSEIF LOCAL == 32 && (TALENT:COUNT:オトコ || TALENT:COUNT:卵生 || TALENT:COUNT:産卵体質 || TALENT:COUNT:妊娠 || TALENT:COUNT:懐卵 || BASE:COUNT:体力 < 1000)
+		CONTINUE
+	;緑の飴玉は対象が小人か小柄体型、もしくは幼児か幼稚だと使えない
+	ELSEIF LOCAL == 33 && (TALENT:COUNT:小人体型 || TALENT:COUNT:小柄体型 || TALENT:COUNT:幼児 || TALENT:COUNT:幼稚)
+		CONTINUE
+	;白の飴玉は対象が妖精だと使えない
+	ELSEIF LOCAL == 34 && TALENT:COUNT:妖精
+		CONTINUE
+	;黒の飴玉の場合
+	ELSEIF LOCAL == 35
+		;[使い魔]には使えない
+		SIF TALENT:COUNT:使い魔
+			CONTINUE
+		;紳士(あなた)か既にＥＸ化させたキャラには使えない
+		SIF COUNT == 0 || CFLAG:COUNT:0
+			CONTINUE
+		;YASAIモードでは霊夢さんには使用できない
+		SIF NO:COUNT == 1001 && FLAG:570 & 1
+			CONTINUE
+		;黒の飴玉によるEX化が可能なキャラでないと使用できない
+		SIF ABLE_EX_CHANGES(COUNT) == 0
+			CONTINUE
+	;灰の飴玉の場合
+	ELSEIF LOCAL == 36
+		;劇物指定なので自分や体力・気力の低い者には使えない
+		SIF COUNT == MASTER || BASE:COUNT:体力 < 1000 || BASE:COUNT:気力 < 1000
+			CONTINUE
+		;[妄信]または[服従]または[傀儡]がないと使えない
+		SIF TALENT:COUNT:親愛 == 0 && TALENT:COUNT:服従 == 0 && TALENT:COUNT:傀儡 == 0
+			CONTINUE
+	;金の飴玉の場合、主人に禁断の知識が必要で、かつ対象が巨躯の場合には使えない
+	ELSEIF LOCAL == 37 && (TALENT:MASTER:禁断の知識 == 0 || TALENT:COUNT:巨躯)
+		CONTINUE
+	;銀の飴玉の場合
+	ELSEIF LOCAL == 38
+		;対象が[オトコ]、[妊娠]、[抱卵中]、[懐卵]のときは使えない（自分には使える）
+		SIF TALENT:COUNT:オトコ || TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵
+			CONTINUE
+		;[卵生][産卵体質]どちらかがないと使えない
+		SIF TALENT:COUNT:卵生 == 0 && TALENT:COUNT:産卵体質 == 0
+			CONTINUE
+	;虹の飴玉の場合
+	ELSEIF LOCAL == 39 
+		;主人に禁断の知識がないか、主人も助手も調合知識がなければ使えない
+		SIF TALENT:MASTER:禁断の知識 == 0 || LOCAL:8 & 1 == 0
+			CONTINUE
+		;対象が[雌雄可変]か[妊娠]、[抱卵中]、[懐卵]のときは使えない
+		SIF TALENT:COUNT:妊娠 || TALENT:COUNT:抱卵中 || TALENT:COUNT:懐卵 || TALENT:COUNT:雌雄可変
+			CONTINUE
+	;翠の飴玉の場合
+	ELSEIF LOCAL == 40
+		;[機械]には使えない
+		SIF TALENT:COUNT:機械
+			CONTINUE
+		;[小人体型]もしくは[小型体型]でないとつかえない
+		SIF TALENT:COUNT:小人体型 == 0 && TALENT:COUNT:小柄体型 == 0
+			CONTINUE
+		;既に生えるようになったら効果ない
+		SIF CFLAG:COUNT:36 == 2
+			CONTINUE
+	;紺の飴玉の場合
+	ELSEIF LOCAL == 41
+		;主人には使えない
+		SIF COUNT == MASTER
+			CONTINUE
+		;[妊娠]か[抱卵中]じゃないと使えない
+		SIF TALENT:COUNT:妊娠 == 0 && TALENT:COUNT:抱卵中 == 0
+			CONTINUE
+		;既に使っていると効果ない
+		SIF EQUIP:COUNT:紺の飴玉
+			CONTINUE
+	;桃の飴玉の場合
+	ELSEIF LOCAL == 42
+		;主人には使えない
+		SIF COUNT == MASTER
+			CONTINUE
+		;ＥＸ化していないと使えない
+		SIF CFLAG:COUNT:0 == 0
+			CONTINUE
+		;既に使っていると効果ない
+		SIF EQUIP:COUNT:桃の飴玉
+			CONTINUE
+	;鈍の飴玉の場合
+	ELSEIF LOCAL == 43
+		;主人には使えない
+		SIF COUNT == MASTER
+			CONTINUE
+		;[機械]、[小人体型]には使えない
+		SIF TALENT:COUNT:機械 || TALENT:COUNT:小人体型
+			CONTINUE
+		;[小柄体型]でないとつかえない
+		SIF TALENT:COUNT:小柄体型 == 0
+			CONTINUE
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:3 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+PRINTFORML 誰に使いますか？ ＜page.{LOCAL:1+1}＞
+CALL USE_ITEM_LIST, LOCAL:1
+DRAWLINE
+PRINTFORMLC \@(LOCAL:1 <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL:1 >= LOCAL:3) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP_SELECT_CHARA
+INPUT
+IF RESULT == 1000
+	RESTART
+ELSEIF RESULT == 1001 && LOCAL:1 > 0
+	LOCAL:1 -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL:1 < LOCAL:3
+	LOCAL:1 += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_SELECT_CHARA
+ENDIF
+
+;各種薬品処理へ移動
+CALLFORM USE_DRUG_{LOCAL}, RESULT, LOCAL:9
+
+;返金or支払処理
+;直前の関数でRETURN 0で返した場合、使用しないと判断
+;それ以外の場合、薬を使ったと判断され、ここで金額を減らす処理を行う
+SIF RESULT
+	MONEY -= LOCAL:9
+
+RESTART

@@ -1,0 +1,130 @@
+﻿;=============================================================================
+;触手放電
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE553
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:553 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;触手が[放電触手]を得ていないとダメ
+SIF (FLAG:75 & 4) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 553) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM553
+PRINTL 触手放電
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 553
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手放電
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 50
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 2000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 2500
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 2800
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	SOURCE:痛み = 3300
+ELSE
+	SOURCE:痛み = 3600
+ENDIF
+
+LOCAL:1 = 1000
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.80
+	LOCAL:2 = 5000
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.50
+	LOCAL:2 = 3000
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+	LOCAL:2 = 2000
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:2 = 1000
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 500
+ELSE
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 200
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:2 , 1.50
+	LOCAL:3 = 0
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:2 , 1.20
+	LOCAL:3 = 10
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:3 = 30
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:2 , 0.80
+	LOCAL:3 = 60
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:2 , 0.60
+	LOCAL:3 = 100
+ELSE
+	TIMES LOCAL:2 , 0.50
+	LOCAL:3 = 250
+ENDIF
+
+SOURCE:中毒充足 = LOCAL:3
+SOURCE:トラウマ = (LOCAL:1 + LOCAL:2) / 2
+SOURCE:逸脱 = LOCAL:2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_553
+IF !TEQUIP:触手服
+	PRINTFORM %CALLNAME:TARGET%に巻き付いていた触手が
+ELSE
+	PRINTFORM %CALLNAME:TARGET%の着ている触手服は
+ENDIF
+PRINTL いきなり放電を始めた
+SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORML 立ち上る白い煙の中から凄まじい悲鳴が聞こえる…

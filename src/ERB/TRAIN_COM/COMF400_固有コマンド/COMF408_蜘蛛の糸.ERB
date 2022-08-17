@@ -1,0 +1,266 @@
+﻿;=============================================================================
+;蜘蛛の糸
+;=============================================================================
+;切れると変な粘液が全身につきます(愛液も付くのは糸を出しているところがヤマメの……故)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE408
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:408 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者がヤマメでないとダメ
+SIF NO:PLAYER != 1058
+	RETURN 0
+;縄装着中はダメ
+SIF TEQUIP:緊縛関連 && TEQUIP:緊縛関連 < 6
+	RETURN 0
+;蜘蛛の巣に吊るされていたらダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;アイマスク装着中はダメ
+SIF TEQUIP:目装着器具 && TEQUIP:目装着器具 != 2
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 408) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM408
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;グルグル巻きの状態で使うと蜘蛛の巣へ磔にされる
+SIF TEQUIP:緊縛関連 == 6
+	JUMP COM653
+
+PRINTL 蜘蛛の糸
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 408
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 蜘蛛の糸
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 100
+	DOWNBASE:1 += 130
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 80
+	DOWNBASE:1 += 100
+ELSE
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 70
+ENDIF
+
+LOCAL:1 = 250
+LOCAL:2 = 800
+SOURCE:露出 = 900
+SOURCE:屈従 = 500
+SOURCE:逸脱 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.40
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES SOURCE:逸脱 , 2.00
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:1 , 2.00
+;絶壁・貧乳だと羞恥心が刺激される
+SIF TALENT:絶壁 || TALENT:貧乳
+	TIMES SOURCE:露出 , 3.50
+
+;調教対象がリグルなら恐怖上昇
+SIF NO:TARGET == 1024
+	TIMES LOCAL:2 , 3.00
+
+SOURCE:トラウマ += LOCAL:2
+SOURCE:痛み += LOCAL:1
+SOURCE:露出 += LOCAL:1
+SOURCE:屈従 += LOCAL:1
+SOURCE:逸脱 += LOCAL:1
+SOURCE:液体追加 += LOCAL:1
+SOURCE:恭順追加 += LOCAL:1
+SOURCE:欲情追加 += LOCAL:1
+
+;縄の着脱
+TEQUIP:緊縛関連 = 6
+TEQUIP:目装着器具 = 2
+TFLAG:142 = 100
+
+TCVAR:緊縛経験 += 7
+RETURN 1
+
+;-------------------------------------------------
+;蜘蛛の糸で緊縛中
+;-------------------------------------------------
+@EQUIP_COM408
+PRINTL ＜蜘蛛の糸で緊縛中＞
+
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 80
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 40
+	DOWNBASE:1 += 60
+ELSE
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 50
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL = 60
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL = 180
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL = 300
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL = 480
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL = 700
+ELSE
+	LOCAL = 850
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL , 2.00
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+SOURCE:痛み += LOCAL
+SOURCE:液体追加 += LOCAL
+SOURCE:露出 += LOCAL
+SOURCE:屈従 += LOCAL
+SOURCE:逸脱 += LOCAL
+SOURCE:恭順追加 += LOCAL
+SOURCE:欲情追加 += LOCAL
+SOURCE:トラウマ += SOURCE:逸脱
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+
+LOCAL:1 = 1 + RAND:10
+TFLAG:142 -= LOCAL:1
+
+SIF TFLAG:142 <= 0
+	CALL SPIDER_SILK_TEAR
+
+TCVAR:緊縛経験 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_408
+PRINTFORML %CALLNAME:PLAYER%は糸疣から出した糸で%CALLNAME:TARGET%をがんじがらめに縛った
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM %CALLNAME:TARGET%は粘りつく糸に絡み取られ、周りを見ることも動くこともできないでいる
+	;リグルきゅん
+	IF NO:TARGET == 1024
+		PRINTFORML %CALLNAME:TARGET%は蜘蛛の糸に絡め取られたそのことに強い恐怖を感じて顔色を失っているようだ…
+	;リグルきゅんの場合羞恥心より前述の恐怖心優先で
+	ELSEIF TALENT:絶壁 || TALENT:貧乳
+		PRINTFORML %CALLNAME:TARGET%は胸の周りだけ露出させた縛り方に羞恥心を刺激されているようだ…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;蜘蛛の糸の破れ処理
+;-------------------------------------------------
+@SPIDER_SILK_TEAR
+TEQUIP:緊縛関連 = 0
+TEQUIP:目装着器具 = 0
+TFLAG:142 = 0
+FOR LOCAL, 0, 8
+	STAIN:LOCAL |= 1
+	STAIN:LOCAL |= 64
+NEXT
+PRINTFORML %CALLNAME:TARGET%は何度ももがいているうちに糸が切れてしまった
+PRINTFORML 糸の断面から粘り気のある液体が滲み出て%CALLNAME:TARGET%の全身に付着した

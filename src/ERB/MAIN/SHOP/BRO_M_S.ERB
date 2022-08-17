@@ -1,0 +1,1120 @@
+﻿;=============================================================================
+;娼館パッチ関連のSHOPメニュー処理など
+;=============================================================================
+;新規コマンドの関数はこちらへ
+;-------------------------------------------------
+;娼館を新設した時の処理
+;-------------------------------------------------
+@BROTHEL_OPEN
+PRINTFORMW 【%NAME:MASTER%娼館　新装開店】
+
+;1週目と、2週目以降で初期人気が異なる。
+IF FLAG:6 > 1
+	FLAG:3005 = FLAG:30
+	SELECTCASE FLAG:3005
+		CASE IS < 50
+			FLAG:3005 = MAX(FLAG:3005 / 2, 0)
+		CASE IS < 150
+			FLAG:3005 = 50 + ((FLAG:3005 - 150) / 10)
+		CASE IS < 2650
+			FLAG:3005 = 25 + ((FLAG:3005 - 50) / 4)
+		CASE IS < 7650
+			FLAG:3005 = 75 + ((FLAG:3005 - 2650) / 20)
+		CASEELSE
+			FLAG:3005 = 100
+	ENDSELECT
+ELSE
+	FLAG:3005 = LIMIT(30 + (FLAG:30 * 2), 0, 100)
+ENDIF
+
+FLAG:3000 = 0
+FLAG:3100 = 1000
+FLAG:3101 = 1000
+;地の文の表示
+CALL MESSAGE_SYSTEM_EVENT_MAIN, 100
+
+PRINTL 
+PRINTW ＜娼館の操作と施設の増築が可能になりました＞
+
+;=============================================================================
+;娼館メニュー
+;=============================================================================
+@BROTHEL_SELECT_MENU
+RESULT:1 = 0
+RESULT:2 = 0
+
+PRINTL 何をしますか？
+DRAWLINE
+
+PRINTL [100] 売春内容の変更
+;PRINTL [101] 稼ぎ番付
+PRINTL [102] 売春中毒の治療
+PRINTL [103] 娼婦精神の治療
+PRINTL [110] 娼館の増築
+PRINTL [111] 娼館の維持費設定
+;PRINTL [120] 主人のノウハウ学習
+;PRINTL [121] 娼婦のノウハウ指導
+;PRINTL [130] 淫具開発
+PRINTL [777] 娼館機能のコンフィグ
+DRAWLINE
+IF FLAG:4 != 4 && FLAG:3007 >= 1000 && FLAG:3008 >= 5000000
+	PRINTL [888] 娼館の売却
+	DRAWLINE
+ENDIF
+PRINTLC      
+PRINTL [5555]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 5555
+	RETURN 0
+
+ELSEIF RESULT == 100
+	CALL BROTHEL_SELECT_WORKS
+	SIF RESULT == 1
+		RETURN 0
+;ELSEIF RESULT == 101
+;	;New Fanction
+;	CALL BROTHEL_GAIN_LIST
+
+ELSEIF RESULT == 102
+	CALL BROTHEL_CURE_MENU, 0
+ELSEIF RESULT == 103
+	CALL BROTHEL_CURE_MENU, 1
+
+ELSEIF RESULT == 110
+	CALL BROTHEL_REFORM_MENU
+
+ELSEIF RESULT == 111
+	CALL BROTHEL_RUNNING_COST_INPUT
+
+;ELSEIF RESULT == 120
+	;New Fanction
+;	CALL BROTHEL_MASTER_LEARNING
+
+;ELSEIF RESULT == 121
+	;New Fanction
+;	CALL BROTHEL_MASTER_LECTURE
+
+;ELSEIF RESULT == 130
+	;New Fanction
+;	CALL BROTHEL_STUFF_DEVELOP
+
+ELSEIF RESULT == 777
+	CALL BROTHEL_CONFIG
+ELSEIF RESULT == 888 && FLAG:4 != 4 && FLAG:3007 >= 1000 && FLAG:3008 >= 5000000
+	CALL SELL_BROTHEL
+	RETURN 0
+;ELSEIF RESULT != 100
+;	GOTO INPUT_LOOP
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;=============================================================================
+;売春の仕事の選択関連処理
+;=============================================================================
+@BROTHEL_SELECT_WORKS
+#LOCALSIZE 3
+#LOCALSSIZE 10
+VARSET LOCAL, 0
+
+LOCALS:0 = キャバクラ
+LOCALS:1 = ストリップ
+LOCALS:2 = ＢＣ売春
+LOCALS:3 = ソープ・Glory Hole
+LOCALS:4 = 売春
+LOCALS:5 = Ａ売春
+LOCALS:6 = コース売春
+LOCALS:7 = 野外ストリップ
+LOCALS:8 = 特殊性癖売春
+$FIRST_LOOP
+DRAWLINE
+PRINTL 売春内容を選択してください。
+
+FOR LOCAL, 0, 9
+		PRINTFORML [{LOCAL, 3}] %TSTRNAME:(70 + LOCAL)%
+		SIF LOCAL == 4 || LOCAL == 6
+			PRINTFORML [{LOCAL + 10, 3}] %TSTRNAME:(80 + LOCAL)%
+NEXT
+SIF FLAG:3000 & 8
+	PRINTFORML [  9] %TSTRNAME:79%
+
+PRINTL [999] 休暇を与える
+DRAWLINE
+PRINTLC   
+PRINTLC [5555]戻る
+PRINTLC [3333]メニューへ戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 3333
+	RETURN 1
+ELSEIF RESULT < 0 || (RESULT > 9 && RESULT != 999 && RESULT != 14 && RESULT != 16)
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP
+ENDIF
+;一時的に使用、どうせ初期化されるし
+TFLAG:401 = RESULT
+CALL BROTHEL_BE_ABLE_TO_WORK
+TFLAG:401 = 0
+SIF RESULT == 1
+	RETURN 1
+GOTO FIRST_LOOP
+
+;=============================================================================
+;売春可能キャラの判定処理と選択
+;=============================================================================
+@BROTHEL_BE_ABLE_TO_WORK
+VARSET LOCAL, 0
+DRAWLINE
+$PRINT_FRESH_LIST
+CALL BROTHEL_CHARA_DISPLAY
+IF TFLAG:402 == 0
+	PRINTW 売春状況を変更できるキャラはいません
+	RETURN 0
+ENDIF
+$PRINT_LIST
+ライン数:2 = LINECOUNT
+PRINTFORML 現在の売春人数：{FLAG:3001}/{ITEM:娼館}　現在の人気：{FLAG:3005}
+SIF TFLAG:401 == 999
+	PRINTFORML 誰に休暇を与えますか？ ＜page.{LOCAL:3 + 1}＞
+SIF TFLAG:401 != 999
+	PRINTFORML 誰に「%TSTRNAME:(70 + TFLAG:401)%」の仕事をさせますか？ ＜page.{LOCAL:3 + 1}＞
+IF TFLAG:401 == 1
+	PRINTL また、この仕事は、最大１０人まで同時に仕事が出来ます。
+	PRINTFORML 現在、 {TFLAG:404}人が参加します。
+ENDIF
+DRAWLINE
+CALL BROTHEL_LIST_CHARA, LOCAL:3
+DRAWLINE
+PRINTFORMLC \@(LOCAL:3 <= 0) ? %" " * 16% # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL:3 >= TFLAG:403) ? %" " * 16% # [9999]次のページ\@
+PRINTL 
+PRINTLC       
+PRINTLC [3333]メニューへ戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 3333
+	RETURN 1
+ELSEIF RESULT == 1111 && LOCAL:3 > 0
+	LOCAL:3 -= 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:2
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && LOCAL:3 < TFLAG:403
+	LOCAL:3 += 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:2
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+PL_VAR_X:0 = RESULT
+IF (CFLAG:RESULT:4 & 1024) == 0 && TFLAG:401 == 999
+	PRINTFORMW %CALLNAME:RESULT%は、既に休暇中です。
+ELSEIF CFLAG:RESULT:4 & 1024 && (CFLAG:RESULT:401 == TFLAG:401 + 1 || TFLAG:401 == 999)
+	PRINTFORMW %CALLNAME:RESULT%に「%TSTRNAME:(69 + CFLAG:RESULT:401)%」の仕事をさせないことにしました。
+	CALL PROSTITUTION_LAYOFF_GENERAL, RESULT
+	SIF TFLAG:401 == 1
+		TFLAG:404--
+	;[売春中毒]
+	IF TALENT:(PL_VAR_X:0):262
+		;地の文・口上表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, PL_VAR_X:0, 801
+		MARK:(PL_VAR_X:0):9 = 3
+		MARK:(PL_VAR_X:0):97 = 3
+		PRINTFORM %CALLNAME:(PL_VAR_X:0)%は、
+		FONTBOLD
+		PRINTFORM 反発刻印Lv{MARK:(PL_VAR_X:0):9}
+		FONTREGULAR
+		PRINTW を取得した。
+	ENDIF
+ELSEIF (CFLAG:RESULT:4 & 1024) == 0 && FLAG:3001 < ITEM:娼館 
+	PRINTFORMW %CALLNAME:RESULT%に「%TSTRNAME:(70 + TFLAG:401)%」の仕事をさせることにしました。
+	CALL PROSTITUTION_APPOINT_GENERAL, RESULT, TFLAG:401 + 1
+	SIF TFLAG:401 == 1
+		TFLAG:404++
+ELSEIF CFLAG:RESULT:4 & 1024 && CFLAG:RESULT:401 != TFLAG:401 + 1
+	PRINTFORMW %CALLNAME:RESULT%に「%TSTRNAME:(69 + CFLAG:RESULT:401)%」から「%TSTRNAME:(70 + TFLAG:401)%」の仕事に変更しました。
+	CFLAG:RESULT:401 = TFLAG:401 + 1
+ELSE
+	PRINTFORMW 人数がいっぱいのため、選択できませんでした。
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:2
+GOTO PRINT_FRESH_LIST
+
+;-------------------------------------------------
+;売春キャラ選択補助処理
+;-------------------------------------------------
+@BROTHEL_LIST_CHARA, ARG
+PL_VAR_I = GETCOLOR()
+REPEAT 20
+	LOCAL = GET_LIST(COUNT + ARG * 20)
+
+	SIF MARK:LOCAL:98 == 0
+		CONTINUE
+	IF LOCAL == TARGET
+		PRINT ☆
+	ELSEIF LOCAL == ASSI
+		PRINT ★
+	ELSEIF CFLAG:LOCAL:4 == 1024
+;		PRINT ▼
+		;ピンク色
+		CALL PRINTCOLOR(RGBCOLOR(220, 20, 60), "▼", 0)
+	ELSEIF CFLAG:LOCAL:1 == 2
+		PRINT ○
+	ELSE
+		PRINT 　
+	ENDIF
+	IF (FLAG:1000 & 2) && CFLAG:LOCAL:402 >= 50 && TALENT:LOCAL:売春中毒 == 0
+		SELECTCASE CFLAG:LOCAL:402
+			CASE IS >= 100
+				SETCOLOR RGBCOLOR(255,   0, 255)
+			CASE IS >= 80
+				SETCOLOR RGBCOLOR(255, 255, 0)
+			CASEELSE
+				SETCOLOR RGBCOLOR(  0, 255, 255)
+		ENDSELECT
+	ENDIF
+	CALL ARRANGE_CHARALIST, LOCAL
+	SIF (FLAG:1000 & 2) && CFLAG:LOCAL:402 >= 50 && TALENT:LOCAL:売春中毒 == 0
+		SETCOLOR PL_VAR_I
+	CALL ARRANGE_CHARALIFE, LOCAL
+	CALL ARRANGE_CHARATALENT, LOCAL
+	
+	PRINTL 
+	
+	CALL ARRANGE_CHARA_BROTHELWORK, LOCAL
+	
+	PRINTL 
+REND
+PRINT 　☆:調教中 ★:助手 ○:助手可 
+CALL PRINTCOLOR(RGBCOLOR(220, 20, 60), "▼", 0)
+PRINTL ：売春中を表しています
+
+;-------------------------------------------------
+;売春キャラ仕事情報開示処理
+;-------------------------------------------------
+@ARRANGE_CHARA_BROTHELWORK, ARG
+LOCAL = GETCOLOR()
+PRINT 仕事予定:
+LOCALS = 日目～
+IF CFLAG:ARG:401 == 0
+	PRINTFORM ～休暇 
+	SELECTCASE CFLAG:ARG:404 % 30
+		CASE IS >= 24
+			SETCOLOR RGBCOLOR(255, 0, 0)
+		CASE IS >= 19
+			SETCOLOR RGBCOLOR(255, 255, 0)
+		CASE IS >= 14
+			SETCOLOR RGBCOLOR(0, 255, 255)
+	ENDSELECT
+	PRINTFORM {CFLAG:ARG:404 + 1, 2}
+	SETCOLOR LOCAL
+	PRINTFORM %LOCALS, 6, LEFT%
+ELSE
+	;ピンク色
+;	CALL PRINTCOLOR(RGBCOLOR(220, 20, 60), TSTRNAME:(69 + CFLAG:ARG:401), 0)
+	SETCOLOR RGBCOLOR(220, 20, 60)
+	PRINTFORM %TSTRNAME:(69 + CFLAG:ARG:401), 21, LEFT%
+	SETCOLOR LOCAL
+ENDIF
+
+IF CFLAG:ARG:403 > 0 && CFLAG:ARG:401 > 0
+	PRINTFORM 　連続日数 ～{CFLAG:ARG:403, 2}日目～
+	PRINTFORM 　ストレス:
+	SELECTCASE CFLAG:ARG:ストレス
+		CASE IS >= 1000
+			SETCOLOR RGBCOLOR(255, 0, 0)
+		CASE IS >= 500
+			SETCOLOR RGBCOLOR(255, 128, 0)
+	ENDSELECT
+	PRINTFORM {CFLAG:ARG:ストレス, 5}
+	SETCOLOR LOCAL
+ENDIF
+;-------------------------------------------------
+;キャラが売春可能であるかの共通判定処理
+;-------------------------------------------------
+@BROTHEL_COM_ABLE_COMMON(ARG)
+#FUNCTION
+;調教対象または助手だとダメ
+SIF ARG == TARGET || ARG == ASSI
+	RETURNF 0
+;体力が500以下だとダメ
+SIF BASE:ARG:体力 <= 500
+	RETURNF 0
+;反発刻印があるとダメ
+IF MARK:ARG:反発刻印
+	RETURNF 0
+;奉仕精神及び欲望が1以下だとダメ
+ELSEIF ABL:ARG:奉仕精神 < 2 && ABL:ARG:欲望 < 2
+	RETURNF 0
+;調教不足だとダメ
+ELSEIF (ABL:ARG:従順 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖) < 7
+	RETURNF 0
+ENDIF
+;[妊娠][懐卵][寄生]があるとダメ
+SIF TALENT:ARG:妊娠 || TALENT:ARG:懐卵 || TALENT:ARG:寄生
+	RETURNF 0
+;育児中はダメ
+SIF CFLAG:ARG:4 == 2
+	RETURNF 0
+RETURNF 1
+
+;-------------------------------------------------
+;売春内容の選択
+;-------------------------------------------------
+@BROTHEL_SELECT_PROSTITUTION, ARG
+#DIM ALRAUNE, 10
+#LOCALSIZE 3
+#LOCALSSIZE 1
+VARSET ALRAUNE, 0
+VARSET LOCAL, 0
+;売春コマンドの系列数
+LOCAL:1 = 5
+;売春取りやめの選択可能処理
+ALRAUNE:0 = 1
+;各種売春コマンドを実行できるか判定
+FOR LOCAL, 1, LOCAL:1
+	;コマンド実行判定
+	TRYCCALLFORM PROSTITUTE_ABLE_COM{LOCAL * 100}, ARG
+		SIF RESULT == 1
+			ALRAUNE:LOCAL = 1
+	CATCH
+	ENDCATCH
+NEXT
+LOCALS = 
+FOR LOCAL, 0, CHARANUM
+	SIF CFLAG:LOCAL:401 == 7
+		LOCALS = %LOCALS% %CALLNAME:LOCAL%
+NEXT
+
+DRAWLINE
+PRINTFORML 現在の%CALLNAME:ARG%の売春状況：\@(CFLAG:ARG:401 == 0) ? 売春していない # %BROTHEL_SHOW_PROSTITUTION_COMNAME(CFLAG:ARG:401)%\@
+PRINTFORML %CALLNAME:ARG%の売春内容を選択してください。
+SIF STRLENS(LOCALS) > 0
+	PRINTFORML セット売春を選択中のキャラ：%LOCALS%（セット売春を実行する場合は2名選択してください）
+DRAWLINE
+FOR LOCAL, 0, LOCAL:1
+	SIF ALRAUNE:LOCAL == 1
+		PRINTFORML [{LOCAL}]%BROTHEL_SHOW_PROSTITUTION_COMNAME(LOCAL)%
+NEXT
+DRAWLINE
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT >= LOCAL:1 || ALRAUNE:RESULT == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	PRINTW 売春を解除します
+	CALL PROSTITUTION_LAYOFF_GENERAL, ARG
+	IF TALENT:ARG:売春中毒
+		;地の文・口上表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 801
+		MARK:ARG:反発刻印 = 3
+		MARK:ARG:97 = 3
+		PRINTFORM %CALLNAME:ARG%は、
+		FONTBOLD
+		PRINTFORM 反発刻印Lv{MARK:ARG:反発刻印}
+		FONTREGULAR
+		PRINTW を取得した。
+	ENDIF
+ELSEIF FLAG:3001 >= ITEM:娼館 && CFLAG:ARG:401 == 0
+	PRINTW これ以上売春を行うスペースを確保できません。娼館を拡張してください
+	RETURN 0
+ELSEIF RESULT == 1
+	PRINTW おさわり厳禁の売春を行います
+	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 1
+ELSEIF RESULT == 2
+	IF TALENT:ARG:オトコ == 0
+		PRINTW 挿入厳禁の売春を行います
+	ELSE
+		PRINTW おさわりＯＫの売春を行います
+	ENDIF
+	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 2
+ELSEIF RESULT == 3
+	PRINTW Ａをメインとした売春を行います
+	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 3
+ELSEIF RESULT == 4
+	PRINTW 通常の売春を行います
+	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 4
+;ELSEIF RESULT == 5
+;	PRINTL 挿入厳禁の多人数との売春を行います
+;	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 5
+;ELSEIF RESULT == 6
+;	PRINTW 多人数との売春を行います
+;	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 6
+;ELSEIF RESULT == 7
+;	PRINTW 二人セットの売春を行います
+;	CALL PROSTITUTION_APPOINT_GENERAL, ARG, 7
+ENDIF
+SIF FLAG:3001 >= ITEM:娼館
+	PRINTW これ以上売春を行うスペースを確保できません。娼館を拡張してください。
+
+;-------------------------------------------------
+;選択中の売春コマンド名表示
+;-------------------------------------------------
+@BROTHEL_SHOW_PROSTITUTION_COMNAME(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		RETURNF "売春しない"
+	CASE 1
+		RETURNF "ソフト売春"
+	CASE 2
+		RETURNF "ＣＢ売春"
+	CASE 3
+		RETURNF "Ａ売春"
+	CASE 4
+		RETURNF "Ｖ売春"
+	CASE 5
+		RETURNF "集団視姦"
+	CASE 6
+		RETURNF "乱交"
+	CASE 7
+		RETURNF "セット売春"
+ENDSELECT
+
+;=============================================================================
+;娼館での治療の選択関連処理
+;=============================================================================
+;-------------------------------------------------
+;治療を行うキャラの選択
+;-------------------------------------------------
+@BROTHEL_CURE_MENU, ARG
+LOCAL:3 = 0
+$PRINT_FRESH_LIST
+ライン数:0 = LINECOUNT
+LOCAL:1 = 0
+LOCAL:2 = 0
+;表示させるキャラを抽出（LOCAL:2に人数）
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人は除外
+	SIF COUNT == MASTER
+		CONTINUE
+	;この場にいることが前提
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;売春中毒の治療を行う場合
+	IF ARG == 0
+		;売春中毒度がゼロで[売春中毒]がないなら除外
+		SIF CFLAG:COUNT:402 == 0 && TALENT:COUNT:売春中毒 == 0
+			CONTINUE
+	;娼婦精神の治療を行う場合
+	ELSE
+		;[娼婦]でないなら除外
+		SIF TALENT:COUNT:娼婦 == 0
+			CONTINUE
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+	SIF (LOCAL:2%20) == 1 && LOCAL:2 > 20
+		LOCAL:1 += 1
+REND
+IF LOCAL:2 == 0
+	PRINTL 治療が必要なキャラはいません
+	RETURN 0
+ENDIF
+
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 誰の\@(ARG == 0) ? 売春中毒 # 娼婦精神\@を治療しますか？ ＜page.{LOCAL:3 + 1}＞
+PRINTFORML 現在の所持金：{MONEY}圓
+DRAWLINE
+CALL BROTHEL_LIST_CHARA, LOCAL:3
+DRAWLINE
+PRINTFORMLC \@(LOCAL:3 <= 0) ? %" " * 16% # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL:3 >= LOCAL:1) ? %" " * 16% # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+ライン数:1 = LINECOUNT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 1111 && LOCAL:3 > 0
+	LOCAL:3 -= 1
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && LOCAL:3 < LOCAL:1
+	LOCAL:3 += 1
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+;売春中毒の治療を行う場合
+IF ARG == 0
+	CALL BROTHEL_CURE_ADDICT, RESULT
+;娼婦精神の治療を行う場合
+ELSE
+	CALL BROTHEL_CURE_MENTAL, RESULT
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+GOTO PRINT_FRESH_LIST
+
+;-------------------------------------------------
+;売春中毒の治療
+;-------------------------------------------------
+@BROTHEL_CURE_ADDICT, ARG
+#LOCALSIZE 1
+;治療費計算用
+LOCAL = (CFLAG:ARG:402 * 1000) + (FLAG:3005 * 100)  + (EXP:ARG:売春経験 * 10)+ CFLAG:ARG:66
+SIF TALENT:ARG:売春中毒
+	LOCAL += 50000 + EXP:ARG:売春経験 + FLAG:3005 + CFLAG:ARG:66
+PRINTFORML 治療費に{LOCAL}圓かかりますがよろしいですか？(所持金：{MONEY}圓)
+SIF TALENT:MASTER:超常目算 || (ASSI > 0 && TALENT:ASSI:超常目算) || TALENT:MASTER:998
+	PRINTFORML %CALLNAME:ARG%の売春中毒度は、{CFLAG:ARG:402}％のようだ
+PRINTL [0]はい
+PRINTL [1]いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 1
+ELSEIF RESULT == 0
+	IF MONEY < LOCAL
+		PRINTW 治療費が足りません
+		RETURN 1
+	ELSE
+		MONEY = MAX(MONEY - LOCAL, 0)
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+
+PRINTFORMW %CALLNAME:ARG%に売春中毒の治療を施しました。
+IF CFLAG:ARG:402 > 0 && TALENT:ARG:売春中毒
+	;売春中毒度の割合減少
+	CFLAG:ARG:402 = CFLAG:ARG:402 * RAND(50, 80) / 100
+	PRINTFORMW %CALLNAME:ARG%の売春中毒度は減りました。
+ELSEIF CFLAG:ARG:402 > 0
+	;売春中毒度をクリア
+	CFLAG:ARG:402 = 0
+	PRINTFORMW %CALLNAME:ARG%の売春中毒度がゼロになりました。
+ENDIF
+;[売春中毒]消滅
+IF TALENT:ARG:売春中毒 && RAND:4 < 1 + CFLAG:ARG:407
+	TALENT:ARG:売春中毒 = 0
+	CFLAG:ARG:407 = 0
+	PRINTW 治療に成功しました。
+	PRINTW [売春中毒]を失った。
+ELSEIF TALENT:ARG:売春中毒
+	PRINTW しかし、[売春中毒]を直せませんでした…。
+	CFLAG:ARG:407++
+ENDIF
+
+;地の文・口上表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 802
+PRINTFORMW 治療に{LOCAL}圓使いました。
+RETURN 0
+
+;-------------------------------------------------
+;娼婦精神の治療
+;-------------------------------------------------
+@BROTHEL_CURE_MENTAL, ARG
+#LOCALSIZE 2
+;治療費計算用
+LOCAL = (CFLAG:ARG:402 * 1000) + (FLAG:3005 * 100)  + (EXP:ARG:売春経験 * 10)+ CFLAG:ARG:66
+;[売春中毒]
+SIF TALENT:ARG:売春中毒
+	LOCAL += 50000 + EXP:ARG:売春経験 + FLAG:3005 + CFLAG:ARG:66
+;[求愛依存]
+SIF TALENT:ARG:求愛依存
+	LOCAL += 2500 + EXP:ARG:売春経験 + FLAG:3005 + CFLAG:ARG:66
+;[看板娘]
+SIF TALENT:ARG:看板娘
+	LOCAL += 1000 + EXP:ARG:売春経験 + FLAG:3005 + CFLAG:ARG:66
+;[娼婦]
+SIF TALENT:ARG:娼婦
+	LOCAL += 500 + EXP:ARG:売春経験 + FLAG:3005 + CFLAG:ARG:66
+;[常連客]
+SIF TALENT:ARG:常連客
+	LOCAL += (3000 + EXP:ARG:売春経験 + FLAG:3005 + CFLAG:ARG:66) * TALENT:ARG:常連客
+
+PRINTFORML 治療費に{LOCAL}圓かかりますがよろしいですか？(所持金：{MONEY}圓)
+PRINTFORML ※実行すると売春に関連する素質が全て失われます！
+PRINTL [0]はい
+PRINTL [1]いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 1
+ELSEIF RESULT == 0
+	IF MONEY < LOCAL
+		PRINTW 治療費が足りません
+		RETURN 1
+	ELSE
+		MONEY = MAX(MONEY - LOCAL, 0)
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;反発刻印による消滅確立の変動
+SELECTCASE MARK:ARG:反発刻印
+	;反発刻印LV0の場合は確実に消滅
+	CASE 0
+		LOCAL:1 = 1
+	;反発刻印LV1の場合1/2で消滅
+	CASE 1
+		LOCAL:1 = (RAND:2 == 0) ? 1 # 0
+	;反発刻印LV2の場合1/3で消滅
+	CASE 2
+		LOCAL:1 = (RAND:3 == 0) ? 1 # 0
+	;反発刻印LV3の場合1/5で消滅
+	CASEELSE
+		LOCAL:1 = (RAND:5 == 0) ? 1 # 0
+ENDSELECT
+
+PRINTFORMW %CALLNAME:ARG%に染み付いてしまった娼婦精神の消滅を試みます
+PRINTW 　　　　　・
+PRINTW 　　　　　・
+PRINTW 　　　　　・
+
+;娼婦消滅成功か否か
+IF LOCAL:1 == 1
+	PRINTW 　　　　　！
+	PRINTW 治療はどうやら無事成功したようだ
+	;地の文・口上表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 803
+
+	PRINTFORM 治療の成功により、%CALLNAME:ARG%は[娼婦]
+	;[娼婦]消滅
+	TALENT:ARG:娼婦 = 0
+	;[求愛依存]消滅
+	IF TALENT:ARG:求愛依存
+		PRINT 、[求愛依存]
+		TALENT:ARG:求愛依存 = 0
+	ENDIF
+	;[売春中毒]消滅
+	IF TALENT:ARG:売春中毒
+		PRINT 、[売春中毒]
+		TALENT:ARG:売春中毒 = 0
+	ENDIF
+	;[看板娘]消滅
+	IF TALENT:ARG:看板娘
+		PRINT 、[看板娘]
+		TALENT:ARG:看板娘 = 0
+	ENDIF
+	;[常連客]消滅
+	IF TALENT:ARG:常連客
+		PRINT 、[常連客]
+		TALENT:ARG:常連客 = 0
+	ENDIF
+	PRINTFORMW を失\@(CFLAG:ARG:402) ? い、売春中毒度がゼロにな # \@った。
+	;売春中度度のクリア
+	CFLAG:ARG:402 = 0
+	CFLAG:ARG:66 /= 100
+	PRINTFORMW 娼婦人気は大幅に下がった。
+ELSE
+	PRINTW 　 ……………………
+	PRINTW 治療は上手くいかなかったようだ……
+	;地の文・口上表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 804
+ENDIF
+PRINTFORMW 治療に{LOCAL}圓使いました
+RETURN 0
+
+;=============================================================================
+;娼館の拡張
+;=============================================================================
+;-------------------------------------------------
+;娼館機能のコンフィグメニュー
+;-------------------------------------------------
+@BROTHEL_REFORM_MENU
+;娼館の拡張に必要な経費はゲームモードによって異なる
+IF FLAG:4 == 4
+	LOCAL:0 = 5000
+	LOCAL:1 = 80000
+	LOCAL:2 = 10000
+	LOCAL:3 = 10000
+	LOCAL:4 = 80000
+ELSE
+	FOR PC_VAR1, 0 ,5
+		LOCAL:PC_VAR1 = 80000
+	NEXT
+ENDIF
+$PRINT_LIST
+
+PRINTFORML 娼館の拡張を行います。実行したい項目を選択してください。(所持金：{MONEY}圓)
+DRAWLINE
+	PRINTFORML [  0] 売春可能人数を増やす・・・・・{LOCAL:0, 5}圓
+;SIF (FLAG:3000 & 1) == 0
+;	PRINTFORML [  1] 大宴会場を設置する・・・・・・{LOCAL:1, 5}圓
+SIF (FLAG:3000 & 2) == 0
+	PRINTFORML [  2] 様々な器具を揃える・・・・・・{LOCAL:2, 5}圓
+SIF (FLAG:3000 & 4) == 0
+	PRINTFORML [  3] ビデオ販売コーナーの設営・・・{LOCAL:3, 5}圓
+SIF (FLAG:3000 & 8) == 0 && TALENT:MASTER:触手使役術 == 1
+	PRINTFORML [  4] 触手部屋を設置する・・・・・・{LOCAL:4, 5}圓
+;SIF FLAG:3000 == 15 && ITEM:娼館 > 30
+;	PRINTFORML [100] もう拡張できません
+DRAWLINE
+PRINTL [100]やめる
+DRAWLINE
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT >= 0 && RESULT <= 4) && MONEY < LOCAL:RESULT
+	PRINTW 実行に必要な金を所持していません
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 4
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_0
+ENDIF
+PC_VAR1 = RESULT
+;選択した拡張工事の実行
+SELECTCASE PC_VAR1
+	CASE 0
+		ITEM:娼館 += 1
+		PRINTFORMW 売春可能人数が{ITEM:娼館}人に増えました
+;	CASE 1
+;		PRINTW 大宴会場が設置され、対多人数売春を行えるようになりました
+;		FLAG:3000 |= 1
+	CASE 2
+		PRINTW 鞭やバイブなどが完備され、ニッチなニーズにも応えられるようになりました
+		FLAG:3000 |= 2
+	CASE 3
+		PRINTW 売春の様子を撮ったビデオをお土産に買って帰れるようになりました
+		FLAG:3000 |= 4
+	CASE 4
+		PRINTW 触手部屋を設置し、よりニッチなニーズにも答えられるようになりました
+		FLAG:3000 |= 8
+ENDSELECT
+
+CALL BROTHEL_MINIMUM_RUNNING_COST
+
+PRINTL 
+PRINTL 
+;所持金の減額
+MONEY = MAX(MONEY - LOCAL:PC_VAR1, 0)
+
+GOTO PRINT_LIST
+
+;=============================================================================
+;娼館機能のコンフィグ
+;=============================================================================
+;-------------------------------------------------
+;娼館機能のコンフィグメニュー
+;-------------------------------------------------
+;娼館を新設した時の処理
+@BROTHEL_CONFIG
+PRINTL 現在、娼館の設定は以下のようになっています。
+ライン数:0 = LINECOUNT
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1001 & 1) ? ○ # ×\@[ 0] 売春描写スキップ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1001 & 2) ? ○ # ×\@[ 1] 売春結果表示スキップ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1000 & 2) ? ○ # ×\@[ 2] 売春中毒度表示
+;-------------------------------------------------
+PRINTL  [100] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	PRINTFORMW 売春中のメッセージ(地の文・口上)を\@(FLAG:1001 & 1) ? 表示 # スキップ\@します
+	FLAG:1001 ^= 1
+ELSEIF RESULT == 1
+	PRINTFORMW イベント売春中の各種システムメッセージを\@(FLAG:1001 & 2) ? 表示 # スキップ\@します
+	FLAG:1001 ^= 2
+ELSEIF RESULT == 2
+	PRINTFORMW 売春中毒度の表示を\@(FLAG:1000 & 2) ? 無効 # 有効\@にしました
+	FLAG:1000 ^= 2
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+
+@OLD_BROTHEL_CONFIG
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+PRINTL  [ 0] キャラ能力表示
+PRINTL  [ 1] メッセージ表示
+;PRINTL  [ 2] 売春自動取りやめ
+;-------------------------------------------------
+;-------------------------------------------------
+PRINTL [100]戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	PRINTL キャラクターの能力表示に関する設定を行います。
+	CALL BROTHEL_CONFIGURATION_0
+ELSEIF RESULT == 1
+	PRINTL 売春時のメッセージのスキップ機能に関する設定を行います。
+	CALL BROTHEL_CONFIGURATION_1
+ELSEIF RESULT != 100
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+;-------------------------------------------------
+;娼館機能のコンフィグ(キャラ能力表示)
+;-------------------------------------------------
+@BROTHEL_CONFIGURATION_0
+PRINTL 現在、キャラ能力表示機能の設定は以下のようになっています。
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1000 & 1) ? ○ # ×\@[ 0] 否定の珠余裕度表示
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1000 & 2) ? ○ # ×\@[ 1] 売春中毒度表示
+;-------------------------------------------------
+PRINTL  [100] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	PRINTFORMW 否定の珠の余裕・反発刻印の表示を\@(FLAG:1000 & 1) ? 無効 # 有効\@にしました
+	FLAG:1000 ^= 1
+ELSEIF RESULT == 1
+	PRINTFORMW 売春中毒度の表示を\@(FLAG:1000 & 2) ? 無効 # 有効\@にしました
+	FLAG:1000 ^= 2
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+;-------------------------------------------------
+;娼館機能のコンフィグ(メッセージ表示)
+;-------------------------------------------------
+@BROTHEL_CONFIGURATION_1
+PRINTL 現在、売春時のメッセージ表示の設定は以下のようになっています。
+ライン数:0 = LINECOUNT
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1001 & 1) ? ○ # ×\@[ 0] 売春描写スキップ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1001 & 2) ? ○ # ×\@[ 1] 売春結果表示スキップ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:1000 & 2) ? ○ # ×\@[ 1] 売春中毒度表示
+;-------------------------------------------------
+PRINTL  [100] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	PRINTFORMW 売春中のメッセージ(地の文・口上)を\@(FLAG:1001 & 1) ? 表示 # スキップ\@します
+	FLAG:1001 ^= 1
+ELSEIF RESULT == 1
+	PRINTFORMW イベント売春中の各種システムメッセージを\@(FLAG:1001 & 2) ? 表示 # スキップ\@します
+	FLAG:1001 ^= 2
+ELSEIF RESULT == 2
+	PRINTFORMW 売春中毒度の表示を\@(FLAG:1000 & 2) ? 無効 # 有効\@にしました
+	FLAG:1000 ^= 2
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+
+;=============================================================================
+;売春中、または、売春可能キャラの計算処理関数
+;LISTに記録
+;=============================================================================
+@BROTHEL_CHARA_DISPLAY
+;表示させるキャラを抽出（LOCAL:2に人数）
+TFLAG:402 = 0
+TFLAG:403 = 0
+TFLAG:404 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:98 = 0
+	;主人は除外
+	SIF PC_VAR1 == MASTER
+		CONTINUE
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:PC_VAR1:4 && (CFLAG:PC_VAR1:4 & 1024) == 0
+		CONTINUE
+	IF TFLAG:401 == 999
+		;娼館にいないキャラも除外
+		SIF (CFLAG:PC_VAR1:4 & 1024) == 0
+			CONTINUE
+	ELSE
+		CALLFORM PROSTITUTE_ABLE_COM{10 * TFLAG:401}, PC_VAR1
+		SIF RESULT == 0
+			CONTINUE
+	ENDIF
+	SIF CFLAG:PC_VAR1:401 == 1
+		TFLAG:404++
+	CALLF SET_LIST, TFLAG:402, PC_VAR1
+	TFLAG:402 += 1
+	MARK:PC_VAR1:98 = 1
+	SIF (TFLAG:402 % 20) == 1 && TFLAG:402 > 20
+		TFLAG:403 += 1
+NEXT
+
+;-------------------------------------------------
+;娼館売却
+;-------------------------------------------------
+@SELL_BROTHEL
+;=============================================================================
+;以下新関数
+;=============================================================================
+;-------------------------------------------------
+;娼婦で稼いだ番付
+;-------------------------------------------------
+@BROTHEL_GAIN_LIST
+
+;-------------------------------------------------
+;主人のノウハウ学習
+;-------------------------------------------------
+@BROTHEL_MASTER_LEARNING
+LOCALS = よりよい娼婦の育て方
+LOCALS:1 = 超図解！ベストショット
+LOCALS:2 = 週刊「大人の玩具」
+LOCALS:3 = ボイストレーニング　決定版
+LOCALS:4 = 教え上手になるための７つの秘訣
+$INPUT_LOOP_0
+PRINTL 何を学習しますか？
+PRINTL ※実行すると、時間が変わります！
+DRAWLINE
+FOR LOCAL, 0, 4
+	PRINTL [{100 + LOCAL}] %LOCALS:(LOCAL)%
+NEXT
+PRINTL  [999] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 999
+	RETURN 0
+ELSEIF RESULT < 100 && RESULT > 104
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+LOCAL = RESULT - 100
+PRINTL 本当に%LOCALS:(LOCAL)%でよろしいですか？
+$INPUT_LOOP_2
+PRINTC [0] はい
+PRINTC [1] いいえ
+INPUT
+IF RESULT == 1
+	GOTO INPUT_LOOP_0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_2
+ENDIF
+
+CALLFORM BROTHEL_MASTER_LEARNING_METHOD{LOCAL}
+
+;-------------------------------------------------
+;娼婦のノウハウ指導
+;-------------------------------------------------
+@BROTHEL_LECTURE
+LOCALS:0 = お客を満足させるマル秘テクニック
+LOCALS:1 = カメラの使い方・写り方
+LOCALS:2 = 「大人の玩具」
+LOCALS:3 = ボイストレーニング
+LOCALS:4 = 教え上手になるための７つの秘訣
+$INPUT_LOOP_0
+PRINTL 何を指導しますか？
+PRINTL ただし、主人に指導するだけの技能がないと実行できません
+PRINTL ※実行すると、時間が変わります！
+DRAWLINE
+FOR LOCAL, 0, 4
+	PRINTL [{100 + LOCAL}] %LOCALS:(LOCAL)%
+NEXT
+PRINTL  [999] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 999
+	RETURN 0
+ELSEIF RESULT < 100 && RESULT > 104
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+LOCAL = RESULT - 100
+PRINTL 本当に%LOCALS:(LOCAL)%でよろしいですか？
+$INPUT_LOOP_2
+PRINTC [0] はい
+PRINTC [1] いいえ
+INPUT
+IF RESULT == 1
+	GOTO INPUT_LOOP_0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_2
+ENDIF
+
+CALLFORM BROTHEL_LECTURE_METHOD{LOCAL}
+
+;-------------------------------------------------
+;淫具開発
+;-------------------------------------------------
+@BROTHEL_STUFF_DEVELOP
+
+
+
+
+
+
+
+
+
+
+

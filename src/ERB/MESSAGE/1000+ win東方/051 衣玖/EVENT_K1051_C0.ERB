@@ -1,0 +1,5613 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;51をキャラ番号に置換して使用してください(霊夢なら1、蓮子なら49、魅魔なら100)。
+;
+;このファイルでは0～99番のコマンドの口上用関数が置いてあります。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;○○口上
+;==============================================================
+;========================================================
+;コマンド口上前の共通関数
+;特定の条件下でコマンド口上を表示させないようにする場合はRETURN 1
+;1以外を返した場合はコマンド口上は表示される
+;========================================================
+@KOJO_1051_TRAIN_MESSAGE_S_BEFORE
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 1
+;口枷がある場合は戻る
+SIF TEQUIP:口装着器具 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SELECTCOM != 583)
+	RETURN 1
+;時止め中は戻る
+SIF TEQUIP:時間止め && SELECTCOM != 418
+	RETURN 1
+;失神回復時は戻る
+SIF TFLAG:898 == 1
+	RETURN 1
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 1
+
+;========================================================
+;コマンド口上
+;CFLAG:9000～9099までの100個を使用して、
+;選んだコマンドを対象に初めて使ったかどうかを判別できる
+;「IF TFLAG:95 == 1」で初回か2回目以降なのかで表示内容を変えることが出来る
+;========================================================
+;-------------------------------------------------
+;愛撫
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_0
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「いやっ、お願いです、触らないで…」
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7301 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 緊張した様子の天子の手を取り、衣玖がそっと自らの体に導く…
+				PRINTFORMW 『あっ…あの衣玖？そんな事、しなくても、いいから…』
+				PRINTFORMW 「ふふっ、滑らかで、可愛らしい手ですね…ご主人様とはまた違います」
+				PRINTFORMW 「こんな綺麗な手が私に触れてくれるのが嬉しくて…つい勝手をしてしまいました」
+				PRINTFORMW 『そんな、挑発してっ…もう、触っちゃうわよ？衣玖のいやらしいところ、たくさん』
+				PRINTFORMW 「いいですよ…天子の手で、私を感じさせてください…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『別に怖がらなくてもいいのよ？ちゃんと悦ばせてあげるから』
+				PRINTFORMW 「…この状況で落ち着けというのですか？無理を言わないでください…」
+			ENDIF
+			CFLAG:7301 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				IF RAND:4 == 0
+					PRINTFORMW 「はっ…！はあっ、あっ、んんっ…いいですよ、天子…」
+					PRINTFORMW 『天人でもないのにこんな綺麗な肌して…うう、なんか病みつきになるわ』
+					PRINTFORMW 「そんな…褒められると、嬉しくて…もっと、感じてしまいます…♪」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 『ひうっ、あっ、んんっ…ねえ衣玖っ…私が、するんだからっ…』
+					PRINTFORMW 「ああっ…この方が、お互い気持ちよくなれるでしょう…♪」
+					PRINTFORMW 『このっ…んあっ！んっ…負けない、んだからぁ…』
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『衣玖って…結構敏感よね？普段はのんびりしてるのに』
+					PRINTFORMW 「はんっ、あん、ふああっ…ふふっ、仕方ないですよ…」
+					PRINTFORMW 「ご主人様も天子も、とっても上手ですから…♪」
+				ELSE
+					PRINTFORMW 「んっ、そこっ…もっと、してください、天子…」
+					PRINTFORMW 『はっ、ひゃっ！くすぐったいよぉ、衣玖う…』
+				ENDIF
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				IF RAND:3 == 0
+					PRINTFORMW 『…衣玖の体見てたら逆にこっちが緊張するわ』
+					PRINTFORMW 『竜宮の遣いがこんな魅力的でどうするのよ？地震の警告に来られたってただありがたいだけじゃない』
+					PRINTFORMW 「あの、あっ、んんっ…そんな、触りながら、言われてもっ…」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「んっ、くうぅ…お上手です、天子…もっと、続けて下さい…」
+					PRINTFORMW 『ご主人様仕込みだから当然よ。私の方がもっと良くしてあげるから…』
+				ELSE
+					PRINTFORMW 「私も…しましょうか？されてばかりでは、悪い気がして…」
+					PRINTFORMW 『ふふん、そんなに私に触りたいの？でもいいのよ、今は私に任せなさい』
+				ENDIF
+			;その他の場合
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 『どう衣玖、気持ちいい？…別に声出してもいいからね』
+				ELSE
+					PRINTFORMW 『そのまま楽にしててね…今にきっと良くなるわ』
+				ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;羞恥プレイ
+		IF TEQUIP:羞恥プレイ == 1 && RAND:2 == 0
+			PRINTFORMW 「あっあっ！ん、はぁん……なんだか……私の体じゃ、ないみたいです…」
+			PRINTFORMW 甘い声を上げ、小刻みに体を震わす衣玖の姿が鏡に映っている…
+			PRINTFORMW 「自分でも、信じられないくらい…とってもいやらしい、顔…♪」
+		;妊娠である
+		ELSEIF TALENT:妊娠
+			IF RAND:2 == 0
+				PRINTFORMW 「…んっ、もう少し強くしても、大丈夫ですよ…」
+				PRINTFORMW 「んあっ、あっ…！じわじわって、気持ちいいのが、上がってきてます…♪」
+				PRINTFORMW 優しい愛撫を繰り返し、徐々に衣玖の興奮を高めていった…
+			ELSE
+				PRINTFORMW 衣玖のお腹をゆっくりさすりながら、愛撫を加えていく…
+				PRINTFORMW 「ああ…%CALLNAME:PLAYER%の指が優しくて、気持ち良くて…」
+				PRINTFORMW 「はい、丁度いいですよ…ふふっ、幸せすぎて怖いくらいです…♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「はあっ、はっ、ああっ…なんだか、%CALLNAME:PLAYER%とこうして触れ合ってるだけでも、ドキドキします…♪」
+				PRINTFORMW 衣玖の艶めかしい体が絡み付きさらにあなたを興奮させる。
+				PRINTFORMW あなたは負けじと衣玖の体を抱きしめ、互いに体を貪りあった…
+			ELSE
+				PRINTFORMW 「もっと、衣玖の体を熱くしてください…」
+				PRINTFORMW 「%CALLNAME:PLAYER%の指で…私をもっと激しく、乱れさせて下さい…%UNICODE(0x2665)%」
+				PRINTFORMW 耳元で囁かれる衣玖の誘惑に、たまらずあなたは激しく衣玖の体を求めた…
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;Ｃ感覚Lv3以上またはＢ感覚Lv3以上
+		IF ABL:Ｃ感覚 >= 3 || ABL:Ｂ感覚 >= 3
+			IF RAND:2 == 0
+				PRINTFORMW 「あっ、そこっ…あっ、気持ちいい…もっと…」
+				PRINTFORMW 無意識なのか、感じる部分に触れる度に衣玖はあなたに体を押し付け、絡めてくる…
+			ELSE
+				PRINTFORMW 「ひうっ！ふっ、ああっ…！だめっ、ちょっと待って、下さっ、はううっ…！」
+				PRINTFORMW 開発された部分を執拗になぞられ、衣玖はあなたのされるがままの状態だ…
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「%CALLNAME:PLAYER%にお任せします…私の気持ち良い所、触って下さい…」
+			PRINTFORMW 衣玖は体の力を抜き、あなたの愛撫に身を任せている…
+		ENDIF
+	;Ｃ感覚Lv3以上またはＢ感覚Lv3以上
+	ELSEIF ABL:Ｃ感覚 >= 3 || ABL:Ｂ感覚 >= 3
+		IF RAND:2 == 0
+			PRINTFORMW 「そこばっかり、んっ、ふうっ！しつこいですよぉ…くううっ…」
+			PRINTFORMW 硬くなってきた部分を擦ると、たまらず衣玖は甘い声を上げた…
+		ELSE
+			PRINTFORMW 「んんっ…！やっ、やめっ…そんなに、強くしないで下さい…！」
+			PRINTFORMW 明らかに以前よりも衣玖は刺激に敏感になっているようだ…
+		ENDIF
+	;屈服刻印Lv1
+	ELSEIF MARK:屈服刻印 == 1
+		PRINTFORMW 「せめて、優しくお願いします…」
+		PRINTFORMW 衣玖は以前よりは体を触られるのに慣れてきたようだ…
+	;その他の場合
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「もうやめてくれませんか？」
+		ELSE
+			PRINTFORMW 「こんな恥ずかしい事をされるなんて…！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;クンニ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_1
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「そんなところっ、やめて下さい！」
+	PRINTFORMW 「嫌、やめて…」
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7302 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 『次は…ねえ衣玖、ここ…いじってみていい？』
+				PRINTFORMW 天子が衣玖のクリトリスを指でそっと触ると、衣玖はぴくりと反応した。
+				PRINTFORMW 「んっ！…あの、優しくして下さいね？私…そこ弱いんです…」
+				PRINTFORMW 『…あのね衣玖、そんな風に言われて優しくする奴がいると思う？』
+				PRINTFORMW 天子がはあ、と溜息をつく。
+				PRINTFORMW 衣玖の仕草は無意識なのにいちいち魅惑的で、天子もそれを実感しているようだ…
+				PRINTFORMW 『舌だし、加減が上手く出来るか分からないけど…痛かったら言ってね？』
+			;その他の場合
+			ELSE
+				PRINTFORMW 『…衣玖のここってこんな感じなのね…あはっ、ドキドキしてきた』
+				PRINTFORMW 「もう、いいでしょう天子…！早く、終わって…」
+				PRINTFORMW 衣玖は天子によって両足を大きく広げられ、酷く屈辱的な格好にされている…
+				PRINTFORMW 『何言ってるのよ、これからよ…それじゃあ衣玖のココ、頂きます…♪』
+			ENDIF
+			CFLAG:7302 = 1
+		;２回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				IF RAND:3 == 0
+					PRINTFORMW 『ふふん、ちゃんと綺麗にしてるのね衣玖ったら』
+					PRINTFORMW 『ご主人様にいっぱい見てもらうんだもの…当然よね？』
+					PRINTFORMW 「それは…ううっ、そうですけどっ、恥ずかしい…」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「はっ、はっ…！すごいっ…いいっ、うんっ、ふああっ…もっと…！」
+					PRINTFORMW 衣玖は天子の激しい舌の動きに夢中になって快楽を貪っている…
+				ELSE
+					PRINTFORMW 『ふふ、どんどん濡れてくる…衣玖ったら濡れやすいのかしら？お魚だし』
+					PRINTFORMW 「違いますっ…！天子が、そんな、激しくうっ…んああっ…いいっ…」
+				ENDIF
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				IF RAND:2 == 0
+					PRINTFORMW 『そんなに声出しちゃって…♪いいのよ、そういうふうにしてるんだから』
+				ELSE
+					PRINTFORMW 『じゅっ、じゅちゅっ、れるっ…手ぇどけてね、大丈夫、痛くしないから…』
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 『もう、感じてるんでしょ？そんな辛そうな顔しないでよ』
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		IF RAND:6 == 0 && TALENT:淫乱
+			PRINTFORMW 「どうぞ、好きに舐め回していいんですよ…？」
+			PRINTFORMW 衣玖は妖しい微笑を浮かべながらあなたの顔をクリトリスへと導いた…
+			PRINTFORMW 「ああっ、いいっ、%CALLNAME:PLAYER%の舌が動いてっ…♪」
+		ELSEIF RAND:5 == 0 && TALENT:淫乱
+			PRINTFORMW 「もっと、もっと強くっ…♪」
+			PRINTFORMW 衣玖はあなたの頭を股間に押し付けるようにして喘いでいる。
+			PRINTFORMW 「イキます、イッちゃいますっ、ああっ、もうだめえっ…！」
+		ELSEIF RAND:5 == 0 && TALENT:淫乱
+			PRINTFORMW 「ああ、また衣玖のクリをいじめて下さい…♪」
+			PRINTFORMW 「いいっ！いいのっ！ジンジンしてますうっ！クリ、もっとしてぇっ！」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「あの…もう少し強く、吸って頂けますか…？」
+			PRINTFORMW 「…はしたないお願いですけど…ただ、そうして貰えたら、もっと気持ちいいかなって…ひうっ！」
+			PRINTFORMW 衣玖が言い終わらないうちにあなたは早速衣玖のクリトリスにむしゃぶりついた…
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「やっ！そんなに音立てちゃ、恥ずかしい、ですからっ…！」
+			PRINTFORMW あなたは構わず下品な音を立てながら激しくクリトリスに吸い付き、舐め回した…
+			PRINTFORMW 「ふううぅっ！激しっ…でもっ…はんっ！感じちゃい、ますっ…♪」
+		ELSE
+			PRINTFORMW 「…優しくしてくださいね？そこ、弱いんです…」
+			PRINTFORMW 恥らう衣玖の言葉を聞きつつ、あなたはそっと衣玖のクリトリスを舐め始めた…
+			PRINTFORMW 「…っっ！ゆっくり、もう少し、ゆっくりして下さい…！あっ、んんっ！」
+			PRINTFORMW 「はうっ、くううっ…！こんなに優しいのに、気持ちいい…」
+		ENDIF
+	;Ｃ感覚Lv5以上
+	ELSEIF ABL:Ｃ感覚 >= 5
+		IF RAND:2 == 0
+			PRINTFORMW 「またっ、そんなところっ、舐めないでえっ！」
+			PRINTFORMW 「感じすぎてっ、怖いっ、んあっ、気持ちいいっ」
+		ELSE
+			PRINTFORMW 「はううううぅっ…！嫌っ、そこはだめなんですっ！」
+			PRINTFORMW 「だめですからっ…あっ、あぐっ、はううっ！舐めちゃだめですってばぁ…」
+		ENDIF
+	;Ｃ感覚Lv3以上
+	ELSEIF ABL:Ｃ感覚 >= 3
+		IF RAND:2 == 0
+			PRINTFORMW 「もういいですからっ…！やめてっ、お願いしますっ、くううっ…！」
+			PRINTFORMW 衣玖は股間からあなたを押しのけようとするが、気持ち良さのあまり力が入らない…
+		ELSE
+			PRINTFORMW 「だめっ…これ以上は、だめですうっ…」
+			PRINTFORMW 感度が上がってきたのだろう、衣玖は必死に声を上げまいとしている…
+		ENDIF
+	;Ｃ感覚Lv1以上
+	ELSEIF ABL:Ｃ感覚 >= 1
+		IF RAND:2 == 0
+			PRINTFORMW 「うっ、あうっ…気持ち悪いだけですから、もうやめて…」
+			PRINTFORMW 与えられる快楽に不慣れなのか、衣玖は少し怯えているようだ…
+		ELSE
+			PRINTFORMW 「んっ、んっ…んっ！あっ…」
+			PRINTFORMW 衣玖は時折明らかに感じた声を出している…
+		ENDIF
+	;その他の場合
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「いいからもう、離れて下さい！」
+		ELSE
+			PRINTFORMW 「…あなたはこんな格好で恥ずかしくないのですか？」
+			PRINTFORMW 「いつまで続けるんです…」
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;アナル愛撫
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_2
+;初回実行時
+IF TFLAG:95 == 1 
+	PRINTFORMW 「痛っ…えっ！？」
+	PRINTFORMW 衣玖は羞恥よりもアナルを弄られた驚きで固まっている…
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	;天子がお尻開発済み前提みたいな内容なので、そうじゃない人には申し訳ぬえ
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7303 == 0
+			;恋慕
+			IF TALENT:恋慕
+				;Ａ感覚Lv2以上
+				IF ABL:Ａ感覚 >= 2
+					PRINTFORMW 『ご主人様から聞いたわよ？衣玖はお尻も好きなんだって…♪』
+					PRINTFORMW 「好きって…！そんな、誰のせいだと思って…んぐっ、あふああっ…！」
+					PRINTFORMW 天子が衣玖の肛門を指で軽く押しこんだ途端、甘い声が上がる…
+					PRINTFORMW 『聞いた通りじゃない…ふふん、ゆっくりほぐしてあげるからね？』
+					PRINTFORMW 「やっ、止めて下さい天子っ…恥ずかしいっ…！」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「あの、天子…？そこは、その…」
+					PRINTFORMW 『お尻の穴ね』
+					PRINTFORMW 「…止めるわけにはいきませんか？」
+					PRINTFORMW 『勿体無いわよ衣玖…ここでも気持ちよくなれる事、知らないの？』
+					PRINTFORMW 「遠慮しておきますからっ、あの、指が、中にっ…！」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 『じゃあ衣玖…お尻をこっちに向けてくれる？』
+				PRINTFORMW 衣玖は訝しがりながらも、天子の指示に従った…
+				PRINTFORMW 「何なんですか…？ううっ、こんな恥ずかしい格好…いぎいっ！」
+				PRINTFORMW 天子がためらいなく衣玖のアナルに指先を食い込ませている…
+				;Ａ感覚Lv2以上
+				IF ABL:Ａ感覚 >= 2
+					PRINTFORMW 「んっ！…んんっ、ふああっ…あの、いきなりだったので…」
+					PRINTFORMW 『確かにそうだったわね、ごめんね衣玖？』
+					PRINTFORMW 『…でもお尻も嫌いじゃないみたいね。ふふん、可愛い声出しちゃって…♪』
+				;その他の場合
+				ELSE
+					PRINTFORMW 「やっ、あがっ…何をしてるんですかっ…痛いです、やめてえっ…」
+					PRINTFORMW 『あ、痛かった？てっきり衣玖も好きなのかと思ったけど…』
+					PRINTFORMW 『ごめんね？次はもう少し優しくするから』
+				ENDIF
+			ENDIF
+			CFLAG:7303 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				;Ａ感覚Lv2以上
+				IF ABL:Ａ感覚 >= 2
+					;処女である
+					IF TALENT:処女 == 1
+						PRINTFORMW 「やっ、ひいっ…わたしっ、はじめても、まだなのにいっ…」
+						PRINTFORMW 衣玖のアナルを愛撫する天子の指がぴたりと止まる。
+						PRINTFORMW 『え、そうなの…？』
+						PRINTFORMW 『さすがにちょっと悪い気がしてきたわ…』
+						PRINTFORML 
+						;乱数分岐:2
+						IF RAND:2 == 0
+							PRINTFORMW 『でも、衣玖が可愛いからもうちょっと続けるわね…♪』
+						;その他の場合
+						ELSE
+							PRINTFORMW 『と、とりあえずこのくらいにしておこうかしら』
+						ENDIF
+					;その他の場合
+					ELSE
+						IF RAND:2 == 0
+							PRINTFORMW 『簡単に指が入っちゃう…竜宮の遣いのお尻は皆こうなのかしら？ふふん』
+							PRINTFORMW 「違いますっ…！私が、とっても、いやらしいから…ですうっ」
+							PRINTFORMW 『素直で可愛いわよ衣玖…♪ご褒美にもっとしてあげるからね…』
+						ELSE
+							PRINTFORMW 『ふふん、馴染んでる馴染んでる♪衣玖のお尻、すごいビクビクしてる…♪』
+							PRINTFORMW 「くっ、はあうっ…こんなところ、見られるなんてっ…」
+							PRINTFORMW 『もっと私の知らない顔見せてちょうだい…♪ほら、深くしてあげるから…』
+						ENDIF
+					ENDIF
+				;その他の場合
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORMW 「そこは、汚いですからっ！どうか、もう…！」
+						PRINTFORMW 『天人の私ほどじゃないけどとっても綺麗よ？』
+						PRINTFORMW 『…って、自分で言ってて恥ずかしいわね』
+					ELSE
+						PRINTFORMW 「んくううっ…天子、あの、もうそんなところいいですからっ…」
+						PRINTFORMW 『ごめんね衣玖、もう少し我慢して？もうすぐ気持ちよくなってくるはずだから』
+					ENDIF
+				ENDIF
+			;処女である
+			ELSEIF TALENT:処女 == 1
+				PRINTFORMW 『え、衣玖ってまだ処女なの？』
+				PRINTFORMW 『…ご主人様もいい趣味してるわねえ…』
+			;Ａ感覚Lv2以上
+			ELSEIF ABL:Ａ感覚 >= 2
+				PRINTFORMW 『そうそうその調子、別にお尻で感じることはおかしなことじゃないのよ？』
+				PRINTFORMW 『だから…衣玖がお尻でイクところ、見せて頂戴…♪』
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ほらもっと力抜いて？でないと痛いだけよ』
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;アナルバイブ
+		IF TEQUIP:Ａ系装着器具 == 1
+			;Ａ感覚Lv3以上かつ潤滑Lv3以上
+			IF ABL:Ａ感覚 >= 3 && PALAM:潤滑 >= PALAMLV:3
+				PRINTFORMW 「んくうっ、ふううぅっ！お尻がいいの、止まらないですっ…」
+				PRINTFORMW 「そこっ、そこもっと…押し込んで動かして、くださいっ…♪」
+			;Ａ感覚Lv1以上かつ潤滑Lv3以上
+			ELSEIF ABL:Ａ感覚 >= 1 && PALAM:潤滑 >= PALAMLV:3
+				PRINTFORMW 「うんっ、んん～……んあ、くううぅ……」
+				PRINTFORMW 「お尻の中で、動いてるのが分かって…ちょっと、気持ち悪いです…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「んぎっ、やっ！やめっ…」
+				PRINTFORMW 「止めて下さいっ！どうかっ…痛いですっ、お願いします…！」
+			ENDIF
+		;アナルビーズ
+		ELSEIF TEQUIP:Ａ系装着器具 == 5
+			;Ａ感覚Lv3以上かつ潤滑Lv3以上
+			IF ABL:Ａ感覚 >= 3 && PALAM:潤滑 >= PALAMLV:3
+				PRINTFORMW 「あはっ、はあっ……お尻っ、抉られてっ…ますぅ…」
+				PRINTFORMW 「こんなに簡単に、出たり入ったり…いやらしいお尻に、されちゃいましたぁ…♪」
+			;Ａ感覚Lv1以上かつ潤滑Lv3以上
+			ELSEIF ABL:Ａ感覚 >= 1 && PALAM:潤滑 >= PALAMLV:3
+				PRINTFORMW 「待って…んあっ、ああぁ…！引っかかってますから…」
+				PRINTFORMW 「力を抜いてっ…もう少し、ゆっくり動かして、くださいぃ…！」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「やっ！いだっ、やだあっ…」
+				PRINTFORMW 「お尻がっ、壊れちゃいますっ…傷ついてしまいますからぁ…」
+			ENDIF
+		;浣腸
+		ELSEIF TEQUIP:Ａ系装着器具 == 7
+			;マゾっ気Lv3以上
+			IF ABL:マゾっ気 >= 3
+				PRINTFORMW 「っ…！抜いちゃうの、ですか…？」
+				PRINTFORMW プラグを引き抜くと見せかけ再びそれを押し込み、衣玖のアナルを掻き回した…
+				PRINTFORMW 「んあああぁっ！あっ！らめっ、お尻っ、入ってきてっ…」
+				PRINTFORMW 「はぁ、はああぁ……ふふっ、お尻壊されちゃうかと思いましたよ…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「抜かないでっ…！抜いたら、漏れてっ…」
+				PRINTFORMW 「んんっ！んあぁっ…奥の方もっ…駄目ですっ、駄目ですっ…本当に、もうやめて…」
+			ENDIF
+		;Ａ感覚Lv5以上
+		ELSEIF ABL:Ａ感覚 >= 5
+			IF RAND:2 == 0
+				PRINTFORMW 「あぐっ、あうっ、凄いいっ♪」
+				PRINTFORMW 「アナルいいですっ、もっと強く、ほじって下さいいっ♪」
+			ELSE
+				PRINTFORMW 「また、衣玖のアナルを弄ってくれるんですね…♪」
+				PRINTFORMW 「%CALLNAME:PLAYER%になら、衣玖の汚いところも全部見せてあげますから…」
+			ENDIF
+		;潤滑LV3未満
+		ELSEIF PALAM:潤滑 < PALAMLV:3
+			PRINTFORMW 「も、もう少ししっかり、濡らしてくれませんか…？」
+			PRINTFORMW 「恥ずかしいのは我慢しますから…痛いのはやめてください！」
+		;Ａ感覚Lv3以上かつ潤滑Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && PALAM:潤滑 >= PALAMLV:3
+			PRINTFORMW 衣玖にアナルをこちらに向けるように言うと、衣玖は顔を赤くして言った…
+			PRINTFORMW 「%CALLNAME:PLAYER%のせいで…お尻も感じるようになってしまいました。」
+			PRINTFORMW 「もっと…もっと気持ち良くなりたいんです。」
+			PRINTFORMW 「衣玖の…その、ア、アナルを…好きにして下さい…」
+		;Ａ感覚Lv1以上かつ潤滑Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 1 && PALAM:潤滑 >= PALAMLV:3
+			PRINTFORMW 「はんっ！…んっ、つぁ…」
+			PRINTFORMW 「なんだか、変な感じ…です…」
+		;その他の場合
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「うう～…どうぞ、触って下さい…」
+				PRINTFORMW 「お尻まで愛されるとは予想外です…」
+			ELSE
+				PRINTFORMW 「%CALLNAME:PLAYER%がしたいなら私は受け入れます、が…」
+				PRINTFORMW 「痛くしないでくださいね…？」
+			ENDIF
+		ENDIF
+	;Ａ感覚Lv5以上
+	ELSEIF ABL:Ａ感覚 >= 5
+		IF RAND:2 == 0
+			PRINTFORMW 「あうっ、あっ、後ろの穴で、気持ちよくなれちゃうなんてえっ！」
+		ELSE
+			PRINTFORMW 「ううっ！お尻の穴で感じてますうっ！」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;Ａ感覚Lv3以上
+		IF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「そんな、お尻を触られるのが、気持ちいい、なんてっ…！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ううっ、くうっ…」
+			PRINTFORMW 抵抗こそしないが、衣玖はきつく口を結んで羞恥に耐えている… 
+		ENDIF
+	;その他の場合
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「いやあっ…こんなの、信じられません…！」
+			PRINTFORMW 「なんて酷い、屈辱です…」
+		ELSE
+			PRINTFORMW 「汚いですから、どうかお願いです、やめて下さい…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;胸愛撫
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_3
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「ううっ…やっぱり、触るんですか…」
+	PRINTFORMW 「どうして男性は私の胸なんか…くっ、せめて優しく触って下さい…」
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7304 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 『………』
+				PRINTFORMW 「…？どうしました天子…別に、触ってもいいんですよ？」
+				PRINTFORMW 『…ほんとに、いいの？何というか、私には畏れ多いというか…あっ、むぐうっ！？』
+				PRINTFORMW 衣玖が天子をいきなり抱き寄せ、胸の谷間に天子の頭を埋めてしまった…
+				PRINTFORMW 「ふふっ、私のおっぱいに興味があったんでしょう？こんな機会なんですから、遠慮なさらず」
+				PRINTFORMW 『ふあおぉ…おっきくて…ふわふわ…』
+				PRINTFORMW 「もう、しっかりして下さい天子、でないと髪の匂い、ずっと嗅いじゃいますよ？」
+				PRINTFORMW 『いいよぉ…もうちょっと、このまま…』
+			;その他の場合
+			ELSE
+				PRINTFORMW 『分かってたのよ衣玖？あんなひらひらな服で隠したって…』
+				PRINTFORMW 『その下にはこんないやらしい胸があるって事。ふふん、皆興味があったはずよ？』
+				PRINTFORMW 天子が衣玖の乳房に指を這わせながら、からかうように話しかける…
+				PRINTFORMW 「…放っといて下さい！別に、好きでこうなわけじゃ…」
+				PRINTFORMW 『ご主人様だけじゃ勿体無いわ。私も楽しませてもらうからね？』
+			ENDIF
+			CFLAG:7304 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				IF RAND:3 == 0
+					PRINTFORMW 天子は夢中になって胸への愛撫を続けている…
+					PRINTFORMW 「あんっ、はあっ…ぎゅっとしていいですよ…んあっ！いいですっ、天子…」
+					PRINTFORMW 「好きにもっと、触って下さい…天子のしたいようにさせてあげますから…♪」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「ふふっ、天子は優しいですね…もう少し強くしてもいいですよ？」
+					PRINTFORMW 『いいの？ううん…でも変なことしたらせっかくのおっぱいが』
+					PRINTFORMW 衣玖は苦笑しながらも、天子の優しい愛撫を見守っている…
+				ELSE
+					PRINTFORMW 『やわらかいよう、きもちいいよう』
+					PRINTFORMW 『…もう私、衣玖の妹になる。いい？』
+					PRINTFORMW 「…妹はなおさらこんなことしないと思うのですけど」
+				ENDIF
+			;Ｂ感覚Lv4以上
+			ELSEIF ABL:Ｂ感覚 >= 4
+				PRINTFORMW 『あははっ、こんなに大きいのにすごく敏感なのね？』
+				PRINTFORMW 『とことんいやらしい身体ね…思いっきり感じさせてあげるから』
+			;その他の場合
+			ELSE
+				PRINTFORMW 『柔らかいのねぇ…』
+				PRINTFORMW 『ま、私は私で魅力的でしょう？ね、ご主人様？』
+				;PRINTFORMW あなたはそっと目をそらした…
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		IF RAND:8 == 0 && TALENT:淫乱
+			PRINTFORMW 「ふふっ、柔らかいからってぐにぐにして遊んじゃ、だめですからね？」
+			PRINTFORMW あなたは構わず、力を加えるほどに形を変える衣玖の乳房を弄び続けた…
+			PRINTFORMW 「はっ…はんっ、あっ、ふああっ、いいっ…」
+			PRINTFORMW 「…もう！お返しに%CALLNAME:PLAYER%のおちんちんも、そうしちゃいますよ！」
+		ELSEIF RAND:7 == 0 && TALENT:淫乱
+			PRINTFORMW 「ああっ、気持ちいい、気持ちいいですっ！」
+			PRINTFORMW 「私のいやらしいおっぱい、もっと触ってください…♪」
+		ELSEIF RAND:6 == 0 && TALENT:淫乱
+			PRINTFORMW 「あの…もっと乳首、弄ってくれませんか…？あっ、そうですっ！そこっ、そこいいっ！」
+			PRINTFORMW 「はあ、はあ…おっぱいされてるだけで、あそこが、濡れてきて…」
+			PRINTFORMW 「もっと…もっと衣玖を目茶苦茶に、乱れさせて下さい…♪」
+		ELSEIF RAND:5 == 0 && TALENT:淫乱
+			PRINTFORMW 「もう、ほんとに%CALLNAME:PLAYER%はおっぱいが好きなんですから…」
+			PRINTFORMW 「いやらしい触りかた…ああっ、もっと、もっと強くしてくださいっ♪」
+			PRINTFORMW 乳房に指を強く食い込ませる程に、衣玖の嬌声が部屋に響き渡った…
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「そんな優しい触り方をされると…ムズムズしちゃいます」
+			PRINTFORMW 「ふふっ、%CALLNAME:PLAYER%も…気持ち良さそうな顔してますよ…」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「ほら、私のおっぱい、触って下さい…」
+			PRINTFORMW 「あなたに触られるのが嬉しくて、こんなにドキドキしてるんです…」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「最近なんだか、%CALLNAME:PLAYER%に胸を触られていると…」
+			PRINTFORMW 「不思議と、気持ちが落ち着くんです…あの、おかしいでしょうか…？」
+		ELSE
+			PRINTFORMW 「…なんだか、とっても楽しそうですね、%CALLNAME:PLAYER%…」
+			PRINTFORMW 胸への愛撫を続けるあなたを衣玖が訝しげな表情で見ている…
+			PRINTFORMW 「さっきからおっぱいにばかり夢中になってませんか？」
+			PRINTFORMW 「まあ、%CALLNAME:PLAYER%に触られると気持ちいいですけど…ちゃんと私の事、見て下さいね？」
+		ENDIF
+	;Ｂ感覚Lv5以上
+	ELSEIF ABL:Ｂ感覚 >= 5
+		IF RAND:2 == 0
+			PRINTFORMW 「はうんっ！あふっ、ああんっ！」
+			PRINTFORMW 「ひもち…よすぎますっ、どうか、もっとゆっくりぃ…」
+			PRINTFORMW 感じ過ぎたのか、衣玖は胸を曝け出したまま力無く横たわっている…
+		ELSE
+			PRINTFORMW 「ひうっ！あっ、あふあっ、胸はだめです！本当に、やめてっ…」
+			PRINTFORMW 乳房をそっと撫でただけで衣玖はガクガクと体を震わせている…
+			PRINTFORMW 「こんな敏感な胸にされてしまって…もう私、どうしたらいいんですかぁ…」
+		ENDIF
+	;Ｂ感覚Lv3以上
+	ELSEIF ABL:Ｂ感覚 >= 3
+		IF RAND:2 == 0
+			PRINTFORMW 衣玖は息を荒くし、はっきりと快楽を感じた表情になっている…
+			PRINTFORMW 「はあっ、はああっ…！そろそろ、終わってください…！やっ、あっ！」
+		ELSE
+			PRINTFORMW 衣玖の豊満な乳房に指を這わせると、みるみるうちに乳首が硬さを増してくる…
+			PRINTFORMW 「見ないで、下さい…！今は恥ずかしいですからっ…！ううっ」
+		ENDIF
+	;Ｂ感覚Lv1以上
+	ELSEIF ABL:Ｂ感覚 >= 1
+		IF RAND:2 == 0
+			PRINTFORMW 「くうっ、んんっ…何度もしつこいです…！いやらしい人間ですね、本当に…」
+			PRINTFORMW 感じ始めていることを受け入れられないのか、衣玖は少し苛立っているようだ…
+		ELSE
+			PRINTFORMW 「んっ、くっ…ふあっ…！あっ、その…」
+			PRINTFORMW 「…強く掴まれたから驚いただけです」
+		ENDIF
+	;その他の場合
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「あの、痛いのですが…やめてもらえますか？」
+		ELSE
+			PRINTFORMW 「そんなに好きなんですか、私の胸が…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;指挿入れ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_4
+;初回実行時
+IF TFLAG:95 == 1 
+	;処女
+	IF TALENT:処女 == 1
+		;効果[ローターＶ挿入or触手子宮責め]まあ普通ローターでしょう
+		IF TEQUIP:Ｖ系装着器具 == 3
+			PRINTFORMW 「えっ？えっ…あの、押し込んじゃ…！」
+			PRINTFORMW 「それ以上は…！あっ！はぐうっ！あうっ、ううぅ…いたい、です…」
+			PRINTFORMW 押し込まれたローターに処女膜を傷付けられ、衣玖が悲鳴を上げる…
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「まさか、そんな…嫌っ、血が出ちゃって、ます…」
+				PRINTFORMW 「……ここは大事に触らないとダメなんですから…ね？%CALLNAME:PLAYER%…」
+				PRINTFORMW 思わぬ形で純潔を失った事に衣玖はショックを受けているようだ…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ううっ、酷い…酷いですよ、こんなの…！」
+				PRINTFORMW 「こんな道具に私の、初めてが…！」
+				PRINTFORMW 無遠慮に純潔を失わされ、衣玖は強いショックを受けている…
+			ENDIF
+		;道具無し
+		;恋慕である
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「どうせなら、%CALLNAME:MASTER%のもので奪ってほしかったのですが…」
+			PRINTFORMW 衣玖は悲しそうに眼をそらしている…
+			PRINTFORMW 「%CALLNAME:PLAYER%なりの気遣いなんでしょう？きっと…」
+		;屈服刻印Lv3以上
+		ELSEIF MARK:屈服刻印 >= 3
+			PRINTFORMW 「こうなることも覚悟はしていましたが…」
+			PRINTFORMW 「仕方ありませんね…どうぞ…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「何する気ですかっ！いやっ！そこはっ！」
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「いいですよ…私が気持ち良くなれるところ、探してみてくださいね？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「くううっ…！痛いっ、動かさないでください…！」
+	ENDIF
+;2回目以降
+ELSE
+	;効果[バイブ]
+	IF TEQUIP:Ｖ系装着器具 == 1
+		;恋慕
+		IF TALENT:恋慕
+			;淫乱である
+			IF TALENT:淫乱
+				IF RAND:3 == 0
+					PRINTFORMW 「ひっ！あひっ！ひいっ！奥ばっかり…！やめっ、だめっ、おかしく、なりますうっ…♪」
+					PRINTFORMW バイブで執拗に膣奥を責め続けると衣玖は身をよじって激しく悶えた…
+					PRINTFORMW 「もうだめ…もうだめですっ、おちんちん、入れて下さいっ」
+					PRINTFORMW 「私の一番奥までおちんちん挿し込んで…！衣玖のおまんこ、壊して下さいっ！」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「おちんちんじゃなくてバイブなら、こうやって私の乱れる姿、ずっと見ていられますものね…」
+					PRINTFORMW 「考えましたね？%CALLNAME:PLAYER%…ふふっ」
+					PRINTFORML 「どうぞ頑張ってください…このまま動かし続けて…私がだめになるまで、」
+					PRINTFORMW 「私のおまんこ、いっぱいいっぱい、気持ち良くして下さい…♪」
+				ELSE
+					PRINTFORMW 「バイブでずぼずぼするのいいですっ！好きっ、もっと動かしてっ、あはああっ…♪」
+					PRINTFORMW 溢れる愛液をかき出すようにバイブで膣内を何度も抉り回す。
+					PRINTFORMW 衣玖は腰をガクガクと震わせて激しく反応している…
+					PRINTFORMW 「ごめんなさいっ、気持ち良くて腰が、止まりませんっ…♪」
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「あっ、あっ…出たり、入ったり…ううん、すごい光景です…」
+					PRINTFORMW 「見てるだけで、なんだかとっても興奮しちゃいます…ひあっ！ああんっ」
+				ELSE
+					PRINTFORMW 「私の膣で、色んなところに当たってるのがわかります…」
+					PRINTFORMW 「はんっ！あっ、ふあっ…もう少し早く動かしても、いいですよ…」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「まるで私のあそこが玩具にされてるみたいです…」
+				PRINTFORMW 「…優しく動かして下さいね？そうすれば%CALLNAME:PLAYER%も私も、楽しめますから…」
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「んああっ…あうっ、ああっ…いい、です…」
+				PRINTFORMW 「そのまま…どうかゆっくり、動かして下さい…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「うっ、くうっ…！」
+				PRINTFORMW 「大丈夫なんですか、こんなに動かして…！」
+				PRINTFORMW 衣玖は慣れないヴァギナへの刺激に耐えている…
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「やっ、やめてっ、お願いします…！」
+			PRINTFORMW 「うぐうっ、あそこが、傷ついてしまいますからっ…！」
+		ENDIF
+	;効果[ローターＶ挿入or触手子宮責め]
+	ELSEIF TEQUIP:Ｖ系装着器具 == 3
+		;恋慕
+		IF TALENT:恋慕
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				IF TALENT:淫乱 == 1 && RAND:2 == 0 
+					PRINTFORMW 「んんっ！んっ、あはあっ…いいですけど、でもおっ…」
+					PRINTFORMW 「もっと、もっと激しく…私の中、掻き回されたいんです…♪」
+				ELSE
+					PRINTFORMW 「んっ、あんっ、あそこの中で震えて、動いて…気持ちいいですよ…」
+					PRINTFORMW 「ふふっ、こんなに小さいのに頑張って…なんだか可愛いですね」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「んっ、はんっ…痛くは、ないです…」
+				PRINTFORMW 「少しずつ、気持ち良くなってますから…このままで大丈夫ですよ…」
+			ENDIF
+		;Ｖ感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「んあっ、あうっ…感じて、いますけどっ…」
+			PRINTFORMW 「早く引き抜いて下さいっ…あそこが、おかしくなってしまいますからっ…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ここは…道具を入れていい場所じゃ、ありません…！」
+			PRINTFORMW 「だからもう、やめっ…うぐううっ…！」
+		ENDIF
+	;道具無し
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;Ｖ感覚Lv3以上
+		IF ABL:Ｖ感覚 >= 3
+			IF TALENT:淫乱 && RAND:4 == 0
+				PRINTFORMW 柔らかい膣肉を指で擦り上げる度、衣玖は面白いように体を震わせて反応している…
+				PRINTFORMW 「はっ、はあっ…おまんこの中で、すごく、動き回ってます…」
+				PRINTFORMW 「ひっ！あうあぁっ…！もう、私の好きな所、全部見つけられちゃってますね…♪」
+			ELSEIF TALENT:淫乱 && RAND:3 == 0
+				PRINTFORMW 「いいっ、イクっ、んあっ！ああっ！」
+				PRINTFORMW 「指だけじゃ、足りないんですうっ！%CALLNAME:PLAYER%のおちんちん欲しいのおっ！」
+				PRINTFORMW 指を入れただけで衣玖のヴァギナは愛液を溢れさせながら激しく蠢き、
+				PRINTFORMW まるであなたの指を膣奥へと飲み込もうとしているかの様だ…
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「入って、来ました…んっ、あふっ…」
+				PRINTFORMW 「優しい触り方…とっても、気持ちいいですよ…」
+				PRINTFORMW 衣玖の膣肉はねっとりとあなたの指に絡みついている…
+			ELSE
+				PRINTFORMW 「%CALLNAME:PLAYER%の指…暖かくて気持ちいいです…」
+				PRINTFORMW 「私の膣も…どうですか？柔らかくて、暖かいでしょう…？ふふっ」
+			ENDIF
+		;その他の場合
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW まだ異物を受け入れ慣れていない衣玖の膣内は、あなたの指をきつく締めつけてくる…
+				PRINTFORMW 「いっ！痛っ…くは、ないですね…すいません、ちょっと驚いただけですから…」
+				PRINTFORMW 「力を抜いて、ですね…はい、ちょっと待って下さい…ふうっ、どうですか…？」
+			ELSE
+				PRINTFORMW 「んっ！んっ…まだ、その…ここを弄られるの、慣れてないものですから…」
+				PRINTFORMW 「出来れば、優しくお願いしますね…？」
+				PRINTFORMW あなたは衣玖の緊張を解すように、丁寧に肉襞に指を絡ませた…
+			ENDIF
+		ENDIF
+	;Ｖ感覚Lv3以上
+	ELSEIF ABL:Ｖ感覚 >= 3
+		PRINTFORMW 衣玖の膣内は抵抗なくあなたの指を飲み込んでいく…
+		PRINTFORMW 「ふうっ…！ふっ、はあっ…あまり、動かさないでください…！」
+		PRINTFORMW 「体が、反応してしまって…！んっ、くうっ…」
+	;Ｖ感覚Lv2以上
+	ELSEIF ABL:Ｖ感覚 >= 2
+		PRINTFORMW 「少しは、慣れてきましたけど…」
+		PRINTFORMW 「だからって、雑に触ってはいけませんからね…！」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「ううっ…そこは、本当に大事な所なんですから…」
+		PRINTFORMW 「傷つけないでっ、どうか…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フェラする
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_5
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「ひっ！何をしてるんですかっっ！？」
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「こんな気持ちいい事、今まで私にさせてたんですね…？」
+		PRINTFORMW 「ふふっ、今度はあなたにもしてあげますから、楽しみにして下さいね？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「恥ずかしすぎて…もう駄目です…」
+		PRINTFORMW 衣玖は顔を手で覆っている…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;キスする
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_6
+;初回実行時
+IF TFLAG:95 == 1
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW ふと、天子が衣玖の頭を抱え持ち、ぼんやりした様子のまま自らの唇を衣玖に近付ける…
+			PRINTFORMW 「えっ、天子…！あの、待って下さい！」
+			PRINTFORMW 「私その、まだ…！」
+			PRINTFORMW 突然の事で、見ているあなたもどうすることも出来ないまま、天子は衣玖の唇を奪った…
+			PRINTFORML 
+			PRINTFORMW 『…あれ？なんだか私、衣玖の顔を見てたら、ぼおっとして…』
+			PRINTFORML それでも、唇と舌に残る感触、驚いて天子を見つめる衣玖の様子から
+			PRINTFORMW 天子は何事が起きたのか、察してしまったようだ…
+			PRINTFORMW 『…あの衣玖さん？ひょっとして、私ってば…』
+			PRINTFORMW 「…初めて、奪われちゃいました」
+			PRINTFORMW 天子の顔が引きつり、焦った様子であなたの方を振り返る。
+			PRINTFORMW 「あのっ、気にしないでいいですからね？」
+			PRINTFORMW 「別に、そんなにこだわりはありませんでしたし、天子なら仕方ないかなって…いえその、」
+			PRINTFORMW 衣玖が言い淀む。あなたと天子は緊張して次の言葉を待つ…
+			PRINTFORMW 「……素敵な口付けでしたよ？」
+			PRINTFORMW …どうやら、いきなりキスをしてしまったことに怒ってはいないようだ。
+			PRINTFORMW あなたは一安心するが、天子はさすがに申し訳なさそうだ…
+			PRINTFORMW 『あうう、ちょっと興奮しちゃって…』
+			PRINTFORMW 『こ、今度はご主人様がするから、それで勘弁して！』
+			PRINTFORMW 「ふふっ、そんな…もう一回してみましょうか？天子…♪」
+		;その他の場合
+		ELSE
+			PRINTFORMW 『ねえ衣玖、キスしてみない？ご主人様が私にしてくれるみたいにやってみたいの』
+			PRINTFORMW 天子の突然の申し出に衣玖は驚いた様子だ。
+			PRINTFORMW 「ですから、私達は女同士でしょうに…！何を言ってるんですか」
+			PRINTFORMW 『ああもう、今更いいでしょう！ほら、顔貸して』
+			PRINTFORMW 「なっ！ちょっと、待って下さ…」
+			PRINTFORMW 天子が強引に衣玖の唇を奪う。
+			PRINTFORMW 苦しそうに顔をしかめる衣玖に構わず、天子は容赦なく衣玖の口内を責め立てている…
+			PRINTFORML 
+			PRINTFORMW ようやく二人の唇が離れ、間に唾液がつうっと糸を引く。
+			PRINTFORMW 天子は満足そうな顔だが、衣玖は少し息苦しそうな様子だ…
+			PRINTFORMW 『どうだった衣玖？ご主人様は私の口はおいしいっていつも言ってくれるの、ふふん』
+			PRINTFORMW 「はあっ、はっ…よく…わかりません…」
+			PRINTFORMW 困惑を口にする衣玖だが、なんとなく上気して見えるのは気のせいだろうか…？
+			PRINTFORMW 『感謝しなさいよ衣玖？これから私とご主人様とで、もっと良くしてあげるから…♪』
+		ENDIF
+		CFLAG:7307 = 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「んむっ！ちゅう…ずちゅ、じゅっ…んちゅ…んむっ、ちゅっ……ぷはっ」
+		PRINTFORMW 「初めてのキスが、こんな激しいものになるだなんて…うふふっ」
+		PRINTFORMW 衣玖は顔をとろけさせ、愛する人とのキスの興奮に酔いしれている…
+		PRINTFORMW 「%CALLNAME:PLAYER%が…好きです。もっと近くにいたい。もっと触れ合いたい…」
+		PRINTFORMW 「どうか衣玖に…もっと、キスしてくれませんか？」
+		PRINTFORMW あなたは再び衣玖との熱い口づけを交わした…
+	;屈服刻印Lv3以上
+	ELSEIF MARK:屈服刻印 >= 3
+		PRINTFORMW 「わかりました。キス…するんですね？」
+		PRINTFORMW あなたは身構えている衣玖の頭を支え持ち、その唇を奪った…
+		PRINTFORMW 「ちゅっ、んんっ、んあっ……頭が、ぼーっとしてきます…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「んんっ！？むっ、うむっ…ぷあっ、苦しいです…」
+	ENDIF
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7307 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「……んっ、んちゅっ、ふぅ……んむっ、ぷぁ…ああ、天子…」
+				PRINTFORMW 『ふふん、衣玖とキスしちゃった…♪ねえ、衣玖はこれでキスの相手は何人目？』
+				PRINTFORMW 「えっ！？……はい、あの…ご主人様と、天子の二人です…」
+				PRINTFORMW 『おお、さすが衣玖。やっぱり身持ちはしっかりしてたのね』
+				PRINTFORMW 『…簡単に唇を許さなくて正解よ？でなかったら…』
+				PRINTFORMW 『こんなキスしてたら、衣玖から離れられなくなるもの…あはっ、もう一回…させて？』
+				PRINTFORMW 「いいですけど…あの、優しく…ふむうっ…んんっ！」
+				PRINTFORMW 衣玖の口付けに魅了された天子が、お返しにと激しく舌を絡める。
+				PRINTFORMW 二人の少女の体液が絡まり合う様を、あなたは興奮を抑えつつ眺め続けた…
+			;その他の場合
+			;いくさんなかせたい
+			ELSE
+				PRINTFORMW 『ふふん、ねえ衣玖？ご主人様と私と、どっちがキスして興奮する？』
+				PRINTFORMW 意地の悪い質問に、衣玖は困った顔をして天子から目を背ける…
+				PRINTFORMW 『…まだよく分からない、のね？』
+				PRINTFORMW 『じゃあ教えてあげるわ…これが私の味よ…♪ふふん、よく覚えてね？衣玖…』
+				PRINTFORMW 天子が衣玖の頭を掴み、再び強引に口付ける。
+				PRINTFORMW 無理に流し込まれる唾液に衣玖は時折苦しそうな様子だ…
+				PRINTFORMW 「んぶっ、んっ、えうっ…く、苦しい、ですよぉ、天子っ…」
+				PRINTFORMW 『ずじゅっ、じゅるっ、えうっ…ちゃんと答えるまで止めないからね…』
+				PRINTFORMW 『ふふん、衣玖ったら泣きそうな顔して…可愛いんだから…♪』
+			ENDIF
+			CFLAG:7307 = 1
+		;２回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				IF RAND:3 == 0
+					PRINTFORMW 『ほら、ご主人様が見てるわよ？ふふん、もっと見せつけてあげましょう』
+					PRINTFORMW 「ふふっ、期待されてる様子ですね」
+					PRINTFORMW 『こっちはこっちで楽しもうじゃない、ね？衣玖……んちゅっ、じゅっ、んんっ…』
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『ちゅっ、れるっ、ぷぁ…これ、まずいかも…衣玖の舌、気持ち良すぎて…』
+					PRINTFORMW 「そうですか…？ふふっ、天子もじきにもっと上手に出来るようになりますよ」
+					PRINTFORMW 「…なのでそれまでは、私の好きにさせて頂きます…♪」
+				ELSE
+					PRINTFORMW 衣玖の巧みな舌使いに、天子の表情がみるみる蕩けてくる…
+					PRINTFORMW 『あふっ、ふあぁ…あの、衣玖っ…積極的すぎよぉ…』
+					PRINTFORMW 「すいません、天子が可愛くてつい…ではもう少し、優しくしましょう…」
+				ENDIF
+			;その他の場合
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 『はむっ、はっ……んんっ、ちゅぱっ、ちゅるっ…』
+				ELSE
+					PRINTFORMW 『んっ…ちゅっ、ふうぅ…』
+				ENDIF
+					;屈服刻印Lv3
+					IF MARK:屈服刻印 == 3
+						PRINTFORMW 『そうそうその調子、もっと舌絡めていいからね…』
+					;その他の場合
+					ELSE
+						PRINTFORMW 『そんな恥ずかしがらないでよ、衣玖だって結構キス上手いじゃない』
+					ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORMW 「ちゅうっ…ちゅっ、ちゅぱっ、れるっ、ちゅうっ…」
+			PRINTFORMW 「もっと衣玖の口の中…舐めまわしてっ…♪」
+			PRINTFORMW 「キスだけで…いやらしい気分になっちゃいますうっ…」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「あっ……ふふ、どうしました？そんな、見つめて…」
+			PRINTFORMW 「それでは、こちらから…」
+			PRINTFORMW 潤んだ唇に見蕩れていた次の瞬間、あなたの舌は衣玖に絡み取られていた…
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「ん…ちゅ…んじゅ、ふぁ…はっ、はあぁ…」
+			PRINTFORMW 「もっと…んむぅ、ちゅ…じゅ、ふぅ…飲ませて、ください…」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「はんっ、あ…れる、えるっ、うむう、ああっ…」
+			PRINTFORMW 「舌が…%CALLNAME:MASTER%の舌が、口の色んなところ、してくれるから…」
+			PRINTFORMW 「はむっ、んん、ぷあ…私も、もっと…ふむぅ、んちゅ、んっ…好きですぅ…」
+		ELSE
+			PRINTFORMW 「んちゅっ、ぐちゅっ、ちゅうっ♪」
+			PRINTFORMW 「どうですか？衣玖のキスは…？」
+			PRINTFORMW 「私は舌が器用なんです。このままキスだけで気持ち良くしてあげますからね…」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「ちゅっ…れろっ、くちゅうっ」
+		PRINTFORMW 「どうしてキスなんてするのか…分かってきた気がします…」
+		PRINTFORMW 衣玖の舌遣いはなかなかのもので、あなたもそれにつられ興奮が高まる。
+	;屈服刻印Lv2
+	ELSEIF MARK:屈服刻印 == 2
+		PRINTFORMW 「もっと…舌を絡ませればいんですね？…やってみます」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「んっ、ちゅっ、んちゅっ」
+		PRINTFORMW 「どうしてこんなことをするのかわかりません…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;自慰
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_7
+;公開オナニー
+IF TEQUIP:ビデオ撮影 == 1
+	;初めて
+	IF CFLAG:7021 == 0
+		;恋慕
+		IF TALENT:恋慕
+			;露出癖Lv3以上
+			IF ABL:露出癖 >= 3
+				PRINTFORMW 「私の…オナニーで、沢山の男性を興奮させられるのですか？」
+				PRINTFORMW 「それなら…一杯、見せてあげましょう？私がはしたなく一人で乱れるところ…♪」
+			ELSE
+				PRINTFORMW 「%CALLNAME:PLAYER%の頼みですから…仕方ありませんけど、」
+				PRINTFORMW 「出来れば%CALLNAME:PLAYER%のためだけにしたいんです…こういう、いやらしい事は」
+				PRINTFORMW 「だからどうか、私をしっかり見ていてください、%CALLNAME:PLAYER%…」
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「…%CALLNAME:PLAYER%に見られているなら、別にいつもと変わりありません」
+			PRINTFORML 「恥ずかしいことは恥ずかしいですが…この映像が世の中に出回ったところで、」
+			PRINTFORMW 「私にはもうどうする事も出来ませんから…」
+			PRINTFORMW 衣玖は諦めたように呟き、自慰を始めた…
+		ELSE
+			PRINTFORMW 「裸を撮られてしまってるんです…今更もう、自慰を見られたって変わりありません…！」
+			PRINTFORMW 強がる衣玖だが、指先は震えたまま、まともに体に触れないでいる…
+			PRINTFORMW …少なくともこれでは売れるようなシーンは撮れないだろう。
+		ENDIF
+		CFLAG:7021 = 1
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;処女である
+			IF TALENT:処女 == 1
+				PRINTFORMW 「また、衣玖のオナニー撮影したいんですか…？」
+				PRINTFORMW 「はあ…いいですけど、私の気持ちも…ちょっとは、考えて下さいね？」
+				PRINTFORMW 「私は、%CALLNAME:PLAYER%のものになると決めたんですから…」
+			;露出癖Lv3以上または淫乱である
+			ELSEIF ABL:露出癖 >= 3 || TALENT:淫乱
+				IF RAND:4 == 0
+					PRINTFORMW 「ふあっ、はっ、ふっ、あっ…乳首を、強くつまんだり…」
+					PRINTFORMW 「クリトリスを、こんな感じで…んっ、くうっ、んうううっ…！」
+					PRINTFORMW 「%CALLNAME:PLAYER%が…教えてくれたんですよ？とっても、いやらしいオナニーの仕方…」
+					PRINTFORMW 「衣玖のいやらしい姿、しっかり撮って下さいね…♪」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「あはあ…見えますか？私のクリトリス…」
+					PRINTFORMW 「見られてると思うだけで、こんなに勃起しちゃってます…」
+					PRINTFORMW 「それじゃあ、オナニーしますよ…んひいっ！ひあっ、ちょっと触っただけなのに…イキそうです…♪」
+					PRINTFORMW 衣玖は充血したクリトリスを夢中で擦っている…
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「ふふ、今度はどこを触ってるのが見たいんですか？」
+					PRINTFORMW 「ほら…見てください…私の乳首、こんなにいやらしく勃ってるんですよ？」
+					PRINTFORMW 「ここを弄ったら、どうなってしまうんでしょう…♪」
+					PRINTFORMW 衣玖は自分の乳首を弄りながら、さらに乱れていった…
+				ELSE
+					PRINTFORMW 「%CALLNAME:PLAYER%のお願いですから…私、頑張りますね？」
+					PRINTFORMW 衣玖はカメラに向き直すと、自ら股間をカメラに見せ付けた…
+					PRINTFORMW 「ではこれから、オナニーします」
+					PRINTFORMW 「おっぱいもクリも、たくさん弄って気持ち良くなろうと思いますので、」
+					PRINTFORMW 「カメラの向こうのあなた？あなたも、衣玖と一緒に、いやらしく乱れましょう…♪」
+				ENDIF
+			;その他の場合
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「どうですか？衣玖のオナニーは…」
+					PRINTFORMW 「とっても、いやらしいでしょう…私は本当は、とってもえっちな事が大好きな、」
+					PRINTFORMW 「はしたない天女なんですよ…ふふっ、幻滅しましたか…？」
+					PRINTFORMW 「それでは引き続き、お楽しみください…んっ、あんっ！」
+				ELSE
+					PRINTFORMW 「んっ！ふぅっ、んっ、はんっ…」
+					PRINTFORMW 「はあ、はあ…気持ち良くなってきました…あなたは、どうですか？」
+					PRINTFORMW 快感に顔を赤らめながら、衣玖が笑顔でこちらを見る。
+					PRINTFORMW その表情はたまらなく淫らで、そして魅力的だ…
+				ENDIF
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「この映像を見ているあなた…あなたは、気持ち良くなってますか…？」
+			PRINTFORMW 「私は…はんっ！ふうっ、だんだん、気持ち良くなって、来てますよ…」
+		;その他の場合
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「こんな姿が記録されてしまうなんてっ…」
+				PRINTFORMW 「竜神様に申し訳がつきません…」
+			ELSE
+				PRINTFORMW 「どうしてこんな辱めを…いやです、こんなこと…」
+				PRINTFORMW 衣玖は半泣きになりながら、自分の体を弄っている…
+			ENDIF
+		ENDIF
+	ENDIF
+;シャワーオナニー
+ELSEIF TEQUIP:シャワープレイ == 1
+	;初めて
+	IF CFLAG:7022 == 0
+		;恋慕
+		IF TALENT:恋慕
+			;自慰中毒Lv2以上
+			IF ABL:自慰中毒 >= 2
+				PRINTFORMW 「実は、以前にお風呂場で…はい、シャワーを使って…オナニー、しちゃいました…」
+				PRINTFORMW 「ごめんなさい、こんないやらしい女で…」
+				PRINTFORMW 「お詫びに、衣玖が気持ち良くなるところ、たくさん見せてあげますから…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「シャワーを使ってだなんて…もう、いやらしいんですから…ふふっ」
+				PRINTFORMW 「ひゃっ！…くっ、くすぐったい、けど…」
+				PRINTFORMW 「…慣れれば、クセになっちゃうかも、しれません…♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「…これはそういう道具ではありませんよね？」
+			PRINTFORMW 「やだ、そんなに勢いを強くしないで！」
+		ENDIF
+		CFLAG:7022 = 1
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			IF RAND:2 == 0
+				PRINTFORMW 「それじゃあ…%CALLNAME:PLAYER%がお湯を衣玖のここに、かけてくれませんか…？」
+				PRINTFORMW 「それなら私も両手が使えますし、あなたもよく見えるでしょう？ふふっ」
+				PRINTFORMW 衣玖は椅子に座り、あなたを股間へと導いた…
+				PRINTFORMW 「見えますか？衣玖のクリトリス…よーく狙って下さいね…♪」
+			ELSE
+				PRINTFORMW 「ああっ！お湯が、いろんなところに、あたってえっ！」
+				PRINTFORMW あなたがシャワーを衣玖の秘部に向けると、衣玖は体を痙攣させて悶えた…
+				PRINTFORMW 「やめてっ、やめてえっ！」
+				PRINTFORMW 「あそこが、あそこがおかしくなっちゃいますっ！いくっ、いくうっ♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「あうっ、ああ…お湯があたったところが、ビリビリしてきます…」
+			PRINTFORMW 衣玖は水流が与える刺激に悶えている…
+		ENDIF
+	ENDIF
+;二穴バイブオナニー
+ELSEIF TEQUIP:Ｖ系装着器具 == 1 && TEQUIP:Ａ系装着器具 == 1
+	;初めて
+	IF CFLAG:7023 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「これは…はっ、はあっ…！すごいことになってますね…」
+			PRINTFORMW 「こんなことするの、%CALLNAME:PLAYER%の前だけですからね？」
+			PRINTFORMW 「ふあっ…！ちょっと触っただけで、お腹の中が、もう、いっぱいです…！」
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ううっ…！あの、苦しくて…動けないです…」
+			PRINTFORMW 無理矢理２本もバイブが入っていればそうなるだろう…
+			PRINTFORMW あなたは衣玖が落ち着くまで仕方なく待つことにした。
+			PRINTFORMW 「お待たせして…すいません…では、始めてみますね…ぐっ、あうっ、んんっ…！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ふざけないで…下さいっ！いいから早く抜いて下さいよ…！」
+			PRINTFORMW ２本のバイブから与えられる苦痛に苛まれながらも、衣玖はこちらに反発しているが…
+			PRINTFORMW 「…くっ、無理です、出来ませんよぉ…」
+			PRINTFORMW 「うっ、ふぐっ、えぐっ…もう嫌…早く、早く終わってえ…」
+			PRINTFORMW …命令に逆らえない悔しさに涙を流しながら、衣玖は無理矢理バイブを動かし始めた…
+		ENDIF
+		CFLAG:7023 = 1
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;自慰中毒Lv3以上
+			IF ABL:自慰中毒 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「あはっ、はっ、ふああっ♪バイブ同士がお腹の中で、擦れてるみたいで…♪」
+					PRINTFORMW 「も、もうだめですっ…狂って、しまいそう…」
+				ELSE
+					PRINTFORMW 「んああああっ！衣玖の中で、バイブが、暴れてえっ！」
+					PRINTFORMW 「こんな凄いオナニー覚えちゃったら、もう、戻れない…！」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「見えますか…？バイブが２本も入ってるところ…」
+				PRINTFORMW 「しっかり見ててくださいね…ううっ、ああっ！凄い…！」
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「前も、後ろもいっぱいでえっ…もうわからないですうっ、んああっ！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「苦しい、ですからっ…もう終わらせて下さい…！」
+		ENDIF
+	ENDIF
+;バイブオナニー
+ELSEIF TEQUIP:Ｖ系装着器具 == 1
+	;初めて
+	IF CFLAG:7024 == 0
+		;恋慕
+		IF TALENT:恋慕
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あっ、くっ、はあっ…！これは、ちょっと…」
+				PRINTFORMW 衣玖がこちらを見る…その表情は想像を超えた快感に震えていた…
+				PRINTFORMW 「クセに、なっちゃうかもしれません…バイブで擦るの、気持ちいいです…♪」
+			ELSE
+				PRINTFORMW 「自分でするんですね…？わかりました、ううん…ちょっと、怖いです…」
+				PRINTFORMW 衣玖は恐る恐る膣内のバイブを動かし始めた…
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			;Ｖ感覚Lv2以上
+			IF ABL:Ｖ感覚 >= 2
+				PRINTFORMW 「少しはその、挿れるのにも…慣れてきましたけど、」
+				PRINTFORMW 「こんなもの、動かして大丈夫なんでしょうか…」
+			ELSE
+				PRINTFORMW 「こんなもの動かして…私のあそこ、本当に大丈夫なんですか…？」
+				PRINTFORMW 「ふっ！うっ…怖いから、ゆっくり、させて下さい…」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「痛いだけですよ！こんなの…くっ、苦しい…ううっ」
+			PRINTFORMW 衣玖は羞恥に震えながらゆっくりとバイブを動かし始めた…
+		ENDIF
+		CFLAG:7024 = 1
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;妊娠である
+			IF TALENT:妊娠 == 1
+				IF RAND:2 == 0
+					PRINTFORMW 「ううん…せっかく、%CALLNAME:PLAYER%に来て頂いたのですから…」
+					PRINTFORMW 「こんなおもちゃでオナニーするよりも、ちゃんと愛し合いませんか？」
+				ELSE
+					PRINTFORMW 「…ちょっとこれはおかしいですよね？」
+					PRINTFORMW 「妊婦が、バイブでオナニーだなんて…」
+					PRINTFORMW 「ものすごい欲求不満みたいなんですけど…まあ、仕方ありませんね…」
+				ENDIF
+			;淫乱である
+			ELSEIF TALENT:淫乱
+				IF RAND:2 == 0
+					PRINTFORMW 「はぐっ！はぐうっ！止まらないですっ、ああっ…！」
+					PRINTFORMW 「もっとっ、もっとおまんこグシャグシャにして欲しいっ…♪あぐっ、あふああっ♪」
+					PRINTFORMW 衣玖が自ら膣奥にバイブを叩き付ける度に愛液が溢れ出して来る…
+					PRINTFORMW 絶頂を繰り返しながら、衣玖はさらに夢中になってオナニーを続けた…
+				ELSE
+					PRINTFORMW 「自分でずぼずぼするの、たまりません…♪」
+					PRINTFORMW 「おまんこの中全部、刺激が強すぎてえっ、もうイクっ、イキそうっ、んあああっ！」
+					PRINTFORMW 衣玖は夢中になってバイブをヴァギナに抜き差ししている…
+					PRINTFORMW 「もう、気持ち良すぎて…頭がおかしくなりそうです…♪」
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「はんっ！ふあっ…いいっ、あそこが、いいですっ…！」
+					PRINTFORMW 衣玖はバイブを奥に差し込んだまま、快感に浸っている…
+					PRINTFORMW 「ああ～～っ…ああっ！はううっ…！やめられない、かも…」
+				ELSE
+					PRINTFORMW 「はっ、はっ、いやらしい音が、すごい…」
+					PRINTFORMW 「もっと…早く動かしても、大丈夫ですよね…？」
+					PRINTFORMW 衣玖は掴んだバイブをさらに深く、激しく動かし始めた…
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「あんっ、あっ、中でっ、震えてっ…」
+				PRINTFORMW 「あなたにっ、触ってほしいですっ…道具じゃ、怖いんです…」
+			ENDIF
+		;Ｖ感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「あうっ…んっ、んっ、あんっ…」
+			PRINTFORMW 衣玖のヴァギナは刺激にも慣れ始め、すんなりとバイブが出入りしている…
+			PRINTFORMW 「こんなはしたないところ、見ないで下さい…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなの嫌です…気持ち良くなんて、なれませんよ…」
+			PRINTFORMW 明らかに衣玖の表情は苦痛を訴えている。快感を感じるどころでは無さそうだ…
+		ENDIF
+	ENDIF
+;アナルバイブオナニー
+ELSEIF TEQUIP:Ａ系装着器具 == 1
+	;初めて
+	IF CFLAG:7025 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ひうっ…！だめですっ、お尻があっ、おかしく、なってしまいます…！」
+			PRINTFORMW 衣玖は初体験の刺激に歯を食いしばりながら、ゆっくりバイブを動かし始めた…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「お尻がっ…！くっ、うううっ…！こんなの、無理ですうっ…！」
+			PRINTFORMW 衣玖は羞恥に震えながらゆっくりとバイブを動かし始めた…
+		ENDIF
+		CFLAG:7025 = 1
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;Ａ感覚Lv3以上
+			IF ABL:Ａ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「お尻の中、震えてますっ！んあっ、いいっ、気持ちいいっ…！」
+				ELSE
+					PRINTFORMW 「お尻にバイブなんか入れて、気持ち良くなっちゃうなんて…」
+					PRINTFORMW 「もうこれじゃただの変態ですよう…」
+					PRINTFORMW そう言いながらも、衣玖はバイブを弄るのをやめられないようだ…
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「やっぱり、お尻を弄るのは、怖いですね…」
+				PRINTFORMW 「でも、%CALLNAME:PLAYER%の言うことですから、きっと気持ち良くなれるんですよね？」
+				PRINTFORMW 
+				PRINTFORMW 「…そうですよね？」
+				PRINTFORMW 衣玖は不安そうな表情で慎重にバイブを動かしている…
+			ENDIF
+		;Ａ感覚Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「…んっ、んっ！はあっ、はんっ…！」
+			PRINTFORMW 黙ってアナルバイブを動かしている衣玖だが、甘い声が漏れている…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「うっ！うぐうっ！」
+			PRINTFORMW 「もう、いいですよね…？苦しいだけですよ、こんなの…」
+		ENDIF
+	ENDIF
+;通常自慰
+;先に↑の特殊な自慰を実行しない方が矛盾しないはず…
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1 
+		;恋慕
+		IF TALENT:恋慕
+			;自慰中毒Lv1以上
+			IF ABL:自慰中毒 >= 1
+				PRINTFORMW 「私が、本当はオナニーするの大好きなこと知ってたんでしょう？」
+				PRINTFORMW 「いいですよ…あなたにだったら、衣玖が乱れるところ好きなだけ見せてあげますから…♪」
+			;調教自慰経験 0
+			ELSEIF EXP:調教自慰経験 == 0
+				PRINTFORMW 「そんなに、見たいですか…？私が一人でするところ」
+				PRINTFORMW 「私としては、%CALLNAME:PLAYER%に触ってもらう方が嬉しいんですけど…」
+				PRINTFORMW 「…あまり上手く出来てなかったら、%CALLNAME:PLAYER%が手伝ってくれてもいいんですよ？ふふっ」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「普通にオナニーするところを見たいって、何を言ってるんですか！もう！」
+				PRINTFORMW 「普通じゃない事をさせたのは一体誰だと思ってるんですか、全く…」
+				PRINTFORMW 「もう、これでいいですか？それじゃあ一人で精々興奮してて下さい！」
+				PRINTFORMW 怒っている様子だが、それでも素直に自慰を始めてくれたようだ…ありがたい。
+			ENDIF
+		;自慰経験 50以上かつ調教自慰経験 0
+		ELSEIF EXP:自慰経験 >= 50 && EXP:調教自慰経験 == 0
+			PRINTFORMW 「…私がよく一人で自分を慰めている事、御存じなのでしょう？」
+			PRINTFORMW 「知っていてその上でこんな事をさせて…つくづく悪趣味ですよ、%CALLNAME:PLAYER%は…」
+			PRINTFORMW 衣玖はあなたへ文句を言いながらも、慣れた手つきで自慰を始めた…
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「わかりました…」
+			PRINTFORMW 「%CALLNAME:PLAYER%の前で上手く出来るか分からないですけど、見ててください…」
+			PRINTFORMW そう言い、衣玖はそっと股間を弄り始め、次第に胸、乳首へと手を伸ばしていく。
+			PRINTFORMW 不慣れな手つきながらも、自分の感じるところを探しているようだ…
+		;屈服刻印Lv2以上
+		ELSEIF MARK:屈服刻印 >= 2
+			PRINTFORMW 「自慰だなんて…そんなっ」
+			PRINTFORMW 「…した事は、ありますけど…人前でなんてっ…！」
+			PRINTFORMW 羞恥のあまり体を小さく丸めながら、衣玖は自慰を始めた…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「どれだけ私を辱めれば気が済むのですか、%CALLNAME:PLAYER%は！」
+			PRINTFORMW 鋭い視線で衣玖はこちらを睨みつけている…
+			PRINTFORMW 「…精々好きに見てればいいでしょう、この変態…！」
+			PRINTFORMW そう言い捨て、衣玖はそっと自らの秘部を弄り始めた…
+		ENDIF
+	;2回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;処女
+			IF TALENT:処女 == 1
+				;助手が天子で助手が調教
+				;同性だと基本レズっ気４無いと自慰させられないぽい　なので恥じらいはとうに無くなった感じ
+				IF ASSIPLAY && NO:ASSI == 1052
+					PRINTFORMW 『もう、いいかげん衣玖の処女貰ってあげなさいよ。何考えてんの？』
+					PRINTFORMW …天子は気付いていないのだろうか？
+					PRINTFORMW 衣玖が熱い視線を送っているのはあなたではなく、天子の方だという事に…
+					PRINTFORMW 「はっ、はあっ…！見て下さい、天子…私のっ、こんな姿をっ…」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW （ああっ…見られちゃってます…私の、まだ処女のままのあそこ…）
+					PRINTFORMW （もっといやらしく乱れないと…初めて、貰って頂けないのでしょうか…？）
+					PRINTFORMW （気持ちいいけど…何だか不安で、もう良く分からないです…！）
+				ELSE
+					PRINTFORMW 「見えますか…？私の大事なところ…」
+					PRINTFORMW 「%CALLNAME:PLAYER%の…お、おちんちんが欲しいって…こんなに濡れちゃって…」
+					PRINTFORMW 「頑張ってオナニーしますから…どうか、私の処女…もらって下さい、あっ、ああっ！」
+					PRINTFORMW 衣玖はあなたに秘所を見せ付けながら夢中でクリトリスをいじっている…
+				ENDIF
+			;妊娠である
+			ELSEIF TALENT:妊娠 == 1
+				IF RAND:2 == 0
+					PRINTFORMW 「一人で気持ち良くなるだけじゃ、お腹の子に申し訳なくて…」
+					PRINTFORMW 「ちゃんと、２人で愛し合いませんか？」
+				ELSE
+					PRINTFORMW 「せっかく来て頂いたのに、私のオナニーなんか見てどうしようって言うんですか…」
+					PRINTFORMW 「もう…後でしっかり抱いて下さいね？」
+				ENDIF
+			;助手が天子で助手が調教
+			;同性だと基本レズっ気４(ry
+			ELSEIF ASSIPLAY && NO:ASSI == 1052
+				IF RAND:3 == 0
+					PRINTFORMW 『衣玖ってそこ弄るの好きよねー。こんなに膨らんじゃって…♪』
+					PRINTFORMW 「はっ、ああっ…いいんですよ？触っても…」
+					PRINTFORMW 「いえ、触って下さい、天子…天子の指、私大好きですから…♪」
+					PRINTFORMW 『ふふん、もう一回イったらしてあげるわ。だから頑張ってね？』
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『ふふん、むっつりなあの衣玖が自ら進んでオナニーしてるなんて…』
+					PRINTFORMW 『たまらないわね…どう衣玖、楽しいでしょう？気持ちいいでしょう？』
+					PRINTFORMW 「はいっ…んっ、ふうっ♪とっても、気持ち良くてぇ…ああもう、いくっ、いきますぅ…」
+					PRINTFORMW 『ちゃんと見ててあげるわ…思いっきりイキなさい、衣玖…♪』
+				ELSE
+					PRINTFORMW 「はふうっ、んんっ、あんっ…♪見て下さい、天子…」
+					PRINTFORMW 「天子に見られてるだけで…私、とっても興奮してるんですよ…」
+					PRINTFORMW 『私もよ？衣玖…衣玖のいやらしいところ、全部見せて…♪』
+				ENDIF
+			;その他の場合
+			;自慰中毒Lv3以上または淫乱でランダム分岐追加
+			ELSE
+				;乱数分岐:4
+				IF ABL:自慰中毒 >= 3 || TALENT:淫乱 == 1 && RAND:7 == 0
+					PRINTFORMW 「もう…%CALLNAME:PLAYER%のおちんちんが欲しくて、こんなに濡れてるんですよ？」
+					PRINTFORMW 「衣玖のおまんこ放ったらかして、そこで見てるだけでいいんですか？」
+					PRINTFORMW 「ほら…指も簡単に入っちゃいますよ…ああっ！」
+					PRINTFORMW 衣玖がヴァギナに指を入れる度、新たな愛液がどんどん湧き出している…
+					PRINTFORMW 「ほらあ…おちんちん入れてくれないとお…勝手に気持ち良く…なっちゃいますからあ…」
+					PRINTFORMW 「ああ…ああっ！おまんこ気持ちいい…ほらあ…早くう…下さいっ…♪」
+				;乱数分岐:3
+				ELSEIF ABL:自慰中毒 >= 3 || TALENT:淫乱 == 1 && RAND:6 == 0
+					PRINTFORMW 「んっ…！私、いつも淋しいときは一人でしてるのに…」
+					PRINTFORMW 「今更こんなことさせなくたっていいじゃないですか…！」
+					PRINTFORMW 口調とは裏腹に、衣玖の自慰は激しさを増す一方だ…
+					PRINTFORMW 「オナニー好きですっ、あふっ、はっ、気持ちいいっ…！」
+					PRINTFORMW 「んっ、あっ！でもっ、%CALLNAME:PLAYER%にして欲しいんですっ！早くっ、どうかぁ…」
+				;乱数分岐:2
+				ELSEIF ABL:自慰中毒 >= 3 || TALENT:淫乱 == 1 && RAND:5 == 0
+					PRINTFORMW 「ああっ、はあっ！見て下さいっ、衣玖がっ、オナニーでイクところ、見て下さいっ♪」
+					PRINTFORMW すっかりオナニーの虜になった衣玖は、夢中で秘部を掻き回し、乳首を擦っている…
+					PRINTFORMW 「イキます、いっちゃいますうっ、あなたの指じゃないのにいっ、イクううっ♪」
+					PRINTFORMW 「おっぱいもっ、おまんこもっ、気持ちいいの、止まらないっ…♪」
+				;その他の場合
+				ELSEIF ABL:自慰中毒 >= 3 || TALENT:淫乱 == 1 && RAND:4 == 0
+					PRINTFORMW 「…あっ、あっ！はうぅ…どんどん、気持ち良くなってきました…」
+					PRINTFORMW 「あの…もう十分濡れてますので、そろそろ、挿れてもらえませんか…？」
+					PRINTFORMW 「オナニーが気持ち良くて…私の指が、止められないんです…♪」
+					PRINTFORMW 「このままだと、一人で、イってしまいそうで…だから、どうか…衣玖のおまんこ、%CALLNAME:PLAYER%のおちんちんで、一杯気持ち良くしてください…♪」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 衣玖の魅惑的な肢体の上を、衣玖自身のしなやかな指が這い回っている…
+					PRINTFORMW 細い指が赤みを帯びた肌に食い込み、たまらなく淫靡な空気を醸し出している。
+					PRINTFORMW 自分で触れるよりもさらに上の興奮をあなたは感じていた…
+					PRINTFORMW 「…随分熱くなってらっしゃいますね？」
+					PRINTFORMW 「私もですよ…%CALLNAME:PLAYER%の興奮が伝わって、もっと激しく、したくなってしまいます…♪」
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「んっ、んくっ、はああっ…」
+					PRINTFORMW 「恥ずかしいですけど…どうせするなら、気持ち良くなりたいですから…」
+					PRINTFORMW 「%CALLNAME:PLAYER%には悪いですけど、ちょっと集中させてくださいね？ふふっ」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「どうぞ…衣玖が気持ち良くなる所、そこでじっくり見てて下さい…」
+					PRINTFORMW 衣玖はあなたに自分の感じるところを見せ付けるように、自慰を続けている…
+					PRINTFORMW 「いい…ああっ、はんっ、次は…%CALLNAME:PLAYER%が触って下さいね…♪」
+				ENDIF
+			ENDIF
+		;自慰中毒Lv3以上
+		ELSEIF ABL:自慰中毒 >= 3
+			PRINTFORMW 「気持ち良くて、クセになっちゃいますう…」
+			PRINTFORMW 「自分でするのが、こんなに気持ちいいなんてえっ！」
+			PRINTFORMW あなたの目の前だというのに、衣玖は自分の秘部を弄るのをやめられないようだ…
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			IF RAND:2 == 0
+				PRINTFORMW 「ふっ、ふうっ、んっ…ここっ、気持ちいっ…」
+				PRINTFORMW 衣玖は自ら貪欲に快楽を求めているように見える…
+			ELSE
+				PRINTFORMW 「ん…あっ…どうでしょう…？」
+				PRINTFORMW 「%CALLNAME:PLAYER%に見られながらだと…指が震えてしまって…」
+			ENDIF
+		;屈服刻印Lv2以上
+		ELSEIF MARK:屈服刻印 >= 2
+			IF RAND:2 == 0
+				PRINTFORMW 「んんっ…私の自慰を見て何が楽しいんですか…？」
+			ELSE
+				PRINTFORMW 「そんなに見つめないで下さい…」
+				PRINTFORMW 「恥ずかしくていやあ…」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「…もうどこか行ってもらえます？邪魔です」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;何もしない
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_9
+;CALL DEBUG_1051
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「あら、休憩でしょうか？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「…何ですか？ジロジロ見ないで下さい…」
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;効果[浣腸＋アナルプラグ装着]
+		IF TEQUIP:Ａ系装着器具 == 7
+			;マゾっ気Lv3以上
+			IF ABL:マゾっ気 >= 3
+				IF RAND:3 == 0
+					PRINTFORMW 「もうちょっとなら…このまま、耐えられますからっ…んはあぁぁ…♪」
+					PRINTFORMW 「限界まで…頑張った方がっ、んぐっ！」
+					PRINTFORMW 「気持ち良く、出せちゃいますからぁ…あぁ、ああっ…」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 衣玖は目に涙を浮かべ、苦しそうに顎を上げて呼吸している…
+					PRINTFORMW 「ふっ…ふうっ、んくっ…！力を入れてないと、もう…！」
+					PRINTFORMW 「お願いですっ…もう、限界ですから…早くこれ、取らせてください…！」
+				ELSE
+					PRINTFORMW 「お腹があっ…！うぐうっ、苦しっ…！」
+					PRINTFORMW 「でも、もっと…もっと我慢しろって、言うんですね？ふふっ…本当に、酷い人…♪」
+					PRINTFORMW あなたは衣玖がもぞもぞと下半身を震わせるのをじっくりと眺めた…
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「こんなのっ…早く、取ってください…！」
+				PRINTFORMW 「ああでも取られたら漏れちゃ…そんなの…いやっ、ううぅ…！」
+			ENDIF
+		;媚薬
+		ELSEIF RAND:6 == 0 && TEQUIP:媚薬 == 1
+			IF RAND:2 == 0
+				PRINTFORMW 「何もしないなら…襲っちゃいますよ？」
+				PRINTFORMW 「たまには妖怪らしく…%CALLNAME:MASTER%を食べちゃいましょうか、ふふっ♪」
+			ELSE
+				PRINTFORMW 「薬まで使ったんですから…放って置かないで下さい、どうか、早く…」
+			ENDIF
+		;効果[利尿剤]
+		ELSEIF RAND:5 == 0 && TEQUIP:利尿剤 == 1
+			PRINTFORMW 「私のこんなところを見て何が楽しいんですか、もう…！」
+			PRINTFORMW 尿意を感じているのか、衣玖はもじもじと両足を擦り合わせている…
+		;効果[ＡまたはＶ系器具かつ感度３以上]
+		ELSEIF RAND:4 == 0 && (TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ａ系装着器具 == 1) && (ABL:Ｖ感覚 >= 3 || ABL:Ａ感覚 >= 3)
+			IF RAND:2 == 0
+				PRINTFORMW 「そんなに見つめないで下さい…！入ってるところなんて、そんなっ…」
+			ELSE
+				PRINTFORMW 「これ…いじっちゃ、駄目なんですか…？」
+			ENDIF
+		;効果[ビデオ撮影]
+		ELSEIF RAND:3 && TEQUIP:ビデオ撮影 == 1
+			IF RAND:2 == 0
+				PRINTFORMW 「ん、撮ってるんですよね…？」
+			ELSE
+				PRINTFORMW 「機械の調子でもおかしいのですか…？」
+			ENDIF
+		;欲望LV3以上
+		ELSEIF RAND:2 && PALAM:欲情 >= PALAMLV:3
+			IF RAND:3 == 0
+				PRINTFORMW 感情の高まりからか、仄かにピンク色に染まる衣玖の肌をあなたはじっくりと眺めた…
+			ELSEIF RAND:2 == 0
+				PRINTFORMW すっかり欲情した衣玖の緋色の瞳があなたを捉えている…
+				PRINTFORMW 「あっ……んっ、はぁ……」
+				PRINTFORMW 「じらしちゃ、嫌です……」
+			ELSE
+				PRINTFORMW 「どうしたんですか…？何もしないというなら…私の方から、してもいいんですよ…？」
+			ENDIF
+		;その他の場合
+		ELSE
+			IF RAND:3 == 0
+				PRINTFORMW 「次はどんな事をしてくれるのでしょう…ふふっ、ドキドキします」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「私はまあその、のんびりしてる方だとは思いますけど…」
+				PRINTFORMW 「別に私に合わせなくてもいいですからね？ふふっ」
+			ELSE
+				PRINTFORMW 「お休みですか？」
+				PRINTFORMW 「ふふ、こうやって裸のまま見つめあうというのは…ちょっと、恥ずかしいですね…♪」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「何か、気に障る事でもしましたか…？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「…はあ、次は何をされるんでしょう…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ローター
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_10
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「なんだか、音が出てますが…」
+	PRINTFORMW 「そんな、震えてっ…んんっ！」
+	PRINTFORMW 衣玖は口を手で抑えるが、初めてのローターの刺激に声が止められないようだ…
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;Ｃ感覚Lv5以上または淫乱
+		IF ABL:Ｃ感覚 >= 5 || TALENT:淫乱
+			IF RAND:2 == 0
+				PRINTFORMW 「んああっ！ああっ！イクっ、イキますうっ♪」
+				PRINTFORMW 「クリが、クリがあっ♪気持ち良すぎてっ、もうイキますっ、イカせて下さいいいっ♪」
+				PRINTFORMW 衣玖はクリトリスへの刺激に体全体を震わせている…
+			ELSE
+				PRINTFORMW 「んひいっ♪すごいっ、そんなに押し付けないでえっ！」
+				PRINTFORMW 「衣玖のクリおかしくなっちゃいますうっ、だめっ、あふれちゃいますうう…」
+				PRINTFORMW 衣玖のクリトリスはピンと勃ち、刺激を求めるようにその存在を主張している…
+			ENDIF
+		;Ｃ感覚Lv3以上
+		ELSEIF ABL:Ｃ感覚 >= 3
+			PRINTFORMW 「ふああ…あっ、ああっ！」
+			PRINTFORMW 「こんな刺激…耐えられないですうっ…！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「あっ…そんなおもちゃより、%CALLNAME:MASTER%に直接触れてほしいのですが…」
+		ENDIF
+	;その他の場合
+	ELSE
+		;Ｃ感覚Lv5以上
+		IF ABL:Ｃ感覚 >= 5
+			PRINTFORMW 「だめっ、ほんとにだめっ」
+			PRINTFORMW %CALLNAME:PLAYER%はすっかり開発された衣玖のクリトリスにローターを押し当てた…
+			PRINTFORMW 「ああああっ！んあああっ！やめてくださいっ、衣玖のアソコっ、壊れちゃいますうぅううっ！」
+			PRINTFORMW 衣玖のヴァギナからは愛液が次々と湧き出して止まらなくなっている…
+		;Ｃ感覚Lv3以上
+		ELSEIF ABL:Ｃ感覚 >= 3
+			PRINTFORMW 「また、気持ち良くなってしまいますっ！」
+			PRINTFORMW 「あそこが、痺れてっ…っはあっ！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「あっ、んんっ…くすぐったいです…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;電気按摩
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_11
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「ちょっと、何なんですか？その大きなものは…？」
+	PRINTFORMW 衣玖は初めて見るマッサージャの異様さに驚いている…
+	PRINTFORMW 「んああああっ！強いっ、いやっ！激しすぎますっ！」
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;Ｃ感覚Lv5以上または淫乱
+		IF ABL:Ｃ感覚 >= 5 || TALENT:淫乱 == 1
+			IF RAND:2 == 0
+				PRINTFORMW 「ああ…私のクリにそれが当たるのを想像しただけで…♪」
+				PRINTFORMW %CALLNAME:PLAYER%はゆっくりと衣玖のクリトリスへマッサージャを近づけた…
+				PRINTFORMW 「優しく…優しくお願いします…でないと…すぐにおかしくなっちゃいますから…♪」
+				PRINTFORMW 構わずに、%CALLNAME:PLAYER%は出力を最大にしたそれを衣玖の秘部へと押し付けた…
+				PRINTFORMW 「はあああっ！ああぁああっ！やめてっ！やめてっ！壊れるうっ！」
+				PRINTFORMW 「衣玖のクリおかしくなってますうっ…もうだめっ、だめですうっ…ぁああっ、止まらないぃ…」
+			ELSE
+				PRINTFORMW 「卑怯です…そんなのでクリを弄られたら、おかしくなるに決まってます…♪」
+				PRINTFORMW 「どうぞ…そのまま押し付けて…衣玖のクリ、滅茶苦茶にしてください♪」
+				PRINTFORMW %CALLNAME:PLAYER%は焦らすようにマッサージャをクリトリスにつん、つんと擦りつけた…
+				PRINTFORMW 「ひっ！ふあっ！…もう♪焦らさないで…%CALLNAME:PLAYER%も私の乱れるところ、見たいんでしょう…？」
+				PRINTFORMW 少し擦っただけで衣玖の秘部からは愛液が溢れ出している…
+			ENDIF
+		;Ｃ感覚Lv3以上
+		ELSEIF ABL:Ｃ感覚 >= 3
+			PRINTFORMW 「んうううっ！あっ、んあっ！」
+			PRINTFORMW 「止まらないっ、イクの止まらないですうっ！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「だめっ、それは強すぎてえっ…」
+			PRINTFORMW 「すぐにいっちゃうんですっ、やめてっ、ああっ！」
+		ENDIF
+	;Ｃ感覚Lv3以上
+	ELSEIF ABL:Ｃ感覚 >= 3
+		PRINTFORMW 「だめっ、それは強すぎてえっ…」
+		PRINTFORMW 「すぐにいっちゃうんですっ、やめてっ、ああっ！」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「んんっ！んっ、あっ！」
+		PRINTFORMW 衣玖はマッサージャの強烈な刺激に何も言えなくなっている…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;バイブ
+;TEQUIP:Ｖ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_12
+;解除時
+IF TEQUIP:Ｖ系装着器具 == 0
+	;初回実行時
+	IF CFLAG:7039 == 0
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「ふああ…なんだか、全部引き抜かれちゃったみたいで…」
+			PRINTFORMW 衣玖はまだ違和感があるのか、しきりに下腹部を撫でている…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「動かさないでっ…ああっ…！」
+			PRINTFORMW 「まだ入ってるみたいで…苦しいです…」
+		ENDIF
+		CFLAG:7039 = 1
+	;2回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕 == 1
+			;Ｖ感覚Lv5以上または淫乱
+			IF ABL:Ｖ感覚 >= 5 || TALENT:淫乱 == 1
+				;衣玖さんの膣にまだ誰のペニスも入っていない
+				IF CFLAG:主人にＶ捧げ回数 == 0 && CFLAG:7312 == 0
+					IF RAND:4 ==0
+						PRINTFORMW 「あっあっ、ふぁ…いっぱい…出ましたね…ふふっ」
+						PRINTFORMW きょとん、とするあなた。出た、とは射精のことだろうか…？
+						PRINTFORMW 「いえ…私の、気持ちいいお汁がですよ？ふふっ」
+						PRINTFORMW 「%CALLNAME:MASTER%も本当は…ここで気持ち良くなりたいんでしょう？もう我慢しないで、ね…？」
+						PRINTFORMW 衣玖の言葉にあなたのペニスはビクビクと反応している…
+					ELSEIF RAND:3 == 0
+						PRINTFORMW 「とっても…はっ、あぁ…気持ち良かった、です…」
+						PRINTFORMW 衣玖の膣口はバイブが抜けた後もヒクヒクと震え、愛液が流れ出ている…
+						PRINTFORMW 「もっと…いれてたい、です…私のここに気持ちいいの、ずっと…」
+					ELSEIF RAND:2 == 0
+						PRINTFORMW 「ぬ、抜くんですか？それなら、次は…」
+						PRINTFORMW 衣玖はペニスにそっと触れ、物欲しげな表情であなたを見つめた…
+						PRINTFORMW 「あっ、熱っ…あの、これを…どうか私に、下さいませんか…」
+					ELSE
+						PRINTFORMW たっぷりと愛液にまみれたバイブが膣口から糸を引いている…
+						PRINTFORMW 「んっ！あっ、抜けちゃっ、た…はっ、はっ…」
+						PRINTFORMW 「……いつでも、どうぞ…%CALLNAME:MASTER%と一緒に作った、衣玖の気持ちいい穴、ですよ…」
+					ENDIF
+				;その他
+				ELSE
+					IF RAND:2 == 0
+						PRINTFORMW 「ああんっ！はあ…はあ…バイブ…抜けちゃいましたね…」
+						PRINTFORMW 衣玖の膣口からは愛液が溢れ、湯気が立つほど濡れそぼっている…
+						PRINTFORMW 「衣玖のおまんこ、%CALLNAME:PLAYER%のが欲しくてもうこんなになってます…♪」
+						PRINTFORMW 「さあ…すっかりできあがった衣玖のココに…おちんちん、入れてみたくありませんか…？ふふっ」
+					ELSE
+						PRINTFORMW 「んっ…ゆっくりお願いします…んんっ、んああっ、ああんっ！」
+						PRINTFORMW 衣玖の膣から引き抜かれたバイブは、愛液まみれになって光を反射している…
+						PRINTFORMW 「はあ、あぁ、あっ…あそこが…ひくひく、動いてます…」
+						PRINTFORMW 「ふふっ…次は、%CALLNAME:PLAYER%のおちんちんで、ここを掻き回して下さい…♪」
+					ENDIF
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「あっ、あっ…はううっ…そのままゆっくり…ああっ…！」
+				PRINTFORMW 「…なんだか、抜けてしまうのが勿体ない、気分です…」
+				PRINTFORMW 衣玖は快楽に蕩けた笑顔であなたを見ている…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「あっ！はうっ…！くっ、抜けましたか…？」
+				PRINTFORMW 「はい、大丈夫です…これからゆっくり、慣らしてくださいね…」
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「んあっ！そんなっ…もっと、ゆっくり…！」
+			PRINTFORMW 「どうかそこは、もう少し優しく扱ってくれないと…困ります…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「はあ…はあ…」
+			PRINTFORMW 「この抜けるときの感覚…気持ち悪いです…」
+		ENDIF
+	ENDIF
+;装着時
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1
+		;処女
+		IF TALENT:処女 == 1
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 「どうせなら、%CALLNAME:MASTER%のもので奪ってほしかったのですが…」
+				PRINTFORMW 衣玖は悲しそうに眼をそらしている…
+				PRINTFORMW 「%CALLNAME:MASTER%なりの気遣いなんでしょう？きっと…」
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				PRINTFORMW 「ひっ！…痛いっ、痛いですっ…ゆっくりっ…！」
+				PRINTFORMW 「もう私は…%CALLNAME:PLAYER%の玩具でしか…ないのですね…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ああ…酷い…」
+				PRINTFORMW 衣玖は秘部に突き刺さったバイブを見て、青ざめている…
+				PRINTFORMW 「こんなことをして…ううっ、許される、とっ…思っているのですか…」
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 == 1
+			PRINTFORMW 「これが、私の中に…？や、優しくお願いします…」
+			PRINTFORMW %CALLNAME:PLAYER%はゆっくりと衣玖の中にバイブを埋めていった…
+			PRINTFORMW 「ううんっ…入ってく、入って…奥までっ、ああっ！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなもので、女性を弄ぶだなんてっ…」
+			PRINTFORMW 「どうかしてますっ…！ううっ…」
+		ENDIF
+	;２回目以降
+	ELSE
+		;衣玖さんの膣にまだ誰のペニスも入っていない
+		;朝イベントや夜這いでたやすく矛盾するけどまあ、察して！
+		IF CFLAG:主人にＶ捧げ回数 == 0 && CFLAG:7312 == 0
+			;恋慕+淫乱+V感覚Lv3以上
+			IF TALENT:恋慕 && TALENT:淫乱 && ABL:Ｖ感覚 >= 3
+				IF RAND:4 == 0
+					PRINTFORMW 「ふふ、おかしいですね…だって…ほら…」
+					PRINTFORMW 衣玖が手を伸ばし、あなたのペニスにそっと指を触れる…
+					PRINTFORMW 「%CALLNAME:MASTER%のおちんちん…こんなにカチカチじゃないですか…」
+					PRINTFORMW 「私のおまんこ犯したい犯したいってそんなに硬くして、先走りが一杯漏れてるのに…」
+					PRINTFORMW 「そんなに私の事、よがらせたいんですか…？ふふっ、ふああぁ…ほんとに、変態ですね…♪」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「どんどん、いやらしいお汁が…溢れてっ、だめ、ですぅ…」
+					PRINTFORMW カクカクと腰を震わせ、愛液を垂れ流す衣玖の膣口にゆっくりとバイブを沈めていく…
+					PRINTFORMW 「%CALLNAME:MASTER%のもこうやっていやらしく…飲み込んであげたいんです…うくっ、はぁん！」
+					PRINTFORMW 「イキそうですっ…あっ、ああぁ…！%CALLNAME:MASTER%ので…イキたいですっ、お願い…%CALLNAME:MASTER%のおちんちんでっ、イカせてえぇ…！」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「これだけでっ…こんなに、いいのにっ…！もしほんとにおちんちん、挿入れられたら…」
+					PRINTFORMW 「私の膣に、%CALLNAME:MASTER%の精子たくさん、出されちゃったら…はっ、あはああぁ…」
+					PRINTFORMW 衣玖の膣壁がバイブをきゅうっと締めつけると、白く濁った愛液がじわりと流れ出す…
+					PRINTFORMW 「考えただけでっ…もっと、溢れちゃいます…♪射精されたみたい…ですか…？んふっ、んんっ…」
+				ELSE
+					PRINTFORMW 「あの、おちんちん押し付けながらそんな…んああっ！」
+					PRINTFORMW 衣玖にぴったりと体を密着させ、ペニスを押しつけながらバイブを挿入した…
+					PRINTFORMW 「あっああ、熱いのがお腹に、触れて…すごく、ビクビクして…！」
+					PRINTFORMW 「外じゃ駄目ですっ…バイブでもなくてっ…お願いです、おちんちん挿入れて、挿入れてえっ！」
+				ENDIF
+			;恋慕+V感覚Lv3以上
+			ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「あはあ、あぁ！っくあぁ…動きながら、入ってきてえ…」
+					PRINTFORMW 「とっても…んん！うっ…あそこが、感じちゃい、ます…」
+					PRINTFORMW 「もうそろそろ…%CALLNAME:MASTER%のを、欲し…あっ！だめっ！激しっ…いい～～！」
+				ELSE
+					PRINTFORMW 「はあ、はあ…奥までみっちり、広げられて…ふうっ…」
+					PRINTFORMW 「大丈夫ですよ…いつでも、受け入れられますから…ふふっ」
+					PRINTFORMW 「ただもう少し、今は…この子で私を気持ち良く、して下さいね…？」
+				ENDIF
+			;恋慕+V感覚Lv1以上
+			ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 1
+				IF RAND:2 == 0
+					PRINTFORMW 「痛み、ですか…？ええだいぶ、慣れてはきました」
+					PRINTFORMW 「…でもいい加減、%CALLNAME:MASTER%ので…してくれても、いいんですよ…？」
+				ELSE
+					PRINTFORMW 「はんっ！あっ、ん…初めての場所に、当たった感じです…」
+					PRINTFORMW 「は、はい…気持ちいいところ、見つかったみたいですね…ふふっ」
+				ENDIF
+			;恋慕
+			ELSEIF TALENT:恋慕
+				IF RAND:2 == 0
+					PRINTFORMW 「ま、またそれですか…」
+					PRINTFORMW 「あの、つまり練習…のようなものですか？」
+				ELSE
+					PRINTFORMW 「道具でばかり弄られるのは、あまりいい気分ではないのですけど…」
+					PRINTFORMW 「慣らしてあげたい、ですか…？はあ…」
+				ENDIF
+			;屈服刻印lv3+淫乱+V感覚Lv3以上
+			ELSEIF MARK:屈服刻印 == 3 && TALENT:淫乱 && ABL:Ｖ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「ああ…！ああっ、あはあ…！もう私の、あそこ…これが入ってないと、だめなんです…！」
+					PRINTFORMW 「もうすっかり、膣が玩具の形に…馴染んでしまってるみたいで…ひうっ、ああ、きてるっ」
+					PRINTFORMW 「ずっとバイブ入れてたいですうっ！ああ！掻き回してっ…！いくっ、いくっ、うう…！」
+				ELSE
+					PRINTFORMW 「んん！んあ！いいっ、膣っ、抉ってますぅ…」
+					PRINTFORML 「%CALLNAME:MASTER%のおちんちん欲しいなんて言いませんから…もっとこれで私の…あ、あそこを、」
+					PRINTFORMW 「犯し尽くしてください…！いいですっ！ああ…もっと%CALLNAME:MASTER%の望むように、乱れますからあ…！」
+				ENDIF
+			;屈服刻印lv3+V感覚Lv3以上
+			ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「いつまで、こんなことっ…！あっ、あうっ！んあっ…」
+					PRINTFORMW 「そんな奥までっ…！やだ、挿入れないでっ…感じて、しまいますからぁ…！」
+				ELSE
+					PRINTFORMW 「わ、私を…んうっ、ふぁ…犯すつもりは、無いのですか…？」
+					PRINTFORMW 「こうやってただいたずらに乱れさせて…あうっ、んぁあ…！」
+					PRINTFORMW 「だめっ、だめです…気持ちいいの、止まらないです…膣で、動いてっ…」
+				ENDIF
+			;屈服刻印lv3+V感覚Lv1以上
+			ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >=1
+				IF RAND:2 == 0
+					PRINTFORMW 「また、これですか…？慣れては、きましたけど…」
+					PRINTFORMW 「だからといってどうか、乱暴な扱いはしないでくださいね…」
+				ELSE
+					PRINTFORMW 「んくっ、うぅ…！また、こんな玩具を…」
+					PRINTFORMW 「%CALLNAME:MASTER%自身で犯せばいいでしょう…こんな、性器を弄ぶような真似…！」
+				ENDIF
+			;V感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「もう…やめてっ、こんな真似…ああ、ああぁ…」
+				PRINTFORMW 「ああ、入ってきてぇ…感じたくない、のにっ…！」
+			;その他
+			ELSE
+				PRINTFORMW 「どうしてこんなことばかり…！酷い、酷いです…」
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕 == 1
+			;Ｖ感覚Lv5以上または淫乱
+			IF ABL:Ｖ感覚 >= 5 || TALENT:淫乱 == 1
+				IF RAND:4 == 0
+					PRINTFORMW 「はっ、はあっ…！もっと奥まで、入れていいですから…んああっ！来ましたあ…♪」
+					PRINTFORMW 大きなバイブを完全にヴァギナで咥えこみ、衣玖は恍惚の表情を見せている…
+					PRINTFORMW 「ひああっ…奥でえっ、奥で震えるのっ、大好きです…おまんこ気持ち良くて幸せですぅ…♪」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「どうですか…？ふふっ、きつかったでしょう？」
+					PRINTFORMW 「ちょっと力を入れて、膣を締めてみたんです…♪」
+					PRINTFORMW 自らのペニスを挿入する際の締め付けが想像され、あなたは思わず興奮が増していく…
+					PRINTFORMW 「%CALLNAME:PLAYER%のおちんちんも、しっかり締めつけてあげますから…」
+					PRINTFORMW 「きっと、とっても気持ちいいと思いますよ…？ふふっ」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「ふああ…いいですっ、気持ちいい…」
+					PRINTFORMW 「%CALLNAME:PLAYER%のおちんちん欲しいのにっ、でもおっ♪」
+					PRINTFORMW 「この子の方も好きになっちゃうかも…ふふっ♪」
+				ELSE
+					PRINTFORMW 「あはあぁ…♪衣玖のアソコ、すっかりバイブを好きになっちゃったみたいです…」
+					PRINTFORMW 「さあ…好きに動かしていいんですよ？」
+					PRINTFORMW 「%CALLNAME:PLAYER%の好きなように…衣玖のおまんこ、ぐちゃぐちゃにして下さい…♪」
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				IF RAND:2 == 0
+					PRINTFORMW 「慣れては来ましたけど…やっぱり入れる瞬間は、緊張します…はあんっ…！」
+					PRINTFORMW 膣内が滑らかに蠢き、ゆっくりとバイブを咥えこんでいく…
+					PRINTFORMW 「んあっ！んんっ…気持ちいい…！ふふっ、私のあそこ、いやらしいですね…」
+				ELSE
+					PRINTFORMW 「はっ、はあっ、入って、来てますよ…」
+					PRINTFORMW 「バイブに膣を広げられる感じが…ゾクゾクします…♪」
+					PRINTFORMW 粘液を湛えた衣玖のヴァギナはすんなりとバイブを受け入れている…
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ああ…こんな大きなものであそこが、掻き回されてますっ…」
+				PRINTFORMW 「まだ少し怖くて…もっと…近くに寄ってくれませんか？」
+				PRINTFORMW あなたは衣玖に寄り添いながら、ゆっくりとバイブを動かした…
+			ENDIF
+		;Ｖ感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「やだっ、こんな道具で、感じてるの…？」
+			PRINTFORMW 衣玖のヴァギナはバイブの刺激に慣れてきたようだ…
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「うううっ…うねって、震えてますうっ…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「いやっ、気持ち悪いですっ…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナルバイブ
+;TEQUIP:Ａ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_13
+;解除時
+IF TEQUIP:Ａ系装着器具 == 0
+	;初回実行時
+	IF TFLAG:95 == 1
+		PRINTFORMW 「あああっ！抜かないでっ、あぐっ！」
+		PRINTFORMW 「はあ…はあ…傷ついたり、してないですよね…？」
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;Ａ感覚Lv5または淫乱
+			IF ABL:Ａ感覚 == 5 || TALENT:淫乱
+				PRINTFORMW 「や、やだ…お尻の穴、開いたままに…」
+				PRINTFORMW 「感じちゃって…力が入らないんですよ、もう…」
+			;Ａ感覚Lv3以上
+			ELSEIF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「あああっ…お尻の穴、スースーしてっ…」
+				PRINTFORMW 「もう…こんなの、クセになったらどうしてくれるんですか…ふふ」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「もう…そんなに見ないで下さい！」
+				PRINTFORMW 「いくらあなたでも、お尻なんて、本当に恥ずかしいんですから…」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなことされてたら…お尻が壊れてしまいますよ…！」
+			PRINTFORMW 衣玖は息を荒くして痛みに耐えている…
+		ENDIF
+	ENDIF
+;装着時
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW 「お尻が、広がってえっ…！」
+			PRINTFORMW 「んぎいいいっ！怖いっ、もっとゆっくり…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ひああっ！あっ！うぐううっ！」
+			PRINTFORMW 「押し込ま、ないでえっ…！苦しいですからっ…あっ、はっ、奥にいっ…」
+		ENDIF
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;Ａ感覚Lv5または淫乱
+			IF ABL:Ａ感覚 == 5 || TALENT:淫乱
+				PRINTFORMW 「ふぅ、う、んっくあぁぁ…♪」
+				PRINTFORMW 「入って、来ましたぁ…」
+			;Ａ感覚Lv3以上
+			ELSEIF ABL:Ａ感覚 >= 3
+				PRINTFORMW 「ふうう…はああっ…！」
+				PRINTFORMW 「お尻の中でえっ、震えてますっ…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「んっ…ううっ…こんな恥ずかしい格好、あなた以外には見せられません…」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ううう…お尻が、お尻壊れてしまいますう…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;クリキャップ
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_14
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;初回実行時
+	IF TFLAG:95 == 1
+		PRINTFORMW 「うう…私のここ、大丈夫でしょうか…？」
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「ふあああ…すごい、刺激でした…♪」
+				PRINTFORMW 衣玖はすっかり勃起した自分のクリトリスを触っては、体をビクビクと震わせている…
+				PRINTFORMW 「でも…%CALLNAME:PLAYER%に直接してもらった方が…嬉しいんですよ？」
+				PRINTFORMW 「ほら…あんっ！こんなに敏感になって…あなたに触れてもらったら…もっと気持ち良くなれそうなんです…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ああ…まだクリが痺れてます…」
+				PRINTFORMW あなたはぷっくり膨らんだ衣玖のクリトリスを指でそっと突いた…
+				PRINTFORMW 「ひゃっ！もう…%CALLNAME:PLAYER%ったら…いたずらしちゃだめですよ、もう…♪」
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「あっ…もう、取っちゃうんですか…？」
+			PRINTFORMW 「いえ…その…はい…気持ち良かった、ものでしたから…」
+			PRINTFORMW 衣玖は顔を赤くして正直な感想を言った…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ひあっ！…こんな道具、もうやめて下さい…」
+		ENDIF
+	ENDIF
+;装着時
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1
+		PRINTFORMW 「変な道具…何なんでしょう…？えっ、そこは…！」
+		PRINTFORMW 「ひっ！…動いてっ…あっ！止めてえっ！」
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふあああっ…クリが、ジンジンしてえっ…♪」
+			PRINTFORMW 「あああっ…気持ちいいですよおっ♪衣玖のクリトリス、もっと苛めてっ…♪」
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「やだっ…クリトリスが、感じるのっ、止まらない…！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんな乱暴な道具で…あっ、んんっ、気持ち良くさせられるなんてっ…！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ニプルキャップ
+;TEQUIP:Ｂ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_15
+;解除時
+IF TEQUIP:Ｂ系装着器具 == 0
+	;初回実行時
+	IF TFLAG:95 == 1
+		PRINTFORMW 「ああっ！終わった…んですね…？」
+		PRINTFORMW 「なんて道具なんでしょう…」
+	;２回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;母乳
+			IF TALENT:母乳体質 && RAND:2 == 0
+				PRINTFORMW 「んあぁ…きつく、吸い付いてたから…こんな…」
+				PRINTFORML キャップが吸着していた乳首は腫れあがり、既に母乳がぷつぷつと滲み出している…
+				PRINTFORMW もはや衣玖が身じろぎするだけで母乳が溢れ出しそうな状態だ。
+				PRINTFORMW 「んっ…あっ…あ…！」
+				PRINTFORMW 「早く…楽にして下さい…おっぱい、出して…搾って、もらえますか…ふふっ…%UNICODE(0x2665)%」
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0 && TALENT:妊娠 == 0
+				PRINTFORMW 「まだ、私の乳首、ジンジンしてます…♪」
+				PRINTFORMW キャップを外した後も、衣玖はその快感に震えている…
+				PRINTFORMW 「やだ…こんなに膨らんで…まるで妊婦みたいだと思いません？ふふっ♪」
+				PRINTFORMW あなたは衣玖の妊娠した姿を思い浮かべ、ゴクリと唾を飲み込んだ…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「見て下さい…ほら、乳首…すごい立ってます…♪」
+				PRINTFORMW キャップの刺激から解放されても、衣玖の乳首は痛いほどに立ったままだ…
+				PRINTFORMW あなたは堪らずその先端を指先で触ってみた…
+				PRINTFORMW 「ふあっ！あっ！…だめっ、そんな、つんつんしないで下さい…はっ、ああ…%UNICODE(0x2665)%」
+			ENDIF
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「私の乳首…大丈夫ですか？」
+			PRINTFORMW 「刺激がすごくて…取れちゃうかと思いました…」
+			PRINTFORMW 衣玖の乳首は刺激と興奮のせいでか、いやらしく膨れている…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんな、無理やり気持ち良くさせられて…」
+		ENDIF
+	ENDIF
+;装着時
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1
+		PRINTFORMW 「んんっ！ふあっ…何ですかこれは…痺れて、痛いですっ…！」
+	;２回目以降
+	ELSE
+		;恋慕母乳
+		IF TALENT:恋慕 && TALENT:母乳体質 && RAND:2 == 0
+			PRINTFORMW 「んああ！あっあっ、きゅって、されてる…」
+			PRINTFORMW 「やだぁ…こんなの、勝手に、おっぱいが…出てきそうに、なってるぅ…%UNICODE(0x2665)%」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「ふうっ、んああっ…乳首が、気持ちいい、ですぅ…」
+			PRINTFORMW 「こんなのだめです…%CALLNAME:PLAYER%に、触ってもらいたくなっちゃう…♪」
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「どうぞ…衣玖の乳首、苛めて下さい…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「まったく、妙な道具をお持ちなんですね…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;オナホール
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_16
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;電極オナホール
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_17
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;正常位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_20
+;初回実行時
+IF TFLAG:95 == 1
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;処女
+		IF TALENT:処女 == 1
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 天子が衣玖を押し倒し、はち切れんばかりに勃起したペニスを衣玖の秘部へと押し付けた…
+				PRINTFORMW 『衣玖がご主人様の事を慕ってるのは知っているわ。でも、今はどうか…私のわがままを聞いて欲しいの』
+				PRINTFORMW 『私も、その…ちゃんと衣玖がき、気持ち良くなれるよう頑張るから…』
+				PRINTFORMW 『衣玖の初めて…私にちょうだ、んっ…？』
+				PRINTFORMW 衣玖の指が天子の唇にそっと触れる。
+				PRINTFORMW きょとんとする天子に衣玖が優しく語りかけた…
+				PRINTFORMW 「天子の気持ち、ちゃんと伝わってますよ」
+				PRINTFORMW 「自分の欲望…性欲に囚われる事を恥じてらっしゃるのはよくわかります。でも…」
+				PRINTFORMW 「私としては、ご主人様だけでなく、天子も私の事を大切に思ってくれている事が分かって嬉しいんですよ？」
+				PRINTFORMW 「私の初めて…天子にあげちゃいます。でも、優しくして下さいね？ふふっ」
+				PRINTFORMW ―――やんわりとした、それでいて確かな受容の言葉。
+				PRINTFORMW それを聞いて天子も決心が固まったようだ…
+				PRINTFORMW 『ありがとね衣玖…それじゃあ…挿入れる、から…！』
+				PRINTFORMW 「あっ！くっ、んんうっ……そのまま、ゆっくり…」
+				PRINTFORMW 『入ってく、入ってくよう…私の、おちんちんがぁ…ああっ！』
+				PRINTFORMW 「受け入れて、あげますから……ううっ！はうっ、くううぅっ……」
+			;その他の場合
+			ELSE
+				PRINTFORMW 天子が衣玖を押し倒し、硬く勃起したペニスを衣玖の秘部へと押し付けた…
+				PRINTFORMW 「やっ！」
+				PRINTFORMW 「……せめて、教えてください……天子は以前から私をこんな目に遭わせたいと思っていたのですか？」
+				PRINTFORMW 『そんなことはないわ。私の知ってる天女のうちの一人、そのくらいの認識』
+				PRINTFORMW 『でも…今となっては私の体がもう、衣玖に夢中になってるの…衣玖を目茶苦茶にしたいって言って聞かないの』
+				PRINTFORMW 『痛いと思うけど…我慢して、衣玖…！』
+				PRINTFORMW がっちりと衣玖を抑えつけ、あてがわれたペニスがゆっくりと衣玖を押し開いていく…
+				PRINTFORMW 「んいっ！いぎっ……わかり、ましたからっ…！」
+				PRINTFORMW 「天子の気持ちは分かりましたから、どうか、落ち着いてえっ…！」
+				PRINTFORMW 天子の力任せの挿入に衣玖も身を固くして反応してしまい、苦痛ばかりが増していく…
+				PRINTFORMW 『ちょっと、ちょっと衣玖、力抜いて…！でないと痛いだけよ！』
+				PRINTFORMW 「もう痛いです！痛いですから…！もっと、ゆっくりぃ…！」
+				PRINTFORMW 『んっ……衣玖、一気に、いくから…頑張って…！』
+				PRINTFORMW 「嫌っ、無理ですっ！だめっ、だめっ……～～～～～っ！！」
+			ENDIF
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 『んううっ……あっ、はあぁ…入ったよ、衣玖……』
+				PRINTFORMW 『……？目を逸らさないでよ、どうかしたの？』
+				PRINTFORMW 「はあっ、はあ……実は、こうして抱かれるのは…初めてでしたので」
+				PRINTFORMW 「天子に見下ろされて…なんだか少し、緊張しちゃいますね」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ふふん……どう衣玖、私にこうして組み敷かれる感想は？』
+				PRINTFORMW 意地悪な質問をぶつけながら、天子は腰を軽く動かして衣玖を責めている…
+				PRINTFORMW 「いっ、んくっ、動かさないでっ…！」
+				PRINTFORMW 「好きにしていいですから…どうか、早く終わらせて…」
+				PRINTFORMW 『それじゃ面白くないでしょ…ふん、衣玖が素直になるまで終わらせないわよ？』
+			ENDIF
+		ENDIF
+		CFLAG:7312 = 1
+	;処女
+	ELSEIF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「はい…準備は、できてます…衣玖の、初めて…貰って下さい…」
+			PRINTFORMW 「あっ！…大丈夫ですっ…そのまま、ゆっくり、ゆっくりぃ…ううんっ、んああっ！入っ、てますぅ…！」
+			PRINTFORMW ゆっくりとあなたのペニスは衣玖の秘裂をこじ開け、奥へと進んでいく…
+			PRINTFORMW 先端に感じた引っ掛かり、衣玖の純潔を示す部分…あなたは苦痛が長く続かぬよう、腰に力を込め、最後の障害を押し破った…
+			PRINTFORMW 「あっ、やっ、ううっ、～～～～っっ！！」
+			PRINTFORMW 「ううっ…くうぅっ…ひっ、えぐっ…とっても、痛いです…でもっ、これで、%CALLNAME:PLAYER%のものに、なれました…」
+			PRINTFORMW 苦痛と歓喜のこもった涙を流しながら、衣玖はあなたを抱きしめ、あなたもそれに応えるよう、そっと口づけをした…
+			CFLAG:7030 = 1
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「覚悟は…してました…せめて優しく…お願いします…」
+			PRINTFORMW 「くっ！ううぅっ…痛いぃ…痛いですっ…いぎいっ！うあぁああ…」
+			PRINTFORMW 衣玖は歯を食いしばり、涙を流して破瓜の痛みに耐えている…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「やめて下さい…どうか、それだけはっ、他の事でしたらっ、何でもしますからあっ…」
+			PRINTFORMW あなたに覆い被さられ、ペニスを秘裂に押し付けられた衣玖は、目を閉じて恐怖に震えている…
+			PRINTFORMW 「んっ、ぐううっ！？痛っ、痛いっ、ううっ、んうううう～っ！！」
+			PRINTFORMW 「やめっ、ひぐっ、やめてえっ…んああっ…助けてっ、いぎっ、誰かぁぁ…」
+		ENDIF
+	;その他の場合
+	ELSE
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「ああ…%CALLNAME:PLAYER%の顔が、良く見えます…」
+			PRINTFORMW 「来て下さい…ふふっ、もっと早く、こうして抱かれたかったです…」
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「どうせなら、こうして初めてを奪われたかったのですが…」
+			PRINTFORMW 「いえ…何でもありません…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「好きにすれば、いいでしょう…」
+			PRINTFORMW 衣玖はだらりと体を投げ出し、あなたのされるがままになっている…
+		ENDIF
+	ENDIF
+;２回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;いくてん初セックス
+		IF CFLAG:7312 == 0
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;淫乱である
+				IF TALENT:淫乱 == 1
+					PRINTFORMW 「もう少し…下の方、んっ…焦らないでください、天子…」
+					PRINTFORMW 「女の子なんですから…私が教えなくても大丈夫ですよね？ふふっ」
+					PRINTFORMW 『わっ、分かってるわよ…！だって、おちん…わ、私のこれが言う事聞かないのよ、もう！』
+					PRINTFORML 緊張と興奮で硬く膨れ上がり、震えの止まらない天子のペニスは衣玖の膣口を捉えられずに
+					PRINTFORMW 何度もその周辺を行ったり来たりし、先走りがいたずらに秘唇を汚していく…
+					PRINTFORMW 『あうう…衣玖ぅ…入んないよう…お願い、手伝って…』
+					PRINTFORMW 涙目の天子の懇願に、衣玖は優しく微笑んで応じた。
+					PRINTFORMW 衣玖の指が天子のペニスに触れ、そしてゆっくりと自らの膣口へと導いていった･･･
+					PRINTFORMW 「あんっ…ちょうど、当たってますから…そのまま、押し進めて、天子…」
+					PRINTFORMW 『うう…ありがとう、衣玖…』
+					PRINTFORML 天子が腰に力を込めた途端、衣玖の解れた肉穴が天子のペニスを咥え、飲み込み始める。
+					PRINTFORMW 意思とは関係なしに膣奥へとペニスが進んでいく感覚に、天子は目を見開いている…
+					PRINTFORMW 『あっあっ、んああ～～…！なにっ、これぇ……！わたし、何も……』
+					PRINTFORMW 『これ…入っちゃったの？全部？うわ、ほんとに…入っちゃってる……』
+					PRINTFORMW 「ふふっ、おめでとうございます。ちゃんと私の膣に、全部入りましたね…」
+					PRINTFORMW 「ああぁ…大きい……♪これは期待できそう……さあ天子、動いてみてくださいね…ふふっ」
+					PRINTFORMW 『か、勝手に腰が…動いちゃうんだけど…！だめ…我慢、出来ないよ…！』
+					PRINTFORMW ペニスから駆け上がる快感に魅入られたように、天子が夢中で腰を振り始める…
+					PRINTFORMW 「んっ！…んっ、あんっ、んん…上手です天子、突いてください、もっと、もっと…♪」
+					PRINTFORMW 『あ゛っ…あっ、ああぁ……衣玖…衣玖ぅ…！』
+				;その他の場合
+				ELSE
+					PRINTFORMW 『いよいよ挿入れられるのね…これがしたかったのよ…ふふん♪』
+					PRINTFORMW 天子のペニスは挿入する瞬間を待ちわび、ビクビクと震えながら先走りを垂らしている…
+					PRINTFORMW 肥大した亀頭が膣口にあてがわれ、ぐっと力が込められた…
+					PRINTFORMW 「んっ…！」
+					PRINTFORMW 「なんて…熱さですかぁ…！んあぁあ、天子のが、奥にぃ…！」
+					PRINTFORMW 『んいぃ…♪衣玖のおまんこ、あったかくて…いい、これっ、すごいよぉ…！』
+					PRINTFORMW 感触を味わうように、ゆっくりと天子のペニスが衣玖の膣肉を掻き分け、押し開いていく。
+					PRINTFORMW ペニスが奥へと進むほどに二人の呼吸は激しく乱れ、体をガクガクと震わせている…
+					PRINTFORMW 
+					PRINTFORMW 『入ったぁ…ぜんぶ、入ったよ、衣玖…』
+					PRINTFORMW 「ええ…私の、奥までぇ…んっ！ああっ…入って、ます…」
+					PRINTFORMW 『動くよ……ひっ！いっ…はっ…はあっ…んああ…ああぁっ…！』
+					PRINTFORMW 「はんっ！…んっ、んくっ…落ち着いて、天子…！」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ああぁぁ…♪すごっ、あったかくて…気持ちいい…』
+				PRINTFORMW 『衣玖のあそこ…ご主人様の言ってた通りね…締めつけられてるのに、優しく包まれてるみたい…♪』
+				PRINTFORMW 「私の…私のそこの感想なんて、いいですから…！」
+				PRINTFORMW 「あっ！あうっ…ああなんで…まだ、大きくっ…」
+				PRINTFORMW 『ふふん…まだまだこんなものじゃないわよ…期待してね、衣玖…♪』
+			ENDIF
+			CFLAG:7312 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				;淫乱であるまたはＶ感覚Lv5以上
+				IF TALENT:淫乱 == 1 || ABL:Ｖ感覚 >= 5
+					;乱数分岐:5
+					IF RAND:5 == 0
+						PRINTFORMW 衣玖の下半身を強引にひっくり返し、押さえつけるように天子が覆い被さる。
+						PRINTFORMW 真上を向いた衣玖の肉穴に栓をするように、ペニスが真っ直ぐに上から突き入れられた…
+						PRINTFORMW 「やだっ…天子っ！この格好はちょっと…恥ずかし…いああぁっ！あはあっ！」
+						PRINTFORMW 『うふうぅ…動けないでしょ…天人はやっぱり、上になるものよね…♪』
+						PRINTFORMW 『面白い、これ…♪勢いよく挿入れるとっ、衣玖のお尻が私を跳ね返すの、ふふっ♪』
+						PRINTFORMW 「強いから、ですよっ…！お尻の事は、知らな、あうっ、んやああっ…」
+						PRINTFORMW 天子が勢いよく突き込み、衣玖の柔らかな尻肉が天子の下半身を押し返す…
+						PRINTFORMW 反動でペニスが抜け落ちそうになったところで…また一気に深々と挿入される。
+						PRINTFORMW 『わたしのっ、こんなおっきいのが…出たり入ったり、すごいよおっ♪』
+						PRINTFORMW 「あひ、はひいいぃっ…♪おまんこっ、ぜんぶ…擦られてえっ！」
+						PRINTFORMW 「またっ、また入って、きてえっ…♪衣玖のここにもっと…打ち込んで、くださ、あふあぁぁ…！」
+					;乱数分岐:4
+					ELSEIF RAND:4 == 0
+						PRINTFORMW 「こんなのは…いかがですか？んんっ…しょ、ふうぅ…くあ、あ、ああぁ…♪」
+						PRINTFORMW 衣玖は天子に圧し掛かられながらも、腰を卑猥にくねらせ、膣襞をねっとりと絡みつかせてペニスを責め立てている…
+						PRINTFORMW 『やだ、これぇ…！おちんちん、飲まれてるみたいっ…！』
+						PRINTFORMW 天子は衣玖の蠢く肉穴から逃れようとペニスを引き抜き…それを逃すまいと衣玖のヴァギナがきゅっ、と締めつける。
+						PRINTFORMW ペニスを捉えて離さない快楽の前に、天子の心と体ははあえなく衣玖の温かく、心地良い沼のような膣奥へと繰り返し落ちてゆく…
+						PRINTFORMW 「気に入ってくれたみたいで…んっ♪んんっ、嬉しいですよ、天子っ…♪」
+						PRINTFORMW 『だって、だってぇ…奥の方、よすぎてっ…感覚が、無いみたいで怖いのっ…！』
+						PRINTFORMW 『抜こうとしたら、今度はやわらかいのが一杯絡んできてっ…離して、くれないのよぉ…♪』
+						PRINTFORMW 「最後まで、離しませんから…♪私のおまんこでっ、天子のおちんちん、溶かしてあげますっ…♪」
+					;乱数分岐:3
+					ELSEIF RAND:3 == 0
+						PRINTFORMW 『衣玖って…奥突かれるのも好きみたいだけど、んっ、ここも…好きでしょう？』
+						PRINTFORMW 「んっ！……ああっ！はっ、そこぉ…そこはぁっ！」
+						PRINTFORMW 膣の入口に近い、浅い部分に雁首をぞりぞりと擦り付ける。
+						PRINTFORMW 緩やかな動きにも関わらず、二人の表情は強烈な快感のあまり苦しそうな程だ…
+						PRINTFORMW 『んっんん…これ、くるぅ…♪おちんちんの先っぽがぁ…火傷しちゃいそう…！』
+						PRINTFORMW 「そんな…入口の、とこ…！あんっ、いやぁ…引っかかってぇ…だめぇ…♪」
+						PRINTFORMW 『ふふっ…♪膣口がぱくぱくしてるわよ…どう衣玖、やっぱり奥におちんちん、欲しい？』
+						PRINTFORMW 「奥ぅ…欲しい、です…♪でもぉ…ひんっ！そこもっと…いじめて、ください…ああっ！はぁあ…♪」
+					;乱数分岐:2
+					ELSEIF RAND:2 == 0
+						PRINTFORMW 『あうあぁっ…おまんこっ、だめっ、とろけてっ…おちんちん、とれちゃうからぁ…！』
+						PRINTFORMW 『ねえ衣玖ぅ…！いいよね、ねえ…！もっと、いいって言ってよぉ…！』
+						PRINTFORMW 必死に抽送を続ける天子を衣玖は下から優しい笑みで見上げている…
+						PRINTFORMW 「あっ、んっ…天子の懸命な顔が…可愛くてっ…」
+						PRINTFORMW 「大丈夫ですよ天子…もっと可愛い顔、見せて下さい…それだけでもう、イっちゃいますから…♪」
+						PRINTFORMW 『ばかぁ！ばかっ、ばかにして…この、スケベ天女…！』
+						PRINTFORMW 『…ううっ、もう許さない、このまま何回も出しまくって犯して泣かせてやるんだからぁ！』
+						PRINTFORMW 「ひうっ、ひいぃ…♪その調子ですよ、天子…」
+						PRINTFORMW 「もっと天子の…んああ！あっ…可愛いところ、見せてえっ…ああん！激しっ、いいっ、いくぅぅ…♪」
+					;その他の場合
+					ELSE
+						PRINTFORMW 「ああうっ！はううっ！あっ！ひあっ！天子っ、天子いっ…！」
+						PRINTFORMW 「天子の体っ…すごく、頼もしく、感じますよおっ…しっかり抱かれてますっ…♪」
+						PRINTFORMW 天子は衣玖の体をしっかりと抱き締め、華奢な体全身をしならせて懸命にペニスを肉穴に突き込んでいる…
+						PRINTFORMW 『はっ…ああっ！こうやって…突けばっ』
+						PRINTFORMW 『しっかり奥まで…届くでしょっ、はっ、ふうぅ…んっ、んくうっ…！』
+						PRINTFORMW 「ひいうっ！んんぅ～～…！そんなにっ、私の膣に出したいんですか…ふふっ…ふあぁあ！」
+						PRINTFORMW 射精を意識させる言葉を聞いた途端、天子の動きに力強さが増す。
+						PRINTFORMW 天子は衣玖の豊満な乳房に顔を埋め、しがみつくように夢中で腰を振り始めた……
+						PRINTFORMW 「っくううっ！あうっ、ああぁうっ…いいですよっ…私の一番奥っ、一番深いところに…」
+						PRINTFORMW 「天子のをいっぱいいっぱい出して、私の体をっ…天子のものに、してくださいっ…♪」
+					ENDIF
+				;Ｖ感覚Lv3以上
+				ELSEIF ABL:Ｖ感覚 >= 3
+					;乱数分岐:2
+					IF RAND:2 == 0
+						PRINTFORMW 「ああ、ふあっ、あっあっ…いいですよ天子…その調子で、突いてっ…」
+						PRINTFORMW 『ちゃんと、出来てる…？良かった、ふふ…もっと二人で、乱れようじゃない、ね…』
+						PRINTFORMW 「ひゃうっ…！天子のが、私の奥っ…ふふっ、もっと私の膣、感じて下さい…♪」
+					;その他の場合
+					ELSE
+						PRINTFORMW 「ああうっ、んんっ、はあぅ…！どうしてこんな、上手いんですかっ、天子ぃ…！」
+						PRINTFORMW 『だてに…はっ、んっ…ご主人様に、仕込まれてないわよ…♪』
+						PRINTFORMW 「そんなっ、卑怯ですぅ…！私の、弱いところ、ばかりっ…んああっ！いいっ、そこ、いいですよぉ…」
+					ENDIF
+				;その他の場合
+				ELSE
+					;乱数分岐:2
+					IF RAND:2 == 0
+						PRINTFORMW 『はうっ、ん…痛くない？もう少し、ゆっくりの方がいいのかしら…』
+						PRINTFORMW 「だ、大丈夫ですから…ふっ、ん…そのまま続けて、いいですよ…」
+						PRINTFORMW 『私にも気を遣わせなさいよ、ね？』
+						PRINTFORMW 『私だって…もっと激しくしてみたいけど、衣玖に泣かれでもしたら傷つくし』
+						PRINTFORMW 「ふふっ、ありがとうございます…でも、ちゃんと良くなって、きてますからね…」
+					;その他の場合
+					ELSE
+						PRINTFORMW 「んっ、はふっ…大丈夫ですか？天子…なんだか、苦しそうに見えます…あっ、んっ」
+						PRINTFORMW 『私も、まだ慣れてないから…おちんちん、ぞくぞくしてっ…頭が、変になりそうよ…』
+					ENDIF
+				ENDIF
+			;その他の場合
+			ELSE
+				;Ｖ感覚Lv3以上
+				IF ABL:Ｖ感覚 >= 3
+					PRINTFORMW 『あはぁ…♪そうよ、そう…私に合わせて腰を振って、衣玖…』
+					PRINTFORMW 『上手じゃない…やっぱり衣玖はいやらしい天女よ…んうっ、いいわ…♪』
+					PRINTFORMW 「こんな…勝手に、ひあぁ…だめっ、感じて、しまって…」
+				;その他の場合
+				ELSE
+					PRINTFORMW 『なに、よ…気持ちよくないの？衣玖…』
+					PRINTFORMW 『こんなに私のをきゅうきゅう締めつけてるくせに…』
+					PRINTFORMW 「ひんっ…ひっ、もう、これくらいでやめましょう…天子…！」
+				ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;妊娠である
+		IF TALENT:妊娠 == 1
+			;淫乱である
+			IF TALENT:淫乱 == 1 && RAND:3 == 0
+				PRINTFORMW 「んあああっ！こんな…お腹に、赤ちゃんいるのにっ…」
+				PRINTFORMW 「生おちんちんがっ、とっても、気持ちいいなんてえ…♪」
+				PRINTFORMW 大きなお腹を抱えた衣玖をこのままセックスの快感に溺れさせたいと、あなたの中で欲望が膨らんでいく…
+				PRINTFORMW 「ゆっくり、して下さ…ひああっ！？だめっ、そんな激しくしちゃだめですっ、」
+				PRINTFORMW 「あっ！ああっ！深いっ！子宮っ、だめっ、だめなのにいっ…、おまんこがっ、気持ちいいですっ、もうだめっ…」
+			ELSEIF TALENT:淫乱 == 1 && RAND:2 == 0
+				PRINTFORMW 「ああぁ、あっ、あああ～～～…！」
+				PRINTFORMW 「こんな、無理しちゃいけないって、わかってるのに…」
+				PRINTFORMW 「おまんこ良過ぎてっ、だらしない顔になっちゃうの、抑えられないんですぅ…」
+				PRINTFORMW 「もっと見下ろして…この淫乱な母親のおまんこに、お仕置きして、下さい…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「あはあっ、ううんっ…大丈夫です…動いても、いいですよ？」
+				PRINTFORMW あなたは衣玖の負担にならないよう、ゆっくりと腰を使う…
+				PRINTFORMW 「%CALLNAME:PLAYER%も…気持ちいいですか？もうちょっと強くしても、大丈夫ですよ…」
+				PRINTFORMW 「いえ、わたしも…とっても気持ちいいです…♪あなたと繋がっているだけで…こんなに嬉しいだなんて…」
+			ENDIF
+		;その他の場合
+		ELSE
+			;淫乱であるまたはＶ感覚Lv5以上
+			IF TALENT:淫乱 || ABL:Ｖ感覚 >= 5
+				;乱数分岐:4
+				IF RAND:4 == 0
+					PRINTFORMW あなたは挿入すると同時に、激しく衣玖に腰を打ち付けた…
+					PRINTFORMW 「ふああっ！？やっ、すごいっ、激しっ、いいっ、いいですうっ♪」
+					PRINTFORMW 「乱暴はっ、んあっ、だめですよっ♪あっ、あっ…はああっ！」
+					PRINTFORMW 激しく突かれながらも、それを優しく受け入れる衣玖に対してあなたはこの上ない愛情を感じた…
+					PRINTFORMW 「ふあああっ！私っ、あなたのものにっ、されちゃってますうっ！」
+					PRINTFORMW 「このままあっ、思いっきり出してっ、精液いっぱい出してっ、衣玖をっ、妊娠させてえっ！」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「ふふっ…♪こうして、繋がってるだけでも、とっても気持ちいいですね…」
+					PRINTFORMW あなたは衣玖に覆い被り、しっかりと抱きしめあっている…
+					PRINTFORMW 「%CALLNAME:PLAYER%の鼓動が…伝わってきます…その、おちんちんでも…♪」
+					PRINTFORMW 「このまま、気持ち良くなりましょう？私が、シてあげますから…ふふっ♪」
+					PRINTFORMW 衣玖の膣内はいやらしくうねり、吸いつき、容赦なくあなたのペニスを責め立てる…
+					PRINTFORMW 「ビクビクしてきましたね…いいですよ…このまま、衣玖の膣に精液、お漏らししちゃって下さい…♪」
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「んはあっ…%CALLNAME:PLAYER%のおちんちん、膣でどんどん大きくなってませんか…♪」
+					PRINTFORMW 愛する人とのセックスという興奮と、衣玖の膣内の絶妙な締め付けがあなたのペニスを限界まで勃起させている…
+					PRINTFORMW 「もう、イキそうなんですね…♪わ、私も…もうだめですっ…」
+					PRINTFORMW 「一緒に…イキましょう？衣玖のおまんこ、滅茶苦茶に突いて、精液、いっぱい出してくださいっ…♪」
+					PRINTFORMW 衣玖は蕩けきった表情で、今にも絶頂を迎えそうなのを必死で耐えている…
+					PRINTFORMW あなたは衣玖の腰を思いっきり引き寄せ、渾身のピストンを叩きつけた…
+				;その他の場合
+				ELSE
+					PRINTFORMW 「はああぁっ…気持ちいいっ…すごいっ、感じるっ…」
+					PRINTFORMW 挿入しただけで衣玖は絶頂を迎え、体全体がプルプルと痙攣している…
+					PRINTFORMW 「動いちゃ…だめですよ？今動かれたら、私っ、もうっ…ああっ！？ああぁっ！」
+					PRINTFORMW 「ひいああっ！イってますうっ、イってますからっ、突かないでっ、もうだめえっ…」
+					PRINTFORMW 衣玖は声も上げられないほどに激しく悶え、よがり続けている…
+					PRINTFORMW あなたは衣玖をさらなる絶頂へと導くべく、激しく抽送を繰り返した…
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 「んああっ…来てますっ、衣玖のっ、奥まで…」
+					PRINTFORMW 「あなたに抱かれる度に、どんどん、気持ち良くなってるんです…♪」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「はあっ、ああっ、あーーっ！」
+					PRINTFORMW 「ああ…嬉しい…%CALLNAME:PLAYER%のおちんちんが入ってくると、膣がぞわぞわっ、て…♪」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ああっ、入ってきましたっ…」
+				PRINTFORMW 衣玖の膣内は荒く収縮を繰り返し、まだペニスを受け入れるだけで精一杯のようだ…
+				PRINTFORMW 「まだ、慣れてなくて…どうか、優しく…お願いしますね？」
+				PRINTFORMW 苦しそうに懇願する衣玖を気遣い、あなたはゆっくりと腰を動かした…
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;Ｖ感覚Lv4以上
+		IF ABL:Ｖ感覚 >= 4
+			PRINTFORMW 「はあっ！んんっ！ひああっ…やめてっ、やめてえっ…んあああっ！」
+			PRINTFORMW 衣玖は眼を背けながらも、明らかに感じている様子だ…
+		;Ｖ感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「んあっ！あっ、くうっ…」
+			PRINTFORMW わずかに喘ぎ声を上げるが、その度に衣玖は口を結んで快感に逆らっているようだ…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「んっ、くっ、んっ…」
+			PRINTFORMW 衣玖は感情の感じられない顔のまま、あなたに抱かれている…
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_21
+;初回実行時
+IF TFLAG:95 == 1
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;処女
+		IF TALENT:処女 == 1
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 「う、後ろからですか…？天子の顔が見えないのは、なんだか、その…」
+				PRINTFORMW 『ん～…考えたんだけど、ご主人様にも衣玖の顔、ちゃんと見せた方がいいのかなって、ね？』
+				PRINTFORMW 『女にされちゃう瞬間、ご主人様にじっくり見てもらいなさい？それじゃあ、いくわよ…』
+				PRINTFORMW 「そ、そんな！あの私、どっちに集中したら……あんっ！んっ、天子…ゆっくりぃ…！」
+				PRINTFORMW 衣玖の正面に回ったあなたには結合部がどうなっているかははっきりと窺えない…
+				PRINTFORMW しかし天子が腰を押し進めていくと共に、衣玖のあなたの手を握る力が強まっていく。
+				PRINTFORMW 『もうちょっと…だからあっ…！んんっ、んああっ！』
+				PRINTFORMW 「やっ！ぐっうっ………―――っ！！」
+				PRINTFORMW あなたの肌に爪が食い込むほどに強く手を握られ、衣玖が口を結んだまま悲鳴を上げる…
+				PRINTFORMW しかしあなたはその手を振り払おうとはせず、しっかりと握ったまま、衣玖が落ち着くまでそうしていた…
+				PRINTFORML 
+				PRINTFORMW 『はあ、はあ…ほら、衣玖…よく頑張ったねって、ご主人様も言ってるわよ？』
+				PRINTFORMW 天子が優しく衣玖の頭を撫でる。あなたもそれに続いて、爪の跡がはっきりと残る手で衣玖の頬を撫でた…
+				PRINTFORMW 「やっ、そんな…二人になんて、恥ずかしいですから…！」
+				PRINTFORMW 「うう、こんな初体験…絶対に忘れられませんよ、もう…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ねえ衣玖…ちょっと、後ろ向いてもらっていい？』
+				PRINTFORMW 不審がりながらも、指示に従って衣玖は天子に背中を向ける。
+				PRINTFORMW 『あー……ごめん、もう私……我慢出来ない、かもっ…！』
+				PRINTFORMW 「んっ…！ぐっ、うう…天子っ、何をっ…！？」
+				PRINTFORMW 首筋にしがみつくように、強引に天子が衣玖を後ろから組み伏せる。
+				PRINTFORMW 腰にぐりぐりと押し付けられる異物の感覚に、衣玖は自分が何をされようとしているのか察してしまう…
+				PRINTFORMW 「ま、待ってください！天子…どうか、どうか待って、落ち着いてっ！」
+				PRINTFORMW 『―――っ、いいからっ……おとなしく、してっ…お願いだから！』
+				PRINTFORMW 互いの顔を見ずにいられるようにしたのは、天子の衣玖へのせめてもの気遣いなのだろうか。
+				PRINTFORMW 衣玖の抵抗が諦めたように弱まった瞬間、天子はそのタイミングを逃さず一気に後ろから挿入した…
+			ENDIF
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 『後ろからするのって…なんだか支配してる感じがしちゃうんだけど』
+				PRINTFORMW 『……調子に乗ってあんまり激しくしちゃったらごめんね、えへへ』
+				PRINTFORMW 「んっ…顔が見えないというのは、結構不安なものです」
+				PRINTFORMW 「天子の温かさを…ちゃんと感じさせてくださいね」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『この格好…まるで獣みたいね。天人である私が言うのもなんだけど』
+				PRINTFORMW 『覆い被さって乱暴に腰を打ち付けて…ふふん、興奮してきちゃった…♪覚悟してね、衣玖』
+				PRINTFORMW 「やだっ…天子がそんな言葉…聞かせないで、下さい…！」
+			ENDIF
+		ENDIF
+		CFLAG:7312 = 1
+	;処女
+	ELSEIF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ちょっと、こ、この格好は普通じゃないですよね…？」
+			PRINTFORMW 「怖いですけど…あなたがそうしたいのであれば…ただ、その…優しく抱いて下さい…」
+			PRINTFORMW あなたは衣玖の秘裂にあてがったペニスを、ゆっくりと押し進めた…
+			PRINTFORMW 「あっ！ぐっ！%CALLNAME:PLAYER%のがっ、来てっ…！んああっ、んうう～っ！」
+			PRINTFORMW 「はあっ、ふうっ、ふっ…全部、入りました、か…？」
+			PRINTFORMW 「ありがとう、ございます…これで私は、%CALLNAME:PLAYER%のものですからね…？」
+			PRINTFORMW 痛みをこらえながら微笑みを向ける衣玖に、あなたはそっと口づけた…
+			CFLAG:7030 = 1
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「せめて普通の格好で、抱いてほしいのに…うぐうっ！ふっ、くうううっ…」
+			PRINTFORMW 「そんなに、強く掴まないでっ…ううう…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ひっ、怖いっ…やめて下さいっ…押し付けないでえっ…」
+			PRINTFORMW 後ろから覆い被さっているため、衣玖からは自分の秘部がどうなっているか確かめられない…
+			PRINTFORMW 「やだ、やだあっ、怖いっ、痛いっ、誰か助けてっ…」
+			PRINTFORMW 「うぐっ…痛い痛い痛い！ああぁ！うああぁあっ……うっ、えぐっ、えぐっ、うううっ…」
+			PRINTFORMW 普段の落ち着いた物腰は見る影もなく、ただひたすら恐怖と苦痛に震える衣玖の姿がそこにあった…
+		ENDIF
+	;その他の場合
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふああっ…今度は、後ろからですか…？」
+			PRINTFORMW 「ふふっ…ちょっと怖いですけど、どうぞ、動いて下さい…」
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ううっ、ああ…後ろからなんて…はうっ！ふあっ！？」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「やめてっ、うっ…くうっ…」
+		ENDIF
+	ENDIF
+;２回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;いくてん初えっち
+		IF CFLAG:7312 == 0
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;淫乱である
+				IF TALENT:淫乱 == 1
+					PRINTFORMW 「おや…？後ろから、ですか」
+					PRINTFORMW 「せっかくの初体験だというのに、私の顔なんて見たくないのですね……およよ」
+					PRINTFORMW 『えっ？えっ、いやその……つい、ね？』
+					PRINTFORMW 『後ろからするの、気持ちいいんじゃないかなって思ってたんだけど……ちょっと、恥ずかしいんだから言わせないでよ』
+					PRINTFORMW 『……その、やっぱり前からの方がいい？』
+					PRINTFORMW 「ふふ、天子のしたいようにして下さい…天子の今までしてみたかったこと、やりたかったこと…」
+					PRINTFORMW 「人前では言えないようなことも全部、今は私が受け入れてあげますから…♪」
+					PRINTFORML 四つん這いになっている衣玖の腰がくい、と持ち上がり、天子の方へと押し付けられる。
+					PRINTFORMW 挑発的に腰を振り、柔らかな尻肉に当たるペニスの感触を楽しんでいるかのようだ…
+					PRINTFORML 
+					PRINTFORMW 『わ、わかったわよ、もう…い、挿入れればいいんでしょ…！』
+					PRINTFORMW 衣玖の挑発に負けじと、天子が強引に挿入しようとする…
+					PRINTFORML すると解れた膣口は多少の位置のずれなど関係無しに亀頭の先端を包み込み、
+					PRINTFORMW 熱い膣肉はペニスを膣奥へと導くように時に優しく、時に吸いつくように締めつけてくる…
+					PRINTFORMW 『これ…すごいっ、私のがっ…飲まれてく、みたいっ…！』
+					PRINTFORMW 「そう、ですよっ…！きてます、私の大事な所っ…どうです…あったかいですか…ふふっ♪」
+					PRINTFORMW 『うふうぅ…！もっと、このまま感じてたいのにっ…動かないとっ、変になりそう…』
+					PRINTFORML ペニスを根元までみっちりと膣内に飲み込ませたまま、天子の腰がカクカクと震え始める。
+					PRINTFORMW 抽送と言うには拙い動きでも、敏感なヴァギナはそれに反応して多大な快楽を衣玖へともたらす…
+					PRINTFORMW 「ああぁっ…んっ、んんっ…その調子です天子、焦らないで…大丈夫ですっ…気持ち、いいですよ…」
+					PRINTFORMW 「そのまま動きを大きく……ひあっ！…ああっ、はぁぁ…」
+					PRINTFORMW 「ふふっ……天子の、おっきくて…あそこが、引き出されちゃい、そうです…んんっ♪」
+				;その他の場合
+				ELSE
+					PRINTFORMW 『いっつもご主人様に後ろからしてもらってるんでしょ？ふふん』
+					PRINTFORMW 『今度は私が衣玖を目茶苦茶にしてあげる……んっ、もう少し…腰上げて…』
+					PRINTFORMW 小柄な天子との対比のせいか、異様な長さにも見える天子のペニス。
+					PRINTFORMW それが膣口にぴたりとあてがわれ、ゆっくりと衣玖の肉穴を掻き分け押し開いていった…
+					PRINTFORMW 「あおぉっ…！おっ、まだっ……まだ、入ってくるのっ…？」
+					PRINTFORMW 「待って、天子っ…奥にっ、大事な所まで、きちゃ……っああぁ！うあうっ、うっ……あたっ、てるぅ…！」
+					PRINTFORMW 『ぁぁああ…！奥まで届いたのね……これが女の子の、衣玖のあそこ……』
+					PRINTFORMW 『すごい…私のおちんちん、衣玖のここに全部、ぴったり入ってる……♪』
+					PRINTFORMW 『意外と相性…いいんじゃない？私達……あはっ、いっぱい擦ってあげる…ううっ！うっ、きもちいぃ…♪』
+					PRINTFORMW 「ああ！あっ、ふあぁ……あそこが、引き出され、ちゃいそう…！」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 『この格好…まるで獣みたいね。天人である私が言うのもなんだけど』
+				PRINTFORMW 『覆い被さって乱暴に腰を打ち付けて…ふふん、興奮してきちゃった…♪覚悟してね、衣玖』
+				PRINTFORMW 「やだっ…天子がそんな言葉…聞かせないで、下さい…！」
+			ENDIF
+			CFLAG:7312 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;淫乱であるまたはＶ感覚Lv5以上
+				IF TALENT:淫乱 == 1 || ABL:Ｖ感覚 >= 5
+					;乱数分岐:5
+					IF RAND:5 == 0
+						PRINTFORMW 「こうして…天子に好きにされちゃうのは、結構好きなのかもしれませんね…」
+						PRINTFORMW 『へえ…衣玖っておとなしい顔してそんな趣味なの？ふふん』
+						PRINTFORMW 「相手は選びますよ？ただ、天子やご主人様にだったら…めちゃめちゃにされても、いいかな、って…♪」
+						PRINTFORMW 
+						PRINTFORMW ―――天子の強烈な一突きが衣玖へと突き刺さる。
+						PRINTFORMW 敏感な膣奥を不意にペニスに叩かれ、快感と衝撃のあまり衣玖の腰が落ちる…
+						PRINTFORMW 「ひっ…ひうっ、天子っ…今のは、びっくりして…」
+						PRINTFORMW 『言ったわね～？めちゃめちゃに、って…確かに』
+						PRINTFORMW 「やっいやっ……それは…あぐっ！うっ！うあううぅ！…まってっ…はうっ！」
+						PRINTFORMW 『期待にっ…応えてあげるっ、容赦しないから…♪』
+						PRINTFORMW 衣玖の腰を無理矢理引き上げ突きやすい状態にし、さらに激しく腰を打ち付ける…
+						PRINTFORMW 反り返った衣玖の体に何度も何度も天子のペニスが滑り込み、引き抜かれ、嬌声が上がる…
+						PRINTFORMW 「んぐっ♪ふうぅう！やだ、これっ…逃げられ、ませんよぉ…！」
+						PRINTFORMW 「気持ちいいっ、いいですっ、いいああぁあ…！いくっ、いいですっ、もっとしてっ…♪」
+					;乱数分岐:4
+					ELSEIF RAND:4 == 0
+						PRINTFORMW 「やだっ…これは、まるで……あっあっ！ひあぁ…！」
+						PRINTFORMW 天子が衣玖の両手を取り、衣玖の背中を反らせるように背後から挿入する…
+						PRINTFORMW 「もう…こんな格好…どこまで挿入れたいんですか…？ふふっ」
+						PRINTFORMW 「私の一番奥、好きなんですね…？わかりますよ…おちんちんがもう、先へ奥へ行きたいって言ってますもの…♪」
+						PRINTFORMW 「その奥には…何があるか、わかってますよね…？」
+						PRINTFORMW 「んあっ！んっ…そうです、私の、大切なとこ…今なら天子のがもう、届きそうですよ…」
+						PRINTFORMW 「んくううぅぅ…♪そのまま、突いてっ…私の膣で好きなだけ気持ちよくなってくださいっ…♪」
+					;乱数分岐:3
+					ELSEIF RAND:3 == 0
+						PRINTFORMW 衣玖の豊満な体へと、立て続けに力強いピストンが打ち込まれる。
+						PRINTFORMW 乳房はリズムに合わせて大きく揺れ、尻肉は波を打ってピストンの強烈さを示している…
+						PRINTFORMW 「ひああぁ！やっ、ああっ、はああぁ……っくうっ！」
+						PRINTFORMW 「はげしっ……いいっ、いあっあっ！ほんとにもう、だめですよおっ…！」
+						PRINTFORMW 『もっとっ…もっとさせてっ、衣玖ぅ…！』
+						PRINTFORMW 『今とっても…いいとこなのっ、だからもう少し…頑張ってっ…♪』
+						PRINTFORMW 「そんなっ……んぐっうっ、まだ、続くなんてえっ……いあっ！」
+						PRINTFORMW 「私もっ、いいのがずっと続いてるんですっ…もうだめ、いくっ、だめええぇ……♪」
+					;乱数分岐:2
+					ELSEIF RAND:2 == 0
+						PRINTFORMW 「あっ…！あっ、天子…」
+						PRINTFORMW 「ふふっ…天子の髪の毛、私にかかって…なんだか触られてるみたいです」
+						PRINTFORMW 覆い被さって腰を振るうち、天子の長髪が衣玖の体へと流れ落ちている…
+						PRINTFORMW 『か、髪って…仕方ないじゃない、別に…』
+						PRINTFORMW 「さらさらでとっても気持ちいいんですよ…？ほら、背中やおっぱいに触れてるとこ…」
+						PRINTFORMW 「指とはまた違った感触で…ぞくぞくしちゃいます、ふふっ」
+					;その他の場合
+					ELSE
+						PRINTFORMW 『えへへ…衣玖の背中…とっても、綺麗よ…』
+						PRINTFORMW 『私が突く度に…んっ、こうやって縮こまったり、仰け反ったり…！』
+						PRINTFORMW 天子の責めに反応して衣玖の上体はしなやかにくねり、うねってその肢体の美しさを魅せつける…
+						PRINTFORMW 「んあっ！あはあぁぁ…私の、膣がっ…掻き回されてえっ…！」
+						PRINTFORMW 「もっと擦って…感じさせて、下さいっ…私を、天子の好きなようにっ、踊らせてください…んあっやっ、体がっ、もう…♪」
+					ENDIF
+				;Ｖ感覚Lv3以上
+				ELSEIF ABL:Ｖ感覚 >= 3
+					;乱数分岐:2
+					IF RAND:2 == 0
+						PRINTFORMW 「はっ…！はあっ…ああ！あっ」
+						PRINTFORMW 「…夢中でしてるのがっ…わかりますよっ、天子…♪」
+						PRINTFORMW 天子は答える余裕もないのか、息を荒くして腰を振り続けている…
+					;その他の場合
+					ELSE
+						PRINTFORMW 『ここに、押し付けるようにしてっ…！んくっ、ふああぁぁ…』
+						PRINTFORMW 『衣玖が悦んでるのが…わかるわよ、ふふ…♪背中がびくびくしてるもの…』
+						PRINTFORMW 「そこはっ…！あんっ！やっ……こんな声、恥ずかしっ…」
+					ENDIF
+				;その他の場合
+				ELSE
+					;乱数分岐:2
+					IF RAND:2 == 0
+						PRINTFORMW 「んいっ、いっ…激しく、したいのはわかりますけど…」
+						PRINTFORMW 「どうかもう少し、慣れるまで…我慢して下さいね、天子…」
+						PRINTFORMW 『わ、わかったわよ…でもほんと、きもちいいのよぉ…』
+					;その他の場合
+					ELSE
+						PRINTFORMW 『衣玖っ……どう、大丈夫…？痛く、ない…？』
+						PRINTFORMW 「もう少し、そのくらいの強さで…んあっ！あっ…続けて、ください…」
+					ENDIF
+				ENDIF
+			;その他の場合
+			ELSE
+				;Ｖ感覚Lv3以上
+				IF ABL:Ｖ感覚 >= 3
+					PRINTFORMW 『そろそろ…余裕が無くなってきたんじゃないかしらっ、それ、それっ…♪』
+					PRINTFORMW 『声我慢したって…衣玖が感じてることくらい、ここの具合で分かっちゃうんだからあっ…』
+					PRINTFORMW 「うくっ、んああぁ……あうっ、あっ！……やっ、やめっ…激しい、ですからっ…！」
+				;その他の場合
+				ELSE
+					PRINTFORMW 『はっ、はぁ…衣玖が一体どんな顔してされてるのか…気になっちゃうわね』
+					PRINTFORMW 「んんっ、んぁ、うぅ……こんなのっ、おかしいですっ、ああぁ…！」
+				ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;妊娠である
+		IF TALENT:妊娠
+			PRINTFORMW 「ちょっと…お腹が、重いですね…」
+			PRINTFORMW 「ゆっくり、して下さいね…？」
+		;その他の場合
+		ELSE
+			;淫乱であるまたはＶ感覚Lv5以上
+			IF TALENT:淫乱 == 1 || ABL:Ｖ感覚 >= 5
+				;乱数分岐:4
+				IF RAND:4 == 0
+					PRINTFORMW 「奥までっ、届いてます…♪あっ、あんっ、深いですよっ…♪」
+					PRINTFORMW 「ぱんぱんって、音がいやらしいですっ、わざとでしょう…♪はあっ、ああんっ」
+					PRINTFORMW 衣玖の張りのあるお尻に腰を叩きつける度に、小気味の良い音が出ている…
+					PRINTFORMW 「そんなっ、掴まないで下さいっ、恥ずかしいっ、ふああっ♪」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「はっ、ふああっ！なんだか、背中から、頭まで犯されてるみたいで…♪」
+					PRINTFORMW 「ひゃっ！？そんな、撫でまわさないでっ、それだけでっ、はあっ、気持ちいい…♪」
+					PRINTFORMW 突きながら衣玖の首筋、背中を撫で回すと、衣玖はビクビクと体を震わせて反応した…
+					PRINTFORMW 「ああっ！んああっ！もう、だめっ、ああっ！…何が何だか、もうっ、気持ち良すぎてぇっ…！」
+					PRINTFORMW 息も絶え絶えに喘いでいる衣玖を、あなたはさらに力強く犯し続けた…
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「あはあああっ！はあっ、激しっ、すごいっ、ふあああっ！」
+					PRINTFORMW 「ひゃあぁっ、壊れちゃうっ、衣玖のおまんこっ、壊れちゃいますぅ！」
+					PRINTFORMW あなたは衣玖の両手を掴み、思いっきり腰を叩きつけた…
+					PRINTFORMW 「気持ちいいっ、気持ちいいっ♪%CALLNAME:PLAYER%のがっ、奥に刺さってますっ♪」
+					PRINTFORMW 「一緒にっ、一緒にイキましょうっ♪はああっ！もっと、衣玖に、衣玖に下さいいっ♪」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「ふあっ、はあっ、あっあっ…そんな、奥ばっかり…♪」
+					PRINTFORMW あなたは衣玖に覆い被さり、膣奥で小刻みにペニスを動かした…
+					PRINTFORMW 「ああっ…ああっ…%CALLNAME:PLAYER%のがっ、奥で膨らんでます…♪これじゃあ、逃げられません…♪」
+					PRINTFORMW 「このまま衣玖の膣奥に、射精、するんですか…？女性を力でねじ伏せて、思いっきり、種付け膣出し、しちゃうんですね…？」
+					PRINTFORMW 「いいですよ…あなたの欲望を、私が、受け止めてあげますから…♪さあ、いっぱい、出してください…♪」
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 「んはあっ！はあっ！奥まで、ずるんっ、って……」
+					PRINTFORMW 「このまま…もっと、気持ち良く、して下さい…♪」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「はぅっ、あっ！はあっ！いいっ、いいですっ…」
+					PRINTFORMW 「後ろからされるもっ…んあっ、好きですっ、ああっ！」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ああっ…%CALLNAME:PLAYER%のが、奥までっ…！」
+				PRINTFORMW 「そのまま…ゆっくり…はい、気持ちいい、です…」
+				PRINTFORMW 衣玖にペニスを馴染ませるように、あなたはゆっくりと腰を動かした…
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;Ｖ感覚Lv4以上
+		IF ABL:Ｖ感覚 >= 4
+			PRINTFORMW 「んああっ！いやっ、はあっ！やめてぇ…」
+			PRINTFORMW 衣玖はペニスを打ち込まれる度、意思に反して激しく喘ぎ声を上げている…
+		;Ｖ感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「はうっ、ふううっ、んんっ！」
+			PRINTFORMW 衣玖は下を向いたままだが、確かに快楽を感じているようだ…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「痛っ！くううっ…乱暴に、しないで下さい…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;対面座位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_22
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORMW 「ふあっ…は、入りました…はい…そ、それで、ど、どうしましょう…？」
+		PRINTFORMW 妙に衣玖の仕草がぎこちないのを感じて、あなたはどうかしたのかと尋ねた…
+		PRINTFORMW 「そ、その…この格好だと、なんだか…」
+		PRINTFORMW 「えっち、しながらだと、見つめ合うのが、なんだか恥ずかしくて…はわっ！？」
+		PRINTFORMW あなたは衣玖をしっかりと抱き寄せ、互いに頭を肩に乗せるようにして抱き合った…
+		PRINTFORMW 「ふふっ…すいません、わがまま言ってしまって…でも、この方があなたを感じられて、嬉しいです…♪」
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「今さら…こんなのやめて下さい…」
+		PRINTFORMW 「私はあなたに従ってるだけなんですから…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「っぐ、うう…こんな真似…恋人にでもなったつもりですか…？」
+		PRINTFORMW 衣玖は間近からあなたを睨みつけている…
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;妊娠である
+		IF TALENT:妊娠 == 1
+			PRINTFORMW 「ふあっ、ひあっ、子宮までっ、赤ちゃんの部屋までっ、届いてますよ…♪」
+			PRINTFORMW すっかり大きくなった衣玖のお腹を気遣いながら、ゆっくりとペニスを奥まで挿し込み、刺激する…
+			PRINTFORMW 「やだっ、もう…子宮口そんないじめないで下さい…♪んあっ、ごりごりっ、してます…♪」
+			PRINTFORMW 「%CALLNAME:PLAYER%のも、膣でびくびくして、とっても気持ち良さそう…」
+		;その他の場合
+		ELSE
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				;乱数分岐:5
+				IF RAND:5 == 0
+					PRINTFORMW 「ああああ…すごい、気持ちいい…あ、あら…？」
+					PRINTFORMW 「あっ、んんっ、あ…あの…すいません…なんだか、腰が抜けてしまって…」
+					PRINTFORMW 衣玖は恥ずかしそうにそう言い、なんとか体勢を立て直そうとするが、力が入らないようだ…
+					PRINTFORMW あなたは倒れかかってくる衣玖をしっかり抱きとめ、再び動き始めた…
+					PRINTFORMW 「ああっ、あああ…こんなに、しっかり抱きしめてもらって…ふふっ、ごめんなさい、でも、本当に…幸せです…♪」
+				;乱数分岐:4
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「はむっ…んぅ、ちゅっ、んんっ、ふむうっ、うううん…♪」
+					PRINTFORMW キスをしながらペニスを衣玖の秘裂にあてがい、ゆっくりと挿入した…
+					PRINTFORMW 「ふうっ、うむっ、くちゅっ、はあんっ、ふああ…♪」
+					PRINTFORMW 「あそこも、口も全部あなたと繋がってて…溶けてしまいそうです…」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「はぐっ、んあっ！ああんっ！もっと、奥までっ、叩きつけてえっ！」
+					PRINTFORMW 「来てるうっ！奥までっ、%CALLNAME:PLAYER%のがあっ！イクうっ、イッちゃうっ♪」
+					PRINTFORMW 抱き合いながらペニスを衣玖の奥まで突き入れると、衣玖は仰け反って悶えた…
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「ひあっ！…%CALLNAME:PLAYER%のおちんちんが…一番奥に触ってます…♪」
+					PRINTFORMW 「このまま、しっかり繋がったまま、衣玖の膣に、出してくださいね…♪」
+					PRINTFORMW あなたは衣玖をしっかりと抱きしめ、射精に向けて腰を突き動かした…
+				;その他の場合
+				ELSE
+					PRINTFORMW 「それじゃあ…挿れますね…はあっ、はあああ…♪」
+					PRINTFORMW ゆっくりと衣玖が腰を沈めると、あなたの耳元で衣玖がの喘ぎ声が聞こえてくる…
+					PRINTFORMW 「ちゅっ、んちゅっ、ふあ…このまま、ずっと繋がっていたいです…」
+					PRINTFORMW 「こうして抱き合っているのが、衣玖は、一番幸せなんです…♪」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ふふっ…とっても、嬉しいです…こうして、%CALLNAME:PLAYER%と繋がっていられることが…♪」
+				PRINTFORMW ゆるやかに腰を動かしながら、あなたは衣玖と口づけを交わした…
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW 「こんな、こんなの…やめてっ、ううっ…」
+			PRINTFORMW 「まるで恋人みたいだなんて、勘違いしそうになるんです…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「やだっ、ううっ、離して…」
+			PRINTFORMW 衣玖はあなたと密着するのを嫌がっている…
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;背面座位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_23
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORMW 「そんなに強く掴まなくても、逃げませんから…♪はあっ、はあぁぁ…」
+		PRINTFORMW 「この格好、奥まで響いて…やっ、胸もそんなにっ、しちゃだめですっ」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「後ろ向きになって、ここに座れ、ですか…」
+		PRINTFORMW 衣玖はあなたの勃起したペニスを一瞥して、すぐに目をそらした…
+		PRINTFORMW 「痛いです…そんなに掴まないでっ…！」
+		PRINTFORMW 「入って、くっ、ふうぅ…」
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;妊娠である
+		IF TALENT:妊娠 == 1
+			PRINTFORMW 「はっ、はあっ、これなら、お腹もあまり気を遣わなくて大丈夫っ、ですねっ」
+			PRINTFORMW あなたは腰を使いながら、そっと衣玖のお腹を撫でてやった…
+			PRINTFORMW 「あん…♪お腹の赤ちゃんもっ、嬉しいって、言ってますよ…」
+			PRINTFORMW 「愛してます、%CALLNAME:PLAYER%…♪」
+		;その他の場合
+		ELSE
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				;乱数分岐:5
+				IF RAND:5 == 0
+					PRINTFORMW 「んっ！乳首がっ、こりこりって…ふあっ、クリもっ、気持ちいい…♪」
+					PRINTFORMW 「もう…私の事を気持ち良くし下さるのは嬉しいですけど…こっちの方に集中しても、いいんですよ…♪」
+					PRINTFORMW 衣玖はあなたにもたれかかると、あなたのペニスの根元をぐっと掴んだ…
+					PRINTFORMW 「ひゃっ！？…ふふっ、ごめんなさい、驚かせてしまって…」
+					PRINTFORMW 「ただ、せっかく私を好きにできる格好なんですから…もっと、私のここ、いじめてほしいんです…」
+					PRINTFORMW そう言って衣玖はぐりぐりと腰をあなたに押し付けてきた…あなたのペニスもそれに反応する。
+					PRINTFORMW 「あっ…興奮してきてますね…♪ふふっ、ちょっと怖いけど、このまま、衣玖を思いっきり、犯してください…♪」
+				;乱数分岐:4
+				ELSEIF RAND:4 == 0
+					PRINTFORMW あなたは衣玖の体を後ろからがっちりと抱きかかえた…
+					PRINTFORMW 「そんな…私を動けなくして、どうしたいんですか…？」
+					PRINTFORMW 「ふふっ…このまま、滅茶苦茶に突きまくって、何度でも膣出しして、孕ませたい」
+					PRINTFORMW 「そんな空気を感じましたが、どうでしょう…♪」
+					PRINTFORMW 「ああ%CALLNAME:PLAYER%のおちんちん、今にも破裂しそうなほど膨らんで…」
+					PRINTFORMW 「いいですよ…このまま一番奥に、びゅーって…出してください…♪」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「ひああああっ！？上の方、擦られるとっ、気持ちいっ、んはあっ！」
+					PRINTFORMW あなたは腰を持ち上げ、半分浮いた状態の衣玖に容赦なくピストンを叩き込んだ…
+					PRINTFORMW 「んんっ！はううっ！…～～～～っ！だめっ、だめっ、やめてえっ！」
+					PRINTFORMW 「止まってっ、止まって下さっ、あううぅっ！もうだめっ、気持ちいいっ、体がっ、持たない…」
+					PRINTFORMW 衣玖はガクガクと痙攣しながらあなたの上で悶え続けた…
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「奥まで、来てますっ、っくうう…ああぁ…」
+					PRINTFORMW ペニスが子宮まで届く位置に入ったことを確かめると、あなたは衣玖の下腹部を撫で回した…
+					PRINTFORMW 「ひゃっ！？ちょっと、そんなとこ、触られると…」
+					PRINTFORMW 「%CALLNAME:PLAYER%のおちんちんが子宮にキスしてること、意識しちゃいます…」
+					PRINTFORMW 「こ、このまま出されたら、どうなっちゃうんでしょう…」
+					PRINTFORMW 衣玖の口調とは裏腹に期待のこもった表情を見ながら、あなたはペニスを打ち込んだ…
+				;その他の場合
+				ELSE
+					PRINTFORMW 「はわっ、はあぁ…%CALLNAME:PLAYER%のおちんちん、入りました…」
+					PRINTFORMW 「こうやって後ろから好きにされちゃうの、好きかもしれません…♪」
+					PRINTFORMW 衣玖は妖艶な笑みを浮かべ、あなたの激しい責めを期待している…
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「はあっ、入りました…ふふっ、重くないですか…？」
+				PRINTFORMW 「後ろから抱きしめられて…なんだか安心しちゃいます…」
+				PRINTFORMW 「いいですよ…あなたの好きなように、動いて下さい…♪」
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW （体中好きにされて、もう、何が何だか…）
+			PRINTFORMW あなたは衣玖のヴァギナを突き上げながら、衣玖の唇に吸い付き、さらに体の様々な部分を責め立てた…
+			PRINTFORMW 「衣玖の体…%CALLNAME:PLAYER%の好きにして下さい…！」
+		;反発刻印Lv3
+		ELSEIF MARK:反発刻印 == 3
+			PRINTFORMW 「やだっ、やめっ、あちこち触らないでっ、気持ち悪いっ、ううぅ…」
+			PRINTFORMW 見えない後ろから貫かれ、さらに体を好きに愛撫されている感覚に、衣玖は嫌悪を露わにしている…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「いやっ、そんなとこ…ううっ！やめっ、あっ…」
+			PRINTFORMW 突かれながらさらに乳房やクリトリスまで愛撫され、衣玖は混乱している…
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;騎乗位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_24
+;初回実行時
+IF TFLAG:95 == 1
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;処女
+		IF TALENT:処女 == 1
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 「……とことんまでおかしな事になってしまったものですね」
+				PRINTFORMW 「天子にそんなものがあるばかりか、私からその…挿入、してくれだなんて…初めてなのに」
+				PRINTFORMW 『……お、お願い衣玖、その…なんて言ったらいいか』
+				PRINTFORMW 衣玖は困惑しつつも、天子に跨り挿入の体勢を整える。
+				PRINTFORMW 天子は自分から申し出た事だが、やはり何か罪悪感を感じているような、そんな様子だ…
+				PRINTFORML 
+				PRINTFORMW 「天子のわがままには困ったものです……が、それを聞いてあげたくなる相手というのも…いるものですよ？」
+				PRINTFORMW 「上手には出来ないと思いますが…せっかくですし、天子のために頑張ってみようと思います、ふふっ」
+				PRINTFORMW 『こ、これからはあまり無茶は言わないから！』
+				PRINTFORMW 『……私だって…衣玖の事は大切に、思ってる……本当に』
+				PRINTFORMW 「それを聞いて安心しました…それじゃあ、いきますよっ…」
+				PRINTFORML 衣玖の体が沈み込み、いよいよ挿入が始まる…
+				PRINTFORMW 時間をかけてゆっくりと、ペニス全体が秘唇へと飲み込まれていった…
+			;その他の場合
+			ELSE
+				PRINTFORMW 『え…私は、横になってろって…ちょっと、本気？』
+				PRINTFORMW 「どうせ逆らえないのです…すいません天子、どうか我慢してて下さい…」
+				PRINTFORMW 衣玖が天子に跨り、震える手でペニスを自らの秘唇へとあてがった…
+				PRINTFORMW そのまま強引に上から腰を落とし…あっさりと、衣玖の純潔は失われた。
+				PRINTFORML 『そこまで無理しないでよっ！うぐっ、んんぁ…！』
+				PRINTFORMW 『なっ、なにこれっ…これが、衣玖の……きゅうきゅうって…気持ち、いいよぉ…！』
+				PRINTFORMW 衣玖は天子の上で苦痛に顔を歪めたまま、苦しそうに息を乱し、声も出せずにいる…
+				PRINTFORML 
+				PRINTFORMW 『ごめんっ…ごめんね衣玖、動くからっ…』
+				PRINTFORMW 『衣玖の膣…あったかくて、震えててっ…我慢出来ないのっ、あぁ！』
+				PRINTFORML 天子が衣玖の腰を掴み、無理矢理グラインドさせる…
+				PRINTFORMW 衣玖に与える苦痛など考えず、自らが快楽を得ることに夢中になっている…
+				PRINTFORMW 「ふぐぅぅ…！ぐっ、うぅ！……いたい、いたいっ……もう、終わってぇ…」
+			ENDIF
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 「あ、あら…あの、天子…？」
+				PRINTFORMW 「天子のが膣で、びくって……私に見下ろされて、興奮してません？」
+				PRINTFORMW 『……してるわね、こんなにいやらしい眺めだなんて思わなかったわ』
+				PRINTFORMW 『繋がってるとこは丸見えだし、衣玖の体も全身よく見えちゃうし…』
+				PRINTFORMW 「もう…！こっちだって恥ずかしいんですよ、ほんとに…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『衣玖の好きなように動いていいのよ？私は下からゆっくり見ててあげるから…♪』
+				PRINTFORMW 「お願いです、目を閉じていて下さい…こんなはしたない姿なんて、どうか…」
+			ENDIF
+		ENDIF
+		CFLAG:7312 = 1
+	;処女
+	ELSEIF TALENT:処女 == 1
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「私自ら、処女を捧げろ、という事ですね…」
+			PRINTFORMW 「わかりました…私…永江衣玖は…%CALLNAME:PLAYER%のために、ずっと尽くします…」
+			PRINTFORMW 衣玖自らペニスを秘裂にあてがったところで一度動きが止まる。
+			PRINTFORMW 大きく息を吸い、そしてゆっくりと吐き出しながら、衣玖はそっと腰を沈めていった…
+			PRINTFORMW 「っはあああ…痛っ、痛いい…ああ、これ以上、入りませんっ、くうう…」
+			PRINTFORMW 挿入の途中で動きが止まる。処女膜の抵抗が強いのか、激しい痛みに見舞われているようだ…
+			PRINTFORMW あなたは衣玖に手助けは要るかと尋ねた…
+			PRINTFORMW 「だ、大丈夫ですっ…うぐっ！もう少し、私に、頑張らせてっ、下さい…」
+			PRINTFORMW もう一度息を吸い直し、再び腰を落とす。何度かの試みの後、あなたは何かを貫いた感触を感じた…
+			PRINTFORMW 「うぐっ！はあっ！ぐっ、ふううぅぅ…ふうっ、ふうっ、これで、これで…」
+			PRINTFORMW 「私は…えぐっ、ふぐっ、衣玖は…%CALLNAME:PLAYER%のものです…ふふっ…♪」
+			PRINTFORMW 涙でその整った顔をくしゃくしゃにしながら、衣玖はあなたに微笑みかけた…
+			PRINTFORMW 「えぐっ、ひっ、とっても…とっても痛いです…どうか、その、頑張ったご褒美、頂けませんか…？」
+			PRINTFORMW 恥ずかしそうにはにかむ衣玖を引き寄せ、あなたは衣玖に口づけた…
+			CFLAG:7030 = 1
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「はい…私の処女、もらって下さい…」
+			PRINTFORMW 衣玖は恐る恐る上になり、膣口にペニスをあてがった…
+			PRINTFORMW 「…いっ、痛っ…くうっ、だめですっ、やっぱり、怖い…」
+			PRINTFORMW 「自分でなんて、怖すぎます…！えっ、嫌っ、どうして！やめてっ！」
+			PRINTFORMW 痺れを切らしたあなたは衣玖の腰を掴むと、力任せにペニスを挿入した…
+			PRINTFORMW 「嫌ああっ！あぎっ、ひいっ、ふぐっ…うううぅっ…やだっ、いたいっ、いたい…」
+			PRINTFORMW 「ああああ…どうして、こんなことに…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「自分でなんて…無理、無理ですっ…出来ません…」
+			PRINTFORMW 衣玖はあなたの上にまたがりはしたが、怯えるばかりで一向にペニスに触れようとしない…
+			PRINTFORMW あなたは恐怖に震える衣玖の手を無理やりペニスまで引っ張り、秘裂にあてがわせた…
+			PRINTFORMW 「いやあっ…！離してっ！離してください！押し付けないで…！痛っ…もう、やめて…」
+			PRINTFORMW 暴れる衣玖の腰を押さえつけ、膣口の位置をペニスの先端に合わせると、そのまま強引に貫いた…
+			PRINTFORMW 「ひっ…ぎいっ…ぐうっ！うぐうっ！いたい、いたい、やだっ、誰かっ、助けてっ、ああぁあ…」
+		ENDIF
+	;その他の場合
+	ELSE
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「私が上に…ですね？やってみます…」
+			PRINTFORMW 「自分で入れるというのは…思った以上に、ドキドキします…ううんっ、んんっ…」
+			PRINTFORMW あなたのペニスを膣内に収めると、ゆっくりと衣玖は腰を動かし始めた…
+			PRINTFORMW 「気持ち…いいですか…？ふあっ、こうやって動かすと、私も感じます…♪」
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「私が動けばいいんですね…？」
+			PRINTFORMW 「やってみます…%CALLNAME:PLAYER%は、じっとしてて下さい…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなもの、自分で入れろなんて…」
+			PRINTFORMW 「うぐっ、ううう…お腹が、苦しい…」
+		ENDIF
+	ENDIF
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;いくてん初プレイ
+		IF CFLAG:7312 == 0
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;淫乱であるまたはＶ感覚Lv5以上
+				IF TALENT:淫乱 == 1 || ABL:Ｖ感覚 >= 5
+					PRINTFORMW 「私から挿入れてほしいだなんて…本当にいいんですか？」
+					PRINTFORMW 「天人ともあろう者が…こんな妖怪なんかに見下ろされて、体を好きなように弄ばれちゃうんですよ？」
+					PRINTFORMW 「組み伏せられて、情けない顔を晒して、みっともない喘ぎ声を上げて…そんな醜態、晒してもいいものでしょうか…」
+					PRINTFORMW 天子の上に跨った衣玖が、挿入直前だというのにも関わらず挑発するように天子へと囁く…
+					PRINTFORMW 『そんなっ…！やだっ……何で、そんな事、言うのっ…！』
+					PRINTFORMW 『でも、でもっ……ひぐっ、うっ…衣玖とっ……したい、してほしい、のっ…』
+					PRINTFORMW 『衣玖と気持ち良くなりたいのっ……だから、酷い事言わないで……』
+					PRINTFORMW 緊張している上に言葉で責められた事がさすがに堪えたのか、天子の目から涙が溢れる。
+					PRINTFORMW 衣玖はそんな天子を慰めるかのように、そっとその頬に触れた…
+					PRINTFORMW 『…なんで意地悪するの、う゛う゛……』
+					PRINTFORMW 「からかってごめんなさいね、天子……」
+					PRINTFORMW 「…でも、これからする事は今言った通りですよ？」
+					PRINTFORMW 「壊れるくらいに…気持ち良くしてあげます…♪嫌がっても、無理だって言ってもやめません」
+					PRINTFORMW 「天子の恥ずかしい姿…いっぱいいっぱい、見させて貰いますからね…ふふっ」
+					PRINTFORMW そう言って衣玖が腰を落とし、天子のペニスを自らのヴァギナへと飲み込ませる…
+					PRINTFORMW ペニスが膣肉を掻き分け、そして柔らかく包まれていく感触に天子は声にならない喘ぎ声を上げている…
+					PRINTFORMW 「ふふ…おっきい…♪ほら天子、もう少しで全部…入りますよっ」
+					PRINTFORMW 「目を閉じちゃだめです…しっかり、私のおまんこに入っていくところ見ててくださいね…♪」
+					PRINTFORML 
+					PRINTFORMW たっぷり時間をかけ、ようやくペニスが全て衣玖の膣内に収まった…
+					PRINTFORMW 衣玖はなんとか余裕を保っているが、必死で喘ぎ声を堪えているのがあなたにはわかる。
+					PRINTFORMW （なんとか声、我慢できたでしょうか…？天子のおちんちん、思った以上に…膣に、きますね…♪）
+					PRINTFORMW ただ、天子には衣玖のそういった様子を察する余裕は無さそうだ…
+					PRINTFORMW 「私のここに…全部、入りました…♪ふふ、よく出来ましたね天子」
+					PRINTFORMW 「いよいよ始めますけど…私だけに任せっ切りではいけません。天子も動いて…下から突き上げて、私に合わせるように、動いてみて下さい…」
+					PRINTFORMW 「そうしたら、お互いとっても気持ち良くなって…最後は、ふふ…わかりますね♪」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「天子の方から…したいのではないのですか？わざわざそんなものを生やしておいて」
+					PRINTFORMW 『そ、それはそうですけど』
+					PRINTFORMW 『…ほら、衣玖ってお姉さんぽいし…優しく、手解きしてもらいたくなるじゃない…？』
+					PRINTFORMW 「えっ…？手解き、って…私だって、そんなに…」
+					PRINTFORML 初めての性交に際してリードしてもらいたいという天子の無茶な頼み。
+					PRINTFORMW しかし、意外に緊張しているらしい天子を見て、衣玖は空気を読んであげることにしたようだ…
+					PRINTFORMW 「わかりました。仕方ありませんね…」
+					PRINTFORMW 「それじゃあ…天子は、じっとしてて下さいね…私が、してあげますから…」
+					PRINTFORMW 『うん…優しくしてね？衣玖…』
+					PRINTFORMW 「も、もう…！期待しないで下さい、恥ずかしいんですよ…」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「私から…しろだなんて、趣味が悪いです…！」
+				PRINTFORMW 「それに……大体、天子の方こそ……はあ、わかりましたよ…」
+			ENDIF
+			CFLAG:7312 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;淫乱であるまたはＶ感覚Lv5以上
+				IF TALENT:淫乱 == 1 || ABL:Ｖ感覚 >= 5
+					;乱数分岐:5
+					IF RAND:5 == 0
+						PRINTFORMW 「あ゛あ゛っ……ほんとにもう、奥まで、ぴっちり……隙間が無いみたいです…♪」
+						PRINTFORMW 「ちょっと動いただけでっ…あぐうっ！ふっ…おまんこの奥っ、抉られてるぅ…！」
+						PRINTFORMW 「こんな状態でっ…射精なんか、されたらぁ…」
+						PRINTFORMW 「精液みんな、子宮に直接入ってしまいますね…♪ふふっ、逃げようがありません…」
+						PRINTFORMW 『しゃ、射精って…い、いやらし過ぎよ！』
+						PRINTFORMW 「おや…口ではそう仰いますが…おちんちんは…ビクビクしてますよ？」
+						PRINTFORMW 「さっきから私のっ…大事なとこ、狙って暴れてますね…ひうっ、くあぁ…♪」
+						PRINTFORMW 『だって、衣玖の膣…さっきからまとわりついて、暖かくて柔らかくて…出したいものは仕方ないじゃない…！』
+						PRINTFORMW 「楽しみにしてますからね…熱い精液、ここにびゅーって…♪」
+					;乱数分岐:4
+					ELSEIF RAND:4 == 0
+						PRINTFORMW 「いっちゃいそうですか…？天子…おちんちん、きゅうきゅうって…苦しそうです…」
+						PRINTFORMW 『ふっ…！うぅう、ああっ…出ちゃ、出ちゃうっ…でもまだ、もっとこのままぁ…』
+						PRINTFORMW 「無理しないでいいんですよ、天子…？」
+						PRINTFORMW 不意に衣玖の動きが止まり、激しい上下運動の代わりに腰をゆっくりとグラインドさせ始めた…
+						PRINTFORMW 「あまり我慢しては却って苦痛になってしまいますよ？ですから…」
+						PRINTFORMW 「優しく、こうやって…んっ、動かしてあげます…」
+						PRINTFORMW 「我慢しないで…私の膣に遠慮なく、天子の精液出していいですよ…♪」
+						PRINTFORMW 「それに…ちょっと出したくらいじゃ収まらないでしょう？そのまま私の膣でおっきくしてあげますからね…ふふっ」
+					;乱数分岐:3
+					ELSEIF RAND:3 == 0
+						PRINTFORMW 『わ、私だってぇ…されるだけじゃ、ないんだから…』
+						PRINTFORML 衣玖の巧みな腰遣いに負けじと天子も下から衣玖を責めようとする。
+						PRINTFORMW 衣玖が艶めかしく腰を擦りつけ、時として天子が下から膣奥めがけ突き上げる…
+						PRINTFORMW 「ああぁもっと…いいです天子…そうやって、突き上げて下さいっ…♪」
+						PRINTFORMW 「こうやって上からぐりぐりって…奥を、んんっ♪押し付けることも、できますけど…」
+						PRINTFORMW 『はううっ…ぐっ、うあぁ！おちんちん、つぶされ、ちゃうっ…』
+						PRINTFORMW 「痛いですか…？でも今こうすればっ…」
+						PRINTFORMW 衣玖が上からの押し付けを弱めると、反動で思わず天子は腰を浮かせてペニスを突き込む…
+						PRINTFORMW 「ひあっ！あはあっ……こうやって、突き上げられる方が…私は、好きみたいです…♪」
+						PRINTFORMW 「もっと頑張って突いてっ、天子……私を、天子の上で踊らせて下さいよ…ふふっ♪」
+					;乱数分岐:2
+					ELSEIF RAND:2 == 0
+						PRINTFORML 衣玖がリズムよく腰を振ると天子のペニスは先端から根元、根元から先端へとまで一気に擦り上げられ、
+						PRINTFORMW 次から次へと新たに湧き出す愛液がその動きを加速させる…
+						PRINTFORMW 『衣玖っ…！ちょっと、早いよっ…おちんちん、もってかれちゃうからぁ…！』
+						PRINTFORMW 「でもっ…おちんちんがっ…一気に入ってくるのが、気持ち良くてっ…んんっ♪」
+						PRINTFORMW 「あんっ、あひっ！いいぁぁ…おまんこの中身も、引きずり、出されちゃいそうですっ…！」
+						PRINTFORMW 衣玖の肉穴は熱く、解れてはいるものの挿入に敏感に反応してペニスをぎゅっと締めつける…
+						PRINTFORMW 深く突き刺すほど摩擦は大きく、互いの性器を離すまいと粘膜が絡み合う…
+						PRINTFORMW 「ふうっ、ふぅうぁあああ！すごい、音…もう、びちゃびちゃになって…」
+						PRINTFORMW 「ああ、もう…！おまんこ熱いっ、もっと擦って、天子のでもっと強くうぅ…！」
+					;その他の場合
+					ELSE
+						PRINTFORMW 「私だけ良くなってたらいけませんね、天子にもしてあげましょう…♪」
+						PRINTFORMW 『はっ…？もう十分にいいってばぁ……ひっ！？いっ、いやっ…ちくび、だめえっ！』
+						PRINTFORMW 腰を振りながらも余裕を魅せる衣玖が天子の胸に手を伸ばし、敏感な乳首を摘み上げた…
+						PRINTFORMW 『なっなんでっ…そんな余裕なのよ、あんたはっ…！んいいっ！』
+						PRINTFORMW 「自分の好きなように出来る格好ですから…♪」
+						PRINTFORMW 「ふふっ、乳首いいみたいですね…天子のが膣でびくびくしてますよっ…いい反応で嬉しいです」
+						PRINTFORMW 『んぎっ、いいあぁ！やだっ…もう、変になるぅ……らめ、らめなのぉ…』
+						PRINTFORMW 「やめません♪…どうぞこのまま…乳首とおちんちん一緒にいかせてあげますよっ」
+						PRINTFORMW 「はっあっ…こりこりして、膨らんできてっ…♪どっちが先にいっちゃうんでしょう…んうぅ、ふああぁ♪」
+					ENDIF
+				;Ｖ感覚Lv3以上
+				ELSEIF ABL:Ｖ感覚 >= 3
+					;乱数分岐:2
+					IF RAND:2 == 0
+						PRINTFORMW 『やっあっ…ああんっ！ああぁぁ…すごいよ、衣玖ぅ…』
+						PRINTFORMW 「ちゃんと…私がリードしてあげますから、ねっ…ふあぁ、んくっ…」
+						PRINTFORMW 「このまま、続けましょうね…もっともっと、気持ち良くなれそう…♪」
+					;その他の場合
+					ELSE
+						PRINTFORMW 「んああっ…♪いいですよ、天子…私に合わせてっ…そうですっ、んあっあっ」
+						PRINTFORMW 『衣玖のあそこがっ…私の、いろんなとこ…擦ってるの…！』
+						PRINTFORMW 「天子も…上手ですっ、ううっ…♪膣で、跳ねてるみたい、ですよぉ…！」
+					ENDIF
+				;その他の場合
+				ELSE
+					;乱数分岐:2
+					IF RAND:2 == 0
+						PRINTFORMW 「んっくっ…天子、もう少し…動くの我慢してもらっても、いいですか…？」
+						PRINTFORMW 「まだ結構…はんっ、きついみたいで…ああっ、膣…押され、ちゃう…！」
+						PRINTFORMW 『はふぁ…！わかってはいるんだけど……もうちょっと頑張ってみる、ね…？』
+					;その他の場合
+					ELSE
+						PRINTFORMW 「まだ…んっ、はぅ…上手く、動けませんね…」
+						PRINTFORMW 『大丈夫よ…衣玖が一生懸命してくれるの、とっても気持ちいい…』
+					ENDIF
+				ENDIF
+			;その他の場合
+			ELSE
+				;Ｖ感覚Lv3以上
+				IF ABL:Ｖ感覚 >= 3
+					PRINTFORMW 『自分から腰動かしてるじゃない、衣玖ったら…』
+					PRINTFORMW 『恥ずかしくないの？ふふん』
+					PRINTFORMW 「だって…天子が動かす、からっ…！」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「もう…満足でしょう、天子…」
+					PRINTFORMW 「したいなら…していいですからっ、この格好はもう…」
+				ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;妊娠である
+		IF TALENT:妊娠 == 1
+			PRINTFORMW 「はい…私のペースで…動きますね…」
+			PRINTFORMW 「自分で動くなんて…前は恥ずかしかったですけど、でも、」
+			PRINTFORMW 「赤ちゃんと一緒に%CALLNAME:PLAYER%と愛し合うための、練習だったのかも…♪」
+		;その他の場合
+		ELSE
+			;淫乱であるまたはＶ感覚Lv5以上
+			IF TALENT:淫乱 == 1 || ABL:Ｖ感覚 >= 5
+				;乱数分岐:6
+				IF RAND:6 == 0
+					PRINTFORMW 「はあっ！はあんっ！おちんちんがっ、擦れてっ♪」
+					PRINTFORMW 大きなリズムで衣玖は腰を振ると、それに合わせて豊かな乳房も揺れている…
+					PRINTFORMW 「あっ、ううんっ、もうっ、おっぱいばかり見て…いやらしいんですから…♪」
+					PRINTFORMW 「そんなえっちな子には…見せてあげませんよ♪ふふっ」
+					PRINTFORMW そう言って衣玖はあなたに倒れこみ、豊かな乳房を押し付けてきた…
+					PRINTFORMW 「これで見えなくなっちゃいましたね…♪ああ、でも、おちんちん膨らんでますっ…」
+					PRINTFORMW 「はあっ！あんっ…いいですよ…このまま、あなたと抱き合ったまま、イキたいですっ、」
+					PRINTFORMW 「だからっ、%CALLNAME:PLAYER%もっ、衣玖の膣に、いっぱい、出してえっ…♪」
+				;乱数分岐:5
+				ELSEIF RAND:5 == 0
+					PRINTFORMW 「ああぁ…私の気持ちいいところ、いっぱい擦られてっ…♪」
+					PRINTFORMW 「%CALLNAME:PLAYER%のおちんちんが当たってるところ、全部気持ちいいんですっ、ああんっ！」
+					PRINTFORMW あなたは衣玖の動きに合わせるように下から腰を動かした…
+					PRINTFORMW 「ああ…♪嬉しいですっ、このまま一緒にっ、もっと激しくっ」
+					PRINTFORMW 「見て下さい…%CALLNAME:PLAYER%だけに見せる、淫らな天女の舞です…♪」
+					PRINTFORMW 「どうかっ、こんな淫らな天女にっ、あなたの精液、たくさん、出してくださいっ…♪」
+					PRINTFORMW あなたの動きが激しくなるほどに、衣玖はそれに応えるように激しく腰を振って乱れた…
+				;乱数分岐:4
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「あはあ…一番奥にあたってます…ふあっ、ぐりぐりって…だめですよ…ふふっ…♪」
+					PRINTFORMW 「そんな奥ばっかり…もうっ、そこで出したいんですね？仕方ないんですから…」
+					PRINTFORMW 衣玖の膣奥を何度も小突くうちに、膣内が少し浅くなった感覚がしてきた…
+					PRINTFORMW 「ほら…%CALLNAME:PLAYER%のせいで、子宮が降りてきちゃいましたよ？」
+					PRINTFORMW 「奥ばっかりいじめるから、体がもう、妊娠したいって…♪」
+					PRINTFORMW あなたはすかさず、降りてきた子宮口に鈴口を密着させる…
+					PRINTFORMW 「ああっ！…すごいっ…そのまま、そのまま衣玖の子宮に直接射精してくださいっ」
+					PRINTFORMW 「全部受け止めますから…私の卵、精子で溺れさせてください…♪」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「私が…動きますねっ、えっ、ふああっ！？」
+					PRINTFORMW 「ちょっとっ！下からそんな、突き上げられたらぁ…当たってますっ、子宮にぃっ、ひああああっ♪」
+					PRINTFORMW なんとか体勢を保とうとする衣玖の腰を掴み、あなたはさらに突き上げた…
+					PRINTFORMW 「らめっ、らめえっ、激しっ、衣玖のおまんこっ、こわれ、壊れちゃいますっ」
+					PRINTFORMW 突き続けるうちに、衣玖の方が限界を迎え、あなたへと倒れこんできた…
+					PRINTFORMW 「はあっ、はあっ、もう…♪女性のあそこ、そんなにしたら、んあっ、駄目なんですから…はあっ♪」
+					PRINTFORMW 涙目になりながらも、あなたを優しく諭そうとする衣玖にあなたはたまらない愛しさを感じた…
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「はいっ♪入りました…気持ちよさそうですね…良かった♪」
+					PRINTFORMW 「こうして…%CALLNAME:PLAYER%の気持ち良さそうな表情を見られるのが…とっても幸せです」
+					PRINTFORMW 「あっ、声も出していいんですよ…？はんっ、あんっ、%CALLNAME:PLAYER%のよがる声も、大好きなんです…」
+					PRINTFORMW 衣玖はそう言いながら、どんどん腰の動きを激しくしている…
+					PRINTFORMW 「はあっ！あんっ…%CALLNAME:PLAYER%の色んなところ、私に見せて下さい…」
+					PRINTFORMW 「そうしたら、衣玖の膣で思いっきりイかせてあげますからね…ふふっ♪」
+					PRINTFORMW 完全に主導権を握られたまま、あなたは衣玖のされるがままになっていた…
+				;その他の場合
+				ELSE
+					PRINTFORMW 「ふふっ…%CALLNAME:PLAYER%のおちんちん、全部飲み込んじゃいました…♪」
+					PRINTFORMW 「本当に大きくて…結構苦しいんですよ？ふふっ」
+					PRINTFORMW 「それじゃあ…%CALLNAME:PLAYER%のおちんちんにぴったりな衣玖のアソコ、堪能してください…♪」
+					PRINTFORMW 初めは入れるだけで精一杯だったペニスを今ではしっかりと受け入れ、さらに絶妙に締め付けてくる…
+					PRINTFORMW 「こうやって…ギリギリまで抜いてからっ…一気にっ…！ひああああっ…♪」
+					PRINTFORMW 「もう一回…もう一回…♪んはああっ！すごいっ、気持ちいいですぅ…♪」
+					PRINTFORMW 入口から子宮口まで一気に抜き差しする圧倒的な快感に、あなたの射精感は一気に高まった…
+				ENDIF
+			;Ｖ感覚Lv3以上
+			ELSEIF ABL:Ｖ感覚 >= 3
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 「なんだか…%CALLNAME:PLAYER%のおちんちんでっ、オナニー、してるみたい、です…」
+					PRINTFORMW 「勝手でごめんなさい…でも、はああっ…気持ち、良くてっ…♪」
+					PRINTFORMW 衣玖はあなたと手を繋いだ状態で、ゆるやかに腰を動かしている…
+					PRINTFORMW 衣玖の秘部からは愛液がとめどなく溢れ、あなたの下腹部を愛液まみれにしている…
+					PRINTFORMW 「はしたなくて…すいませんっ、でもっ、もう少しっ、んんっ！続けさせてください…♪」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「はあっ、んはあっ…どうですか…？衣玖の膣、気持ちいい、ですか…♪」
+					PRINTFORMW コツを掴んだのか、衣玖は積極的に腰を動かしてあなたに奉仕している…
+					PRINTFORMW 「あなたの好きな動きが…分かってきましたよ…？こんな感じで、どうですかっ」
+					PRINTFORMW 突然膣内がペニスを締め付けたかと思えば、次はゆるやかに絡み付いてきたりと、衣玖は自在にあなたを責め立てる…
+					PRINTFORMW 「良かった…気持ちいいんですね…♪どうぞ、もっと気持ち良くなって下さい…♪」
+					PRINTFORMW 衣玖のあまりの上達ぶりに、あなたは戸惑いながらもされるがままになっていた…
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「はあっ…は、入りましたぁ…大きくて、苦しっ…」
+				PRINTFORMW 「ふう…%CALLNAME:PLAYER%を気持ち良くさせられるよう…頑張りますね…♪」
+				PRINTFORMW 衣玖は慣れないながらも、懸命に腰を動かしてあなたに奉仕している…
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「はあっ、んんっ、きたあっ…」
+				PRINTFORMW 「それでは…私が動きますので、%CALLNAME:PLAYER%は楽にして下さい、んあっ…」
+				PRINTFORMW 平坦な口調だが、なめらかな腰の動きは実に魅惑的だ…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「んぐっ…ふうっ、ふあっ…うまく、出来ていますか…？」
+				PRINTFORMW 「自分で動くなんて、どうすればいいのか…」
+			ENDIF
+		;その他の場合
+		ELSE
+			;Ｖ感覚Lv3以上
+			IF ABL:Ｖ感覚 >= 3
+				PRINTFORMW 「んっ…んっ…もういいでしょう…？」
+				PRINTFORMW 言葉とは裏腹に、衣玖は確かに感じてきているようだ…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ううっ…もう、やめていいでしょう？」
+				PRINTFORMW 「こんなの、誰のためにもなりません…」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;逆レイプ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_25
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手を犯す
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_26
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面立位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_27
+;恋慕
+IF TALENT:恋慕 == 1
+	;妊娠である
+	IF TALENT:妊娠 == 1
+		PRINTFORMW 「はあっ、はあっ…ちょ、ちょっと、この体勢は、苦しいです…」
+	;その他の場合
+	ELSE
+		;乱数分岐:3
+		IF RAND:3 == 0
+			PRINTFORMW 「抱き合ったまま…ですね、はい…下から…んああっ…！」
+			PRINTFORMW あなたは衣玖と抱き合ったまま下から突き上げるように挿入し、そのまま唇を重ねた…
+			PRINTFORMW 「ちゅっ…くちゅ、ふうっ、うむぅ…はあっ、%CALLNAME:PLAYER%のが…しっかり入っているの、感じます…♪」
+			PRINTFORMW 「ああっ…%CALLNAME:PLAYER%のおちんちん、子宮を押し上げてますよ…」
+			PRINTFORMW 「嬉しいです…このまま一番奥で、気持ち良く、なって下さいね…♪」
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「ふああっ、こんなにっ、広げられて…恥ずかしい、ですっ…♪」
+			PRINTFORMW あなたが片足を持ち上げているため、衣玖は思いっきり足を広げた状態で突き上げられている…
+			PRINTFORMW 「そんなっ、んああっ！突き上げたらっ、浮いちゃいますっ」
+			PRINTFORMW 「もっと、しっかり…衣玖を、抱きしめてっ、下さい…ああっ、嬉しいっ…」
+		;その他の場合
+		ELSE
+			PRINTFORMW あなたは体勢を整えると、衣玖の両足を持ち上げ、完全に衣玖を宙に浮いた状態にした…
+			PRINTFORMW 「ああっ…！奥までっ、深い、深いですっ…この格好だと、どんどん入ってく…」
+			PRINTFORMW 「すごい…私の体、%CALLNAME:PLAYER%のおちんちんで、持ち上げられちゃってます…♪」
+			PRINTFORMW 「あ、あの…落ちないように、しっかり支えて下さい…♪」
+		ENDIF
+	ENDIF
+;その他の場合
+ELSE
+	;乱数分岐:2
+	IF RAND:2 == 0
+		PRINTFORMW 「やめてっ、やめて下さい…こんな恥ずかしい格好…！」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「やだっ…身動きが、取れなっ…くうっ、押し付けないで下さい…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;背面立位
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_28
+;恋慕
+IF TALENT:恋慕
+	;妊娠である
+	IF TALENT:妊娠
+		PRINTFORMW 「はっ、はあっ、倒れないように、しっかり支えて下さいね…？」
+	;その他の場合
+	ELSE
+		;乱数分岐:3
+		IF RAND:3 == 0
+			PRINTFORMW 「あっ、あっ、下からっ、こんこんって、来てますっ…♪」
+			PRINTFORMW 衣玖の片足を持ち上げ、膣奥を責めると衣玖はこちらにもたれてきた…
+			PRINTFORMW 「すいません…立って、いられないくらい気持ちいいんです…」
+			PRINTFORMW 「ちょっと格好が恥ずかしいですけど、このまま、抱いて下さい…♪」
+			PRINTFORMW 衣玖の足を大きく広げたまま、あなたはさらに奥へ突きこんだ…
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「あああっ…！ああっ、すごい…あの、重く…ないですか…？」
+			PRINTFORMW 「はうっ！身動きが出来ないと…%CALLNAME:PLAYER%のおちんちんの感覚ばかり…意識しちゃいます…♪」
+			PRINTFORMW あなたは衣玖を抱えたまま、大きく腰を使って衣玖を突き上げた…
+			PRINTFORMW 「ふあっ！はあっ、ああっ！深っ、深いですっ…おかしく、なりそうっ…♪」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「すっ、すごいっ、腰が、抜けちゃいそうです…！」
+			PRINTFORMW あなたは後ろから衣玖の乳房を掴み、さらに、股間を弄ってクリトリスを刺激している…
+			PRINTFORMW 「もうだめっ、立って、いられないっ…っくあああっ♪」
+		ENDIF
+	ENDIF
+;その他の場合
+ELSE
+	;乱数分岐:2
+	IF RAND:2 == 0
+		PRINTFORMW 「やっ！恥ずかしいっ、やめてえっ…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「こんな格好…恥ずかしいですからっ、ううっ、怖いですっ…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;正常位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_30
+;初回実行時
+IF TFLAG:95 == 1
+	;処女
+	IF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ちょっと、そっちは違いますよ…！うぐっ、っくああぁぁ…！」
+			PRINTFORMW 「そんなっ、はあっ、初めてもまだなのに、こんなことっ…！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「んぐうぅ…ふうっ、ふうっ…苦しい、です…」
+			PRINTFORMW （辛いけど、貞操を守るには、我慢しなければ…！）
+		ENDIF
+	;その他の場合
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「本当に、大丈夫ですよね…？こんなところに、入れてしまって…」
+			PRINTFORMW 不安そうな衣玖のアナルにペニスをあてがい、あなたはゆっくりと挿入を始めた…
+			PRINTFORMW 「ひぎっ…！うううっ…熱っ、お尻が、熱いですっ……ああっ、入って、来てますぅ…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「処女を奪った上、さらにこんなところまで犯そうだなんて…」
+			PRINTFORMW 「%CALLNAME:PLAYER%は…うぐっ！ううっ、狂っているのですか…？」
+		ENDIF
+	ENDIF
+;2回目以降
+ELSE
+	;処女
+	IF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「また、お尻なんですか…？…うあっ、んんんっ！」
+				PRINTFORMW 「その…お尻も、嫌いじゃないですけど…こ、こっちにも、欲しいんです…」
+				PRINTFORMW 衣玖は恥ずかしがりながら、まだ男を知らない秘部をあなたに見せ付けた…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「んぐっ、んんっ、ふうっ…やだっ、気持ちいいっ、そんなっ」
+				PRINTFORMW 「処女なのにっ、お尻で感じてますっ…はあっ、はぐっ…！」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「これでっ、ううっ…%CALLNAME:PLAYER%が満足するのでしたら…」
+			PRINTFORMW 「私のお尻を、好きにして下さい…うっ、んぐうっ…」
+			PRINTFORMW 衣玖は自分の貞操を守るために、黙って苦痛に耐えている…
+		ENDIF
+	;その他の場合
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;Ａ感覚Lv4以上
+			IF ABL:Ａ感覚 >= 4
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 「ひああっ、すごいですっ…お尻の中がっ、引き出されちゃいますっ、んおおっ♪」
+					PRINTFORMW 「%CALLNAME:PLAYER%の熱いのがっ、お尻滅茶苦茶に掻き回してますうっ♪もっと、もっと突いてっ…！」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「ふぐううっ、あううっ！はあっ、お尻がっ、気持ちいいですっ！」
+					PRINTFORMW 「もっと…もっと強くしていいですからっ、衣玖のお尻っ、もっと突いて下さいっ♪」
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORMW 「あはあ…♪お尻って…意外と、気持ちいい、かも…」
+				PRINTFORMW これまでじっくり開発してきた甲斐があってか、衣玖のアナルは意外にすんなりとペニスを受け入れている…
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ああっ、嫌あ…！痛いのに、なんでっ…」
+			PRINTFORMW 「ちょっとでも、気持ちいいなんて…うぐっ、やめてっ、抜いて下さい…！」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_31
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面座位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_32
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面座位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_33
+;PRINTFORMW 
+
+;-------------------------------------------------
+;騎乗位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_34
+;PRINTFORMW 
+
+;-------------------------------------------------
+;逆アナルレイプ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_35
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手のＡを犯す
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_36
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面立位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_37
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面立位アナル
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_38
+;PRINTFORMW 
+
+;-------------------------------------------------
+;手淫
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_40
+;初回実行時
+IF TFLAG:95 == 1
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		PRINTFORMW 「……私、このような事をするのは初めてなのですが…」
+		PRINTFORMW 『え、ご主人様もまだなの？』
+		PRINTFORMW 『…ご主人様って優しいんだか、変わってるんだか分からないわね』
+		CFLAG:7308 = 1
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「上手にできるかわかりませんが…では、失礼しますね？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「あぁやだ…男の人のおちんちん…触っちゃってる…」
+	ENDIF
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7308 == 0
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 「んん…ご主人様のも立派ですけど…天子のも、なかなか…」
+				PRINTFORMW 衣玖は戸惑いながらも、そそり立つ天子のペニスから目を離せずにいる…
+				PRINTFORMW 『…見られてるだけでなんだかぞくぞくしちゃうわね』
+				PRINTFORMW 『…ねえ衣玖、それじゃあ私の…手で、してくれる？』
+				PRINTFORMW まだ恥ずかしさが残るのか、天子は不安そうな顔で衣玖を見つめている…
+				PRINTFORMW 「そんな顔しないで天子…ふふっ、私に任せて下さい」
+				PRINTFORMW 「お姉さんが気持ち良くしてあげますから、そのまま楽にしていて、ね…？」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ほら衣玖…触ってみて？男の人のと一緒でしょ？』
+				PRINTFORMW 衣玖は恐る恐る天子のペニスに触れ、感触を確かめている…
+				PRINTFORMW 『あっ！んくっ…衣玖の指、少し触れただけなのに…びくってしちゃった』
+				PRINTFORMW 『ぞくぞくしてきたわ…♪じゃあ衣玖、私のこれ、気持ち良くしてね…？』
+			ENDIF
+			CFLAG:7308 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				;乱数分岐:4
+				IF RAND:4 == 0
+					PRINTFORMW 「出そうなんですね…とびきり硬くなってきましたよ？」
+					PRINTFORMW 「一番気持ちいいところなんでしょうね…そんな顔して」
+					PRINTFORMW 射精間近の快感を味わう事に夢中になっている天子は返事をする余裕も無さそうだ…
+					PRINTFORMW 「いつまで我慢が続くのでしょう…♪可愛い顔が台無しですね、ふふっ」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「天子は素直で可愛いですね…弱いところ、すぐに分かっちゃいますよ？」
+					PRINTFORMW 『言わないでえっ、もうだめっ、もう、きもちよくてえっ…！』
+					PRINTFORMW 「我慢しないで…このまま、最後までいきますよ…」
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『やっ、やっ…衣玖っ、それだめっ、それ以上されたら、もう私…』
+					PRINTFORMW 「私の手に出していいですから…どうぞそのまま、気持ちよくなって下さい…♪」
+					PRINTFORMW 衣玖はこれ以上ない笑顔で天子のペニスを愛撫し続けている…
+				;その他の場合
+				ELSE
+					PRINTFORMW 『あの衣玖、それ反則よっ、はんっ！はっ、ひああっ！』
+					PRINTFORMW 衣玖はペニスを扱きながら、天子の体への愛撫を続けている…
+					PRINTFORMW 「気持ち良くして差し上げると言ったでしょう…？」
+					PRINTFORMW 「…ふふっ、いい顔になってきましたね、天子…♪」
+				ENDIF
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 『ああんっ、すごい…♪衣玖の綺麗な指が、私のコレに触ってる…』
+					PRINTFORMW 『思いっきり…汚しちゃうけどごめんね…♪衣玖が上手なのが悪いんだからあっ…！』
+				;その他の場合
+				ELSE
+					PRINTFORMW 『はっ、んはあっ…！もっと、もっと早く動かしてっ…』
+					PRINTFORMW 『いいわよ衣玖っ…♪もっと乱暴にしていいからっ、ううっ！あふうっ！』
+				ENDIF
+			;その他の場合
+			ELSE
+				PRINTFORML 『衣玖は真面目だもんね…嫌そうな顔してるけど、』
+				PRINTFORMW 『こうして私のを気持ちよくしてくれるんだもの…♪ああ、もっと強くしてっ…』
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;奉仕精神Lv4以上
+		;精液中毒Lv3以上でランダム分岐追加
+		IF ABL:奉仕精神 >= 4
+			;乱数分岐:8 風呂場でさらに追加
+			IF RAND:8 == 0 && ABL:精液中毒 >= 3 && TEQUIP:お風呂場プレイ == 1
+				PRINTFORMW 「ここなら汚れも気になりませんね」
+				PRINTFORML 「気持ち良くしてあげますから…%CALLNAME:PLAYER%の精液がいっぱい出るところ、」
+				PRINTFORMW 「私によく見せて下さいね？ふふっ、楽しみです…どこまで届くでしょうか…♪」
+			;乱数分岐:7
+			ELSEIF RAND:7 == 0 && ABL:精液中毒 >= 3
+				PRINTFORMW 「%CALLNAME:PLAYER%のおちんちん、気持ちよさそうに震えてます…」
+				PRINTFORMW 「どうぞ…衣玖の手の中で、思いっきり精子出して下さいね？」
+				PRINTFORMW 「あなたの熱い精子で、ベトベトにして欲しいんです…♪」
+			;乱数分岐:6
+			ELSEIF RAND:6 == 0 && ABL:精液中毒 >= 3
+				PRINTFORMW 「ああすごい…先走りだけでもうこんなに…」
+				PRINTFORMW あなたのペニスは衣玖の巧みな奉仕により、先走りを漏らし続けている…
+				PRINTFORMW 「なんてえっちな音なんでしょう…はあ…こんなに糸を引いて…」
+				PRINTFORMW 「興奮しちゃいますね…♪さあ、%CALLNAME:PLAYER%の精子が出るまで、もっと激しくしますよ…」
+			;乱数分岐:5
+			ELSEIF RAND:5 == 0 && ABL:精液中毒 >= 3
+				PRINTFORMW こんなに暴れて…私の手ではおさまりません」
+				PRINTFORMW 「こんな乱暴なおちんちんは、こうしてしまいましょうか…♪」
+				PRINTFORMW ふわりとした感触にあなたのペニスが包まれる。
+				PRINTFORMW 「どうですか…私の下着の感触は？ああ…とっても気持ちよさそうな顔ですね…♪」
+				PRINTFORMW 衣玖は羽衣を操るがごとく、巧みに手に持ったパンツをあなたのペニスに絡めている…
+				PRINTFORMW 「ほら…衣玖のパンツ、汚したくありませんか…？いっぱい精液出して、匂い、取れなくしちゃって下さい…♪」
+			;乱数分岐:4
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「ああ…素敵ですよ、%CALLNAME:PLAYER%のおちんちん…」
+				PRINTFORMW 「こうして手で触れてみると、改めてよく分かります…」
+				PRINTFORMW 衣玖はペニスの存在を確かめるように、根元から先端へとゆっくり愛撫を続けている…
+				PRINTFORMW 「…これでもっと、私の事を啼かせて下さいね…ふふっ、期待してます…♪」
+			;乱数分岐:3
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「こうしてると、あなたの顔がよく見えるんです」
+				PRINTFORMW 「ほら…もう出そうなんですよね？ふふ、そんな我慢しても、あなたのおちんちんは正直ですよ…♪」
+				PRINTFORMW 衣玖は手の動きを一層激しくし、あなたを果てさせようとする…
+				PRINTFORMW 「さあ…出して下さい…あなたの感じてる顔、もっとよく見せて…」
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「こんなに大きくしてしまって…大丈夫ですか？」
+				PRINTFORMW 衣玖は勃起したあなたのペニスをまじまじと見つめている…
+				PRINTFORMW 「…一度手で出してあげましょう。すっきり気持ち良くしてあげますよ？ふふっ」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「すごく硬くなってきてます…出そうなんですね…？」
+				PRINTFORMW 「でも…もう少し我慢して下さい…もう少しですから」
+				PRINTFORMW 衣玖はそう言いながらも指の動きを激しくしている…
+				PRINTFORMW 「ごめんなさい…辛いでしょうけど、もう少し、頑張ってください…！」
+			ENDIF
+		;その他の場合
+		ELSE
+			;思いつきのネタは低確率で…
+			IF RAND:20 == 0
+				PRINTFORMW 「もう少し強くですか？痛かったら言って下さい」
+				PRINTFORMW 「…そういえば%CALLNAME:PLAYER%は普段、どんな感じでされてるのですか？……あっ」
+				PRINTFORML 
+				PRINTFORMW …オナニーのやり方を質問されてしまった！
+				PRINTFORMW 「…き、気持ちいいですか？ふ、ふふっ」
+			;乱数分岐:3
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「いいですよ…衣玖に任せて下さい…」
+				PRINTFORMW 「ああ…どんどん大きくなってきました…ふふっ♪いつでも出していいですからね…」
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「こんなに熱くて…まるで熱のかたまりです」
+				PRINTFORMW 「手でしただけでは治まりそうもありませんけど…頑張ってその、抜いてあげますね…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「…手で、いいんですか？別にあの、もっとえっちな事だってしてあげますけど…」
+				PRINTFORMW 「私の指がそんなに…？ふふっ、それなら期待に応えて、もっと良くしてあげないといけませんね…♪」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;乱数分岐:2
+		IF RAND:2 == 0
+			PRINTFORMW 「もっと早く、ですか…？」
+			PRINTFORMW 衣玖は指示に従い、ペニスを擦りあげるスピードを速めた…
+			PRINTFORMW 「！手の中で膨らんで…だ、大丈夫なんでしょうか…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こうすると、気持ちいいんでしょうか…？」
+			PRINTFORMW 衣玖は指をしなやかにペニスに絡みつかせ、動かしている…
+			PRINTFORMW 「…！手の中で、ビクッとしましたね…」
+		ENDIF
+	;その他の場合
+	ELSE
+		PRINTFORMW 「うう…もう止めていいですか？」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フェラチオ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_41
+;初回実行時
+IF TFLAG:95 == 1
+	;屈服刻印Lv3
+	IF MARK:屈服刻印 == 3
+		PRINTFORMW 「その…どうすればいいか、教えて頂けないでしょうか…？」
+		PRINTFORMW 「舐めたり…咥えたり…ですね、やってみます…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「本当にできるんでしょうか…」
+		PRINTFORMW 「大きすぎてっ…口に入りません…」
+	ENDIF
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:5309 == 0
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 「口でしますよ？天子…」
+				PRINTFORMW 『息がかかって…くすぐったいよ、衣玖…』
+				PRINTFORMW 天子は衣玖が自分のペニスを口にする瞬間を見つめている…
+				PRINTFORMW 衣玖がペニスの先端を口に含み、そっと舐め上げる…すると天子の体全体がビクリと震えた。
+				PRINTFORMW 『ふううんっ！んっ！はんっ…！』
+				PRINTFORMW 『あっ！あっ！…はああっ…！あ…ごめん衣玖…』
+				PRINTFORMW 『なんか、舌でされたら…びっくりして、体が勝手に動いちゃって…口の中、大丈夫？』
+				PRINTFORMW 「んっ…ええ、大丈夫ですよ…そうですね、次はもう少し優しくしましょう…」
+				PRINTFORMW 「…ただ、天子も力を抜いて、ゆっくりしてくださいね？」
+				PRINTFORMW 「でないと…きっと最後までもちませんよ？ふふっ」
+				PRINTFORMW 衣玖の妖しい微笑みに天子はやや気押されている…
+				PRINTFORMW その後も天子の反応を楽しむように、衣玖はペニスを愛撫し続けた…
+				PRINTFORML 
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ひあっ！？あっ、んんっ！』
+				PRINTFORMW 「動かないで、天子っ…！んぐうっ！ぐっ！……えほっ、げえっ…」
+				PRINTFORML 初めて感じる舌での刺激に天子の腰が大きく跳ね上がり、
+				PRINTFORMW ペニスが衣玖の喉奥に当たってしまったようだ…
+				PRINTFORMW 『はっ、あはっ…舐められた時と、衣玖の喉に当たった時…すごい、びりってきたの…♪』
+				IF MARK:屈服刻印 == 3
+					PRINTFORMW 『お願い、もう一回して…早く…でないと、衣玖に酷い事、しちゃいそう…♪』
+					PRINTFORMW 咳き込んで涙目の衣玖の頭を天子が掴み、ゆっくりと股間を押し付ける…
+					PRINTFORMW 「けほっ…天子、分かりましたから、落ち着いて…！」
+					PRINTFORMW 「…今度は動かないでくださいね？歯が当たったらまずいですし…」
+					PRINTFORMW 『大丈夫よ…衣玖のお口でいっぱい気持ち良くしてね…♪』
+					PRINTFORML 
+				ELSE
+					PRINTFORMW 『…衣玖、苦しいの？でも…その顔、ちょっと興奮するかも…ふふっ』
+					PRINTFORMW あまりよろしくない事を思いついた風な天子を見て、衣玖が慌てる…
+					PRINTFORMW 「……！すいません、次はもっと優しくしますから…」
+					PRINTFORMW 「あまり、動かないでくださいね？その…ちゃんとしますから、お願いします…」
+					PRINTFORMW 『大丈夫よ、衣玖がちゃんとしてくれれば、変な事はしないわ…♪』
+					PRINTFORML 
+				ENDIF
+			ENDIF
+			CFLAG:5309 = 1
+		;２回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;淫乱でランダム分岐追加
+				;乱数分岐:5
+				IF RAND:5 == 0 && TALENT:淫乱 == 1
+					PRINTFORMW 衣玖の舌が器用に動き回り、ペニスの根元から先端まで刺激を与え続けている…
+					PRINTFORMW 『んあっぐうっ…何これっ、おちんちん、ぞわぞわしてっ…！』
+					PRINTFORMW 『もう…出ちゃうよっ、衣玖うっ、出ちゃうから、優しくしてえっ…』
+					PRINTFORMW 「……♪れろおっ、えう、れるうう…いつでも出していいですからね…じゅるっ、ぴちゃっ…」
+				;乱数分岐:4
+				ELSEIF RAND:4 == 0 && TALENT:淫乱 == 1
+					PRINTFORMW ぐぽっ、ぐぽっと空気の漏れる音を出しながら、衣玖が頭を激しく上下し、咥えた天子のペニスを責め立てている…
+					PRINTFORMW 『らめっ、らめえっ！衣玖っ、だめ衣玖っ』
+					PRINTFORMW 『とれちゃうっ、おちんちん、とれちゃうからあっ！ひあっ、あっ、あんああんっ！』
+					PRINTFORMW 「んむっ、ふっ、んるうっ、ふっ…どんどんいきますよ？ふふっ…あむっ、んじゅっ…」
+				;乱数分岐:3
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 『ああっ、衣玖うっ…！そこもっと、舐めて、欲しいのぉ…』
+					PRINTFORMW 「このあたりですか……くちゅ、ちゅっ、ずじゅじゅっ…んっ、ぺろ、じゅぷうっ…」
+					PRINTFORMW 『～～～っ……すごい…んくうぅぅ…♪』
+					PRINTFORMW 衣玖のペニスへの愛撫に天子は声も出せないほどに感じ、喘いでいる…
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『衣玖の口の中、あったかくて…おちんちん、とろけ、そう…』
+					PRINTFORMW 「ううん…んぐうっ…あむううっ……ぷはっ」
+					PRINTFORMW 衣玖が唾液まみれのペニスを口から出し、一息つく…
+					PRINTFORMW 「全部咥えるのはちょっと苦しいですけど…天子のその顔を見たら、頑張った甲斐があるというものです、ふふっ」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「ちゅっ、ちゅるっ…天子…あむっ、私のお口…いいですか？えうっ、じゅるっ…」
+					PRINTFORMW 『きもちいいよぉ…ああっ、これもう、頭が、変に…』
+					PRINTFORMW 「我慢してくださいね…その方が、もっと出すときに良くなれますよ…」
+				ENDIF
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				;乱数分岐:3
+				IF RAND:3 == 0
+					PRINTFORMW 『あの真面目な衣玖が、こんな顔しておちんちんしゃぶってるなんて…』
+					PRINTFORMW 「んむうっ、んじゅう、ちゅるっ…からかわないでください！…もう」
+					PRINTFORMW 『ごめんね、でもいやらしくて素敵よ？衣玖のしてる時の顔…♪』
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『んああっ…！衣玖の舌が、絡みついてっ、ぬるぬるで…♪』
+					PRINTFORMW 「ちゅうっ、じゅっ、れるうっ、はっ、はむう…」
+					PRINTFORMW 天子は衣玖の頭を時折撫でながら、満足そうな様子で奉仕を受けている…
+				;その他の場合
+				ELSE
+					PRINTFORMW 『すごいわね衣玖…そんなのどこで覚えたの？』
+					PRINTFORMW 「んあっ、はむっ、ずじゅっ……意地悪言わないで下さい、天子…」
+					PRINTFORMW 天子は目を細めて衣玖の奉仕する姿を眺めている…
+				ENDIF
+			;その他の場合
+			ELSE
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 『あまり嫌そうな顔しないでよ衣玖、美人が台無しよ？』
+					PRINTFORMW 「そんなわけじゃないですけど…少し、苦しくて…」
+				;その他の場合
+				ELSE
+					PRINTFORMW 『んっ、んくううっ…気持ちいいけどっ、ねえ衣玖、あなたならもっと上手に出来るはずよ？』
+					PRINTFORMW 「はむっ、んっ、はっ…私には、よく分かりませんよ…」
+				ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;精液中毒Lv3以上または淫乱
+		IF ABL:精液中毒 >= 3 || TALENT:淫乱 == 1
+			;乱数分岐:4
+			IF RAND:4 == 0
+				PRINTFORMW 「ちゅうっ、ちゅぱっ、じゅるっ、んちゅうっ」
+				PRINTFORMW 衣玖はペニスの先端を執拗に舐っている…
+				PRINTFORMW 「先端がどんどん膨らんでますよ…出したいですか？ふふっ♪」
+				PRINTFORMW 「いいですよ…最後はおちんちん全部気持ち良くしてあげます…」
+				PRINTFORMW 衣玖は根元を激しくこすりあげ、先端を強く吸い上げた…
+			;乱数分岐:3
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「んはあ…私の口の中、%CALLNAME:PLAYER%の匂いでいっぱいです…」
+				PRINTFORMW 「ちゅうっ、うんっ、ちゅぱっ、にちゃっ…」
+				PRINTFORMW 「出そうなんですね…？精液…全部受け止めてあげますから…」
+				PRINTFORMW 「いっぱい、いっぱい%CALLNAME:PLAYER%の飲ませて下さい…♪」
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 衣玖は様々な角度からあなたのペニスを咥え、あなたを責め立てている…
+				PRINTFORMW 「ほっぺも使ってみましょうか…あむうっ、うっ、んちゅうっ」
+				PRINTFORMW 「痛くないですか？ふふっ、いろんなところが当たって、おちんちんびっくりしてますよ♪」
+				PRINTFORMW 「最後は優しくしてあげますから…さあ、いっぱい出してくださいね…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「じゅぷっ、じゅぷっ、ぐちゅっ」
+				PRINTFORMW 衣玖の激しい口技に、射精感が高まってゆく…
+				PRINTFORMW 「出して下さい…衣玖の口に…思いっきり出して下さい…♪」
+				PRINTFORMW 「いつでもいいですから…ああ、もうはちきれそうになって…♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「ちゅっ、じゅるっ、ぷあっ…%CALLNAME:PLAYER%を気持ち良くすることが、私の幸せなんです…♪」
+				PRINTFORMW 「もっと気持ちいい顔、見せて下さい…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「衣玖の舌使い、ご堪能下さい…♪」
+				PRINTFORMW 「じゅぽっ、じゅぱっ、れるっ、ちゅるっ…ああ、大きくなってますっ」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;乱数分岐:2
+		IF RAND:2 == 0
+			PRINTFORMW 「痛かったら、言って下さいね…うんっ、はむっ…」
+			PRINTFORMW 「もっと、激しく…？じゃあ、滑りを良くしないと…」
+			PRINTFORMW 衣玖はペニスの先端に唾液を垂らし、再び咥えた…
+			PRINTFORMW 「（私、無意識のうちになんていやらしいことを…！）」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ふうっ、ちゅっ、あむっ…こんな感じ…でしょうか？」
+			PRINTFORMW 「気持ちいいんですか？はあ…ありがとうございます…」
+			PRINTFORMW 衣玖は丁寧にペニスへの奉仕を続けている…
+		ENDIF
+	;その他の場合
+	ELSE
+		PRINTFORMW 「うむっ、ううん…」
+		PRINTFORMW 「なんて形なんでしょう…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;パイズリ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_42
+;初回実行時
+IF TFLAG:95 == 1
+	;屈服刻印Lv3
+	IF MARK:屈服刻印 == 3
+		PRINTFORMW 「上手く出来るでしょうか…その、あまり乱暴にしないで下さいね？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「体に直接押し付けられて…いやっ、怖い…」
+	ENDIF
+;2回目以降
+ELSE
+	;助手が天子で助手が調教
+	IF ASSIPLAY && NO:ASSI == 1052
+		;初めて
+		IF CFLAG:7310 == 0
+			;恋慕
+			IF TALENT:恋慕 == 1
+				PRINTFORMW 『えへへ、これやってみたかったのよね…おお、すごい眺め』
+				PRINTFORMW 「ふふっ、楽しそうですね？天子」
+				PRINTFORMW 「では、動かしてみますね…よいしょ、うん…どうですか？」
+				PRINTFORMW 衣玖がふにふにと自らの乳房をこねると、天子がすぐに反応する。
+				PRINTFORMW 『ふあっ、あっ…柔らかくてっ…あったかくてぇ…』
+				PRINTFORMW 『…このまま続けて欲しいんだけど…いい？衣玖…』
+				PRINTFORMW 「私のおっぱいでよろしければ。ふふっ、お任せ下さいね？」
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				PRINTFORMW 『えへへ、これやってみたかったのよね…おお、すごい眺め』
+				PRINTFORMW 「何だか楽しそうですね、天子…」
+				PRINTFORMW 『ちょっと衣玖のおっぱい使うわよー…えい』
+				PRINTFORMW 天子が衣玖の乳房を鷲掴みにし、谷間に挟まれたペニスへと引き寄せる…
+				PRINTFORMW 「痛っ…！あの天子、ちょっと…」
+				PRINTFORMW 『ごめんごめん、どうしてもしてみたくて』
+				PRINTFORMW 『あったかいし、柔らかいし、見た目はすごいし…♪じゃあ後はよろしくね衣玖？』
+				PRINTFORMW 「もう…後は私がしますから…掴まないでくださいね」
+			;その他の場合
+			ELSE
+				PRINTFORMW 『ふふん、そんな顔してても結局してくれるんだから、衣玖って優しいわね』
+				PRINTFORMW 衣玖の胸の谷間にペニスを挟み込み、天子は自らそれを動かしている…
+				PRINTFORMW 「乱暴にはしないでください…胸も、大切な所ですから…」
+				PRINTFORMW 『衣玖もしてくれたら、早く気持ちよくなれるわよ？』
+				PRINTFORMW 『私としては、この眺めをゆっくり楽しみたいんけどね…♪』
+			ENDIF
+			CFLAG:7310 = 1
+		;その他の場合
+		ELSE
+			;恋慕
+			IF TALENT:恋慕 == 1
+				;乱数分岐:3
+				IF RAND:3 == 0
+					PRINTFORMW 重量感のある乳房が天子のペニスを擦る度、二人の口から甘い声が漏れる…
+					PRINTFORMW 『衣玖うっ、衣玖うっ…いいよぉ、もう、出ちゃいそう…！』
+					PRINTFORMW 「もっと押しつけてっ…天子のおちんちん、感じさせてっ…」
+				;乱数分岐:2
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 『衣玖う…これすごいっ、興奮しちゃうよぉ…』
+					PRINTFORMW 天子が衣玖の乳房を掴み、自ら扱きあげている…
+					PRINTFORMW 指先から伝わる柔らかさとペニスに感じる快感に、天子は夢中のようだ…
+					PRINTFORMW 「私のおっぱいで、オナニーされちゃってますね…♪可愛いですよ、天子…」
+				;その他の場合
+				ELSE
+					PRINTFORMW 「天子はおっぱいがお好きですね…すごく、硬くなってます…」
+					PRINTFORMW 『ひあっ…んっ、あっ…そうよっ、衣玖のおっぱいでされるの好きよっ…！』
+					PRINTFORMW 「ありがとうございます…♪ふふっ、もっと気持ちよくしてあげますからね…」
+				ENDIF
+			;屈服刻印Lv3
+			ELSEIF MARK:屈服刻印 == 3
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 『そのままこっち見て衣玖？ふふん、いいわよその上目遣い…♪』
+					PRINTFORMW 『乳首も立ってるし…衣玖も感じてるんじゃない？ほら…』
+					PRINTFORMW 天子が衣玖の乳首を指で擦り上げると、たまらず衣玖が喘ぎ声を上げる…
+					PRINTFORMW 「んあっ！んっくう…私は、いいですからっ…はっ、はあっ…」
+				;その他の場合
+				ELSE
+					PRINTFORMW 『どう衣玖、自分でおっぱいそんなに動かして、気持ちいいんじゃない？』
+					PRINTFORMW 「……ちょっと、胸も気持ちいいです」
+					PRINTFORMW 『そうそう♪私も気持ちいいし…もっと激しくしちゃっていいからね』
+				ENDIF
+			;その他の場合
+			ELSE
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 『ほら、もっといやらしくおっぱい使わないと、終わらないわよ？』
+				;その他の場合
+				ELSE
+					PRINTFORMW 『なんだかぎこちないわね。まあこれはこれで悪くないけど』
+				ENDIF
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;奉仕精神Lv5以上または淫乱
+		IF ABL:奉仕精神 >= 5 || TALENT:淫乱
+			;母乳つき
+			IF STAIN:胸 & 16 && RAND:2 == 0
+				IF RAND:4 == 0
+					PRINTFORMW 「せっかくですし、こうして…ふふ%UNICODE(0x2665)%」
+					PRINTFORML 乳首から流れ出した母乳を手にまぶし、乳房に挟まれたペニスに擦りつける…
+					PRINTFORMW 豊満な乳房に包まれた中で、%CALLNAME:PLAYER%のペニスは母乳と、先走りとそして衣玖の唾液にまみれていく…
+					PRINTFORMW 「おっぱいの…フルコース…みたいな、ものでしょうか…ふふ…%UNICODE(0x2665)%」
+					PRINTFORMW 「どうぞ…たくさん出して…もっともっと、おっぱい汚して、好きにして…気持ちよく、なって下さい…%UNICODE(0x2665)%」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「んぅんっ、あっ、ん…激しっ、あ…%UNICODE(0x2665)%」
+					PRINTFORMW 馬乗りになってペニスを乳房に挟んで擦り付け、同時に母乳の溢れる乳首を弄ぶ…
+					PRINTFORMW 「ちくび、はぁ…触らなくて、いいのにっ%UNICODE(0x2665)%」
+					PRINTFORMW 「ああ…！ああっあっ！ぎゅうってして…搾って、そのまま…イって…くだ、さい…ね…%UNICODE(0x2665)%」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「あっ…あっ、おっぱい、出ちゃってます…ふふ、恥ずかしい…」
+					PRINTFORMW 衣玖が豊かな胸を左右から挟み込む度に、母乳が滲み出ている…
+					PRINTFORMW 「%CALLNAME:PLAYER%からも、私からも…いっぱい溢れて…いやらしいですね…♪」
+				ELSE
+					PRINTFORMW 「ぎゅうって…しますよ？ふふ、見てて下さいね…」
+					PRINTFORML 衣玖が手に力を込めて乳肉を、挟まれたペニスを両側から搾り上げる…
+					PRINTFORMW ペニスに伝わる快感と、衣玖の乳首から勢いよく母乳が噴き出す光景に%CALLNAME:PLAYER%の興奮は頂点に達する…
+					PRINTFORMW 「太い、すごい太いですよ…%UNICODE(0x2665)%ふふ、一緒に、ほらぁ…ミルク、いっぱい…出しましょう、ね…%UNICODE(0x2665)%」
+				ENDIF
+			;その他
+			ELSE
+				IF RAND:6 == 0
+					PRINTFORML きつく絞められた乳肉の間で、ペニスが悲鳴を上げるように脈打つ…
+					PRINTFORMW そして衣玖が締め付けをやわらげると、一気に竿へと血液が巡り、まるでペニスが発火しているかのような熱さを感じる…
+					PRINTFORML 「ふふ、ちょっときつかったですか？でも、今の反応は…どうやらお好きみたいですね、ふふふ」
+					PRINTFORMW 「さあ、もう一度…いきますよー…ぎゅっ%UNICODE(0x2665)%ぎゅっ%UNICODE(0x2665)%」
+				ELSEIF RAND:5 == 0
+					PRINTFORML たっぷりした乳肉に%CALLNAME:PLAYER%のペニスが包まれた極上の眺め…
+					PRINTFORMW そして竿を、亀頭をくまなく刺激する柔らかな感触に思わず%CALLNAME:PLAYER%は感嘆のため息を漏らしてしまう…
+					PRINTFORMW 「んっ、んっふぅ、ふふ…♪もう、たまらない…といった感じですね…？」
+					PRINTFORMW 「%CALLNAME:PLAYER%の気持ちいい顔も声も、もっと…私に見せて下さいね…%UNICODE(0x2665)%」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「ああ…おっぱいの中で、大きくなってきましたね…%UNICODE(0x2665)%」
+					PRINTFORML 「射精…したいんですね？いつでもいいですよ…」
+					PRINTFORMW 「おっぱいでも、口でも、顔でも、好きなところに、ぶちまけて下さい…%UNICODE(0x2665)%」
+				ELSEIF RAND:3 == 0
+					PRINTFORML 「ほんとにおっぱいが好きなんですから…♪」
+					PRINTFORMW 「いいですよ…衣玖のおっぱいの中で、いっぱい射精して、汚してください…♪」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「ふふ、%CALLNAME:MASTER%のおちんちんの鼓動、感じますよ…」
+					PRINTFORMW 衣玖の豊満な乳房はあなたのペニスをしっかり挟み、包み込んでいる…
+					PRINTFORML 「私も気持ち良くて、ドキドキしてて…」
+					PRINTFORMW 「一番気持ちいい瞬間に、射精させてあげますね…%UNICODE(0x2665)%」
+				ELSE
+					PRINTFORML 「あんっ！ふふっ、乳首に擦りつけちゃだめですよ…♪もう、せっかくあなたの大好きなおっぱいがあるのに、」
+					PRINTFORMW 「そんないたずらしちゃ、挟んであげませんよ？」
+					PRINTFORMW しかしあなたは構わずに、ペニスで衣玖の乳首を擦り続けた…
+					PRINTFORMW 「やっ、そんなっ…ふあっ、乳首っ、熱くなって…ああっ！」
+				ENDIF
+			ENDIF
+		;その他の場合
+		ELSE
+			;母乳つき
+			IF STAIN:胸 & 16 && RAND:2 == 0
+				IF RAND:2 == 0
+					PRINTFORMW 「あっ、んぁ…ふふ、母乳が、ついたままですけど…失礼しますね」
+					PRINTFORMW 「これじゃ…まるで自分で、おっぱい搾ってるみたいです…恥ずかしい…」
+				ELSE
+					PRINTFORMW 「おっぱいが出るようになったんですから…ここは大事に扱わないとだめですよ？ふふ」
+					PRINTFORMW 「優しく包んであげますから…私に任せて、気持ちよくなって下さいね…%UNICODE(0x2665)%」
+				ENDIF
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ああ…%CALLNAME:MASTER%のおちんちんの熱さ、伝わってきます…」
+				PRINTFORMW 「気持ちいいですか？おっぱいの間でビクビクしてます…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「おちんちんがずっと私を向いてて…」
+				PRINTFORMW 「なんだか、口でするよりも、ドキドキしますね…♪」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「私の胸、好きみたいですけど…」
+		PRINTFORMW 「こんな事をして楽しいのでしょうか…？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「んっ、んんっ…疲れるし、胸が痛いです…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;素股
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_43
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕
+		;処女
+		IF TALENT:処女
+			;助手が天子で助手が調教
+			IF ASSIPLAY && NO:ASSI == 1052
+				PRINTFORMW 『ね、ねえ、衣玖ってまだ処女なのよね？』
+				PRINTFORMW 「…ええ、そうですね」
+				PRINTFORMW 『ほら、間違って入らないように注意してねって…言おうと、したんだけど…』
+				PRINTFORMW 「あ、あら…お気遣い、感謝しますね天子」
+				PRINTFORMW 衣玖が恥ずかしそうに苦笑いする…デリケートな話題だけに、お互いやや話し辛そうだ。
+				PRINTFORMW 「…そんな優しい天子には衣玖お姉さんからサービスしてあげます、ふふっ」
+				PRINTFORMW 『も、もう…そんなつもりじゃなかったんだけど！』
+				PRINTFORMW 「でも、気を遣われて本当に嬉しかったんですよ？やっぱり天子はいい子です…♪」
+				CFLAG:7311 = 1
+			;その他の場合
+			ELSE
+				PRINTFORMW 「私が上になるんですね？わかりましたけど…」
+				PRINTFORMW （%CALLNAME:MASTER%に初めてを奪って欲しいのに、これじゃ自分で入れるしかないじゃないですか…）
+				PRINTFORMW なかなか動こうとしない衣玖に、あなたはどうかしたのかと問いかけた…
+				PRINTFORMW 「い、いえ…始めますね…」
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「お互い…気持ち良くなりましょうね…♪」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「熱いのが…擦れて…んんっ…変な感じです…！」
+	;処女
+	ELSEIF TALENT:処女 == 1
+		PRINTFORMW 「やだ…私の大事なところに、当たって…」
+		PRINTFORMW 「入れちゃだめですよ…！本当に…！」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「やだ…いやらしい…」
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;処女
+		IF TALENT:処女 == 1
+			;助手が天子で助手が調教　初回
+			IF ASSIPLAY && NO:ASSI == 1052 && CFLAG:7311 == 0
+				PRINTFORMW 『ね、ねえ、衣玖ってまだ処女なのよね？』
+				PRINTFORMW 「…はい、そうですけど…」
+				PRINTFORMW 『ほら、間違って入らないように注意してねって…言おうと、したんだけど…』
+				PRINTFORMW 「あ、あら…お気遣い、感謝しますね天子」
+				PRINTFORMW 衣玖が恥ずかしそうに苦笑いする…デリケートな話題だけに、お互いやや話し辛そうだ。
+				PRINTFORMW 「…そんな優しい天子には衣玖お姉さんからサービスしてあげます、ふふっ」
+				PRINTFORMW 『も、もう…そんなつもりじゃなかったんだけど！』
+				PRINTFORMW 「でも、気を遣われて本当に嬉しかったんですよ？やっぱり天子はいい子です…♪
+				CFLAG:7311 = 1
+			;助手が天子で助手が調教　２回目以降
+			ELSEIF ASSIPLAY && NO:ASSI == 1052
+				PRINTFORMW （はあっ…！衣玖の、あそこが擦れて、気持ちいっ…）
+				PRINTFORMW （…ああ、あの奥に入れたら私どうなっちゃうんだろ…）
+				PRINTFORMW （いやでも、さすがに衣玖の処女貰っちゃうのは…まずいわよねえ…）
+			;その他の場合
+			ELSE
+				;乱数分岐:2
+				IF RAND:2 == 0
+					PRINTFORMW 「あううっ…！私の、あそこが…%CALLNAME:PLAYER%のおちんちんに、ぴったり、くっついてますよ…」
+					PRINTFORMW 濡れそぼった衣玖の割れ目があなたのペニスをなぞり、愛液を塗りつけている…
+					PRINTFORMW 「もう…準備できてますから…！どうか、私の初めて、貰って下さい…！」
+					PRINTFORMW 挿入を懇願しながら衣玖は激しくあなたのペニスに秘裂を擦りつけている…
+				;その他の場合
+				ELSE
+					PRINTFORMW 「わかりました、けど…」
+					PRINTFORMW 「私のその、は、初めて…貰っては、頂けないんですか…？」
+					PRINTFORMW 衣玖はそう言いながらも、あなたにまたがって股間をペニスに擦りつけている…
+					PRINTFORMW 「こうして、擦ってると…なんだか、私の奥の方がっ、ああんっ！」
+					PRINTFORMW 「熱くなって…きちゃうんですっ、んあっ、ああん…苦しいですっ、だから、どうか…！」
+					PRINTFORMW 衣玖は涙ながらに懇願しながらも、腰を振るのを止められないようだ…
+				ENDIF
+			ENDIF
+		;淫乱である
+		ELSEIF TALENT:淫乱 == 1
+			;天子助手時のランダム分岐　気持ち優先表示
+			IF ASSIPLAY && NO:ASSI == 1052 && RAND:4 == 0
+				PRINTFORMW 「こういうのも気持ちいいでしょう？天子…」
+				PRINTFORMW 『んあっ！はっ、んううっ…ぬるぬる、擦れてすごいっ…』
+				PRINTFORMW 『衣玖のあそこが、あったかくて…吸いついてくるみたいなのっ…』
+				PRINTFORMW 「膣に入れたらもっと気持ちいいですよ…♪ふふっ、期待して下さいね…」
+			ELSEIF ASSIPLAY && NO:ASSI == 1052 && RAND:3 == 0
+				PRINTFORMW 『挿入れたいっ、挿入れたいのおっ、衣玖の膣にっ、出させてえっ…！』
+				PRINTFORMW 『もうだめえっ…！出ちゃうからっ、お願いっ、挿入れさせてよおっ…！』
+				PRINTFORMW 衣玖の秘裂に天子のペニスが食い込み、二人に強烈な快感をもたらしている…
+				PRINTFORMW 「私も欲しいですうっ…！でもっ、止められないですっ、出してください、天子いっ…！」
+			;乱数分岐:4
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「ほら…見て下さい？いつも%CALLNAME:PLAYER%のおちんちん、衣玖のこんな奥まで、入ってるんですよ…？」
+				PRINTFORMW 下腹部に押し当てられたペニスを指差し、衣玖が妖しく話しかける…
+				PRINTFORMW 「私の一番奥におちんちんが届くたびに…快感で頭の中が真っ白になるんです…」
+				PRINTFORMW 「こうして擦るだけじゃ満足出来ませんよね…？ふふっ」
+				PRINTFORMW 「次は入口だけじゃなくて、私のここ…子宮まで%CALLNAME:PLAYER%のおちんちん、届かせてください…♪」
+			;乱数分岐:3
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「あっ、あっ、すごいっ、どんどんお汁がっ、漏れてますよ…？」
+				PRINTFORMW %CALLNAME:PLAYER%に跨った衣玖が割れ目をペニスに擦りつける度に、先走りが漏れ出して来る…
+				PRINTFORMW 「まるで私にっ、おちんちん付いてるみたいです…」
+				PRINTFORMW 「このままイカせてあげましょうか…？ちょっと、顔にかかってしまいそうですけど…ふふっ♪」
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ふああぁあぁっ…だめえっ、気持ち良くてっ、だめなんですうっ」
+				PRINTFORMW 「クリがっ、感じすぎてえっ！イクっ、イクっ、うううぅうんんっ！」
+				PRINTFORMW 衣玖は%CALLNAME:PLAYER%の上で腰を振りながら、盛大に愛液を撒き散らしている…
+				PRINTFORMW 「もう駄目ですっ、入れてっ、%CALLNAME:PLAYER%のおちんちん、早く私の膣に入れて下さいっ…！」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「んんっ…んあっ…こんなに濡れてるのに、入れてくれないなんて…」
+				PRINTFORMW 「おあずけだなんてっ…酷いですよ…」
+				PRINTFORMW 衣玖の股間からは白く濁った愛液が溢れて、%CALLNAME:PLAYER%の下腹部を派手に汚している…
+				PRINTFORMW 「そんな勿体ないおちんちんは…私が懲らしめてあげますから…ううっ、あっ♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			;天子助手時のランダム分岐
+			IF ASSIPLAY && NO:ASSI == 1052 && RAND:4 == 0
+				PRINTFORMW 「この格好で出したら、天子の顔にかかってしまいますよ？ふふっ」
+				PRINTFORMW 衣玖がペニスを天子の腹部に押し付けるように擦り続けている…
+				PRINTFORMW 『やっ！ちょっと…変な事言わないでよお…んふあっ！だめっ、気持ちいいっ』
+			ELSEIF ASSIPLAY && NO:ASSI == 1052 && RAND:3 == 0
+				PRINTFORMW 「どうです天子…擦れて、痛くないですか？」
+				PRINTFORMW 『痛いわけ、ないじゃない…！』
+				PRINTFORMW 『触れてるところが熱くて、気持ちよくて…すぐに出ちゃいそうよぉ…！』
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「%CALLNAME:PLAYER%のがっ、とっても熱くて…ああっ…いやらしい気持ちに、なっちゃいます…」
+				PRINTFORMW 「私も興奮してますよ…私のあそこも、とっても熱くなってます…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ふふっ、ヌルヌルして…とってもいやらしいです…」
+				PRINTFORMW 「私も、感じちゃってます…このまま、一緒にイきましょうね…♪」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3または奉仕精神Lv3
+	ELSEIF MARK:屈服刻印 == 3 || ABL:奉仕精神 >= 3
+		;乱数分岐:4
+		IF RAND:4 == 0 && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『ねえ衣玖、もっと動きを大きくして？そう、全体に擦りつけるように…』
+			PRINTFORMW 『そう、そんな感じ…衣玖のあそこ、私のおちんちんでたっぷり擦っていいのよ？ふふん』
+			PRINTFORMW 「やっ…んっ、はんっ…おっきくて、腰が疲れてしまいますよぉ…」
+		;乱数分岐:3
+		ELSEIF RAND:3 == 0 && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『ふふん、そんなに必死に擦りつけちゃって…♪』
+			PRINTFORMW 『どう衣玖、そろそろ私のおちんちん、挿入れたくなってきたんじゃない？』
+			PRINTFORMW 「…わ、私は別に…ただ天子に、気持ちよくなってもらいたいだけです…」
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「あっ、はっ…もっと…早くした方が、いいですか…？」
+			PRINTFORMW 「どうですか…私のここで、気持ちよく、出来てますか…？」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「んううん…あ、当たってます…わたしのク、クリトリスに、%CALLNAME:PLAYER%のものが…」
+			PRINTFORMW 「熱くて、ヌルヌルして…くぅんっ、気持ちいい、です…」
+		ENDIF
+	;処女
+	ELSEIF TALENT:処女 == 1
+		;乱数分岐:3
+		IF RAND:3 == 0 && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『そのうち衣玖にこれが入っちゃうかもしれないんだし、今の内に感触に慣れておかないとね』
+			PRINTFORMW 「そんなっ…やめてください天子…私には、無理ですよぉ…」
+			PRINTFORMW 『ちょっと言い過ぎちゃったかな？でも大丈夫よ衣玖』
+			PRINTFORMW 『その時は私もしっかり見ててあげるから…楽しみにしてなさい？ふふん』
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0  && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『そんな怖がらないでよ衣玖…無理矢理挿入れるような真似はしないわよ』
+			PRINTFORMW 「…本当ですよね？何だか今にもここに、入ってしまいそうで…」
+			PRINTFORMW 『これでも一応天人ですしー、誰かを騙して楽しむ趣味は無いから大丈夫よ、ほら続けて？』
+		;その他の場合
+		ELSE
+			PRINTFORMW 「はあ…はあ…動いて、あげますから…んんっ！」
+			PRINTFORMW 「入れちゃだめですからね…んっ、あっ」
+		ENDIF
+	;その他の場合
+	ELSE
+		;乱数分岐:2
+		IF RAND:2 == 0
+			PRINTFORMW 「くうっ…じっとしてて下さい…入ってしまいそうで…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんな、卑猥な事…普通にするより、恥ずかしいですよ…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナル舐め強制
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_44
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナルおねだり
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_45
+;PRINTFORMW 
+
+;-------------------------------------------------
+;足舐め強制
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_46
+;PRINTFORMW 
+
+;-------------------------------------------------
+;足扱き
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_47
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORMW 「%CALLNAME:PLAYER%って本当に…変態さんなんですから…ふふっ」
+		PRINTFORMW 「痛かったら言ってくださいね…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「一体%CALLNAME:PLAYER%という人は…何を考えているんですか…」
+		PRINTFORMW 「わざわざ弱点を誰かに踏んでもらうなんて…」
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 == 1 
+		;ヴァギナに精液汚れ
+		IF RAND:6 == 0 && STAIN:ヴァギナ & 4 && TFLAG:103 && TALENT:処女 == 0
+			PRINTFORMW 衣玖が大きく足を開いて%CALLNAME:PLAYER%のペニスを足で扱いていると、
+			PRINTFORMW 先程中出しした精液がヴァギナから垂れ落ちてくるのがよく見える…
+			PRINTFORMW 「もう…そんなとこばかり見て、いやらしいんですから…」
+			PRINTFORMW 「またここを汚したいんですか？ふふっ、そこから届くでしょうか…？手伝いますから、頑張って下さい♪」
+			PRINTFORMW そう言って衣玖はさらにペニスを足で激しく擦りあげた…
+		;乱数分岐:5
+		ELSEIF RAND:5 == 0 && ASSIPLAY && NO:ASSI == 1052 && ABL:サドっ気 >= 3
+			PRINTFORMW 『……っくう、んんっ！あっ、うぐぅぅ…』
+			PRINTFORMW 「もっと声を上げさせてもいいんですけど…我慢してる表情もいいですね、ふふっ」
+			PRINTFORMW 「私も天子を苛めたい欲を抑えるので大変です…♪」
+		;乱数分岐:4
+		ELSEIF RAND:4 == 0 && ASSIPLAY && NO:ASSI == 1052 && ABL:サドっ気 >= 3
+			PRINTFORMW 「天人はここも頑丈なんですか？強めにいきますよ…！」
+			PRINTFORMW 『ひっ、いぎっ！ねえ衣玖っ、ちょっと痛い、痛いからあっ！』
+			PRINTFORMW 「そんなこと言って…どんどんお汁が漏れてますよ？…やめませんからね」
+		;乱数分岐:3
+		ELSEIF RAND:3 == 0 && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 「天子って…痛いのが趣味なんですか？やっぱり」
+			PRINTFORMW 『やっぱりって衣玖、あのねえ……こんなこと、親しい相手にしか頼めないわよ、もう！』
+			PRINTFORMW 「およよ、失礼しました…ふふっ、思ったよりも慕われてたようで嬉しいですね」
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「ふふっ…%CALLNAME:PLAYER%、私のあそこに目が釘付けになってますよ？」
+			PRINTFORMW 「いいんですよ…♪この方が、%CALLNAME:PLAYER%も興奮するでしょう？」
+			PRINTFORMW 衣玖が指で秘裂をそっと広げるのを見て、%CALLNAME:PLAYER%のペニスはさらに固さを増していった…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「今度はストッキングを履いたまま、してほしい？」
+			PRINTFORMW 衣玖は穏やかな笑みを浮かべながらも、戸惑いは隠せないようだ…
+			PRINTFORMW 「う～ん…考えておきますね…」
+		ENDIF
+	;その他の場合
+	ELSE
+		;乱数分岐:3
+		IF RAND:3 == 0 && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『衣玖の足って柔らかくって気持ちいい…♪普段歩かないで浮いてばかりいるからじゃない？』
+			PRINTFORMW 「そうかもしれませんけど…こんなことをするためではありません…！」
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0 && ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『この格好、衣玖のあそこが丸見えなのよ？ふふん、どっちが辱められてるんだか』
+			PRINTFORMW 『ほらぁ、手で隠しちゃダメでしょう？空気読みなさいよ全く』
+			PRINTFORMW 「ううっ…！早く、終わらせてくださいよ…足がもたないです…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「またですか？こんなの気持ちいいんですか？」
+			PRINTFORMW 「ああ…感触が気持ち悪い…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;髪扱き
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_48
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORMW 「およよ…」
+		PRINTFORMW 「ちょっとそこは…優しくしてくれないと、怒りますよ？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「ひっ…！何…してるんですかっ…！」
+		PRINTFORMW 衣玖は%CALLNAME:PLAYER%を突き放そうとするが、髪を持たれているため身動きが取れないようだ…
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;精液中毒Lv3以上
+		IF ABL:精液中毒 >= 3
+			PRINTFORMW 「%CALLNAME:PLAYER%のおちんちん、こんな近くに…♪」
+			PRINTFORMW 「しっかり見ててあげますよ…ふふっ、すごい匂いですね…♪」
+			PRINTFORMW 「さあ…衣玖の髪も、%CALLNAME:PLAYER%の精液でっ、染め上げて下さい…！」
+		;助手が天子で助手が調教
+		ELSEIF ASSIPLAY && NO:ASSI == 1052
+			PRINTFORMW 『ごめん衣玖っ、もう少しだけこのままさせてっ…！』
+			PRINTFORMW 衣玖は複雑そうな表情で、天子が髪で自慰を続けるのを見つめている…
+		;精液中毒Lv1以上
+		ELSEIF ABL:精液中毒 >= 1
+			PRINTFORMW 「まるで、%CALLNAME:PLAYER%のを見せつけられてるみたいです…」
+			PRINTFORMW 「大丈夫ですから…そのまま、続けて下さいね…」
+		;その他の場合
+		ELSE
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「そんなの、本当に気持ちいいんですか…？」
+				PRINTFORMW 「男性の考えることは不思議です…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「髪を褒めて下さるのは嬉しいですけど…」
+				PRINTFORMW 「さすがに、愛で方が間違っているのではないでしょうか…」
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		PRINTFORMW 「ううっ…早く終わって下さい…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;腋扱き
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_49
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「ひゃっ！くすぐったい…」
+	PRINTFORMW 「うう…熱いのが伝わってきます…」
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;奉仕精神Lv5以上または淫乱
+		IF ABL:奉仕精神 >= 5 || TALENT:淫乱
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「もう…乱暴なんですから…」
+				PRINTFORMW %CALLNAME:PLAYER%は衣玖に腕を上げさせ、腋だけでなく乳房や背中にまで擦りつけた…
+				PRINTFORMW 「ヌルヌルして…%CALLNAME:PLAYER%にいろんなとこ、汚されちゃってます…」
+				PRINTFORMW 「さあ、%CALLNAME:PLAYER%の好きなところに…精液、ぶちまけて下さい…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「あらあら…おっぱいも使いたいんですか？欲張りなんですから…」
+				PRINTFORMW %CALLNAME:PLAYER%は腋に挟まれたペニスを押し込み、さらに乳房にまで擦りつけた…
+				PRINTFORMW 「いったいどこに出されちゃうんでしょう…ふふっ、くすぐったい…♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「ひっ！…はっ、あはっ、あのっ、くすぐったいですから！」
+				PRINTFORMW 衣玖が体をよじるのに構わず、%CALLNAME:PLAYER%は強引に腋にペニスを擦りつけた…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「ふっ、はふっ…やっぱり、腋でするのは、不思議な感じですね…」
+				PRINTFORMW 「もう少し締めた方がいいんでしょうか…？」
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;奉仕精神Lv3以上
+		IF ABL:奉仕精神 >= 3
+			PRINTFORMW 「こんなことをして気持ちいいとは、思えないのですが…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「あの、ふざけてるんですか？」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;全身扱き
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_50
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尻扱き
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_1051
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;処女
+		IF TALENT:処女 == 1
+			PRINTFORMW 「えっ、このまままさか…」
+			PRINTFORMW 衣玖は後ろから挿入されるのかと、ビクッと体を震わせた…
+			PRINTFORMW 「も、もう…驚かせないで下さいね…？」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「後ろからする…のでは、ないのですね」
+			PRINTFORMW 「そんなにお尻を触られると、入れられちゃうよりなんだか恥ずかしいのですが…」
+		ENDIF
+	;処女
+	ELSEIF TALENT:処女 == 1
+		PRINTFORMW 「ひっ…！怖いです、お尻に、当てないで…」
+		PRINTFORMW 衣玖は後ろから挿入されるかもという恐怖に、身を固くしている…
+	;その他の場合
+	ELSE
+		PRINTFORMW 「むっ、お尻をそんな風に使うなんて…」
+		PRINTFORMW 「随分と失礼なことをされている気がします…」
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		;処女
+		IF TALENT:処女 == 1
+			PRINTFORMW 「もうっ、またですか…？この格好、%CALLNAME:PLAYER%がよく見えなくて…怖いんです…」
+			PRINTFORMW 「ふああ…おちんちんの熱が、伝わってきて…」
+			PRINTFORMW 衣玖の形の良いお尻は、%CALLNAME:PLAYER%の先走りにまみれていやらしく光っている…
+		;淫乱である
+		ELSEIF TALENT:淫乱 == 1
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「ふふっ♪いいですよ…衣玖のお尻で、気持ち良くなって下さい…」
+				PRINTFORMW 「ああ…おちんちん熱い…そのまま、入れちゃってもいいんですよ…？」
+				PRINTFORMW 「私のそこ、もう濡れちゃって準備できてますから…♪」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「私のお尻、気持ちいいですか…？」
+				PRINTFORMW 衣玖の豊満な尻肉に挟まれたペニスは、快感に震えている…
+				PRINTFORMW 「どうぞ…好きな時に出してくださいね…おしりに熱い精液、たっぷりかけて下さい…♪」
+			ENDIF
+		;その他の場合
+		ELSE
+			;乱数分岐:2
+			IF RAND:2 == 0
+				PRINTFORMW 「んっ、悪くないですけど…そんなのじゃあ、お互い満足出来ないと思います」
+				PRINTFORMW 「お尻なら…別に後で、触らせてあげますから…早く、しませんか…？」
+				PRINTFORMW 衣玖は恥ずかしそうに小声で挿入を求めている…
+			;その他の場合
+			ELSE
+				PRINTFORMW 「あの、十分濡れてますから、入れても…」
+				PRINTFORMW 衣玖が呟くが、構わずあなたは衣玖の尻肉にペニスを擦り付けている…
+				PRINTFORMW 「…いつまでお尻をそうしてるんですかっ…するならして欲しいのに、もう…！」
+			ENDIF
+		ENDIF
+	;その他の場合
+	ELSE
+		;屈服刻印Lv3
+		IF MARK:屈服刻印 == 3
+			PRINTFORMW 「ふあっ…！んっ、んっ…擦られてるだけなのに、熱く…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなこと…私でなくてもいいでしょう？」
+			PRINTFORMW 「適当な柔らかいもの相手にしててくださいよ、全く…」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;竿扱き
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_52
+;PRINTFORMW 
+
+;-------------------------------------------------
+;玉揉み強制
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_53
+;恋慕
+IF TALENT:恋慕 == 1
+	;淫乱である
+	IF TALENT:淫乱 == 1
+		;乱数分岐:4
+		IF RAND:4 == 0
+			PRINTFORMW 「ちょっとだけ、ここをびりびりしてみましょうか？」
+			PRINTFORMW それはさすがに…！いくらなんでも遠慮しておこう…
+			PRINTFORMW 「ふふっ、冗談ですよ。でも、痺れるほどに気持ちよくしてあげますね…♪」
+		;乱数分岐:3
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「私の膣に出たがってる精子…この中に沢山、詰まってるんですね…♪」
+			PRINTFORMW 「%CALLNAME:MASTER%がこのままイったら無駄撃ちですよ？ふふっ、いいんですか？」
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「いっぱい出せるよう、念入りにここをほぐしてあげましょう…♪」
+			PRINTFORMW 「ふふっ、揉む度におちんちんがびくびく反応してますよ？私の手、そんなにいいんですね…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ふふっ、ずっしりしてます…」
+			PRINTFORMW 「今日もこの中身、私にいっぱい出してくださいね…♪」
+		ENDIF
+	;その他の場合
+	ELSE
+		;乱数分岐:2
+		IF RAND:2 == 0
+			PRINTFORMW 「手の中で、ころころしてますね…不思議な感じ…」
+			PRINTFORMW 「もう少し強めでもいいんですか？ふふっ、面白くなってきました…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんな感じで、ゆっくり、ぎゅっと…どうでしょうか…？」
+			PRINTFORMW 「人の体にこんな部分があるのですね…ちょっと驚きです」
+		ENDIF
+	ENDIF
+;屈服刻印Lv3
+ELSEIF MARK:屈服刻印 == 3
+	;乱数分岐:2
+	IF RAND:2 == 0
+		PRINTFORMW 「大丈夫なんですか？こんなことをして…」
+		PRINTFORMW 「んっ！…あまり動かない方がいいですよ、私も不慣れですから…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「…私が人を襲わない妖怪だからって、気を許し過ぎです」
+	ENDIF
+;その他の場合
+ELSE
+	;乱数分岐:2
+	IF RAND:2 == 0
+		PRINTFORMW 「汚らしい…くっ、こっちを見ないでください…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「嫌な、感触です…こんなことをさせて何がいいんですか…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;玉舐め強制
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_54
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORML 「はむっ、んじゅっ…んっ、れるっ、あむう…」
+		PRINTFORMW （おかしなものですね…男の人のここが今では、妙に愛しいなんて…）
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW （堕ちて、しまったのですね…こんな事をするのに抵抗もないなんて…）
+	;その他の場合
+	ELSE
+		PRINTFORMW （信じられない…私が、こんな汚い真似を…！）
+	ENDIF
+;２回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;乱数分岐:2
+		IF RAND:2 == 0
+			PRINTFORML 「こっちのほうに触らなくても…気持ちよくなれちゃうんですね…♪」
+			PRINTFORMW 陰嚢のみへの刺激であなたは絶頂へと昇り詰めようとしている…
+		;その他の場合
+		ELSE
+			PRINTFORML 「んじゅっ、じゅうっ…れろ、ぬりゅっ…吸っちゃいますよ…？んじゅうっ」
+			PRINTFORMW 衣玖が陰嚢のいたる所を責め立て、痛いほどの快感をあなたにもたらす…
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;乱数分岐:2
+		IF RAND:2 == 0
+			PRINTFORML 「あっ、んあっ…押し付けないでっ…ちゃんとしますから…！」
+			PRINTFORMW あなたは衣玖の顔に陰嚢を押し付け、強引にその感触を楽しんだ…
+		;その他の場合
+		ELSE
+			PRINTFORML 「はあっ…あむっ、ふうっ…んっ、どうですか…」
+			PRINTFORMW （匂いと、熱さで…意識が遠くなりそう…）
+		ENDIF
+	;その他の場合
+	ELSE
+		PRINTFORML 「うっ……ちゅぱ、ちゅっ…こんなの、嫌…」
+		PRINTFORMW 衣玖は屈辱に耐えながら、ちろちろと陰嚢を舌先で舐めている…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナル愛撫強制
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_55
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ナイズリ
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_56
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ローション
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_60
+;初回実行時
+IF TFLAG:95 == 1
+	PRINTFORMW 「あっ、くううんっ…何ですかこれは…？」
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ああっ…ぬるぬるして、なんだかいやらしいですね…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「ふあっ、んっ！しつこく、触らないで下さい…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;媚薬
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_61
+;初回実行時
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORMW 「ああっ…こんな感じは、初めてです…」
+		PRINTFORMW 「どうしたんでしょう…あなたにもっと、触れてほしいんです…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「やだ…頭が、ぼおっと、してきて…」
+		PRINTFORMW 「何をしたんですか…！」
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「この薬を飲むと…えっちな事しか、考えられなくなるんです…」
+		PRINTFORMW 「どうか…この疼きを、鎮めてくれませんか…？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「いやっ…体が、熱くなってくるっ…！」
+		PRINTFORMW 「触らないで下さい…！」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;利尿薬
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_62
+;初めて
+IF TFLAG:95 == 1
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;露出癖Lv4以上
+		IF ABL:露出癖 >= 4
+			PRINTFORMW 「えっ…えっ？何ですかこれ、急に、お腹が…んっ、んんっ！」
+			PRINTFORMW 「あはっ、そんな…これじゃあ我慢、出来そうもないですね…」
+			PRINTFORMW 「見られちゃいます…%CALLNAME:MASTER%に私の、お漏らししちゃうところ…ふふっ♪」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「や、やだっ…こんな時に、どうして…？」
+			PRINTFORMW 「な、何にやにやしてるんですか…！このままじゃ…そのっ…漏れちゃい、ますよぉ…！」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「……あの、お手洗いに行きたいのですが…」
+		PRINTFORMW 「つ、付いて来なくても結構です！すぐに戻りますから…って、どうして前を塞ぐのですか…？」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「妙なものを飲ませて…くっ、なんだか、お腹が…」
+		PRINTFORMW 「まさか、そういうつもりで…ふざけないで！早くそこを、どいて下さい…！」
+	ENDIF
+;２回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;露出癖Lv4以上
+		IF ABL:露出癖 >= 4
+			;乱数分岐:3
+			IF RAND:3 == 0 && TALENT:おもらし癖 == 1
+				PRINTFORMW 「おしっこ、止まらなくなってしまいますよぉ…」
+				PRINTFORMW 「薬のせいで、もう…自分じゃ…抑えられないん、です…♪」
+				PRINTFORMW 衣玖の股間からぴゅっ、ぴゅっと時折尿が漏れ出ているのが見える…
+			;乱数分岐:2
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「すぐに…出しちゃいますか？それともしばらく我慢した方がいいですか？」
+				PRINTFORMW 「%CALLNAME:MASTER%次第です…ほら、早く決めないと漏れちゃいますよ？ふふっ」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「おや…わざわざ薬を使わなくても…ちゃんと命令してくれれば、いいんですよ？」
+				PRINTFORMW 「%CALLNAME:MASTER%にでしたら…私のどんなところを見られたって、構いません…♪」
+			ENDIF
+		;おもらし癖である
+		ELSEIF TALENT:おもらし癖 == 1
+			PRINTFORMW 「ああっ！あっ、んやぁ…もう、すぐここまでっ…来てます…」
+			PRINTFORMW 「ただでさえ、出やすくなってしまってるのにっ…！はっああっ、もう、出ちゃ…！」
+		;露出癖Lv2以上
+		ELSEIF ABL:露出癖 >= 2
+			PRINTFORMW 「うう…お腹の中で、集まってきちゃってます…」
+			PRINTFORMW 「その、ちょっとだけ気持ちいいですけど、本当に…本当に恥ずかしいんですからね？」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「また、この感覚はっ……もうっ！酷いですよ…」
+			PRINTFORMW 「どうして私のこんなところ、見たがるんですかぁ…やだっ、どんどん熱くっ…」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;露出癖Lv4以上
+		IF ABL:露出癖 >= 4
+			PRINTFORMW 「はあっ、はああぁ…出ちゃい、そうです…」
+			PRINTFORMW 「もう、いいですか…？出してしまって…早く気持ち良く、んっ…なりたいです…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「…するところを見るだけでは飽き足らず、こんな薬まで使って…」
+			PRINTFORMW 「そうまでして私を辱めたいのですね…くっ、んあ…我慢が、出来ないっ…」
+		ENDIF
+	;その他の場合
+	ELSE
+		PRINTFORMW 「うっ、ふっ…んん～っ…やだ…苦しい、です…！」
+		PRINTFORMW 「もう…楽になってしまいたい、のにっ…こんなの、嫌あ…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;座薬
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_63
+;PRINTFORMW 
+
+;-------------------------------------------------
+;座薬(膣)
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_64
+;PRINTFORMW 
+
+;-------------------------------------------------
+;賢者の血
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_65
+;PRINTFORMW 
+
+;-------------------------------------------------
+;排卵誘発剤
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_66
+;初回実行時
+IF TFLAG:95 == 1
+	;出産経験あり
+	IF EXP:出産経験 > 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はあ…こんな薬もあるのですね。感心してしまいます」
+			PRINTFORMW 「…つまり、また子供が欲しい…ということですよね、%CALLNAME:PLAYER%？」
+			PRINTFORMW あなたが頷くと、衣玖は満面の笑みを浮かべた…
+			PRINTFORMW 「今夜は頑張りましょうね？%CALLNAME:PLAYER%…♪」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「望まぬ子を産ませたあげく、さらにこんなものを使うのですか…」
+			PRINTFORMW 「……もう好きにして下さい」
+			PRINTFORML 
+			PRINTFORMW ――-衣玖の頬を涙が伝った…
+		ENDIF
+	;出産経験なし
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「排卵…誘発剤？」
+			PRINTFORMW 「私は妖怪ですけど…妊娠できるのでしょうか…？」
+			PRINTFORMW 「ふふっ…でも、%CALLNAME:PLAYER%の赤ちゃんなら…ほ、欲しい、です…」
+			PRINTFORMW 顔を真っ赤にして希望を口にした衣玖に応えようと、あなたの興奮は高まった…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ああ…そんな…」
+			PRINTFORMW 「あなたは恐ろしい人間です…」
+			PRINTFORMW 衣玖はこれからされることの恐怖に震えている…
+		ENDIF
+	ENDIF
+;2回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;乱数分岐:6
+		IF RAND:6 == 0 && EXP:出産経験 >= 1
+			PRINTFORMW 「ああ…またあの時のように、激しく犯して頂けるんですね…」
+			PRINTFORMW 「私が泣いても、叫んでもきっと%CALLNAME:PLAYER%は止めないんでしょう…」
+			PRINTFORMW 「いいですよ…私を孕ませることしか考えない、子作りの為だけのセックス…始めましょう…♪」
+		;乱数分岐:5
+		ELSEIF RAND:5 == 0 && EXP:出産経験 >= 1
+			PRINTFORMW 「また%CALLNAME:PLAYER%の子供を授かることを期待しただけで…」
+			PRINTFORMW 「やだ…濡れてきちゃいました…♪」
+			PRINTFORMW 「今日は衣玖の子宮、いっぱいになるまで離しませんからね…♪」
+		;乱数分岐:4
+		ELSEIF RAND:4 == 0 && EXP:出産経験 >= 1
+			PRINTFORMW 「ふふっ、すごかったですよ？あの時の%CALLNAME:PLAYER%は」
+			PRINTFORMW 「わたしの膣に、何度も何度も溢れるほど注ぎ込んで…♪」
+			PRINTFORMW 「その後でしたね、妊娠したと分かったのは…」
+			PRINTFORMW 「それじゃあ、また子供を授かれるよう、頑張りましょう？%CALLNAME:PLAYER%…」
+		;乱数分岐:3
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「すごく伝わってきます…私を孕ませたいという%CALLNAME:PLAYER%の気持ち」
+			PRINTFORMW 「嬉しいです…私も、%CALLNAME:PLAYER%との子供が欲しくてたまらないんです…」
+			PRINTFORMW 「今日は壊れるまで…衣玖を抱いて下さい…」
+		;乱数分岐:2
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「んっ…飲みました…はい、大丈夫です…」
+			PRINTFORMW 「%CALLNAME:PLAYER%の好きなように何度でも抱いて下さい…めちゃめちゃにしてもらって構いません…」
+			PRINTFORMW 「思いっきり膣に出して、衣玖を孕ませてください…♪」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「私…頑張りますね」
+			PRINTFORMW 「子供が出来るよう、%CALLNAME:PLAYER%の精子…いっぱいいっぱい、衣玖の膣に、注ぎ込んでください…♪」
+		ENDIF
+	;その他の場合
+	ELSE
+		;出産経験あり
+		IF EXP:出産経験 > 0
+			PRINTFORMW 衣玖は全くと言っていい程感情を見せぬまま、薬を飲み込んだ…
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなものを使っても、妊娠するとは限りませんよ？」
+			PRINTFORMW 衣玖は強がるが、その体はかすかに震えている…
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;緊急避妊薬
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_67
+;PRINTFORMW 
+
+;-------------------------------------------------
+;産卵促進剤
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_68
+;PRINTFORMW 
+
+;-------------------------------------------------
+;陰核成長剤
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_69
+;PRINTFORMW 
+
+;-------------------------------------------------
+;興奮剤
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_70
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手避妊薬
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_71
+;PRINTFORMW 
+
+;-------------------------------------------------
+;感覚増幅薬
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_72
+;PRINTFORMW 
+
+;-------------------------------------------------
+;お香を焚く
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_79
+;シダーウッド
+IF TFLAG:99 == 0
+	;PRINTFORMW 
+;ペパーミント
+ELSEIF TFLAG:99 == 1
+	;PRINTFORMW 
+;ジャスミン
+ELSEIF TFLAG:99 == 2
+	;PRINTFORMW 
+;ラヴェンダー
+ELSEIF TFLAG:99 == 3
+	;PRINTFORMW 
+;ムスク
+ELSEIF TFLAG:99 == 4
+	;PRINTFORMW 
+;フランキンセンス
+ELSEIF TFLAG:99 == 5
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;クリトリス注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_80
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ヴァギナ注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_81
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナル注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_82
+;PRINTFORMW 
+
+;-------------------------------------------------
+;バスト注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_83
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尿道注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_84
+;PRINTFORMW 
+
+;-------------------------------------------------
+;Ｃ肥大注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_85
+;PRINTFORMW 
+
+;-------------------------------------------------
+;Ｃ賢者の血注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_86
+;PRINTFORMW 
+
+;-------------------------------------------------
+;採血注射
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_88
+;PRINTFORMW 
+
+;-------------------------------------------------
+;裸エプロン
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_90
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「裸の上になんて、恥ずかしいですね…」
+			PRINTFORMW 「じゃあ、空気を読んで、あなたに尽くしてあげましょう…♪」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんなのつけたままじゃ、汚れてしまいますが…」
+			PRINTFORMW 「似合ってる？はあ、ありがとうございます…」
+		ENDIF
+	;2回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふふ…好きなんですね？この格好」
+			PRINTFORMW 「いっぱい、愛し合いましょうね…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「そんなにじろじろ見ないで下さい…」
+			PRINTFORMW 衣玖は体を隠そうとするが、その姿は逆にあなたの劣情を煽っている…
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;スク水プレイ
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_91
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;初回実行時
+	IF TFLAG:95 == 1
+		PRINTFORMW 「なんだか、きついですね…」
+		PRINTFORMW 「水着ですか？確かにそんな感じ、ですね…ううん…」
+	;2回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「この格好なら…汚れても、すぐに洗えそうですね…」
+			PRINTFORMW その言葉を聞いて、ついあなたは様々な液体に塗れる衣玖の姿を思い浮かべた…
+			PRINTFORMW 「あら、興奮しました？ふふっ♪じゃあ、今日はあなたにいっぱい汚されましょう…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「なんだか、恥ずかしい格好ですよね…」
+			PRINTFORMW 衣玖の美しい肢体に水着がぴったりと張り付き、いやらしさを増している…
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;お医者プレイ
+;TEQUIP:お医者さんプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_92
+;解除時
+IF TEQUIP:お医者さんプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;コスプレ
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_93
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;助手コスプレ
+;TEQUIP:ASSI:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1051_TRAIN_MESSAGE_S_COM_94
+;解除時
+IF TEQUIP:ASSI:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;--------------------------------------------------------------------------------------------------
+;CALL DEBUG_1051
+;↑を何もしないに貼り付ける
+@DEBUG_1051
+PRINTL デバッグルームです
+	$INPUT_LOOP_1051
+	PRINTL [0] 能力関連(衣玖)
+	PRINTL [6] 能力関連(助手)
+	PRINTL [1] フラグ調整
+	PRINTL [3] 確認したい文を見る
+	PRINTL [4] EDを見る
+	PRINTL [9] やめる
+	$INPUT_LOOP_50
+	INPUT
+	IF RESULT == 0
+		PRINTL 操作したい能力を選んで下さい
+		PRINTL [0] マゾっ気
+		PRINTL [1] V感覚
+		PRINTL [2] A感覚
+		PRINTL [3] 屈服刻印
+		PRINTL [4] 恋慕
+		PRINTL [5] 好感度
+		$INPUT_LOOP_55
+		INPUT
+		IF RESULT == 0
+			PRINTL 対象：マゾっ気
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 3
+			PRINTL [3] 4
+			PRINTL [4] 5
+			$INPUT_LOOP_56
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				ABL:マゾっ気 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				ABL:マゾっ気 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv3にしました
+				ABL:マゾっ気 = 3
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv4にしました
+				ABL:マゾっ気 = 4
+			ELSEIF RESULT == 4
+				PRINTFORMW Lv5にしました
+				ABL:マゾっ気 = 5
+			ELSE
+				GOTO INPUT_LOOP_56
+			ENDIF
+		ELSEIF RESULT == 1
+			PRINTL 対象：V感覚
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 3
+			PRINTL [3] 4
+			PRINTL [4] 5
+			$INPUT_LOOP_57
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				ABL:Ｖ感覚 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				ABL:Ｖ感覚 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv3にしました
+				ABL:Ｖ感覚 = 3
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv4にしました
+				ABL:Ｖ感覚 = 4
+			ELSEIF RESULT == 4
+				PRINTFORMW Lv5にしました
+				ABL:Ｖ感覚 = 5
+			ELSE
+				GOTO INPUT_LOOP_57
+			ENDIF
+		ELSEIF RESULT == 2
+			PRINTL 対象：A感覚
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 3
+			PRINTL [3] 4
+			PRINTL [4] 5
+			$INPUT_LOOP_58
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				ABL:Ａ感覚 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				ABL:Ａ感覚 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv3にしました
+				ABL:Ａ感覚 = 3
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv4にしました
+				ABL:Ａ感覚 = 4
+			ELSEIF RESULT == 4
+				PRINTFORMW Lv5にしました
+				ABL:Ａ感覚 = 5
+			ELSE
+				GOTO INPUT_LOOP_58
+			ENDIF
+		ELSEIF RESULT == 3
+			PRINTL 対象：屈服刻印
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 2
+			PRINTL [3] 3
+			$INPUT_LOOP_59
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				MARK:屈服刻印 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				MARK:屈服刻印 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv2にしました
+				MARK:屈服刻印 = 2
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv3にしました
+				MARK:屈服刻印 = 3
+			ELSE
+				GOTO INPUT_LOOP_59
+			ENDIF
+		ELSEIF RESULT == 4
+			PRINTL 対象：恋慕
+			PRINTL [0] つける
+			PRINTL [1] はずす
+			$INPUT_LOOP_60
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW 恋慕をつけました
+				TALENT:恋慕 = 1
+			ELSEIF RESULT == 1
+				PRINTFORMW 恋慕を外しました
+				TALENT:恋慕 = 0
+			ELSE
+				GOTO INPUT_LOOP_60
+			ENDIF
+		ELSEIF RESULT == 5
+			PRINTL 対象：好感度
+			PRINTL [0] 0
+			PRINTL [1] 500
+			PRINTL [2] 999
+			PRINTL [3] 1000
+			PRINTL [4] 2999
+			PRINTL [5] 3000
+			$INPUT_LOOP_70
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW 好感度を変化させました
+				CFLAG:好感度 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW 好感度を変化させました
+				CFLAG:好感度 = 500
+			ELSEIF RESULT == 2
+				PRINTFORMW 好感度を変化させました
+				CFLAG:好感度 = 999
+			ELSEIF RESULT == 3
+				PRINTFORMW 好感度を変化させました
+				CFLAG:好感度 = 1000
+			ELSEIF RESULT == 4
+				PRINTFORMW 好感度を変化させました
+				CFLAG:好感度 = 2999
+			ELSEIF RESULT == 5
+				PRINTFORMW 好感度を変化させました
+				CFLAG:好感度 = 3000
+			ELSE
+				GOTO INPUT_LOOP_70
+			ENDIF
+		ELSE
+			GOTO INPUT_LOOP_55
+		ENDIF
+		GOTO INPUT_LOOP_1051
+	ELSEIF RESULT == 6
+		PRINTL 操作したい能力を選んで下さい(助手ですよ)
+		PRINTL [0] マゾっ気
+		PRINTL [1] サドっ気
+		PRINTL [2] A感覚
+		PRINTL [3] 屈服刻印
+		PRINTL [4] 恋慕
+		$INPUT_LOOP_66
+		INPUT
+		IF RESULT == 0
+			PRINTL 対象：マゾっ気
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 3
+			PRINTL [3] 4
+			PRINTL [4] 5
+			$INPUT_LOOP_67
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				ABL:ASSI:マゾっ気 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				ABL:ASSI:マゾっ気 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv3にしました
+				ABL:ASSI:マゾっ気 = 3
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv4にしました
+				ABL:ASSI:マゾっ気 = 4
+			ELSEIF RESULT == 4
+				PRINTFORMW Lv5にしました
+				ABL:ASSI:マゾっ気 = 5
+			ELSE
+				GOTO INPUT_LOOP_67
+			ENDIF
+		ELSEIF RESULT == 1
+			PRINTL 対象：サドっ気
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 3
+			PRINTL [3] 4
+			PRINTL [4] 5
+			$INPUT_LOOP_68
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				ABL:ASSI:サドっ気 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				ABL:ASSI:サドっ気 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv3にしました
+				ABL:ASSI:サドっ気 = 3
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv4にしました
+				ABL:ASSI:サドっ気 = 4
+			ELSEIF RESULT == 4
+				PRINTFORMW Lv5にしました
+				ABL:ASSI:サドっ気 = 5
+			ELSE
+				GOTO INPUT_LOOP_68
+			ENDIF
+		ELSEIF RESULT == 2
+			PRINTL 対象：レズっ気
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 3
+			PRINTL [3] 4
+			PRINTL [4] 5
+			$INPUT_LOOP_69
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				ABL:ASSI:レズっ気 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				ABL:ASSI:レズっ気 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv3にしました
+				ABL:ASSI:レズっ気 = 3
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv4にしました
+				ABL:ASSI:レズっ気 = 4
+			ELSEIF RESULT == 4
+				PRINTFORMW Lv5にしました
+				ABL:ASSI:レズっ気 = 5
+			ELSE
+				GOTO INPUT_LOOP_69
+			ENDIF
+		ELSEIF RESULT == 3
+			PRINTL 対象：撮影技能
+			PRINTL [0] 0
+			PRINTL [1] 1
+			PRINTL [2] 2
+			PRINTL [3] 3
+			$INPUT_LOOP_64
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW Lv0にしました
+				MARK:ASSI:71 = 0
+			ELSEIF RESULT == 1
+				PRINTFORMW Lv1にしました
+				MARK:ASSI:71 = 1
+			ELSEIF RESULT == 2
+				PRINTFORMW Lv2にしました
+				MARK:ASSI:71 = 2
+			ELSEIF RESULT == 3
+				PRINTFORMW Lv3にしました
+				MARK:ASSI:71 = 3
+			ELSE
+				GOTO INPUT_LOOP_64
+			ENDIF
+		ELSEIF RESULT == 4
+			PRINTL 対象：恋慕
+			PRINTL [0] つける
+			PRINTL [1] はずす
+			$INPUT_LOOP_65
+			INPUT
+			IF RESULT == 0
+				PRINTFORMW 恋慕をつけました
+				TALENT:ASSI:恋慕 = 1
+			ELSEIF RESULT == 1
+				PRINTFORMW 恋慕を外しました
+				TALENT:ASSI:恋慕 = 0
+			ELSE
+				GOTO INPUT_LOOP_65
+			ENDIF
+		ELSE
+			GOTO INPUT_LOOP_66
+		ENDIF
+		GOTO INPUT_LOOP_1051
+	ELSEIF RESULT == 1
+		PRINTL 操作したいフラグを選んで下さい
+		PRINTL [0] 最初の能力選択リセット
+		PRINTL [3] 一番最初の掛け合いをもう一度見る
+		$INPUT_LOOP_61
+		INPUT
+		IF RESULT == 0
+			CFLAG:5220 = 0
+		ELSEIF RESULT == 3
+			PRINTFORMW リセットしました
+			CFLAG:5202 = 0
+		ELSE
+			GOTO INPUT_LOOP_61
+		ENDIF
+		GOTO INPUT_LOOP_1051
+	ELSEIF RESULT == 3 
+		PRINTL どの文をチェックする？
+		PRINTL [0] 
+		PRINTL [1] 
+		PRINTL [2] 
+		PRINTL [3] 
+		PRINTL [4] 
+		PRINTL [5] 
+		$INPUT_LOOP_53
+		INPUT
+		IF RESULT == 0
+			PRINTFORMW 
+		ELSEIF RESULT == 1
+			PRINTFORMW 
+		ELSEIF RESULT == 2
+			PRINTFORMW 
+		ELSEIF RESULT == 3
+			PRINTFORMW 
+		ELSEIF RESULT == 4
+			PRINTFORMW 
+		ELSEIF RESULT == 5
+			PRINTFORMW 
+		ELSE
+			GOTO INPUT_LOOP_53
+		ENDIF
+		GOTO INPUT_LOOP_1051
+	ELSEIF RESULT == 4
+		PRINTL [0] エンゲージリング使用時
+		PRINTL [1] 単体エンディング
+		PRINTL [2] -
+		PRINTL [3] 奴隷エンディング
+		PRINTL [4] -
+		PRINTL [5] -
+		$INPUT_LOOP_54
+		INPUT
+		IF RESULT == 0
+			CALL KOJO_1051_MESSAGE_SUB_EVENT_SCENE200
+		ELSEIF RESULT == 1
+			CALL KOJO_1051_MESSAGE_SINGLE_ENDING
+		ELSEIF RESULT == 2
+			
+		ELSEIF RESULT == 3
+			CALL KOJO_1051_MESSAGE_SLAVE_ENDING
+		ELSEIF RESULT == 4
+			PRINTFORMW 
+		ELSEIF RESULT == 5
+			PRINTFORMW 
+		ELSE
+			GOTO INPUT_LOOP_54
+		ENDIF
+		GOTO INPUT_LOOP_1051
+	ELSEIF RESULT == 9
+		PRINTFORMW デバッグルームから出ます
+	ELSE
+		GOTO INPUT_LOOP_50
+	ENDIF

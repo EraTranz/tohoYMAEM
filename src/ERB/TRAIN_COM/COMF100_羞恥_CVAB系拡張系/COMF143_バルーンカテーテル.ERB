@@ -1,0 +1,534 @@
+﻿;=============================================================================
+;バルーンカテーテル
+;=============================================================================
+;拡張バルーンを魔改造
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE143
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:143 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;尿道開発経験が1以下の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:尿道開発経験 <= 1
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｕ系装着器具 == 3
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:風船カテーテル == 0
+	RETURN 0
+;[オトコ]の場合、技巧3以上じゃないと使えない
+SIF TALENT:オトコ && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;助手調教の場合、技巧4以上じゃないと使えない。
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;体力が1000未満では装着不可能
+SIF BASE:体力 < 1000 && !(FLAG:16 & 32)
+	RETURN 0
+;気力が500未満の時はダメ
+SIF BASE:気力 < 500 && !(FLAG:16 & 32)
+	RETURN 0
+;Ｕ拡張経験少ないとダメ
+SIF EXP:Ｕ拡張経験 < 5
+	RETURN 0
+;クスコ使用中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;他のＵ系装着具使用中は不可
+SIF (TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 3)
+	RETURN 0
+;オトコの場合、Ｃ系装着具使用中は不可
+SIF (TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム) && TALENT:オトコ
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 143) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM143
+PRINTL バルーンカテーテル
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 143
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = バルーンカテーテル
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+LOCAL:1 = 160
+
+;EXP:Ｕ拡張経験をみる
+IF EXP:Ｕ拡張経験 < EXPLV:1
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:2
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:3
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:5
+	TIMES LOCAL:1 , 0.80
+ELSE
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.60
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 2.00
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1 * 2
+
+SOURCE:露出 = 800
+SOURCE:痛み = 400
+SOURCE:中毒充足 = 500
+SOURCE:逸脱 = 1000
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 80
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 250
+	SOURCE:屈従 = 800
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 600
+	SOURCE:屈従 = 1400
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1000
+	SOURCE:屈従 = 1800
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1300
+	SOURCE:屈従 = 2100
+ELSE
+	SOURCE:快Ｃ = 1700
+	SOURCE:屈従 = 2400
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	SOURCE:痛み += 2000
+	SOURCE:屈従 += 200
+	SOURCE:不潔 = 1000
+	SOURCE:逸脱 += 1000
+	SOURCE:反感追加 = 2000
+ELSEIF ABL:マゾっ気 == 1
+	SOURCE:痛み += 1600
+	SOURCE:屈従 += 500
+	SOURCE:不潔 = 2000
+	SOURCE:逸脱 += 1000
+	SOURCE:反感追加 = 1000
+ELSEIF ABL:マゾっ気 == 2
+	SOURCE:痛み += 1200
+	SOURCE:屈従 += 800
+	SOURCE:不潔 = 1000
+	SOURCE:逸脱 += 1000
+	SOURCE:反感追加 = 500
+ELSEIF ABL:マゾっ気 == 3
+	SOURCE:痛み += 800
+	SOURCE:屈従 += 1200
+	SOURCE:不潔 = 500
+	SOURCE:逸脱 += 500
+	SOURCE:反感追加 = 100
+ELSEIF ABL:マゾっ気 == 4
+	SOURCE:痛み += 600
+	SOURCE:屈従 += 1500
+	SOURCE:不潔 = 300
+	SOURCE:逸脱 += 100
+	SOURCE:反感追加 = 0
+ELSE
+	SOURCE:痛み += 400
+	SOURCE:屈従 += 2000
+	SOURCE:不潔 = 150
+	SOURCE:逸脱 += 50
+	SOURCE:反感追加 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.40
+	SOURCE:痛み += 1600
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.80
+	SOURCE:痛み += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	SOURCE:痛み += 600
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.40
+	SOURCE:痛み += 250
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+	SOURCE:痛み += 120
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.90
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.10
+	TIMES SOURCE:屈従 , 1.20
+ELSE
+	TIMES SOURCE:快Ｃ , 1.20
+	TIMES SOURCE:屈従 , 1.40
+ENDIF
+
+;EXP:尿道開発経験をみる
+IF EXP:尿道開発経験 < EXPLV:1
+	TIMES SOURCE:快Ｃ , 0.20
+	SOURCE:痛み += 8000
+ELSEIF EXP:尿道開発経験 < EXPLV:2
+	TIMES SOURCE:快Ｃ , 0.60
+	SOURCE:痛み += 3600
+ELSEIF EXP:尿道開発経験 < EXPLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF EXP:尿道開発経験 < EXPLV:4
+	TIMES SOURCE:快Ｃ , 1.20
+	SOURCE:痛み += 300
+ELSEIF EXP:尿道開発経験 < EXPLV:5
+	TIMES SOURCE:快Ｃ , 1.40
+	SOURCE:痛み += 30
+ELSE
+	TIMES SOURCE:快Ｃ , 1.60
+	SOURCE:痛み += 0
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｃ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｃ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｃ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｃ , 1.20
+ELSE
+	TIMES SOURCE:快Ｃ , 1.30
+ENDIF
+
+;オトコ
+SIF TALENT:オトコ
+	TIMES SOURCE:痛み , 4.50
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES SOURCE:快Ｃ , 1.20
+
+;Ｃ敏感、鈍感をみる
+;快Ｃ自体のチェックは後でまとめてやる
+IF TALENT:Ｃ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｃ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;バルーンカテーテルの着脱
+IF TEQUIP:Ｕ系装着器具 == 3
+	TEQUIP:Ｕ系装着器具 = 0
+	LOCAL:2 = 2
+	IF TEQUIP:利尿剤
+		LOCAL:2 *= 2
+		TEQUIP:利尿剤 = 0
+	ENDIF
+ELSE
+	TEQUIP:Ｕ系装着器具 = 3
+	LOCAL:2 = 1
+ENDIF
+
+SIF EXP:尿道開発経験 <= 5
+	TCVAR:異常経験 += 1
+;放尿レベル増加
+CFLAG:放尿レベル += LOCAL:2
+SIF BASE:尿意
+	BASE:尿意 = 0
+TCVAR:尿道開発経験 += LOCAL:2
+TCVAR:Ｕ拡張経験 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;バルーンカテーテル挿入中
+;--------------------------------------------------
+@EQUIP_COM143
+PRINTL ＜バルーンカテーテル挿入中＞
+
+LOCAL:3 = 80
+
+;EXP:Ｕ拡張経験をみる
+IF EXP:Ｕ拡張経験 < EXPLV:1
+	TIMES LOCAL:3 , 3.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:2
+	TIMES LOCAL:3 , 2.50
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:3
+	TIMES LOCAL:3 , 2.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:4
+	TIMES LOCAL:3 , 1.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:5
+	TIMES LOCAL:3 , 0.80
+ELSE
+	TIMES LOCAL:3 , 0.60
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:3 , 2.00
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:3 , 0.60
+
+DOWNBASE:0 += LOCAL:3
+DOWNBASE:1 += LOCAL:3 * 2
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 80
+	LOCAL:1 = 300
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 250
+	LOCAL:1 = 800
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL = 600
+	LOCAL:1 = 1400
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL = 1000
+	LOCAL:1 = 1800
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL = 1300
+	LOCAL:1 = 2100
+ELSE
+	LOCAL = 1700
+	LOCAL:1 = 2400
+ENDIF
+
+;EXP:尿道経験をみる
+IF EXP:尿道開発経験 < EXPLV:1
+	TIMES LOCAL , 0.50
+	LOCAL:2 = 2000
+ELSEIF EXP:尿道開発経験 < EXPLV:2
+	TIMES LOCAL , 1.00
+	LOCAL:2 = 300
+ELSEIF EXP:尿道開発経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	LOCAL:2 = 50
+ELSEIF EXP:尿道開発経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:2 = 10
+ELSEIF EXP:尿道開発経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:2 = 0
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:2 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.40
+	LOCAL:2 += 800
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:2 += 500
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:2 += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.40
+	LOCAL:2 += 120
+ELSE
+	TIMES LOCAL , 1.80
+	LOCAL:2 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;オトコ
+SIF TALENT:オトコ
+	TIMES LOCAL:2 , 4.50
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES LOCAL:2 , 2.00
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES LOCAL , 1.20
+
+;Ｃ敏感、鈍感をみる
+;快Ｃ自体のチェックは後でまとめてやる
+IF TALENT:Ｃ鈍感
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+ELSEIF TALENT:Ｃ敏感
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:1 /= 3
+
+SOURCE:快Ｃ += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+SOURCE:逸脱 += LOCAL:1
+
+;バルーンカテーテル挿入中のときは強制的に尿意を催される効果も(＝放尿レベル増加)
+IF TEQUIP:利尿剤
+	CFLAG:放尿レベル += 2
+ELSE
+	CFLAG:放尿レベル += 1
+ENDIF
+
+CALL DISPLAY_EQUIP_MESSAGE_COM, 143
+
+TCVAR:尿道開発経験 += 3
+TCVAR:Ｕ拡張経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_143
+IF TEQUIP:Ｕ系装着器具 == 3
+	PRINTFORML %CALLNAME:TARGET%の広がりきった尿道からバルーンカテーテルを抜いてやった…
+	IF EXP:Ｕ拡張経験 < EXPLV:1
+		PRINTFORML %CALLNAME:TARGET%の尿道はゆっくりと閉じていった
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:2
+		PRINTFORML %CALLNAME:TARGET%の尿道はひくつきながらゆるゆると閉じていった
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:3
+		PRINTFORML %CALLNAME:TARGET%の尿道はぽっかり口を開いている
+	ELSEIF EXP:Ｕ拡張経験 < EXPLV:4
+		PRINTFORML %CALLNAME:TARGET%の尿道は拡がったままなかなか戻らないようだ
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の尿道からその中が丸見えになっている。
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の尿道にバルーンカテーテルを挿入し、空気を送り込んだ…
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_143
+PRINTFORML %CALLNAME:TARGET%は、尿道にバルーンカテーテルを入れられたまま責め続けられている。
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	IF ABL:マゾっ気 == 0
+		PRINTFORML %CALLNAME:TARGET%は尿道に鎮座する異物を受け入れられないのか、苦悶の表情を浮かべている。
+	ELSEIF ABL:マゾっ気 == 1
+		PRINTFORML %CALLNAME:TARGET%は堅く目を閉じ、排尿感を懸命に堪えている。
+	ELSEIF ABL:マゾっ気 == 2
+		PRINTFORML %CALLNAME:TARGET%は尿意に耐えようと顔を紅潮させ、内股で立っている。
+	ELSEIF ABL:マゾっ気 == 3
+		PRINTFORML %CALLNAME:TARGET%は下腹部の激痛に苛まれながらも、時折恍惚とした表情を浮かべている。
+	ELSEIF ABL:マゾっ気 >= 5 && TALENT:おもらし癖
+		PRINTFORML %CALLNAME:TARGET%は尿道の刺激を心ゆくまで堪能している。
+		PRINTFORML %CALLNAME:TARGET%の口は快感でだらしなく開いており、\@(TALENT:オトコ) ? そこから # そこと膣口からは\@ポタポタと涎が滴り落ちている。
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は尿意と尿道痛を快楽と感じているのかうっとりした表情を浮かべている。
+	ENDIF
+ENDIF

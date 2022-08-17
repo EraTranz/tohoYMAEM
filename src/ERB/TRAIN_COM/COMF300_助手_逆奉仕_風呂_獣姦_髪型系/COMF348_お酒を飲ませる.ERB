@@ -1,0 +1,166 @@
+﻿;=============================================================================
+;お酒を飲ませる
+;=============================================================================
+;その名の通り持っている酒を飲ませる
+;酒は野外コンサートを開いたとき、ファンから入手可能
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE348
+#LOCALSIZE 2
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:348 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;お酒が必要
+LOCAL = 0
+FOR LOCAL:1, 0, 8
+	SIF ITEM:(600+LOCAL:1) > 0
+		LOCAL = 1
+NEXT
+SIF LOCAL == 0
+	RETURN 0
+;主人に対する好感度が100以上必要
+SIF CFLAG:好感度 < 100
+	RETURN 0
+;反発刻印が0でないとダメ
+SIF MARK:反発刻印
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;猿轡付けていると無理
+SIF TEQUIP:口装着器具
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 348) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM348
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 348
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+DRAWLINE
+PRINTL 何を飲ませる？
+DRAWLINE
+FOR LOCAL, 0, 8
+	SIF STRLENS(ITEMNAME:(600+LOCAL)) <= 0 || ITEM:(600+LOCAL) <= 0
+		CONTINUE
+	PRINTFORML [{LOCAL}] %ITEMNAME:(LOCAL+600)%
+NEXT
+$INPUT_LOOP
+INPUT
+IF RESULT < 0 || RESULT > 7 || STRLENS(ITEMNAME:(600+RESULT)) <= 0 || ITEM:(600+RESULT) <= 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+TFLAG:149 = RESULT + 600
+
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;選択した酒を3瓶以上持っているかつＣＡＢＶ絶頂が各30以上だとイきつけ三杯
+SIF ITEM:(TFLAG:149) >= 3 && EX:0 >= 30 && EX:1 >= 30 && EX:2 >= 30 && EX:3 >= 30
+	JUMP COM649
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+PRINTFORML %ITEMNAME:(TFLAG:149)%を飲ませる
+TSTR:0 = %ITEMNAME:(TFLAG:149)%を飲ませる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;カルーア
+IF TFLAG:149 == 600
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 20
+	SOURCE:酒酔い = 250
+;ビール
+ELSEIF TFLAG:149 == 601
+	DOWNBASE:0 += 20
+	DOWNBASE:1 += 25
+	SOURCE:酒酔い = 500
+;ワイン
+ELSEIF TFLAG:149 == 602
+	DOWNBASE:0 += 25
+	DOWNBASE:1 += 40
+	SOURCE:酒酔い = 750
+;大吟醸酒
+ELSEIF TFLAG:149 == 603
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 50
+	SOURCE:酒酔い = 1000
+;スピリタス
+ELSEIF TFLAG:149 == 604
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 80
+	SOURCE:酒酔い = 1500
+	SOURCE:鬼殺し = 400
+;神便鬼毒酒
+ELSEIF TFLAG:149 == 605
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 70
+	SOURCE:酒酔い = 500
+	SOURCE:鬼殺し = 2000
+ENDIF
+
+;酒を消費
+ITEM:(TFLAG:149) -= 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_348
+PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%に持ってきた%ITEMNAME:(TFLAG:149)%を飲ませた
+;カルーア
+IF TFLAG:149 == 600
+	PRINTFORML カルーアの重厚な味で%CALLNAME:TARGET%の心は少し落ち着いた…
+;ビール
+ELSEIF TFLAG:149 == 601
+	PRINTFORML さっぱりした喉越しで%CALLNAME:TARGET%の気分は少し持ちあがった…
+;ワイン
+ELSEIF TFLAG:149 == 602
+	PRINTFORML 上品な味と香りで%CALLNAME:TARGET%の機嫌が少し良くなった…
+;大吟醸酒
+ELSEIF TFLAG:149 == 603
+	PRINTFORML さらりとした舌触りと米と水が作り出す絶妙な旨味で%CALLNAME:TARGET%は和んだ…
+;スピリタス
+ELSEIF TFLAG:149 == 604
+	PRINTFORML 強烈な刺激と独特の甘みが%CALLNAME:TARGET%の理性をかき乱した…
+;神便鬼毒酒
+ELSEIF TFLAG:149 == 605
+	PRINTFORML この世のものとは思えないような味が%CALLNAME:TARGET%\@(TALENT:鬼) ? の心をがっしりと捕えたようだ # を新たな境地へと導いた\@…
+ENDIF

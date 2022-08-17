@@ -1,0 +1,36 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;コマンド実行時の口上
+;========================================================
+@K2008_COMMAND
+#DIM _RANK
+
+_RANK = K2008F_RANK()
+
+;初回実施は別口上を呼び出す
+IF TFLAG:95 == 1
+	TRYCCALLFORM K2008_RANK{_RANK}_COM_{SELECTCOM}_FIRST
+		;呼び出せた場合は終わり
+		RETURN 0
+	CATCH
+		;ない場合は未指定に飛ばす
+		TRYCCALLFORM K2008_COM_{SELECTCOM}_FIRST
+			;呼び出せた場合は終わり
+			RETURN 0
+		CATCH
+		ENDCATCH
+	ENDCATCH
+ENDIF
+
+;ランク指定の口上
+TRYCCALLFORM K2008_RANK{_RANK}_COM_{SELECTCOM}
+	;呼び出せた場合は終わり
+CATCH
+	;ない場合は未指定に飛ばす
+	TRYCCALLFORM K2008_COM_{SELECTCOM}
+	CATCH
+		;未指定もなければ汎用口上処理へ飛ばす
+		TRYCALL K2008_COM_GENERAL
+	ENDCATCH
+ENDCATCH
+

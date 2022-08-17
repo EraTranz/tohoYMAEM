@@ -1,0 +1,209 @@
+﻿;=============================================================================
+;角アナル挿入
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE436
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:436 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者が[鬼]またはハクタク化している[半白澤]でないとダメ
+IF TALENT:PLAYER:半白澤 == 0 && TALENT:PLAYER:鬼 == 0
+	RETURN 0
+ELSEIF TALENT:PLAYER:半白澤 == 1
+	RETURN 0
+ENDIF
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;一定のＡ経験が必要
+SIF EXP:Ａ経験 < EXPLV:3
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 436) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM436
+PRINTL 角アナル挿入
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 436
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 角アナル挿入
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 700
+DOWNBASE:1 += 350
+
+SOURCE:情愛 = 100
+SOURCE:痛み = 2500
+SOURCE:露出 = 1200
+SOURCE:屈従 = 2000
+SOURCE:逸脱 = 2700
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 11
+	SOURCE:屈従 += 100
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 110
+	SOURCE:屈従 += 700
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 550
+	SOURCE:屈従 += 1500
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 1100
+	SOURCE:屈従 += 3000
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 2200
+	SOURCE:屈従 += 5000
+ELSE
+	SOURCE:快Ａ = 3300
+	SOURCE:屈従 += 8000
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み += 26000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.30
+	SOURCE:痛み += 13000
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み += 6500
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 2000
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 1000
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	SOURCE:痛み += 500
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 10000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	SOURCE:痛み += 3600
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 200
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:屈従 , 1.40
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+TCVAR:Ａ経験 += 25
+TCVAR:Ａ拡張経験 += 2
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 10
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0
+	TFLAG:50 += (ABL:Ａ感覚 >= 3) ? 2 # 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_436
+PRINTFORM %CALLNAME:PLAYER%は自分の角を\@(TALENT:小柄体型) ? 小柄な # \@%CALLNAME:TARGET%の
+SIF ABL:Ａ感覚 >= 3
+	PRINT 充分に開発された
+PRINTL アナルに限界まで挿し込んだ…

@@ -1,0 +1,238 @@
+﻿;=============================================================================
+;蜘蛛の巣肛門姦
+;=============================================================================
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM656
+PRINTL 蜘蛛の巣肛門姦
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 656
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 蜘蛛の巣肛門姦
+SELECTCOM = 656
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	LOCAL = 75
+ELSEIF ABL:PLAYER:技巧 == 1
+	LOCAL = 300
+ELSEIF ABL:PLAYER:技巧 == 2
+	LOCAL = 900
+ELSEIF ABL:PLAYER:技巧 == 3
+	LOCAL = 1800
+ELSEIF ABL:PLAYER:技巧 == 4
+	LOCAL = 2400
+ELSE
+	LOCAL = 3600
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+;奉仕精神をみる
+LOCAL = EJACULATIONCHECK_ABL_13_1(TARGET, LOCAL)
+
+;調教者のＡ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_2_1(PLAYER, LOCAL)
+;調教者のＡ経験をみる
+LOCAL = EJACULATIONCHECK_EXP_1_1(PLAYER, LOCAL)
+
+;調教対象のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL)
+
+SIF EXIST_PENIS(TARGET)
+	BASE:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 50
+DOWNBASE:1 += 280
+
+SOURCE:不潔 = 3000
+SOURCE:屈従 = 2000
+SOURCE:逸脱 = 4800
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:屈従 , 0.80
+	SOURCE:支配 = 100
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:屈従 , 0.90
+	SOURCE:支配 = 200
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:支配 = 350
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:屈従 , 1.10
+	SOURCE:支配 = 500
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:支配 = 800
+ELSE
+	TIMES SOURCE:屈従 , 1.30
+	SOURCE:支配 = 1400
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 800
+	SOURCE:性行動 = 1600
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 1400
+	SOURCE:性行動 = 1900
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 2000
+	SOURCE:性行動 = 2300
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 2500
+	SOURCE:性行動 = 2700
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2900
+	SOURCE:性行動 = 3100
+ELSE
+	SOURCE:快Ｃ = 3200
+	SOURCE:性行動 = 3500
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	TIMES SOURCE:快Ｃ , 0.50
+	TIMES SOURCE:性行動 , 0.50
+ELSEIF ABL:PLAYER:技巧 == 1
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF ABL:PLAYER:技巧 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF ABL:PLAYER:技巧 == 3
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:性行動 , 1.50
+ELSEIF ABL:PLAYER:技巧 == 4
+	TIMES SOURCE:快Ｃ , 2.50
+	TIMES SOURCE:性行動 , 2.50
+ELSE
+	TIMES SOURCE:快Ｃ , 4.00
+	TIMES SOURCE:性行動 , 4.00
+ENDIF
+
+TCVAR:PLAYER:Ａ経験 += 1
+SIF ASSIPLAY == 0 && EXIST_BAR(TARGET)
+	CFLAG:主人のＡ犯し回数 += 1
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(TARGET)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	TIMES SOURCE:性行動 , 3.00
+
+	;ABL:射精中毒をみる
+	IF ABL:射精中毒 == 0
+		SOURCE:中毒充足 += 0
+		TIMES SOURCE:快Ｃ , 2.00
+		TIMES SOURCE:屈従, 2.00
+	ELSEIF ABL:射精中毒 == 1
+		SOURCE:中毒充足 += 50
+		TIMES SOURCE:快Ｃ , 2.50
+		TIMES SOURCE:屈従, 1.60
+	ELSEIF ABL:射精中毒 == 2
+		SOURCE:中毒充足 += 150
+		TIMES SOURCE:快Ｃ , 3.00
+		TIMES SOURCE:屈従, 1.00
+	ELSEIF ABL:射精中毒 == 3
+		SOURCE:中毒充足 += 300
+		TIMES SOURCE:快Ｃ , 4.50
+		TIMES SOURCE:屈従, 0.70
+	ELSEIF ABL:射精中毒 == 4
+		SOURCE:中毒充足 += 600
+		TIMES SOURCE:快Ｃ , 6.00
+		TIMES SOURCE:屈従, 0.40
+	ELSE
+		SOURCE:中毒充足 += 1200
+		TIMES SOURCE:快Ｃ , 8.00
+		TIMES SOURCE:屈従, 0.10
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = TARGET
+	;射精された人物を設定
+	TFLAG:94 = PLAYER
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_656
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+IF EXIST_PENIS(TARGET)
+	;奴隷のＰ⇔調教者のＡの汚れが移動
+	STAIN:ペニス |= STAIN:PLAYER:アナル
+	STAIN:PLAYER:アナル |= STAIN:ペニス
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 4
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 4
+ENDIF
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+
+;処女喪失の後でペニスを抜いているか
+TFLAG:101 = (TFLAG:101 == 2) ? 1 # 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_656
+;前回と今回の調教者が同じで、前回の調教が逆アナルレイプか蜘蛛の巣肛門姦であり、抜かないフラグがある場合
+IF TFLAG:102 && (PREVCOM == 35 || PREVCOM == 656) && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のペニスをきつく食い締めたまま、執拗に腰を振りたてた…
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は
+	SIF TALENT:PLAYER:サド
+		PRINT 嗜虐的な笑みを浮かべ、
+	PRINTFORM 蜘蛛の巣に貼り付けられている%CALLNAME:TARGET%の上にまたがると、
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 粘液にまみれた
+	PRINT アヌスでゆっくりとモノを飲み込んでいった…
+ENDIF
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	IF PALAM:恐怖 >= PALAMLV:3
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%はなんとか蜘蛛の巣から逃れようと暴れている……
+	ELSEIF PALAM:欲情 >= PALAMLV:3 && PALAM:恭順 >= PALAMLV:3
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%は蜘蛛の巣に掛かっているという状況に欲情してしまっている……
+	ELSE
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%は大人しくしている……
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_656
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 2
+;射精箇所選択の可・不可
+TFLAG:704 = 0

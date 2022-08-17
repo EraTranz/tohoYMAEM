@@ -1,0 +1,238 @@
+﻿;=============================================================================
+;年月日関連の処理
+;=============================================================================
+;--------------------------------------------------
+;ゲーム開始もしくは周回プレイ開始の初期設定
+;--------------------------------------------------
+@CALENDAR_INIT
+;年
+DAY:4 = 1
+;月
+DAY:5 = 1
+;日付
+DAY:6 = 1
+;曜日 1=日曜～7=土曜
+DAY:7 = 1
+;閏年かどうか？ 1=閏年 0=平年
+DAY:8 = 0
+
+;--------------------------------------------------
+;今年は閏年か否かを判断する
+;--------------------------------------------------
+@CALENDAR_LEAP
+DAY:8 = ((DAY:4 % 400 == 0) && (DAY:4 % 100 != 0) || (DAY:4 % 400 == 0)) ? 1 # 0
+
+;--------------------------------------------------
+;データ読み込み時などの場合の再設定
+;--------------------------------------------------
+@CALENDAR_CALC, ARG
+VARSET LOCAL,0
+;曜日を先に求める
+DAY:7 = 1 + ARG % 7
+
+;以下年月日を計算
+LOCAL = ARG
+DAY:4 = 1
+LOCAL:12 = 0
+;4000000年(1460970000日）ごとにまず計算
+IF LOCAL > 1460970000
+	LOCAL:12 += LOCAL / 1460970000
+	LOCAL = LOCAL % 1460970000
+ENDIF
+DAY:4 += 4000000 * LOCAL:12
+LOCAL:11 = 0
+;次に40000年(14609700日）ごとに計算
+IF LOCAL > 14609700
+	LOCAL:11 += LOCAL / 14609700
+	LOCAL = LOCAL % 14609700
+ENDIF
+DAY:4 += 40000 * LOCAL:11
+LOCAL:10 = 0
+;400年（146097日）ごとに繰り返すのがグレゴリオ暦
+IF LOCAL > 146097
+	LOCAL:10 += LOCAL / 146097
+	LOCAL = LOCAL % 146097
+ENDIF
+DAY:4 += 400 * LOCAL:10
+LOCAL:4 = 0
+LOCAL:8 = 0
+IF LOCAL % 146097 == 0 && DAY < 146098
+	DAY:4 += 399
+	DAY:5 = 12
+	DAY:6 = 31
+	RETURN 1
+ENDIF
+$NEXT_YEAR
+IF LOCAL > (365 + LOCAL:8) 
+	LOCAL:4 ++
+	LOCAL -= (LOCAL:8) ? 366 # 365
+	LOCAL:8 = (LOCAL:4 % 100 != 0 && LOCAL:4 % 4 == 0) ? 1 # 0
+	GOTO NEXT_YEAR
+ENDIF
+DAY:4 += LOCAL:4
+LOCAL:5 = 1
+LOCAL:6 = 0
+IF LOCAL <= 0
+	DAY:4 --
+	DAY:5 = 12
+	DAY:6 = 31
+	CALL CALENDAR_LEAP
+	RETURN 1
+ENDIF
+CALL CALENDAR_LEAP
+$NEXT_DAY
+LOCAL --
+LOCAL:6 ++
+IF LOCAL > 0
+	IF LOCAL:5 == 1 || LOCAL:5 == 3 || LOCAL:5 == 5 || LOCAL:5 == 7 || LOCAL:5 == 8 || LOCAL:5 == 10 || LOCAL:5 == 12
+		IF LOCAL:6 > 30
+			LOCAL:5 ++
+			LOCAL:6 = 0
+		ENDIF
+	ELSEIF LOCAL:5 == 4 || LOCAL:5 == 6 || LOCAL:5 == 9 || LOCAL:5 == 11
+		IF LOCAL:6 > 29
+			LOCAL:5 ++
+			LOCAL:6 = 0
+		ENDIF
+	ELSEIF DAY:8
+		IF LOCAL:6 > 28
+			LOCAL:5 ++
+			LOCAL:6 = 0
+		ENDIF
+	ELSE
+		IF LOCAL:6 > 27
+			LOCAL:5 ++
+			LOCAL:6 = 0
+		ENDIF
+	ENDIF
+	GOTO NEXT_DAY
+ENDIF
+DAY:5 = LOCAL:5
+DAY:6 = LOCAL:6
+
+;--------------------------------------------------
+;１日経過
+;--------------------------------------------------
+@CALENDAR_CHECK
+CALL CALENDAR_LEAP
+;まずは曜日処理
+DAY:7 = (DAY:7 < 7) ? DAY:7 + 1 # 1
+;日数処理
+DAY:6 ++
+IF DAY:5 == 1 || DAY:5 == 3 || DAY:5 == 5 || DAY:5 == 7 || DAY:5 == 8 || DAY:5 == 10 || DAY:5 == 12
+	IF DAY:6 == 32
+		DAY:6 = 1
+		DAY:5 ++
+		IF DAY:5 == 13
+			DAY:5 = 1
+			DAY:4 ++
+		ENDIF
+	ENDIF
+ELSEIF DAY:5 == 4 || DAY:5 == 6 || DAY:5 == 9 || DAY:5 == 11
+	IF DAY:6 == 31
+		DAY:6 = 1
+		DAY:5 ++
+	ENDIF
+ELSEIF DAY:6 == (DAY:8 == 0) ? 29 # 30
+		DAY:6 = 1
+		DAY:5 ++
+ENDIF
+
+;--------------------------------------------------
+;年月日と曜日の表示処理
+;--------------------------------------------------
+;ARG=0：計算省略、ARG=1：日付の計算実行
+@CALENDAR_PRINT, ARG
+SIF DAY:7 == 0 && ARG == 1
+	CALL CALENDAR_CALC, DAY
+
+VARSET LOCALS,""
+SPLIT "閏,日,月,火,水,木,金,土",",",LOCALS
+STR:3 = %LOCALS:(DAY:7)%
+
+PRINTFORM 　{DAY:4}年{DAY:5}月{DAY:6}日
+PRINTFORM  %STR:3%曜日
+
+;--------------------------------------------------
+;キャラごとの記念日をチェックする処理
+;--------------------------------------------------
+@ANNIVERSARY_CHECK
+#LOCALSIZE 5
+
+;今日の日にカレンダーを戻しておく。
+;DAY:4~6の初期化、というより今日の日付に更新
+CALL CALENDAR_CALC, DAY
+;現在の年月日をローカル変数に入れておく
+LOCAL:1 = DAY:4
+LOCAL:2 = DAY:5
+LOCAL:3 = DAY:6
+
+FOR LOCAL:0, 0, CHARANUM
+	;失踪中のは除外する
+	SIF CFLAG:(LOCAL:0):4 == 1 || CFLAG:(LOCAL:0):4 == 8192
+		CONTINUE
+	;主人の記念日はいまのところない
+	SIF LOCAL == MASTER
+		CONTINUE
+
+	;記念日フラグをクリアにする
+	CFLAG:(LOCAL:0):3128 = 0
+
+	;購入されて…
+	IF CFLAG:(LOCAL:0):3111 > 0
+		CALL CALENDAR_CALC, CFLAG:(LOCAL:0):3111
+		;月日を比較する
+		IF LOCAL:2 == DAY:5 && LOCAL:3 == DAY:6
+			PRINTFORML %CALLNAME:LOCAL%が購入されて{LOCAL:1 - DAY:4}年たちました。
+			CFLAG:(LOCAL:0):3128 |= 1
+		ENDIF
+	ENDIF
+	;連れてこられて…
+	IF CFLAG:(LOCAL:0):3112 > 0
+		CALL CALENDAR_CALC, CFLAG:(LOCAL:0):3112
+		;月日を比較する
+		IF LOCAL:2 == DAY:5 && LOCAL:3 == DAY:6
+			PRINTFORML %CALLNAME:LOCAL%が連れてこられて{LOCAL:1 - DAY:4}年たちました。
+			CFLAG:(LOCAL:0):3128 |= 2
+		ENDIF
+	ENDIF
+	;誕生日
+	IF CFLAG:(LOCAL:0):3110 > 0
+		CALL CALENDAR_CALC, CFLAG:(LOCAL:0):3110
+		;月日を比較する
+		IF LOCAL:2 == DAY:5 && LOCAL:3 == DAY:6
+			PRINTFORML %CALLNAME:LOCAL%の誕生日です。
+			CFLAG:(LOCAL:0):3128 |= 4
+		ENDIF
+	ENDIF
+	;契約記念日
+	IF CFLAG:(LOCAL:0):3114 > 0
+		CALL CALENDAR_CALC, CFLAG:(LOCAL:0):3114
+		;月日を比較する
+		IF LOCAL:2 == DAY:5 && LOCAL:3 == DAY:6
+			PRINTFORML %CALLNAME:LOCAL%の{LOCAL:1 - DAY:4}年目の契約記念日です。
+			CFLAG:(LOCAL:0):3128 |= 8
+		ENDIF
+	ENDIF
+	;結婚記念日
+	IF CFLAG:(LOCAL:0):3113 > 0
+		CALL CALENDAR_CALC, CFLAG:(LOCAL:0):3113
+		;月日を比較する
+		IF LOCAL:2 == DAY:5 && LOCAL:3 == DAY:6
+			PRINTFORML %CALLNAME:LOCAL%の{LOCAL:1 - DAY:4}年目の結婚記念日です。
+			CFLAG:(LOCAL:0):3128 |= 16
+		ENDIF
+	ENDIF
+	;初妊娠記念日?
+	IF CFLAG:(LOCAL:0):3116 > 0
+		CALL CALENDAR_CALC, CFLAG:(LOCAL:0):3116
+		;月日を比較する
+		IF LOCAL:2 == DAY:5 && LOCAL:3 == DAY:6
+			PRINTFORML %CALLNAME:LOCAL%がここで初めて妊娠して{LOCAL:1 - DAY:4}年たちました。
+			CFLAG:(LOCAL:0):3128 |= 32
+		ENDIF
+	ENDIF
+NEXT
+
+;今日の日にカレンダーを戻しておく。
+CALL CALENDAR_CALC, DAY

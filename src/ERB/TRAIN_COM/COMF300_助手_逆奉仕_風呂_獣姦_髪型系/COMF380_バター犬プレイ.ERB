@@ -1,0 +1,131 @@
+﻿;=============================================================================
+;バター犬プレイ
+;=============================================================================
+;クンニを元に作成
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE380
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:380 > 0
+	RETURN 0
+;獣姦系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8192) == 0
+	RETURN 0
+;動物性愛経験が1未満の場合
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:動物性愛経験 < EXPLV:1
+	RETURN 0
+;動物小屋と犬が必要
+SIF (FLAG:72 & 1) == 0 || (FLAG:72 & 2) == 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 380) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM380
+PRINTL バター犬プレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 380
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = バター犬プレイ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 75
+
+SOURCE:露出 = 220
+SOURCE:液体追加 = 120
+SOURCE:屈従 = 100
+SOURCE:痒み = 200
+SOURCE:不潔 = 5000
+SOURCE:逸脱 = 15500
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 60
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 240
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 1050
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 2250
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 3600
+ELSE
+	SOURCE:快Ｃ = 4950
+ENDIF
+
+;猫舌持ちはトラウマと逸脱増加
+IF TALENT:猫舌
+	TIMES SOURCE:逸脱 , 2.0
+	SOURCE:トラウマ = 800
+ENDIF
+
+;奴隷のＶに動物の汚れを付けたいところだが今後の課題とする
+
+;淫乱を持っていなくて、動物性愛経験がなかった場合には異常経験が増える
+SIF EXP:動物性愛経験 == 0 && TALENT:淫乱 == 0
+	TCVAR:異常経験 += 1
+
+TCVAR:動物性愛経験 += 1
+
+;コマンド属性：獣姦
+TFLAG:98 = 9
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_380
+PRINTFORM %CALLNAME:TARGET%の股間に塗ったバターを舐め取るように犬が
+IF TALENT:ふたなり && PALAM:欲情 >= PALAMLV:3
+	PRINTL そそり勃ったペニスに舌を這わせて舐め上げた…
+ELSEIF TALENT:ふたなり
+	PRINTL ペニスの付け根を舌で舐め上げた…
+ELSEIF PALAM:欲情 >= PALAMLV:3
+	PRINTL 尖りきったクリトリスを舌で吸い上げた…
+ELSE
+	PRINTL クリトリスを舌で舐め上げた…
+ENDIF

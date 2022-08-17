@@ -1,0 +1,1678 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;コマンドの地の文追加分・コマンドの特殊処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;コマンドの地の文追加分
+;=============================================================================
+;--------------------------------------------------------
+;愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_0
+PRINTL 
+SELECTCASE (UP:0 + UP:3)
+	CASE IS < 100
+		IF TALENT:反抗的 || MARK:反発刻印 > 2
+			PRINTFORML %CALLNAME:TARGET%は愛撫されながらも反抗的な態度を取っている。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%はむず痒そうに身体をよじるが快楽を感じるまでには至っていないようだ。
+		ENDIF
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はこちらの愛撫に反応して身体を震わせている。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%は軽い電撃でも身体に走ったかのように小さく震えた。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は明らかに快楽を感じている様子\@(TEQUIP:口装着器具) ? を見せて # で艶やかな喘ぎ声をあげて\@いる。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は愛撫に激しく快楽を感じ、自らせがむように手を首にまわしてきた。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はこちらの愛撫だけで激しく感じまくっており、さらなる刺激を求めてしなだれかかってきた。
+ENDSELECT
+
+;--------------------------------------------------------
+;クンニ
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_1
+PRINTL 
+SELECTCASE UP:0
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%のそこはまだしっとりと閉じたままだ。快楽を感じるにはもう少しかかるかもしれない。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%はクンニの刺激にじっと耐えているものの、確実に感じてきているようだ。
+	CASE IS < 3000
+		PRINTFORM 敏感な豆を舐められると感じるのか、%CALLNAME:TARGET%は
+		SIF TALENT:恥じらい
+			PRINTFORML 羞恥に頬を赤く染め\@(TEQUIP:口装着器具) ? # 手で自分の口を抑えて声が出るのをこらえ\@ながら
+		IF TALENT:解放 || TALENT:快感に素直
+			PRINTL 熱い吐息を吐きながら快楽に身をゆだねている。
+		ELSEIF TALENT:抑圧 || TALENT:快感の否定
+			PRINTL 快楽を否定するように首を振って耐えている。
+		ELSE
+			PRINTFORML 秘所から愛液を垂らし\@(TEQUIP:口装着器具) ? # つつわずかに小さく吐息を漏らし\@た。
+		ENDIF
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%の小さな豆を舌で擦り上げてやると%CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? # 可愛らしい声を漏らしながら\@がくがくと身体を揺らした。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? # 明らかな快楽の声をあげ\@、無意識にこちらの頭を手で押さえてさらにその部分を押し付けてきた。
+	CASEELSE
+		IF TALENT:Ｃ敏感
+			PRINTFORML %CALLNAME:TARGET%は敏感な\@(TALENT:ふたなり) ? ペニス # クリトリス\@への責めに激しく身もだえし\@(TEQUIP:口装着器具) ? # 、あられもない声を張り上げ続け\@た。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は\@(TALENT:ふたなり)? ペニス # クリトリス\@への刺激に\@(TEQUIP:口装着器具) ? 激しく # 激しい喘ぎ声を上げながら\@悶え続けた。
+		ENDIF
+ENDSELECT
+
+;--------------------------------------------------------
+;アナル愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_2
+PRINTL 
+SELECTCASE UP:2
+	CASE IS < 300
+		PRINTFORM %CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 少し # 悲鳴を上げて\@体をよじる。
+		IF ABL:Ａ感覚 <= 2
+			PRINTL じっくりと開発していけばいいだろう。
+		ELSE
+			PRINTL 身体の準備が足りなかったようだ。
+		ENDIF
+	CASE IS < 1000
+		PRINTFORM %CALLNAME:TARGET%はちいさく身体を揺らした。
+		IF ABL:Ａ感覚 <= 2
+			PRINTL もうすこし開発してやる必要がありそうだ。
+		ELSE
+			PRINTL 快楽を得るにはもう少し身体をほぐしてやってからの方が良いようだ。
+		ENDIF
+	CASE IS < 3000
+		PRINTFORM %CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? # 小さく嬌声を上げて\@体を跳ねさせた。
+		SIF TALENT:Ａ敏感
+			PRINT もともとアナルへの刺激に弱かったらしく、
+		PRINTL 明らかに快楽を感じ始めている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%はアナルへの刺激に明らかな快楽を感じているようだ。
+	CASE IS < 10000
+		PRINTFORM \@(TALENT:Ａ敏感) ? 敏感なアナルを責められると # アナルへの刺激に\@%CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 身体を揺らしながら # よがり声を上げながら\@
+		IF TALENT:解放 || TALENT:快感に素直
+			PRINTL 快楽を訴えた。
+		ELSEIF TALENT:抑圧 || TALENT:快感の否定
+			PRINTL 必死で快楽を否定した。
+		ELSE
+			PRINTL 悶え狂った。
+		ENDIF
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%は開発されきったアナルを弄ってやるとたまらないというように\@(TEQUIP:口装着器具) ? # 悲鳴まじりの喘ぎ声をあげなら\@よがり狂った。
+ENDSELECT
+
+;--------------------------------------------------------
+;胸愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_3
+PRINTL 
+SELECTCASE UP:3
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はまだ胸で快楽を感じられるまでには至っていないようだ。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%の胸はうっすらと赤みが掛かったかのようにみえている。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%の胸を揉み続けてやると乳首は固くしこって\@(TEQUIP:口装着器具) ? きた。 # いき、熱い吐息を漏らし始めている。\@
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は胸への愛撫にトロンとした表情になってされるがままになっている。
+	CASE IS < 10000
+		PRINTFORM %CALLNAME:TARGET%は
+		IF TALENT:絶壁
+			PRINT その膨らみのほぼ皆無な胸で
+		ELSEIF TALENT:貧乳
+			PRINT その小振りな胸で
+		ENDIF
+		PRINTL 感じまくっており、胸への刺激だけで法悦を極めようとしている。 
+	CASEELSE
+		PRINTFORM %CALLNAME:TARGET%の胸を揉み続けてやるとそれだけで感じまくって身体を跳ねさせ、
+		IF TALENT:爆乳
+			PRINTL 目の前でその爆乳を大きく弾ませてこちらの目を楽しませてくれた。
+		ELSEIF TALENT:巨乳
+			PRINTL 目の前でその巨乳を弾ませてこちらの目を楽しませてくれた。
+		ELSE
+			PRINTL 緩んだ表情で快楽に身を任せていた。
+		ENDIF
+ENDSELECT
+
+;--------------------------------------------------------
+;フェラする
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_5
+PRINTL 
+SELECTCASE UP:0
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はまだフェラされることによっての快楽を感じるまでには至っていないようだ。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%の\@(TALENT:肥大陰核) ? ペニスのようなクリトリス # ペニス\@への刺激にむずがゆさを感じているようだ。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%の\@(TALENT:肥大陰核) ? ペニスのようなクリトリス # ペニス\@は軽い電撃でも走ったかのように小さく震えた。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%の\@(TALENT:肥大陰核) ? ペニスのようなクリトリス # ペニス\@に%CALLNAME:PLAYER%の舌が触れるたびに%CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 身体を震わせた。 # 喘ぎ声をあげている。\@
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%のフェラに快楽を感じ、さらなる刺激を求めて\@(TEQUIP:口装着器具) ? きた。 # まるでせかすように喘ぎ声をあげた。\@
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%のフェラに激しく快楽を感じ、
+		PRINTFORML さらに深い快感を求め自らせがむようにその手で%CALLNAME:PLAYER%の頭を掴んできた。
+ENDSELECT
+
+;--------------------------------------------------------
+;自慰
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_7
+PRINTL 
+PRINTFORM %CALLNAME:TARGET%は
+SIF TALENT:恥じらい && ABL:露出癖 <= 3
+	PRINT 羞恥に顔を真っ赤に染め、涙を浮かべて
+IF TALENT:小柄体型
+	PRINT 小さな身体で
+ELSEIF TALENT:小柄体型 == 0 && (TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ａ系装着器具 == 1)
+	PRINT 自らの中に
+ENDIF
+IF (TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8) && (TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16)
+	PRINT ２本の異形の触手を咥え込み
+	SIF TEQUIP:Ｖ系装着器具 == 22
+		PRINT 膣内のザラついた天井を執拗に擦られ
+	SIF TEQUIP:Ｖ系装着器具 == 23
+		PRINT 子宮をも満たされ
+	SIF TEQUIP:Ｖ系装着器具 == 27
+		PRINT 愛液を啜られ
+	SIF TEQUIP:Ａ系装着器具 == 22
+		PRINT 小腸を蹂躙され
+	SIF TEQUIP:Ａ系装着器具 == 23
+		PRINT 体内から貫通した触手を口から溢れさせ
+	SIF TEQUIP:Ａ系装着器具 == 27
+		PRINT 腸を薬液で満たされ
+ELSEIF GROUPMATCH(TEQUIP:Ｖ系装着器具, 21, 22, 23, 27) && TEQUIP:触手服 & 8
+	PRINT ヴァギナに触手を咥え込み
+	SIF TEQUIP:Ｖ系装着器具 == 22
+		PRINT ザラついた天井を執拗に擦られ
+	SIF TEQUIP:Ｖ系装着器具 == 23
+		PRINT 子宮をも満たされ
+	SIF TEQUIP:Ｖ系装着器具 == 27
+		PRINT 愛液を啜られ
+ELSEIF GROUPMATCH(TEQUIP:Ａ系装着器具, 21, 22, 23, 27) && TEQUIP:触手服 & 16
+	PRINT お尻の穴に触手を咥え込み
+	SIF TEQUIP:Ａ系装着器具 == 22
+		PRINT 小腸を蹂躙され
+	SIF TEQUIP:Ａ系装着器具 == 23
+		PRINT 体内から貫通した触手を口から溢れさせ
+	SIF TEQUIP:Ａ系装着器具 == 27
+		PRINT 腸を薬液で満たされ
+ENDIF
+;「膣内に何かあるかつ触手服が責め始めた記憶がある」または「そもそも入ってない」
+;かつ「後ろの穴に何かあるかつ触手服が責め始めた記憶がある」または「そもそも入っていない」
+;かつ「露出癖がLV4ではない」ときに「ながら」を追加
+SIF ((TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8) || !TEQUIP:Ｖ系装着器具) && ((TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16) || !TEQUIP:Ａ系装着器具) && ABL:露出癖 != 4 && !(!TEQUIP:Ｖ系装着器具 && !TEQUIP:Ａ系装着器具)
+	PRINT ながら
+IF (TEQUIP:Ｖ系装着器具 == 1 && !(TEQUIP:触手服 & 8)) && (TEQUIP:Ａ系装着器具 == 1 && !(TEQUIP:触手服 & 16))
+	PRINT ２本のバイブをくわえ込んでいる卑猥な様を見せ
+	IF ABL:露出癖 != 4
+		PRINT ながら、
+	ELSE
+		PRINT 、
+	ENDIF
+ELSEIF TEQUIP:Ｖ系装着器具 == 1 && !(TEQUIP:触手服 & 8)
+	PRINT 入っているバイブを手で持ち、
+ELSEIF TEQUIP:Ａ系装着器具 == 1  && !(TEQUIP:触手服 & 16)
+	PRINT 突っ込まれているアナルバイブを持って、
+ELSEIF (TEQUIP:Ｖ系装着器具 == 2 && !(TEQUIP:触手服 & 8)) && (TEQUIP:Ａ系装着器具 == 2 && !(TEQUIP:触手服 & 16))
+	PRINT ２本の要石をくわえ込んで、
+ELSEIF TEQUIP:Ｖ系装着器具 == 2  && !(TEQUIP:触手服 & 8)
+	PRINT 要石をヴァギナにくわえ込んで、
+ELSEIF TEQUIP:Ａ系装着器具 == 2  && !(TEQUIP:触手服 & 16)
+	PRINT 要石をアナルにくわえ込んで、
+ENDIF
+SIF ABL:露出癖 == 4
+	PRINT 露出の快楽に酔っている表情を見せながら
+IF ABL:露出癖 >= 5
+	PRINT 完全に見られる快感を覚えてしまったのか、淫蕩な表情を浮かべて自ら
+	IF TALENT:オトコ
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒をさらけ出すように
+		ELSE
+			PRINT 今にも射精しそうな肉棒を見せつけるように
+		ENDIF
+	ELSEIF TALENT:ふたなり
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒と愛液が溢れ出る秘所をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒と愛液が溢れ出る秘所をさらけ出すように
+		ELSE
+			PRINT 愛液が溢れ出る秘所と我慢汁がにじみ出る肉棒を見せつけながら
+		ENDIF
+	ELSEIF BASE:陰核
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒と化した陰核と愛液が溢れ出る秘所をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒と化した陰核と愛液が溢れ出る秘所をさらけ出すように
+		ELSE
+			PRINT 愛液を溢れさせ続ける秘所を押し開き
+			IF BASE:陰核 == 250
+				PRINT 胸の下まで雄々しく反り返る異常なサイズの
+			ELSEIF BASE:陰核 > 200
+				PRINT もはや男性器と呼ぶにも異様なサイズの
+			ELSEIF BASE:陰核 >= 150
+				PRINT 勃起した男性器と見紛う
+			ELSEIF BASE:陰核 > 100
+				PRINT ペニス程もある
+			ELSEIF BASE:陰核 > 50
+				PRINT 小指ほどまで膨らんでしまった
+			ELSE
+				PRINT 多少膨らみ始めた
+			ENDIF
+			PRINT 陰核を見せつけながら
+		ENDIF
+	ELSE
+		PRINT 愛液を溢れさせ続ける秘所を押し開いて見せながら
+	ENDIF
+ENDIF
+SIF TEQUIP:ビデオ撮影
+	PRINT ビデオカメラに向かって
+PRINTL オナニーを続けている。
+
+SELECTCASE (UP:0 + UP:1 + UP:2 + UP:3)
+	CASE IS < 300
+		PRINTL その手の動きはまだ拙く、快楽よりも羞恥の方が強いようだ。
+	CASE IS < 1000
+		PRINTL 時折小さく身体を震わせる様は確実に快楽を感じ始めている様子だがまだ没頭しきれないようだ。
+	CASE IS < 3000
+		PRINTFORML その表情には明らかに快楽の兆しが\@(TEQUIP:口装着器具) ? 見えてきて # 見え、熱っぽい吐息が漏れて\@いる。
+	CASE IS < 6000
+		PRINTFORML そして堪えきれない情感に快楽の\@(TEQUIP:口装着器具) ? 表情を浮かべ # 声を上げ\@ながら自慰行為へ没頭していった。
+	CASE IS < 10000
+		PRINTL そして自慰行為を続けながら快楽に身体を跳ねさせ、背中でブリッジを作りながら自らの性器を弄り続けた。
+	CASEELSE
+		PRINT あまりの快楽になにもかも忘れて蕩けた表情で
+		IF TALENT:オトコ
+			PRINTL 激しく肉棒を扱き上げている。
+		ELSEIF TALENT:ふたなり
+			PRINTL 肉棒を扱く快感と秘所を指で弄る二つの快感に溺れている。
+		ELSE
+			PRINTL ぐちゅぐちゅと音を立てて性器を弄り続けている。
+		ENDIF
+		PRINTL 放っとけばいつまでもやり続けそうだ。
+ENDSELECT
+
+;--------------------------------------------------------
+;ローター
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_10
+PRINTL 
+SELECTCASE UP:0
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はまだ大きな快楽を得るには至っていないようだ。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%の\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@にローターを押し付けると小さく\@(TEQUIP:口装着器具) ? # 悲鳴を上げて\@ビクンと身体を跳ねさせた。
+	CASE IS < 3000
+		IF TALENT:快感に素直
+			PRINTFORML %CALLNAME:TARGET%はローターの刺激に気持ちよさそうにその快楽を享受している。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%の\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@にローターを押し付けると\@(TEQUIP:口装着器具) ? # 快楽の声を上げながら\@刺激から逃れようと身をよじった。
+		ENDIF
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@を直接ローターを刺激され激しい快楽に全身を跳ねさせた。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%の\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@をローターで刺激してやると激しい快楽にのたうち、腰を卑猥にグラインドさせた。
+	CASEELSE
+		IF TALENT:濡れやすい
+			PRINTFORML %CALLNAME:TARGET%はローターを押し付けられると、強烈すぎる快楽に激しく背中を反らせたまま連続で潮を噴いた。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%はローターを押し付けられあまりの快楽に涎すら垂らしながら身体をのた打ち回らせた。
+		ENDIF
+ENDSELECT
+
+;--------------------------------------------------------
+;電気按摩
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_11
+PRINTL 
+SELECTCASE UP:0
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%の\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@に電気按摩を押し当ててやったが、振動に耐えるだけで大きな快楽を得るまでにはいたってないようだ。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%のあそこへ電気按摩を押し当ててやるとむずがゆそうにしながらもその表情に快楽の兆しが見える。
+	CASE IS < 3000
+		PRINTFORML \@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@へ電気按摩を押し当ててやると%CALLNAME:TARGET%は小さく\@(TEQUIP:口装着器具) ? # 可愛らしい声をあげながら\@体を震わせた。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%のあそこへ電気按摩を押し当ててやると堪えきれない快楽に思わず両足を閉じて電気按摩を締め付けてしまい、%CALLNAME:TARGET%は身悶えた。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@に感じる電気按摩の振動がもたらす余りの快楽に必死に逃げようとし\@(TEQUIP:口装着器具) ? # ながら色っぽい喘ぎ声を出し続け\@ている。
+	CASEELSE
+		PRINTFORM %CALLNAME:TARGET%は電気按摩を押し当てた瞬間に激しく体をのけぞらせ、
+		IF TALENT:濡れやすい
+			PRINTL あそこから何度も潮をふいた。
+		ELSE
+			PRINTL 強烈な快楽に身体を跳ねまくらせた。
+		ENDIF
+ENDSELECT
+
+;--------------------------------------------------------
+;バイブ
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_12
+PRINTL 
+IF TEQUIP:Ｖ系装着器具 == 1
+	SELECTCASE UP:1
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%はバイブの太さに苦しそうにもがいた。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%は慣れないバイブの感覚に戸惑いながらも時折突き上げる快楽の衝撃に体を震わせている。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%はすでにヴァギナでも快楽を感じれる体になってきたのか、振動するバイブを入れてやると明らかに感じている\@(TEQUIP:口装着器具) ? ように身体を震わせた # 声を上げた\@。
+		CASE IS < 6000
+			PRINTFORM %CALLNAME:TARGET%の
+			SIF TALENT:小人体型 || TALENT:小柄体型
+				PRINT 小さな
+			PRINTL ヴァギナにバイブを突っ込んでやるとすぐに快楽に蕩けた表情になった。
+		CASE IS < 10000
+			PRINTFORM %CALLNAME:TARGET%は
+			SIF TALENT:小人体型 || TALENT:小柄体型
+				PRINT その小さな体で
+			PRINTL 極太のバイブをくわえ込んで、激しい振動による刺激と快楽にその裸身を若鮎のように跳ねさせている。
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%に振動させたままのバイブで激しく抜き差ししてやると愛液を垂れながして激しい快楽にのたうちまわった。
+	ENDSELECT
+ELSE
+	SELECTCASE UP:1
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%の体からバイブを引き抜いてやるとほっとした表情をした。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%はその体からバイブを引き抜く時に小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 可愛らしい喘ぎ声を出し\@た。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%の体からバイブを引き抜く時に軽く抜き差ししてやると小さく\@(TEQUIP:口装着器具) ? # 喘ぎ声を漏らしながら\@体を悶えさせた。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%を散々バイブで責めた後でようやく引き抜いてやると膣から大量の愛液があふれ出た。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%はバイブを引き抜いただけで可愛らし\@(TEQUIP:口装着器具) ? く身体を震わせ # い喘ぎ声を上げ\@たので最後にもう一回突っ込んで激しく抜き差ししてやると愛液を噴きながら全身を跳ねさせた。
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%の体からバイブを引き抜く前にバイブを持って思いきり激しく抜き差ししてやると全身をのた打ち回らせてよがり狂った。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;アナルバイブ
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_13
+PRINTL 
+IF TEQUIP:Ａ系装着器具 == 1
+	SELECTCASE UP:2
+		CASE IS < 300
+			PRINTFORML アナルにバイブを入れてやると%CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 苦しそうに表情を歪め # 悲鳴を上げ\@た。まだ苦痛の方が勝るようだ。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%のアナルは大分受け入れられるようになったようだがまだ少し苦しそうだ。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%はアナルにバイブを入れられ少し苦しそうにするも快楽が勝って来たようだ。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%はアナルにバイブを突っ込まれて明らか\@(TEQUIP:口装着器具) ? に # な嬌声を上げて\@快楽を感じている。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%はアナルバイブのもたらす強烈な快楽に表情を緩ませている。
+		CASEELSE
+			PRINTFORM %CALLNAME:TARGET%はアナルへの刺激に激しく感じまくって
+			IF TALENT:小人体型 || TALENT:小柄体型
+				PRINT その小さな身体を
+			ELSE
+				PRINT その汗まみれの全身を
+			ENDIF
+			PRINTL のたうちまわらせた。
+	ENDSELECT
+ELSE
+	SELECTCASE UP:2
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%の身体からアナルバイブを引き抜くと安堵\@(TEQUIP:口装着器具) ? したような表情を見せ # のため息を吐い\@た。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%のアナルの締め付けを楽しみながらゆっくり引き抜いてやった。
+		CASE IS < 3000
+			PRINTFORML アナルからバイブを引き抜く瞬間、%CALLNAME:TARGET%は堪えきれない\@(TEQUIP:口装着器具) ? かのような表情を見せ # 喘ぎ声を上げ\@た。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%の中で振動し続けるバイブを強引に引き抜いてやると\@(TEQUIP:口装着器具) ? 苦しさと気持ちよさの入り混じったような複雑な表情を見せ # 甘い快楽の入り混じった悲鳴を上げ\@た。
+		CASE IS < 10000
+			PRINTFORML アナルバイブを引き抜く前に軽く抜き差ししてやると%CALLNAME:TARGET%は、\@(TEQUIP:口装着器具) ? 快感に身を任せその # 甘い声を上げながら\@お尻を振った。
+		CASEELSE
+			PRINTFORML アナルバイブを持って激しく抜き差ししてやると%CALLNAME:TARGET%は強烈な快楽に\@(TEQUIP:口装着器具) ? # 激しく喘ぎ声を上げながら\@卑猥に腰を振って快楽を貪った。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;電動クリキャップ
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_14
+PRINTL 
+IF TEQUIP:Ｃ系装着器具 == 1
+	SELECTCASE UP:0
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%はクリトリスへの刺激に目を閉じて耐えている。
+		CASE IS < 1000
+			PRINTFORML 電動クリキャップでクリを揉みこんでやると%CALLNAME:TARGET%は小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 喘ぎ声を上げ\@た。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%はクリトリスへの刺激に耐え切れず身体を小刻みに震わせて快楽に突き上げられている。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%は電動クリキャップの刺激がもたらす激しい快感に腰を突き出すようにして卑猥なダンスを踊っている。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%はクリトリスへ送られる快楽に意識を朦朧とさせたまま緩んだ表情を見せている。
+		CASEELSE
+			PRINTFORML 電動クリキャップを持って動かしてやると%CALLNAME:TARGET%はクリトリスへの凄まじい刺激に耐え切れず愛液を大量に垂れ流しながら身体を跳ねさせた。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;電動ニプルキャップ
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_15
+PRINTL 
+IF TEQUIP:Ｂ系装着器具 == 1
+	SELECTCASE UP:3
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%は胸を吸われる感覚に戸惑った表情で耐えている。
+		CASE IS < 1000
+			PRINTFORML 電動ニプルキャップを胸に取り付けてやると%CALLNAME:TARGET%は小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 喘ぎ声を上げ\@た。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%は胸への刺激に耐え切れず身体を小刻みに震わせている。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%は電動ニプルキャップの刺激がもたらす激しい快感に身体全体を震わせている。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%は胸に送られる快楽に意識を朦朧とさせたまま緩んだ表情を見せている。
+		CASEELSE
+			PRINTFORML 電動ニプルキャップを持って動かしてやると%CALLNAME:TARGET%は胸への凄まじい刺激に耐え切れず\@(TEQUIP:口装着器具) ? 身体全体を激しく震わ # 口から唾液を垂れ流しながら身体を跳ねさ\@せた。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;オナホール
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_16
+PRINTL 
+IF TEQUIP:Ｃ系装着器具 == 2
+	SELECTCASE UP:0
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%はペニスへの慣れない刺激に戸惑った表情で耐えている。
+		CASE IS < 1000
+			PRINTFORML オナホールをペニスに取り付けてやると%CALLNAME:TARGET%は小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 喘ぎ声を上げ\@た。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%はペニスへの刺激に耐え切れず身体を小刻みに震わせている。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%はオナホールの刺激がもたらす激しい快感に身体全体を震わせている。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%はオナホールからペニスに送られる快楽を味わうのに夢中になっている。
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%はオナホールからペニスへ送られる凄まじい刺激に耐え切れず\@(TEQUIP:口装着器具) ? 身体全体を激しく震わ # 口から唾液を垂れ流しながら身体を跳ねさ\@せた。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;電極オナホール
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_17
+PRINTL 
+IF TEQUIP:Ｃ系装着器具 == 6
+	SELECTCASE UP:0
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%はペニスへ電撃を受けるたびにその痛みに泣きそうな表情で耐えている。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%はペニスへの快感よりも電撃への痛みの方がどうしても気になるようで必死になって耐えている。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%はペニスへの電撃と振動に耐え切れず身体を小刻みに震わせている。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%は電極オナホールから送られる様々な刺激により激しい快感を身体全体で味わっている。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%は電撃による衝撃に強い快感を覚え、さらなる電撃が来るのを待ち構えるかのごとく身体を動かした。
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%は電極オナホールからペニスへ送られる凄まじい電撃と振動に\@(TEQUIP:口装着器具) ? 身体全体を激しく震わ # 口から唾液を垂れ流しながら身体を跳ねさ\@せた。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;正常位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_20
+PRINTL 
+IF MARK:反発刻印 > 2
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は、%CALLNAME:PLAYER%から逃れようともがいている。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は、早くやめるように怒気を含んだ声をあげている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は、肉欲に流されそうになるのを必死に絶えている。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は、%CALLNAME:PLAYER%の動きに合わせ腰をくねらせている。
+	CASEELSE
+		IF SELECTCOM == 20 || SELECTCOM == 22 || SELECTCOM == 617
+			PRINTFORML 肉欲に支配された%CALLNAME:TARGET%は、%CALLNAME:PLAYER%に足を絡め快感を貪っている。
+		ELSE
+			PRINTFORML 肉欲に支配された%CALLNAME:TARGET%は、%CALLNAME:PLAYER%にあわせ自らも腰を動かし快感を貪っている。
+		ENDIF
+ENDSELECT
+ELSE
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は、まだ慣れないのか抜き差しされるたびに苦しそうな声をあげている。
+	CASE IS < 1000
+		PRINTFORML 膣内を擦られた%CALLNAME:TARGET%は、時折小さく喘いでいる。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%はセックスに慣れ始めたのか、ペニスが抜き差しされるたびに小さな喘ぎ声をあげている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は、膣穴を擦られるたびに可愛らしく喘いでいる。
+	CASE IS < 10000
+		PRINTFORML セックスの快楽を覚えた%CALLNAME:TARGET%は、蕩け顔でペニス受け入れ甘い声をあげている。
+	CASEELSE
+		PRINTFORM 腰を少し動かしただけで軽く達したのか、%CALLNAME:TARGET%は
+		SIF TALENT:小人体型 || TALENT:小柄体型
+			PRINTFORM 小さな
+		PRINTFORML 体を痙攣させ声にならない喘ぎ声をあげている。
+ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;後背位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_21
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;後背位愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_616
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;対面座位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_22
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;対面座位胸愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_617
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;背面座位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_23
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;背面座位胸愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_632
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;対面立位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_27
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;背面立位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_28
+CALL SYSTXT_TRAIN_TEXT_COM_20
+
+;--------------------------------------------------------
+;挿入Ｇスポ責め
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_614
+PRINTL 
+IF MARK:反発刻印 > 2
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は、%CALLNAME:PLAYER%から逃れようともがいている。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は、早くやめるように怒気を含んだ声をあげている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は、肉欲に流されそうになるのを必死に絶えている。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は、%CALLNAME:PLAYER%の動きに合わせ腰をくねらせている。
+	CASEELSE
+		IF PREVCOM == 20 || PREVCOM == 22 || PREVCOM == 617
+			PRINTFORML 肉欲に支配された%CALLNAME:TARGET%は、%CALLNAME:PLAYER%に足を絡め快感を貪っている。
+		ELSE
+			PRINTFORML 肉欲に支配された%CALLNAME:TARGET%は、%CALLNAME:PLAYER%にあわせ自らも腰を動かし快感を貪っている。
+		ENDIF
+ENDSELECT
+ELSE
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は、まだ慣れないのか膣壁を擦られても苦しいだけのようだ。
+	CASE IS < 1000
+		PRINTFORML 膣壁を擦られた%CALLNAME:TARGET%は、時折小さく喘いでいる。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は膣壁を擦られる感触に慣れ始めたのか、小さな喘ぎ声をあげている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は、膣壁を擦られるたびに可愛らしく喘いでいる。
+	CASE IS < 10000
+		PRINTFORML 膣壁を擦られる快楽を覚えた%CALLNAME:TARGET%は、蕩け顔でペニス受け入れ甘い声をあげている。
+	CASEELSE
+		PRINTFORM 膣壁を軽く擦られただけで達したのか、%CALLNAME:TARGET%は
+		SIF TALENT:小人体型 || TALENT:小柄体型
+			PRINTFORM 小さな
+		PRINTFORML 体を痙攣させ声にならない喘ぎ声をあげている。
+ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;挿入子宮口責め
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_615
+PRINTL 
+IF MARK:反発刻印 > 2
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は、%CALLNAME:PLAYER%から逃れようともがいている。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は、早くやめるように怒気を含んだ声をあげている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は、肉欲に流されそうになるのを必死に絶えている。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は、%CALLNAME:PLAYER%の動きに合わせ腰をくねらせている。
+	CASEELSE
+		IF PREVCOM == 20 || PREVCOM == 22 || PREVCOM == 617
+			PRINTFORML 肉欲に支配された%CALLNAME:TARGET%は、%CALLNAME:PLAYER%に足を絡め快感を貪っている。
+		ELSE
+			PRINTFORML 肉欲に支配された%CALLNAME:TARGET%は、%CALLNAME:PLAYER%にあわせ自らも腰を動かし快感を貪っている。
+		ENDIF
+ENDSELECT
+ELSE
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は、深い所を突かれる感触に慣れないのか苦しそうな声をあげている。
+	CASE IS < 1000
+		PRINTFORML 深い所を突かれた%CALLNAME:TARGET%は、時折小さく喘いでいる。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は深い所を責められる感触に慣れ始めたのか、ペニスで突かれるたびに小さな喘ぎ声をあげている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は、深い所を突かれるたびに可愛らしく喘いでいる。
+	CASE IS < 10000
+		PRINTFORML 深い所を責められる快楽を覚えた%CALLNAME:TARGET%は、蕩け顔でペニス受け入れ甘い声をあげている。
+	CASEELSE
+		PRINTFORM 子宮口を軽く突かれただけで達したのか、%CALLNAME:TARGET%は
+		SIF TALENT:小人体型 || TALENT:小柄体型
+			PRINTFORM 小さな
+		PRINTFORML 体を痙攣させ声にならない喘ぎ声をあげている。
+ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;騎乗位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_24
+PRINTL 
+SELECTCASE UP:1
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は苦しそうにしながら命令に従って腰を振る。だが、まだ快楽を得るには遠いようだ。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%は苦しそうにしながらもその表情には快楽の兆しが見える。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は腰を振りながらこらえきれない快楽に\@(TEQUIP:口装着器具) ? 浸っ # 可愛らしい声を漏らし\@ている。
+	CASE IS < 6000
+		IF TALENT:巨乳 || TALENT:爆乳
+			PRINTFORML 目の前で%CALLNAME:TARGET%は大きな乳房を腰の動きに合わせて上下に弾ませながら快楽に浸りきっている。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は大分慣れてきたのか、快楽に突き上げられながら自ら進んで腰を振っている。
+		ENDIF
+	CASE IS < 10000
+		PRINTFORM %CALLNAME:TARGET%は
+		SIF TALENT:小人体型 || TALENT:小柄体型
+			PRINTFORM その小さな身体で
+		IF TALENT:快感の否定 || TALENT:抑圧
+			PRINTFORML 快楽を否定\@(TEQUIP:口装着器具) ? するかのように身体を振りながらも、確かに感じ # する言葉を吐きつつ、こらえ切れない喘ぎ声を上げ続け\@ている。
+		ELSE
+			PRINTFORML 一生懸命腰を振り背中を反らし\@(TEQUIP:口装着器具) ? # ながら快楽の喘ぎ声を上げ\@た。
+		ENDIF
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%は腰を振りながら緩みきった、だらしない顔で快楽を貪っている。
+ENDSELECT
+
+;--------------------------------------------------------
+;正常位アナル
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_30
+PRINTL 
+SELECTCASE UP:2
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は苦しそうに喘いでいた。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%は苦しそうにしながらもその表情には快楽の兆しが見える。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は快楽に\@(TEQUIP:口装着器具) ? 浸っ # 可愛らしい声を漏らし\@ている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%が動くたびに感じる甘い痺れに、戸惑いつつも嬌声を上げていた。
+	CASE IS < 10000
+		PRINTFORM %CALLNAME:TARGET%は強烈な快楽に表情を緩ませ喘ぎ声をあげながら、
+		IF SELECTCOM == 30 || SELECTCOM == 32 || SELECTCOM == 619
+			PRINTFORML %CALLNAME:PLAYER%に足を絡め腰を押し付けてきた。
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%の動きにあわせてビクビクと体を痙攣させていた。
+		ENDIF
+	CASEELSE
+		PRINTFORM %CALLNAME:TARGET%は激しく感じまくり、
+		IF SELECTCOM == 30 || SELECTCOM == 32 || SELECTCOM == 619
+			PRINTFORM %CALLNAME:PLAYER%に足を絡め腰を押し付けながら、
+		ELSE
+			PRINTFORM %CALLNAME:PLAYER%に押し付けた腰を動かしながら、
+		ENDIF
+		SIF TALENT:小柄体型
+			PRINTFORM 小さな
+		PRINTFORML 身体をビクビクと痙攣させた。
+ENDSELECT
+
+;--------------------------------------------------------
+;後背位アナル
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_31
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;後背位アナル胸愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_618
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;対面座位アナル
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_32
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;対面座位アナル胸愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_619
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;背面座位アナル
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_33
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;背面座位アナル胸愛撫
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_633
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;対面立位アナル
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_37
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;背面立位アナル
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_38
+CALL SYSTXT_TRAIN_TEXT_COM_30
+
+;--------------------------------------------------------
+;アナル騎乗位
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_34
+PRINTL 
+SELECTCASE UP:2
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%は苦しそうにしながら命令に従って腰を振る。だが、まだ快楽を得るには遠いようだ。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%は苦しそうにしながらもその表情には快楽の兆しが見える。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は腰を振りながらこらえきれない快楽に\@(TEQUIP:口装着器具) ? 浸っ # 可愛らしい声を漏らし\@ている。
+	CASE IS < 6000
+		IF TALENT:巨乳 || TALENT:爆乳
+			PRINTFORML 目の前で%CALLNAME:TARGET%は大きな乳房を腰の動きに合わせて上下に弾ませながら快楽に浸りきっている。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は大分慣れてきたのか、快楽に突き上げられながら自ら進んで腰を振っている。
+		ENDIF
+	CASE IS < 10000
+		PRINTFORM %CALLNAME:TARGET%は
+		SIF TALENT:小人体型 || TALENT:小柄体型
+			PRINTFORM その小さな身体で
+		IF TALENT:快感の否定 || TALENT:抑圧
+			PRINTFORML 快楽を否定\@(TEQUIP:口装着器具) ? するかのように身体を振りながらも、確かに感じ # する言葉を吐きつつ、こらえ切れない喘ぎ声を上げ続け\@ている。
+		ELSE
+			PRINTFORML 一生懸命腰を振り背中を反らし\@(TEQUIP:口装着器具) ? # ながら快楽の喘ぎ声を上げ\@た。
+		ENDIF
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%は腰を振りながら緩みきった、だらしない顔で快楽を貪っている。
+ENDSELECT
+
+;--------------------------------------------------------
+;ローター自慰
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_124
+PRINTL 
+PRINTFORM %CALLNAME:TARGET%は
+SIF TALENT:恥じらい && ABL:露出癖 <= 3
+	PRINT 羞恥に顔を真っ赤に染め、涙を浮かべて
+IF TALENT:小柄体型
+	PRINT 小さな身体で
+ELSEIF TALENT:小柄体型 == 0 && (TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ａ系装着器具 == 1)
+	PRINT 自らの中に
+ENDIF
+IF (TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8) && (TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16)
+	PRINT ２本の異形の触手を咥え込み
+	SIF TEQUIP:Ｖ系装着器具 == 22
+		PRINT 膣内のザラついた天井を執拗に擦られ
+	SIF TEQUIP:Ｖ系装着器具 == 23
+		PRINT 子宮をも満たされ
+	SIF TEQUIP:Ｖ系装着器具 == 27
+		PRINT 愛液を啜られ
+	SIF TEQUIP:Ａ系装着器具 == 22
+		PRINT 小腸を蹂躙され
+	SIF TEQUIP:Ａ系装着器具 == 23
+		PRINT 体内から貫通した触手を口から溢れさせ
+	SIF TEQUIP:Ａ系装着器具 == 27
+		PRINT 腸を薬液で満たされ
+ELSEIF GROUPMATCH(TEQUIP:Ｖ系装着器具, 21, 22, 23, 27) && TEQUIP:触手服 & 8
+	PRINT ヴァギナに触手を咥え込み
+	SIF TEQUIP:Ｖ系装着器具 == 22
+		PRINT ザラついた天井を執拗に擦られ
+	SIF TEQUIP:Ｖ系装着器具 == 23
+		PRINT 子宮をも満たされ
+	SIF TEQUIP:Ｖ系装着器具 == 27
+		PRINT 愛液を啜られ
+ELSEIF GROUPMATCH(TEQUIP:Ａ系装着器具, 21, 22, 23, 27) && TEQUIP:触手服 & 16
+	PRINT お尻の穴に触手を咥え込み
+	SIF TEQUIP:Ａ系装着器具 == 22
+		PRINT 小腸を蹂躙され
+	SIF TEQUIP:Ａ系装着器具 == 23
+		PRINT 体内から貫通した触手を口から溢れさせ
+	SIF TEQUIP:Ａ系装着器具 == 27
+		PRINT 腸を薬液で満たされ
+ENDIF
+;「膣内に何かあるかつ触手服が責め始めた記憶がある」または「そもそも入ってない」
+;かつ「後ろの穴に何かあるかつ触手服が責め始めた記憶がある」または「そもそも入っていない」
+;かつ「露出癖がLV4ではない」ときに「ながら」を追加
+SIF ((TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8) || !TEQUIP:Ｖ系装着器具) && ((TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16) || !TEQUIP:Ａ系装着器具) && ABL:露出癖 != 4 && !(!TEQUIP:Ｖ系装着器具 && !TEQUIP:Ａ系装着器具)
+	PRINT ながら
+IF (TEQUIP:Ｖ系装着器具 == 1 && !(TEQUIP:触手服 & 8)) && (TEQUIP:Ａ系装着器具 == 1 && !(TEQUIP:触手服 & 16))
+	PRINT ２本のバイブをくわえ込んでいる卑猥な様を見せ
+	IF ABL:露出癖 != 4
+		PRINT ながら、
+	ELSE
+		PRINT 、
+	ENDIF
+ELSEIF TEQUIP:Ｖ系装着器具 == 1 && !(TEQUIP:触手服 & 8)
+	PRINT 入っているバイブを手で持ち、
+ELSEIF TEQUIP:Ａ系装着器具 == 1  && !(TEQUIP:触手服 & 16)
+	PRINT 突っ込まれているアナルバイブを持って、
+ELSEIF (TEQUIP:Ｖ系装着器具 == 2 && !(TEQUIP:触手服 & 8)) && (TEQUIP:Ａ系装着器具 == 2 && !(TEQUIP:触手服 & 16))
+	PRINT ２本の要石をくわえ込んで、
+ELSEIF TEQUIP:Ｖ系装着器具 == 2  && !(TEQUIP:触手服 & 8)
+	PRINT 要石をヴァギナにくわえ込んで、
+ELSEIF TEQUIP:Ａ系装着器具 == 2  && !(TEQUIP:触手服 & 16)
+	PRINT 要石をアナルにくわえ込んで、
+ENDIF
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:Ａ系装着器具
+	PRINT さらには自分の感じる場所に
+PRINT ローターを押し当てて、
+SIF ABL:露出癖 == 4
+	PRINT 露出の快楽に酔っている表情を見せながら
+IF ABL:露出癖 >= 5
+	PRINT 完全に見られる快感を覚えてしまったのか、淫蕩な表情を浮かべて自ら
+	IF TALENT:オトコ
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒をさらけ出すように
+		ELSE
+			PRINT 今にも射精しそうな肉棒を見せつけるように
+		ENDIF
+	ELSEIF TALENT:ふたなり
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒と愛液が溢れ出る秘所をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒と愛液が溢れ出る秘所をさらけ出すように
+		ELSE
+			PRINT 愛液が溢れ出る秘所と我慢汁がにじみ出る肉棒を見せつけながら
+		ENDIF
+	ELSEIF BASE:陰核
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒と化した陰核と愛液が溢れ出る秘所をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒と化した陰核と愛液が溢れ出る秘所をさらけ出すように
+		ELSE
+			PRINT 愛液を溢れさせ続ける秘所を押し開き
+			IF BASE:陰核 == 250
+				PRINT 胸の下まで雄々しく反り返る異常なサイズの
+			ELSEIF BASE:陰核 > 200
+				PRINT もはや男性器と呼ぶにも異様なサイズの
+			ELSEIF BASE:陰核 >= 150
+				PRINT 勃起した男性器と見紛う
+			ELSEIF BASE:陰核 > 100
+				PRINT ペニス程もある
+			ELSEIF BASE:陰核 > 50
+				PRINT 小指ほどまで膨らんでしまった
+			ELSE
+				PRINT 多少膨らみ始めた
+			ENDIF
+			PRINT 陰核を見せつけながら
+		ENDIF
+	ELSE
+		PRINT 愛液を溢れさせ続ける秘所を押し開いて見せながら
+	ENDIF
+ENDIF
+SIF TEQUIP:ビデオ撮影
+	PRINT ビデオカメラに向かって
+PRINTL オナニーを続けている。
+
+SELECTCASE (UP:0 + UP:1 + UP:2 + UP:3)
+	CASE IS < 300
+		PRINTL その手の動きはまだ拙く、快楽よりも羞恥の方が強いようだ。
+	CASE IS < 1000
+		PRINTL 時折小さく身体を震わせる様は確実に快楽を感じ始めている様子だがまだ没頭しきれないようだ。
+	CASE IS < 3000
+		PRINTFORML その表情には明らかに快楽の兆しが\@(TEQUIP:口装着器具) ? 見えてきて # 見え、熱っぽい吐息が漏れて\@いる。
+	CASE IS < 6000
+		PRINTFORML そして堪えきれない情感に快楽の\@(TEQUIP:口装着器具) ? 表情を浮かべ # 声を上げ\@ながら自慰行為へ没頭していった。
+	CASE IS < 10000
+		PRINTL そして自慰行為を続けながら快楽に身体を跳ねさせ、背中でブリッジを作りながら自らの性器を弄り続けた。
+	CASEELSE
+		PRINT あまりの快楽になにもかも忘れて蕩けた表情で
+		IF TALENT:オトコ
+			PRINTL 激しく肉棒を扱き上げ玉の部分にローターを押し当てている。
+		ELSEIF TALENT:ふたなり
+			PRINTL 肉棒を扱く快感と秘所を指で弄りつつローターを抜き挿しする二つの快感に溺れている。
+		ELSE
+			PRINTL ぐちゅぐちゅと音を立てて性器を弄りつつローターを抜き挿しし続けている。
+		ENDIF
+		PRINTL 放っとけばいつまでもやり続けそうだ。
+ENDSELECT
+
+;--------------------------------------------------------
+;電マ自慰
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_125
+PRINTL 
+PRINTFORM %CALLNAME:TARGET%は
+SIF TALENT:恥じらい && ABL:露出癖 <= 3
+	PRINT 羞恥に顔を真っ赤に染め、涙を浮かべて
+IF TALENT:小柄体型
+	PRINT 小さな身体で
+ELSEIF TALENT:小柄体型 == 0 && (TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ａ系装着器具 == 1)
+	PRINT 自らの中に
+ENDIF
+IF (TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8) && (TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16)
+	PRINT ２本の異形の触手を咥え込み
+	SIF TEQUIP:Ｖ系装着器具 == 22
+		PRINT 膣内のザラついた天井を執拗に擦られ
+	SIF TEQUIP:Ｖ系装着器具 == 23
+		PRINT 子宮をも満たされ
+	SIF TEQUIP:Ｖ系装着器具 == 27
+		PRINT 愛液を啜られ
+	SIF TEQUIP:Ａ系装着器具 == 22
+		PRINT 小腸を蹂躙され
+	SIF TEQUIP:Ａ系装着器具 == 23
+		PRINT 体内から貫通した触手を口から溢れさせ
+	SIF TEQUIP:Ａ系装着器具 == 27
+		PRINT 腸を薬液で満たされ
+ELSEIF GROUPMATCH(TEQUIP:Ｖ系装着器具, 21, 22, 23, 27) && TEQUIP:触手服 & 8
+	PRINT ヴァギナに触手を咥え込み
+	SIF TEQUIP:Ｖ系装着器具 == 22
+		PRINT ザラついた天井を執拗に擦られ
+	SIF TEQUIP:Ｖ系装着器具 == 23
+		PRINT 子宮をも満たされ
+	SIF TEQUIP:Ｖ系装着器具 == 27
+		PRINT 愛液を啜られ
+ELSEIF GROUPMATCH(TEQUIP:Ａ系装着器具, 21, 22, 23, 27) && TEQUIP:触手服 & 16
+	PRINT お尻の穴に触手を咥え込み
+	SIF TEQUIP:Ａ系装着器具 == 22
+		PRINT 小腸を蹂躙され
+	SIF TEQUIP:Ａ系装着器具 == 23
+		PRINT 体内から貫通した触手を口から溢れさせ
+	SIF TEQUIP:Ａ系装着器具 == 27
+		PRINT 腸を薬液で満たされ
+ENDIF
+;「膣内に何かあるかつ触手服が責め始めた記憶がある」または「そもそも入ってない」
+;かつ「後ろの穴に何かあるかつ触手服が責め始めた記憶がある」または「そもそも入っていない」
+;かつ「露出癖がLV4ではない」ときに「ながら」を追加
+SIF ((TEQUIP:Ｖ系装着器具 && TEQUIP:触手服 & 8) || !TEQUIP:Ｖ系装着器具) && ((TEQUIP:Ａ系装着器具 && TEQUIP:触手服 & 16) || !TEQUIP:Ａ系装着器具) && ABL:露出癖 != 4 && !(!TEQUIP:Ｖ系装着器具 && !TEQUIP:Ａ系装着器具)
+	PRINT ながら
+IF (TEQUIP:Ｖ系装着器具 == 1 && !(TEQUIP:触手服 & 8)) && (TEQUIP:Ａ系装着器具 == 1 && !(TEQUIP:触手服 & 16))
+	PRINT ２本のバイブをくわえ込んでいる卑猥な様を見せ
+	IF ABL:露出癖 != 4
+		PRINT ながら、
+	ELSE
+		PRINT 、
+	ENDIF
+ELSEIF TEQUIP:Ｖ系装着器具 == 1 && !(TEQUIP:触手服 & 8)
+	PRINT 入っているバイブを手で持ち、
+ELSEIF TEQUIP:Ａ系装着器具 == 1  && !(TEQUIP:触手服 & 16)
+	PRINT 突っ込まれているアナルバイブを持って、
+ELSEIF (TEQUIP:Ｖ系装着器具 == 2 && !(TEQUIP:触手服 & 8)) && (TEQUIP:Ａ系装着器具 == 2 && !(TEQUIP:触手服 & 16))
+	PRINT ２本の要石をくわえ込んで、
+ELSEIF TEQUIP:Ｖ系装着器具 == 2  && !(TEQUIP:触手服 & 8)
+	PRINT 要石をヴァギナにくわえ込んで、
+ELSEIF TEQUIP:Ａ系装着器具 == 2  && !(TEQUIP:触手服 & 16)
+	PRINT 要石をアナルにくわえ込んで、
+ENDIF
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:Ａ系装着器具
+	PRINT さらには自分の感じる場所に
+PRINT 振動している電気按摩を押しつけて、
+SIF ABL:露出癖 == 4
+	PRINT 露出の快楽に酔っている表情を見せながら
+IF ABL:露出癖 >= 5
+	PRINT 完全に見られる快感を覚えてしまったのか、淫蕩な表情を浮かべて自ら
+	IF TALENT:オトコ
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒をさらけ出すように
+		ELSE
+			PRINT 今にも射精しそうな肉棒を見せつけるように
+		ENDIF
+	ELSEIF TALENT:ふたなり
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒と愛液が溢れ出る秘所をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒と愛液が溢れ出る秘所をさらけ出すように
+		ELSE
+			PRINT 愛液が溢れ出る秘所と我慢汁がにじみ出る肉棒を見せつけながら
+		ENDIF
+	ELSEIF BASE:陰核
+		IF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6) && !(TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT 電極のついた
+			PRINT オナホールに扱かれる肉棒と化した陰核と愛液が溢れ出る秘所をさらけ出すように
+		ELSEIF (TEQUIP:Ｃ系装着器具 == 22 || TEQUIP:Ｃ系装着器具 == 26) && (TEQUIP:触手服 & 2)
+			SIF TEQUIP:Ｃ系装着器具 == 26
+				PRINT 帯電した
+			PRINT 触手に扱かれる肉棒と化した陰核と愛液が溢れ出る秘所をさらけ出すように
+		ELSE
+			PRINT 愛液を溢れさせ続ける秘所を押し開き
+			IF BASE:陰核 == 250
+				PRINT 胸の下まで雄々しく反り返る異常なサイズの
+			ELSEIF BASE:陰核 > 200
+				PRINT もはや男性器と呼ぶにも異様なサイズの
+			ELSEIF BASE:陰核 >= 150
+				PRINT 勃起した男性器と見紛う
+			ELSEIF BASE:陰核 > 100
+				PRINT ペニス程もある
+			ELSEIF BASE:陰核 > 50
+				PRINT 小指ほどまで膨らんでしまった
+			ELSE
+				PRINT 多少膨らみ始めた
+			ENDIF
+			PRINT 陰核を見せつけながら
+		ENDIF
+	ELSE
+		PRINT 愛液を溢れさせ続ける秘所を押し開いて見せながら
+	ENDIF
+ENDIF
+SIF TEQUIP:ビデオ撮影
+	PRINT ビデオカメラに向かって
+PRINTL オナニーを続けている。
+
+SELECTCASE (UP:0 + UP:1 + UP:2 + UP:3)
+	CASE IS < 300
+		PRINTL その手の動きはまだ拙く、快楽よりも羞恥の方が強いようだ。
+	CASE IS < 1000
+		PRINTL 時折小さく身体を震わせる様は確実に快楽を感じ始めている様子だがまだ没頭しきれないようだ。
+	CASE IS < 3000
+		PRINTFORML その表情には明らかに快楽の兆しが\@(TEQUIP:口装着器具) ? 見えてきて # 見え、熱っぽい吐息が漏れて\@いる。
+	CASE IS < 6000
+		PRINTFORML そして堪えきれない情感に快楽の\@(TEQUIP:口装着器具) ? 表情を浮かべ # 声を上げ\@ながら自慰行為へ没頭していった。
+	CASE IS < 10000
+		PRINTL そして自慰行為を続けながら快楽に身体を跳ねさせ、背中でブリッジを作りながら自らの性器を弄り続けた。
+	CASEELSE
+		PRINT あまりの快楽になにもかも忘れて蕩けた表情で
+		IF TALENT:オトコ
+			PRINTL 激しく肉棒を扱き上げその竿の部分に電気按摩を押し当てている。
+		ELSEIF TALENT:ふたなり
+			PRINTL 肉棒を扱く快感と秘所を指で弄りつつ電気按摩を押し当てる二つの快感に溺れている。
+		ELSE
+			PRINTL ぐちゅぐちゅと音を立てて性器を弄り発情しきった雌穴に電気按摩を押し当て続けている。
+		ENDIF
+		PRINTL 放っとけばいつまでもやり続けそうだ。
+ENDSELECT
+
+;--------------------------------------------------------
+;ローター挿入
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_151
+PRINTL 
+IF TEQUIP:Ｖ系装着器具 == 3
+	SELECTCASE UP:1
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%はローターの刺激に\@(TEQUIP:口装着器具) ? # 唇をかみしめて\@耐えている。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%はまだ慣れないローターの感覚に戸惑いながらも、愉悦の色を隠せないでいる。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%は振動するローターを入れてやると明らかに感じている\@(TEQUIP:口装着器具) ? かのように身体を震わせ # 声を上げ\@た。
+		CASE IS < 6000
+			PRINTFORM %CALLNAME:TARGET%の
+			SIF TALENT:小人体型 || TALENT:小柄体型
+				PRINT 小さな
+			PRINTL ヴァギナにローターを突っ込んでやるとすぐに快楽に蕩けた表情になった。
+		CASE IS < 10000
+			PRINTFORM %CALLNAME:TARGET%は
+			SIF TALENT:小柄体型
+				PRINT その小さな体で
+			PRINTL ローターをくわえ込んで、激しい振動による刺激と快楽に全身をガクガクと震わせている。
+		CASEELSE
+			PRINTFORML ローターを入れて振動を最大にしてやると、%CALLNAME:TARGET%は全身を痙攣させ白目をむいてよがり狂っている。
+	ENDSELECT
+ELSE
+	SELECTCASE UP:1
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%の体からローターを引き抜いてやると少し残念そうな表情をした。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%はその体からローターを引き抜く時に小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 可愛らしい喘ぎ声を出し\@た。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%の体から焦らしながらローターを引き抜くと、途中で小さくピクン！と身体を震わせ\@(TEQUIP:口装着器具) ? # て愛らしい呻き声をあげ\@た。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%を散々ローターで虐めてから引き抜いてやると、すでに足下には愛液で小さな水たまりが出来ていた。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%はローターを引き抜いただけで達したので、二度三度と出しては入れを繰り返してやるとその度に身体を震わせて絶頂に至っている。
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%はローターを引き抜こうとするとかむりを振って嫌がったので、
+			PRINTL お仕置きに奥まで一気に突っ込んで一度絶頂させて黙らせてからゆっくりと時間をかけて引き抜いてやった。
+			PRINTFORML %CALLNAME:TARGET%は休む間もなくイき続けて息も絶え絶えになっている。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;ローターＡ挿入
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_170
+PRINTL 
+IF TEQUIP:Ａ系装着器具 == 3
+	SELECTCASE UP:2
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%はローターの刺激とアナルに突っ込まれた恥ずかしさに唇をかみしめて耐えている。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%はまだ慣れないローターの感覚に戸惑いながらも、愉悦の色を隠せないでいる。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%は振動するローターをアナルに入れてやるとと明らかに感じている\@(TEQUIP:口装着器具) ? かのように身体を震わせ # 声を上げ\@た。
+		CASE IS < 6000
+			PRINTFORM %CALLNAME:TARGET%の
+			SIF TALENT:小人体型 || TALENT:小柄体型
+				PRINT 小さな
+			PRINTL アナルにローターを突っ込んでやるとすぐに快楽に蕩けた表情になった。
+		CASE IS < 10000
+			PRINTFORM %CALLNAME:TARGET%は
+			SIF TALENT:小柄体型
+				PRINT その小さな体で
+			PRINTL ローターをくわえ込んで、激しい振動による刺激と快楽に全身をガクガクと震わせている。
+		CASEELSE
+			PRINTFORML ローターをアナルに入れて振動を最大にしてやると、%CALLNAME:TARGET%は全身を痙攣させ白目をむいてよがり狂っている。
+	ENDSELECT
+ELSE
+	SELECTCASE UP:2
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%のアナルからローターを引き抜いてやると恥じらいながらも少し残念そうな表情をした。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%はアナルからローターを引き抜く時に小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 可愛らしい喘ぎ声を出し\@た。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%のアナルから焦らしながらローターを引き抜くと、途中で小さくピクン！と身体を震わせ\@(TEQUIP:口装着器具) ? # て愛らしい呻き声をあげ\@た。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%をアナルから散々ローターで虐めてから引き抜いてやると、すでに足下には愛液と尿で小さな水たまりが出来ていた。
+		CASE IS < 10000
+			PRINTFORML %CALLNAME:TARGET%はアナルからローターを引き抜いただけで達したので、二度三度と出しては入れを繰り返してやるとその度に身体を震わせて絶頂に至っている。
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%はアナルからローターを引き抜こうとするとかむりを振って嫌がったので、
+			PRINTL お仕置きに奥まで一気に突っ込んで一度絶頂させて黙らせてからゆっくりと時間をかけて引き抜いてやった。
+			PRINTFORML %CALLNAME:TARGET%は休む間もなくイき続けて息も絶え絶えになっている。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;乳吸い
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_203
+PRINTL 
+IF TALENT:母乳体質
+	SELECTCASE UP:3
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%は乳首を吸われると、純粋にくすぐったそうにしている。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%は乳首を舌で弄り回す度に、小さく震えて反応している。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%の乳首は吸う程固くなり、その度%CALLNAME:TARGET%は母乳が出そうな感覚を堪えているようだ。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%は乳首から母乳が吸い出されようとするその刺激だけでトロンとした表情になってされるがままになっている。
+		CASE IS < 10000
+			PRINTFORM %CALLNAME:TARGET%は
+			IF TALENT:絶壁
+				PRINT 平らな
+			ELSEIF TALENT:貧乳
+				PRINT 薄い
+			ELSEIF TALENT:巨乳
+				PRINT 大きな
+			ELSEIF TALENT:爆乳
+				PRINT 大き過ぎる
+			ENDIF
+			PRINTL 胸の先端を吸われ、乳腺の中を母乳が巡る感覚だけで法悦を極めようとしている。 
+		CASEELSE
+			PRINTFORM %CALLNAME:TARGET%の乳首を強く吸うとそれだけで感じまくり、
+			IF TALENT:巨乳
+				PRINTFORM その巨乳に思わず%CALLNAME:PLAYER%の頭を抱き締めて埋めさせ、
+			ELSEIF TALENT:爆乳
+				PRINTFORM その爆乳に思わず%CALLNAME:PLAYER%の頭を抱き締めて深く埋めさせ、
+			ELSE
+				PRINTFORM その胸に思わず%CALLNAME:PLAYER%の頭を抱き締めて押し付け、
+			ENDIF
+			PRINTL 母乳が吹き出そうなその感覚のみで快楽を得続け悶えまくっている。
+	ENDSELECT
+ELSE
+	SELECTCASE UP:3
+		CASE IS < 300
+			PRINTFORML %CALLNAME:TARGET%は乳首を吸われると、純粋にくすぐったそうにしている。
+		CASE IS < 1000
+			PRINTFORML %CALLNAME:TARGET%は乳首を舌で弄り回す度に、小さく震えて反応している。
+		CASE IS < 3000
+			PRINTFORML %CALLNAME:TARGET%の乳首は口内で転がされる度固くなり、その度%CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 身体を熱く震わせ # 熱い吐息を漏らし始め\@ている。
+		CASE IS < 6000
+			PRINTFORML %CALLNAME:TARGET%は乳首への口と舌での愛撫だけでトロンとした表情になってされるがままになっている。
+		CASE IS < 10000
+			PRINTFORM %CALLNAME:TARGET%は
+			IF TALENT:絶壁 || TALENT:オトコ
+				PRINT 平らな
+			ELSEIF TALENT:貧乳
+				PRINT 薄い
+			ELSEIF TALENT:巨乳
+				PRINT 大きな
+			ELSEIF TALENT:爆乳
+				PRINT 大き過ぎる
+			ENDIF
+			PRINTL 胸の先端への刺激に感じまくっており、乳首を吸われるだけで法悦を極めようとしている。 
+		CASEELSE
+			PRINTFORM %CALLNAME:TARGET%の乳首を口内で弄り倒すとそれだけで感じまくり、
+			IF TALENT:巨乳
+				PRINTFORM その巨乳に思わず%CALLNAME:PLAYER%の頭を抱き締めて埋めさせ、
+			ELSEIF TALENT:爆乳
+				PRINTFORM その爆乳に思わず%CALLNAME:PLAYER%の頭を抱き締めて深く埋めさせ、
+			ELSE
+				PRINTFORM その胸に思わず%CALLNAME:PLAYER%の頭を抱き締めて押し付け、
+			ENDIF
+			PRINTL それによる更なる乳首への刺激に悶え続けた。
+	ENDSELECT
+ENDIF
+
+;--------------------------------------------------------
+;乳房自慰
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_205
+PRINTL 
+PRINTFORM %CALLNAME:TARGET%は
+SIF TALENT:恥じらい && ABL:露出癖 <= 3
+	PRINT 羞恥に顔を真っ赤に染め、涙を浮かべて
+SIF TALENT:小人体型 || TALENT:小柄体型
+	PRINT 小さな身体で
+IF ABL:露出癖 == 4
+	PRINT 露出の快楽に酔っている表情を見せながら
+ELSEIF ABL:露出癖 >= 5
+	PRINT 完全に見られる快感を覚えてしまったのか、淫蕩な表情を浮かべて自ら
+ENDIF
+IF TALENT:巨乳
+	PRINT 豊かな乳房を持ち上げ
+ELSEIF TALENT:爆乳
+	PRINT 重そうな程大きい乳房を持ち上げ
+ELSEIF TALENT:絶壁
+	PRINT 平らな胸を
+ELSEIF TALENT:貧乳
+	PRINT 薄い胸を
+ENDIF
+PRINT 突き出すようにして
+SIF TEQUIP:ビデオ撮影
+	PRINT ビデオカメラに向かって
+IF TEQUIP:Ｂ系装着器具 == 2
+	PRINTL 母乳を搾ろうとしている。
+ELSE
+	PRINTL 乳房弄りを続けている。
+ENDIF
+
+SELECTCASE (UP:3 / 4)
+	CASE IS < 300
+		PRINTL その手の動きはまだ拙く、快楽よりも羞恥の方が強いようだ。
+	CASE IS < 1000
+		PRINTL 時折小さく身体を震わせる様は確実に快楽を感じ始めている様子だがまだ没頭しきれないようだ。
+	CASE IS < 3000
+		PRINTFORML その表情には明らかに快楽の兆しが見え\@(TEQUIP:口装着器具) ? # 、熱っぽい吐息が漏れ\@ている。
+	CASE IS < 6000
+		PRINTFORML そして堪えきれない情感に\@(TEQUIP:口装着器具) ? 身体を熱く震わせ # 快楽の声を上げ\@ながら更に懸命に乳房弄りに没頭していった。
+	CASE IS < 10000
+		PRINTL そして乳房全体を弄り続けながら快楽に身体を跳ねさせ、時折乳首を抓みその度に身体を反らせていた。
+	CASE IS < 40000
+		PRINT あまりの快楽になにもかも忘れて蕩けた表情で
+		SIF TEQUIP:排卵誘発剤
+			PRINT ひたすら白い果汁を搾り出そうとし
+		PRINTL ている。
+	CASEELSE
+		IF TALENT:絶壁 || TALENT:貧乳
+			PRINTL 勃起しきった乳首をつねり上げ続けている。
+		ELSEIF TALENT:巨乳
+			PRINTL 豊かな乳房を様々な形に歪ませ続けている。
+		ELSEIF TALENT:爆乳
+			PRINTL 手に全く納まらない大きさの乳房を重そうに揉み込み続けている。
+		ELSE
+			PRINTL 乳房を弄り続けている。
+		ENDIF
+		PRINTL 放っとけばいつまでもやり続けそうだ。
+ENDSELECT
+
+;--------------------------------------------------------
+;スパンキング
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_220
+#LOCALSIZE 1
+PRINTL 
+SELECTCASE UP:16
+	CASE IS < 300
+		LOCAL = 0
+	CASE IS < 1000
+		LOCAL = 1
+	CASE IS < 2000
+		LOCAL = 2
+	CASE IS < 3000
+		LOCAL = 3
+	CASEELSE
+		LOCAL = 4
+ENDSELECT
+IF TALENT:痛みに弱い
+	LOCAL += 1
+ELSEIF TALENT:痛みに強い
+	LOCAL -= 1
+ENDIF
+
+SELECTCASE LOCAL
+	CASE IS <= 0
+		PRINTFORML %CALLNAME:TARGET%は悲鳴をこらえながら痛みに耐えた。
+	CASE 1
+		PRINTFORML %CALLNAME:TARGET%は激しい苦痛\@(TEQUIP:口装着器具) ? を必死にこらえていたが、明らかに苦しそうに見え # にかみ締めた歯の隙間から苦しそうなうめき声を上げ\@た。
+	CASE 2
+		PRINTFORML %CALLNAME:TARGET%は苦痛に堪えきれず\@(TEQUIP:口装着器具) ? # 悲鳴を上げながら\@全身を跳ねさせた。
+	CASE 3
+		PRINTFORML %CALLNAME:TARGET%は痛みのあまり全身に脂汗を浮かべながら痛苦にのた打ち回った。
+	CASE 4
+		PRINTFORML %CALLNAME:TARGET%はあまりの痛みに意識を飛ばしそうになりながら\@(TEQUIP:口装着器具) ? も必死に耐え # 聞くに堪えない獣のような悲鳴を上げ\@続けた。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はあまりの痛みに\@(TEQUIP:口装着器具) ? まるで許しを請うかのような目を向けてきた # 泣きじゃくりながら必死で許しを請うている\@。
+ENDSELECT
+
+;--------------------------------------------------------
+;鞭
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_221
+#LOCALSIZE 1
+PRINTL 
+SELECTCASE UP:16
+	CASE IS < 300
+		LOCAL = 0
+	CASE IS < 1000
+		LOCAL = 1
+	CASE IS < 2000
+		LOCAL = 2
+	CASE IS < 3000
+		LOCAL = 3
+	CASEELSE
+		LOCAL = 4
+ENDSELECT
+IF TALENT:痛みに弱い
+	LOCAL += 1
+ELSEIF TALENT:痛みに強い
+	LOCAL -= 1
+ENDIF
+
+SELECTCASE LOCAL
+	CASE IS <= 0
+		PRINTFORML %CALLNAME:TARGET%は悲鳴をこらえながら痛みに耐えた。
+	CASE 1
+		PRINTFORML %CALLNAME:TARGET%は激しい苦痛\@(TEQUIP:口装着器具) ? を必死にこらえていたが、明らかに苦しそうに見え # にかみ締めた歯の隙間から苦しそうなうめき声を上げ\@た。
+	CASE 2
+		PRINTFORML %CALLNAME:TARGET%は苦痛に堪えきれず\@(TEQUIP:口装着器具) ? # 悲鳴を上げながら\@全身を跳ねさせた。
+	CASE 3
+		PRINTFORML %CALLNAME:TARGET%は痛みのあまり全身に脂汗を浮かべながら痛苦にのた打ち回った。
+	CASE 4
+		PRINTFORML %CALLNAME:TARGET%はあまりの痛みに意識を飛ばしそうになりながら\@(TEQUIP:口装着器具) ? も必死に耐え # 聞くに堪えない獣のような悲鳴を上げ\@続けた。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はあまりの痛みに\@(TEQUIP:口装着器具) ? まるで許しを請うかのような目を向けてきた # 泣きじゃくりながら必死で許しを請うている\@。
+ENDSELECT
+
+;--------------------------------------------------------
+;針
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_222
+#LOCALSIZE 1
+PRINTL 
+SELECTCASE UP:16
+	CASE IS < 300
+		LOCAL = 0
+	CASE IS < 1000
+		LOCAL = 1
+	CASE IS < 2000
+		LOCAL = 2
+	CASE IS < 3000
+		LOCAL = 3
+	CASEELSE
+		LOCAL = 4
+ENDSELECT
+IF TALENT:痛みに弱い
+	LOCAL += 1
+ELSEIF TALENT:痛みに強い
+	LOCAL -= 1
+ENDIF
+
+SELECTCASE LOCAL
+	CASE IS <= 0
+		PRINTFORML %CALLNAME:TARGET%は悲鳴をこらえながら痛みに耐えた。
+	CASE 1
+		PRINTFORML %CALLNAME:TARGET%は激しい苦痛\@(TEQUIP:口装着器具) ? を必死にこらえていたが、明らかに苦しそうに見え # にかみ締めた歯の隙間から苦しそうなうめき声を上げ\@た。
+	CASE 2
+		PRINTFORML %CALLNAME:TARGET%は苦痛に堪えきれず\@(TEQUIP:口装着器具) ? # 悲鳴を上げながら\@全身を跳ねさせた。
+	CASE 3
+		PRINTFORML %CALLNAME:TARGET%は痛みのあまり全身に脂汗を浮かべながら痛苦にのた打ち回った。
+	CASE 4
+		PRINTFORML %CALLNAME:TARGET%はあまりの痛みに意識を飛ばしそうになりながら\@(TEQUIP:口装着器具) ? も必死に耐え # 聞くに堪えない獣のような悲鳴を上げ\@続けた。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はあまりの痛みに\@(TEQUIP:口装着器具) ? まるで許しを請うかのような目を向けてきた # 泣きじゃくりながら必死で許しを請うている\@。
+ENDSELECT
+
+;--------------------------------------------------------
+;蝋燭
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_223
+#LOCALSIZE 1
+PRINTL 
+SELECTCASE UP:16
+	CASE IS < 300
+		LOCAL = 0
+	CASE IS < 1000
+		LOCAL = 1
+	CASE IS < 2000
+		LOCAL = 2
+	CASE IS < 3000
+		LOCAL = 3
+	CASEELSE
+		LOCAL = 4
+ENDSELECT
+IF TALENT:痛みに弱い
+	LOCAL += 1
+ELSEIF TALENT:痛みに強い
+	LOCAL -= 1
+ENDIF
+
+SELECTCASE LOCAL
+	CASE IS <= 0
+		PRINTFORML %CALLNAME:TARGET%は悲鳴をこらえながら熱さに耐えた。
+	CASE 1
+		PRINTFORML %CALLNAME:TARGET%は熱さから来る激しい苦痛\@(TEQUIP:口装着器具) ? を必死にこらえていたが、明らかに苦しそうに見え # にかみ締めた歯の隙間から苦しそうなうめき声を上げ\@た。
+	CASE 2
+		PRINTFORML %CALLNAME:TARGET%は熱さに堪えきれず\@(TEQUIP:口装着器具) ? # 悲鳴を上げながら\@全身を跳ねさせた。
+	CASE 3
+		PRINTFORML %CALLNAME:TARGET%は熱さと痛みのあまり全身に脂汗を浮かべながら痛苦にのた打ち回った。
+	CASE 4
+		PRINTFORML %CALLNAME:TARGET%はあまりの熱さと痛みに意識を飛ばしそうになりながら\@(TEQUIP:口装着器具) ? も必死に耐え # 聞くに堪えない獣のような悲鳴を上げ\@続けた。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はあまりの熱さと痛みに\@(TEQUIP:口装着器具) ? まるで許しを請うかのような目を向けてきた # 泣きじゃくりながら必死で許しを請うている\@。
+ENDSELECT
+
+;--------------------------------------------------------
+;水を飲ませる
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_253
+PRINTL 
+SELECTCASE (CHECK_PERCENTAGE_BASE(TARGET, 4))
+	CASE IS >= 90
+		PRINTFORML %CALLNAME:TARGET%は水を飲まされている時から股間を必死で押さえながら下腹部に力を込め、既に限界にきている尿意を耐えている…
+	CASE IS >= 60
+		PRINTFORML 水を飲まされた%CALLNAME:TARGET%は大きく体を震わせると明らかに内股になり、襲い来る尿意を耐えている…
+	CASE IS >= 30
+		PRINTFORML 水を飲まされた%CALLNAME:TARGET%は尿意を意識し、やや内股になった…
+	CASEELSE
+		PRINTFORML 水を飲まされた%CALLNAME:TARGET%は若干の尿意を感じたようだ…
+ENDSELECT
+
+;--------------------------------------------------------
+;足コキする
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_302
+PRINTL 
+SELECTCASE UP:0
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はペニスを踏みつけられるたびに涙を流し\@(TEQUIP:口装着器具) ? # ながら悲鳴を上げ\@ている。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%はペニスを足でシゴかれるたびに\@(TEQUIP:口装着器具) ? 身体を激しく震わせ # 喘ぎ声を上げ\@た。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%はペニスへの刺激に快楽を感じて悶えている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%はペニスを踏まれると嬉しそうに卑猥な快感を味わった。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の足がペニスに近づくだけでだらしない顔で微笑んだ。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はペニスを踏みつけられるたびに身体全体でよがり狂っている。
+ENDSELECT
+
+;--------------------------------------------------------
+;手淫する
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_321
+PRINTL 
+SELECTCASE UP:0
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はペニスをしごかれると多少痛そうな表情をした。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%はペニスへの刺激に小さく\@(TEQUIP:口装着器具) ? 身体を震わせ # 喘ぎ声を上げ\@た。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%はペニスをしごかれるとその快感に身体を小刻みに震わせている。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%はペニスをしごかれるとその激しい快感に激しく\@(TEQUIP:口装着器具) ? # 喘ぎ声を上げながら\@全身を震わせた。
+	CASE IS < 10000
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の手が待ちきれないかのようにペニスを突き出した。
+	CASEELSE
+		PRINTFORML %CALLNAME:PLAYER%が激しく%CALLNAME:TARGET%のペニスをしごいてやると%CALLNAME:TARGET%は
+		PRINTFORML 気絶しそうなぐらいによがり狂\@(TEQUIP:口装着器具) ? っ # いながら誰にはばかることなく大声で喘ぎ声を上げ\@た。
+ENDSELECT
+
+;--------------------------------------------------------
+;ヴァギナを拭く
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_336
+PRINTL 
+IF TALENT:恋慕
+	PRINTFORML %CALLNAME:TARGET%は目を潤ませながらヴァギナを拭く%CALLNAME:PLAYER%をみつめている。
+ELSEIF MARK:屈服刻印 >= 3
+	PRINTFORML %CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 気持ち良さそうな表情をし # 甘い声を上げ\@ながら、大人しく拭かれている。
+ELSEIF MARK:反発刻印 >= 3
+	PRINTFORML %CALLNAME:TARGET%は身を捩って%CALLNAME:PLAYER%の手から逃げようとしている。
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は不快な顔をしながらヴァギナを拭う%CALLNAME:PLAYER%をみている。
+ENDIF
+
+;--------------------------------------------------------
+;膣内洗浄
+;--------------------------------------------------------
+;@SYSTXT_TRAIN_TEXT_COM_339
+
+;--------------------------------------------------------
+;ペッティング
+;--------------------------------------------------------
+@SYSTXT_TRAIN_TEXT_COM_606
+PRINTL 
+SELECTCASE (UP:0 + UP:3)
+	CASE IS < 100
+		IF TALENT:反抗的 || MARK:反発刻印 > 2
+			PRINTFORML %CALLNAME:TARGET%は愛撫とキスをされながらも反抗的な態度を取っている。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%はむず痒そうに身体をよじるが快楽を感じるまでには至っていないようだ。
+		ENDIF
+	CASE IS < 300
+		PRINTFORML %CALLNAME:TARGET%はこちらの愛撫とキスに反応して身体を震わせている。
+	CASE IS < 1000
+		PRINTFORML %CALLNAME:TARGET%は軽い電撃でも身体に走ったかのように小さく震えた。
+	CASE IS < 3000
+		PRINTFORML %CALLNAME:TARGET%は明らかに快楽を感じている様子\@(TEQUIP:口装着器具) ? を見せて # で艶やかな喘ぎ声をあげて\@いる。
+	CASE IS < 6000
+		PRINTFORML %CALLNAME:TARGET%は愛撫とキスに激しく快楽を感じ、自らせがむように手を首にまわしてきた。
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%はこちらの愛撫とキスで激しく感じまくっており、さらなる刺激を求めてしなだれかかってきた。
+ENDSELECT
+
+;--------------------------------------------------------
+;テンプレ用
+;--------------------------------------------------------
+;「(SAMPLE)」内に該当するコマンド番号を入れること
+;@SYSTXT_TRAIN_TEXT_COM_(SAMPLE)
+;SELECTCASE (UP:X)
+;	CASE IS < 300
+;		PRINTFORML 
+;	CASE IS < 1000
+;		PRINTFORML 
+;	CASE IS < 3000
+;		PRINTFORML 
+;	CASE IS < 6000
+;		PRINTFORML 
+;	CASE IS < 10000
+;		PRINTFORML 
+;	CASEELSE
+;		PRINTFORML 
+;ENDSELECT
+
+;--------------------------------------------------------
+;追加地の文のシチュによる非表示切り替え用式中関数
+;--------------------------------------------------------
+;ARG＝SELECTCOM
+@NOT_PRINT_ADDITIONAL_TEXT(ARG)
+#FUNCTION
+;三角木馬乗馬中、特殊風呂入浴中、賢者の血反動中、興奮剤反動中、浣腸中、極太氷柱or氷塊挿入中、吊るし上げ中、荊で緊縛中の場合
+IF TEQUIP:三角木馬乗馬中 || TEQUIP:特殊風呂入浴中 || TEQUIP:賢者の血 == 1 || (TEQUIP:興奮剤 > 0 && TEQUIP:興奮剤 < 5) || TEQUIP:Ａ系装着器具 == 7 || TEQUIP:氷柱 >= 3 || TEQUIP:緊縛関連 == 4 || TEQUIP:緊縛関連 == 5
+	;苦痛と恐怖と不快と抑鬱と薬毒の上昇値の合計が一定以上ならば表示せずに帰る
+	SIF (UP:16 + UP:17 + UP:21 + UP:22 + UP:30) >= 1000
+		RETURNF 0
+ENDIF
+RETURNF 1

@@ -1,0 +1,120 @@
+﻿;=============================================================================
+;媚薬
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE61
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:61 > 0
+	RETURN 0
+;アイテムを持っているか触手調教中でないとダメ
+SIF ITEM:媚薬 == 0 && TEQUIP:触手調教 == 0
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;睡眠中は不可
+;SIF EQUIP:睡眠薬
+;	RETURN 0
+;失神中は不可
+;SIF TFLAG:899 > 0
+;	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 61) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM61
+IF TEQUIP:触手調教
+	PRINTL 触手媚薬展開
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 61
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 触手媚薬展開
+ELSE
+	PRINTL 媚薬
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 61
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 媚薬
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+LOCAL:1 = 300
+SIF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	LOCAL:1 /= 2
+;調教対象に媚薬中毒があれば消費を抑える
+SIF TALENT:媚薬中毒
+	LOCAL:1 /= 2
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1
+
+;媚薬効果で欲情のアップが2倍になるので実際には+10000
+SOURCE:欲情追加 = 5000
+SOURCE:薬物浸潤 = 2000
+SOURCE:逸脱 = 2000
+
+;媚薬中毒
+IF TALENT:媚薬中毒
+	SOURCE:中毒充足 = 500
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+	SOURCE:媚薬浸潤 = 100
+ELSE
+	SOURCE:媚薬浸潤 = 1 + RAND:3
+ENDIF
+
+IF TEQUIP:触手調教 == 0
+	;媚薬1つ消費
+	CALL USE_PLURAL_ITEM, 61, 1
+ENDIF
+
+TEQUIP:媚薬 = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_61
+IF TEQUIP:触手調教
+	PRINTFORML 催淫効果のある液体が触手から染み出してきた
+ELSEIF TEQUIP:YASAIモードで使用 == 2 && TALENT:PLAYER:野菜の錬金術師 && PALAM:潤滑 >= 5000
+	PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%の体についた液体を媚薬に変えた
+ELSE
+	PRINTFORM %CALLNAME:TARGET%に
+	SIF ABL:PLAYER:技巧 >= 3
+		PRINT 口移しで
+	SIF ABL:従順 == 0
+		PRINT 無理やり
+	PRINTL 媚薬を飲ませた
+ENDIF
+PRINTFORML %CALLNAME:TARGET%は荒い息をついて肌を紅潮させている…

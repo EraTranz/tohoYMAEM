@@ -1,0 +1,49 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;ビデオによる人気取得イベント
+;-------------------------------------------------
+;CFLAG:最高金額_ビデオ　ビデオで稼いだ最高金額
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE104
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTFORMW 「はぁ……　いつまでこんな日々が続くのよ」
+		PRINTFORMW 「そういえば何度も撮影されてるけど、あのビデオ何に使ってるのかしら……」
+		PRINTFORMW 「ん、何よこれ、いかがわしいチラシじゃな……　ッ！？」
+	CASE 2 TO 3
+		PRINTFORMW 「ねえ、今日もビデオ回してたじゃない」
+		PRINTFORMW 「あれって録画した後、何に使ってるのかしら？」
+		PRINTFORMW 「見てみろって、うわっ、アダルトショップのチラシじゃないの」
+		PRINTFORMW 「どこでこんなの貰ってく……る……　え、えええ？」
+	CASE 4 TO 5
+		PRINTFORMW 「ねえ、今日もビデオ回してたじゃない」
+		PRINTFORMW 「あれって何に使ってるの？　まさか、%CALLNAME:MASTER%があれで夜な夜な……」
+		PRINTFORML 
+		PRINTFORMW ぽかっ
+		PRINTFORML 
+		PRINTFORMW 「あイタッ！　なによ、ちょっとふざけただけで叩かないでよ」
+		PRINTFORMW 「まったく……　って、何よそのビデオ、それで私を叩い……たの……」
+ENDSELECT
+
+PRINTFORML 
+PRINTFORML ------------------------------------------------------------------
+PRINTFORML 『天才岡崎教授の性活』
+PRINTFORML 大人気シリーズの最新作がついに登場！！
+PRINTFORML 踏んづけて欲しい教授ランキングNo.1のあられもない姿がついに解禁！？
+;売却額≠販売額ということで
+SELECTCASE CFLAG:最高金額_ビデオ
+	CASE IS < 5000
+		PRINTFORMW お手頃価格 2,000圓
+	CASE IS < 15000
+		PRINTFORMW 初回限定版 9,000圓　通常版 4,700圓
+	CASEELSE
+		PRINTFORMW 限定解除版 20,000圓～　ディレクターズカット版あり
+ENDSELECT
+PRINTFORMW ------------------------------------------------------------------
+PRINTFORMW
+PRINTFORMW ・
+PRINTFORMW ・・
+PRINTFORMW ・・・
+PRINTFORMW 「あ、あははー」
+PRINTFORMW 「とんでもないことになってるわね……」
+

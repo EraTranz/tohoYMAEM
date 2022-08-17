@@ -1,0 +1,2962 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;デバッグモード用の特殊コマンド
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;以下焼き芋弁当パッチ用のデバッグモードを起動しているときに使える特殊な処理をここで一括で管理
+;大きく分けて調教中に使えるものとメインメニュー(SHOP)が開いているときに使用できるものに分かれる
+;=============================================================================
+;調教中に使用可能なコマンド
+;=============================================================================
+@DEBUG_MENU_TRAIN
+DRAWLINE
+PRINTL 何をしますか？
+PRINTL 
+PRINTLC [  0] - 体力気力回復
+PRINTLC [  1] - 身体洗浄
+SIF (PALAM:反感 > 0 || PALAM:不快 > 0 || PALAM:抑鬱 > 0)
+	PRINTLC [  2] - 反発要素削除
+PRINTLC [  3] - 好感操作
+PRINTLC [  4] - ストレス操作
+PRINTLC [  5] - PALAM/BASE編集
+PRINTLC [  6] - キャラ編集
+PRINTLC [  7] - 淫乱系素質着脱
+PRINTLC [  8] - ITEM操作
+PRINTLC [  9] - CFLAG操作
+PRINTLC [ 10] - TFLAG操作
+PRINTLC [ 11] - FLAG操作
+PRINTLC [ 12] - TEQUIP操作
+PRINTLC [ 13] - EQUIP操作
+PRINTFORMLC [ 14] - 自動能力上昇の\@(TALENT:998) ? OFF # ON\@
+PRINTLC [ 15] - TSTR操作
+PRINTLC [ 16] - 調教の命令補正変更
+PRINTLC [ 17] - 理性回復
+PRINTLC [ 99] - クイックロード
+PRINTLC [100] - 戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	CALL TRAIN_HEAL
+ELSEIF RESULT == 1
+	CALL TRAIN_WASHING
+ELSEIF RESULT == 2 && (PALAM:反感 > 0 || PALAM:不快 > 0 || PALAM:抑鬱 > 0)
+	CALL REPULSION_DEL
+ELSEIF RESULT == 3
+	CALL EDIT_FAVORABILITY
+ELSEIF RESULT == 4
+	CALL EDIT_STRESS
+ELSEIF RESULT == 5
+	CALL EDIT_PALAM
+ELSEIF RESULT == 6
+	LOCAL = MASTER
+	LOCAL:1 = TARGET
+	LOCAL:2 = ASSI
+	CALL EDIT_CHARA
+	MASTER = LOCAL
+	TARGET = LOCAL:1
+	ASSI = LOCAL:2
+ELSEIF RESULT == 7
+	CALL TRAIN_TALENT_LEWD
+ELSEIF RESULT == 8
+	CALL EDIT_ITEM
+ELSEIF RESULT == 9
+	CALL EDIT_CFLAG
+ELSEIF RESULT == 10
+	CALL EDIT_TFLAG
+ELSEIF RESULT == 11
+	CALL EDIT_FLAG
+ELSEIF RESULT == 12
+	CALL EDIT_TEQUIP
+ELSEIF RESULT == 13
+	CALL EDIT_EQUIP
+ELSEIF RESULT == 14
+	CALL TRAIN_DEBUG
+ELSEIF RESULT == 15
+	CALL EDIT_TSTR
+ELSEIF RESULT == 16
+	CALL TRAIN_ORDER_DEBUG
+ELSEIF RESULT == 17
+	CALL REASON_HEAL
+ELSEIF RESULT == 99
+	CALL QUICKLOAD
+ELSEIF RESULT == 100
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;体力気力回復処理
+;--------------------------------------------------
+;主人、調教対象(いるなら助手も)の体力と気力を全快する
+;ただし全快したからと言って一発で体力がマイナスになるようなコマンドを使うと
+;普通にゲームオーバーになるので注意(例外あり)
+@TRAIN_HEAL
+DRAWLINE
+PRINTL 「ハ・ン・ド・パ・ワ・－！！」
+BASE:体力 = MAXBASE:0
+BASE:気力 = MAXBASE:1
+BASE:MASTER:体力 = MAXBASE:MASTER:0
+BASE:MASTER:気力 = MAXBASE:MASTER:1
+IF ASSI >= 0
+	BASE:ASSI:体力 = MAXBASE:ASSI:0
+	BASE:ASSI:気力 = MAXBASE:ASSI:1
+ENDIF
+
+;--------------------------------------------------
+;理性回復処理
+;--------------------------------------------------
+@REASON_HEAL
+DRAWLINE
+PRINTL 「ハ・ン・ド・パ・ワ・－！！」
+BASE:理性 = MAXBASE:9
+IF ASSI >= 0
+	BASE:ASSI:理性 = MAXBASE:ASSI:9
+ENDIF
+;--------------------------------------------------
+;清潔一番
+;--------------------------------------------------
+;調教者、調教対象の全身のヨゴレを洗浄する
+@TRAIN_WASHING
+DRAWLINE
+PRINTFORML %CALLNAME:TARGET%と%CALLNAME:PLAYER%の汚れを洗浄します
+;奴隷の汚れを落とす
+RESET_STAIN TARGET
+;調教者の汚れを落とす
+RESET_STAIN PLAYER
+
+;--------------------------------------------------
+;反発要素(反感・不快・抑鬱のPALAM)をワンタッチで削除
+;--------------------------------------------------
+@REPULSION_DEL
+DRAWLINE
+PRINTFORML 反発要素(反感・不快・抑鬱のPALAM)を削除しました
+PALAM:反感 = 0
+PALAM:不快 = 0
+PALAM:抑鬱 = 0
+
+;--------------------------------------------------
+;好感度変化処理
+;--------------------------------------------------
+;現在調教中のキャラの好感度を好きな値に変化させます
+;恋慕などのイベントは調教終了時に発生するので即効果が発揮するわけではない
+;あまりにも大きすぎる値にするとバグることがあります
+@EDIT_FAVORABILITY
+DRAWLINE
+PRINTFORML %CALLNAME:TARGET%の好感度:{CFLAG:好感度}
+PRINTL どの値にするか入力してください(0-999999/無効な値でキャンセル)
+INPUT
+SIF RESULT < 0 || RESULT > 999999
+	RETURN 0
+CFLAG:好感度 = RESULT
+PRINTFORML %CALLNAME:TARGET%の好感度を{CFLAG:好感度}に変更しました
+
+;--------------------------------------------------
+;ストレス変化処理
+;--------------------------------------------------
+;現在調教中のキャラのストレスを好きな値に変化させます
+;幼児退行などのイベントは時間経過時に発生するので即効果が発揮するわけではない
+;あまりにも大きすぎる値にするとバグることがあります
+@EDIT_STRESS
+DRAWLINE
+PRINTFORML %CALLNAME:TARGET%のストレス:{CFLAG:ストレス}
+PRINTL どの値にするか入力してください(0-999999/無効な値でキャンセル)
+INPUT
+SIF RESULT < 0 || RESULT > 999999
+	RETURN 0
+CFLAG:ストレス = RESULT
+PRINTFORML %CALLNAME:TARGET%のストレスを{CFLAG:ストレス}に変更しました
+
+;--------------------------------------------------
+;淫乱系素質着脱処理
+;--------------------------------------------------
+;現在調教中のキャラの淫乱系素質を付加/削除させます
+@TRAIN_TALENT_LEWD
+DRAWLINE
+PRINTFORML %CALLNAME:TARGET%に付加/削除する素質を選んでください
+PRINTFORML [0] 素質[淫乱]を\@(TALENT:淫乱) ? 削除 # 追加\@する
+PRINTFORML [1] 素質[\@(TALENT:オトコ || TALENT:ふたなり) ? 淫茎 # 淫核\@]を\@(TALENT:淫核／淫茎) ? 削除 # 追加\@する
+SIF TALENT:オトコ == 0
+	PRINTFORML [2] 素質[淫壷]を\@(TALENT:淫壷) ? 削除 # 追加\@する
+PRINTFORML [3] 素質[淫尻]を\@(TALENT:淫尻) ? 削除 # 追加\@する
+PRINTFORML [4] 素質[淫乳]を\@(TALENT:淫乳) ? 削除 # 追加\@する
+PRINTFORML [5] 素質[尿道狂]を\@(TALENT:尿道狂) ? 削除 # 追加\@する
+PRINTFORML [6] 素質[キス魔]を\@(TALENT:キス魔) ? 削除 # 追加\@する
+PRINTFORML [7] 素質[ドＳ]を\@(TALENT:ドＳ) ? 削除 # 追加\@する
+PRINTFORML [8] 素質[ドＭ]を\@(TALENT:ドＭ) ? 削除 # 追加\@する
+PRINTFORML [9] 素質[即落ち]を\@(TALENT:即落ち) ? 削除 # 追加\@する
+IF TALENT:オトコ == 1
+	PRINTFORML [20]全淫乱素質を\@(TALENT:淫乱 || TALENT:淫核／淫茎 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ || TALENT:即落ち) ? 削除 # 追加\@する
+ELSEIF TALENT:オトコ == 0 && TALENT:ふたなり
+	PRINTFORML [20]全淫乱素質を\@(TALENT:淫乱 || TALENT:淫核／淫茎 || TALENT:淫壷 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ || TALENT:即落ち) ? 削除 # 追加\@する
+ELSEIF TALENT:オトコ == 0
+	PRINTFORML [20]全淫乱素質を\@(TALENT:淫乱 || TALENT:淫壷 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ || TALENT:即落ち) ? 削除 # 追加\@する
+ENDIF
+SIF CFLAG:14 < 15 || CFLAG:15 < 15 || CFLAG:16 < 1023
+	PRINTL [97]全淫乱素質を取得したことにする
+SIF (TFLAG:104 & 128) == 0
+	PRINTL [98]全淫乱素質追加フラグ
+SIF (TFLAG:104 & 512) == 0
+	PRINTL [99]素質[淫魔]追加フラグ
+PRINTL [100] 戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTFORMW 素質[淫乱]を\@(TALENT:淫乱) ? 削除 # 追加\@しました
+	TALENT:淫乱 = (TALENT:淫乱) ? 0 # 1
+ELSEIF RESULT == 1
+	PRINTFORMW 素質[\@(TALENT:オトコ || TALENT:ふたなり) ? 淫茎 # 淫核\@]を\@(TALENT:淫核／淫茎) ? 削除 # 追加\@しました
+	TALENT:淫核／淫茎 = (TALENT:淫核／淫茎) ? 0 # 1
+ELSEIF RESULT == 2 && TALENT:オトコ == 0
+	PRINTFORMW 素質[淫壷]を\@(TALENT:淫壷) ? 削除 # 追加\@しました
+	TALENT:淫壷 = (TALENT:淫壷) ? 0 # 1
+ELSEIF RESULT == 3
+	PRINTFORMW 素質[淫尻]を\@(TALENT:淫尻) ? 削除 # 追加\@しました
+	TALENT:淫尻 = (TALENT:淫尻) ? 0 # 1
+ELSEIF RESULT == 4
+	PRINTFORMW 素質[淫乳]を\@(TALENT:淫乳) ? 削除 # 追加\@しました
+	TALENT:淫乳 = (TALENT:淫乳) ? 0 # 1
+ELSEIF RESULT == 5
+	PRINTFORMW 素質[尿道狂]を\@(TALENT:尿道狂) ? 削除 # 追加\@しました
+	TALENT:尿道狂 = (TALENT:尿道狂) ? 0 # 1
+ELSEIF RESULT == 6
+	PRINTFORMW 素質[キス魔]を\@(TALENT:キス魔) ? 削除 # 追加\@しました
+	TALENT:キス魔 = (TALENT:キス魔) ? 0 # 1
+ELSEIF RESULT == 7
+	PRINTFORMW 素質[ドＳ]を\@(TALENT:ドＳ) ? 削除 # 追加\@しました
+	TALENT:ドＳ = (TALENT:ドＳ) ? 0 # 1
+ELSEIF RESULT == 8
+	PRINTFORMW 素質[ドＭ]を\@(TALENT:ドＭ) ? 削除 # 追加\@しました
+	TALENT:ドＭ = (TALENT:ドＭ) ? 0 # 1
+ELSEIF RESULT == 9
+	PRINTFORMW 素質[即落ち]を\@(TALENT:即落ち) ? 削除 # 追加\@しました
+	TALENT:即落ち = (TALENT:即落ち) ? 0 # 1
+ELSEIF RESULT == 20
+	IF TALENT:オトコ == 1
+		IF TALENT:淫乱 || TALENT:淫核／淫茎 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ || TALENT:即落ち
+			TALENT:淫乱 = 0
+			TALENT:淫核／淫茎 = 0
+			TALENT:淫尻 = 0
+			TALENT:淫乳 = 0
+			TALENT:尿道狂 = 0
+			TALENT:キス魔 = 0
+			TALENT:ドＳ = 0
+			TALENT:ドＭ = 0
+			TALENT:即落ち = 0
+			PRINTFORMW 全淫乱素質を削除しました
+		ELSE
+			TALENT:淫乱 = 1
+			TALENT:淫核／淫茎 = 1
+			TALENT:淫尻 = 1
+			TALENT:淫乳 = 1
+			TALENT:尿道狂 = 1
+			TALENT:キス魔 = 1
+			TALENT:ドＳ = 1
+			TALENT:ドＭ = 1
+			TALENT:即落ち = 1
+			PRINTFORMW 全淫乱素質を追加しました
+		ENDIF
+	ELSEIF TALENT:オトコ == 0 && TALENT:ふたなり
+		IF TALENT:淫乱 || TALENT:淫核／淫茎 || TALENT:淫壷 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ || TALENT:即落ち
+			TALENT:淫乱 = 0
+			TALENT:淫核／淫茎 = 0
+			TALENT:淫壷 = 0
+			TALENT:淫尻 = 0
+			TALENT:淫乳 = 0
+			TALENT:尿道狂 = 0
+			TALENT:キス魔 = 0
+			TALENT:ドＳ = 0
+			TALENT:ドＭ = 0
+			TALENT:即落ち = 0
+			PRINTFORMW 全淫乱素質を削除しました
+		ELSE
+			TALENT:淫乱 = 1
+			TALENT:淫核／淫茎 = 1
+			TALENT:淫壷 = 1
+			TALENT:淫尻 = 1
+			TALENT:淫乳 = 1
+			TALENT:尿道狂 = 1
+			TALENT:キス魔 = 1
+			TALENT:ドＳ = 1
+			TALENT:ドＭ = 1
+			TALENT:即落ち = 1
+			PRINTFORMW 全淫乱素質を追加しました
+		ENDIF
+	ELSEIF TALENT:オトコ == 0
+		IF TALENT:淫乱 || TALENT:淫壷 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ || TALENT:即落ち
+			TALENT:淫乱 = 0
+			TALENT:淫壷 = 0
+			TALENT:淫尻 = 0
+			TALENT:淫乳 = 0
+			TALENT:尿道狂 = 0
+			TALENT:キス魔 = 0
+			TALENT:ドＳ = 0
+			TALENT:ドＭ = 0
+			TALENT:即落ち = 0
+			PRINTFORMW 全淫乱素質を削除しました
+		ELSE
+			TALENT:淫乱 = 1
+			TALENT:淫壷 = 1
+			TALENT:淫尻 = 1
+			TALENT:淫乳 = 1
+			TALENT:尿道狂 = 1
+			TALENT:キス魔 = 1
+			TALENT:ドＳ = 1
+			TALENT:ドＭ = 1
+			TALENT:即落ち = 1
+			PRINTFORMW 全淫乱素質を追加しました
+		ENDIF
+	ENDIF
+ELSEIF RESULT == 97 && (CFLAG:14 < 15 || CFLAG:15 < 15 || CFLAG:16 < 1023)
+	PRINTW 全淫乱素質を取得したことにしました
+	CFLAG:14 = 15
+	CFLAG:15 = 15
+	CFLAG:16 = 1023
+ELSEIF RESULT == 98 && (TFLAG:104 & 256) == 0
+	PRINTW 全淫乱素質追加フラグをオンにしました
+	TFLAG:104 |= 256
+ELSEIF RESULT == 99 && (TFLAG:104 & 512) == 0
+	PRINTW 素質[淫魔]追加フラグをオンにしました
+	TFLAG:104 |= 512
+ELSEIF RESULT == 100
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;売却・助手フラグ変更処理
+;--------------------------------------------------
+;現在調教中のキャラを売却可能か否か、助手可能か否かの設定を変更できる
+@TRAIN_ASSIST_FLAG
+DRAWLINE
+PRINTFORM 現在%CALLNAME:TARGET%は
+IF CFLAG:1 == 0
+	PRINT 売却できない
+ELSEIF CFLAG:1 == 1
+	PRINT 売却可能な
+ELSE
+	PRINT 助手可能な
+ENDIF
+PRINTL 状態です
+PRINTL どうしますか？
+SIF CFLAG:1 != 0
+	PRINTL [0] 売却不可能にする
+SIF CFLAG:1 != 1
+	PRINTL [1] 売却可能にする
+SIF CFLAG:1 != 2
+	PRINTL [2] 助手可能にする
+PRINTL [100] 戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 0 && CFLAG:1 != 0
+	PRINTFORMW %CALLNAME:TARGET%を売却不可能な状態にしました
+ELSEIF RESULT == 1 && CFLAG:1 != 1
+	PRINTFORMW %CALLNAME:TARGET%を売却可能な状態にしました
+ELSEIF RESULT == 2 && CFLAG:1 != 2
+	PRINTFORMW %CALLNAME:TARGET%を助手可能な状態にしました
+ELSEIF RESULT == 100
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+CFLAG:1 = RESULT
+RESTART
+
+;--------------------------------------------------
+;自動能力上昇機能有効化・無効化処理
+;--------------------------------------------------
+;調教対象に[Debug]を追加(削除)する
+;[Debug]が追加されている間はコマンドを選択するたびに何らかの能力が上昇する
+;(素のRRでいう「即落ち」が付いている状態)
+;また、体力が500以下になると自動的に全快(0未満のとき同様)するようになる
+@TRAIN_DEBUG
+DRAWLINE
+TALENT:998 = (TALENT:998) ? 0 # 1
+PRINTFORMW %CALLNAME:TARGET%に自動能力上昇機能を\@(TALENT:998) ? 有効 # 無効\@にしました
+
+;--------------------------------------------------
+;調教の命令補正変更処理
+;--------------------------------------------------
+@TRAIN_ORDER_DEBUG
+LOCALS:0 = 無効
+LOCALS:1 = 成功(＋999)
+LOCALS:2 = 失敗(－999)
+TEQUIP:0 = (TEQUIP:0 < 0 || TEQUIP:0 > 2) ? 2 # TEQUIP:0
+DRAWLINE
+PRINTFORML 現在設定されている調教の命令補正は「%LOCALS:(TEQUIP:0)%」です
+PRINTL どうしますか？
+REPEAT 3
+	SIF TEQUIP:0 != COUNT
+		PRINTFORML [{COUNT}] 命令補正を「%LOCALS:COUNT%」に変更する
+REND
+PRINTL [100] 戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT == 0 || RESULT == 1 || RESULT == 2) && TEQUIP:0 != RESULT
+	PRINTFORMW 調教の命令補正を「%LOCALS:RESULT%」に変更しました
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+TEQUIP:0 = RESULT
+RESTART
+
+;=============================================================================
+;メインメニューで使用可能なコマンド
+;=============================================================================
+@DEBUG_MENU_SHOP
+DRAWLINE
+PRINTFORML {DAY}日目\@(TIME == 0) ? (昼) # (夜)\@
+IF TARGET >= 0
+	PRINTFORM %CALLNAME:TARGET% 調教中　
+	CALL LIFE_BAR, TARGET
+ENDIF
+SIF ASSI >= 0
+	PRINTFORM （助手:%CALLNAME:ASSI%）
+PRINTFORML (残り{MONEY}圓)
+DRAWLINE
+PRINTL 何をしますか？
+PRINTL 
+PRINTLC [ 0] - キャラ編集
+PRINTLC [ 1] - 日付変更
+PRINTLC [ 2] - 昼夜逆転
+PRINTLC [ 3] - 所持金変更
+PRINTLC [ 4] - FLAG操作
+PRINTLC [ 5] - ITEM操作
+PRINTLC [ 6] - キャラカード操作
+PRINTLC [ 7] - DITEMTYPE操作
+PRINTLC [ 8] - 難易度変更
+PRINTFORMLC [ 9] - 期限を\@(FLAG:5 & 1) ? あり # なし\@にする
+SIF MONEY:998
+	PRINTLC [10] - 収入RANKリセット
+SIF FLAG:14 & 4
+	PRINTLC [11] - ヤンデレリセット
+SIF TARGET >= 0
+	PRINTLC [12] - 弁当テスト
+SIF FLAG:15 & 4096
+	PRINTLC [13] - 触手関連の数値変更
+SIF FLAG:12 & 8
+	PRINTLC [14] - 蒐集品の編集
+PRINTLC [15] - SAVESTR操作
+SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+	PRINTLC [16] - 目標金額変更
+PRINTLC [96] - キャラ全回復
+PRINTLC [97] - エンディングテスト
+PRINTLC [98] - 強くてニューゲーム
+PRINTLC [99] - クイックロード
+PRINTLC [100] - 戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	LOCAL = MASTER
+	LOCAL:1 = TARGET
+	LOCAL:2 = ASSI
+	CALL EDIT_CHARA
+	MASTER = LOCAL
+	TARGET = LOCAL:1
+	ASSI = LOCAL:2
+ELSEIF RESULT == 1
+	JUMP EDIT_DATE
+ELSEIF RESULT == 2
+	JUMP EDIT_TIME
+ELSEIF RESULT == 3
+	CALL EDIT_MONEY
+ELSEIF RESULT == 4
+	CALL EDIT_FLAG
+ELSEIF RESULT == 5
+	CALL EDIT_ITEM
+ELSEIF RESULT == 6
+	CALL EDIT_CHARACARD
+ELSEIF RESULT == 7
+	CALL EDIT_DITEMTYPE
+ELSEIF RESULT == 8
+	CALL EDIT_GAME_MODE
+ELSEIF RESULT == 9
+	CALL EDIT_ENDLESS_MODE
+ELSEIF RESULT == 10 && MONEY:998
+	CALL EDIT_INCOME_RANKING
+ELSEIF RESULT == 11 && FLAG:14 & 4
+	CALL EDIT_SANITY
+ELSEIF RESULT == 12 && TARGET >= 0
+	CALL EDIT_LUNCH
+ELSEIF RESULT == 13 && FLAG:15 & 4096
+	CALL EDIT_TENTACLE
+ELSEIF RESULT == 14 && FLAG:12 & 8
+	CALL EDIT_COLLECTION_MENU
+ELSEIF RESULT == 15
+	CALL EDIT_SAVESTR
+ELSEIF RESULT == 16 && FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+	CALL EDIT_MONEYLIMIT
+ELSEIF RESULT == 96
+	CALL EDIT_HEAL_ALL
+ELSEIF RESULT == 97
+	CALL EDIT_ENDING_TEST
+	RETURN 1
+ELSEIF RESULT == 98
+	CALL START_NEWGAME
+	RETURN 1
+ELSEIF RESULT == 99
+	CALL QUICKLOAD
+ELSEIF RESULT == 100
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;日付変更処理
+;--------------------------------------------------
+@EDIT_DATE
+DRAWLINE
+PRINTFORML 現在:{DAY}日目\@(TIME == 0) ? (昼) # (夜)\@
+PRINTL 現在何日目かを入力してください(0以下なら変更しない)
+INPUT
+SIF RESULT < 1
+	RETURN 0
+DAY = RESULT
+PRINTFORMW 現在の日付を{DAY}日目に変更しました
+CALL CALENDAR_CALC, DAY
+
+;--------------------------------------------------
+;昼夜逆転処理
+;--------------------------------------------------
+@EDIT_TIME
+DRAWLINE
+TIME = (TIME == 0) ? 1 # 0
+PRINTFORMW 時間帯を{DAY}日目の\@(TIME == 0) ? 昼 # 夜\@に変更しました
+
+;--------------------------------------------------
+;所持金変更処理
+;--------------------------------------------------
+@EDIT_MONEY
+DRAWLINE
+PRINTFORML 現在所持金:{MONEY}圓
+PRINTL 望む金額を入力してください(負の値なら変更しない)
+INPUT
+SIF RESULT < 0
+	RETURN 0
+MONEY = RESULT
+PRINTFORMW 現在の所持金を{MONEY}圓に変更しました
+
+;--------------------------------------------------
+;目標金額変更処理
+;--------------------------------------------------
+@EDIT_MONEYLIMIT
+DRAWLINE
+PRINTFORML 現在の目標金額:{MONEY:100}圓
+PRINTFORML 大富豪エンドの目標金額はその10倍の{10*MONEY:100}圓です。
+PRINTL 望む金額を入力してください(負の値なら変更しない)
+INPUT
+SIF RESULT < 0
+	RETURN 0
+MONEY:100 = RESULT
+PRINTFORMW 現在の目標金額を{MONEY:100}圓に変更しました
+
+;--------------------------------------------------
+;難易度の変更処理
+;--------------------------------------------------
+@EDIT_GAME_MODE
+SIF FLAG:3 < 1 || FLAG:3 > 7
+	FLAG:3 = 0
+DRAWLINE
+PRINTFORML 現在、難易度は“%DISPLAY_DIFFICULTY(FLAG:3)%”です
+PRINTL 変更したい難易度を選択してください
+DRAWLINE
+PRINTL [0]そのまま
+PRINTL [1]EASY
+PRINTL [2]NORMAL
+PRINTL [3]HARD
+PRINTL [4]LUNATIC
+PRINTL [5]PHANTASM
+PRINTL [6]ULTRA　　
+PRINTL [7]OVERDRIVE
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	RETURN 0
+ELSEIF RESULT >= 1 && RESULT <= 7
+	FLAG:3 = RESULT
+	PRINTFORMW 難易度を“%DISPLAY_DIFFICULTY(FLAG:3)%”にしました
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;エンドレスモードの変更処理
+;--------------------------------------------------
+;エンドレス状態を有効あるいは解除する
+;主にエンディングを試すための機能
+@EDIT_ENDLESS_MODE
+DRAWLINE
+PRINT 
+FLAG:5 ^= 1
+PRINTFORMW エンドレスモードを\@(FLAG:5 & 1) ? 有効 # 無効\@にしました
+
+;--------------------------------------------------
+;収入ランキング初期化処理
+;--------------------------------------------------
+@EDIT_INCOME_RANKING
+DRAWLINE
+FOR LOCAL, 970, 999
+	MONEY:LOCAL = 0
+NEXT
+PRINTW 収入ランキングを初期化しました
+
+;--------------------------------------------------
+;ヤンデレゲージリセット処理
+;--------------------------------------------------
+;ヤンデレモードの嫉妬・狂気・ヤンデレゲージを解除
+;(元から嫉妬・狂気を持っていないなら嫉妬・狂気も解除)
+@EDIT_SANITY
+DRAWLINE
+LOCAL:1 = 0
+FOR LOCAL, 0, CHARANUM
+	IF CFLAG:LOCAL:嫉妬ポイント
+		CFLAG:LOCAL:嫉妬ポイント = 0
+		IF TALENT:LOCAL:嫉妬 && CFLAG:LOCAL:12 & 4096
+			TALENT:LOCAL:嫉妬 = 0
+			CFLAG:LOCAL:12 -= 4096
+		ENDIF
+		IF TALENT:LOCAL:狂気 && CFLAG:LOCAL:12 & 1
+			TALENT:LOCAL:狂気 = 0
+			CFLAG:LOCAL:12 -= 1
+		ENDIF
+		LOCAL:1 += 1
+	ENDIF
+NEXT
+IF LOCAL:1 > 0
+	PRINTW キャラの嫉妬・狂気を解除しました
+ELSE
+	PRINTW 嫉妬・狂気に侵されているキャラはいません
+ENDIF
+
+;--------------------------------------------------
+;弁当テスト処理
+;--------------------------------------------------
+;弁当パッチの動作、珠入手量、売値の確認用
+@EDIT_LUNCH
+DRAWLINE
+PRINTL 弁当の挙動テストを開始します
+PRINTL テストしたい項目を選択してください
+PRINTL [0]手作り弁当
+PRINTL [1]毒入り弁当
+PRINTL [2]嫉妬チョコ
+PRINTL [3]自作の弁当
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	DRAWLINE
+	PRINTW 手作り弁当処理のテストを始めます
+	CALL LUNCH_SALE
+ELSEIF RESULT == 1
+	DRAWLINE
+	PRINTW 毒入り弁当処理のテストを始めます
+	CALL POISONED_LUNCH
+ELSEIF RESULT == 2
+	DRAWLINE
+	PRINTW 嫉妬チョコ処理のテストを始めます
+	CALL LUNCH_CHOCOLATE
+ELSEIF RESULT == 3
+	DRAWLINE
+	PRINTW 自作の弁当処理のテストを始めます
+	CALL LUNCH_SELF
+ELSEIF RESULT == 100
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;触手関連変更処理
+;--------------------------------------------------
+@EDIT_TENTACLE
+DRAWLINE
+PRINTL 変更したい項目を選択してください
+PRINTL [0]触手エネルギー
+PRINTL [1]触手の珠
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	DRAWLINE
+	PRINTFORML 現在の触手エネルギー({BASE:MASTER:触手}τ)
+	PRINTL 望む値を入力してください(負の値なら変更しない)
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	BASE:MASTER:触手 = RESULT
+	PRINTFORMW 現在の触手エネルギーを{BASE:MASTER:触手}τに変更しました
+ELSEIF RESULT == 1
+	DRAWLINE
+	PRINTFORML 現在の触手の珠({JUEL:MASTER:触手}個)
+	PRINTL 望む値を入力してください(100万以上の数値または負の値なら変更しない)
+	INPUT
+	SIF RESULT < 0 || RESULT >= 1000000
+		RESTART
+	JUEL:MASTER:触手 = RESULT
+	PRINTFORMW 現在の触手の珠を{JUEL:MASTER:触手}個に変更しました
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;キャラ全快
+;--------------------------------------------------
+@EDIT_HEAL_ALL
+REPEAT CHARANUM
+	IF TALENT:COUNT:死亡
+		MAXBASE:COUNT:0 = MAX(MAXBASE:COUNT:0, CSVBASE(NO:COUNT, 0, CFLAG:COUNT:0) )
+		MAXBASE:COUNT:1 = MAX(MAXBASE:COUNT:1, CSVBASE(NO:COUNT, 1, CFLAG:COUNT:0) )
+		TALENT:COUNT:死亡 = 0
+	ENDIF
+	BASE:COUNT:体力 = MAXBASE:COUNT:0
+	BASE:COUNT:気力 = MAXBASE:COUNT:1
+	BASE:COUNT:酔い = 0
+REND
+PRINTW 全員の体力・気力・酔いが回復しました
+
+;--------------------------------------------------
+;キャラ書き換え
+;--------------------------------------------------
+@EDIT_CHARA
+;前後のキャラを表示できるか判定
+LOCAL:1 = -1
+LOCAL:2 = -1
+FOR LOCAL, 0, CHARANUM
+	SIF LOCAL == TARGET
+		CONTINUE
+	IF LOCAL < TARGET
+		LOCAL:1 = LOCAL
+	ELSE
+		LOCAL:2 = LOCAL
+		BREAK
+	ENDIF
+NEXT
+
+DRAWLINE
+PRINTFORML \@(TARGET < 0) ? 対象を選択してください # 現在「%CALLNAME:TARGET%」を選択中\@
+DRAWLINE
+PRINTFORMLC [  0] - \@(TARGET >= 0) ? 対象変更 # 対象選択\@
+IF TARGET >= 0
+	PRINTLC [  1] - 対象情報
+	PRINTLC [  2] - ABL/MAXBASE編集
+	PRINTLC [  3] - EXP編集
+	PRINTLC [  4] - MARK編集
+	PRINTLC [  5] - TALENT編集
+	PRINTLC [  6] - JUEL編集
+	PRINTLC [  7] - RELATION編集
+	PRINTLC [  8] - CFLAG操作
+	PRINTLC [  9] - PALAM/BASE編集
+	PRINTLC [ 10] - EQUIP操作
+	PRINTLC [ 11] - 売却調査用
+	PRINTLC [ 12] - 称号編集
+	PRINTLC [ 13] - CSTR編集
+ENDIF
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL:1 < 0) ? %" " * 16% # [1011]%CALLNAME:(LOCAL:1)%を編集\@
+PRINTFORMLC [1000]戻る
+PRINTFORMLC \@(LOCAL:2 < 0) ? %" " * 16% # [1019]%CALLNAME:(LOCAL:2)%を編集\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1011 && LOCAL:1 >= 0
+	TARGET = LOCAL:1
+ELSEIF RESULT == 1019 && LOCAL:2 >= 0
+	TARGET = LOCAL:2
+ELSEIF RESULT == 0
+	CALL SELECT_TARGET
+ELSEIF TARGET < 0
+	PRINTW 対象を選択してください。
+ELSEIF RESULT == 1
+	CALL SHOW_CHARADATA_MENU
+ELSEIF RESULT == 2
+	CALL EDIT_ABL
+ELSEIF RESULT == 3
+	CALL EDIT_EXP
+ELSEIF RESULT == 4
+	CALL EDIT_MARK
+ELSEIF RESULT == 5
+	CALL EDIT_TALENT
+ELSEIF RESULT == 6
+	CALL EDIT_JUEL
+ELSEIF RESULT == 7
+	CALL EDIT_RELATION
+ELSEIF RESULT == 8
+	CALL EDIT_CFLAG
+ELSEIF RESULT == 9
+	CALL EDIT_PALAM
+ELSEIF RESULT == 10
+	CALL EDIT_EQUIP
+ELSEIF RESULT == 11
+	CALL EDIT_RESEARCH_CHARA
+ELSEIF RESULT == 12
+	CALL EDIT_NICKNAME
+ELSEIF RESULT == 13
+	CALL EDIT_CSTR
+ENDIF
+RESTART
+
+@SELECT_TARGET
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+LOCAL:1 = CHARANUM / 20
+
+$PRINT_LIST
+DRAWLINE
+SIF TARGET >= 0
+	PRINTFORML 現在の選択キャラ:%CALLNAME:TARGET%
+PRINTFORML 誰を対象にしますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT CHARANUM
+	SIF COUNT >= LOCAL * 20 && COUNT < (LOCAL+1) * 20
+		PRINTFORML [{COUNT}]%NAME:COUNT%
+REND
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM
+	GOTO INPUT_LOOP
+ENDIF
+
+TARGET = RESULT
+PRINTFORML %CALLNAME:TARGET%を対象に選択しました
+
+;--------------------------------------------------
+; PALAM操作
+;--------------------------------------------------
+@EDIT_PALAM
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF STRLENS(PALAMNAME:LOCAL) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}]%PALAMNAME:LOCAL% ({PALAM:LOCAL}) 
+NEXT
+PRINTFORMLC [100]現在体力 ({BASE:体力}) 
+PRINTFORMLC [101]現在気力 ({BASE:気力}) 
+SIF ( TALENT:オトコ || TALENT:ふたなり )
+	PRINTFORMLC [102]射精ゲージ ({BASE:射精}) 
+SIF TALENT:母乳体質
+	PRINTFORMLC [103]噴乳ゲージ ({BASE:母乳}) 
+SIF TALENT:おもらし癖 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
+	PRINTFORMLC [104]尿意ゲージ ({BASE:尿意}) 
+SIF TALENT:パイパン || CFLAG:36
+	PRINTFORMLC [105]陰毛ゲージ ({BASE:陰毛}) 
+SIF TALENT:寄生
+	PRINTFORMLC [106]触手寄生LV ({BASE:触手})
+PRINTFORMLC [107]現在陰核ゲージ ({BASE:陰核}) 
+PRINTFORMLC [108]酔いゲージ ({BASE:酔い}) 
+SIF TALENT:理性
+	PRINTFORMLC [109]現在理性 ({BASE:理性}) 
+PRINTFORMLC [120]現在底力 ({BASE:底力}) 
+PRINTLC [199]パラメータリセット
+PRINTLC [200]戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 200
+	RETURN 0
+ELSEIF RESULT == 199
+	VARSET PALAM, 0
+	PRINTW パラメータを全てリセットしました
+	RESTART
+ELSEIF RESULT == 100
+	DRAWLINE
+	PRINTFORML 体力の変更(現在{BASE:体力})
+	PRINTFORML 数値を入力[0-{MAXBASE:0}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:0
+		BASE:体力 = RESULT
+ELSEIF RESULT == 101
+	DRAWLINE
+	PRINTFORML 気力の変更(現在{BASE:気力})
+	PRINTFORML 数値を入力[0-{MAXBASE:1}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:1
+		BASE:気力 = RESULT
+ELSEIF RESULT == 102 && ( TALENT:オトコ || TALENT:ふたなり )
+	DRAWLINE
+	PRINTFORML 射精ゲージの変更(現在{BASE:射精})
+	PRINTFORML 数値を入力[0-{MAXBASE:2 - 1}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:2 - 1
+		BASE:射精 = RESULT
+ELSEIF RESULT == 103 && TALENT:母乳体質
+	DRAWLINE
+	PRINTFORML 噴乳ゲージの変更(現在{BASE:母乳})
+	PRINTFORML 数値を入力[0-{MAXBASE:3 - 1}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:3 - 1
+		BASE:母乳 = RESULT
+ELSEIF RESULT == 104 && TALENT:おもらし癖 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
+	DRAWLINE
+	PRINTFORML 尿意ゲージの変更(現在{BASE:尿意})
+	PRINTFORML 数値を入力[0-{MAXBASE:4 - 1}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:4 - 1
+		BASE:尿意 = RESULT
+ELSEIF RESULT == 105 && (TALENT:パイパン || CFLAG:36)
+	DRAWLINE
+	PRINTFORML 陰毛ゲージの変更(現在{BASE:陰毛})
+	PRINTFORML 剃毛プレイ用、0～50がツルツル、51～250が生えかけ、251～1000で生えそろった(剃毛可能)
+	PRINTFORML 数値を入力[0-1000]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= 1000
+		BASE:陰毛 = RESULT
+ELSEIF RESULT == 106 && TALENT:寄生
+	DRAWLINE
+	PRINTFORML 触手寄生LVの変更(現在{BASE:触手})
+	PRINTFORML 数値を入力[0-{MAXBASE:6}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:6
+		BASE:触手 = RESULT
+ELSEIF RESULT == 107
+	DRAWLINE
+	PRINTFORML 陰核LVの変更(現在{BASE:陰核})
+	PRINTFORML 陰核の成長具合(非[オトコ][ふたなり]用、0が成長しない、1～50がノーマル、51～100が小指サイズ、101～200が男性器サイズ、201～250(最大値)が異様なサイズ)
+	PRINTFORML 数値を入力[0-250]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= 250
+		BASE:陰核 = RESULT
+ELSEIF RESULT == 108
+	DRAWLINE
+	PRINTFORML 酔いゲージの変更(現在{BASE:酔い})
+	PRINTFORML 数値を入力[0-{MAXBASE:8 * 3}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:8 * 3
+		BASE:酔い = RESULT
+ELSEIF RESULT == 109 && TALENT:理性
+	DRAWLINE
+	PRINTFORML 理性の変更(現在{BASE:理性})
+	PRINTFORML 数値を入力[0-{MAXBASE:9}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:9
+		BASE:理性 = RESULT
+ELSEIF RESULT == 120
+	DRAWLINE
+	PRINTFORML 底力LVの変更(現在{BASE:底力})
+	PRINTFORML 数値を入力[0-{MAXBASE:20}]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT >= 0 && RESULT <= MAXBASE:20
+		BASE:底力 = RESULT
+ELSEIF RESULT < 0 || RESULT > 99
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	SIF STRLENS(PALAMNAME:LOCAL) == 0
+		GOTO INPUT_LOOP
+	DRAWLINE
+	PRINTFORML %PALAMNAME:LOCAL%の変更(現在{PALAM:LOCAL})
+	PRINTFORML 数値を入力[0-9999999]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT < 0 || RESULT > 9999999
+		RESTART
+	PALAM:LOCAL = RESULT
+ENDIF
+RESTART
+
+;--------------------------------------------------
+; ABL操作
+;--------------------------------------------------
+;ABLの有無をCSVから取得
+@DISP_ABL(ARG)
+#FUNCTION
+RETURNF (STRLENS(ABLNAME:ARG)) ? 1 # 0
+
+;ABL変更
+@EDIT_ABL
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF DISP_ABL(LOCAL) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}]%ABLNAME:LOCAL%LV ({ABL:LOCAL})  
+NEXT
+PRINTL 
+PRINTFORMLC [100]最大体力 ({MAXBASE:0}) 
+PRINTFORMLC [101]最大気力 ({MAXBASE:1}) 
+SIF ( TALENT:オトコ || TALENT:ふたなり )
+	PRINTFORMLC [102]最大射精ゲージ ({MAXBASE:2}) 
+SIF TALENT:母乳体質
+	PRINTFORMLC [103]最大噴乳ゲージ ({MAXBASE:3}) 
+SIF TALENT:おもらし癖 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
+	PRINTFORMLC [104]最大尿意ゲージ ({MAXBASE:4}) 
+;PRINTFORML [105]最大陰毛ゲージ ({MAXBASE:5}) 
+SIF TALENT:寄生
+	PRINTFORMLC [106]最大触手寄生LV ({MAXBASE:6})
+SIF TALENT:理性
+	PRINTFORMLC [107]最大理性 ({MAXBASE:9}) 
+PRINTFORMLC [110]ABL一括操作
+PRINTLC [200]戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+SIF RESULT == 200
+	RETURN 0
+SIF (RESULT < 0 || RESULT > 108) && RESULT != 110
+	GOTO INPUT_LOOP
+IF RESULT == 100
+	DRAWLINE
+	PRINTFORML 最大体力の変更(現在{MAXBASE:0})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:体力
+		BASE:体力 = RESULT
+	MAXBASE:0 = RESULT
+ELSEIF RESULT == 101
+	DRAWLINE
+	PRINTFORML 最大気力の変更(現在{MAXBASE:1})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:気力
+		BASE:気力 = RESULT
+	MAXBASE:1 = RESULT
+ELSEIF RESULT == 102
+	DRAWLINE
+	PRINTFORML 最大射精ゲージの変更(現在{MAXBASE:2})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:射精
+		BASE:射精 = RESULT - 1
+	MAXBASE:2 = RESULT
+ELSEIF RESULT == 103
+	DRAWLINE
+	PRINTFORML 最大噴乳ゲージの変更(現在{MAXBASE:3})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:母乳
+		BASE:母乳 = RESULT - 1
+	MAXBASE:3 = RESULT
+ELSEIF RESULT == 104
+	DRAWLINE
+	PRINTFORML 最大尿意ゲージの変更(現在{MAXBASE:4})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:尿意
+		BASE:尿意 = RESULT - 1
+	MAXBASE:4 = RESULT
+;ELSEIF RESULT == 105
+;	DRAWLINE
+;	PRINTFORML 最大陰毛ゲージの変更(現在{MAXBASE:5})
+;	PRINTFORML 数値を入力[0-1000]（無効な数値でキャンセル）
+;	INPUT
+;	SIF RESULT >= 0 && RESULT <= 1000
+;		MAXBASE:5 = RESULT
+ELSEIF RESULT == 106
+	DRAWLINE
+	PRINTFORML 最大触手寄生LVの変更(現在{MAXBASE:6})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:触手
+		BASE:触手 = RESULT
+	MAXBASE:6 = RESULT
+ELSEIF RESULT == 107
+	DRAWLINE
+	PRINTFORML 最大理性の変更(現在{MAXBASE:9})
+	PRINTFORML 数値を入力（負の数値でキャンセル）
+	INPUT
+	SIF RESULT < 0
+		RESTART
+	SIF RESULT < BASE:理性
+		BASE:理性 = RESULT
+	MAXBASE:9 = RESULT
+ELSEIF RESULT == 110
+	CALL EDIT_ABL_ALL
+ELSE
+	LOCAL = RESULT
+	DRAWLINE
+	PRINTFORML %ABLNAME:LOCAL%LVの変更(現在{ABL:LOCAL})
+	PRINTFORML 数値を入力[0-5]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT < 0 || RESULT > 10
+		RESTART
+	ABL:LOCAL = RESULT
+ENDIF
+
+RESTART
+
+;ABL変更
+@EDIT_ABL_ALL
+#DIM ABL_ALL
+
+WHILE 1
+	DRAWLINE
+	PRINTFORML ABLLV一括変更
+	PRINTFORMLC [  1] 感覚系(現在:\@ABL_ALL & 1 ? ON # OFF\@)
+	PRINTFORMLC [  2] 従順から露出癖まで(現在:\@ABL_ALL & 2 ? ON # OFF\@)
+	PRINTFORMLC [  3] ～～っ気系(現在:\@ABL_ALL & 4 ? ON # OFF\@)
+	PRINTFORMLC [  4] 中毒系(現在:\@ABL_ALL & 8 ? ON # OFF\@)
+	PRINTFORMLC [  5] 技能系(現在:\@ABL_ALL & 16 ? ON # OFF\@)
+	PRINTFORMLC [  6] 素質系(現在:\@ABL_ALL & 32 ? ON # OFF\@)
+	PRINTFORMLC [  7] 戦闘系(現在:\@ABL_ALL & 64 ? ON # OFF\@)
+	PRINTFORMLC [  8] 主人系(現在:\@ABL_ALL & 128 ? ON # OFF\@)
+	PRINTFORMLC [ 10] 一括\@ABL_ALL ? OFF # ON\@
+	PRINTFORMLC [ 20] 編集実行
+	PRINTFORMLC [ 99] 戻る
+
+	INPUT
+	IF RESULT == 99
+		RETURN
+	ELSEIF (RESULT > 0 && RESULT < 9) || RESULT == 10
+		SELECTCASE RESULT
+		CASE 1
+			IF ABL_ALL & 1
+				ABL_ALL &= 254
+			ELSE
+				ABL_ALL |= 1
+			ENDIF
+		CASE 2
+			IF ABL_ALL & 2
+				ABL_ALL &= 253
+			ELSE
+				ABL_ALL |= 2
+			ENDIF
+		CASE 3
+			IF ABL_ALL & 4
+				ABL_ALL &= 251
+			ELSE
+				ABL_ALL |= 4
+			ENDIF
+		CASE 4
+			IF ABL_ALL & 8
+				ABL_ALL &= 247
+			ELSE
+				ABL_ALL |= 8
+			ENDIF
+		CASE 5
+			IF ABL_ALL & 16
+				ABL_ALL &= 239
+			ELSE
+				ABL_ALL |= 16
+			ENDIF
+		CASE 6
+			IF ABL_ALL & 32
+				ABL_ALL &= 223
+			ELSE
+				ABL_ALL |= 32
+			ENDIF
+		CASE 7
+			IF ABL_ALL & 64
+				ABL_ALL &= 191
+			ELSE
+				ABL_ALL |= 64
+			ENDIF
+		CASE 8
+			IF ABL_ALL & 128
+				ABL_ALL &= 127
+			ELSE
+				ABL_ALL |= 128
+			ENDIF
+		CASE 10
+			IF ABL_ALL
+				ABL_ALL = 0
+			ELSEIF ABL_ALL == 0
+				ABL_ALL |= 255
+			ENDIF
+		ENDSELECT
+		CLEARLINE 4
+	ELSEIF RESULT == 20
+		BREAK
+	ELSE
+	ENDIF
+WEND
+PRINTFORML 数値を入力[0-5]（無効な数値でキャンセル）
+INPUT
+SIF RESULT < 0 || RESULT > 10
+	RESTART
+IF ABL_ALL & 1
+	FOR LOCAL, 0, 10
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 2
+	FOR LOCAL, 10, 20
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 4
+	FOR LOCAL, 20, 30
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 8
+	FOR LOCAL, 30, 40
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 16
+	FOR LOCAL, 70, 74
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 32
+	FOR LOCAL, 74, 77
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 64
+	FOR LOCAL, 78, 85
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+IF ABL_ALL & 128
+	FOR LOCAL, 98, 100
+		SIF DISP_ABL(LOCAL) == 0
+			CONTINUE
+		ABL:LOCAL = RESULT
+	NEXT
+ENDIF
+
+RETURN
+
+;--------------------------------------------------
+;素質編集
+;--------------------------------------------------
+@EDIT_TALENT
+LOCAL = 0
+LOCAL:1 = 4
+CALLF CLEAR_LIST
+;表示させる素質を抽出
+REPEAT 1000
+	;主人の[Debug]は外せない
+	SIF COUNT == 998 && TARGET == MASTER
+		CONTINUE
+	;存在しない素質は排除
+	STRLENS TALENTNAME:COUNT
+	SIF RESULT == 0
+		CONTINUE
+
+	CALLF SET_LIST, COUNT, 1
+REND
+
+$PRINT_LIST
+DRAWLINE
+PRINTFORML どの素質を変更しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 60
+	LOCAL:2 = COUNT + LOCAL * 60
+	SIF LOCAL:2 == 230
+		LOCAL:2 = 831
+	SIF LOCAL:2 == 231
+		LOCAL:2 = 833
+	SIF LOCAL:2 == 232
+		LOCAL:2 = 834
+	SIF LOCAL:2 == 233 && TARGET != MASTER
+		LOCAL:2 = 998
+	SIF GET_LIST(LOCAL:2) == 0
+		CONTINUE
+	IF TALENT:(LOCAL:2) == 0
+		PRINTFORMLC [{LOCAL:2, 3}]×【%TALENTNAME:(LOCAL:2)%】
+	ELSEIF TALENT:(LOCAL:2) == 1
+		PRINTFORMLC [{LOCAL:2, 3}]◎【%TALENTNAME:(LOCAL:2)%】
+	ELSEIF TALENT:(LOCAL:2) > 1
+		PRINTFORMLC [{LOCAL:2, 3}]○【%TALENTNAME:(LOCAL:2)%】
+	ENDIF
+REND
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT > 1000
+	GOTO INPUT_LOOP
+ELSEIF GET_LIST(RESULT) == 0
+	GOTO INPUT_LOOP
+ENDIF
+
+SIF STRLENS(TALENTNAME:RESULT) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+IF (RESULT == 0 || RESULT == 213) && TALENT:RESULT == 1
+	PRINTFORMW \@(RESULT == 0) ? 再生処女にしました # 心の目を閉じました\@
+	TALENT:RESULT = 2
+ELSEIF (RESULT == 122 || RESULT == 124 || RESULT == 220 || RESULT == 833) && TALENT:RESULT == 0
+	CALL EDIT_ADVANCED_TALENT, RESULT
+ELSE
+	PRINTFORMW [%TALENTNAME:RESULT%]を\@(TALENT:RESULT) ? 削除 # 付加\@しました
+	TALENT:RESULT = (TALENT:RESULT) ? 0 # 1
+ENDIF
+GOTO PRINT_LIST
+
+;………………………………………………
+;素質変更補助処理
+;………………………………………………
+@EDIT_ADVANCED_TALENT, ARG
+PRINTFORML %TALENTNAME:ARG%の値を決めてください[0-999] (現在{TALENT:ARG})
+PRINTL [1000]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 1000
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORMW %TALENTNAME:ARG%の値を{RESULT}にしました
+TALENT:ARG = RESULT
+
+;--------------------------------------------------
+; MARK操作
+;--------------------------------------------------
+;MARKの有無をCSVから取得
+@DISP_MARK(ARG)
+#FUNCTION
+RETURNF (STRLENS(MARKNAME:ARG)) ? 1 # 0
+
+;MARK変更
+@EDIT_MARK
+DRAWLINE
+FOR LOCAL, 0, 100
+	SIF DISP_MARK(LOCAL) == 0
+		CONTINUE
+	PRINTFORML [{LOCAL, 3}]%MARKNAME:LOCAL% ({MARK:LOCAL})
+NEXT
+PRINTFORML [ 96]恐怖刻印取得履歴 ({MARK:96})
+PRINTFORML [ 97]反発刻印取得履歴 ({MARK:97})
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 96 || RESULT == 97
+	GOTO SKIP_GENERAL_PROCESS
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+SIF DISP_MARK(LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %MARKNAME:LOCAL%LVの変更(現在{MARK:LOCAL})
+PRINTFORML 数値を入力[0-3]（無効な数値でキャンセル）
+INPUT
+SIF RESULT < 0 || RESULT >3
+	RESTART
+MARK:LOCAL = RESULT
+
+RESTART
+
+$SKIP_GENERAL_PROCESS
+IF RESULT == 96
+	PRINTFORML 恐怖刻印取得履歴LVの変更(現在{MARK:96})
+	PRINTFORML 数値を入力[0-3]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT < 0 || RESULT >3
+		RESTART
+	MARK:96 = RESULT
+ELSEIF RESULT == 97
+	PRINTFORML 反発刻印取得履歴LVの変更(現在{MARK:97})
+	PRINTFORML 数値を入力[0-3]（無効な数値でキャンセル）
+	INPUT
+	SIF RESULT < 0 || RESULT >3
+		RESTART
+	MARK:97 = RESULT
+ENDIF
+RESTART
+
+;--------------------------------------------------
+; EXP操作
+;--------------------------------------------------
+;EXPの有無をCSVから取得
+@DISP_EXP(ARG)
+#FUNCTION
+RETURNF (STRLENS(EXPNAME:ARG)) ? 1 # 0
+
+;EXP変更
+@EDIT_EXP
+DRAWLINE
+FOR LOCAL:1, 0, 100
+	LOCAL = LOCAL:1
+	SIF DISP_EXP(LOCAL) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}]%EXPNAME:LOCAL% ({EXP:LOCAL})　
+NEXT
+PRINTLC [100]戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+SIF RESULT == 100
+	RETURN 0
+SIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+LOCAL = RESULT
+SIF DISP_EXP(LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %EXPNAME:LOCAL%の変更(現在{EXP:LOCAL})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+EXP:LOCAL = RESULT
+RESTART
+
+;--------------------------------------------------
+; JUEL操作
+;--------------------------------------------------
+;JUELの有無を指定
+;JUELNAMEは無かった残念！
+@DISP_JUEL(ARG)
+#FUNCTION
+SIF ARG >= 0 && ARG <= 3
+	RETURNF 1
+SIF ARG >= 10 && ARG <= 17
+	RETURNF 1
+;SIF ARG >= 20 && ARG <= 22
+;	RETURNF 1
+SIF ARG >= 30 && ARG <= 32
+	RETURNF 1
+SIF ARG == 100
+	RETURNF 1
+RETURNF 0
+
+;JUEL変更
+@EDIT_JUEL
+DRAWLINE
+FOR LOCAL, 0, 200
+	SIF DISP_JUEL(LOCAL) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}]%PALAMNAME:LOCAL%の珠({JUEL:LOCAL}) 
+NEXT
+PRINTLC [200]戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+SIF RESULT == 200
+	RETURN 0
+SIF RESULT < 0 || RESULT > 200
+	GOTO INPUT_LOOP
+LOCAL = RESULT
+SIF DISP_JUEL(LOCAL) == 0
+	GOTO INPUT_LOOP
+DRAWLINE
+PRINTFORML %PALAMNAME:LOCAL%の珠の変更(現在{JUEL:LOCAL})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+JUEL:LOCAL = RESULT
+RESTART
+
+;--------------------------------------------------
+; RELATION操作
+;--------------------------------------------------
+;RERATIONの変更
+@EDIT_RELATION
+DRAWLINE
+PRINTL 現在の相性
+FOR LOCAL:10, 1, 6
+	FOR LOCAL, 0, 120
+		SIF RELATION:(1000 * LOCAL:10 + LOCAL) <= 0
+			CONTINUE
+		PRINTFORMLC [{1000 * LOCAL:10 + LOCAL}]%ITEMNAME:(1000 * LOCAL:10 + LOCAL)%({RELATION:(1000 * LOCAL:10 + LOCAL)}％)
+	NEXT
+NEXT
+PRINTL 
+PRINTL [1000-5097]対応する番号のキャラとの相性の変更（無効な数値でキャンセル）
+PRINTL [555]戻る
+$INPUT_LOOP
+INPUT
+SIF RESULT == 555
+	RETURN 0
+SIF RESULT < 1000 || RESULT > 5097
+	GOTO INPUT_LOOP
+LOCAL = RESULT
+DRAWLINE
+PRINTFORML [%ITEMNAME:LOCAL%]との相性の変更(現在{RELATION:LOCAL})
+PRINTFORML 数値を入力[0-1000]（無効な数値でキャンセル）
+INPUT
+SIF RESULT < 0 || RESULT > 1000
+	RESTART
+RELATION:LOCAL = RESULT
+RESTART
+
+;--------------------------------------------------
+; CFLAG操作
+;--------------------------------------------------
+;CFLAGの説明
+@DEFINE_CFLAG(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		RETURNF "ＳＰキャラかどうか 0=SPではない 1～=SPキャラ"
+	CASE 1
+		RETURNF "売却及び助手可能 1=売却可能 2=助手可能で売却可能"
+	CASE 2
+		RETURNF "主人への好感度"
+	CASE 3
+		RETURNF "売却不可能フラグ 1=[相愛]用 2=[隷属]もしくは[烙印]用"
+	CASE 4
+		RETURNF "居場所フラグ 1=失踪 2=育児室 4=触手幽閉 1024=娼館"
+	CASE 5
+		RETURNF "種族を変えられたフラグ"
+	CASE 6
+		RETURNF "体力上昇累積分"
+	CASE 7
+		RETURNF "気力上昇累積分"
+	CASE 8
+		RETURNF "身体測定フラグ"
+	CASE 9
+		RETURNF "口上表示の個別設定フラグ"
+	CASE 10
+		RETURNF "蒐集品を採取されたかどうかの判定"
+	CASE 11
+		RETURNF "ＶＡ異常経験変動判定"
+	CASE 12
+		RETURNF "トラウマ判定"
+	CASE 13
+		RETURNF "イベントで消滅する素質判定"
+	CASE 14
+		RETURNF "イベントで取得した恋慕系素質"
+	CASE 15
+		RETURNF "イベントで取得した服従系素質"
+	CASE 16
+		RETURNF "イベントで取得した淫乱系素質"
+	CASE 17
+		RETURNF "イベントで取得した崩壊系素質"
+	CASE 18
+		RETURNF "引継ぎキャラ判別 0=引継ぎキャラでない 1=引継ぎキャラである"
+	CASE 20
+		RETURNF "シチュエーション判定用フラグ"
+	CASE 21
+		RETURNF "特殊コマンド初体験判定フラグ"
+	CASE 22
+		RETURNF "苛映塚コマンド初体験判定フラグ"
+	CASE 23
+		RETURNF "特殊風呂コマンド初体験判定フラグ"
+	CASE 24
+		RETURNF "触手コマンド初体験判定フラグ"
+	CASE 25
+		RETURNF "獣姦コマンド初体験判定フラグ"
+	CASE 29
+		RETURNF "種族改造初体験判定フラグ"
+	CASE 30
+		RETURNF "嫉妬ポイント"
+	CASE 31
+		RETURNF "放尿レベル"
+	CASE 32
+		RETURNF "媚薬中毒日数カウント、媚薬中毒レベル"
+	CASE 33
+		RETURNF "鈴蘭の毒使用回数"
+	CASE 34
+		RETURNF "触手出産回数"
+	CASE 35
+		RETURNF "妊娠もしくは懐卵日数カウント用"
+	CASE 36
+		RETURNF "陰毛が成長するかの判定 0=手付かず 1=脱毛 2=育毛可能"
+	CASE 37
+		RETURNF "陰核肥大関連フラグ"
+	CASE 38
+		RETURNF "ストレス過負荷レベル"
+	CASE 39
+		RETURNF "触手幽閉経過時間"
+	CASE 40
+		RETURNF "尻尾の本数"
+	CASE 41
+		RETURNF "触手インプラント"
+	CASE 42
+		RETURNF "烙印キャラ用特殊装備フラグ"
+	CASE 43
+		RETURNF "汎用口上用人格フラグ"
+	CASE 44
+		RETURNF "汎用逆口上用人格フラグ"
+	CASE 46
+		RETURNF "最後に調教された日付"
+	CASE 47
+		RETURNF "最後に助手を解任された日付"
+	CASE 50
+		RETURNF "コスプレ実行回数"
+	CASE 55
+		RETURNF "調教中の説教／薀蓄受講回数"
+	CASE 56
+		RETURNF "パイズリをしてあげた回数"
+	CASE 57
+		RETURNF "パイズリをしてもらった回数"
+	CASE 60
+		RETURNF "Ｃ開発度"
+	CASE 61
+		RETURNF "Ｖ開発度"
+	CASE 62
+		RETURNF "Ａ開発度"
+	CASE 63
+		RETURNF "Ｂ開発度"
+	CASE 64
+		RETURNF "強制精飲絶頂開発度"
+	CASE 65
+		RETURNF "ストレス値"
+	CASE 66
+		RETURNF "堕落度(主人専用)"
+	CASE 77
+		RETURNF "出産予定日"
+	CASE 80
+		RETURNF "売春で得ることができた最高金額"
+	CASE 81
+		RETURNF "多人数売春で得ることができた最高金額"
+	CASE 82
+		RETURNF "ビデオで稼いだ最高金額"
+	CASE 83
+		RETURNF "写真で稼いだ最高金額"
+	CASE 84
+		RETURNF "野外ライブで稼いだ最高金額"
+	CASE 87
+		RETURNF "母乳で稼いだ最高金額"
+	CASE 88
+		RETURNF "聖水で稼いだ最高金額"
+	CASE 89
+		RETURNF "産卵で稼いだ最高金額"
+	CASE 90
+		RETURNF "アスパラで稼いだ最高金額"
+	CASE 91
+		RETURNF "ワインで稼いだ最高金額"
+	CASE 92
+		RETURNF "スイートポテトで稼いだ最高金額"
+	CASE 93
+		RETURNF "弁当で稼いだ最高金額"
+	CASE 94
+		RETURNF "陰毛お守りで稼いだ最高金額"
+	CASE 95
+		RETURNF "愛液で稼いだ最高金額"
+	CASE 96
+		RETURNF "全部の収入の中の最高金額"
+	CASE 97
+		RETURNF "その奴隷が今まで稼いできた総金額"
+	CASE 98
+		RETURNF "現在の周回で恋慕or淫乱or服従をつけた人数(主人のみ)"
+	CASE 150
+		RETURNF "弁当関連の経歴フラグ"
+	CASE 151
+		RETURNF "ライブ関連の経歴フラグ"
+	CASE 152
+		RETURNF "日常生活関連の経歴フラグ"
+	CASE 153
+		RETURNF "夜イベント関連の経歴フラグ"
+	CASE 154
+		RETURNF "朝イベント関連の経歴フラグ"
+	CASE 155
+		RETURNF "状態に関する経歴フラグ"
+	CASE 156
+		RETURNF "称号に関する経歴フラグ"
+	CASE 157
+		RETURNF "主人の称号に関する経歴フラグ"
+	CASE 160
+		RETURNF "バーレイ専用コマンド経歴フラグ"
+	CASE 161
+		RETURNF "夜イベントで奴隷が盗撮したときの回数"
+	CASE 162
+		RETURNF "同化刻印によるリザレクション回数"
+	CASE 163
+		RETURNF "蓬莱人によるリザレクション回数"
+	CASE 164
+		RETURNF "呪精によるリザレクション回数"
+	CASE 165
+		RETURNF "YASAIによるリザレクション回数"
+	CASE 170
+		RETURNF "主人の下着を持ち逃げした回数"
+	CASE 171
+		RETURNF "主人からもらったプレゼントの個数"
+	CASE 172
+		RETURNF "主人との調教でのキス回数"
+	CASE 173
+		RETURNF "主人のペニスでＶを犯された回数"
+	CASE 174
+		RETURNF "主人のペニスでＡを犯された回数"
+	CASE 175
+		RETURNF "主人のＶをペニスで犯した回数"
+	CASE 176
+		RETURNF "主人のＡをペニスで犯した回数"
+	CASE 180
+		RETURNF "このターン地下牢でされたことフラグ"
+	CASE 3001
+		RETURNF "父もしくは母として子供を何人作ったか"
+	CASE 3002
+		RETURNF "仕送りしてくれる息子の数(母親)"
+	CASE 3011
+		RETURNF "現在育児中の赤子の人数(３つ子まで)"
+	CASE 3012
+		RETURNF "１人目の赤子の性別(0=女,1=男)"
+	CASE 3013
+		RETURNF "２人目の赤子の性別(0=女,1=男)"
+	CASE 3014
+		RETURNF "３人目の赤子の性別(0=女,1=男)"
+	CASE 3100
+		RETURNF "子供から見ての産みの母親のキャラ番号"
+	CASE 3101
+		RETURNF "子供から見ての育ての母親のキャラ番号"
+	CASE 3102
+		RETURNF "子供が母の第何子か？"
+	CASE 3103
+		RETURNF "子供から見ての父親のキャラ番号"
+	CASE 3104
+		RETURNF "子供が父の第何子か？"
+	CASE 3105
+		RETURNF "子供から見ての産みの母親の固有番号"
+	CASE 3106
+		RETURNF "子供から見ての育ての母親の固有番号"
+	CASE 3107
+		RETURNF "子供から見ての父親の固有番号"
+	CASE 3108
+		RETURNF "子供の世代"
+	CASE 3109
+		RETURNF "キャラ固有番号"
+	CASE 3110
+		RETURNF "子供の誕生日"
+	CASE 3111
+		RETURNF "奴隷の購入された日"
+	CASE 3112
+		RETURNF "奴隷が連れてこられた日"
+	CASE 3113
+		RETURNF "結婚記念日"
+	CASE 3114
+		RETURNF "契約記念日"
+	CASE 3115
+		RETURNF "奴隷が陥落した日"
+	CASE 3116
+		RETURNF "初妊娠日"
+	CASE 3117
+		RETURNF "初助手被任命日"
+	CASE 3118
+		RETURNF "連れてきた人(キャラID)"
+	CASE 3128
+		RETURNF "記念日調査用フラグ"
+	CASE 11000 TO 15099
+		RETURNF "助手としての%CALLNAME:TARGET%による下４桁のキャラ番号への調教経験"
+	CASEELSE
+		RETURNF "――"
+ENDSELECT
+
+@EDIT_CFLAG
+LOCAL = 0
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 現在立っているCFLAG
+PRINTFORML どれを変更しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 20000
+	SIF COUNT < LOCAL * 50 || COUNT >= (LOCAL + 1) * 50
+		CONTINUE
+	PRINTFORMLC [{COUNT, 5}] CFLAG:{COUNT, 5} = {CFLAG:COUNT}
+REND
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 17% # [44444]前のページ\@
+PRINTLC [55555]戻る
+PRINTFORMLC \@(LOCAL >= 199) ? %" " * 17% # [66666]次のページ\@
+PRINTL 
+PRINTFORMLC \@(LOCAL <= 9) ? %" " * 17% # [77777]10ページ前\@
+PRINTFORMLC %" " * 17%
+PRINTFORMLC \@(LOCAL >= 190) ? %" " * 17% # [99999]10ページ先\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 55555
+	RETURN 0
+ELSEIF RESULT == 44444 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 66666 && LOCAL < 399
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 77777 && LOCAL > 9
+	LOCAL -= 10
+	GOTO PRINT_LIST
+ELSEIF RESULT == 99999 && LOCAL < 390
+	LOCAL += 10
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= 20000
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL:1 = RESULT
+DRAWLINE
+PRINTFORML CFLAG:{LOCAL:1}(%DEFINE_CFLAG(LOCAL:1)%)の変更(現在{CFLAG:(LOCAL:1)})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+CFLAG:(LOCAL:1) = RESULT
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+;TFLAG編集
+;--------------------------------------------------
+;TFLAGの説明
+@DEFINE_TFLAG(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 107
+		RETURNF "(調教の残り時間)"
+	CASEELSE
+		RETURNF ""
+ENDSELECT
+
+
+
+
+@EDIT_TFLAG
+LOCAL = 0
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 現在立っているTFLAG
+PRINTFORML どれを変更しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 1000
+	SIF COUNT < LOCAL * 50 || COUNT >= (LOCAL + 1) * 50
+		CONTINUE
+	PRINTFORMLC [{COUNT, 3}] TFLAG:{COUNT, 3} = {TFLAG:COUNT}
+REND
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= 19) ? %" " * 16% # [1009]次のページ\@
+PRINTL [1010]調教フラグ全リセット(要注意)
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < 19
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1010
+	VARSET TFLAG, 0
+	PRINTW 調教フラグを全てリセットしました
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT > 1000
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL:1 = RESULT
+DRAWLINE
+PRINTFORML TFLAG:{RESULT}%DEFINE_TFLAG(LOCAL:1)%の変更(現在{TFLAG:RESULT})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+TFLAG:(LOCAL:1) = RESULT
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+;FLAG編集
+;--------------------------------------------------
+;説明付与
+@DEFINE_FLAG(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+CASE 75
+	RETURNF "触手の能力 0-262143"
+CASE 40 TO 50
+	RETURNF "ビデオ撮影の内容"
+CASE 51 TO 60
+	RETURNF "1～10回目の撮影したコマンドのCOMF番号(0なら愛撫)：保存"
+CASE 100 TO 399
+	RETURNF "現在未使用"
+CASE 550 TO 560
+	RETURNF "調教メニュー登録パッチで使用"
+CASE 581 TO 590
+	RETURNF "エピソードを表示する奴隷の保存、(キャラ番号 + 口上表示 * 10000 + 表示するエピソード * 100000)"
+CASE 1500 TO 1999
+	RETURNF "技師パッチ用枠"
+CASE 2000 TO 2001
+	RETURNF "奴隷市場用枠"
+CASE 3010 TO 3019
+	RETURNF "娼館ランキングで使用"
+CASE 10001 TO 15999
+	RETURNF "各種エンディング判定(10001～10999はハーレムエンド、11001～15999はキャラエンド判定、それぞれビット管理)"
+CASEELSE
+	IF STRLENS(FLAGNAME:ARG) > 0
+		RETURNF FLAGNAME:ARG
+	ELSE
+		RETURNF "――"
+	ENDIF
+ENDSELECT
+
+@EDIT_FLAG
+VARSET LOCAL, 0
+LOCAL:1 = 199
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 現在立っているFLAG
+PRINTFORML どれを変更しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 20000
+	SIF COUNT < LOCAL * 50 || COUNT >= (LOCAL + 1) * 50
+		CONTINUE
+	PRINTFORMLC [{COUNT, 5}] FLAG:{COUNT, 5} = {FLAG:COUNT}
+REND
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 17% # [44444]前のページ\@
+PRINTLC [55555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 17% # [66666]次のページ\@
+PRINTL 
+PRINTFORMLC \@(LOCAL/10 <= 0) ? %" " * 17% # [77777]10ページ前\@
+PRINTFORMLC %" " * 17%
+PRINTFORMLC \@(LOCAL/10 >= LOCAL:1/10) ? %" " * 17% # [99999]10ページ先\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 55555
+	RETURN 0
+ELSEIF RESULT == 44444 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 66666 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 77777 && LOCAL/10 > 0
+	LOCAL -= 10
+	GOTO PRINT_LIST
+ELSEIF RESULT == 99999 && LOCAL/10 < LOCAL:1/10
+	LOCAL += 10
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= 20000
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL:2 = RESULT
+DRAWLINE
+PRINTFORM FLAG:{LOCAL:2}(
+PRINTFORM %DEFINE_FLAG(LOCAL:2)%
+PRINTFORML )の変更(現在{FLAG:(LOCAL:2)})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+FLAG:(LOCAL:2) = RESULT
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+; TEQUIP操作
+;--------------------------------------------------
+;TEQUIPのうち除外したい場合は使う
+@DISP_TEQUIP, ARG
+#FUNCTION
+RETURNF (STRLENS(TEQUIPNAME:ARG)) ? 1 # 0
+
+;TEQUIPのうち説明を付与したい場合は使う
+@DEFINE_TEQUIP, ARG
+IF STRLENS(TEQUIPNAME:ARG) > 0
+	PRINTS TEQUIPNAME:ARG
+	IF ARG == 11
+		PRINT  1:媚薬 2～:媚薬風呂・特殊効果発揮時間用
+	ELSEIF ARG == 13
+		PRINT  1:反動終了 2:反動中 3～:効果発揮中
+	ELSEIF ARG == 14
+		PRINT  1:反動終了 2～4:反動中 5～:効果発揮中
+	ELSEIF ARG == 16
+		PRINT  1:排卵誘発剤 2:触手排卵剤
+	ELSEIF ARG == 17
+		PRINT  1:緊急避妊薬 2:触手避妊膜
+	ELSEIF ARG == 21
+		PRINT  1:クスコ 2:触手幽霊膣鏡
+	ELSEIF ARG == 41
+		PRINT  1:アイマスク 2:蜘蛛の糸
+	ELSEIF ARG == 42
+		PRINT  1:ボールギャグ 2:触手口辱 3:強制開口器 4:触手強制飲酒
+	ELSEIF ARG == 44
+		PRINT  1:鼻フック 2:触手鼻穴挿入 5:洗濯バサミ
+	ELSEIF ARG == 45
+		PRINT  1:耳栓 2:触手耳穴挿入
+	ELSEIF ARG == 54
+		PRINT  1:温水 2:冷水 3:熱湯
+	ELSEIF ARG == 56
+		PRINT  1:大鏡 2:浄玻璃の鏡
+	ELSEIF ARG == 59
+		PRINT  1:裸エプロン 2:スクール水着 3～:コスチュームプレイ
+	ELSEIF ARG == 74
+		PRINT  1:読心 2:触手読心責め
+	ELSEIF ARG == 75
+		PRINT  1ビット:奴隷 2ビット:主人 4ビット:助手
+	ELSEIF ARG == 76
+		PRINT  1ビット:奴隷 2ビット:主人 4ビット:助手
+	ELSEIF ARG == 77
+		PRINT  1:操りの糸 2:触手精神制御
+	ELSEIF ARG == 91
+		PRINT  1:口内 2:腕に注射
+	ENDIF
+ELSE
+	PRINT ――
+ENDIF
+;TEQUIP変更-----------------------------------------------------------
+@EDIT_TEQUIP
+DRAWLINE
+PRINTL 現在使用中の装着系の道具の状態
+FOR LOCAL, 0, 100
+	LOCAL:1 = DISP_TEQUIP(LOCAL)
+	SIF LOCAL:1 == 0 || TEQUIP:LOCAL == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}] TEQUIP:{LOCAL} = {TEQUIP:LOCAL}
+	IF LOCAL:1
+		PRINT (
+		CALL DEFINE_TEQUIP, LOCAL
+		PRINT )
+	ENDIF
+;	PRINTFORML ={TEQUIP:LOCAL}  
+NEXT
+PRINTL 
+PRINTL [0-99]対応する番号の装着系の道具の状態の変更（無効な数値でキャンセル）
+PRINTL [100]装着系の道具の状態の全リセット（要注意）
+PRINTL [200]戻る
+$INPUT_LOOP
+INPUT
+
+IF RESULT == 100
+	FOR LOCAL:1, 0, 100
+		SIF RESULT == 0 && TEQUIP:(LOCAL:1) <= 0
+			CONTINUE
+		TEQUIP:(LOCAL:1) = 0
+	NEXT
+	PRINTW 装着系の道具の状態を全てリセットしました
+	RESTART
+ELSEIF RESULT == 200
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+DRAWLINE
+PRINTFORM TEQUIP:{LOCAL}
+IF DISP_TEQUIP(LOCAL)
+	PRINT (
+	CALL DEFINE_TEQUIP, LOCAL
+	PRINT )
+ENDIF
+PRINTFORML の変更(現在{TEQUIP:LOCAL})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+TEQUIP:LOCAL = RESULT
+
+RESTART
+
+;--------------------------------------------------
+; EQUIP操作
+;--------------------------------------------------
+;EQUIPのうち除外したい場合は使う
+@DISP_EQUIP, ARG
+#FUNCTION
+RETURNF (ARG != 0 && ARG != 1 && ARG != 14) ? 0 # 1
+
+;EQUIPのうち説明を付与したい場合は使う
+@DEFINE_EQUIP, ARG
+IF ARG == 0
+	PRINT 桃の飴玉/引き継ぎでＥＸ化解除の選択
+ELSEIF ARG == 1
+	PRINT 紺の飴玉/親離れ日数短縮
+ELSEIF ARG == 14
+	PRINT 睡眠薬
+ELSE
+	PRINT ――
+ENDIF
+
+;EQUIP変更-----------------------------------------------------------
+@EDIT_EQUIP
+DRAWLINE
+PRINTL 現在使用中の装着系の道具の状態
+FOR LOCAL, 0, 100
+	LOCAL:1 = DISP_EQUIP(LOCAL)
+	SIF LOCAL:1 == 0 || EQUIP:(LOCAL:1) == 0
+		CONTINUE
+	PRINTFORMLC [{LOCAL, 3}] EQUIP:{LOCAL} = {EQUIP:LOCAL}
+	IF LOCAL:1
+		PRINT (
+		CALL DEFINE_EQUIP, LOCAL
+		PRINT )
+	ENDIF
+NEXT
+PRINTL 
+PRINTL [0-99]対応する番号の装着系の道具の状態の変更（無効な数値でキャンセル）
+PRINTL [100]装着系の道具の状態の全リセット（要注意）
+PRINTL [200]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	FOR LOCAL:1, 0, 100
+		SIF RESULT == 0 && EQUIP:(LOCAL:1) <= 0
+			CONTINUE
+		EQUIP:(LOCAL:1) = 0
+	NEXT
+	PRINTW 装着系の道具の状態を全てリセットしました
+	RESTART
+ENDIF
+
+SIF RESULT == 200
+	RETURN 0
+SIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+LOCAL = RESULT
+DRAWLINE
+PRINTFORM EQUIP:{LOCAL}
+IF DISP_TEQUIP(LOCAL)
+	PRINT (
+	CALL DEFINE_EQUIP, LOCAL
+	PRINT )
+ENDIF
+PRINTFORML の変更(現在{EQUIP:LOCAL})
+PRINTFORML 数値を入力（負の数値でキャンセル）
+INPUT
+SIF RESULT < 0
+	RESTART
+EQUIP:LOCAL = RESULT
+
+RESTART
+
+;--------------------------------------------------
+; ITEM操作
+;--------------------------------------------------
+@DISP_ITEM, ARG
+#FUNCTION
+;ショップで買わないと意味が無いので除外
+SIF ARG >= 95 && ARG <= 99
+	RETURNF 0
+;キャラクターカードを除外
+SIF ARG >= 100 && ARG <= 599
+	RETURNF 0
+;ITEMの有無をCSVから取得
+RETURNF (STRLENS(ITEMNAME:ARG)) ? 1 # 0
+
+;ITEM変更
+@EDIT_ITEM
+DRAWLINE
+REPEAT 99
+	SIF DISP_ITEM(COUNT) == 0
+		CONTINUE
+	IF ITEM:COUNT == 0
+		PRINTFORMLC [{COUNT, 3}]×【%ITEMNAME:COUNT%】
+	ELSEIF ITEM:COUNT == 1 && (COUNT < 60 || COUNT > 89)
+		PRINTFORMLC [{COUNT, 3}]○【%ITEMNAME:COUNT%】
+	ELSEIF ITEM:COUNT > 1
+		PRINTFORMLC [{COUNT, 3}]{ITEM:COUNT,2}【%ITEMNAME:COUNT%】
+	ENDIF
+REND
+FOR LOCAL, 600, 616
+	SIF DISP_ITEM(LOCAL) == 0
+		CONTINUE
+	IF ITEM:LOCAL == 0
+		PRINTFORMLC [{LOCAL, 3}]×【%ITEMNAME:LOCAL%】
+	ELSEIF ITEM:LOCAL > 0
+		PRINTFORMLC [{LOCAL, 3}]{ITEM:LOCAL,2}【%ITEMNAME:LOCAL%】
+	ENDIF
+NEXT
+PRINTL 
+PRINTL [100]戻る
+PRINTL ×…持っていない ○…持っている 数字…その数だけ持っている
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT >= 0 && RESULT < 100) || (RESULT >= 600 && RESULT < 616)
+	LOCAL = RESULT
+ELSE
+	GOTO INPUT_LOOP_1
+ENDIF
+SIF DISP_ITEM(LOCAL) == 0
+	GOTO INPUT_LOOP_1
+DRAWLINE
+;複数所有することができるものは数を入力させる
+IF (LOCAL >= 60 && LOCAL <= 90) || (LOCAL >= 600 && LOCAL < 616)
+	DRAWLINE
+	PRINTFORML %ITEMNAME:LOCAL%をいくつ所持しますか？
+	PRINTFORML 所持できるのは0～99個までです。(現在{ITEM:LOCAL}個所持)
+	PRINTLC [0] 持たない
+	PRINTLC [1] 1個
+	PRINTLC [5] 5個
+	PRINTLC [99] 99個
+	PRINTL 
+	$INPUT_LOOP_2
+	INPUT
+	IF RESULT < 0 || RESULT > 99
+		CLEARLINE 1
+		REUSELASTLINE  
+		GOTO INPUT_LOOP_2
+	ELSE
+		PRINTFORMW ＜%ITEMNAME:LOCAL%\@(RESULT == 0) ? を持たないように # を{RESULT}個所持\@しました＞
+		ITEM:LOCAL = RESULT
+	ENDIF
+;そうでないものはON/OFF
+ELSEIF ITEM:LOCAL
+	PRINTFORMW [%ITEMNAME:LOCAL%]を喪失しました
+	ITEM:LOCAL = 0
+ELSE
+	PRINTFORMW [%ITEMNAME:LOCAL%]を所持しました
+	ITEM:LOCAL = 1
+ENDIF
+RESTART
+
+;--------------------------------------------------
+;キャラクターカード操作
+;--------------------------------------------------
+@EDIT_CHARACARD
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+FOR COUNT, 1000, 1120
+	;存在しないキャラは除外
+	SIF ITEMPRICE:COUNT == 0
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+	LOCAL:2 += 1
+NEXT
+FOR COUNT, 2000, 2050
+	;存在しないキャラは除外
+	SIF ITEMPRICE:COUNT == 0
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+	LOCAL:2 += 1
+NEXT
+FOR COUNT, 3000, 3050
+	;存在しないキャラは除外
+	SIF ITEMPRICE:COUNT == 0
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+	LOCAL:2 += 1
+NEXT
+FOR COUNT, 4000, 4050
+	;存在しないキャラは除外
+	SIF ITEMPRICE:COUNT == 0
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+	LOCAL:2 += 1
+NEXT
+FOR COUNT, 5000, 5099
+	;存在しないキャラは除外
+	SIF ITEMPRICE:COUNT == 0
+		CONTINUE
+	CALLF SET_LIST, COUNT, 1
+	LOCAL:2 += 1
+NEXT
+LOCAL:1 = (LOCAL:2 - 1) / 50
+
+$PRINT_LIST
+DRAWLINE
+PRINTFORML どのキャラクターカードの枚数を変更しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+;キャラクターカードを表示
+LOCAL:2 = 0
+FOR COUNT, 1000, 5099
+	SIF GET_LIST(COUNT) == 0
+		CONTINUE
+	LOCAL:2 += 1
+	SIF LOCAL:2 >= LOCAL*50 && LOCAL:2 < (LOCAL+1)*50
+		PRINTFORMLC \@(ITEM:COUNT == 0) ? × # ○\@[{COUNT}]%ITEMNAME:COUNT, 14%
+NEXT
+PRINTL 
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [444]前のページ\@
+PRINTLC [555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [666]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 555
+	RETURN 0
+ELSEIF RESULT == 444 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 666 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 1000 || RESULT > 5099 || GET_LIST(RESULT) == 0
+	GOTO INPUT_LOOP
+ENDIF
+
+PRINTFORMW 【%ITEMNAME:RESULT%】のキャラクターカードを\@(ITEM:RESULT) ? 破棄 # 所持\@しました
+ITEM:RESULT = (ITEM:RESULT) ? 0 # 1
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+; DITEMTYPE操作
+;--------------------------------------------------
+@EDIT_DITEMTYPE
+VARSET LOCAL, 0
+DRAWLINE
+PRINTL 変更したいDITEMTYPEの一次配列(0-999)を入力してください(範囲外ならキャンセル)
+INPUT
+SIF RESULT < 0 || RESULT > 999
+	RETURN 0
+LOCAL = RESULT
+
+PRINTFORML 変更したいDITEMTYPE:{LOCAL}の二次配列(0-999)を入力してください(範囲外ならキャンセル)
+INPUT
+SIF RESULT < 0 || RESULT > 999
+	RETURN 0
+LOCAL:1 = RESULT
+
+PRINTFORML 変更したいDITEMTYPE:{LOCAL}:{LOCAL:1}の値を入力してください
+PRINTFORML (現在値：{DITEMTYPE:LOCAL:(LOCAL:1)}　負の値なら変更しない)
+INPUT
+SIF RESULT < 0
+	RETURN 0
+DITEMTYPE:LOCAL:(LOCAL:1) = RESULT
+PRINTFORMW DITEMTYPE:{LOCAL}:{LOCAL:1}の値を{RESULT}に変更しました
+
+;--------------------------------------------------
+;TSTR編集
+;--------------------------------------------------
+@EDIT_TSTR
+LOCAL = 0
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 現在立っているTSTR
+PRINTFORML どれを変更しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+REPEAT 400
+	SIF COUNT < LOCAL * 20 || COUNT >= (LOCAL + 1) * 20
+		CONTINUE
+	PRINTFORML [{COUNT, 3}] TSTR:{COUNT} = %TSTR:COUNT%
+REND
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= 19) ? %" " * 16% # [1009]次のページ\@
+PRINTL [1010]TSTRフラグ全リセット(要注意)
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < 19
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1010
+	VARSET TSTR
+	PRINTW TSTRフラグを全てリセットしました
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT > 400
+	GOTO INPUT_LOOP
+ENDIF
+DRAWLINE
+PRINTFORML TSTR:{RESULT}の変更(現在%TSTR:RESULT%)
+PRINTFORML 文字列を入力（空白でキャンセル）
+INPUTS
+SIF STRLENS(RESULTS) == 0
+	RETURN 0
+TSTR:RESULT = %RESULTS%
+GOTO PRINT_LIST
+
+;--------------------------------------------------
+;売却調査用能力操作
+;--------------------------------------------------
+@EDIT_RESEARCH_CHARA
+DRAWLINE
+PRINTFORML %CALLNAME:TARGET%の売却値を調査するための能力を変更します
+PRINTL どの基準に合わせますか？
+PRINTL [0] 売却可能(従順、欲望、技巧、奉仕精神、露出癖、全感覚Lv3)
+PRINTL [1] 育成済み(従順、欲望、技巧、奉仕精神、露出癖、全感覚Lv5)
+SIF CFLAG:1 >= 1
+	PRINTL [2] 売値確認
+PRINTL [3] ビデオの売値補正確認
+PRINTL [100] 戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	CALL EDIT_CHARASALE_ABILITY, 3
+ELSEIF RESULT == 1
+	CALL EDIT_CHARASALE_ABILITY, 5
+ELSEIF RESULT == 2 && CFLAG:1 >= 1
+	CALL RESEARCH_CHARASALE_CALC
+ELSEIF RESULT == 3
+	CALL RESEARCH_SELLVIDEO_CALC
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;………………………………………………
+;売却調査用能力操作実行処理
+;………………………………………………
+@EDIT_CHARASALE_ABILITY, ARG
+;売却可能フラグ
+SIF CFLAG:1 < 1
+	CFLAG:1 = 1
+;従順、欲望、技巧、奉仕精神、露出癖、全感覚を指定レベルに
+REPEAT 15
+	SIF COUNT >= 4 && COUNT < 10
+		CONTINUE
+	ABL:COUNT = ARG
+REND
+;[処女]や[オトコ]の場合、Ｖ感覚は0として扱う
+SIF TALENT:処女 || TALENT:オトコ
+	ABL:Ｖ感覚 = 0
+;『売却可能』の特殊処理
+IF ARG == 3
+	;[解放]に変化[抑圧]は元に戻す。また[抵抗]が消滅している場合、復活させる
+	IF CFLAG:13 & 1 && TALENT:抑圧 == 0
+		TALENT:抑圧 = 1
+		CFLAG:13 -= 1
+		IF CFLAG:12 & 65536 && TALENT:解放
+			TALENT:解放 = 0
+			CFLAG:12 -= 65536
+		ENDIF
+	ENDIF
+	IF CFLAG:13 & 2 && TALENT:抵抗 == 0
+		TALENT:抵抗 = 1
+		CFLAG:13 -= 2
+	ENDIF
+	;売却に従順や欲望がLv4以上必要な場合、Lv4に引き上げ
+	SIF TALENT:反抗的 || TALENT:気丈
+		ABL:従順 = 4
+	SIF TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗
+		ABL:欲望 = 4
+	PRINTFORMW %CALLNAME:TARGET%を『売却可能』な能力に合わせました
+;『育成済み』の特殊処理
+ELSE
+	;[抑圧]は消滅して[解放]に変化、[抵抗]は消滅したと仮定
+	IF TALENT:抑圧
+		TALENT:抑圧 = 0
+		TALENT:解放 = 1
+		CFLAG:13 |= 1
+		CFLAG:12 |= 65536
+	ENDIF
+	IF TALENT:抵抗
+		TALENT:抵抗 = 0
+		CFLAG:13 |= 2
+	ENDIF
+	PRINTFORMW %CALLNAME:TARGET%を『育成済み』の能力に合わせました
+ENDIF
+
+;………………………………………………
+;売値確認
+;………………………………………………
+@RESEARCH_CHARASALE_CALC
+CALL SALE_CHARA, TARGET
+IF TALENT:狂気 && (TALENT:相愛 || ((TALENT:妄信 || TALENT:嫉妬) && TALENT:服従 == 0 && TALENT:淫乱 == 0 && ABL:従順 < 5))
+	TIMES RESULT , 0.10
+	PRINTFORML 輸送時に破壊暴走し失踪 ×0.10
+ENDIF
+RESULT = MAX(RESULT, 0)
+PRINTFORML 今の状態で%CALLNAME:TARGET%を売却すると{RESULT}圓で売れることになります。\@(RESULT < 10000) ? 安っ！ # やったね！\@
+PRINTFORMW ※{RESULT:1}圓(奴隷の売値の基礎値) × {(RESULT:2)/10000}\@((RESULT:2)%10000/10 < 100) ? .0 # .\@{((RESULT:2)%10000/10)}(基礎Buy率補正) × α(その他の補正)
+
+;………………………………………………
+;ビデオの売値補正確認
+;………………………………………………
+@RESEARCH_SELLVIDEO_CALC
+LOCAL = MAX(VIDEO_TALENT_BONUS(10000), 0)
+PRINTFORML 今の%CALLNAME:TARGET%はビデオの売値の倍率が{LOCAL/10000}\@(LOCAL%10000/10 < 100) ? .0 # .\@{(LOCAL%10000/10)}倍になります。\@(LOCAL < 10000) ? なんてこったい！ # やったね！\@
+PRINTFORMW ※ビデオは写したコマンド(＋価格調整)、シーンボーナス、タイトルボーナス等価格を左右する要素が複数あります
+
+;--------------------------------------------------
+;称号編集
+;--------------------------------------------------
+@EDIT_NICKNAME
+$PRINT_LIST
+;本来の称号の文字数保持用ローカル変数のリセット
+LOCAL = 0
+DRAWLINE
+STRLENS NICKNAME:TARGET
+IF RESULT > 0
+	PRINTFORML 現在の称号は「%NICKNAME:TARGET%」です
+ELSE
+	PRINTL 現在は称号を持って(名乗って)いません
+ENDIF
+CSVNICKNAME NO:TARGET , 0
+STRLENS RESULTS
+LOCAL = RESULT
+PRINTL 称号をどうしますか？
+PRINTL [0] 現在の称号のままにする
+SIF LOCAL > 0 && CFLAG:0 == 0
+	PRINTFORML [1] 本来の称号(%RESULTS%)に戻す
+PRINTL [2] 称号を消す
+PRINTL [3] 称号を入力する
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTFORMW %CALLNAME:TARGET%の称号を変更しませんでした
+	RETURN 1
+ELSEIF RESULT < 0 || RESULT > 3
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 2
+	PRINTFORMW %CALLNAME:TARGET%の称号を消去しました
+	NICKNAME:TARGET = 
+	RETURN 1
+ELSEIF RESULT == 1
+	NICKNAME:TARGET = %RESULTS%
+	PRINTFORMW %CALLNAME:TARGET%の称号を本来のものに戻しました。
+	RETURN 1
+ELSEIF RESULT != 3
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORML %CALLNAME:TARGET%の新しい称号を入力してください。
+PRINTFORML 空白の場合は変更しません。
+
+$INPUT_LOOP2
+INPUTS
+SIF STRLENS(RESULTS) == 0
+	RETURN 0
+NICKNAME:TARGET = %RESULTS%
+PRINTFORML %CALLNAME:TARGET%の称号は
+PRINTFORMW 「%NICKNAME:TARGET%」としました。
+RETURN 1
+
+;--------------------------------------------------
+; CSTR操作
+;--------------------------------------------------
+;CSTRのうち除外したい場合は使う
+@DISP_CSTR, ARG
+#FUNCTION
+;SIF ARG != 14 && ARG != 15
+;	RETURN 0
+RETURNF 1
+
+;CSTRのうち説明を付与したい場合は使う
+@DEFINE_CSTR, ARG
+IF ARG == 1
+	PRINT 主人の時の家の表示
+ELSEIF ARG == 2
+	PRINT 裸体盛り特別メニュー
+ELSEIF ARG == 3
+	PRINT どのように館に来たか
+ELSEIF ARG == 4
+	PRINT そのキャラの自宅名
+ELSEIF ARG == 11
+	PRINT 汎用口上における一人称
+ELSEIF ARG == 12
+	PRINT 汎用口上における二人称
+ELSEIF ARG == 13
+	PRINT 汎用口上における特殊語尾1
+ELSEIF ARG == 14
+	PRINT 汎用口上における特殊語尾2
+ELSEIF ARG == 15
+	PRINT 汎用口上におけるお母さん
+ELSEIF ARG == 16
+	PRINT 汎用逆口上における一人称
+ELSEIF ARG == 17
+	PRINT 汎用逆口上における二人称
+ELSEIF ARG == 18
+	PRINT 汎用逆口上における特殊語尾1
+ELSEIF ARG == 19
+	PRINT 汎用逆口上における特殊語尾2
+ELSEIF ARG == 20
+	PRINT 汎用逆口上におけるお母さん
+ELSEIF ARG == 21
+	PRINT １人目の赤子の名前
+ELSEIF ARG == 22
+	PRINT ２人目の赤子の名前
+ELSEIF ARG == 23
+	PRINT ３人目の赤子の名前
+ELSEIF ARG == 24
+	PRINT １人目の赤子の呼び名
+ELSEIF ARG == 25
+	PRINT ２人目の赤子の呼び名
+ELSEIF ARG == 26
+	PRINT ３人目の赤子の呼び名
+ELSEIF ARG == 27
+	PRINT １人目の赤子のあだ名
+ELSEIF ARG == 28
+	PRINT ２人目の赤子のあだ名
+ELSEIF ARG == 29
+	PRINT ３人目の赤子のあだ名
+ELSEIF ARG == 31
+	PRINT ぱんくしょんにおける名称表示
+ELSEIF ARG == 32
+	PRINT ぱんくしょんにおける種族表示(分類)
+ELSEIF ARG == 33
+	PRINT ぱんくしょんにおける種族表示(詳細)
+ELSEIF ARG == 87
+	PRINT 口上定義による固有チョコ名
+ELSEIF ARG == 88
+	PRINT 口上定義による固有料理名
+ELSEIF ARG == 89
+	PRINT 口上定義による持ち歌名
+ELSEIF ARG > 95
+	PRINT 口上側による設定文字列
+ELSE
+	PRINT ――
+ENDIF
+
+;CSTR変更-----------------------------------------------------------
+@EDIT_CSTR
+DRAWLINE
+PRINTL 現在使用中の装着系の道具の状態
+FOR LOCAL, 0, 100
+	LOCAL:1 = DISP_CSTR(LOCAL)
+	SIF LOCAL:1 == 0 || CSTR:LOCAL == ""
+		CONTINUE
+	PRINTFORM [{LOCAL, 3}] CSTR:{LOCAL} = %CSTR:LOCAL%
+	IF LOCAL:1
+		PRINT (
+		CALL DEFINE_CSTR, LOCAL
+		PRINTL )
+	ENDIF
+NEXT
+PRINTL 
+PRINTL [0-99]対応する番号のCSTRの状態の変更（無効な数値でキャンセル）
+PRINTL [100]CSTRの状態の全リセット（要注意）
+PRINTL [200]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	VARSET CSTR
+	PRINTW CSTRの状態を全てリセットしました
+	RESTART
+ELSEIF RESULT == 200
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+DRAWLINE
+PRINTS CSTR:LOCAL
+IF DISP_CSTR(LOCAL)
+	PRINT (
+	CALL DEFINE_CSTR, LOCAL
+	PRINT )
+ENDIF
+PRINTFORML の変更
+PRINTFORML 文字列を入力（無入力でキャンセル）
+INPUTS
+SIF RESULTS == ""
+	RESTART
+CSTR:LOCAL = %RESULTS%
+
+RESTART
+
+;--------------------------------------------------
+; SAVESTR操作
+;--------------------------------------------------
+;SAVESTRのうち除外したい場合は使う
+@DISP_SAVESTR, ARG
+#FUNCTION
+RETURNF 1
+
+;SAVESTRのうち説明を付与したい場合は使う
+@DEFINE_SAVESTR, ARG
+IF ARG == 1
+	PRINT エンディング到達後の主人の本拠地の名称
+ELSE
+	PRINT ――
+ENDIF
+
+;SAVESTR変更-----------------------------------------------------------
+@EDIT_SAVESTR
+DRAWLINE
+PRINTL 現在使用中のSAVESTRの状態
+FOR LOCAL, 0, 100
+	LOCAL:1 = DISP_SAVESTR(LOCAL)
+	SIF LOCAL:1 == 0 || SAVESTR:LOCAL == ""
+		CONTINUE
+	PRINTFORM [{LOCAL, 3}] SAVESTR:{LOCAL} = %SAVESTR:LOCAL%
+	IF LOCAL:1
+		PRINT (
+		CALL DEFINE_SAVESTR, LOCAL
+		PRINTL )
+	ENDIF
+NEXT
+PRINTL 
+PRINTL [0-99]対応する番号のSAVESTRの状態の変更（無効な数値でキャンセル）
+PRINTL [100]SAVESTRの状態の全リセット（要注意）
+PRINTL [200]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	VARSET SAVESTR
+	PRINTW SAVESTRの状態を全てリセットしました
+	RESTART
+ELSEIF RESULT == 200
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+DRAWLINE
+PRINTS SAVESTR:LOCAL
+IF DISP_SAVESTR(LOCAL)
+	PRINT (
+	CALL DEFINE_SAVESTR, LOCAL
+	PRINT )
+ENDIF
+PRINTFORML の変更
+PRINTFORML 文字列を入力（無入力でキャンセル）
+INPUTS
+SIF RESULTS == ""
+	RESTART
+SAVESTR:LOCAL = %RESULTS%
+
+RESTART
+
+;=============================================================================
+;エンディングテスト
+;=============================================================================
+@EDIT_ENDING_TEST
+CALLF CLEAR_LIST
+DRAWLINE
+PRINTL どのエンディングをテストしますか？
+DRAWLINE
+REPEAT 400
+	SIF COUNT == 0
+		CONTINUE
+	STRLENS STR:(10000+COUNT)
+	SIF RESULT < 1
+		CONTINUE
+	PRINTFORMLC [{COUNT, 2}] %STR:(10000+COUNT)%
+	CALLF SET_LIST, COUNT, 1
+REND
+PRINTL 
+DRAWLINE
+PRINTL [100]キャンセル
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 999
+	GOTO INPUT_LOOP
+ELSEIF GET_LIST(RESULT) == 1
+	PRINTFORMW %STR:(10000+RESULT)%の動作テストを行います
+	PRINTW  
+	CALLFORM ENDING_{RESULT}
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+
+;=============================================================================
+;蒐集品編集
+;=============================================================================
+;--------------------------------------------------
+;編集する蒐集品の選択
+;--------------------------------------------------
+@EDIT_COLLECTION_MENU
+VARSET LOCALS,""
+SPLIT "キャラごとの蒐集品,尻子玉,黄金水,愛液,血液,破瓜血,パンティー,写真,ビデオ,母乳,卵,触手,陰毛",",",LOCALS
+TFLAG:0 = 0
+PRINTL 何をしますか？
+DRAWLINE
+REPEAT 13
+	PRINTFORML [{COUNT,2}] \@(COUNT == 0) ? %LOCALS:0% # 蒐集品『%LOCALS:COUNT%』\@の編集
+REND
+PRINTL [100]戻る
+DRAWLINE
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	CALL COLLECTION_EDIT_RESET
+	RETURN 0
+ELSEIF RESULT >= 0 && RESULT <= 12
+	TSTR:0 = %LOCALS:RESULT%
+ELSE
+	GOTO INPUT_LOOP_1
+ENDIF
+TFLAG:0 = RESULT
+CALL EDIT_COLLECTION_MAIN
+RESTART
+
+;--------------------------------------------------
+;蒐集品編集メインメニュー
+;--------------------------------------------------
+@EDIT_COLLECTION_MAIN
+;変数のリセット
+LOCAL = 1
+LOCAL:1 = 0
+
+;ページをめくったときなどはここから
+$PRINT_LIST_PAGE
+CALL PAGE_COLLECTION_EDIT_LIST
+LOCAL:1 = RESULT
+
+DRAWLINE
+PRINTFORML 対象キャラを選択してください ＜page.{LOCAL}＞
+PRINTFORML 現在『%TSTR:0%』を選択中
+CALL ARRANGE_COLLECTION_EDIT_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 1) ? %" " * 16 % # [444]前のページ\@
+PRINTLC [555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16 % # [666]次のページ\@
+PRINTL 
+$INPUT_LOOP_MAIN
+INPUT
+IF RESULT == 555
+	RETURN 0
+ELSEIF RESULT == 444 && LOCAL > 1
+	LOCAL -= 1
+ELSEIF RESULT == 666 && LOCAL < LOCAL:1
+	LOCAL += 1
+ELSEIF RESULT < 5099 && GET_LIST(RESULT) == 1
+	DRAWLINE
+	IF TFLAG:0 == 0
+		CALL COLLECTION_EDIT_0, RESULT
+	ELSE
+		CALL COLLECTION_EDIT_COMMON, RESULT
+	ENDIF
+ELSE
+	GOTO INPUT_LOOP_MAIN
+ENDIF
+GOTO PRINT_LIST_PAGE
+
+;--------------------------------------------------
+;蒐集品編集のページ数決定用
+;--------------------------------------------------
+@PAGE_COLLECTION_EDIT_LIST
+LOCAL = 0
+CALLF CLEAR_LIST
+;キャラが存在していたら表示可能フラグを立てる
+FOR LOCAL:10, 1, 6
+	REPEAT 120
+		IF ITEMPRICE:(COUNT + 1000 * LOCAL:10) > 0
+			CALLF SET_LIST, COUNT + 1000 * LOCAL:10, 1
+			LOCAL += 1
+		ENDIF
+	REND
+NEXT
+IF (LOCAL%30) == 0
+	LOCAL /= 30
+ELSE
+	LOCAL /= 30
+	LOCAL += 1
+ENDIF
+RETURN LOCAL
+
+;--------------------------------------------------
+;蒐集品編集可能なキャラの補助表示
+;--------------------------------------------------
+@ARRANGE_COLLECTION_EDIT_LIST, ARG
+LOCAL:1 = 0
+FOR LOCAL:10, 1, 6
+	FOR LOCAL:11, 0, 120
+		SIF (1000 * LOCAL:10 + LOCAL:11) == 1000
+			CONTINUE
+		;表示否の場合は除外
+		SIF GET_LIST(1000 * LOCAL:10 + LOCAL:11) == 0
+			CONTINUE
+		LOCAL:1 += 1
+		;どこからどこまでを陳列するか
+		SIF LOCAL:1 <= (ARG * 30) && LOCAL:1 > (ARG - 1) * 30
+			PRINTFORMLC [{(1000 * LOCAL:10 + LOCAL:11)}]%ITEMNAME:(1000 * LOCAL:10 + LOCAL:11)%
+	NEXT
+NEXT
+
+PRINTL 
+
+;-----------------------------------------
+;キャラごとの蒐集品の編集
+;-----------------------------------------
+@COLLECTION_EDIT_0, ARG
+PRINTFORML %ITEMNAME:ARG%の%TSTR:0%をどうしますか？
+PRINTL [0] 全部持っていないことにする
+PRINTL [1] 全部1つずつ持っていることにする
+PRINTL [2] キャンセル
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 0
+	PRINTFORMW %ITEMNAME:ARG%の%TSTR:0%を持っていないように編集しました
+ELSEIF RESULT == 1
+	PRINTFORMW %ITEMNAME:ARG%の%TSTR:0%を1つずつ入手しているように編集しました
+ELSEIF RESULT == 2
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP_0
+ENDIF
+FOR COUNT, 1, 13
+	DA:ARG:COUNT = RESULT
+NEXT
+
+;-----------------------------------------
+;蒐集品の編集の汎用処理
+;-----------------------------------------
+@COLLECTION_EDIT_COMMON, ARG
+PRINTFORML 現在%ITEMNAME:ARG%の%TSTR:0%を{DA:ARG:(TFLAG:0)}所持しています
+PRINTL 変更したい値を入力してください(最大999まで・無効な値はキャンセル)
+PRINTLC  [ 0] 所持数  0
+PRINTLC  [ 1] 所持数  1
+PRINTLC  [ 5] 所持数  5
+PRINTLC  [10] 所持数 10
+PRINTLC [999] 所持数999
+PRINTLC [1000]やめる
+PRINTL 
+INPUT
+IF RESULT >= 0 && RESULT <= 999
+	PRINTFORMW %ITEMNAME:ARG%の%TSTR:0%を{RESULT}入手しているように編集しました
+	DA:ARG:(TFLAG:0) = RESULT
+ELSE
+	RETURN 0
+ENDIF
+
+;-----------------------------------------
+;蒐集品の種類の修正処理
+;-----------------------------------------
+@COLLECTION_EDIT_RESET
+REPEAT 13
+	FLAG:(COUNT+500) = 0
+REND
+FOR LOCAL:1, 1, 6
+	FOR LOCAL:2, 0, 120
+		FOR LOCAL:3, 1, 13
+			SIF DA:(1000 * LOCAL:1 + LOCAL:2):(LOCAL:3)
+				FLAG:(500 + LOCAL:3) += 1
+		NEXT
+	NEXT
+NEXT
+FOR COUNT, 1, 13
+	FLAG:500 += FLAG:(COUNT+500)
+NEXT
+
+;=============================================================================
+;クイックロード用設定
+;=============================================================================
+@QUICKLOAD
+FLAG:1 = 1
+BEGIN SHOP

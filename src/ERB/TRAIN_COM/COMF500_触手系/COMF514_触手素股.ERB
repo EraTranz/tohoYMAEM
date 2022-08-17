@@ -1,0 +1,181 @@
+﻿;=============================================================================
+;触手素股
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE514
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:514 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;調教対象にペニスがついているとダメ
+SIF EXIST_BAR(TARGET)
+	RETURN 0
+;潤滑が高くないとダメ
+SIF PALAM:潤滑 < 2000
+	RETURN 0
+;Ｖ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;触手尿道挿入中はダメ
+SIF TEQUIP:Ｕ系装着器具
+	RETURN 0
+;触手緊縛中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;人魚はダメ
+SIF TALENT:人魚 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 514) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM514
+PRINTL 触手素股
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 514
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手素股
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 70
+DOWNBASE:1 += 150
+
+SOURCE:不潔 = 1500
+SOURCE:屈従 = 1200
+SOURCE:逸脱 = 400
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 = 50
+	SOURCE:達成感 = 60
+	TIMES SOURCE:不潔 , 4.00
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 = 75
+	SOURCE:達成感 = 80
+	TIMES SOURCE:不潔 , 2.50
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:性行動 = 100
+	SOURCE:達成感 = 120
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:性行動 = 150
+	SOURCE:達成感 = 300
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:性行動 = 200
+	SOURCE:達成感 = 400
+	TIMES SOURCE:不潔 , 0.50
+ELSE
+	SOURCE:性行動 = 300
+	SOURCE:達成感 = 600
+	TIMES SOURCE:不潔 , 0.10
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 10
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 50
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 100
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 250
+ELSE
+	LOCAL:1 = 500
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL:1 , 0.30
+	TIMES SOURCE:性行動 , 0.60
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL:1 , 0.60
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:性行動 , 1.20
+ELSEIF PALAM:潤滑 < PALAMLV:5
+	TIMES LOCAL:1 , 2.00
+	TIMES SOURCE:性行動 , 1.40
+ELSE
+	TIMES LOCAL:1 , 2.50
+	TIMES SOURCE:性行動 , 1.60
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 1.00
+	TIMES SOURCE:性行動 , 0.60
+	TIMES SOURCE:達成感 , 0.60
+	TIMES SOURCE:不潔 , 2.00
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 1.20
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 1.80
+	TIMES SOURCE:性行動 , 1.30
+	TIMES SOURCE:達成感 , 1.30
+	TIMES SOURCE:不潔 , 0.50
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 2.00
+	TIMES SOURCE:性行動 , 1.80
+	TIMES SOURCE:達成感 , 1.80
+	TIMES SOURCE:不潔 , 0.10
+ELSE
+	TIMES LOCAL:1 , 2.40
+	TIMES SOURCE:性行動 , 2.20
+	TIMES SOURCE:達成感 , 2.20
+	TIMES SOURCE:不潔 , 0.00
+ENDIF
+SOURCE:快Ｃ += LOCAL:1
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_514
+PRINTFORML 左右から近づいてきた触手は%CALLNAME:TARGET%の脚を閉じさせ、股にはさまれるような感じで、別の触手が%CALLNAME:TARGET%の
+IF TALENT:小柄体型
+	PRINT 幼いワレメを
+ELSE
+	PRINT 陰唇を
+ENDIF
+PRINTL 擦り始めた…

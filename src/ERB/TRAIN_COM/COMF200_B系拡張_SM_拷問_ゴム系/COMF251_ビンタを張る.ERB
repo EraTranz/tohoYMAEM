@@ -1,0 +1,78 @@
+﻿;=============================================================================
+;ビンタを張る
+;=============================================================================
+;実際には苦痛があるためもっと体力気力をもっていかれる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE251
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:251 > 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 251) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM251
+PRINTL ビンタを張る
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 251
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ビンタを張る
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 80
+DOWNBASE:1 += 50
+
+SOURCE:露出 = 100
+SOURCE:逸脱 = 700
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 330
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 550
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 880
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 1320
+ELSE
+	SOURCE:痛み = 1980
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 1
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_251
+PRINTFORML %CALLNAME:TARGET%の頬を平手で強く叩いた
+PRINTFORML 何度も何度も叩かれている内に、%CALLNAME:TARGET%の頬は真っ赤に腫れていった…

@@ -1,0 +1,192 @@
+﻿;=============================================================================
+;昆虫採集セットの薬
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE421
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:421 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が永琳じゃないとダメ
+SIF NO:PLAYER != 1029
+	RETURN 0
+;媚薬、利尿剤、排卵誘発剤、賢者の血全てを最低1つずつ持っていないとダメ
+SIF ITEM:媚薬 == 0 || ITEM:利尿剤 == 0 || ITEM:排卵誘発剤 == 0 || ITEM:賢者の血 == 0
+	RETURN 0
+;体力が1000未満では使用不可
+SIF BASE:体力 < 1000 && !(FLAG:16 & 32)
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;昆虫採集セットの薬効果発揮中は不可
+SIF TEQUIP:昆虫採集セットの薬
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 421) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM421
+PRINTL 昆虫採集セットの薬
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 421
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 昆虫採集セットの薬
+
+LOCAL:1 = RAND:16
+TFLAG:99 = LOCAL:1
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 300
+DOWNBASE:1 += 300
+
+SOURCE:薬物浸潤 = 3500
+SOURCE:逸脱 = 7000
+SOURCE:反感追加 = 1500
+
+LOCAL:2 = 1000
+LOCAL:3 = 5000
+
+IF LOCAL:1 == 0
+	SOURCE:快Ｃ = LOCAL:3
+	SIF TALENT:オトコ == 0
+		SOURCE:快Ｖ = LOCAL:3
+	SOURCE:快Ａ = LOCAL:3
+	SOURCE:欲情追加 = LOCAL:3
+	SOURCE:露出 = LOCAL:3
+	SOURCE:快Ｂ = LOCAL:3
+ELSEIF LOCAL:1 >= 1 && LOCAL:1 < 3 && TALENT:オトコ == 0
+	IF ABL:Ｖ感覚 <= 2
+		SOURCE:快Ｖ = LOCAL:2
+		SOURCE:露出 = LOCAL:2
+	ELSE
+		SOURCE:快Ｖ = LOCAL:3
+		SOURCE:露出 = LOCAL:3
+	ENDIF
+ELSEIF LOCAL:1 >= 3 && LOCAL:1 < 5
+	IF ABL:Ａ感覚 <= 2
+		SOURCE:快Ａ = LOCAL:2
+		SOURCE:露出 = LOCAL:2
+	ELSE
+		SOURCE:快Ａ = LOCAL:3
+		SOURCE:露出 = LOCAL:3
+	ENDIF
+ELSEIF LOCAL:1 >= 5 && LOCAL:1 < 8
+	IF ABL:Ｂ感覚 <= 2
+		SOURCE:快Ｂ = LOCAL:2
+		SOURCE:露出 = LOCAL:2
+	ELSE
+		SOURCE:快Ｂ = LOCAL:3
+		SOURCE:露出 = LOCAL:3
+	ENDIF
+ELSEIF LOCAL:1 >= 8 && LOCAL:1 < 11
+	IF ABL:Ｃ感覚 <= 2
+		SOURCE:快Ｃ = LOCAL:2
+		SOURCE:露出 = LOCAL:2
+	ELSE
+		SOURCE:快Ｃ = LOCAL:3
+		SOURCE:露出 = LOCAL:3
+	ENDIF
+ELSEIF LOCAL:1 == 15 && TALENT:動物耳 == 0
+	PRINTFORML %CALLNAME:TARGET%は[動物耳]を得た
+	TALENT:動物耳 = 1
+ELSE
+	SOURCE:欲情追加 = 7000
+	PALAM:恐怖 += 4000
+ENDIF
+
+;媚薬、利尿剤、排卵誘発剤、賢者の血を1つずつ消費
+CALL USE_PLURAL_ITEM, 61, 1
+CALL USE_PLURAL_ITEM, 62, 1
+CALL USE_PLURAL_ITEM, 64, 1
+CALL USE_PLURAL_ITEM, 66, 1
+
+PALAM:恐怖 += 1000
+TEQUIP:昆虫採集セットの薬 = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 3
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_421
+PRINTFORM %CALLNAME:PLAYER%は
+SIF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ || ABL:PLAYER:サドっ気 > 2
+	PRINT 嗜虐的な笑みを浮かべると、嫌がる
+PRINTFORML %CALLNAME:TARGET%を組み伏せ、怪しげな液体を注入した
+IF TFLAG:99 == 0
+	PRINTFORML %CALLNAME:TARGET%は一瞬苦しそうな表情を浮かべていたが、次の瞬間強烈な疼きが体の芯から滲み出てきた%CALLNAME:TARGET%はあらゆる性感帯を一度に刺激された錯覚に陥った
+ELSEIF TFLAG:99 >= 1 && TFLAG:99 < 3 && TALENT:オトコ == 0
+	PRINTFORM %CALLNAME:TARGET%は
+	SIF TALENT:処女 == 1
+		PRINT 処女であるにもかかわらず
+	PRINTL 子宮の奥が疼き始めた
+ELSEIF TFLAG:99 >= 3 && TFLAG:99 < 5
+	PRINTFORM %CALLNAME:TARGET%は
+	SIF EXP:Ａ経験 == 0
+		PRINT 今まで後ろの穴を弄られたことがなかったにもかかわらず
+	PRINTL 急激に菊門をほじって貰いたい衝動に襲われた
+ELSEIF TFLAG:99 >= 5 && TFLAG:99 < 8
+	PRINTFORM %CALLNAME:TARGET%の
+	IF TALENT:絶壁 || TALENT:貧乳
+		PRINT 僅かに膨らんだ胸に乗っている豆の様な乳首が
+	ELSEIF TALENT:巨乳 || TALENT:爆乳
+		PRINT 豊満な双丘の頂点にある突起が
+	ELSE
+		PRINT 形が整った乳房の先端が
+	ENDIF
+	PRINTL いきなり尖り始めた
+ELSEIF TFLAG:99 >= 8 && TFLAG:99 < 11
+	PRINTFORM %CALLNAME:TARGET%の
+	IF EXIST_PENIS(TARGET)
+		PRINTL 陰茎は突然疼き始めた
+	ELSEIF TALENT:肥大陰核
+		PRINTL ペニスの様に巨大な陰核は突然疼き始めた
+	ELSE
+		SIF TALENT:小柄体型
+			PRINT 可愛らしい小さな
+		PRINTL 陰核は剥き出しの状態になった
+	ENDIF
+ELSEIF TFLAG:99 == 15 && TALENT:動物耳 == 0
+	PRINTFORM %CALLNAME:TARGET%の頭に突如
+	PRINTDATA LOCAL
+		DATA イヌミミ
+		DATA ネコミミ
+		DATA キツネミミ
+		DATA ウサミミ
+		DATA エルフミミ
+	ENDDATA
+	PRINTL が生えてしまった
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は荒い息をつきながら爪が腕に食い込む程自分の体をぎゅっと抱きしめている
+	PRINTFORML それでも体の火照りを抑えられなくなったのか%CALLNAME:TARGET%の足元には愛液で出来た水たまりが広がっている……
+ENDIF

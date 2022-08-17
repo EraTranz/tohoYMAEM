@@ -1,0 +1,114 @@
+﻿;=============================================================================
+;利尿剤
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE62
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:62 > 0
+	RETURN 0
+;アイテムを持っているか触手調教中でないとダメ
+SIF ITEM:利尿剤 == 0 && TEQUIP:触手調教 == 0
+	RETURN 0
+;薬毒耐性の場合、直接注入以外ダメ
+SIF TALENT:薬毒耐性 && TEQUIP:触手調教 == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;睡眠中は不可
+;SIF EQUIP:睡眠薬
+;	RETURN 0
+;失神中は不可
+;SIF TFLAG:899 > 0
+;	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 62) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM62
+IF TEQUIP:触手調教
+	PRINTL 触手利尿剤展開
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 62
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 触手利尿剤展開
+ELSE
+	PRINTL 利尿剤
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 62
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 利尿剤
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 50
+ELSE
+	DOWNBASE:0 += 120
+	DOWNBASE:1 += 120
+ENDIF
+
+SOURCE:薬物浸潤 = 100
+SOURCE:逸脱 = 2000
+;利尿剤効果で軽く変動
+SOURCE:反感追加 = 150
+
+;触手でない場合は利尿剤を1個使用
+SIF TEQUIP:触手調教 == 0
+	CALL USE_PLURAL_ITEM, 62, 1
+TEQUIP:利尿剤 = 1
+
+CALL CALC_GAUGE4_SLAVE, TARGET, 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_62
+IF TEQUIP:触手調教
+	PRINTFORML 極細い触手が、利尿作用のある液体を尿道から直接流し込んだ…
+ELSE
+	PRINTFORM %CALLNAME:TARGET%に
+	SIF ABL:PLAYER:技巧 >= 3
+		PRINT 口移しで
+	SIF ABL:従順 <= 2
+		PRINT 無理やり
+	PRINTL 利尿剤を飲ませた
+ENDIF
+PRINTFORML %CALLNAME:TARGET%は荒い息をつき、涙を浮かべて尿意に耐えている…
+;IF EQUIP:睡眠薬 == 0 || TFLAG:899 == 0
+;	PRINTFORML %CALLNAME:TARGET%は荒い息をつき、涙を浮かべて尿意に耐えている…
+;ELSEIF EQUIP:睡眠薬
+;	PRINTFORML %CALLNAME:TARGET%は眠りながらも荒い息をつき、小さな呻き声をあげている…
+;ENDIF

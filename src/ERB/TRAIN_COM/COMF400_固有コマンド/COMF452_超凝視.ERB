@@ -1,0 +1,150 @@
+﻿;=============================================================================
+;超凝視
+;=============================================================================
+;このロリコンどもめ！
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE452
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:452 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者がユウゲンマガンでないとダメ
+SIF NO:PLAYER != 2021
+	RETURN 0
+;狂人には通用しない
+SIF TALENT:狂気
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;アイマスク、暗闇展開中は不可能
+SIF TEQUIP:目装着器具 || TEQUIP:暗闇
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 452) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM452
+PRINTL 超凝視
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 452
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 超凝視
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;発動中であれば発動停止
+IF TEQUIP:超凝視
+	TEQUIP:超凝視 = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 40
+
+SOURCE:羞恥扇情 = 700
+SOURCE:逸脱 = 4500
+SOURCE:支配 = 500
+
+TEQUIP:超凝視 = 1
+RETURN 1
+
+;-------------------------------------------------
+;超凝視発動中
+;-------------------------------------------------
+;パラメータ変化。情愛主導権達成感屈従中毒充足トラウマ羞恥扇情性技学習のソースをランダムに入れ替え
+;加算される可能性を置いているのはカオスっぽくなるから
+;またカオスさを増強させるため、さらにパラメーターに加算される値が上下に変化するように
+@EQUIP_COM452
+VARSET LOCAL, 0
+PRINTL ＜超凝視発動中＞
+;テンポラリに配置して、元々のSOURCE値をリセット
+LOCAL:1 = SOURCE:情愛
+LOCAL:2 = SOURCE:主導権
+LOCAL:3 = SOURCE:達成感
+LOCAL:4 = SOURCE:屈従
+LOCAL:5 = SOURCE:中毒充足
+LOCAL:6 = SOURCE:トラウマ
+LOCAL:7 = SOURCE:羞恥扇情
+LOCAL:8 = SOURCE:性技学習
+SOURCE:情愛 = 0
+SOURCE:主導権 = 0
+SOURCE:達成感 = 0
+SOURCE:屈従 = 0
+SOURCE:中毒充足 = 0
+SOURCE:トラウマ = 0
+SOURCE:羞恥扇情 = 0
+SOURCE:性技学習 = 0
+
+;再計算
+FOR LOCAL , 1, 9
+	LOCAL:9 = LOCAL:LOCAL
+	IF RAND:3 == 0
+		TIMES LOCAL:9 , 0.80
+	ELSEIF RAND:2 == 0
+		TIMES LOCAL:9 , 1.20
+	ENDIF
+	LOCAL:10 = RAND:100
+	LOCAL:10 %= 8
+	SELECTCASE LOCAL:10
+		CASE 0
+			SOURCE:情愛 += LOCAL:9
+		CASE 1
+			SOURCE:主導権 += LOCAL:9
+		CASE 2
+			SOURCE:達成感 += LOCAL:9
+		CASE 3
+			SOURCE:屈従 += LOCAL:9
+		CASE 4
+			SOURCE:中毒充足 += LOCAL:9
+		CASE 5
+			SOURCE:トラウマ += LOCAL:9
+		CASE 6
+			SOURCE:羞恥扇情 += LOCAL:9
+		CASE 7
+			SOURCE:性技学習 += LOCAL:9
+	ENDSELECT
+NEXT
+
+LOCAL = RAND:5
+IF LOCAL == 0
+	;不潔が欲情追加に追加
+	LOCAL:11 = SOURCE:不潔 / 10 * 7
+	SOURCE:欲情追加 += LOCAL:11
+ELSEIF LOCAL == 1
+	;逸脱が恭順追加に追加
+	LOCAL:11 = SOURCE:逸脱 / 10 * 7
+	SOURCE:恭順追加 += LOCAL:11
+ELSEIF LOCAL == 2
+	;反感追加が液体追加に追加
+	LOCAL:11 = SOURCE:反感追加 / 10 * 7
+	SOURCE:液体追加 += LOCAL:11
+ENDIF
+;最後に快CVABの合計に比例して支配のソースが増える
+LOCAL:11 = (SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ) / 10 * 7
+SOURCE:支配 += LOCAL:11
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_452
+IF TEQUIP:超凝視
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を覗きこむのをやめた…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%をその瞳で覗きこんだ…
+ENDIF

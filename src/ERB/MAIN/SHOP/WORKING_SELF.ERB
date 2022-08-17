@@ -1,0 +1,256 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;工作関連の処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;工作選擇処理
+;=============================================================================
+@WORKING_SELF
+VARSET LOCAL, 0
+
+LOCAL:9 = TARGET
+TARGET = MASTER
+
+$LABORING_SELECT_LOOP
+LOCAL = RAND:5
+LOCAL:1 = 0
+LOCAL:2 = 0
+
+;ABL:技巧
+IF ABL:技巧 == 0
+	LOCAL:2 = 15
+ELSEIF ABL:技巧 == 1
+	LOCAL:2 = 30
+ELSEIF ABL:技巧 == 2
+	LOCAL:2 = 50
+ELSEIF ABL:技巧 == 3
+	LOCAL:2 = 70
+ELSEIF ABL:技巧 == 4
+	LOCAL:2 = 90
+ELSE
+	LOCAL:2 = 120
+ENDIF
+
+;ABL:工作技能
+IF ABL:工作技能 == 0
+	TIMES LOCAL:2 , 0.80
+ELSEIF ABL:工作技能 == 1
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:工作技能 == 2
+	TIMES LOCAL:2 , 1.20
+ELSEIF ABL:工作技能 == 3
+	TIMES LOCAL:2 , 1.40
+ELSEIF ABL:工作技能 == 4
+	TIMES LOCAL:2 , 1.60
+ELSE
+	TIMES LOCAL:2 , 1.80
+ENDIF
+
+;EXP:工作經驗
+IF EXP:工作経験 < EXPLV:1
+	TIMES LOCAL:2 , 0.80
+ELSEIF EXP:工作経験 < EXPLV:2
+	TIMES LOCAL:2 , 1.00
+ELSEIF EXP:工作経験 < EXPLV:3
+	TIMES LOCAL:2 , 1.20
+ELSEIF EXP:工作経験 < EXPLV:4
+	TIMES LOCAL:2 , 1.40
+ELSEIF EXP:工作経験 < EXPLV:5
+	TIMES LOCAL:2 , 1.60
+ELSE
+	TIMES LOCAL:2 , 1.80
+ENDIF
+
+;EASYでないなら作り手の体力消耗、気力消耗、酔い、ストレスによるマイナス補正がある
+IF FLAG:3 != 1
+	;体力消耗状態
+	SIF MAXBASE:0 > 0 && (100 * BASE:体力) / MAXBASE:0 <= 25
+		TIMES LOCAL:2 , 0.75
+	;気力消耗状態
+	SIF MAXBASE:1 > 0 && (100 * BASE:気力) / MAXBASE:1 <= 25
+		TIMES LOCAL:2 , 0.75
+	;酔っている
+	SIF MAXBASE:8 > 0 && (100 * BASE:酔い) / MAXBASE:8 >= 80
+		TIMES LOCAL:2 , 0.50
+
+	;ストレスが10000以上
+	IF CFLAG:ストレス >= 10000
+		TIMES LOCAL:2 , 0.80
+	;ストレスが1000以上
+	ELSEIF CFLAG:ストレス >= 1000
+		TIMES LOCAL:2 , 0.90
+	ENDIF
+ENDIF
+
+;LOCAL = 工作の種類
+IF LOCAL == 0 && ABL:工作技能 >= 4
+	;キャラ固有工作
+	LOCAL:4 = 450
+ELSEIF LOCAL == 1 && TALENT:母乳体質
+	;授乳
+	LOCAL:4 = 400
+	;母性
+	SIF TALENT:母性
+		LOCAL:4 += 50
+ELSEIF LOCAL == 2
+	;性教育の授業
+	LOCAL:4 = 350
+	;教育者
+    SIF TALENT:教育者
+		LOCAL:4 += 100
+ELSEIF LOCAL == 3 && ABL:歌唱技能 > 0 && !RAND:(6 - ABL:歌唱技能)
+	;ミニライブ
+	LOCAL:4 = 300
+	;歌唱技能
+    SIF ABL:歌唱技能 > 0
+		LOCAL:4 += ABL:歌唱技能 * 30
+ELSE
+	;肉体労働
+	LOCAL:4 = 300
+	;体力気力
+	SIF MAXBASE:0 > 2500 || MAXBASE:1 > 2000
+		LOCAL:4 += 100
+ENDIF
+
+
+;工作名人
+SIF TALENT:工作名人
+	TIMES LOCAL:4 , 1.80
+;魅力
+SIF TALENT:魅力
+	TIMES LOCAL:4 , 1.10
+;謎の魅力
+SIF TALENT:謎の魅力
+	TIMES LOCAL:4 , 1.10
+;人気
+SIF TALENT:人気
+	TIMES LOCAL:4 , 1.30
+
+IF LOCAL == 0 && (ABL:料理技能 >= 4 || LOCAL:1 == 1)
+	;(専用)口上側で定義されている固有工作が25%の確率で出る
+	IF CFLAG:9 & 8 && RAND:4 == 0
+		IF STRLENS(CSTR:90) > 0
+			TSTR:5 = %CSTR:90%
+		ELSE
+			GOTO LABORING_SELECT_LOOP
+		ENDIF
+	ELSE
+		GOTO LABORING_SELECT_LOOP
+	ENDIF
+	LOCAL:7 = 0
+ELSEIF LOCAL == 1 && TALENT:母乳体質
+	TSTR:5 = 授乳
+	LOCAL:7 = 1
+ELSEIF LOCAL == 2
+	TSTR:5 = 宣教授业
+	LOCAL:7 = 2
+ELSEIF LOCAL == 3 && ABL:歌唱技能 > 0
+	TSTR:5 = ミニライブ
+	LOCAL:7 = 3
+ELSE
+	TSTR:5 = 肉体労働
+	LOCAL:7 = 4
+ENDIF
+	
+PRINTL 
+PRINTFORM %CALLNAME:TARGET, 11%に
+PRINTW 働く
+PRINTL 
+PRINTW 　　　　　・
+PRINTW 　　　　　・
+PRINTW 　　　　　・
+PRINTL 
+PRINTFORMW %CALLNAME:TARGET%は%TSTR:5%に参加した。
+PRINTL 　　　　　・
+PRINTL 　　　　　・
+PRINTL 　　　　　・
+BASE:体力 = MAX(BASE:体力 - MAX(MAXBASE:0/ 3,450), 1)
+BASE:気力 = MAX(BASE:気力 - MAX(MAXBASE:1/ 3,600), 1)
+
+PRINTFORML %CALLNAME:TARGET%は体力と気力を消耗した。
+;工作技能Lv4かつ固有工作の場合、値段は下方修正(元はLv5専用だったので)
+SIF LOCAL:7 == 0 && ABL:工作技能 == 4 && LOCAL:1 == 0
+	TIMES LOCAL:4 , 0.8
+	
+LOCAL:3 = (LOCAL:2 * LOCAL:4) / 45
+IF FLAG:3 >= 3
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 3)
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 5)
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 10)
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 100000, 25)
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 500000, 50)
+ELSE
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 2)
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 4)
+	LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 8)
+ENDIF
+SIF TALENT:親愛
+	TIMES LOCAL:3 , 1.50
+PRINTFORML %CALLNAME:TARGET%が働き{LOCAL:3}圓を得た。
+MONEY:1 = LOCAL:3
+CALL SHOW_MONEY_INCREACE
+;--------------------------------------------------
+;工作(主人)で稼いだ最高金額判定処理
+SIF MONEY:1 > MONEY:976
+	CALL NEW_HIGH_INCOME_ALL, 976
+;--------------------------------------------------
+
+;噴乳経験
+SIF LOCAL:7 == 1
+	CALL COMMON_UP_EXP, TARGET, 5, 1+ABL:噴乳中毒+RAND:2, 0
+
+;教育経験
+IF LOCAL:7 == 2
+	SELECTCASE EXP:教育経験
+		CASE IS >= EXPLV:1
+			LOCAL:6 = 1
+		CASE IS >= EXPLV:2
+			LOCAL:6 = 2
+		CASE IS >= EXPLV:3
+			LOCAL:6 = 3
+		CASE IS >= EXPLV:4
+			LOCAL:6 = 4
+		CASE IS >= EXPLV:5
+			LOCAL:6 = 5
+	ENDSELECT
+	LOCAL:5 = LOCAL:6 + 1 + RAND:5
+	TIMES LOCAL:5, 0.50
+	CALL COMMON_UP_EXP, TARGET, 75, MAX(LOCAL:5, 1), 0
+ENDIF
+
+;歌唱経験
+IF LOCAL:7 == 3
+	SELECTCASE EXP:歌唱経験
+	CASE IS >= EXPLV:1
+		LOCAL:6 = 1
+	CASE IS >= EXPLV:2
+		LOCAL:6 = 2
+	CASE IS >= EXPLV:3
+		LOCAL:6 = 3
+	CASE IS >= EXPLV:4
+		LOCAL:6 = 4
+	CASE IS >= EXPLV:5
+		LOCAL:6 = 5
+	ENDSELECT
+	LOCAL:5 = LOCAL:6 + 1 + RAND:5
+	TIMES LOCAL:5, 0.50
+	CALL COMMON_UP_EXP, TARGET, 73, MAX(LOCAL:5, 1), 0
+ENDIF
+
+;工作経験
+LOCAL:6 = MIN(ABL:工作技能, 5)
+LOCAL:5 = LOCAL:6 + 1 + RAND:5
+TIMES LOCAL:5, 0.50
+CALL COMMON_UP_EXP, TARGET, 74, MAX(LOCAL:5, 1), 0
+
+WAIT
+
+TARGET = LOCAL:9
+
+;主人の工作技能アップ可能通知処理
+SIF BUY_SKILL_MASTER_WORKING_PRICE() > 0 && ABL:MASTER:工作技能 < 5
+	PRINTFORMW %CALLNAME:MASTER%は、工作の奥義に手が届きそうな気がしてきている。
+
+;休憩フラグを立てる
+FLAG:0 = 1
+BEGIN TURNEND
+RETURN 1

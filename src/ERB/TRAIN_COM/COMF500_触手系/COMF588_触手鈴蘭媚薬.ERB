@@ -1,0 +1,311 @@
+﻿;=============================================================================
+;触手鈴蘭媚薬
+;=============================================================================
+;触手媚薬漬けの効果を分離したうえで仕様を変更。とは言え、基本は媚薬のまま。
+;触手生贄を通じて触手と一体化したメディスンを召喚、
+;鈴蘭型の触手から分泌される媚薬効果の液体を塗ったり口移ししたりして性感帯の感度を高めていく……という超難解なプレイ
+
+;開発度に関しては以下の通り
+;Ｃ：触手Ｃ(Ｐ)責め系調教で開発度上昇、1000以上で感度が1ランク上昇
+;Ｖ：触手Ｖ挿入系調教で開発度上昇、2000以上で感度が1ランク上昇
+;Ａ：触手Ａ挿入系調教で開発度上昇、2500以上で感度が1ランク上昇
+;Ｂ：触手Ｂ責め系調教で開発度上昇、5000以上で感度が1ランク上昇
+;※各部の淫乱系素質を取得していた場合、開発度がさらに上昇される
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE588
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:588 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:キャラ触手 & 8
+	RETURN 1
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;触手が[MEDICINE触手]を得ていないとダメ
+SIF (FLAG:98 & 256) == 0
+	RETURN 0
+;メディスンを触手生贄に捧げていない(=メディスンが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 256) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 588) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM588
+PRINTL 触手鈴蘭媚薬
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 588
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手鈴蘭媚薬
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;解除時は若干消費が低下
+LOCAL:1 = (TEQUIP:キャラ触手 & 8) ? 100 # 200
+LOCAL:2 = (TEQUIP:キャラ触手 & 8) ? 150 # 300
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識
+	LOCAL:1 /= 2
+	LOCAL:2 /= 2
+ELSEIF ASSI >= 0 && TALENT:ASSI:調合知識
+	LOCAL:1 /= 2
+	LOCAL:2 /= 2
+ENDIF
+;調教対象に媚薬中毒があれば消費を抑える
+IF TALENT:媚薬中毒
+	LOCAL:1 /= 2
+	LOCAL:2 /= 2
+ENDIF
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+;媚薬の効果を受けていた場合は一部効果減
+;媚薬効果で欲情のアップが2倍になる
+IF TEQUIP:媚薬
+	SOURCE:欲情追加 = 1000
+	SOURCE:薬物浸潤 = 1500
+ELSE
+	SOURCE:欲情追加 = 2500
+	SOURCE:薬物浸潤 = 2500
+ENDIF
+SOURCE:逸脱 = 5000
+
+;媚薬中毒
+IF TALENT:媚薬中毒
+	SOURCE:中毒充足 = 500
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+	SOURCE:媚薬浸潤 = 100
+ELSE
+	SOURCE:媚薬浸潤 = 1 + RAND:3
+ENDIF
+
+IF TEQUIP:キャラ触手 & 8
+	TEQUIP:キャラ触手 -= 8
+ELSE
+	TEQUIP:媚薬 = 1
+	TEQUIP:キャラ触手 |= 8
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手鈴蘭媚薬注入中
+;-------------------------------------------------
+@EQUIP_COM588
+PRINTL ＜触手鈴蘭媚薬注入中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 10
+
+LOCAL = 0
+LOCAL:1 = 0
+LOCAL:2 = 0
+LOCAL:3 = 0
+
+;ABL:触手中毒をみる
+SELECTCASE ABL:触手中毒
+	CASE 0
+		LOCAL:11 = 100
+		LOCAL:12 = 80
+		LOCAL:13 = 1000
+	CASE 1
+		LOCAL:11 = 200
+		LOCAL:12 = 160
+		LOCAL:13 = 500
+	CASE 2
+		LOCAL:11 = 400
+		LOCAL:12 = 240
+		LOCAL:13 = 250
+	CASE 3
+		LOCAL:11 = 600
+		LOCAL:12 = 320
+		LOCAL:13 = 100
+	CASE 4
+		LOCAL:11 = 800
+		LOCAL:12 = 400
+		LOCAL:13 = 50
+	CASEELSE
+		LOCAL:11 = 1000
+		LOCAL:12 = 500
+		LOCAL:13 = 10
+ENDSELECT
+
+;メディスンとの相性あるなしで補正が上下
+LOCAL:10 = 33
+IF RELATION:(LOCAL:10) > 0 && RELATION:(LOCAL:10) != 100
+	LOCAL:11 *= RELATION:(LOCAL:10)
+	LOCAL:11 /= 100
+	LOCAL:12 *= RELATION:(LOCAL:10)
+	LOCAL:12 /= 100
+	LOCAL:13 *= RELATION:(LOCAL:10)
+	LOCAL:13 /= 100
+ENDIF
+
+SOURCE:液体追加 += LOCAL:11
+SOURCE:中毒充足 += LOCAL:12
+SOURCE:トラウマ += (LOCAL:11 + LOCAL:12 + LOCAL:13)/3
+SOURCE:薬物浸潤 += 500
+SOURCE:逸脱 += LOCAL:13
+
+;触手クリ責め、触手ペニス責め、カテーテル
+IF (TEQUIP:Ｃ系装着器具 || TEQUIP:Ｕ系装着器具) && TALENT:Ｃ敏感 == 0
+	IF TEQUIP:Ｃ系装着器具
+		LOCAL:14 = 2
+		;淫核／淫茎
+		SIF TALENT:淫核／淫茎
+			TIMES LOCAL:14 , 1.50
+		LOCAL:14 += RAND:2
+		LOCAL += LOCAL:14
+	ENDIF
+	IF TEQUIP:Ｕ系装着器具
+		LOCAL:14 = 1
+		;お漏らし癖
+		SIF TALENT:おもらし癖
+			LOCAL:14 += 2
+		;尿道狂
+		SIF TALENT:尿道狂
+			TIMES LOCAL:14 , 1.50
+		LOCAL:14 += RAND:2
+		LOCAL += LOCAL:14
+	ENDIF
+ENDIF
+;触手挿入、Ｇスポ責め、子宮責め、触手幽霊膣鏡
+IF (TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ) && TALENT:Ｖ敏感 == 0
+	IF TEQUIP:クスコ
+		LOCAL:1 = 3
+	ELSE
+		LOCAL:1 = TEQUIP:Ｖ系装着器具
+	ENDIF
+	;淫壷
+	SIF TALENT:淫壷
+		TIMES LOCAL:1 , 1.50
+	LOCAL:1 += RAND:2
+ENDIF
+;アナル触手、触手小腸責め、触手貫通、触手浣腸
+IF TEQUIP:Ａ系装着器具 && TALENT:Ａ敏感 == 0
+	IF TEQUIP:Ａ系装着器具 == 7
+		LOCAL:2 = 2
+	ELSE
+		LOCAL:2 = TEQUIP:Ａ系装着器具
+	ENDIF
+	;淫尻
+	SIF TALENT:淫尻
+		TIMES LOCAL:2 , 1.50
+	LOCAL:2 += RAND:2
+ENDIF
+;触手乳首責め、触手搾乳、触手乳腺挿入
+IF TEQUIP:Ｂ系装着器具 && TALENT:Ｂ敏感 == 0
+	IF TEQUIP:Ｂ系装着器具 == 3
+		LOCAL:3 = 3
+	ELSEIF TEQUIP:Ｂ系装着器具 == 2
+		LOCAL:3 = 2
+	ELSE
+		LOCAL:3 = 1
+	ENDIF
+	;淫乳
+	SIF TALENT:淫乳
+		TIMES LOCAL:3 , 1.50
+	LOCAL:3 += RAND:2
+ENDIF
+REPEAT 4
+	;[鵺]は鈴蘭媚薬による開発が出来ない。また、入手されるソースが変化
+	IF TALENT:鵺
+		SOURCE:露出 += LOCAL:COUNT * 10
+		SOURCE:薬物浸潤 += LOCAL:COUNT * 5
+	ELSE
+		CFLAG:(COUNT+60) += LOCAL:COUNT
+		SOURCE:薬物浸潤 += LOCAL:COUNT * 10
+	ENDIF
+REND
+
+;メディスンの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;薬物経験
+TCVAR:薬物経験 += 1
+
+;デバッグモードでは媚薬による開発度合いを表示
+IF TALENT:MASTER:998 && TALENT:鵺 == 0
+	PRINTFORM Ｃ開発Lv:\@(TALENT:Ｃ敏感 == 0) ? {CFLAG:Ｃ開発度, 3} # MAX\@　
+	PRINTFORM Ｖ開発Lv:\@(TALENT:Ｖ敏感 == 0) ? {CFLAG:Ｖ開発度, 3} # MAX\@　
+	PRINTFORM Ａ開発Lv:\@(TALENT:Ａ敏感 == 0) ? {CFLAG:Ａ開発度, 3} # MAX\@　
+	PRINTFORML Ｂ開発Lv:\@(TALENT:Ｂ敏感 == 0) ? {CFLAG:Ｂ開発度, 3} # MAX\@
+ENDIF
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_588
+IF TEQUIP:キャラ触手 & 8
+	PRINTFORM メディスンは%CALLNAME:PLAYER%の命令を受けると、
+	IF TEQUIP:口装着器具 == 0 && TEQUIP:触手強制回復 != 1
+		PRINTFORML 少し名残惜しそうに%CALLNAME:TARGET%の体から身を離した
+		PRINTFORML 唾液なのか媚薬なのか。白い糸がメディスンと%CALLNAME:TARGET%の口から伸びており、その姿はまるで離れるのを惜しんでいるかのような錯覚を覚えさせる
+	ELSE
+		PRINTFORML ほんの少しつまらなさそうな顔をして%CALLNAME:TARGET%に群がっていた触手を引き剥がした
+		PRINTFORML 触手から引いている白い粘液の糸から放たれる鈴蘭の香りが触手本来の臭気とまじりあい、何とも言えない空間を生み出している
+	ENDIF
+	PRINTFORML メディスンが触手の花の中に戻ると、まるで幼い人形を守るかのように肉の花弁が閉じた
+	PRINTFORML そして鈴蘭の香りを放つ液体でびしょびしょになった%CALLNAME:TARGET%を残し、触手の蕾は壁の向こうへと帰って行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に反応して、触手の壁から人が一人入れそうな程極太い触手が現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと鈴蘭が開花するように身を開き、中から異形と完全に融合したメディスンが無数の粘液で濡れた触手を率いながら姿を見せた
+	PRINTFORML メディスンは%CALLNAME:MASTER%に対して可愛らしく一礼すると、アルカイックスマイルを浮かべつつ%CALLNAME:TARGET%に近づいた
+	IF TEQUIP:口装着器具 == 0 && TEQUIP:触手強制回復 != 1
+		PRINTFORML そして触手から分泌された催淫効果のある液体を口に含ませ、口移しで無理矢理%CALLNAME:TARGET%の喉に流し込んだ
+	ELSE
+		PRINTFORML そして巧みな触手さばきで%CALLNAME:TARGET%の性感帯をに催淫効果のある液体を塗り付けた
+	ENDIF
+	IF TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は荒い息をついて肌を紅潮させている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の肌が妖しく紅潮している…
+	ENDIF
+ENDIF

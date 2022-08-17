@@ -1,0 +1,1160 @@
+﻿;=============================================================================
+;コスプレ
+;=============================================================================
+;煩悩炸裂はいいけど、こんな仕様でどうかなあ？
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE93
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:93 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 1
+;アイテム｢仮装衣装一式｣を持っていないとダメ
+SIF ITEM:仮装衣装一式 == 0
+	RETURN 0
+;従順が2以上ないとダメ
+SIF ABL:従順 < 2
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ｂ系装着具使用中は不可
+SIF TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム
+	RETURN 0
+;Ｕ系装着具使用中は不可
+SIF TEQUIP:Ｕ系装着器具
+	RETURN 0
+;緊縛中はダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;アイマスク装着中はダメ
+SIF TEQUIP:目装着器具
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;人魚はダメ
+SIF TALENT:人魚 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 93) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM93
+PRINTL コスプレ
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 93
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+LOCAL:3 = 0
+IF TEQUIP:コスチュームプレイ < 1
+	PRINTL 何を着せる？
+	PRINTLC [ 1] 女教師の衣装
+	PRINTLC [ 2] 和服
+	PRINTLC [ 3] メイド服
+	PRINTLC [ 4] 体操服＋ブルマ
+	PRINTLC [ 5] ナース服
+	PRINTLC [ 6] チャイナ服
+	PRINTLC [ 7] セーラー服
+	PRINTLC [ 8] ネグリジェ
+	PRINTLC [ 9] 裸Ｙシャツ
+	PRINTLC [10] ビキニ
+	PRINTLC [11] 危ないレオタード
+	PRINTLC [12] バニースーツ
+	PRINTLC [13] ボンデージ
+	PRINTLC [14] 園児服
+	PRINTLC [15] 褌だけ
+	PRINTLC [16] 軍服
+	PRINTLC [17] ウェディングドレス
+	PRINTLC [18] ゴシックロリータ
+	PRINTLC [19] 裸サスペンダー
+	PRINTLC [20] 巫女衣装
+	$INPUT_LOOP
+	INPUT
+	IF RESULT < 1 || RESULT > 20
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+	LOCAL:3 = RESULT + 2
+
+	SELECTCASE LOCAL:3
+		CASE 3
+			TSTR:0 = 女教師のコスプレ
+		CASE 4
+			TSTR:0 = 和服のコスプレ
+		CASE 5
+			TSTR:0 = メイド服のコスプレ
+		CASE 6
+			TSTR:0 = 体操服＋ブルマのコスプレ
+		CASE 7
+			TSTR:0 = ナース服のコスプレ
+		CASE 8
+			TSTR:0 = チャイナ服のコスプレ
+		CASE 9
+			TSTR:0 = セーラー服のコスプレ
+		CASE 10
+			TSTR:0 = ネグリジェのコスプレ
+		CASE 11
+			TSTR:0 = 裸Ｙシャツのコスプレ
+		CASE 12
+			TSTR:0 = ビキニのコスプレ
+		CASE 13
+			TSTR:0 = 危ないレオタードのコスプレ
+		CASE 14
+			TSTR:0 = バニースーツのコスプレ
+		CASE 15
+			TSTR:0 = ボンデージのコスプレ
+		CASE 16
+			TSTR:0 = 園児服のコスプレ
+		CASE 17
+			TSTR:0 = 褌だけのコスプレ
+		CASE 18
+			TSTR:0 = 軍服コスプレ
+		CASE 19
+			TSTR:0 = ウェディングドレスのコスプレ
+		CASE 20
+			TSTR:0 = ゴシックロリータのコスプレ
+		CASE 21
+			TSTR:0 = 裸サスペンダーのコスプレ
+		CASE 22
+			TSTR:0 = 巫女衣装のコスプレ
+		CASEELSE
+			CLEARLINE 1
+			REUSELASTLINE
+			GOTO INPUT_LOOP
+	ENDSELECT
+ELSE
+	TSTR:0 = コスプレ衣装脱衣
+ENDIF
+TFLAG:146 = LOCAL:3
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 20
+
+;消費体力修整
+IF LOCAL:3 == 5 || LOCAL:3 == 6 || LOCAL:3 == 8 || LOCAL:3 == 13 || LOCAL:3 == 14 || LOCAL:3 == 15 || LOCAL:3 == 17 || LOCAL:3 == 20 || LOCAL:3 == 22
+	DOWNBASE:0 += 5
+ELSEIF LOCAL:3 == 4 || LOCAL:3 == 16 || LOCAL:3 == 18 || LOCAL:3 == 19
+	DOWNBASE:0 += 10
+ENDIF
+;消費気力修整
+IF LOCAL:3 == 8
+	DOWNBASE:1 += 5
+ELSEIF LOCAL:3 == 5 || LOCAL:3 == 6 || LOCAL:3 == 10 || LOCAL:3 == 18 || LOCAL:3 == 19 || LOCAL:3 == 20
+	DOWNBASE:1 += 10
+ELSEIF LOCAL:3 == 11 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 14 || LOCAL:3 == 15 || LOCAL:3 == 16 || LOCAL:3 == 17 || LOCAL:3 == 21
+	DOWNBASE:1 += 20
+ENDIF
+
+LOCAL:1 =100
+LOCAL:2 =200
+
+;露出＆屈従基本修整
+IF LOCAL:3 == 8 || LOCAL:3 == 18 || LOCAL:3 == 19 || LOCAL:3 == 20
+	LOCAL:1 =150
+ELSEIF LOCAL:3 == 5
+	LOCAL:1 =200
+ELSEIF LOCAL:3 == 16
+	LOCAL:1 =250
+ELSEIF LOCAL:3 == 6 || LOCAL:3 == 14
+	LOCAL:1 =400
+ELSEIF LOCAL:3 == 15
+	LOCAL:1 =500
+ELSEIF LOCAL:3 == 10 || LOCAL:3 == 12 || LOCAL:3 == 13
+	LOCAL:1 =600
+ELSEIF LOCAL:3 == 11
+	LOCAL:1 =650
+ELSEIF LOCAL:3 == 17 || LOCAL:3 == 21
+	LOCAL:1 =700
+ENDIF
+
+;逸脱基本修整
+IF LOCAL:3 == 4 || LOCAL:3 == 7
+	LOCAL:2 =250
+ELSEIF LOCAL:3 == 5 || LOCAL:3 == 8 || LOCAL:3 == 22
+	LOCAL:2 =300
+ELSEIF LOCAL:3 == 18
+	LOCAL:2 =350
+ELSEIF LOCAL:3 == 10
+	LOCAL:2 =400
+ELSEIF LOCAL:3 == 12 || LOCAL:3 == 13
+	LOCAL:2 =450
+ELSEIF LOCAL:3 == 6 || LOCAL:3 == 14
+	LOCAL:2 =500
+ELSEIF LOCAL:3 == 11 || LOCAL:3 == 15 || LOCAL:3 == 20
+	LOCAL:2 =600
+ELSEIF LOCAL:3 == 16 || LOCAL:3 == 21
+	LOCAL:2 =750
+ELSEIF LOCAL:3 == 17
+	LOCAL:2 =800
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1, 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1, 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1, 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1, 1.10
+ELSE
+	TIMES LOCAL:1, 1.20
+ENDIF
+
+;モロの露出
+IF LOCAL:3 == 11 || LOCAL:3 == 15 || LOCAL:3 ==17 || LOCAL:3 == 21
+;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:露出 = 100
+		SOURCE:欲情追加 = 0
+		SOURCE:逸脱 = 100
+		TIMES LOCAL:1, 0.60
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:露出 = 500
+		SOURCE:欲情追加 = 50
+		SOURCE:逸脱 = 300
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:露出 = 100
+		SOURCE:欲情追加 = 100
+		SOURCE:逸脱 = 50
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:露出 = 50
+		SOURCE:欲情追加 = 150
+		SOURCE:逸脱 = 0
+		TIMES LOCAL:1, 2.00
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:露出 = 0
+		SOURCE:欲情追加 = 200
+		SOURCE:逸脱 = 0
+		TIMES LOCAL:1, 2.60
+	ELSE
+		SOURCE:露出 = 0
+		SOURCE:欲情追加 = 300
+		SOURCE:逸脱 = 0
+		TIMES LOCAL:1, 3.80
+	ENDIF
+;モロではないがそそる露出
+ELSEIF LOCAL:3 == 6 || LOCAL:3 == 8 || LOCAL:3 == 10 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 14
+	;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:中毒充足 += 0
+		SOURCE:液体追加 += 0
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:中毒充足 += 50
+		SOURCE:液体追加 += 50
+		TIMES LOCAL:1, 1.20
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:中毒充足 += 100
+		SOURCE:液体追加 += 100
+		TIMES LOCAL:1, 1.40
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:中毒充足 += 200
+		SOURCE:液体追加 += 200
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:中毒充足 += 400
+		SOURCE:液体追加 += 400
+		TIMES LOCAL:1, 2.00
+	ELSE
+		SOURCE:中毒充足 += 800
+		SOURCE:液体追加 += 800
+		TIMES LOCAL:1, 3.00
+	ENDIF
+ENDIF
+
+;元々メイドなら特別修整
+IF LOCAL:3 == 5 && (NO:TARGET == 1009 || NO:TARGET == 2018 || NO:TARGET == 3001)
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 0.80
+		SOURCE:反感追加 = 200
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 0.90
+		SOURCE:反感追加 = 50
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 = 10
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 = 0
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 = 0
+	ELSE
+		TIMES LOCAL:1, 2.00
+		SOURCE:反感追加 = 0
+	ENDIF
+;従順さがとても要求されるコス集
+ELSEIF LOCAL:3 == 4 || LOCAL:3 == 5 || LOCAL:3 == 7 || LOCAL:3 == 18
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 = 500
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 = 100
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.40
+		SOURCE:反感追加 = 50
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 = 0
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 2.10
+		SOURCE:反感追加 = 0
+	ELSE
+		TIMES LOCAL:1, 3.00
+		SOURCE:反感追加 = 0
+	ENDIF
+;従順さがほどほどに必要なコス集
+ELSEIF LOCAL:3 == 3 || LOCAL:3 == 8 || LOCAL:3 == 9 || LOCAL:3 == 20 || LOCAL:3 == 22
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 0.80
+		SOURCE:反感追加 = 500
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 = 100
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 = 50
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.40
+		SOURCE:反感追加 = 0
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 = 0
+	ELSE
+		TIMES LOCAL:1, 2.00
+		SOURCE:反感追加 = 0
+	ENDIF
+;恋慕付きウェディングドレスは少女たちの夢
+ELSEIF LOCAL:3 == 19 && TALENT:恋慕
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 0.80
+		SOURCE:反感追加 = 1000
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 = 500
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 = 100
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 = 0
+		SOURCE:情愛 = 100
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 2.10
+		SOURCE:反感追加 = 0
+		SOURCE:情愛 = 1000
+		SOURCE:恭順追加 = 100
+	ELSE
+		TIMES LOCAL:1, 3.00
+		SOURCE:反感追加 = 0
+		SOURCE:情愛 = 5000
+		SOURCE:恭順追加 = 500
+	ENDIF
+ENDIF
+
+;奉仕精神が要求されるコス集
+IF LOCAL:3 == 5 || LOCAL:3 == 7 || LOCAL:3 == 14 || LOCAL:3 == 22
+	;ABL:奉仕精神をみる
+	IF ABL:奉仕精神 == 0
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:奉仕精神 == 1
+		TIMES LOCAL:1, 1.20
+	ELSEIF ABL:奉仕精神 == 2
+		TIMES LOCAL:1, 1.40
+	ELSEIF ABL:奉仕精神 == 3
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:奉仕精神 == 4
+		TIMES LOCAL:1, 1.80
+	ELSE
+		TIMES LOCAL:1, 2.00
+	ENDIF
+ENDIF
+
+;マゾっ気に効果的なコス集
+IF LOCAL:3 == 5 || LOCAL:3 == 6 || LOCAL:3 == 12
+	;ABL:マゾっ気をみる
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL:1, 0.80
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL:1, 1.30
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL:1, 2.00
+	ELSE
+		TIMES LOCAL:1, 3.00
+	ENDIF
+ENDIF
+
+;サドっ気に効果的なコス集
+IF LOCAL:3 == 3 || LOCAL:3 == 15 || LOCAL:3 == 18
+	;ABL:サドっ気をみる
+	IF ABL:サドっ気 == 0
+		SOURCE:主導権 = 10
+		TIMES SOURCE:中毒充足 , 0.80
+	ELSEIF ABL:サドっ気 == 1
+		SOURCE:主導権 = 100
+		TIMES SOURCE:中毒充足 , 1.00
+	ELSEIF ABL:サドっ気 == 2
+		SOURCE:主導権 = 500
+		TIMES SOURCE:中毒充足 , 1.30
+	ELSEIF ABL:サドっ気 == 3
+		SOURCE:主導権 = 800
+		TIMES SOURCE:中毒充足 , 1.60
+	ELSEIF ABL:サドっ気 == 4
+		SOURCE:主導権 = 1500
+		TIMES SOURCE:中毒充足 , 2.00
+	ELSE
+		SOURCE:主導権 = 3000
+		TIMES SOURCE:中毒充足 , 3.00
+	ENDIF
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 2.00
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1, 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1, 1.50
+
+;恥じらいに効果覿面なコス
+IF LOCAL:3 == 6 ||LOCAL:3 == 10 || LOCAL:3 == 11 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 15 || LOCAL:3 == 16
+	;恥じらい
+	SIF TALENT:恥じらい
+		TIMES LOCAL:2 , 2.50
+;それ以外のコス
+ELSE
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 2.00
+ENDIF
+
+;おっぱい関連のコス修整1
+IF LOCAL:3 == 6 || LOCAL:3 == 13 || LOCAL:3 == 16
+	;巨乳
+	IF TALENT:巨乳
+		SOURCE:痛み = 500
+	;爆乳
+	ELSEIF TALENT:爆乳
+		SOURCE:痛み = 800
+	ENDIF
+ENDIF
+
+;小柄体型
+IF TALENT:小柄体型
+	TIMES LOCAL:1, 1.50
+	TIMES LOCAL:2 , 1.50
+ENDIF
+
+;幼児関連のコス修整1
+IF LOCAL:3 == 6 || LOCAL:3 == 16 || LOCAL:3 == 20
+	;幼児、幼稚、幼児退行
+	SIF TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行
+		TIMES LOCAL:2 , 0.50
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:屈従 += LOCAL:1 /2
+SOURCE:逸脱 += LOCAL:2
+
+;おっぱい関連のコス修整2
+IF LOCAL:3 == 6 || LOCAL:3 == 10 || LOCAL:3 == 11 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 14 || LOCAL:3 == 15 || LOCAL:3 == 16 || LOCAL:3 == 17 || LOCAL:3 == 21
+	;絶壁
+	IF TALENT:絶壁
+		SOURCE:羞恥扇情 += LOCAL:1 /4
+	;貧乳
+	ELSEIF TALENT:貧乳
+		SOURCE:羞恥扇情 += LOCAL:1 /6
+	ELSE
+		SOURCE:羞恥扇情 += LOCAL:1 /8
+	ENDIF
+ENDIF
+
+;幼児関連でないものには恥ずかしいコス修整
+IF LOCAL:3 == 16 || LOCAL:3 == 20
+	;幼児、幼稚、幼児退行ない
+	IF TALENT:幼児 == 0 && TALENT:幼稚 == 0 && TALENT:幼児退行 == 0
+		;恥じらい持ち
+		IF TALENT:恥じらい
+			SOURCE:羞恥扇情 += LOCAL:1 /4
+		;恥薄いを持たない
+		ELSEIF TALENT:恥薄い == 0
+			SOURCE:羞恥扇情 += LOCAL:1 /6
+		;恥薄いでなんとかメンツを保つ
+		ELSE
+			SOURCE:羞恥扇情 += LOCAL:1 /8
+		ENDIF
+	ENDIF
+ENDIF
+
+;幼児関連のコス修整2
+IF LOCAL:3 == 6 || LOCAL:3 == 16 || LOCAL:3 == 20
+	;幼児、幼稚、幼児退行
+	SIF TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行
+		SOURCE:トラウマ += LOCAL:2 /10
+;幼児関連でない連中
+ELSE
+	SOURCE:トラウマ += LOCAL:2 /5
+ENDIF
+
+;衣装の着脱
+IF TEQUIP:コスチュームプレイ > 2
+	TEQUIP:コスチュームプレイ = 0
+ELSE
+	TEQUIP:コスチュームプレイ = LOCAL:3
+	;調教対象のコスプレ経験
+	CFLAG:コスプレ実行回数 += 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;コスプレ中
+;-------------------------------------------------
+@EQUIP_COM93
+VARSET LOCALS,""
+SPLIT "ダミー,＜裸エプロンコスプレ中＞,＜スクール水着コスプレ中＞,＜女教師コスプレ中＞,＜和服コスプレ中＞,＜メイド服コスプレ中＞,＜体操服＋ブルマコスプレ中＞,＜ナース服コスプレ中＞,＜チャイナ服コスプレ中＞,＜セーラー服コスプレ中＞,＜ネグリジェコスプレ中＞,＜裸Ｙシャツコスプレ中＞,＜ビキニのコスプレ中＞,＜危ないレオタードコスプレ中＞,＜バニースーツコスプレ中＞,＜ボンデージコスプレ中＞,＜園児服コスプレ中＞,＜褌だけのコスプレ中＞,＜軍服コスプレ中＞,＜ウェディングドレスコスプレ中＞,＜ゴスロリ衣装コスプレ中＞,＜裸サスペンダーコスプレ中＞,＜巫女衣装コスプレ中＞",",",LOCALS
+LOCAL = TEQUIP:コスチュームプレイ
+PRINTFORML %LOCALS:LOCAL%
+
+;調教対象が睡眠中か気絶中ならソースは入らないが体力と気力消費軽減
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	DOWNBASE:1 += 5
+	GOTO PASSOUT_93
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+;消費体力修整
+IF LOCAL == 4 || LOCAL == 16 || LOCAL == 18 || LOCAL == 19
+	DOWNBASE:0 += 5
+ENDIF
+;消費気力修整
+IF LOCAL == 5 || LOCAL == 6 || LOCAL == 10 || LOCAL == 18 || LOCAL == 19 || LOCAL == 20
+	DOWNBASE:1 += 5
+ELSEIF LOCAL == 11 || LOCAL == 12 || LOCAL == 13 || LOCAL == 14 || LOCAL == 15 || LOCAL == 16 || LOCAL == 17 || LOCAL == 21
+	DOWNBASE:1 += 10
+ENDIF
+
+LOCAL:1 =100
+LOCAL:2 =200
+
+;露出＆屈従基本修整
+IF LOCAL == 8 || LOCAL == 18 || LOCAL == 19 || LOCAL == 20
+	LOCAL:1 =150
+ELSEIF LOCAL == 5
+	LOCAL:1 =200
+ELSEIF LOCAL == 16
+	LOCAL:1 =250
+ELSEIF LOCAL == 6 || LOCAL == 14
+	LOCAL:1 =400
+ELSEIF LOCAL == 15
+	LOCAL:1 =500
+ELSEIF LOCAL == 10 || LOCAL == 12 || LOCAL == 13
+	LOCAL:1 =600
+ELSEIF LOCAL == 11
+	LOCAL:1 =650
+ELSEIF LOCAL == 17 || LOCAL == 21
+	LOCAL:1 =700
+ENDIF
+
+;逸脱基本修整
+IF LOCAL == 4 || LOCAL == 7
+	LOCAL:2 =250
+ELSEIF LOCAL == 5 || LOCAL == 8 || LOCAL == 22
+	LOCAL:2 =300
+ELSEIF LOCAL == 18
+	LOCAL:2 =350
+ELSEIF LOCAL == 10
+	LOCAL:2 =400
+ELSEIF LOCAL == 12 || LOCAL == 13
+	LOCAL:2 =450
+ELSEIF LOCAL == 6 || LOCAL == 14
+	LOCAL:2 =500
+ELSEIF LOCAL == 11 || LOCAL == 15 || LOCAL == 20
+	LOCAL:2 =600
+ELSEIF LOCAL == 16 || LOCAL == 21
+	LOCAL:2 =750
+ELSEIF LOCAL == 17
+	LOCAL:2 =800
+ENDIF
+
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1, 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1, 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1, 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1, 1.10
+ELSE
+	TIMES LOCAL:1, 1.20
+ENDIF
+
+;モロの露出
+IF LOCAL == 11 || LOCAL == 15 || LOCAL ==17 || LOCAL == 21
+;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:露出 += 100
+		SOURCE:欲情追加 += 0
+		SOURCE:逸脱 += 100
+		TIMES LOCAL:1, 0.60
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:露出 += 500
+		SOURCE:欲情追加 += 50
+		SOURCE:逸脱 += 300
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:露出 += 100
+		SOURCE:欲情追加 += 100
+		SOURCE:逸脱 += 50
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:露出 += 50
+		SOURCE:欲情追加 += 150
+		SOURCE:逸脱 += 0
+		TIMES LOCAL:1, 2.00
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:露出 += 0
+		SOURCE:欲情追加 += 200
+		SOURCE:逸脱 += 0
+		TIMES LOCAL:1, 2.60
+	ELSE
+		SOURCE:露出 += 0
+		SOURCE:欲情追加 += 300
+		SOURCE:逸脱 += 0
+		TIMES LOCAL:1, 3.80
+	ENDIF
+;モロではないがそそる露出
+ELSEIF LOCAL == 6 || LOCAL == 8 || LOCAL == 10 || LOCAL == 12 || LOCAL == 13 || LOCAL == 14
+	;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:中毒充足 += 0
+		SOURCE:液体追加 += 0
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:中毒充足 += 50
+		SOURCE:液体追加 += 50
+		TIMES LOCAL:1, 1.20
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:中毒充足 += 100
+		SOURCE:液体追加 += 100
+		TIMES LOCAL:1, 1.40
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:中毒充足 += 200
+		SOURCE:液体追加 += 200
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:中毒充足 += 400
+		SOURCE:液体追加 += 400
+		TIMES LOCAL:1, 2.00
+	ELSE
+		SOURCE:中毒充足 += 800
+		SOURCE:液体追加 += 800
+		TIMES LOCAL:1, 3.00
+	ENDIF
+ENDIF
+
+;元々メイドなら特別修整
+IF LOCAL == 5 && (NO:TARGET == 1009 || NO:TARGET == 2018 || NO:TARGET == 3001)
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 0.80
+		SOURCE:反感追加 += 200
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 0.90
+		SOURCE:反感追加 += 50
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 += 10
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 += 0
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 += 0
+	ELSE
+		TIMES LOCAL:1, 2.00
+		SOURCE:反感追加 += 0
+	ENDIF
+;従順さがとても要求されるコス集
+ELSEIF LOCAL == 4 || LOCAL == 5 || LOCAL == 7 || LOCAL == 18
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 += 500
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 += 100
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.40
+		SOURCE:反感追加 += 50
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 += 0
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 2.10
+		SOURCE:反感追加 += 0
+	ELSE
+		TIMES LOCAL:1, 3.00
+		SOURCE:反感追加 += 0
+	ENDIF
+;従順さがほどほどに必要なコス集
+ELSEIF LOCAL == 3 || LOCAL == 8 || LOCAL == 9 || LOCAL == 20 || LOCAL == 22
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 0.80
+		SOURCE:反感追加 += 500
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 += 100
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 += 50
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.40
+		SOURCE:反感追加 += 0
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 += 0
+	ELSE
+		TIMES LOCAL:1, 2.00
+		SOURCE:反感追加 += 0
+	ENDIF
+;恋慕付きウェディングドレスは少女たちの夢
+ELSEIF LOCAL == 19 && TALENT:恋慕
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:1, 0.80
+		SOURCE:反感追加 += 1000
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:1, 1.00
+		SOURCE:反感追加 += 500
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:1, 1.20
+		SOURCE:反感追加 += 100
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:1, 1.50
+		SOURCE:反感追加 += 0
+		SOURCE:情愛 += 100
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:1, 2.10
+		SOURCE:反感追加 += 0
+		SOURCE:情愛 += 1000
+		SOURCE:恭順追加 += 100
+	ELSE
+		TIMES LOCAL:1, 3.00
+		SOURCE:反感追加 += 0
+		SOURCE:情愛 += 5000
+		SOURCE:恭順追加 += 500
+	ENDIF
+ENDIF
+
+;奉仕精神が要求されるコス集
+IF LOCAL == 5 || LOCAL == 7 || LOCAL == 14 || LOCAL == 22
+	;ABL:奉仕精神をみる
+	IF ABL:奉仕精神 == 0
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:奉仕精神 == 1
+		TIMES LOCAL:1, 1.20
+	ELSEIF ABL:奉仕精神 == 2
+		TIMES LOCAL:1, 1.40
+	ELSEIF ABL:奉仕精神 == 3
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:奉仕精神 == 4
+		TIMES LOCAL:1, 1.80
+	ELSE
+		TIMES LOCAL:1, 2.00
+	ENDIF
+ENDIF
+
+;マゾっ気に効果的なコス集
+IF LOCAL == 5 || LOCAL == 6 || LOCAL == 12
+	;ABL:マゾっ気をみる
+	IF ABL:マゾっ気 == 0
+		TIMES LOCAL:1, 0.80
+	ELSEIF ABL:マゾっ気 == 1
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:マゾっ気 == 2
+		TIMES LOCAL:1, 1.30
+	ELSEIF ABL:マゾっ気 == 3
+		TIMES LOCAL:1, 1.60
+	ELSEIF ABL:マゾっ気 == 4
+		TIMES LOCAL:1, 2.00
+	ELSE
+		TIMES LOCAL:1, 3.00
+	ENDIF
+ENDIF
+
+;サドっ気に効果的なコス集
+IF LOCAL == 3 || LOCAL == 15 || LOCAL == 18
+	;ABL:サドっ気をみる
+	IF ABL:サドっ気 == 0
+		SOURCE:主導権 += 10
+		TIMES SOURCE:中毒充足 , 0.80
+	ELSEIF ABL:サドっ気 == 1
+		SOURCE:主導権 += 100
+		TIMES SOURCE:中毒充足 , 1.00
+	ELSEIF ABL:サドっ気 == 2
+		SOURCE:主導権 += 500
+		TIMES SOURCE:中毒充足 , 1.30
+	ELSEIF ABL:サドっ気 == 3
+		SOURCE:主導権 += 800
+		TIMES SOURCE:中毒充足 , 1.60
+	ELSEIF ABL:サドっ気 == 4
+		SOURCE:主導権 += 1500
+		TIMES SOURCE:中毒充足 , 2.00
+	ELSE
+		SOURCE:主導権 += 3000
+		TIMES SOURCE:中毒充足 , 3.00
+	ENDIF
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 2.00
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1, 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1, 1.50
+
+;恥じらいに効果覿面なコス
+IF LOCAL == 6 ||LOCAL == 10 || LOCAL == 11 || LOCAL == 12 || LOCAL == 13 || LOCAL == 15 || LOCAL == 16
+	;恥じらい
+	SIF TALENT:恥じらい
+		TIMES LOCAL:2 , 2.50
+;それ以外のコス
+ELSE
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 2.00
+ENDIF
+
+;おっぱい関連のコス修整1
+IF LOCAL == 6 || LOCAL == 13 || LOCAL == 16
+	;巨乳
+	IF TALENT:巨乳
+		SOURCE:痛み += 500
+	;爆乳
+	ELSEIF TALENT:爆乳
+		SOURCE:痛み += 800
+	ENDIF
+ENDIF
+
+;小柄体型
+IF TALENT:小柄体型
+	TIMES LOCAL:1, 1.50
+	TIMES LOCAL:2 , 1.50
+ENDIF
+
+;幼児関連のコス修整1
+IF LOCAL == 6 || LOCAL == 16 || LOCAL == 20
+	;幼児、幼稚、幼児退行
+	SIF TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行
+		TIMES LOCAL:2 , 0.50
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:屈従 += LOCAL:1 /2
+SOURCE:逸脱 += LOCAL:2
+
+;おっぱい関連のコス修整2
+IF LOCAL == 6 || LOCAL == 10 || LOCAL == 11 || LOCAL == 12 || LOCAL == 13 || LOCAL == 14 || LOCAL == 15 || LOCAL == 16 || LOCAL == 17 || LOCAL == 21
+	;絶壁
+	IF TALENT:絶壁
+		SOURCE:羞恥扇情 += LOCAL:1 /4
+	;貧乳
+	ELSEIF TALENT:貧乳
+		SOURCE:羞恥扇情 += LOCAL:1 /6
+	ELSE
+		SOURCE:羞恥扇情 += LOCAL:1 /8
+	ENDIF
+ENDIF
+
+;幼児関連でないものには恥ずかしいコス修整
+IF LOCAL == 16 || LOCAL == 20
+	;幼児、幼稚、幼児退行ない
+	IF TALENT:幼児 == 0 && TALENT:幼稚 == 0 && TALENT:幼児退行 == 0
+		;恥じらい持ち
+		IF TALENT:恥じらい
+			SOURCE:羞恥扇情 += LOCAL:1 /4
+		;恥薄いを持たない
+		ELSEIF TALENT:恥薄い == 0
+			SOURCE:羞恥扇情 += LOCAL:1 /6
+		;恥薄いでなんとかメンツを保つ
+		ELSE
+			SOURCE:羞恥扇情 += LOCAL:1 /8
+		ENDIF
+	ENDIF
+ENDIF
+
+;幼児関連のコス修整2
+IF LOCAL == 6 || LOCAL == 16 || LOCAL == 20
+	;幼児、幼稚、幼児退行
+	SIF TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行
+		SOURCE:トラウマ += LOCAL:2 /10
+;幼児関連でない連中
+ELSE
+	SOURCE:トラウマ += LOCAL:2 /5
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+$PASSOUT_93
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:露出癖 >= 3
+	TFLAG:50 += 1
+
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_93
+IF TEQUIP:コスチュームプレイ > 2
+	PRINTFORML %CALLNAME:TARGET%に着ている衣装を脱ぐように命じたが拒否された。
+	PRINTL もう少し調教が必要なようだ。
+ELSE
+	PRINTFORML %CALLNAME:TARGET%にコスプレをするように命じたが拒否された。
+	PRINTL もう少し調教が必要なようだ。
+ENDIF
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_93
+IF TEQUIP:コスチュームプレイ > 2
+	PRINTFORML %CALLNAME:TARGET%が着けている衣装を脱がせた……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%に%TSTR:0%をするように命じた
+	PRINTFORM %CALLNAME:TARGET%は
+	IF TALENT:恥じらい
+		PRINTFORML 顔を真っ赤にしつつ%CALLNAME:PLAYER%の命令を実行している……
+	ELSEIF (TFLAG:146 == 5 && (NO:TARGET == 1009 || NO:TARGET == 2018 || NO:TARGET == 3001)) || (TFLAG:146 == 8 && NO:TARGET == 1006) || (TFLAG:146 == 22 && (NO:TARGET == 1001 || NO:TARGET == 1042))
+		PRINTFORML 慣れた手つきで着替えている…
+	ELSEIF TALENT:恥薄い == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0 && (TFLAG:146 == 11 || TFLAG:146 == 16 || TFLAG:146 == 17 || TFLAG:146 == 21)
+		PRINTFORML 凄く顔を真っ赤にして恥ずかしがっていたが、仕方がないと思ったのかなんとか着替えた……
+	ELSEIF (TALENT:親愛 || TALENT:相愛 || TALENT:服従 || TALENT:妄信 || TALENT:烙印 || TALENT:隷属) && TFLAG:146 == 19
+		PRINTFORML すごく嬉しそうな顔をしながら着替え、なんどもくるりと周りながら自分の姿を見せ付けている……
+	ELSEIF (TFLAG:146 == 10 || TFLAG:146 == 11 || TFLAG:146 == 12 || TFLAG:146 == 13 || TFLAG:146 == 14 || TFLAG:146 == 15) &&(TALENT:絶壁 || TALENT:貧乳)
+		PRINTFORML %TSTR:0%を着けたまではよかったものの、
+		PRINTL 自分の胸の貧相さを意識しているのかしきりに胸を隠す動作を繰り返している……
+	ELSEIF (TFLAG:146 == 10 || TFLAG:146 == 11 || TFLAG:146 == 12 || TFLAG:146 == 13 || TFLAG:146 == 14 || TFLAG:146 == 15) &&(TALENT:巨乳 || TALENT:爆乳)
+		PRINTFORML %TSTR:0%を着けたまではよかったものの、
+		PRINTL 胸回りが窮屈に感じるのか胸元に手を伸ばしては布地を引っ張る動作を頻繁に繰り返している……
+	ELSEIF TALENT:幼児 || TALENT:幼稚
+		PRINTFORML %TSTR:0%を着けると子供のようにはしゃぎ始めた
+	ELSEIF TALENT:倒錯的 || TALENT:淫乱
+		PRINTL 一瞬躊躇するそぶりを見せたものの、
+		PRINTL 早くも新たな快感に目覚めたのかいそいそと着替え始めた……
+	ELSE
+		PRINTFORML 心底呆れたような表情を浮かべながらも命令通り%TSTR:0%をしていく……
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_93, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+;ABL:自慰中毒
+IF ABL:自慰中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:自慰中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;自慰しやすい
+IF TALENT:自慰しやすい
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+;難易度上昇
+;ビデオまたは野外で+10、羞恥プレイ中で+7、Ｃ系道具またはカテーテル系装着で＋3、
+;バイブ系やアナル系の道具で+5、拡張系道具装着でさらに＋3
+TFLAG:241 = 27
+SIF TEQUIP:ビデオ撮影 || TEQUIP:野外プレイ
+	TFLAG:241 += 10
+SIF TEQUIP:羞恥プレイ
+	TFLAG:241 += 7

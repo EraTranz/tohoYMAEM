@@ -1,0 +1,263 @@
+﻿;=============================================================================
+;吸血
+;=============================================================================
+;ベースは針。成功判定は主に足コキから
+;TFLAG:140とEXP:吸血経験を使用します
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE400
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:400 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;すでに実行しているとダメ
+SIF TFLAG:140 & 4
+	RETURN 0
+;調教者が吸血鬼でないとダメ
+SIF TALENT:PLAYER:吸血鬼 == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;媚薬効果発揮中はダメ
+SIF TEQUIP:媚薬
+	RETURN 0
+;利尿剤効果発揮中はダメ
+SIF TEQUIP:利尿剤
+	RETURN 0
+;賢者の血効果発揮中はダメ
+SIF TEQUIP:賢者の血
+	RETURN 0
+;睡眠薬効果発揮中はダメ
+SIF EQUIP:睡眠薬
+	RETURN 0
+;排卵誘発剤効果発揮中はダメ
+SIF TEQUIP:排卵誘発剤
+	RETURN 0
+;緊急避妊薬効果発揮中はダメ
+SIF TEQUIP:緊急避妊薬
+	RETURN 0
+;鈴蘭の毒効果発揮中はダメ
+SIF TEQUIP:鈴蘭の毒
+	RETURN 0
+;昆虫採集セットの薬効果発揮中はダメ
+SIF TEQUIP:昆虫採集セットの薬
+	RETURN 0
+;触手強制回復効果発揮中はダメ
+SIF TEQUIP:触手強制回復
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 400) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM400
+PRINTL 吸血
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 400
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 吸血
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 150
+
+SOURCE:屈従 = 1000
+SOURCE:逸脱 = 4000
+SOURCE:欲情追加 = 1000
+SOURCE:恭順追加 = 1000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 2000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 2300
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 2600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 2850
+ELSE
+	SOURCE:痛み = 3000
+ENDIF
+
+;EXP:吸血経験をみる
+IF EXP:吸血経験 < EXPLV:1
+	TIMES SOURCE:屈従 , 0.10
+	TIMES SOURCE:逸脱 , 2.50
+	TIMES SOURCE:欲情追加 , 0.00
+	TIMES SOURCE:恭順追加 , 0.00
+ELSEIF EXP:吸血経験 < EXPLV:2
+	TIMES SOURCE:屈従 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+	TIMES SOURCE:欲情追加 , 1.00
+	TIMES SOURCE:恭順追加 , 0.50
+ELSEIF EXP:吸血経験 < EXPLV:3
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:逸脱 , 0.25
+	TIMES SOURCE:欲情追加 , 10.0
+	TIMES SOURCE:恭順追加 , 5.00
+ELSE
+	TIMES SOURCE:屈従 , 5.00
+	TIMES SOURCE:逸脱 , 0.00
+	TIMES SOURCE:欲情追加 , 20.0
+	TIMES SOURCE:恭順追加 , 10.0
+ENDIF
+
+;ABL:調教者の技巧をみる
+IF ABL:PLAYER:技巧 < 1
+	TIMES SOURCE:痛み , 2.00
+ELSEIF ABL:PLAYER:技巧 < 2
+	TIMES SOURCE:痛み , 1.75
+ELSEIF ABL:PLAYER:技巧 < 3
+	TIMES SOURCE:痛み , 1.50
+ELSEIF ABL:PLAYER:技巧 < 4
+	TIMES SOURCE:痛み , 1.25
+ELSEIF ABL:PLAYER:技巧 < 5
+	TIMES SOURCE:痛み , 1.00
+ELSE
+	TIMES SOURCE:痛み , 0.75
+ENDIF
+
+;妹様
+IF NO:PLAYER == 1011
+	TIMES SOURCE:痛み , 5.00
+	DOWNBASE:0 += 450
+	DOWNBASE:1 += 350
+;狂気
+ELSEIF TALENT:PLAYER:狂気
+	TIMES SOURCE:痛み , 2.00
+	DOWNBASE:0 += 150
+	DOWNBASE:1 += 50
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+TCVAR:吸血経験 += 1
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+
+TFLAG:140 |= 4
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_400
+PRINTFORML %CALLNAME:TARGET%の血を吸おうと首筋に取り付こうとしたが拒絶された。
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_400
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の首筋に取り付くと、
+PRINTFORML 牙を突き立てて%CALLNAME:TARGET%の血を飲み始めた
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_400, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:マゾっ気
+IF ABL:マゾっ気
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:マゾっ気
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:21%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;保守的
+IF TALENT:保守的
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:24%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+
+;調教者の小悪魔
+IF TALENT:PLAYER:小悪魔
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:PLAYER%が%TALENTNAME:93%({LOCAL:99})
+ENDIF
+
+;吸血初体験
+IF EXP:吸血経験 == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 吸血初体験({LOCAL:99})
+ENDIF
+
+TFLAG:241 = 30

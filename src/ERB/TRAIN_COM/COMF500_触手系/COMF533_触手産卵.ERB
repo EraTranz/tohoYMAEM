@@ -1,0 +1,449 @@
+﻿;=============================================================================
+;触手産卵
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE533
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:533 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとはダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;妊娠中なら不可
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;Ｖ拡張経験が少ないと卵は追加不可能
+IF EXP:Ｖ拡張経験 < 1
+	LOCAL = 0
+ELSEIF EXP:Ｖ拡張経験 < 4
+	LOCAL = 1
+ELSEIF EXP:Ｖ拡張経験 < 20
+	LOCAL = 2
+ELSEIF EXP:Ｖ拡張経験 < 50
+	LOCAL = 3
+ELSEIF EXP:Ｖ拡張経験 < 200
+	LOCAL = 4
+ELSEIF EXP:Ｖ拡張経験 < 500
+	LOCAL = 5
+ELSE
+	LOCAL = 6
+ENDIF
+SIF TEQUIP:触手膣内産卵 >= LOCAL
+	RETURN 0
+;触手が邪魔で膣内産卵できない
+SIF TEQUIP:Ｖ系装着器具 == 3
+	RETURN 0
+;幽霊膣鏡挿入中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 533) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM533
+PRINTL 触手産卵
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 533
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手産卵
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+LOCAL:1 = 70
+LOCAL:2 = 80
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.40
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 0.80
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+ELSE
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.40
+ENDIF
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+SOURCE:露出 = 1800
+SOURCE:不潔 = 2400
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 80
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 250
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 600
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 1000
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1300
+ELSE
+	SOURCE:快Ｖ = 1700
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	SOURCE:痛み = 2000
+	SOURCE:屈従 = 200
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 2000
+ELSEIF ABL:マゾっ気 == 1
+	SOURCE:痛み = 1600
+	SOURCE:屈従 = 500
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 1000
+ELSEIF ABL:マゾっ気 == 2
+	SOURCE:痛み = 1200
+	SOURCE:屈従 = 800
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 500
+ELSEIF ABL:マゾっ気 == 3
+	SOURCE:痛み = 800
+	SOURCE:屈従 = 1200
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 100
+ELSEIF ABL:マゾっ気 == 4
+	SOURCE:痛み = 600
+	SOURCE:屈従 = 1500
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 0
+ELSE
+	SOURCE:痛み = 400
+	SOURCE:屈従 = 2000
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 0
+ENDIF
+
+;触手中毒
+IF ABL:触手中毒 == 0
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:触手中毒 == 1
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:触手中毒 == 2
+	TIMES SOURCE:不潔 , 0.75
+ELSEIF ABL:触手中毒 == 3
+	TIMES SOURCE:不潔 , 0.50
+ELSEIF ABL:触手中毒 == 4
+	TIMES SOURCE:不潔 , 0.25
+ELSE
+	TIMES SOURCE:不潔 , 0.10
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.40
+	SOURCE:痛み += 800
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	SOURCE:痛み += 500
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.40
+	SOURCE:痛み += 120
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	SOURCE:痛み += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.10
+ELSE
+	TIMES SOURCE:快Ｖ , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.30
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;卵プラグの着脱
+SIF TEQUIP:Ｖ系装着器具 == 0
+	TEQUIP:Ｖ系装着器具 = 1
+TEQUIP:触手膣内産卵 += 1
+
+TCVAR:Ｖ経験 += 10
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+STAIN:アナル |= 2
+STAIN:アナル |= 4
+STAIN:アナル |= 64
+RETURN 1
+
+;--------------------------------------------------
+;触手膣内産卵中
+;--------------------------------------------------
+@EQUIP_COM533
+PRINTL ＜触手膣内産卵中＞
+CALL DISPLAY_EQUIP_MESSAGE_COM, 533
+
+LOCAL:3 = 110
+LOCAL:4 = 90
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:3 , 1.00
+	TIMES LOCAL:4 , 1.40
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:3 , 0.90
+	TIMES LOCAL:4 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:4 , 1.00
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:3 , 0.70
+	TIMES LOCAL:4 , 0.80
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:3 , 0.60
+	TIMES LOCAL:4 , 0.60
+ELSE
+	TIMES LOCAL:3 , 0.50
+	TIMES LOCAL:4 , 0.40
+ENDIF
+
+DOWNBASE:0 += LOCAL:3
+DOWNBASE:1 += LOCAL:4
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	LOCAL = 80
+	LOCAL:1 = 300
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL = 250
+	LOCAL:1 = 800
+ELSEIF ABL:Ｖ感覚 == 2
+	LOCAL = 600
+	LOCAL:1 = 1400
+ELSEIF ABL:Ｖ感覚 == 3
+	LOCAL = 1000
+	LOCAL:1 = 1800
+ELSEIF ABL:Ｖ感覚 == 4
+	LOCAL = 1300
+	LOCAL:1 = 2100
+ELSE
+	LOCAL = 1700
+	LOCAL:1 = 2400
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES LOCAL , 0.50
+	LOCAL:2 = 2000
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES LOCAL , 1.00
+	LOCAL:2 = 300
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	LOCAL:2 = 50
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:2 = 10
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:2 = 0
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:2 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.40
+	LOCAL:2 += 800
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:2 += 500
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:2 += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.40
+	LOCAL:2 += 120
+ELSE
+	TIMES LOCAL , 1.80
+	LOCAL:2 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES LOCAL:2 , 2.00
+
+;Ｖ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+SOURCE:快Ｖ += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+SOURCE:逸脱 += LOCAL:1 *2
+SOURCE:支配 += LOCAL:1
+
+TCVAR:Ｖ経験 += 3
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_533
+IF TEQUIP:触手膣内産卵
+	PRINTFORML 触手は卵を抱え込んでいる%CALLNAME:TARGET%の子宮に追加の卵を産みつけた…
+ELSEIF TEQUIP:Ｖ系装着器具 == 2
+	PRINTFORML %CALLNAME:TARGET%の膣を責めたてていた触手は一つ身震いしたと思いきや、子宮口をこじ開け、奥に向かって卵を吐き出した
+ELSEIF TEQUIP:Ｖ系装着器具 == 1
+	PRINTFORML %CALLNAME:TARGET%の性器に潜り込んでいた触手は突如奥に向かって突き進み、子宮口の向こう側に内包していた卵を放りこんだ…
+ELSE
+	PRINTFORML 極太の触手が%CALLNAME:TARGET%の秘唇に潜り込むと、子宮の奥で卵を産みつけた…
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_533
+SIF EQUIP:睡眠薬 || TFLAG:899 > 0
+	RETURN 0
+
+PRINTFORML %CALLNAME:TARGET%は子宮に触手の卵を押し込まれ、栓をされた状態で責められている
+IF ABL:マゾっ気 == 0
+	PRINTFORML %CALLNAME:TARGET%は激痛のあまり、声も出ないようだ…
+ELSEIF ABL:マゾっ気 == 1
+	PRINTFORM %CALLNAME:TARGET%は脂汗を浮かべ
+	SIF TEQUIP:緊縛関連 == 0
+		PRINT 、大きく膨れた腹部に手を添え
+	PRINTL ている…
+ELSEIF ABL:マゾっ気 == 2
+	PRINTFORM %CALLNAME:TARGET%は苦しそうな表情をしながらも、顔を紅潮させ大きく膨らんだ自分のお腹を
+	IF TEQUIP:緊縛関連
+		PRINTL 見続けている…
+	ELSE
+		PRINTL 擦っている…
+	ENDIF
+ELSEIF ABL:マゾっ気 == 3
+	PRINTFORML %CALLNAME:TARGET%は排卵感に苛まれながらも、時折恍惚とした表情を浮かべている…
+ELSEIF ABL:マゾっ気 == 4
+	PRINTFORML %CALLNAME:TARGET%はうっとりした表情を浮かべ、排卵感と腹痛を愉しんでいる…
+ELSE
+	PRINTFORML 大きく膨らんでいる%CALLNAME:TARGET%のお腹の中では呼吸に合わせてコロコロと卵が動いているようだ。
+	PRINTFORML 卵が子宮の襞を引っかいているのか、時折%CALLNAME:TARGET%は艶っぽい悲鳴をあげている……
+ENDIF

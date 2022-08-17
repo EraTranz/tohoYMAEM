@@ -1,0 +1,229 @@
+﻿;=============================================================================
+;水牢
+;=============================================================================
+;縄で緊縛と併用しながら行うため、かなりハード。時間をおくごとに消耗が激しくなる
+;主に苦痛を入れることが目的だが普通の調教にはあまり向いていない
+;あくまでシチュを楽しむ程度
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE365
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:365 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 32) == 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 7
+	RETURN 1
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;縄で緊縛中じゃないとダメ
+SIF TEQUIP:緊縛関連 == 0 || (TEQUIP:緊縛関連 >= 5 && TEQUIP:緊縛関連 <= 7)
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 7
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 365) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM365
+PRINTL 水牢
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 365
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 水牢
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 = 10
+DOWNBASE:1 = 25
+
+IF TEQUIP:特殊風呂入浴中 == 7
+	TEQUIP:特殊風呂入浴中 = 0
+	TFLAG:155 = 0
+	RETURN 1
+ENDIF
+
+SOURCE:反感追加 = 10000
+SOURCE:屈従 = 1500
+
+TEQUIP:特殊風呂入浴中 = 7
+TFLAG:155 = 0
+RETURN 1
+
+;--------------------------------------------------
+;水責め中
+;--------------------------------------------------
+@EQUIP_COM365
+PRINTL ＜水責め中＞
+IF TFLAG:155 < 20
+	TFLAG:155 += 1
+	PRINTL 
+	PRINTFORML せり上がってくる水に%CALLNAME:TARGET%は大きく消耗していく…
+ENDIF
+DOWNBASE:0 += 30 * TFLAG:155
+DOWNBASE:1 += 60 * TFLAG:155
+
+LOCAL = 150 * TFLAG:155
+LOCAL:1 = 100 * TFLAG:155
+LOCAL:2 = 125 * TFLAG:155
+
+;従順
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 2.50
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 2.00
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.50
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 0.75
+ELSE
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+
+;マゾっ気
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL , 5.00
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 3.00
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL , 3.50
+	TIMES LOCAL:1 , 1.25
+	TIMES LOCAL:2 , 2.50
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL , 2.40
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.50
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.50
+ELSE
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.20
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 1.50
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.80
+ENDIF
+;マゾ
+IF TALENT:マゾ
+	TIMES LOCAL , 0.50
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 0.50
+ENDIF
+
+;河童補正
+IF TALENT:河童
+	TIMES LOCAL , 0.30
+	TIMES LOCAL:1 , 0.30
+	TIMES LOCAL:2 , 0.30
+ENDIF
+
+;人魚補正
+IF TALENT:人魚
+	TIMES LOCAL , 0.30
+	TIMES LOCAL:1 , 0.30
+	TIMES LOCAL:2 , 0.30
+ENDIF
+
+SOURCE:痛み += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:反感追加 += LOCAL:2
+SOURCE:支配 += LOCAL:1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_365
+;解放
+IF TEQUIP:特殊風呂入浴中 == 7
+	PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%を水牢から解放してやった…
+;水責め開始で対象が反発刻印Lv2以上持ちで恋慕と服従と恐怖刻印がない場合
+ELSEIF MARK:反発刻印 > 1 && MARK:恐怖刻印 <= 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0
+	PRINTFORML 縛られて動けない%CALLNAME:TARGET%を水牢に放り込み、水責めを開始した。
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%を睨みつづけていた…
+;水責め開始で対象が恐怖刻印Lv2以上持ちで恋慕と服従と気丈がない場合
+ELSEIF MARK:恐怖刻印 > 1 && TALENT:気丈 == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0
+	PRINTFORML 縛られて動けないはずなのに恐怖でガタガタ震えている%CALLNAME:TARGET%を水牢に放り込み、水責めを開始した。
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%に泣きながら許しを請うていた…
+;水責め開始でその他
+ELSE
+	PRINTFORML 縛られて動けない%CALLNAME:TARGET%を水牢に放り込み、水責めを開始した…
+ENDIF

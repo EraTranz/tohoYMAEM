@@ -1,0 +1,350 @@
+﻿;=============================================================================
+;Ｃ肥大注射
+;=============================================================================
+;ふたなりサイズで性交可能とする、但し射精機能は無いのでペニバンと同じ扱い
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE86
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:86 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;注射系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 64) == 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;助手調教の場合、技巧4以上か[針さばき]じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4 && TALENT:PLAYER:針さばき == 0
+	RETURN 0
+;注射セットと賢者の血を持っていないとダメ
+SIF (ITEM:注射セット == 0 || ITEM:賢者の血 == 0)
+	RETURN 0
+;産卵促進剤を使用していたら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;効果発揮中・反動中はダメ
+SIF TEQUIP:賢者の血
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 85) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM85
+PRINTL Ｃ肥大注射
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 85
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = Ｃ肥大注射
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+LOCAL:3 = (TALENT:MASTER:調合知識) ? 1 # 0
+SIF ASSI >= 0 && TALENT:ASSI:調合知識
+	LOCAL:3 = 1
+
+LOCAL:1 = (LOCAL:3) ? 750 # 1000
+LOCAL:2 = (LOCAL:3) ? 600 # 800
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+SOURCE:快Ｃ = 1200
+SOURCE:中毒充足 = 500
+SOURCE:薬物浸潤 = 1500
+SOURCE:逸脱 = 2000
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:逸脱 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:逸脱 , 1.80
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:逸脱 , 1.20
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:逸脱 , 1.00
+ELSE
+	TIMES SOURCE:逸脱 , 0.80
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	TIMES SOURCE:快Ｃ , 0.50
+ELSEIF ABL:Ｃ感覚 == 1
+	TIMES SOURCE:快Ｃ , 0.75
+ELSEIF ABL:Ｃ感覚 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF ABL:Ｃ感覚 == 3
+	TIMES SOURCE:快Ｃ , 1.25
+ELSEIF ABL:Ｃ感覚 == 4
+	TIMES SOURCE:快Ｃ , 1.50
+	EX:0 += RAND:2
+ELSE
+	TIMES SOURCE:快Ｃ , 2.00
+	EX:0 += 1
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:中毒充足 , 0.80
+	TIMES DOWNBASE:0 , 1.20
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:中毒充足 , 1.10
+	TIMES DOWNBASE:0 , 1.10
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:中毒充足 , 1.30
+	TIMES DOWNBASE:0 , 1.00
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:中毒充足 , 1.50
+	TIMES DOWNBASE:0 , 0.90
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:中毒充足 , 1.70
+	TIMES DOWNBASE:0 , 0.80
+ELSE
+	TIMES SOURCE:中毒充足 , 2.10
+	TIMES DOWNBASE:0 , 0.70
+ENDIF
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 3300
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 3600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 4000
+ELSE
+	SOURCE:痛み = 4500
+ENDIF
+
+;反抗的
+SIF TALENT:反抗的
+	TIMES SOURCE:痛み , 1.10
+;抵抗
+SIF TALENT:抵抗
+	TIMES SOURCE:痛み , 1.10
+;Ｃ敏感
+IF TALENT:Ｃ敏感
+	IF ABL:Ｃ感覚 <= 3
+		TIMES SOURCE:快Ｃ , 1.20
+	ELSEIF ABL:Ｃ感覚 == 4
+		TIMES SOURCE:快Ｃ , 1.50
+	ELSE
+		TIMES SOURCE:快Ｃ , 1.80
+		EX:0 += RAND:2
+	ENDIF
+;Ｃ鈍感
+ELSEIF TALENT:Ｃ鈍感
+	EX:0 -= (EX:0 > 1) ? 1 # 0
+	IF ABL:Ｃ感覚 <= 3
+		TIMES SOURCE:快Ｃ , 0.60
+	ELSEIF ABL:Ｃ感覚 == 4
+		TIMES SOURCE:快Ｃ , 0.70
+	ELSE
+		TIMES SOURCE:快Ｃ , 0.80
+	ENDIF
+ENDIF
+
+;調教者が針さばき
+SIF TALENT:PLAYER:針さばき
+	TIMES SOURCE:痛み , 0.90
+;調教者が幼稚
+SIF TALENT:PLAYER:幼稚
+	TIMES SOURCE:痛み , 1.20
+
+;鈴仙か永琳による使用
+IF TEQUIP:触手調教 == 0
+	SIF NO:PLAYER == 1028
+		TIMES SOURCE:痛み , 0.70
+	SIF NO:PLAYER == 1029
+		TIMES SOURCE:痛み , 0.50
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+
+SIF PLAYER == MASTER
+	TCVAR:Ｃ調律経験 += 2
+
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+
+;陰核成長剤1つ消費
+CALL USE_PLURAL_ITEM, 68, 1
+
+IF EX:0 < 5
+	LOCAL:4 = 5 + RAND:10
+ELSEIF EX:0 < 10
+	LOCAL:4 = 10 + RAND:10
+ELSEIF EX:0 < 20
+	LOCAL:4 = 15 + RAND:15
+ELSEIF EX:0 < 50
+	LOCAL:4 = 20 + RAND:15
+ELSEIF EX:0 < 100
+	LOCAL:4 = 30 + RAND:15
+ELSE
+	LOCAL:4 = 50 + RAND:15
+ENDIF
+BASE:陰核 = MIN(BASE:陰核 + LOCAL:4, 250)
+
+;陰核成長剤(注射)効果発揮
+TEQUIP:陰核成長剤 = 2
+RETURN 1
+
+;--------------------------------------------------
+;陰核成長剤(注射)効果発揮中
+;--------------------------------------------------
+@EQUIP_COM85
+LOCAL = 0
+IF EX:0 < 10
+	LOCAL = 1 + RAND:5
+ELSEIF EX:0 < 50
+	LOCAL = 3 + RAND:5
+ELSEIF EX:0 < 100
+	LOCAL = 5 + RAND:5
+ELSE
+	LOCAL = 7 + RAND:5
+ENDIF
+
+BASE:陰核 = MIN(BASE:陰核 + LOCAL, 250)
+SIF FLAG:12 & 4
+	PRINTFORML 陰核の成長具合:{BASE:陰核}
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_85
+IF TFLAG:899 > 0
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	SIF TALENT:肥大陰核 && BASE:陰核 > 150
+		PRINT 巨大な
+	PRINTL クリトリスに容赦なく注射針を突き立てた
+	PRINTFORML %CALLNAME:TARGET%は激痛に身を震わせている
+	PRINTL 
+	PRINTL しばらくすると、効果が現れ始めたのか粘着質のいやらしい音をたてながら
+	SIF TALENT:肥大陰核 && BASE:陰核 > 150
+		PRINT 巨大な
+	PRINTL クリトリスはムクムクと膨れ上がっていった…	
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%にこれからすることを聞かされて、
+	;壊造人格、傀儡、精神崩壊
+	IF TALENT:精神崩壊 || TALENT:傀儡 || TALENT:壊造人格
+		PRINTL ほんの少しだけ嫌がるような素振り見せた気がする…
+	;縛られている
+	ELSEIF TEQUIP:緊縛関連
+		PRINT 自由を奪われた格好で
+		IF ABL:従順 < 3 || MARK:屈服刻印 < 1 || MARK:反発刻印 > 0
+			IF TALENT:反抗的 || TALENT:気丈 || TALENT:プライド高い
+				PRINTL 気丈にもこちらを睨み付けている…
+			ELSEIF TALENT:臆病 || TALENT:大人しい
+				PRINTL 目に涙を浮かべ、恐怖のあまり震えている…
+			ELSE
+				PRINTL 青褪めた表情で俯いている…
+			ENDIF
+		ELSEIF TALENT:服従 || TALENT:烙印 || TALENT:隷属 || TALENT:使い魔
+			PRINTL どことなく期待に満ちた視線を向けている…
+		ELSE
+			PRINTL 抵抗を諦めただ俯いている…
+		ENDIF
+	;縛られていない
+	ELSE
+		IF ABL:従順 < 3 || MARK:屈服刻印 < 1 || MARK:反発刻印 > 0
+			PRINT 逃げようとするも無理やり押さえつけられ
+			IF TALENT:反抗的 || TALENT:気丈 || TALENT:プライド高い
+				PRINTL 気丈にもこちらを睨み付けている…
+			ELSEIF TALENT:臆病 || TALENT:大人しい
+				PRINTL 歯の根も合わぬほどガチガチと震えている…
+			ELSE
+				PRINTL 青褪めた表情で俯いている…
+			ENDIF
+		ELSEIF TALENT:服従 || TALENT:烙印 || TALENT:隷属 || TALENT:使い魔
+			PRINTL 主人の命令に従い、自らワレメを大きく広げた…
+		ELSE
+			PRINTL 抵抗を諦め自らワレメを広げてただ俯いている…
+		ENDIF
+	ENDIF
+	PRINTFORM %CALLNAME:PLAYER%は
+	;女体狂乱より抜粋でございます
+	SIF ABL:PLAYER:サドっ気 > 3 || TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+		PRINTL 注射を打つために麻酔を打つかと冗談を言いながら
+	PRINTFORM %CALLNAME:TARGET%の
+	SIF TALENT:肥大陰核 && BASE:陰核 > 150
+		PRINT 巨大な
+	PRINTL クリトリスに容赦なく注射針を突き立てた…
+	PRINTFORML %CALLNAME:TARGET%は激痛に身を震わせている……
+	PRINTL 
+	PRINTL 効果が現れ始めたのか粘着質のいやらしい音をたてながら
+	SIF TALENT:肥大陰核 && BASE:陰核 > 150
+		PRINT 巨大な
+	PRINTL クリトリスはムクムクと膨れ上がっていく
+	PRINTFORM %CALLNAME:TARGET%はその光景
+	IF TALENT:精神崩壊 || TALENT:傀儡 || TALENT:壊造人格
+		PRINTL に何を思っているのか、ガラス玉のような瞳でじっと見つめている……
+	ELSEIF ABL:従順 < 3 || MARK:屈服刻印 < 1 || MARK:反発刻印 > 0
+		IF TALENT:反抗的 || TALENT:気丈 || TALENT:生意気
+			PRINTL に釘付けになっていた……
+		ELSEIF TALENT:臆病 || TALENT:大人しい
+			PRINTL に顔を蒼白にしてうろたえている……
+		ELSE
+			PRINTL から視線を逸らして俯いている……
+		ENDIF
+	ELSE
+		PRINTL をただ見守っていた……
+	ENDIF
+ENDIF

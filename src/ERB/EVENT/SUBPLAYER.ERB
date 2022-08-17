@@ -1,0 +1,1196 @@
+﻿;eraMeiQからパクリ
+
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;固定ファン、メイン外キャラ関連処理等
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;-------------------------------------------------
+;統括
+;-------------------------------------------------
+@SUBPLAYER_EVENT, ARG
+
+
+;=============================================================================
+;売却済みキャラのその後関連
+;=============================================================================
+@SELLED_CHARA_STACK
+#DIM choice
+#DIM select
+#DIM npcnum
+choice = 0
+select = 0
+npcnum = 0
+
+LOADGLOBAL
+
+;売却される処理
+FOR LOCAL:5, 101, 151
+	SIF STRLENS(GLOBALS:(LOCAL:5)) == 0
+		CONTINUE
+	;ここで各区分毎にLOCALS分割
+	SPLIT GLOBALS:(LOCAL:5), "_", LOCALS
+	;取り置きは除く
+	SIF TOINT(LOCALS:13) == 1
+		CONTINUE
+	
+	;一時キャラ解凍追加
+	CALL CHARA_EXTRACTION, (LOCAL:5)
+	select = CHARANUM -1
+	
+	CALL COMMON_MARKET_CHECK, select
+	
+	;理性減少処理（娼婦で無い場合）
+	IF TALENT:select:娼婦 == 0 && TALENT:select:求愛依存 == 0
+		MAXBASE:select:9 = LIMIT(MAXBASE:select:9 - RAND(-200,601), 0, 12000)
+		BASE:select:理性 = MIN(BASE:select:理性, MAXBASE:select:9)
+	ENDIF
+	;理性の無い(0以下の)キャラは永久削除
+	IF MAXBASE:select:0 <= 0 || MAXBASE:select:9 <= 0
+		;市場note
+		IF MAXBASE:select:0 <= 0
+			LOCALS = @s@%CALLNAME:select%の生命が尽きた為削除されました@e@0x665555
+		ELSE
+			LOCALS = @s@%CALLNAME:select%の理性が尽きた為削除されました@e@0x665555
+		ENDIF
+		CALL SET_CHARABUYNOTE (LOCALS)
+		;前詰め
+		FOR LOCAL:6, LOCAL:5, 150
+			GLOBALS:(LOCAL:6) = %GLOBALS:(LOCAL:6 +1)%
+		NEXT
+		;※次の番号のキャラが前倒しになるので注意
+		LOCAL:5 -= 1
+		DELCHARA select
+		CONTINUE
+	ENDIF
+	
+	SIF CFLAG:select:99 % 10 == 2
+		npcnum += 1
+	;上書き処理
+	GLOBALS:(LOCAL:5) = 
+	CALL CHARA_RESERVE, CHARANUM -1
+	
+	IF CFLAG:select:99 >= 100
+	;制限売却（帰還制限）自動調教処理
+		IF CFLAG:select:99 / 100 == 1 && (RAND:8 == 0 || (RAND:4 == 0 && (TALENT:select:魅惑 || TALENT:select:謎の魅力)))
+			;準売却モードへ
+			CFLAG:select:99 += 100
+			CFLAG:select:3665 = RAND(3,10)
+			CFLAG:select:3665 += (CFLAG:select:3665 -1) * 1000
+			SIF CFLAG:select:99 % 100 / 10 == 0
+				CFLAG:select:99 += 10
+			
+			;市場note
+			LOCALS = %CALLNAME:select%が顧客へ貸し出されました (@s@{CFLAG:select:3665 / 1000}日間@e@)0x9999BB
+			CALL SET_CHARABUYNOTE (LOCALS)
+			
+			;自動調教処理
+			CALL CHARA_AUTO_TRAINED, select
+		ELSEIF CFLAG:select:99 / 100 == 2 && CFLAG:select:3665 > 0
+			;自動調教処理(1/6で行動なし)
+			IF RAND:6 > 0
+				CALL CHARA_AUTO_TRAINED, select
+			ELSE
+				REPEAT 2
+					BASE:select:COUNT = MIN(BASE:select:COUNT + 25 * (2 + RAND:3), MAXBASE:select:COUNT)
+				REND
+			ENDIF
+			CFLAG:select:3665 -= 1000
+			IF CFLAG:select:3665 < 1000
+				;レンタル解除
+				CFLAG:select:99 -= 100
+				CFLAG:select:3665 = 0
+			ENDIF
+		ENDIF
+		;上書き処理
+		GLOBALS:(LOCAL:5) = 
+		CALL CHARA_RESERVE, CHARANUM -1
+	
+	;裏売却判定
+	ELSEIF ((TALENT:select:魅惑 || TALENT:select:謎の魅力) && RAND:4 == 0) || RAND:64 == 0
+		;市場note
+		LOCALS = @s@%CALLNAME:select%@e@が顧客に購入されました0x999999
+		CALL SET_CHARABUYNOTE (LOCALS)
+		;前詰め
+		FOR LOCAL:6, 151, 190
+			IF STRLENS(GLOBALS:(LOCAL:6)) == 0
+				GLOBALS:(LOCAL:6) = %GLOBALS:(LOCAL:5)%
+				BREAK
+			ENDIF
+			;空きが無ければ登録せずに消える
+		NEXT
+		FOR LOCAL:6, LOCAL:5, 150
+			GLOBALS:(LOCAL:6) = %GLOBALS:(LOCAL:6 +1)%
+		NEXT
+		
+		GLOBALS:150 = 
+	ENDIF
+	
+	DELCHARA select
+NEXT
+
+;以下発動率40%
+SIF RAND:10 > 3
+	RETURN 0
+
+;完売済みキャラの処理
+FOR LOCAL:7, 151, 190
+	SIF STRLENS(GLOBALS:(LOCAL:7)) == 0
+		CONTINUE
+	;ここで各区分毎にLOCALS分割
+	SPLIT GLOBALS:(LOCAL:7), "_", LOCALS
+	SIF TOINT(LOCALS:13) == 1
+		CONTINUE
+	
+	;一時キャラ解凍追加
+	CALL CHARA_EXTRACTION, LOCAL:7
+	select = CHARANUM -1
+	
+	CALL COMMON_MARKET_CHECK, select
+	
+	IF (((TALENT:select:魅惑 || TALENT:select:謎の魅力) && RAND:12 == 0) || RAND:24 == 0) && CFLAG:select:99 < 100
+		;永久削除
+		GLOBALS:(LOCAL:7) = 
+	;発動率10%
+	ELSEIF !RAND:10
+		;再登録処理
+		SIF CFLAG:select:99 / 10 == 0
+			CFLAG:select:99 += 10
+		CFLAG:select:454 ++
+		;市場note
+		LOCALS = @s@%CALLNAME:select%@e@が顧客から再売却されました0xD0AAAA
+		CALL SET_CHARABUYNOTE (LOCALS)
+		CALL CHARA_RESERVE, select
+		GLOBALS:(LOCAL:7) = 
+	;発動率50%
+	ELSEIF RAND:10 > 4
+		;自動調教処理
+		CALL CHARA_AUTO_TRAINED, select
+	ELSE
+		REPEAT 2
+			BASE:select:COUNT = MIN(BASE:select:COUNT + 25 * (2 + RAND:3), MAXBASE:select:COUNT)
+		REND
+	ENDIF
+	DELCHARA CHARANUM -1
+NEXT
+
+;以下発動率60%
+SIF RAND:10 > 5
+	RETURN 0
+
+;市場NPC追加処理
+;裏キャラ枠39?、表キャラ枠40が空いてるなら稀に追加
+IF STRLENS(GLOBALS:189) == 0 && STRLENS(GLOBALS:140) == 0 && RAND:3 && RAND:(6+npcnum) == 0 && npcnum < 10
+	CALL CHARA_AUTOADD
+	;追加時アラートするならこの辺のタイミングで挿入↓↑
+ENDIF
+
+;=============================================================================
+;自動追加用NPCキャラ
+;=============================================================================
+;-------------------------------------------------
+;自動追加用のランダムキャラ生成
+;-------------------------------------------------
+@CHARA_AUTOADD
+#DIM check
+#DIM select
+
+IF FLAG:17 & 128
+	check = 3000 + RAND:38
+ELSEIF RAND:9 == 0
+	DO 
+		check = 1001 + RAND:112
+	LOOP ITEM:check > 0
+ELSEIF RAND:9 == 0
+	DO 
+		check = 2000 + RAND:43
+	LOOP ITEM:check > 0 || GROUPMATCH(check, 2031, 2032, 2033, 2035, 2037, 2038)
+ELSEIF RAND:9 == 0
+	DO 
+		check = 4000 + RAND:21
+	LOOP ITEM:check > 0 || GROUPMATCH(check, 4018, 4019, 4020)
+ELSE
+	check = 3000 + RAND:38
+ENDIF
+
+ADDCHARA check
+select = CHARANUM -1
+;汎用キャラの場合はランダム素質付加処理に飛ぶ
+IF check >= 3000 && check < 4000
+	CALL CHARA_RANDOM_STATE_2, select
+ELSE
+	;名無しキャラ以外はキャラカードを取得
+	ITEM:check = 1
+ENDIF
+
+;----- キャラ追加による設定 --- -----
+;理性ゲージ設定
+SIF MAXBASE:select:9 <= 0
+	MAXBASE:select:9 = (9500 + 25 * RAND:101) / 100 * RAND(70,91)
+BASE:select:理性 = MAXBASE:select:9 / 100 * RAND(70,91)
+TALENT:select:理性 = 1
+;発情設定
+SIF TALENT:select:動物耳 || TALENT:select:淫魔 || TALENT:select:悪魔 || TALENT:select:妖狐 || TALENT:select:半白澤 || TALENT:select:鬼 || TALENT:select:鵺 || TALENT:select:化け狸 || TALENT:select:人狼
+	TALENT:select:発情可 = 1
+;調教度ゲージ設定
+CALL CHECK_ACCEPTANCE,select
+;射精ゲージ設定
+SIF (TALENT:select:オトコ || TALENT:select:ふたなり) && MAXBASE:select:2 <= 0
+	MAXBASE:2 = CALC_GAUGE2_COMMON(select)
+;噴乳ゲージ設定
+SIF TALENT:select:母乳体質
+	CALL CALC_GAUGE3_SLAVE, select, 1
+;尿意ゲージ設定
+SIF TALENT:select:おもらし癖 || EXP:select:放尿経験
+	CALL CALC_GAUGE4_SLAVE, select, 1
+LOCAL = TARGET
+TARGET = select
+;触手ゲージ設定
+SIF TALENT:寄生
+	CALL CALC_TENTACLE_GAUGE
+TARGET = LOCAL
+;酔いゲージ設定
+CALL CALC_GAUGE8, select, 0
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, select
+;NPC判定
+CFLAG:select:99 += 2
+;中古
+CFLAG:select:454 ++
+;----- キャラ追加による設定 END -----
+
+;ステータス変化*ｎ
+LOCAL:15 = RAND:12
+IF LOCAL:15 > 0
+	FLAG:8670 = 1
+	FOR LOCAL:16, 0, LOCAL:15
+		CALL CHARA_AUTO_TRAINED, select
+	NEXT
+	FLAG:8670 = 0
+ENDIF
+
+
+;市場note
+LOCALS = @s@%CALLNAME:select%@e@が市場に登録されました0xEEBBBB
+PRINTL 
+PRINTL とある新キャラが市場に登録されました……
+CALL SET_CHARABUYNOTE (LOCALS)
+
+;----- 圧縮 --- -----
+CALL CHARA_RESERVE, select
+;----- 圧縮 END -----
+DELCHARA CHARANUM -1
+
+;-------------------------------------------------
+;自動調教によるステータス変化
+;-------------------------------------------------
+@CHARA_AUTO_TRAINED, ARG
+;口上で使用
+;TFLAG:217 調教者性別
+;X 調教時間
+;X コマンドの種類
+;X 調教の行為
+;TFLAG:218 薬物の種類 10が無い
+;TFLAG:219 行為の強度
+VARSET LOCAL, 0
+TFLAG:218 = -1
+LOCAL:10 = TARGET
+TARGET = ARG
+;調教者性別ランダム
+IF RAND:9 == 0
+	;女
+	LOCAL:0 = 1
+ELSEIF RAND:7 == 0
+	;調教師
+	LOCAL:0 = 4
+ELSEIF RAND:5 == 0
+	;資産家
+	LOCAL:0 = 3
+ELSEIF RAND:3 == 0
+	;浮浪者
+	LOCAL:0 = 2
+ELSE
+	;男
+	LOCAL:0 = 0
+ENDIF
+
+;調教師
+IF LOCAL:0 == 4
+	LOCAL:6 = -1
+;浮浪者
+ELSEIF LOCAL:0 == 2
+	LOCAL:6 = 1
+ELSE
+	LOCAL:6 = 0
+ENDIF
+
+TFLAG:217 = LOCAL:0
+;開始宣言(0男,1女)
+CALL OTHERPLACE_MESSAGE, TARGET, TFLAG:217
+
+;調教時間ランダム
+LOCAL:1 = 6
+;資産家
+SIF LOCAL:0 == 3
+	LOCAL:1 -= 2
+;浮浪者
+SIF LOCAL:0 == 2
+	LOCAL:1 += 2
+;調教師
+SIF LOCAL:0 == 4
+	LOCAL:1 += 4
+;調教方針ランダム
+;今回実行したコマンドの種類
+;(0=愛撫系,1=Ｖセックス系,2=Ａセックス系,3=奉仕系,4=自慰系,5=露出系,6=ハード系,7=何もしない)
+$TRAIN_LOOP
+LOCAL:7 = 0
+FOR LOCAL:11, 0, LOCAL:1
+	TFLAG:219 = 0
+	SELECTCASE RAND:24
+		CASE 0 TO 4
+			LOCAL:2 = 0
+		CASE 5 TO 8
+			LOCAL:2 = 1
+		CASE 9 TO 11
+			LOCAL:2 = 2
+		CASE 12 TO 15
+			LOCAL:2 = 3
+		CASE 16 TO 18
+			LOCAL:2 = 4
+		CASE 19 TO 20
+			LOCAL:2 = 5
+		CASE 21
+			LOCAL:2 = 6
+		CASE 22 TO 23
+			LOCAL:2 = 7
+	ENDSELECT
+	;LOCAL:2 = RAND:8
+	IF LOCAL:2 != 7
+		;レズ
+		SIF !TALENT:オトコ && LOCAL:0 == 1
+			EXP:レズ経験 += RAND:3 + 1
+		;ＢＬ
+		SIF TALENT:オトコ && LOCAL:0 != 1
+			EXP:ＢＬ経験 += RAND:3 + 1
+	ENDIF
+	;薬物と関連
+	;(1=ローション,2=媚薬,3=利尿剤,6=興奮剤,7=感覚増幅薬,8=睡眠薬)
+	;微妙な感じ……
+	;今回実行したコマンドの種類
+	IF RAND:(10 - LOCAL:6 * 2) == 0 && (TFLAG:218 != -1 || RAND:14 == 0)
+		SIF LOCAL:4
+			LOCAL:5 = LOCAL:4
+		SELECTCASE LOCAL:2
+			;愛撫系
+			CASE 0
+				SELECTCASE RAND:100
+					CASE 0 TO 10
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;Ｖセックス系
+			CASE 1
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;Ａセックス系
+			CASE 2
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;奉仕系
+			CASE 3
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;自慰系
+			CASE 4
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;露出系
+			CASE 5
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;ハード系
+			CASE 6
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+			;何もしない
+			CASE 7
+				SELECTCASE RAND:100
+					CASE 0 TO 20
+						LOCAL:4 = 1
+					CASE 21 TO 35
+						LOCAL:4 = 2
+					CASE 41 TO 50
+						LOCAL:4 = 3
+					CASE 51 TO 60
+						LOCAL:4 = 6
+					CASE 61 TO 70
+						LOCAL:4 = 7
+					CASE 71 TO 85
+						LOCAL:4 = 8
+				ENDSELECT
+		ENDSELECT
+		SIF LOCAL:5 != LOCAL:4
+			TFLAG:218 = -1
+	ENDIF
+	
+	;薬物効果(一回)
+	;(10=無い,11=ローション,12=媚薬,13=利尿剤,14=坐剤,15=賢者の血,16=興奮剤,17=感覚増幅薬,18=睡眠薬)
+	IF TFLAG:218 == -1 && LOCAL:4 > 0
+		EXP:薬物経験 += 1 + MAX(RAND:4 - 2, 0)
+		
+		IF LOCAL:4 != 8 && ABL:従順 + ABL:マゾっ気 + MARK:苦痛刻印 + MARK:快楽刻印 + MARK:屈服刻印 + MARK:薬物刻印 + MARK:恥辱刻印 + MARK:恐怖刻印 > 5 + MARK:反発刻印 * 3 && MARK:反発刻印 < 2 + LOCAL:6 && MARK:97 < MARK:反発刻印 + 1 && RAND:(2 + MARK:反発刻印) == 0
+			MARK:反発刻印 += 1
+			MARK:97 = MARK:反発刻印
+			CFLAG:3668 -= 75
+		ENDIF
+		
+		CALL OTHERPLACE_MESSAGE, TARGET, 10 + LOCAL:4
+	ENDIF
+	TFLAG:218 = LOCAL:4
+	
+	;薬物効果(毎回)
+	;(1=ローション,2=媚薬,3=利尿剤,6=興奮剤,7=感覚増幅薬,8=睡眠薬)
+	;特例有り
+	;媚薬
+	;SIF LOCAL:4 == 2 && RAND:(6 - ABL:Ｃ感覚) <= 2
+	;EXP:絶頂経験 += RAND:2
+	
+	SELECTCASE TFLAG:218
+		CASE 1
+			;セックス系
+			IF GROUPMATCH(LOCAL:2, 1, 2)
+				SIF RAND:(21 - ABL:Ｃ感覚 - ABL:Ｖ感覚 - ABL:Ａ感覚 - ABL:Ｂ感覚) == 0
+					EXP:絶頂経験 += RAND:2
+			ENDIF
+		CASE 2
+			;快感系
+			IF GROUPMATCH(LOCAL:2, 0, 1, 2, 4)
+				SIF RAND:(21 - ABL:Ｃ感覚 - ABL:Ｖ感覚 - ABL:Ａ感覚 - ABL:Ｂ感覚) == 0
+					EXP:絶頂経験 += RAND:2
+			;奉仕系
+			ELSEIF GROUPMATCH(LOCAL:2, 3, 5)
+				EXP:奉仕快楽経験 += 1
+			ENDIF
+		CASE 3
+			;快感系
+			IF GROUPMATCH(LOCAL:2, 0, 1, 2, 4)
+				SIF RAND:(16 - ABL:Ｃ感覚 - ABL:Ｖ感覚) == 0
+					EXP:放尿経験 += RAND:2
+			ELSE
+				SIF RAND:10 == 0
+					EXP:放尿経験 += RAND:2
+			ENDIF
+		CASE 6
+			;奉仕系
+			IF GROUPMATCH(LOCAL:2, 3, 5)
+				EXP:奉仕快楽経験 += 1
+			ENDIF
+		CASE 7
+			;快感系
+			IF GROUPMATCH(LOCAL:2, 0, 1, 2, 4)
+				SIF RAND:(21 - ABL:Ｃ感覚 - ABL:Ｖ感覚 - ABL:Ａ感覚 - ABL:Ｂ感覚) == 0
+					EXP:絶頂経験 += RAND:2
+			;奉仕系
+			ELSEIF GROUPMATCH(LOCAL:2, 3, 5)
+				EXP:奉仕快楽経験 += 1
+			ENDIF
+		CASE 8
+			;ハード系
+			IF GROUPMATCH(LOCAL:2, 5, 6)
+				EXP:奉仕快楽経験 += 1
+			ENDIF
+	ENDSELECT
+	
+	SELECTCASE LOCAL:2
+		;愛撫系
+		CASE 0
+			;(0 TO 3=Ｃ,4 TO 5=Ｖ,6=Ａ,7 TO 10=Ｂ)
+			LOCAL:3 = RAND:11
+			SELECTCASE LOCAL:3
+				;Ｃ
+				CASE 0 TO 3
+					LOCAL:3 = 0
+					;調律
+					SIF ABL:Ｃ感覚 > 0
+						EXP:Ｃ調律経験 += RAND:2
+					SIF ABL:Ｃ感覚 > 1
+						EXP:Ｃ調律経験 += RAND:2
+					;絶頂
+					SIF ABL:Ｃ感覚 > 0 && RAND:(6 - ABL:Ｃ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF ABL:Ｃ感覚 > 2 && RAND:(6 - ABL:Ｃ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF RAND:(6 + LOCAL:6) == 0 && EXP:Ｃ調律経験 >= COST0(1) && RAND:(6 - ABL:Ｃ感覚) != 0 && RAND:(6 - ABL:Ｃ感覚) != 0
+						ABL:Ｃ感覚 += 1
+				;Ｖ
+				CASE 4 TO 5
+					LOCAL:3 = 1
+					SIF TALENT:オトコ
+						CONTINUE
+					;初体験
+					IF TALENT:処女 == 1 && RAND:3 == 0
+						EXP:Ｖ経験 += 1
+						SIF ABL:マゾっ気 >= 3
+							EXP:苦痛快楽経験 += ABL:マゾっ気 * 2
+						TALENT:処女 = 0
+					ELSE
+						IF TALENT:処女
+							SIF ABL:マゾっ気 >= 3
+								EXP:苦痛快楽経験 += ABL:マゾっ気 * 2
+							TALENT:処女 = 0
+						ENDIF
+						SIF RAND:3 != 0
+							EXP:Ｖ経験 += 1
+					ENDIF
+					;調律
+					SIF ABL:Ｖ感覚 > 0
+						EXP:Ｖ調律経験 += RAND:2
+					SIF ABL:Ｖ感覚 > 1
+						EXP:Ｖ調律経験 += RAND:2
+					;絶頂
+					SIF ABL:Ｖ感覚 > 0 && RAND:(6 - ABL:Ｖ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF ABL:Ｖ感覚 > 2 && RAND:(6 - ABL:Ｖ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF RAND:(6 + LOCAL:6) == 0 && EXP:Ｖ経験 >= COST1(1) && RAND:(6 - ABL:Ｖ感覚) != 0 && RAND:(6 - ABL:Ｖ感覚) != 0
+						ABL:Ｖ感覚 += 1
+				;Ａ
+				CASE 6
+					LOCAL:3 = 2
+					SIF RAND:(1 + ABL:Ａ感覚) == 0
+						CONTINUE
+					;初体験
+					IF !EXP:Ａ経験 && RAND:3 == 0
+						EXP:Ａ経験 += 1
+						SIF ABL:マゾっ気 >= 3
+							EXP:苦痛快楽経験 += ABL:マゾっ気 * 2
+					ELSE
+						SIF ABL:マゾっ気 >= 3
+								EXP:苦痛快楽経験 += ABL:マゾっ気 * RAND(1, 3)
+						SIF RAND:3 != 0
+							EXP:Ａ経験 += 1
+					ENDIF
+					;調律
+					SIF ABL:Ａ感覚 > 0
+						EXP:Ａ快楽経験 += RAND:2
+					SIF ABL:Ａ感覚 > 1
+						EXP:Ａ快楽経験 += RAND:2
+					;絶頂
+					SIF ABL:Ａ感覚 > 1 && RAND:(6 - ABL:Ａ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF ABL:Ａ感覚 > 2 && RAND:(6 - ABL:Ａ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF RAND:(6 + LOCAL:6) == 0 && EXP:Ａ経験 >= COST2(1) && RAND:(6 - ABL:Ａ感覚) != 0 && RAND:(6 - ABL:Ａ感覚) != 0
+						ABL:Ａ感覚 += 1
+				;Ｂ
+				CASE 7 TO 10
+					LOCAL:3 = 3
+					;調律
+					SIF ABL:Ｂ感覚 > 0
+						EXP:Ｂ快楽経験 += RAND:2
+					SIF ABL:Ｂ感覚 > 1
+						EXP:Ｂ快楽経験 += RAND:2
+					;絶頂
+					SIF ABL:Ｂ感覚 > 1 && RAND:(6 - ABL:Ｂ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF ABL:Ｂ感覚 > 2 && RAND:(6 - ABL:Ｂ感覚) == 0
+						EXP:絶頂経験 += RAND:2
+					SIF RAND:(6 + LOCAL:6) == 0 && EXP:Ｂ快楽経験 >= (ABL:Ｂ感覚 + 1) * (5 + ABL:Ｂ感覚) && RAND:(6 - ABL:Ｂ感覚) != 0 && RAND:(6 - ABL:Ｂ感覚) != 0
+						ABL:Ｂ感覚 += 1
+			ENDSELECT
+		;Ｖセックス系
+		CASE 1
+			SIF TALENT:オトコ
+				CONTINUE
+			;初体験
+			IF TALENT:処女
+				SIF ABL:マゾっ気 >= 3
+					EXP:苦痛快楽経験 += ABL:マゾっ気 * 2
+				TALENT:処女 = 0
+			ENDIF
+			EXP:Ｖ経験 += 1
+			;調律
+			SIF ABL:Ｖ感覚 > 0
+				EXP:Ｖ調律経験 += RAND:2
+			SIF ABL:Ｖ感覚 > 1
+				EXP:Ｖ調律経験 += RAND:3
+			;精液
+			IF LOCAL:0 == 0 && RAND:3
+				IF RAND:2
+					EXP:精液経験 += 1
+					CALL PREG_MARKET_CHECK, TARGET
+				ENDIF
+			ENDIF
+			;絶頂
+			SIF ABL:Ｖ感覚 > 0 && RAND:(6 - ABL:Ｖ感覚) <= 1
+				EXP:絶頂経験 += RAND:2
+			SIF ABL:Ｖ感覚 > 2 && RAND:(6 - ABL:Ｖ感覚) <= 1
+				EXP:絶頂経験 += RAND:3
+			SIF RAND:(6 + LOCAL:6) == 0 && EXP:Ｖ経験 >= COST1(1) && RAND:(6 - ABL:Ｖ感覚) != 0
+				ABL:Ｖ感覚 += 1
+		;Ａセックス系
+		CASE 2
+			SIF RAND:(1 + ABL:Ａ感覚) == 0
+				CONTINUE
+			;初体験
+			SIF ABL:マゾっ気 >= 3
+				EXP:苦痛快楽経験 += ABL:マゾっ気 * RAND(1, 3)
+			EXP:Ａ経験 += 1
+			;調律
+			SIF ABL:Ａ感覚 > 0
+				EXP:Ａ快楽経験 += RAND:2
+			SIF ABL:Ａ感覚 > 1
+				EXP:Ａ快楽経験 += RAND:2
+			;精液
+			SIF LOCAL:0 == 0 && RAND:4
+				EXP:精液経験 += RAND:2
+			;絶頂
+			SIF ABL:Ａ感覚 > 1 && RAND:(6 - ABL:Ａ感覚) == 0
+				EXP:絶頂経験 += RAND:2
+			SIF ABL:Ａ感覚 > 2 && RAND:(6 - ABL:Ａ感覚) == 0
+				EXP:絶頂経験 += RAND:2
+			SIF RAND:(6 + LOCAL:6) == 0 && EXP:Ａ経験 >= COST2(1) && RAND:(6 - ABL:Ａ感覚) != 0
+				ABL:Ａ感覚 += 1
+		;奉仕系(簡素化)
+		;(0=キス,1=フェラ,2=他)
+		CASE 3
+			SIF RAND:(2 + ABL:従順 + ABL:奉仕精神) == 0
+				CONTINUE
+			EXP:奉仕快楽経験 += ABL:従順 / 2 + ABL:奉仕精神
+			LOCAL:3 = RAND:3
+			SELECTCASE LOCAL:3
+				CASE 0
+					EXP:キス経験 += 1
+				CASE 1
+					EXP:フェラ経験 += 1
+			ENDSELECT
+			;精液
+			SIF LOCAL:0 == 0 && RAND:2
+				EXP:精液経験 += RAND:3
+			SIF RAND:(6 + LOCAL:6) == 0 && EXP:奉仕快楽経験 >= COST13(3) && RAND:(6 - ABL:奉仕精神) != 0
+				ABL:奉仕精神 += 1
+		;自慰系(簡素化)
+		;構想(0=一般,1=道具)
+		CASE 4
+			SIF RAND:(2 + ABL:露出癖 + ABL:自慰中毒) == 0
+				CONTINUE
+			EXP:露出快楽経験 += (ABL:従順 / 2 + ABL:露出癖) / 2
+			EXP:自慰経験 += 1
+			EXP:調教自慰経験 += 1
+			SIF RAND:(6 + LOCAL:6) == 0 && EXP:露出快楽経験 >= COST14(1) && RAND:(6 - ABL:露出癖) != 0
+				ABL:露出癖 += 1
+		;露出系(簡素化)
+		;構想(0=一般,1=散歩)
+		CASE 5
+			SIF RAND:(2 + ABL:露出癖) == 0
+				CONTINUE
+			EXP:露出快楽経験 += ABL:従順 / 2 + ABL:露出癖 + RAND:2
+			SIF RAND:(6 + LOCAL:6) == 0 && EXP:露出快楽経験 >= COST14(1) && RAND:(6 - ABL:露出癖) != 0
+				ABL:露出癖 += 1
+			SIF RAND:9 == 0 && EXP:自慰経験 >= COST30(4) && EXP:調教自慰経験 >= COST30(5) && RAND:(6 - ABL:自慰中毒) != 0
+				ABL:自慰中毒 += 1
+		;ハード系(簡素化)
+		;構想(0=虐待,1=性器拡張,2=輪姦)
+		CASE 6
+			IF RAND:(40 - LOCAL:6 * 20) == 0
+				LOCAL:7 += 3
+				LOCAL:3 = 2
+			ELSE
+				SIF !RAND:4
+					EXP:緊縛経験 += RAND:4
+				SIF ABL:マゾっ気 >= 3
+					EXP:苦痛快楽経験 += ABL:マゾっ気 * 2
+				;恐怖刻印
+				IF MARK:恐怖刻印 < 3 && MARK:96 < MARK:恐怖刻印 + 1 && RAND:(2 + MARK:恐怖刻印) == 0
+					MARK:恐怖刻印 += 1
+					MARK:96 = MARK:恐怖刻印
+					CFLAG:3668 += 50
+				ENDIF
+				;反発刻印
+				IF ABL:従順 + ABL:マゾっ気 + MARK:苦痛刻印 + MARK:快楽刻印 + MARK:屈服刻印 + MARK:薬物刻印 + MARK:恥辱刻印 + MARK:恐怖刻印 > 5 + MARK:反発刻印 * 3 && MARK:反発刻印 < 2 + LOCAL:6 && MARK:97 < MARK:反発刻印 + 1 && RAND:(2 + MARK:反発刻印) == 0
+					MARK:反発刻印 += 1
+					MARK:97 = MARK:反発刻印
+					CFLAG:3668 -= 75
+				ENDIF
+				SIF RAND:(6 + LOCAL:6) == 0 && EXP:苦痛快楽経験 >= COST21(4) && RAND:(6 - ABL:マゾっ気) != 0
+					ABL:マゾっ気 += 1
+			ENDIF
+	ENDSELECT
+	;行為効果(毎回)
+	;(100+=愛撫系,110+=Ｖセックス系,120+=Ａセックス系,130+=奉仕系,140+=自慰系,150+=露出系,160+=ハード系,170+=何もしない)
+	CALL OTHERPLACE_MESSAGE, TARGET, 100 + LOCAL:2 * 10 + LOCAL:3
+	
+	EXP:別人調教経験 += 1
+	IF TFLAG:218 != 8
+		CFLAG:好感度 -= 2
+		CFLAG:3668 += 3
+		IF TFLAG:218 == 2
+			CFLAG:好感度 -= 1
+			CFLAG:3668 += 2
+		ELSEIF TFLAG:218 == 6
+			CFLAG:好感度 -= 1
+			CFLAG:3668 += 2
+		ELSEIF TFLAG:218 == 7
+			CFLAG:好感度 -= 1
+			CFLAG:3668 += 2
+		ENDIF
+	ENDIF
+NEXT
+
+;輪姦
+IF LOCAL:7 > 0
+	LOCAL:1 = LOCAL:7
+	GOTO TRAIN_LOOP
+ENDIF
+
+SIF RAND:(6 + LOCAL:6) == 0 && EXP:別人調教経験 >= ABL:従順 * (20 + ABL:従順 * 5) && RAND:(6 - ABL:従順) != 0 && RAND:(6 - ABL:従順) != 0
+	ABL:従順 += 1
+	
+SIF RAND:(6 + LOCAL:6) == 0 && EXP:別人調教経験 >= ABL:欲望 * (20 + ABL:欲望 * 5) && RAND:(6 - ABL:欲望) != 0 && RAND:(6 - ABL:欲望) != 0
+	ABL:欲望 += 1
+	
+SIF RAND:(6 + LOCAL:6) == 0 && EXP:別人調教経験 >= ABL:技巧 * (20 + ABL:技巧 * 6) && RAND:(6 - ABL:技巧) != 0 && RAND:(6 - ABL:技巧) != 0
+	ABL:技巧 += 1
+
+REPEAT 6
+	RESULT:COUNT = LOCAL:COUNT
+REND
+
+REPEAT 2
+	BASE:COUNT = LIMIT(BASE:COUNT - 25 * (2 + RAND:3) + 25 * RAND:5, 500 + 25 * RAND:5, MAXBASE:COUNT - 25 * RAND:5)
+REND
+EXP:別人調教経験 += RAND:(LOCAL:1)
+CFLAG:好感度 = MAX(CFLAG:好感度 - RAND:(LOCAL:1), -999999)
+CFLAG:3668 = LIMIT(CFLAG:3668 + RAND:(LOCAL:1) + MARK:苦痛刻印 + MARK:快楽刻印 + MARK:屈服刻印 + MARK:薬物刻印 + MARK:恥辱刻印 + MARK:恐怖刻印 - MARK:反発刻印 * 3 + LOCAL:6 * 3, -1000, 1000)
+
+;終了宣言(2男,3女)
+CALL OTHERPLACE_MESSAGE, TARGET, TFLAG:217 + 5
+
+;刻印変動処理
+;5/6で無変動
+;条件が厳しい……？
+IF RAND:(6 + LOCAL:6) == 0
+	;苦痛刻印
+	SIF ABL:マゾっ気 >= MARK:苦痛刻印 && EXP:苦痛快楽経験 >= MARK:苦痛刻印 * 20 && CFLAG:3668 >= MARK:苦痛刻印 * 150 && RAND:(4 - MARK:苦痛刻印) != 0
+		MARK:苦痛刻印 += RAND:2
+	;快楽刻印
+	SIF ABL:欲望 >= MARK:快楽刻印 && EXP:絶頂経験 >= MARK:快楽刻印 * 20 && CFLAG:3668 >= MARK:快楽刻印 * 150 && RAND:(4 - MARK:快楽刻印) != 0
+		MARK:快楽刻印 += RAND:2
+	;屈服刻印
+	SIF ABL:従順 >= MARK:屈服刻印 && CFLAG:3668 >= MARK:屈服刻印 * 150 && RAND:(4 - MARK:屈服刻印) != 0
+		MARK:屈服刻印 += RAND:2
+	;恥辱刻印
+	SIF ABL:露出癖 >= MARK:恥辱刻印 && EXP:露出快楽経験 >= MARK:恥辱刻印 * 20 && CFLAG:3668 >= MARK:恥辱刻印 * 150 && RAND:(4 - MARK:恥辱刻印) != 0
+		MARK:恥辱刻印 += RAND:2
+	;恐怖刻印
+	SIF MARK:反発刻印 == 0 && ABL:従順 >= MARK:恐怖刻印 && CFLAG:3668 >= MARK:恐怖刻印 * 150 && RAND:(1 + MARK:恐怖刻印) != 0 && RAND:(6 + LOCAL:6) == 0
+		MARK:恐怖刻印 -= RAND:2
+	;反発刻印
+	SIF ABL:従順 >= MARK:反発刻印 && CFLAG:3668 >= MARK:反発刻印 * 200 && RAND:(1 + MARK:反発刻印) != 0 && RAND:(4 + MARK:反発刻印) == 0
+		MARK:反発刻印 -= RAND:2
+ENDIF
+
+;売却判定
+CALL CAN_SELL_SLAVE_2
+
+;素質変動処理
+;5/6で無変動
+IF RAND:(6 + LOCAL:6) == 0
+	;[恋慕]は消失する
+	IF TALENT:恋慕 && TALENT:相愛 == 0 && ABL:従順 == 4 + TALENT:親愛 && MARK:屈服刻印 == 3 && MARK:反発刻印 == 0 && EXP:別人調教経験 > MIN(EXP:主人調教経験, 10000) * (2 + TALENT:親愛) + 200 && CFLAG:好感度 <= MIN(EXP:主人調教経験, 10000) * -1 && CFLAG:3668 >= 500 && RAND:3 == 0
+		IF FLAG:17 & 64
+			;口上・地の文の表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 851
+			IF TALENT:親愛
+				PRINTFORMW %CALLNAME:TARGET%は[親愛][恋慕]を失いました
+			ELSE
+				PRINTFORMW %CALLNAME:TARGET%は[恋慕]を失いました
+			ENDIF
+		ENDIF
+		TALENT:恋慕 = 0
+		TALENT:親愛 = 0
+	ENDIF
+		
+	;[服従]を得た
+	IF TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && EXP:別人調教経験 >= 250 + MIN(EXP:主人調教経験 / 4, 2000) && MARK:快楽刻印 == 3 && MARK:屈服刻印 == 3 && MARK:恥辱刻印 >= 2 && MARK:恐怖刻印 && MARK:反発刻印 == 0 && ABL:従順 + ABL:奉仕精神 >= 4 && ABL:欲望 >= 3 && EXP:異常経験 && CFLAG:3668 >= 500 && RAND:3 == 0
+		IF FLAG:17 & 64
+			;口上・地の文の表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 852
+			PRINTFORMW %CALLNAME:TARGET%は[服従]を得た
+		ENDIF
+		TALENT:服従 = 1
+		CFLAG:3668 = 1000
+	ENDIF
+		
+	;[淫乱]を得た
+	IF TALENT:恋慕 == 0 && TALENT:淫乱 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && MARK:反発刻印 == 0 && EXP:別人調教経験 >= 100 + MIN(EXP:主人調教経験 / 4, 2000) && ABL:欲望 >= 4 && EXP:異常経験 >= 3 && CFLAG:3668 >= 500 && RAND:3 == 0
+		IF FLAG:17 & 64
+			;口上・地の文の表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 853
+			PRINTFORMW %CALLNAME:TARGET%は[淫乱]を得た
+		ENDIF
+		TALENT:淫乱 = 1
+		CFLAG:3668 = 1000
+	ENDIF
+	;服従
+	;IF CFLAG:11 > 500 && EXP:63 > 1000 && MARK:屈服刻印 > 2 && (MARK:苦痛刻印 + MARK:恥辱刻印) > 3 && TALENT:妄信 == 0
+	;	TALENT:妄信 = 1
+	;	LOCALS = %CALLNAME:TARGET%が@s@[服従]@e@を取得0xDD9999
+	;	CALL SET_PLAYERSNOTE (LOCALS, TARGET, 1, 1)
+	;妄信
+	;ELSEIF CFLAG:11 > 2000 && EXP:63 > 2000 && MARK:屈服刻印 > 3 && (MARK:苦痛刻印 + MARK:恥辱刻印) > 4 && TALENT:妄信 == 1
+	;	TALENT:妄信 = 2
+	;	LOCALS = %CALLNAME:TARGET%が@s@[妄信]@e@を取得0xDD9999
+	;	CALL SET_PLAYERSNOTE (LOCALS, TARGET, 1, 1)
+	;隷属
+	;ELSEIF CFLAG:11 > 4000 && EXP:63 > 4000 && MARK:屈服刻印 > 4 && (MARK:苦痛刻印 + MARK:恥辱刻印) > 5 && TALENT:妄信 == 2
+	;	TALENT:妄信 = 3
+	;	LOCALS = %CALLNAME:TARGET%が@s@[隷属]@e@を取得0xDD9999
+	;	CALL SET_PLAYERSNOTE (LOCALS, TARGET, 1, 1)
+	;ENDIF
+	;淫乱
+	;IF CFLAG:11 > 250 && EXP:63 > 250 && MARK:快楽刻印 > 3 && MARK:屈服刻印 > 2 && RAND:(12 / (1 + MARK:5)) == 0 && TALENT:親愛 == 0
+	;	TALENT:親愛 = 1
+	;	LOCALS = %CALLNAME:TARGET%が@s@[淫乱]@e@を取得0xDD9999
+	;	CALL SET_PLAYERSNOTE (LOCALS, TARGET, 1, 1)
+	;ENDIF
+ENDIF
+
+TARGET = LOCAL:10
+
+;-------------------------------------------------
+;裏調教時、メッセージ表示（FLAG:17 & 64 時のみ）
+;-------------------------------------------------
+@OTHERPLACE_MESSAGE, ARG, ARG:1, ARG:2 = 0
+;口上表示時に地の文表示を制御できます。
+;また、ARG:1には該当のイベント番号(イベント番号と中身最新版.txt参照)が、
+;ARG:2には各イベント毎の分岐用の値が入ります。
+#LOCALSIZE 15
+SIF !(FLAG:17 & 64) || FLAG:8670
+	RETURN 0
+;TFLAG:99に分岐用の値を代入
+;(0+=全く容認できない,1000+=抵抗中,2000+=口が嫌だと言っても、体は正直なものだ,3000+=完全に受け入れ)
+;未実装……
+;臨時対策
+IF TFLAG:219 == 0
+	IF CFLAG:ARG:3668 >= 600 && EXP:ARG:別人調教経験 > MIN(EXP:ARG:主人調教経験, 10000) * 3 / 2 + 150 && CFLAG:ARG:好感度 <= 0 - MIN(EXP:ARG:主人調教経験, 10000) * (TALENT:ARG:恋慕 + TALENT:ARG:親愛 + TALENT:ARG:相愛)
+		TFLAG:219 = 3
+	ELSEIF CFLAG:ARG:3668 >= 300 && EXP:ARG:別人調教経験 > MIN(EXP:ARG:主人調教経験, 10000) * 2 / 3 + 100 && CFLAG:ARG:好感度 <= 350 - MIN(EXP:ARG:主人調教経験, 10000) * (TALENT:ARG:恋慕 + TALENT:ARG:親愛 + TALENT:ARG:相愛)
+		TFLAG:219 = 2
+	ELSEIF CFLAG:ARG:3668 >= 0 && EXP:ARG:別人調教経験 > MIN(EXP:ARG:主人調教経験, 10000) * 1 / 3 + 50 && CFLAG:ARG:好感度 <= 700 - MIN(EXP:ARG:主人調教経験, 10000) * (TALENT:ARG:恋慕 + TALENT:ARG:親愛 + TALENT:ARG:相愛)
+		TFLAG:219 = 1
+	ENDIF
+ENDIF
+TFLAG:99 = 1000 * TFLAG:219 + ARG:1
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL:13 = TARGET
+TARGET = ARG
+;地の文
+TRYCALLFORM SYSTXT_MESSAGE_SUB_EVENT_SCENE850
+LOCAL:14 = RESULT
+SIF ARG:2
+	WAIT
+;専用口上
+IF CFLAG:9 & 8
+	;口上の存在判定(ARG要注意)
+	TRYCCALLFORM TRY_{NO:TARGET}
+		TRYCCALLFORM KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_BEFORE
+			;@KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_BEFOREでRETURN 1をするとコマンド口上は表示しない
+			;また、調教中かつ失神中・失神回復時でも、失神中と失神回復時のイベント口上は必ず表示する
+			SIF RESULT != 1
+				TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_SCENE850, LOCAL:14
+		CATCH
+			;そもそもBEFORE関数がなかった
+			TRYCALLFORM KOJO_{NO:TARGET}_MESSAGE_SUB_EVENT_SCENE850, LOCAL:14
+		ENDCATCH
+	CATCH
+	ENDCATCH
+;汎用口上
+ELSE
+	TRYCALLFORM KOJO_X_MESSAGE_SUB_EVENT_SCENE850, LOCAL:14
+ENDIF
+
+SIF LOCAL:14 == -1
+	PRINTL 
+
+TWAIT 100, 1
+
+;調教対象を元に戻す
+TARGET = LOCAL:13
+
+;--------------------------------------------------
+;売却判定
+;--------------------------------------------------
+@CAN_SELL_SLAVE_2
+;売却や助手化が可能になったか
+;ＣＶＡＢの各感覚Lvがいずれも3未満なら帰る
+SIF ABL:Ｃ感覚 < 3 && ABL:Ｖ感覚 < 3 && ABL:Ａ感覚 < 3 && ABL:Ｂ感覚 < 3
+	RETURN 0
+;従順と欲望Lvを合計して6未満なら帰る
+SIF ABL:従順 + ABL:欲望 < 6
+	RETURN 0
+;反抗的か気丈を持っているなら従順Lvが4未満でも帰る
+SIF ABL:従順 < 4 && (TALENT:反抗的 || TALENT:気丈)
+	RETURN 0
+;自制心か抑圧か抵抗を持っているなら欲望Lvが4未満でも帰る
+SIF ABL:欲望 < 4 && (TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗)
+	RETURN 0
+;調教度不足
+SIF CFLAG:3668 <= 0
+	RETURN 0
+;既に助手可能なら帰る
+SIF CFLAG:1 == 2
+	RETURN 0
+
+LOCAL = 0
+;売却可能になったかをチェック
+SIF (ABL:技巧 >= 3 && ABL:奉仕精神 >= 3) || (ABL:露出癖 >= 3 && ABL:自慰中毒 >= 2) || ABL:マゾっ気 >= 3 || (ABL:Ｃ感覚 + ABL:Ｖ感覚 + ABL:Ａ感覚 + ABL:Ｂ感覚 >= 13) || ABL:従順 >= 5 || ABL:欲望 >= 5
+	LOCAL |= 1
+;助手可能になったかをチェック
+SIF (ABL:Ｃ感覚 >= 3 && ABL:従順 >= 3 && ABL:欲望 >= 3 && ABL:技巧 >= 3 && ABL:(22 + TALENT:オトコ) >= 3) || (ABL:従順 >= 5 && ABL:欲望 >= 4)
+	LOCAL |= 2
+;売却可能か助手可能であると判定され、今まで売却可能でなかった場合
+IF (LOCAL & 1 || LOCAL & 2) && CFLAG:1 < 1
+	CFLAG:1 = 1
+;助手可能であると判定され、今まで助手可能でなかった場合
+ELSEIF LOCAL & 2 && CFLAG:1 < 2
+	CFLAG:1 = 2
+ELSE
+	RETURN 0
+ENDIF
+
+@COMMON_MARKET_CHECK, ARG
+;月経周期
+;オトコではない
+IF COM_ABLE_CHECK_FEMALE(ARG) && !TALENT:ARG:幼児 && !TALENT:ARG:死亡
+	SELECTCASE CFLAG:ARG:3669
+		CASE 0, 5, 14, 19
+			;20％の確率で短縮（生理期、生理期以降、排卵日以降、危険日以降）
+			SIF !RAND:5
+				CFLAG:ARG:3669 ++
+	ENDSELECT
+	CFLAG:ARG:3669 ++
+	;10％の確率で延長
+	SIF RAND:(10 + SPECIAL_CYCLE_CHECK(ARG))
+		CFLAG:ARG:3669 %= 28
+	;月経の状態を把握
+	CALL EVENT_DANGERDAY_CHECK, ARG
+ELSE
+	TALENT:ARG:危険日 = 0
+	TALENT:ARG:生理 = 0
+	TALENT:ARG:排卵 = 0
+	CFLAG:ARG:3669 = 0
+ENDIF
+
+;子供成長イベント
+IF FLAG:11 & 32 && (NO:ARG == 2048 || NO:ARG == 2049) && TALENT:ARG:幼児 && DAY >= (CFLAG:ARG:誕生日 + 50)
+	TALENT:ARG:幼児 = 0
+	LOCAL = 0
+	IF TALENT:ARG:小柄体型 && MARK:ARG:81 == 0
+		TALENT:ARG:小柄体型 = 0
+	ENDIF
+	IF RAND:5 == 0
+		LOCAL = 1
+	ELSEIF TALENT:ARG:幼稚
+		TALENT:ARG:幼稚 = 0
+	ENDIF
+	;胸の成長は1段階アップに変更。[爆乳]のときのみ変化なし
+	IF LOCAL == 0 && RAND:3 == 0 && TALENT:ARG:爆乳 == 0 && TALENT:ARG:オトコ == 0 && MARK:ARG:81 == 0
+		;[絶壁]の場合
+		IF TALENT:ARG:絶壁
+			TALENT:ARG:絶壁 = 0
+			LOCAL = 111
+		;[貧乳]の場合
+		ELSEIF TALENT:ARG:貧乳
+			TALENT:ARG:貧乳 = 0
+		;[巨乳]の場合
+		ELSEIF TALENT:ARG:巨乳
+			TALENT:ARG:巨乳 = 0
+			LOCAL = 113
+		;[普乳]の場合
+		ELSE
+			LOCAL = 112
+		ENDIF
+		SIF LOCAL > 0
+			TALENT:ARG:LOCAL = 1
+	ENDIF
+	;成長したことを示す
+	MARK:ARG:81 = 1
+	;汎用口上用フラグ(成長したので人格が変化するかも？)
+	CFLAG:ARG:43 = 0
+	;「人格設定」
+	CALL DEFINE_JINKAKU_SELECT, ARG
+ENDIF
+;子供徐々に成長
+SIF FLAG:11 & 64 && MARK:ARG:81 == 0
+	CALL MAKE_SIZE, 1, ARG
+;[鵺]の素質変動イベント
+SIF TALENT:ARG:鵺
+	CALL EVENT_NUETALENT_RANDOM, ARG
+;精飲開発度の減少処理
+;精液中毒が、0,1,...,5の時、5/10,6/10,...,10/10倍される
+SIF CFLAG:ARG:精飲開発度 > 0
+	CFLAG:ARG:精飲開発度 = MAX(CFLAG:ARG:精飲開発度 * (50 + ABL:ARG:精液中毒 * 10) / 100, 0)
+;放尿レベルの減少処理
+;10減るのが基本、異常経験数が多いと徐々に減らなくなる。
+SIF CFLAG:ARG:放尿レベル > 0
+	CFLAG:ARG:放尿レベル = MAX(CFLAG:ARG:放尿レベル - 10 + MIN(EXP:ARG:異常経験 / 10 , 10), 0)
+;潤滑、欲情蓄積の減少処理
+;異常経験数が多いと徐々に減らなくなる。
+REPEAT 2
+	CFLAG:ARG:(58+COUNT) = MAX(CFLAG:ARG:(58+COUNT) - 25 * (1 + RAND:2) + MIN(EXP:ARG:異常経験 / 10 , 10), 0)
+REND
+CALL MARKET_CHILD_BIRTH, ARG
+
+@PREG_MARKET_CHECK, ARG
+SIF TALENT:ARG:オトコ || TALENT:ARG:幼児 || TALENT:ARG:卵生 || TALENT:ARG:産卵体質 || TALENT:ARG:妊娠 || TALENT:ARG:育児中 || TALENT:ARG:抱卵中 || TALENT:ARG:懐卵 || RAND:250 != 0
+	RETURN 0
+LOCAL = ASSI
+ADDCHARA 2047
+ASSI = CHARANUM - 1
+TALENT:ARG:妊娠 = 1
+CFLAG:ARG:70 = 2
+;元陥落転換
+IF TALENT:ARG:相愛
+	CFLAG:ARG:3673 = 3
+	IF TALENT:ARG:旦那あり
+		CFLAG:ARG:3674 = 3
+	ELSE
+		TALENT:ARG:旦那あり = 1
+	ENDIF
+ELSEIF TALENT:ARG:親愛
+	IF TALENT:ARG:旦那あり || TALENT:ARG:彼氏あり
+		CFLAG:ARG:3674 = 2
+	ELSE
+		TALENT:ARG:彼氏あり = 1
+	ENDIF
+	CFLAG:ARG:3673 = 2
+ELSEIF TALENT:ARG:恋慕
+	IF TALENT:ARG:旦那あり || TALENT:ARG:彼氏あり || TALENT:ARG:思い人あり
+		CFLAG:ARG:3674 = 1
+	ELSE
+		TALENT:ARG:思い人あり = 1
+	ENDIF
+	CFLAG:ARG:3673 = 1
+ENDIF
+TALENT:ARG:恋慕 = 0
+TALENT:ARG:親愛 = 0
+TALENT:ARG:相愛 = 0
+TFLAG:989 = 1
+CALL CHANGE_N_STATUS, ARG
+TFLAG:989 = 0
+;元陥落転換
+IF CFLAG:ARG:3673 == 3
+	SIF CFLAG:ARG:3674 < 3
+		TALENT:ARG:旦那あり = 0
+	TALENT:ARG:相愛 = 1
+	TALENT:ARG:親愛 = 1
+	TALENT:ARG:恋慕 = 1
+ELSEIF CFLAG:ARG:3673 == 2
+	SIF CFLAG:ARG:3674 < 2
+		TALENT:ARG:彼氏あり = 0
+	TALENT:ARG:親愛 = 1
+	TALENT:ARG:恋慕 = 1
+ELSEIF CFLAG:ARG:3673 == 1
+	SIF CFLAG:ARG:3674 < 1
+		TALENT:ARG:思い人あり = 0
+	TALENT:ARG:恋慕 = 1
+ENDIF
+CFLAG:ARG:3673 = 0
+CFLAG:ARG:3674 = 0
+CALL CLEAR_FLAG
+ASSI = LOCAL
+DELCHARA CHARANUM - 1
+
+@MARKET_CHILD_BIRTH, ARG
+SIF CFLAG:ARG:77 > DAY || !TALENT:ARG:妊娠
+	RETURN 0
+LOCAL = MASTER
+ADDCHARA 2047
+MASTER = CHARANUM - 1
+TFLAG:989 = 1
+CALL CHILD_BIRTH, ARG
+TFLAG:989 = 0
+TALENT:ARG:育児中 = 0
+CALL CLEAR_FLAG
+MASTER = LOCAL
+DELCHARA CHARANUM - 1

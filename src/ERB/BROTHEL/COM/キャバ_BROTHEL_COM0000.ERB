@@ -1,0 +1,438 @@
+﻿;=============================================================================
+;ソフト売春　の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド実行可能判定処理
+;-------------------------------------------------
+@PROSTITUTE_ABLE_COM0, ARG
+;キャラが売春可能であるかの共通判定処理を満たしている
+SIF BROTHEL_COM_ABLE_COMMON(ARG) == 0
+	RETURN 0
+RETURN 1
+
+;=============================================================================
+;選択可能処理
+;FLAG:3000 & 2	…	淫具所持
+;=============================================================================
+@JUDGE_PROSTITUTE_COM1, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM2, ARG
+SIF (FLAG:3000 & 2) == 0
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM3, ARG
+;技巧、サドっ気
+SIF (FLAG:3000 & 2) == 0 || ABL:ARG:技巧 < 2 || ABL:ARG:サドっ気 == 0
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM4, ARG
+;技巧、マゾっ気、[人魚]
+SIF (FLAG:3000 & 2) == 0 || ABL:ARG:技巧 < 4 || ABL:ARG:マゾっ気 == 0 || TALENT:ARG:人魚
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM5, ARG
+;[母性]
+SIF TALENT:ARG:母性 == 0
+	RETURN 0
+RETURN 1
+;-------------------------------------------------
+;売春コマンドの分岐処理
+;-------------------------------------------------
+@PROSTITUTE_COM0, ARG
+#LOCALSIZE 1
+CALL CHOOSE_PROSTITUTE_COM, ARG, 0
+SELECTCOM = RESULT
+
+SIF TALENT:MASTER:998
+	PRINTFORML SELECTCOM = {SELECTCOM}
+
+;顧客の設定、と、期待値
+CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE1, ARG
+
+;欲望をチェックする。欲望が相手の欲望を上回るかどうか。成功なら欲望レベルの２倍、失敗なら１倍入ります。
+;ソフト売春では、相手の欲望の最大値が低めで、満足させやすいです。
+LOCAL = RAND:4
+IF LOCAL <= ABL:ARG:欲望
+	;最小で、0、確実的な最小で、6、8、10、最大で、13
+	TFLAG:408 += LOCAL + ABL:ARG:欲望 * 2
+ELSE
+	;最小で、0、最大で5
+	TFLAG:408 += LOCAL + ABL:ARG:欲望
+ENDIF
+
+;相手からの行動は無いため、露出癖、奉仕精神がそのまま得点に入ります。
+;ただし5でストップします。
+;最小で、0、最大で、10
+TFLAG:408 += MIN(ABL:ARG:奉仕精神, 5) + MIN(ABL:ARG:露出癖, 5)
+TFLAG:403 = 0
+
+;従順がLV2以上ないと、著しく微妙になります
+SIF ABL:ARG:従順 < 2
+	TFLAG:408 /= 2
+
+;………………………………………………
+;選択された売春コマンドを実行
+;………………………………………………
+TRYCCALLFORM PROSTITUTE_COM{SELECTCOM}, ARG
+	SIF RESULT == 1
+		RETURN 1
+CATCH
+ENDCATCH
+RETURN 0
+
+;=============================================================================
+;ソフト売春(紳士トーク)の処理
+;=============================================================================
+;2つのパターンのうち、効果が高いものを実行します
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM1, ARG
+#LOCALSIZE 2
+VARSET LOCAL, 0
+
+PRINTL キャバクラ -普通のキャバクラ-
+
+;………………………………………………
+;パターン1 (相手をひたすら性的に挑発)
+;………………………………………………
+;分岐用TFLAG:99に0が入る
+;従順、欲望、技巧、露出癖をみる
+;最大で25
+LOCAL:0 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:露出癖, 5) * 2
+
+;[貞操無頓着]、[解放]
+SIF TALENT:ARG:貞操無頓着 || TALENT:ARG:解放
+	TIMES LOCAL:0 , 2.0
+
+;………………………………………………
+;パターン2 (恥ずかしそうな表情で相手を興奮させる)
+;………………………………………………
+;分岐用TFLAG:99に1が入る
+;従順、奉仕精神、マゾっ気、露出癖をみる　(※露出癖は能力が低い方が効果が上がる)
+LOCAL:1 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:奉仕精神, 5) + MIN(ABL:ARG:マゾっ気, 5) + (10 - MIN(ABL:ARG:露出癖, 5) * 2)
+
+;[臆病]、[恥じらい]
+SIF TALENT:ARG:臆病 || TALENT:ARG:恥じらい
+	TIMES LOCAL:1 , 2.0
+
+IF LOCAL:0 > LOCAL:1
+	TFLAG:408 += LOCAL:0
+	TFLAG:99 = 0
+ELSE
+	TFLAG:408 += LOCAL:1
+	TFLAG:99 = 1
+ENDIF
+
+DOWNBASE:ARG:0 += 5
+DOWNBASE:ARG:1 += 10
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 1
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM1
+PRINTFORML %CALLNAME:TARGET%は顧客と二人きりで、エッチな言葉を織り交ぜたおしゃべりをした。
+IF TFLAG:99 == 0
+	PRINTFORML 顧客が命じると、%CALLNAME:TARGET%は涙目になりながら猥語を何度も何度も繰り返した。
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は蔑むような笑みを浮かべて、エロトークを行っている。
+ENDIF
+
+;=============================================================================
+;ソフト売春(コスプレイ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+;設備LV2かつ、Ｖ感覚LV3以上かＡ感覚LV3以上であれば、バイブを使いながらの接待となる。
+;バイブを使った場合、満足度が1つなら+1、両方使ったなら+3される。
+@PROSTITUTE_COM2, ARG
+VARSET LOCAL, 0
+PRINTL キャバクラ -コスキャバ-
+
+;………………………………………………
+;パターン1 (相手をひたすら性的に挑発)
+;………………………………………………
+;分岐用TFLAG:99に0が入る
+;従順、欲望、技巧、露出癖をみる
+;最大で25
+LOCAL:0 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:露出癖, 5) * 2
+
+;[貞操無頓着]、[解放]、[目立ちたがり]
+SIF TALENT:ARG:貞操無頓着 || TALENT:ARG:解放 || TALENT:ARG:目立ちたがり
+	TIMES LOCAL:0 , 2.0
+
+;………………………………………………
+;パターン2 (恥ずかしそうな表情で相手を興奮させる)
+;………………………………………………
+;分岐用TFLAG:99に1が入る
+;従順、奉仕精神、マゾっ気、露出癖をみる　(※露出癖は能力が低い方が効果が上がる)
+LOCAL:1 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:奉仕精神, 5) + MIN(ABL:ARG:マゾっ気, 5) + (10 - MIN(ABL:ARG:露出癖, 5) * 2)
+
+;[臆病]、[恥じらい]
+SIF TALENT:ARG:臆病 || TALENT:ARG:恥じらい
+	TIMES LOCAL:1 , 2.0
+
+IF LOCAL:0 > LOCAL:1
+	TFLAG:408 += LOCAL:0
+	TFLAG:99 = 0
+ELSE
+	TFLAG:408 += LOCAL:1
+	TFLAG:99 = 1
+ENDIF
+
+DOWNBASE:ARG:0 += 5
+DOWNBASE:ARG:1 += 10
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:露出快楽経験 = MAX(TFLAG:401 / 2, 1)
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 1
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM2
+
+;=============================================================================
+;ソフト売春(Ｓ型)の処理
+;=============================================================================
+;相手を責める。ちぎる。なげる。攻撃する。
+;2つのパターンのうち、効果が高いものを実行します
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM3, ARG
+#LOCALSIZE 2
+VARSET LOCAL, 0
+
+PRINTL キャバクラ -ＳＭプレイ Ｓ型-
+
+;………………………………………………
+;パターン1 (相手をひたすらに攻撃する。真性サド)
+;………………………………………………
+;分岐用TFLAG:99に0が入る
+;欲望、技巧、サドっ気*2をみる
+LOCAL:0 += MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + (MIN(ABL:ARG:サドっ気, 5) * 2)
+
+;[プライドが高い]かつ[サド]かつ従順、または、ドＳ
+IF TALENT:ARG:プライド高い && ABL:ARG:従順 > 3 && TALENT:ARG:サド || TALENT:ARG:ドＳ
+	TIMES LOCAL:0 , 3.0
+;[プライドが高い]かつ従順
+ELSEIF TALENT:ARG:プライド高い && ABL:ARG:従順 > 3
+	TIMES LOCAL:0 , 2.0
+;[プライドが高い]か[サド]
+ELSEIF TALENT:ARG:プライド高い || TALENT:ARG:サド
+	TIMES LOCAL:0 , 1.5
+ENDIF
+
+SELECTCASE EXP:ARG:ＳＭ教育経験
+	CASE IS <= 199
+		
+	CASE IS <= 299
+		TIMES LOCAL:0 , 1.2
+	CASE IS <= 499
+		TIMES LOCAL:0 , 1.5
+	CASE IS < 1000
+		TIMES LOCAL:0 , 1.8
+	CASEELSE
+		TIMES LOCAL:0 , 2.0
+ENDSELECT
+
+;………………………………………………
+;パターン2 (恥ずかしそうな表情で相手を興奮させる)
+;………………………………………………
+;分岐用TFLAG:99に1が入る
+;技巧、欲望、奉仕精神、露出癖をみる　(※たどたどしい手つきが可愛いらしいので、技巧と露出癖は能力が低い方が効果が上がる)
+LOCAL:1 += MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:奉仕精神, 5) + (10 - MIN(ABL:ARG:技巧, 5) * 2) + (10 - MIN(ABL:ARG:露出癖, 5) * 2)
+
+;[臆病]、[恥じらい]
+SIF TALENT:ARG:臆病 || TALENT:ARG:恥じらい
+	TIMES LOCAL:1 , 2.0
+;[倒錯的]ならともにボーナス
+IF TALENT:ARG:倒錯的
+	TIMES LOCAL:0 , 1.5
+	TIMES LOCAL:1 , 1.5
+ENDIF
+
+IF LOCAL:0 > LOCAL:1
+	TFLAG:408 += LOCAL:0
+	TFLAG:99 = 0
+ELSE
+	TFLAG:408 += LOCAL:1
+	TFLAG:99 = 1
+ENDIF
+
+DOWNBASE:ARG:0 += 5
+DOWNBASE:ARG:1 += 15
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+TCVAR:ARG:ＳＭ教育経験 = MAX(TFLAG:401 / 2, 1)
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 2
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM3
+PRINTFORML ボンテージスーツに身を包んだ%CALLNAME:TARGET%は、顧客を四つん這いにさせ、鞭を使って攻め立ててあげた
+
+;=============================================================================
+;ソフト売春(Ｍ型)の処理
+;=============================================================================
+;縛った状態を眺めるという紳士プレイ。
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM4, ARG
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 20
+
+PRINTL キャバクラ -ＳＭプレイ Ｍ型-
+
+;欲望、露出癖、マゾっ気をみる
+TFLAG:408 += MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:露出癖, 5) + (MIN(ABL:ARG:マゾっ気, 5) * 2)
+;加点
+;[ドＭ]
+IF TALENT:ARG:ドＭ
+	TIMES TFLAG:408 , 3.0
+;[マゾ]
+ELSEIF TALENT:ARG:マゾ
+	TIMES TFLAG:408 , 2.0
+;[痛みに強い]
+ELSEIF TALENT:ARG:痛みに強い
+	TIMES TFLAG:408 , 1.5
+ENDIF
+;減点
+;[無関心]
+SIF TALENT:ARG:無関心
+	TIMES TFLAG:408 , 0.5
+;[感情乏しい]
+SIF TALENT:ARG:感情乏しい
+	TIMES TFLAG:408 , 0.5
+;[痛みに弱い]
+SIF TALENT:ARG:痛みに強い
+	TIMES TFLAG:408 , 0.75
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:露出快楽経験 = MAX(TFLAG:401 / 2, 1)
+TCVAR:ARG:苦痛快楽経験 = MAX(TFLAG:401 / 2, 1)
+;縄使用
+IF TFLAG:99 == 2
+	TCVAR:ARG:苦痛快楽経験 += MAX(TFLAG:401 / 2, 1)
+	TCVAR:ARG:緊縛経験 = TFLAG:401
+ENDIF
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 2
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM4
+PRINTFORML %CALLNAME:TARGET%は目隠し状態の姿にされた上、Ｍ字開脚のポーズから動けないように机の上に縛り付けられた
+PRINTL 顧客らはそれを存分に眺め、堪能したようだ
+
+;=============================================================================
+;ソフト売春(ママへのお悩み相談)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM5, ARG
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 20
+
+PRINTL キャバクラ -人生相談室-
+
+;(欲望、技巧、奉仕精神)*2を見る
+TFLAG:408 += (MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)) * 2
+SELECTCASE RAND:4
+	CASE 0
+		;奉仕快楽経験
+		IF EXP:ARG:奉仕快楽経験 >= 1000
+			TIMES TFLAG:408 , 3.0
+		ELSEIF EXP:ARG:奉仕快楽経験 >= 500
+			TIMES TFLAG:408 , 1.5
+		ENDIF
+		TFLAG:99 = 0
+	CASE 1
+		;苦痛快楽経験
+		IF EXP:ARG:苦痛快楽経験 >= 500
+			TIMES TFLAG:408 , 3.0
+		ELSEIF EXP:ARG:苦痛快楽経験 >= 250
+			TIMES TFLAG:408 , 1.5
+		ENDIF
+		TFLAG:99 = 1
+	CASE 2
+		;異常経験
+		IF EXP:ARG:異常経験 >= 30
+			TIMES TFLAG:408 , 5.0
+		ELSEIF EXP:ARG:異常経験 >= 20
+			TIMES TFLAG:408 , 3.0
+		ELSEIF EXP:ARG:異常経験 >= 10
+			TIMES TFLAG:408 , 2.0
+		ENDIF
+		TFLAG:99 = 2
+	CASE 3
+		;売春経験
+		IF EXP:ARG:売春経験 >= 10000
+			TIMES TFLAG:408 , 5.0
+		ELSEIF EXP:ARG:売春経験 >= 5000
+			TIMES TFLAG:408 , 3.0
+		ELSEIF EXP:ARG:売春経験 >= 1000
+			TIMES TFLAG:408 , 2.0
+		ENDIF
+		TFLAG:99 = 3
+ENDSELECT
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 2
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM5
+PRINTFORML %CALLNAME:TARGET%は、悩めるお客の相談に乗った。
+SELECTCASE TFLAG:99
+	CASE 3
+		PRINTL また辛いことがあったら、いつでも来てくださいね、とお客をなぐさめた。
+	CASE 2
+		PRINTL 尋常ではない仕打ちをされても、気を落とさないようにね、とお客を励ました。
+	CASE 1
+		PRINTL ひどい仕打ちをされてもいつか乗り越えられますよ、とお客をなぐさめた。
+	CASE 0
+		PRINTL たとえ相手がひどい人でも、きちんと気配りが出来れば、きっといいことがありますよ、とお客を励ました。
+ENDSELECT

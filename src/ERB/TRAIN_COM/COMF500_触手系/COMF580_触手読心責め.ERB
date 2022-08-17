@@ -1,0 +1,298 @@
+﻿;=============================================================================
+;触手読心責め
+;=============================================================================
+;読心をベースに作成……がほとんど原形を留めていないというオチ
+;触手生贄を通じて下半身が触手と一体化したさとりんを召喚、
+;胸を押し当てたりあごを撫でたりしながら奴隷の心を読み、耳元で囁いていく……という超誰得なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE580
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:580 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;調教対象が心の目を閉ざしている[覚]だとダメ
+SIF TALENT:覚 == 2
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:読心 == 2
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[SATORI触手]を得ていないとダメ
+SIF (FLAG:98 & 1) == 0
+	RETURN 0
+;さとりを触手生贄に捧げていない(=さとりが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 1) == 0
+	RETURN 0
+;読心中はダメ
+SIF TEQUIP:巨大化 == 1
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 580) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM580
+PRINTL 触手読心責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 580
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手読心責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 300
+
+LOCAL:1 = 800
+LOCAL:2 = 1400
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 600
+	SOURCE:トラウマ = 2500
+	SOURCE:逸脱 = 10000
+	TIMES LOCAL:1, 0.60
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 800
+	SOURCE:トラウマ = 1800
+	SOURCE:逸脱 = 7000
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 600
+	SOURCE:トラウマ = 1300
+	SOURCE:逸脱 = 5000
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 300
+	SOURCE:トラウマ = 1500
+	SOURCE:逸脱 = 3000
+	TIMES LOCAL:1, 2.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 200
+	SOURCE:トラウマ = 1000
+	SOURCE:逸脱 = 1000
+	TIMES LOCAL:1, 2.60
+ELSE
+	SOURCE:露出 = 100
+	SOURCE:トラウマ = 1800
+	SOURCE:逸脱 = 200
+	TIMES LOCAL:1, 3.80
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 1.80
+ELSE
+	TIMES LOCAL:1 , 2.00
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 1.50
+;無関心
+SIF TALENT:無関心
+	TIMES LOCAL:1 , 0.80
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL:1 , 2.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 3.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+
+;さとりとの相性あるなしで補正が上下
+LOCAL:3 = 61
+IF RELATION:(LOCAL:3) > 0 && RELATION:(LOCAL:3) != 100
+	LOCAL:1 *= RELATION:(LOCAL:3)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:3)
+	LOCAL:2 /= 100
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:トラウマ += (LOCAL:1 + LOCAL:2)/2
+SOURCE:逸脱 += LOCAL:2
+
+IF TEQUIP:読心
+	TEQUIP:読心 = 0
+ELSE
+	TEQUIP:読心 = 2
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手読心中
+;-------------------------------------------------
+@EQUIP_COM580
+PRINTL ＜触手読心中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 100
+
+LOCAL:1 = 400
+LOCAL:2 = 700
+SOURCE:トラウマ += 750
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 += 300
+	SOURCE:トラウマ += 1300
+	SOURCE:逸脱 += 5000
+	TIMES LOCAL:1, 0.30
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 += 400
+	SOURCE:トラウマ += 9800
+	SOURCE:逸脱 += 3500
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 += 300
+	SOURCE:トラウマ += 650
+	SOURCE:逸脱 += 2500
+	TIMES LOCAL:1, 2.00
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 += 150
+	SOURCE:トラウマ += 750
+	SOURCE:逸脱 += 1500
+	TIMES LOCAL:1, 3.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 += 100
+	SOURCE:トラウマ += 500
+	SOURCE:逸脱 += 500
+	TIMES LOCAL:1, 4.60
+ELSE
+	SOURCE:露出 += 50
+	SOURCE:トラウマ += 900
+	SOURCE:逸脱 += 100
+	TIMES LOCAL:1, 5.80
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.10
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 1.60
+ELSE
+	TIMES LOCAL:1 , 1.80
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 1.50
+;無関心
+SIF TALENT:無関心
+	TIMES LOCAL:1 , 0.80
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL:1 , 2.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 3.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+
+;さとりとの相性あるなしで補正が上下
+LOCAL = 61
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:トラウマ += (LOCAL:1 + LOCAL:2)/2
+SOURCE:逸脱 += LOCAL:2
+
+;さとりの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_580
+IF TEQUIP:読心 == 2
+	PRINTFORML %CALLNAME:PLAYER%の命令を受けると、さとりは一瞬不満そうな表情を浮かべた
+	PRINTFORML しかし気を取り直したらしく、%CALLNAME:TARGET%の耳たぶを甘噛みした後離れていった
+	PRINTFORML 小さな悲鳴を上げた%CALLNAME:TARGET%に淫靡な笑みを浮かべると、さとりは管状の触手の内に身を潜ませ、そのまま肉壁の向こう側へと消えて行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に応じたのか、触手の壁をかき分けて一本の人が入れそうな太さの触手が現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと花弁を開くように先端が割れ、中から肉の管と一体化したさとりが一糸纏わぬ姿で身を乗り出した
+	PRINTFORML さとりは%CALLNAME:MASTER%に向かって一礼すると、光を宿していない瞳を%CALLNAME:TARGET%に向けた
+	PRINT そして
+	IF RAND:2 == 0
+		PRINTFORM 淫靡な笑みを浮かべながら自らの胸を%CALLNAME:TARGET%に押し付け、
+	ELSE
+		PRINTFORM 病的なまでに白い手で%CALLNAME:TARGET%のあごを優しく撫でつつ、
+	ENDIF
+	PRINTFORML %CALLNAME:TARGET%の心の奥底を覗き込み始めた…
+ENDIF

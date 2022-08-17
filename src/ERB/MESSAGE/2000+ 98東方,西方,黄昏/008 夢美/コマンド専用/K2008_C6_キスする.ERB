@@ -1,0 +1,52 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;キスする
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK未指定（RANK指定がある場合はそちらを優先する）
+;-------------------------------------------------
+@K2008_COM_6
+;そのままリダイレクト
+CALL K2008_COM_GENERAL
+CALL K2008_VOICE("キス")
+
+;-------------------------------------------------
+;拒否口上
+;-------------------------------------------------
+;	_DIST	= 実行可能までの距離（拒否時は常に0より大きい）
+;_DENIED	= 今回の調教中で既に、この命令を拒否したなら1、してないなら0
+;	_DONE	= 今回の調教中に、この命令が実行できた回数。一度もできていないなら0
+;-------------------------------------------------
+;@K2008_DENY_COM_6(_DIST, _DENIED, _DONE)
+@K2008_RANK1_DENY_COM_6(_DIST, _DENIED, _DONE)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+;もうちょっと
+IF _DIST < 5
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「か、顔近づけないで……　駄目だったらダメなの」
+		CASEELSE
+			CALL K2008_DENY_GENERAL, _DIST, _DENIED, _DONE
+	ENDSELECT
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「私の唇はそんなに安くないの」
+			PRINTFORMW 「払えばいいのかって？　ふざけないで、非売品よ！」
+		CASE 1
+			PRINTFORMW 「なんで%K2008FS_CALL_YOUR_NAME()%なんかとキスしなきゃいけないのよ！？」
+		CASEELSE
+			CALL K2008_DENY_GENERAL, _DIST, _DENIED, _DONE
+	ENDSELECT
+ENDIF
+
+@K2008_RANK2_DENY_COM_6(_DIST, _DENIED, _DONE)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+
+CALL K2008_RANK1_DENY_COM_6

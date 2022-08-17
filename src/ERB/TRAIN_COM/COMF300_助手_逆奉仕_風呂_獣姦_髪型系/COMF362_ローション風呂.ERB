@@ -1,0 +1,199 @@
+﻿;=============================================================================
+;ローション風呂
+;=============================================================================
+;ローション30本をイケニエに全身ローションを浸らせていくコマンド。クスコを付けていると効果が上昇。
+;潤滑は単純に液体の量だけでなく、摩擦にも関係していると解釈。
+;故に一定値を超えた潤滑(1万以上とか)というのは愛液等の量が○○Lというよりむしろ滑りやすさって意味のほうが強いと判断し、風呂の仕様に反映
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE362
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:362 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 4) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 3
+	RETURN 1
+;ローションを30個以上持っていないとダメ
+SIF ITEM:ローション < 30
+	RETURN 0
+;調教者が小人体型のときは技巧が3以上ないとダメ
+SIF TALENT:PLAYER:小人体型 && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;潤滑が15000以上のときはダメ
+SIF PALAM:潤滑 >= 15000
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 3
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 362) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM362
+PRINTL ローション風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 362
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ローション風呂
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 3
+	DOWNBASE:0 += 5
+	DOWNBASE:1 += 20
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:達成感 = 60
+SOURCE:液体追加 = 15000
+SOURCE:露出 = 800
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 20
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 60
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 300
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 500
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 800
+ELSE
+	SOURCE:快Ｃ = 1300
+ENDIF
+
+;クスコ装着中は効果変動
+IF TEQUIP:クスコ
+	TIMES SOURCE:快Ｃ , 0.30
+	SOURCE:液体追加 += 10000
+	SOURCE:露出 += 500
+	SIF EXP:Ｖ経験 || TALENT:処女 != 1
+		SOURCE:快Ｖ += 50 * (1 + ABL:Ｖ感覚)
+ENDIF
+
+;ローションを30個消費
+CALL USE_PLURAL_ITEM, 60, 30
+
+TEQUIP:特殊風呂入浴中 = 3
+TEQUIP:ローション = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;ローション風呂入浴中
+;--------------------------------------------------
+@EQUIP_COM362
+PRINTL ＜ローション風呂入浴中＞
+
+SOURCE:液体追加 += 500
+SOURCE:露出 += 800
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ += 10
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ += 20
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ += 40
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ += 80
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ += 200
+ELSE
+	SOURCE:快Ｃ += 600
+ENDIF
+
+;クスコ装着中は効果変動
+IF TEQUIP:クスコ
+	TIMES SOURCE:快Ｃ , 0.50
+	SOURCE:液体追加 += 800
+	SOURCE:露出 += 500
+	SIF EXP:Ｖ経験 || TALENT:処女 != 1
+		SOURCE:快Ｖ += 20 * (1 + ABL:Ｖ感覚)
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_362
+IF TEQUIP:特殊風呂入浴中 == 3
+	PRINTFORML %CALLNAME:TARGET%をローションに満たされた風呂から引き揚げた
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を抱えあげると、ローションで満たされた巨大な器の中に浸からせた
+	IF TEQUIP:クスコ
+		PRINTFORML クスコによって強制的に開かれた%CALLNAME:TARGET%のヴァギナ内に冷たいローションが流れ込んでいく……
+		IF EXP:Ｖ経験
+			PRINTFORM %CALLNAME:TARGET%は膣
+			SIF EXP:Ｖ経験 > EXPLV:5
+				PRINT そして子宮内
+			PRINTL に流れ込んでくるローションの感触にびっくりしたのか体を軽くのけぞらせた……
+		ENDIF
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%はローションの冷たい感触に体を硬直させている……
+	ENDIF
+	PRINTFORML %CALLNAME:TARGET%は全身ローションまみれになった
+ENDIF

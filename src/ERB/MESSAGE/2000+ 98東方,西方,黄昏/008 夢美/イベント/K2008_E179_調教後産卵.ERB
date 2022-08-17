@@ -1,0 +1,36 @@
+﻿;YM→YMAEコンバータによって作成されました
+
+;-------------------------------------------------
+;産卵
+;TFLAG:99で産んだ卵の個数を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE179
+PRINTFORML 
+PRINTFORMW ……
+PRINTFORM 調教中から膨らみ始めていた夢美のお腹は、
+SELECTCASE TFLAG:99
+	CASE IS >=6
+		PRINTFORMW いまや破裂寸前の風船のようだ
+		PRINTFORMW 多くの卵たちが、外に出るのが今か今かと待ちわびている
+	CASE IS >= 3
+		PRINTFORMW 多数の卵を抱え込んでいることを物語っている
+		PRINTFORMW 胎内に鎮座している卵は一体いくつあるのだろう
+	CASEELSE
+		PRINTFORMW いまもゆっくりと膨らみを増している
+		PRINTFORMW どうやらもう少しで産卵できるらしい
+ENDSELECT
+
+PRINTFORML 
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTFORML 「いっ、イヤよっ、こんなの早く出さなきゃ・・・！」
+		PRINTFORMW 「んギッ、出て……行って！　私の中から出ていけッ！！　ンギイイィィ！！」
+	CASE 2 TO 3
+		PRINTFORMW 「はーっ、はっ、ふぅー……　ひっふっ、ふー、んひあっ！」
+		PRINTFORMW 「ああぁ、産まれる！？　哺乳類失格してたまご、産んじゃう！！」
+	CASE 4 TO 5
+		PRINTFORMW 「んお、ヲ゛♪　タマゴ袋破水したぁ♪　孕み液がビチャビチャってすごイィ」
+		PRINTFORMW 「メリめりってェー　まんこ口から素敵タマゴちゃん這い出てく、りゅッ、あ゛アァ゛♪」
+		PRINTFORMW 「素敵、すてきステキ！　ゆめみ、哺乳類やめて幸せッ、産卵だいしゅきぃい♪」
+ENDSELECT
+

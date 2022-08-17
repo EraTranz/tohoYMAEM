@@ -1,0 +1,123 @@
+﻿;=============================================================================
+;説教を受ける
+;=============================================================================
+;映姫様の説教を受ける。調教対象の場合、好感度と達成感が尋常じゃなく増える
+;一方調教者だった場合、恭順と屈従がそれなりに増える
+;ただし他の調教実行後は使用不可、及び使うと調教終了
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE446
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:446 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;対象、または調教者が映姫様でないとダメ
+SIF NO:TARGET != 1036 && NO:PLAYER != 1036
+	RETURN 0
+;調教開始直後じゃないとダメ
+SIF PREVCOM != -1
+	RETURN 0
+;対象だった場合、反発刻印があったらダメ
+SIF NO:TARGET == 1036 && MARK:反発刻印 < 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 446) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM446
+;助手の映姫様がやるときはあなたも巻き込まれて「受ける」ので
+IF NO:MASTER == 1036
+	PRINTL 説教をする
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 446
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 説教をする
+ELSE
+	PRINTL 説教を受ける
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 446
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 説教を受ける
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;映姫様を調教
+IF NO:TARGET == 1036
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 10
+	DOWNBASE:MASTER:1 += 333
+	SIF ASSI >= 0
+		DOWNBASE:ASSI:1 += 333
+	SOURCE:情愛 = 100
+	SOURCE:達成感 = 60000
+	SIF EQUIP:戦闘中
+		SOURCE:達成感 /= 3
+	SIF CHECK_GAMEMODE_ENDING_EXIST() == 1
+		CFLAG:好感度 += 99
+
+	;主人および存在すれば助手の受講回数(こっちは助手は逃げられない)
+	CFLAG:MASTER:調教説教薀蓄受講数 += 1
+	SIF ASSI >= 0 && EQUIP:ASSI:睡眠薬 == 0
+		CFLAG:ASSI:調教説教薀蓄受講数 += 1
+;映姫様が調教
+ELSE
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 9999
+	SOURCE:恭順追加 = 6000
+	SOURCE:屈従 = 2000
+	IF EQUIP:戦闘中
+		SOURCE:恭順追加 /= 2
+		SOURCE:屈従 /= 2
+	ENDIF
+
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES SOURCE:恭順追加 , 1.00
+	ELSEIF ABL:従順 == 1
+		TIMES SOURCE:恭順追加 , 0.50
+	ELSEIF ABL:従順 == 2
+		TIMES SOURCE:恭順追加 , 0.40
+	ELSEIF ABL:従順 == 3
+		TIMES SOURCE:恭順追加 , 0.30
+	ELSEIF ABL:従順 == 4
+		TIMES SOURCE:恭順追加 , 0.20
+	ELSE
+		TIMES SOURCE:恭順追加 , 0.10
+	ENDIF
+
+	;調教対象の受講回数(助手がいたとしても逃げるｗ)
+	CFLAG:調教説教薀蓄受講数 += 1
+ENDIF
+TFLAG:107 = 999
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_446
+IF NO:TARGET == 1036
+	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%に向けて説教をし始めた
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に対し、説教を始めた
+ENDIF

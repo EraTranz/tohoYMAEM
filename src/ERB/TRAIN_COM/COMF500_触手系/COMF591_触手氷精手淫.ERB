@@ -1,0 +1,244 @@
+﻿;=============================================================================
+;触手氷精手淫
+;=============================================================================
+;触手生贄を通じて触手と一体化したチルノを召喚、
+;冷たい手で延々と奴隷に手コキしていく……という超変態的なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE591
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:591 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｃ系装着器具 == 8
+	RETURN 1
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[CIRNO触手]を得ていないとダメ
+SIF (FLAG:98 & 2048) == 0
+	RETURN 0
+;チルノを触手生贄に捧げていない(=チルノが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 2048) == 0
+	RETURN 0
+;他のＣ系触手責め中はダメ
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 8
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 591) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM591
+PRINTL 触手氷精手淫
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 591
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手氷精手淫
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 15
+DOWNBASE:1 += 120
+
+LOCAL:2 = 600
+LOCAL:4 = 70
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 60
+	LOCAL:3 = 40
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 180
+	LOCAL:3 = 150
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 800
+	LOCAL:3 = 750
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 1700
+	LOCAL:3 = 1400
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 2700
+	LOCAL:3 = 2300
+ELSE
+	LOCAL:1 = 3800
+	LOCAL:3 = 3000
+ENDIF
+
+;主人が[妖精知識]
+IF TALENT:MASTER:妖精知識
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+	TIMES LOCAL:3 , 1.20
+	TIMES LOCAL:4 , 1.20
+ENDIF
+
+;チルノとの相性あるなしで補正が上下
+LOCAL:5 = 5
+IF RELATION:(LOCAL:5) > 0 && RELATION:(LOCAL:5) != 100
+	LOCAL:1 *= RELATION:(LOCAL:5)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:5)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:5)
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:(LOCAL:5)
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:快Ｃ += LOCAL:1
+SOURCE:露出 += LOCAL:2
+SOURCE:性行動 += LOCAL:3
+SOURCE:トラウマ += (LOCAL:2 + LOCAL:4)/2
+SOURCE:逸脱 += LOCAL:4
+
+IF TEQUIP:Ｃ系装着器具 == 8
+	TEQUIP:Ｃ系装着器具 = 0
+ELSE
+	TEQUIP:Ｃ系装着器具 = 8
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手氷精手淫中
+;-------------------------------------------------
+@EQUIP_COM591
+PRINTL ＜触手氷精手淫中＞
+
+DOWNBASE:0 += 8
+DOWNBASE:1 += 25
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 36
+	LOCAL:2 = 18
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 108
+	LOCAL:2 = 68
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 225
+	LOCAL:2 = 126
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 405
+	LOCAL:2 = 256
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 540
+	LOCAL:2 = 360
+ELSE
+	LOCAL:1 = 675
+	LOCAL:2 = 500
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+ELSE
+	TIMES LOCAL:1 , 1.30
+ENDIF
+
+;主人が[妖精知識]
+IF TALENT:MASTER:妖精知識
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+	TIMES LOCAL:3 , 1.20
+	TIMES LOCAL:4 , 1.20
+ENDIF
+
+;チルノとの相性あるなしで補正が上下
+LOCAL = 5
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:LOCAL
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:快Ｃ += LOCAL:1
+SOURCE:露出 += LOCAL:2
+SOURCE:性行動 += LOCAL:3
+SOURCE:欲情追加 += 50
+SOURCE:トラウマ += (LOCAL:2 + LOCAL:4)/2
+SOURCE:逸脱 += LOCAL:4
+
+;チルノの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_591
+IF TEQUIP:Ｃ系装着器具
+	PRINTFORML %CALLNAME:PLAYER%の命令を受けると、チルノは一瞬キョトンとした表情を見せた
+	PRINTFORML 再度命令すると、チルノは少し不機嫌そうにしながら%CALLNAME:TARGET%から離れて行った
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 恥部を冷やされ、弄ばれ、息も絶え絶えな%CALLNAME:TARGET%を残し、チルノは触手の中に籠ると、そのまま何処かへ去って行った……
+	ELSE
+		PRINTFORML 恥部を冷やされ弄ばれた%CALLNAME:TARGET%を残し、チルノは触手の中に籠ると、そのまま何処かへ去って行った……
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に応じたのか、触手の壁をかき分けて冷気を纏ったやや太い触手が現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと先端が割れ、中から肉の管と一体化したチルノが全裸の姿のまま大量の煙を身に纏わせつつ乗り出してきた
+	PRINTFORML チルノは%CALLNAME:MASTER%に向かって一度うなずくと、感情が抜け落ちた冷たい瞳を%CALLNAME:TARGET%に向けた
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML そして多数の触手を出し、%CALLNAME:TARGET%が逃げられないように押さえ込むと、チルノは冷気を纏った手で%CALLNAME:TARGET%のペニスを扱き始めた…
+	ELSE
+		PRINTFORML そして多数の触手を出し、%CALLNAME:TARGET%を押さえ込むと、チルノは冷気を纏った手で%CALLNAME:TARGET%のペニスを扱き始めた…
+	ENDIF
+ENDIF

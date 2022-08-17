@@ -1,0 +1,236 @@
+﻿;===========================================================================
+;	リソース表示関連で使用する関数群
+;
+;===========================================================================
+;=========================================================
+;	ターゲットの画像を表示
+;
+;	targetNo：表示対象
+;	iName	：使用する画像ファイルの先頭文字列
+;	xPos	：画像のx軸の相対位置指定
+;	yPos	：画像のy軸の相対位置指定
+;	size	：画像サイズ(10=1.0倍)
+;
+;	関数使用例
+;	CALL PRINT_CHARA_IMAGE, TARGET, "立ち絵_服", 3500, 0, 10, clothFlag
+;=========================================================
+@PRINT_CHARA_IMAGE(targetNo, iName, xPos, yPos, size, clothFlag = 0)
+#DIM targetNo
+#DIMS iName
+#DIM xPos = 0
+#DIM yPos = 0
+#DIM size = 10
+#DIMS imageNoStr
+#DIMS sPrint_Text
+#DIM nudeFlag
+#DIM clothFlag
+
+; 画像表示がOFFの場合は処理を抜ける
+SIF !(FLAG:画像設定 & 1)
+	RETURN RESULT
+
+; 表示対象がいない(-1)場合は、処理を抜ける
+SIF targetNo < 0
+	RETURN RESULT
+
+; 画像Noを取得
+imageNoStr = %PARSE_IMAGE_NO(targetNo)%
+
+; 描画文字列作成
+sPrint_Text = <p align='left'><nobr>
+IF imageNoStr != ""
+	sPrint_Text += @"<button value='-1' pos='{xPos}'>"
+	sPrint_Text += "<img "
+	sPrint_Text += @" src='%iName%_%GET_IMAGE_FACE(targetNo)%_%imageNoStr%'"
+	sPrint_Text += @" srcb='%iName%_%GET_IMAGE_MOUSEOVER_FACE(targetNo)%_%imageNoStr%'"
+	sPrint_Text += @" height='{size*100}'"
+	sPrint_Text += @" ypos='{yPos}'"
+	sPrint_Text += ">"
+	sPrint_Text += "</button>"
+ELSEIF (FLAG:画像設定 & 16) && targetNo != 0
+	; 可変画像の生成
+	nudeFlag = (iName == "立ち絵_裸")
+	CALL CN_CREATE_IMAGE(targetNo, nudeFlag, clothFlag)
+
+	sPrint_Text += @"<button value='-1' pos='{xPos}'>"
+	sPrint_Text += "<img "
+	IF nudeFlag
+		sPrint_Text += @" src='CN_101'"
+		sPrint_Text += @" srcb='CN_102'"
+	ELSE
+		sPrint_Text += @" src='CN_001'"
+		sPrint_Text += @" srcb='CN_002'"
+	ENDIF
+	sPrint_Text += @" height='{size*100}'"
+	sPrint_Text += @" ypos='{yPos}'"
+	sPrint_Text += ">"
+	sPrint_Text += "</button>"
+ENDIF
+sPrint_Text += "</p>"
+
+; 描画処理
+HTML_PRINT sPrint_Text
+;PRINTFORML %sPrint_Text%
+
+RETURN RESULT
+
+;=========================================================
+;	画面画像を表示
+;
+;	targetNo：表示対象
+;	iName	：使用する画像ファイルの先頭文字列
+;	viewName	：表示画面の文字列
+;
+;	関数使用例
+;	CALL PRINT_VIEW_CHARA_IMAGE, TARGET, "立ち絵_服", "通常画面", TEQUIP:コスチュームプレイ
+;=========================================================
+@PRINT_VIEW_CHARA_IMAGE(targetNo, iName, viewName, clothFlag = 0)
+#DIM targetNo
+#DIMS iName
+#DIM clothFlag
+#DIMS viewName
+SIF FLAG:(viewName+"画像：表示")
+    CALL PRINT_CHARA_IMAGE, targetNo, iName, FLAG:(viewName+"画像：X座標"), FLAG:(viewName+"画像：Y座標"), FLAG:(viewName+"画像：画像サイズ"), clothFlag
+RETURN RESULT
+
+;=========================================================
+;	表示対象の表情文字列を返す
+;
+;	ARG：表示対象
+;=========================================================
+@GET_IMAGE_FACE(ARG)
+#FUNCTIONS
+
+;死亡
+SIF TALENT:ARG:死亡
+	RETURNF "通常"
+
+;反発刻印を1以上持っている場合、怒り
+SIF MARK:ARG:反発刻印 >= 1
+	RETURNF "怒り"
+
+RETURNF "通常"
+
+;=========================================================
+;	表示対象の表情文字列（マウスオーバー時）を返す
+;
+;	ARG：表示対象
+;=========================================================
+@GET_IMAGE_MOUSEOVER_FACE(ARG)
+#FUNCTIONS
+
+;死亡
+SIF TALENT:ARG:死亡
+	RETURNF "通常"
+
+;恋慕、服従、淫乱のいずれかを持っている場合、笑い
+SIF TALENT:ARG:恋慕 == 1 || TALENT:ARG:服従 == 1 || TALENT:ARG:淫乱 == 1
+	RETURNF "笑い"
+
+	;反発刻印を1以上持っている場合、通常
+SIF MARK:ARG:反発刻印 >= 1 || ARG == MASTER
+	RETURNF "通常"
+
+RETURNF "怒り"
+
+;=========================================================
+;	キャラ番号を 画像Noで返す
+;	(画像が無い場合は、空文字列が戻る)
+;
+;	targetNo：表示対象
+;=========================================================
+@PARSE_IMAGE_NO(targetNo)
+#FUNCTIONS
+#DIM targetNo
+#DIM charaNo
+#DIM imageNo
+
+; 表示対象がいない(-1)場合は、空文字列を返す
+SIF targetNo < 0
+	RETURNF ""
+
+; キャラ番号を取得
+charaNo = NO:targetNo
+
+;--------------------------------------
+; 別Ver画像表示
+;--------------------------------------
+; EX化
+IF CFLAG:targetNo:0 != 0 && (FLAG:画像設定 & 8)
+	SELECTCASE charaNo
+		;「1001:霊夢」旧作Ver
+		CASE 1001
+			RETURNF "1001A"
+		;「1002:魔理沙」旧Ver
+		CASE 1002
+			RETURNF "1002A"
+		;「1003:ルーミア」Ex長髪Ver
+		CASE 1003
+			RETURNF "1003A"
+		;「1014:アリス」旧作Ver
+		CASE 1014
+			RETURNF "1014A"
+	ENDSELECT
+ENDIF
+
+;「2020:シンギョク」男Ver
+SIF charaNo == 2020 && TALENT:targetNo:オトコ == 1 && (FLAG:画像設定 & 2) && (FLAG:画像設定 & 8)
+	RETURNF "2020A"
+
+SELECTCASE charaNo
+	;--------------------------------------
+	; 画像表示設定による出し分け
+	;--------------------------------------
+	; 男非表示
+	CASE 1069, 1070, 1074
+		;「画像表示：モブ」の判定
+		IF (FLAG:画像設定 & 2)
+			imageNo = charaNo
+		ELSE
+			imageNo = 0
+		ENDIF
+	;--------------------------------------
+	; 特殊な画像表示
+	;--------------------------------------
+	;「1091:半霊(忌)」は「1065:半霊」を使用
+	CASE 1091
+		imageNo = 1065
+	;「2036:ビビット」は「2028:VIVIT」を使用
+	CASE 2036
+		imageNo = 2028
+	;--------------------------------------
+	; 通常の画像表示
+	;--------------------------------------
+	; 1000番台 通常キャラ
+	CASE 1001 TO 1110
+		imageNo = charaNo
+	; 2000番台 旧作キャラ
+	CASE 2000 TO 2028
+		imageNo = charaNo
+	; 3000番台 名無しキャラ他
+	CASE 3000 TO 3037
+		;「画像表示：モブ」の判定
+		IF (FLAG:画像設定 & 4)
+			imageNo = charaNo
+		ELSE
+			imageNo = 0
+		ENDIF
+	; 5000番台 IRCネタ関係
+	CASE 5097
+		imageNo = charaNo
+	;--------------------------------------
+	; 非表示
+	;--------------------------------------
+	CASEELSE
+		imageNo = 0
+ENDSELECT
+
+; 固有キャラ(1001~2999)が非表示の場合 0
+SIF !(FLAG:画像設定 & 8) && (1000 < imageNo) && (imageNo < 3000)
+	imageNo = 0
+
+IF imageNo == 0
+	RETURNF ""
+ELSE
+	RETURNF TOSTR(imageNo)
+ENDIF

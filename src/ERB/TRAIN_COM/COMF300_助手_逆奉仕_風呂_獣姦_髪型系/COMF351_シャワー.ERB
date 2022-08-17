@@ -1,0 +1,351 @@
+﻿;=============================================================================
+;シャワー
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE351
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:351 > 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:シャワープレイ
+	RETURN 1
+;吸血鬼や動物耳には従順4がないと使用不可（プレイヤーがサドならＯＫ）
+IF TALENT:吸血鬼 || TALENT:動物耳
+	SIF ABL:Ｃ感覚 < 4 && TALENT:PLAYER:サド == 0
+		RETURN 0
+ENDIF
+;お風呂プレイ中じゃないとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;助手がスク水とビキニと褌以外のコスプレ中はだめ
+SIF ASSIPLAY && TEQUIP:PLAYER:コスチュームプレイ > 1 && TEQUIP:PLAYER:コスチュームプレイ != 2 && TEQUIP:PLAYER:コスチュームプレイ != 12 && TEQUIP:PLAYER:コスチュームプレイ != 17
+	RETURN 0
+;ビキニと褌以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 12 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具
+	RETURN 0
+;Ｂ系装着具使用中は不可
+SIF TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 351) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM351
+LOCAL:1 = 1
+PRINTL シャワー
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 351
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TEQUIP:シャワープレイ || (FLAG:15 & 1024) == 0
+	TSTR:0 = シャワー
+ELSE
+	CALL SELECT_SHOWER
+	LOCAL:1 = RESULT + 1
+ENDIF
+;口上用
+TFLAG:99 = LOCAL:1
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;温水(普通)シャワー、シャワー停止
+IF LOCAL:1 == 1
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 10
+
+	SOURCE:露出 = 50
+	SOURCE:達成感 = 400
+	SOURCE:恭順追加 = 200
+	SOURCE:逸脱 = 50
+;冷水シャワー
+ELSEIF LOCAL:1 == 2
+	;チルノ＆レティは別扱い
+	IF SHOWER_ONDO_ATSUIYO_BONUS(TARGET)
+		DOWNBASE:0 += 0
+		DOWNBASE:1 += 10
+	
+		SOURCE:露出 = 50
+		SOURCE:達成感 = 400
+		SOURCE:恭順追加 = 200
+		SOURCE:逸脱 = 50
+	ELSE
+		DOWNBASE:0 += 20
+		DOWNBASE:1 += 30
+	
+		SOURCE:露出 = 50
+		SOURCE:達成感 = 400
+		SOURCE:痛み = 200
+		SOURCE:逸脱 = 100
+	ENDIF
+;熱湯シャワー
+ELSEIF LOCAL:1 == 3
+	;チルノ＆レティは別扱い
+	IF SHOWER_ONDO_ATSUIYO_BONUS(TARGET)
+		DOWNBASE:0 += 40
+		DOWNBASE:1 += 60
+	
+		SOURCE:露出 = 50
+		SOURCE:達成感 = 400
+		SOURCE:痛み = 400
+		SOURCE:逸脱 = 400
+	ELSE
+		DOWNBASE:0 += 20
+		DOWNBASE:1 += 30
+
+		SOURCE:露出 = 50
+		SOURCE:達成感 = 400
+		SOURCE:痛み = 100
+		SOURCE:逸脱 = 200
+	ENDIF
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:露出 += 10
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:露出 += 30
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:露出 += 60
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:露出 += 100
+ELSE
+	SOURCE:露出 += 150
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:情愛 = 0
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:情愛 = 20
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:情愛 = 40
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:情愛 = 70
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:情愛 = 110
+ELSE
+	SOURCE:情愛 = 150
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:達成感 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:達成感 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:達成感 , 1.20
+ELSE
+	TIMES SOURCE:達成感 , 1.30
+ENDIF
+
+;吸血鬼の場合
+IF TALENT:吸血鬼
+	SOURCE:痒み = 100
+	TIMES SOURCE:痛み , 1.60
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:反感追加 , 1.40
+ENDIF
+;動物耳の場合
+IF TALENT:動物耳
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.60
+	TIMES SOURCE:反感追加 , 2.00
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;シャワーの開始と終了
+TEQUIP:シャワープレイ = (TEQUIP:シャワープレイ) ? 0 # LOCAL:1
+
+;シャワーで汚れがリセット
+RESET_STAIN TARGET
+;CALL MINUS_RAND_LOOP, TARGET, 3, 2, 0
+;CFLAG:3666 = MAX(CFLAG:3666 - RESULT, 0)
+
+;（できれば）潤滑が半分に
+PALAM:潤滑 /= 2
+PALAM:不快 /= 2
+RETURN 1
+
+;-------------------------------------------------
+;シャワー選択
+;-------------------------------------------------
+@SELECT_SHOWER
+PRINTL 湯加減はどうしますか？
+PRINTL [0] - 普通
+PRINTL [1] - 冷たい
+PRINTL [2] - 熱い
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	TSTR:0 = 温水シャワー
+ELSEIF RESULT == 1
+	TSTR:0 = 冷水シャワー
+ELSEIF RESULT == 2
+	TSTR:0 = 熱湯シャワー
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN RESULT
+
+;-------------------------------------------------
+;シャワー使用中
+;-------------------------------------------------
+@EQUIP_COM351
+IF TEQUIP:シャワープレイ == 1
+	PRINTL ＜シャワー使用中＞
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 10
+	SOURCE:恭順追加 += 200
+ELSEIF TEQUIP:シャワープレイ == 2
+	PRINTL ＜シャワー(冷水)使用中＞
+	;チルノ＆レティは別
+	IF SHOWER_ONDO_ATSUIYO_BONUS(TARGET)
+		DOWNBASE:0 += 0
+		DOWNBASE:1 += 10
+		SOURCE:恭順追加 += 200
+	ELSE
+		DOWNBASE:0 += 5
+		DOWNBASE:1 += 20
+		SOURCE:痛み += 200
+	ENDIF
+ELSEIF TEQUIP:シャワープレイ == 3
+	PRINTL ＜シャワー(熱湯)使用中＞
+	;チルノ＆レティは別
+	IF SHOWER_ONDO_ATSUIYO_BONUS(TARGET)
+		DOWNBASE:0 += 10
+		DOWNBASE:1 += 50
+		SOURCE:痛み += 200
+		SOURCE:逸脱 += 50
+	ELSE
+		DOWNBASE:0 += 5
+		DOWNBASE:1 += 25
+		SOURCE:痛み += 100
+	ENDIF
+ENDIF
+
+SOURCE:達成感 += 400
+SOURCE:恭順追加 += 100
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:露出 += 10
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:露出 += 30
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:露出 += 60
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:露出 += 100
+ELSE
+	SOURCE:露出 += 150
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:情愛 += 0
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:情愛 += 20
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:情愛 += 40
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:情愛 += 70
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:情愛 += 110
+ELSE
+	SOURCE:情愛 += 150
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:達成感 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:達成感 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:達成感 , 1.20
+ELSE
+	TIMES SOURCE:達成感 , 1.30
+ENDIF
+
+SOURCE:欲情追加 += 50
+SOURCE:露出 += 50
+
+;吸血鬼の場合
+IF TALENT:吸血鬼
+	SOURCE:痒み += 150
+	TIMES SOURCE:痛み , 1.60
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:反感追加 , 1.40
+ENDIF
+;動物耳の場合
+IF TALENT:動物耳
+	SOURCE:反感追加 += 150
+	TIMES SOURCE:逸脱 , 1.60
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:反感追加 , 2.00
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;シャワーで汚れがリセット
+RESET_STAIN TARGET
+;CALL MINUS_RAND_LOOP, TARGET, 3, 2, 0
+;CFLAG:3666 = MAX(CFLAG:3666 - RESULT, 0)
+
+PALAM:潤滑 /= 2
+PALAM:不快 /= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_351
+IF TEQUIP:シャワープレイ
+	IF TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%はシャワーを止めた
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%にシャワーを止めさせた
+	ENDIF
+ELSE
+	IF TFLAG:99 == 2
+		PRINTFORML 蓮口から氷のように冷たい水が%CALLNAME:TARGET%に降り注いだ
+	ELSEIF TFLAG:99 == 3
+		PRINTFORML %CALLNAME:TARGET%の体に熱いお湯を浴びさせた
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%にシャワーを浴びさせた
+	ENDIF
+ENDIF

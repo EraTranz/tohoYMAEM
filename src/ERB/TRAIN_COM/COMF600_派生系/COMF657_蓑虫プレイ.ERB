@@ -1,0 +1,380 @@
+﻿;=============================================================================
+;蓑虫プレイ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE657
+#FUNCTION
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURNF 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURNF 0
+;調教者が天然処女であり、調教対象の前でまだ一度も助手を犯すを行ったことが無い場合、
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && TALENT:PLAYER:処女 == 1 && (CFLAG:21 & 4) == 0
+	RETURNF 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURNF 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURNF 0
+;助手がヤマメでないとダメ
+SIF NO:ASSI != 1058
+	RETURNF 0
+;助手は[蜘蛛の脚]を所有してないとダメ
+SIF TALENT:ASSI:蜘蛛の脚 == 0
+	RETURNF 0
+;助手が[オトコ]だとダメ
+SIF TALENT:ASSI:オトコ
+	RETURNF 0
+;小人体型持ちは、双方が調教者と調教対象ならOK
+;それ以外の場合は助手が小人体型のとき主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:ASSI:小人体型 && (TALENT:MASTER:禁断の知識 == 0 && TALENT:PLAYER:小人体型 == 0)
+	RETURNF 0
+;主人にペニスがない、かつペニスバンドもないとダメ
+SIF EXIST_BAR(MASTER) == 0 && ITEM:ペニスバンド == 0
+	RETURNF 0
+;縄使用中か従順が3以上ないとダメ
+SIF TEQUIP:緊縛関連 == 0 && ABL:従順 < 4
+	RETURNF 0
+;蜘蛛の巣にかけていないとダメ
+SIF TEQUIP:緊縛関連 != 7
+	RETURNF 0
+;助手がコスプレ中はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ > 1
+	RETURNF 0
+;野外プレイ中でないとダメ
+SIF TEQUIP:野外プレイ == 0
+	RETURNF 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURNF 0
+;時間帯が夜でないとだめ
+SIF TIME == 0
+	RETURNF 0
+;対象と助手の相性が良くないとダメ
+SIF RELATION:(NO:ASSI) <= 100
+	RETURNF 0
+;睡眠中は不可（あまり意味がないので）
+SIF EQUIP:睡眠薬
+	RETURNF 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 657) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM657
+PRINTL 蓑虫プレイ
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 657
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER,657
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+TSTR:0 = 蓑虫プレイ
+SELECTCOM = 657
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;助手のABL:技巧をみる
+IF ABL:ASSI:技巧 == 0
+	LOCAL = 50
+ELSEIF ABL:ASSI:技巧 == 1
+	LOCAL = 300
+ELSEIF ABL:ASSI:技巧 == 2
+	LOCAL = 800
+ELSEIF ABL:ASSI:技巧 == 3
+	LOCAL = 1500
+ELSEIF ABL:ASSI:技巧 == 4
+	LOCAL = 2000
+ELSE
+	LOCAL = 3200
+ENDIF
+
+;助手の従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(ASSI, LOCAL)
+;助手の奉仕精神をみる
+LOCAL = EJACULATIONCHECK_ABL_13_1(ASSI, LOCAL)
+;助手のＶ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_1_1(ASSI, LOCAL)
+;助手のマゾっ気をみる
+LOCAL = EJACULATIONCHECK_ABL_21_2(ASSI, LOCAL)
+;助手のＶ経験をみる
+LOCAL = EJACULATIONCHECK_EXP_0_1(ASSI, LOCAL)
+
+;調教対象のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL)
+
+SIF EXIST_PENIS(MASTER)
+	BASE:MASTER:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 280
+
+SOURCE:情愛 = 1200
+SOURCE:逸脱 = 2800
+
+;ABL:欲望をみる
+IF ABL:欲望 == 0
+	SOURCE:液体追加 = 75
+	SOURCE:屈従 = 3200
+ELSEIF ABL:欲望 == 1
+	SOURCE:液体追加 = 150
+	SOURCE:屈従 = 3800
+ELSEIF ABL:欲望 == 2
+	SOURCE:液体追加 = 300
+	SOURCE:屈従 = 4600
+ELSEIF ABL:欲望 == 3
+	SOURCE:液体追加 = 550
+	SOURCE:屈従 = 5400
+ELSEIF ABL:欲望 == 4
+	SOURCE:液体追加 = 800
+	SOURCE:屈従 = 6200
+ELSE
+	SOURCE:液体追加 = 1000
+	SOURCE:屈従 = 7000
+ENDIF
+
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES SOURCE:情愛 , 0.10
+	TIMES SOURCE:液体追加 , 0.50
+ELSEIF ABL:奉仕精神 == 1
+	TIMES SOURCE:情愛 , 0.40
+	TIMES SOURCE:液体追加 , 0.80
+ELSEIF ABL:奉仕精神 == 2
+	TIMES SOURCE:情愛 , 0.70
+	TIMES SOURCE:液体追加 , 1.00
+ELSEIF ABL:奉仕精神 == 3
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:液体追加 , 1.50
+ELSEIF ABL:奉仕精神 == 4
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:液体追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:液体追加 , 2.50
+ENDIF
+
+LOCAL:1 = 1000
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.50
+;気丈
+SIF TALENT:気丈
+	TIMES LOCAL:1 , 0.50
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.20
+;自慰しやすい
+SIF TALENT:自慰しやすい
+	TIMES SOURCE:情愛 , 2.50
+SOURCE:トラウマ += LOCAL:1
+
+;助手が処女
+IF TALENT:ASSI:処女
+	PRINTL ＜助手が処女＞
+
+	IF TALENT:ASSI:処女 == 1
+		TIMES SOURCE:屈従 , 20.00
+		TIMES SOURCE:逸脱 , 3.00
+		IF (CFLAG:21 & 4) == 0
+			TCVAR:異常経験 += 1
+			CFLAG:21 |= 4
+		ENDIF
+		IF ABL:従順 < 2
+			PRINTFORML そして%ABLNAME:10%が2になった
+			ABL:従順 = 2
+		ENDIF
+	ELSE
+		TIMES SOURCE:屈従 , 15.00
+		TIMES SOURCE:逸脱 , 2.50
+	ENDIF
+	TFLAG:5 += TALENT:ASSI:処女
+	TALENT:ASSI:処女 = 0
+	STAIN:ASSI:ヴァギナ |= 32
+ENDIF
+TCVAR:ASSI:Ｖ経験 += 1
+SIF EXIST_BAR(MASTER)
+	CFLAG:ASSI:主人にＶ捧げ回数 += 1
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	;ABL:精液中毒をみる
+	IF ABL:精液中毒 == 0
+		TIMES SOURCE:屈従, 1.00
+	ELSEIF ABL:精液中毒 == 1
+		TIMES SOURCE:屈従, 1.20
+	ELSEIF ABL:精液中毒 == 2
+		TIMES SOURCE:屈従, 1.50
+	ELSEIF ABL:精液中毒 == 3
+		TIMES SOURCE:屈従, 2.00
+	ELSEIF ABL:精液中毒 == 4
+		TIMES SOURCE:屈従, 2.50
+	ELSE
+		TIMES SOURCE:屈従, 3.00
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = PLAYER
+	;射精された人物を設定
+	TFLAG:94 = ASSI
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_657
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;射精に関係なく行われる処理はここから
+IF EXIST_PENIS(MASTER)
+	;主人のＰ⇔助手のＶの汚れが移動
+	STAIN:MASTER:ペニス |= STAIN:ASSI:ヴァギナ
+	STAIN:ASSI:ヴァギナ |= STAIN:MASTER:ペニス
+ENDIF
+
+IF TALENT:MASTER:オトコ == 0 && TALENT:ASSI:オトコ == 0
+	TCVAR:ASSI:レズ経験 += 10
+ELSEIF TALENT:MASTER:オトコ && TALENT:ASSI:オトコ
+	TCVAR:ASSI:ＢＬ経験 += 10
+ENDIF
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+
+;処女喪失の後でペニスを抜いているか
+TFLAG:101 = (TFLAG:101 == 2) ? 1 # 0
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_657
+PRINTFORML %CALLNAME:MASTER%は%CALLNAME:ASSI%に互いの性交を%CALLNAME:TARGET%に
+PRINTFORML 見せつけるように命令したが拒否されてしまった。
+PRINTFORML %CALLNAME:ASSI%にはまだまだ躾が足りないようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_657
+PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%は蜘蛛の巣で拘束され、動けない%CALLNAME:TARGET%を放置し、暗がりへと隠れた…
+PRINTFORML 不気味な静けさが広がる中、%CALLNAME:TARGET%の目に飛び込んだのは
+PRINTFORML 木の上から蓑虫のように糸で降りつつ%CALLNAME:TARGET%に見せつけながら、
+;対象の欲望Lvと奉仕精神Lvが共にLv4以上ある場合
+IF ABL:欲望 > 3 && ABL:奉仕精神 > 3
+	PRINTFORML %CALLNAME:ASSI%を犯し続けている%CALLNAME:MASTER%の姿であった。
+	PRINTFORML その姿を羨ましそうに見ている%CALLNAME:TARGET%の下の口からはいやらしい蜜が垂れ落ちてしまっているようだった…
+;その他の場合
+ELSE
+	PRINTFORML %CALLNAME:ASSI%を犯し続けている%CALLNAME:MASTER%の姿であった……
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_657, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情,5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;助手のABL:露出癖
+IF ABL:ASSI:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:ASSI:露出癖
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% 助手の%ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;助手が処女
+IF TALENT:ASSI:処女
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 15
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 助手が処女({LOCAL:99})
+ENDIF
+;助手が恋慕
+IF TALENT:ASSI:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が恋慕({LOCAL:99})
+ENDIF
+
+;実行値は40
+TFLAG:241 = 40
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_657
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 1
+;射精箇所選択の可・不可
+TFLAG:704 = 0
+

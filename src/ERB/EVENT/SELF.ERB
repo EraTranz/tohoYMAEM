@@ -1,0 +1,1937 @@
+﻿;=============================================================================
+;調教後の自慰・性交渉処理
+;=============================================================================
+;夜、厳しい条件をクリアすると…？
+;調教後性交渉追加版(2008/04/17 byα)
+;調教後の自慰に排他性追加(2009/02/09 by芋)
+@SELF_CHECK_MAIN
+LOCAL = 0
+;賢者の血使用と産卵イベントと調教後押し倒しイベントは互いに排他的
+;戦闘中・アイアンメイデンによる終了の場合は基本的に以下のイベントは起こらない（触手すらも）
+IF EQUIP:戦闘中 || SELECTCOM == 252
+	;賢者の血
+	SIF EQUIP:戦闘中 && TEQUIP:賢者の血
+		CALL SELF_CHECK1
+	TFLAG:128 = 0
+;眠ったり失神したりしていても…触手は暴れまわる！
+ELSEIF (EQUIP:睡眠薬 || TFLAG:899 > 0 || TFLAG:198 & 16) && (TEQUIP:触手調教 || TEQUIP:触手服)
+	CALL SELF_CHECK11
+	TFLAG:128 = 0
+;調教終了時に眠っているまたは失神している場合、処理を飛ばす
+ELSEIF EQUIP:睡眠薬 || TFLAG:899 > 0 || TFLAG:198 & 16
+	TFLAG:128 = 0
+;賢者の血使用時は反動があるかを見る
+ELSEIF TEQUIP:賢者の血
+	CALL SELF_CHECK1
+	TFLAG:128 = 0
+;触手を召喚したまま調教を終了した場合、触手に襲われる
+ELSEIF TEQUIP:触手調教 || TEQUIP:触手服
+	CALL SELF_CHECK10
+	TFLAG:128 = 0
+;[卵生]か[産卵体質]で[妊娠]及び[懐卵]ではない、かつ産卵判定もしくは中田氏があるときは卵を産む
+ELSEIF (TALENT:卵生 || TALENT:産卵体質) && TALENT:妊娠 == 0 && TALENT:懐卵 == 0 && (CFLAG:71 > 0 || TFLAG:128)
+	CALL EVENT_LAY_EGG
+;それ以外のときはCONFIGで調教後行為がＯＮでなら押し倒しイベントを見る
+ELSEIF FLAG:12 & 512
+	CALL SELF_CHECK2
+	TFLAG:128 = 0
+	LOCAL = 1
+ENDIF
+;調教終了時に眠っているまたは失神している場合、アイアンメイデン幽閉終了もしくは調教後行為を抑制している場合ここで処理を終わらせる
+SIF EQUIP:戦闘中 || EQUIP:睡眠薬 || TFLAG:899 > 0 || TFLAG:198 & 16 || SELECTCOM == 252 || (FLAG:12 & 512) == 0
+	RETURN 0
+
+;調教後自慰
+CALL SELF_CHECK3, LOCAL
+
+;調教後搾乳は他の自慰イベントとの競合性はない
+CALL SELF_CHECK4
+
+;調教後レズプレイと一晩６９は共存可能。しかし夜這いとは互いに排他的
+TFLAG:220 = 0
+;助手がいて時間に余裕がある場合
+IF ASSI >= 0 && TFLAG:107 <= 100
+	;調教対象も助手もオトコでなくてレズ中毒が共にある場合
+	IF TALENT:オトコ == 0 && TALENT:ASSI:オトコ == 0 && ABL:レズ中毒 && ABL:ASSI:レズ中毒
+		CALL SELF_CHECK5
+		;調教対象も助手もフタナリの場合
+		SIF TALENT:ふたなり && TALENT:ASSI:ふたなり
+			CALL SELF_CHECK6
+	;調教対象も助手もオトコでありＢＬ中毒が共にある場合
+	ELSEIF TALENT:オトコ && TALENT:ASSI:オトコ && ABL:ＢＬ中毒 && ABL:ASSI:ＢＬ中毒
+		CALL SELF_CHECK7
+	ENDIF
+ENDIF
+;時間に余裕がある場合夜イベント発生(レズプレイとは排他の関係)
+SIF TFLAG:220 == 0 && TFLAG:107 <= 100
+	CALL SELF_CHECK8
+
+;-----------------------------------------------
+;賢者の血の反動処理
+;-----------------------------------------------
+;賢者の血による絶頂チェック
+@SELF_CHECK1
+;賢者の血の効果が残っていないと発生しない
+SIF TEQUIP:賢者の血 < 2
+	RETURN 0
+;賢者の血使用中に絶頂を迎えさせていない場合は発生しない
+SIF TFLAG:110 + TFLAG:111 + TFLAG:112 + TFLAG:113 <= 0
+	RETURN 0
+
+DRAWLINE
+PRINTL 
+;賢者の血の調教後反動のイベント向上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 3
+PRINTL 
+CALL REACT_DRUG_SELF
+WAIT
+
+;-----------------------------------------------
+;調教後の押し倒し処理
+;-----------------------------------------------
+;賢者の血使用時は押し倒しのイベントは発生しない
+;旧式説明
+;タイプ1-1:1 主人棒あり＞相手Ｖあり
+;タイプ1-2:2 主人棒あり＞相手Ｖなし
+;タイプ2-1:3 主人棒なしＶあり＞相手棒あり
+;タイプ2-2:4 主人棒なしＶあり＞相手棒なしＶあり
+
+;新型説明
+;type1	主人男双	対象双女	Ｖ　　　	TFLAG:99 = 1
+;type2	主人男双	対象男　	Ａ　　　	TFLAG:99 = 2
+;type3	主人女　	対象男双	Ｖさせる	TFLAG:99 = 3
+;type4	主人女　	対象女　	レズ　　	TFLAG:99 = 4
+;type5	主人男双	対象双女	Ａ　　　	TFLAG:99 = 5
+;type6	主人双　	対象男双	Ｖさせる	TFLAG:99 = 6
+;type7	主人双女	対象男双	Ａさせる	TFLAG:99 = 7
+;type8	主人男　	対象双　	Ａさせる	TFLAG:99 = 8
+;type9	主人男　	対象男　	ゲイ　　	TFLAG:99 = 9
+@SELF_CHECK2
+VARSET LOCAL, 0
+;前提条件
+;恋慕がないとダメ
+SIF TALENT:恋慕 == 0
+	RETURN 0
+;体力必要
+SIF BASE:体力 < 500
+	RETURN 0
+;時間も必要
+SIF TFLAG:107 > 100
+	RETURN 0
+CALLF CLEAR_LIST
+PC_VAR2 = 1
+FOR PC_VAR1, 1, 10
+	CALLFORM SELF_CHECK2_TYPE{PC_VAR1}
+	SIF RESULT == 0
+		CONTINUE
+	PC_VAR2++
+	CALLF SET_LIST, PC_VAR2, PC_VAR1
+NEXT
+PC_VAR1 = GET_LIST( RAND:PC_VAR2 + 2 )
+TRYCALLFORM SELF_CHECK2_TYPE{PC_VAR1}
+LOCAL = 0
+SIF RESULT == 0
+	LOCAL = 1
+IF LOCAL == 0
+	PRINTL 
+	TRYCALLFORM SELF_CHECK2_TYPE{PC_VAR1}_CALC
+	WAIT
+ENDIF
+
+;-----------------------------------------------
+;type1	主人男双	対象双女	Ｖ
+;-----------------------------------------------
+@SELF_CHECK2_TYPE1
+;主人棒なし
+SIF TALENT:MASTER:オトコ + TALENT:MASTER:ふたなり == 0
+	RETURN 0
+;対象で男にＶはない
+SIF TALENT:オトコ
+	RETURN 0
+;非処女じゃないとダメ
+SIF TALENT:処女 || EXP:Ｖ経験 <= 0
+	RETURN 0
+;Ｖ感覚
+IF ABL:Ｖ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ｖ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE1_CALC
+DRAWLINE
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 1
+
+;Ｖ経験
+CALL COMMON_UP_EXP,TARGET, 0, TFLAG:226, 0
+CFLAG:主人にＶ捧げ回数 += TFLAG:226
+;Ｖ調律経験
+CALL COMMON_UP_EXP,TARGET, 42, TFLAG:226, 0
+
+;-----------------------------------------------
+;type2	主人男双	対象男	Ａ
+;-----------------------------------------------
+@SELF_CHECK2_TYPE2
+;主人棒なし
+SIF TALENT:MASTER:オトコ + TALENT:MASTER:ふたなり == 0
+	RETURN 0
+;対象が女だと抜ける
+SIF TALENT:オトコ == 0
+	RETURN 0
+;対象がＢＬ中毒がないと抜ける
+SIF ABL:ＢＬ中毒 < 1
+	RETURN 0
+;Ａ経験ないとダメ
+SIF EXP:Ａ経験 <= 0
+	RETURN 0
+;Ａ感覚
+IF ABL:Ａ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ａ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE2_CALC
+DRAWLINE
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 2
+
+;Ａ経験
+CALL COMMON_UP_EXP,TARGET, 1, TFLAG:226, 0
+CFLAG:主人にＡ捧げ回数 += TFLAG:226
+
+;-----------------------------------------------
+;type3	主人女	対象男双	Ｖさせる
+;-----------------------------------------------
+@SELF_CHECK2_TYPE3
+
+;主人が棒もちだと抜ける
+SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	RETURN 0
+;対象が棒なし
+SIF TALENT:オトコ + TALENT:ふたなり == 0
+	RETURN 0
+;主人が非処女じゃないとダメ
+SIF TALENT:MASTER:処女 || EXP:MASTER:Ｖ経験 <= 0
+	RETURN 0
+
+;Ｃ感覚
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ｃ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE3_CALC
+DRAWLINE
+;地の文章カット
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 3
+
+;主人のＶ経験
+CALL COMMON_UP_EXP,MASTER, 0, TFLAG:226, 0
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CFLAG:主人のＶ犯し回数 += TFLAG:226
+;レズ経験
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
+;-----------------------------------------------
+;type4	主人女	対象女	レズ
+;-----------------------------------------------
+@SELF_CHECK2_TYPE4
+
+;主人が棒もちだと抜ける
+SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	RETURN 0
+;対象が棒もちは抜ける
+SIF TALENT:オトコ || TALENT:ふたなり
+	RETURN 0
+
+;レズっ気ないとダメ
+SIF ABL:レズっ気 < 1
+	RETURN 0
+
+;レズっ気
+LOCAL = MIN(ABL:レズっ気, 5)
+
+;レズ中毒によるボーナス
+IF ABL:レズ中毒 >= 5
+	LOCAL += 3
+ELSEIF ABL:レズ中毒 == 4
+	LOCAL += 2
+ELSEIF ABL:レズ中毒 == 3
+	LOCAL += 1
+ENDIF
+
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE4_CALC
+DRAWLINE
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 4
+;レズ経験
+CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
+
+;-----------------------------------------------
+;type5	主人男双	対象双女	Ａ
+;-----------------------------------------------
+@SELF_CHECK2_TYPE5
+;主人が棒がないと抜ける
+SIF TALENT:MASTER:オトコ + TALENT:MASTER:ふたなり == 0
+	RETURN 0
+;対象が男は抜ける
+SIF TALENT:オトコ
+	RETURN 0
+;Ａ経験ないとダメ
+SIF EXP:Ａ経験 <= 0
+	RETURN 0
+;Ａ感覚
+IF ABL:Ａ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ａ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE5_CALC
+DRAWLINE
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 5
+
+;Ａ経験
+CALL COMMON_UP_EXP,TARGET, 1, TFLAG:226, 0
+CFLAG:主人にＡ捧げ回数 += TFLAG:226
+;-----------------------------------------------
+;type6	主人双	対象男双	Ｖさせる
+;-----------------------------------------------
+@SELF_CHECK2_TYPE6
+
+;対象が棒がないと抜ける
+SIF TALENT:オトコ + TALENT:ふたなり == 0
+	RETURN 0
+;主人が男は抜ける
+SIF TALENT:MASTER:オトコ
+	RETURN 0
+;主人が棒がないと抜ける
+SIF TALENT:MASTER:ふたなり == 0
+	RETURN 0
+;主人が非処女じゃないとダメ
+SIF TALENT:MASTER:処女 || EXP:MASTER:Ｖ経験 <= 0
+	RETURN 0
+
+;Ｃ感覚
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ｃ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE6_CALC
+DRAWLINE
+;地の文章カット
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 6
+
+;主人のＶ経験
+CALL COMMON_UP_EXP,MASTER, 0, TFLAG:226, 0
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CFLAG:主人のＶ犯し回数 += TFLAG:226
+;レズ経験
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
+;-----------------------------------------------
+;type7	主人双女	対象男双	Ａさせる
+;-----------------------------------------------
+@SELF_CHECK2_TYPE7
+
+;対象が棒がないと抜ける
+SIF TALENT:オトコ + TALENT:ふたなり == 0
+	RETURN 0
+;主人が男だと抜ける
+SIF TALENT:MASTER:オトコ
+	RETURN 0
+;主人にＡ経験ないとダメ
+SIF EXP:MASTER:Ａ経験 <= 0
+	RETURN 0
+
+;Ｃ感覚
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ｃ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE7_CALC
+DRAWLINE
+;地の文章カット
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 7
+
+;主人のＡ経験
+CALL COMMON_UP_EXP,MASTER, 1, TFLAG:226, 0
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CFLAG:主人のＡ犯し回数 += TFLAG:226
+;レズ経験
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
+;-----------------------------------------------
+;type8	主人男	対象双	Ａさせる
+;-----------------------------------------------
+@SELF_CHECK2_TYPE8
+
+;対象が男だと抜ける
+SIF TALENT:オトコ
+	RETURN 0
+;対象が棒がないと抜ける
+SIF TALENT:ふたなり == 0
+	RETURN 0
+;主人が男でないと抜ける
+SIF TALENT:MASTER:オトコ == 0
+	RETURN 0
+;主人にＡ経験ないとダメ
+SIF EXP:MASTER:Ａ経験 <= 0
+	RETURN 0
+
+;Ｃ感覚
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ｃ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE8_CALC
+DRAWLINE
+;地の文章カット
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 8
+
+;主人のＡ経験
+CALL COMMON_UP_EXP,MASTER, 1, TFLAG:226, 0
+SIF TALENT:ふたなり || TALENT:肥大陰核
+	CFLAG:主人のＡ犯し回数 += TFLAG:226
+;-----------------------------------------------
+;type9	主人男	対象男	ゲイ
+;-----------------------------------------------
+@SELF_CHECK2_TYPE9
+
+;対象が男でないと抜ける
+SIF TALENT:オトコ == 0
+	RETURN 0
+;主人が男でないと抜ける
+SIF TALENT:MASTER:オトコ == 0
+	RETURN 0
+;主人にＡ経験ないとダメ
+SIF EXP:MASTER:Ａ経験 <= 0
+	RETURN 0
+
+;Ｃ感覚
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 0
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 1
+ELSEIF ABL:Ｃ感覚 <= 3
+	LOCAL = 2
+ELSE
+	LOCAL = 3
+ENDIF
+
+;欲望と奉仕精神によるボーナス
+IF ABL:奉仕精神 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 >= 5
+		LOCAL += 2
+	ELSEIF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 3 && ABL:奉仕精神 >= 5
+		LOCAL += 1
+	ENDIF
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+;ある程度時間が経過している
+IF TFLAG:107 > 50 && LOCAL
+	LOCAL -= 1
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10 && LOCAL
+	LOCAL += 1
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;表現のみ制限(処理は変わらず)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = MIN(TFLAG:226, 10)
+
+RETURN 1
+
+@SELF_CHECK2_TYPE9_CALC
+DRAWLINE
+;地の文章カット
+;調教後セックス口上(TFLAG:99によるタイプわけをしてください)
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 150, 9
+
+;主人のＡ経験
+CALL COMMON_UP_EXP,MASTER, 1, TFLAG:226, 0
+;ＢＬ経験
+CALL COMMON_UP_EXP,TARGET, 13, TFLAG:226, 0
+CFLAG:主人のＡ犯し回数 += TFLAG:226
+;-----------------------------------------------
+;調教後自慰・アナル自慰処理
+;-----------------------------------------------
+@SELF_CHECK3, ARG
+;自慰中毒による自慰・アナル自慰チェック
+VARSET LOCAL, 0
+
+;珠変化量を記録
+TFLAG:670 = JUEL:快Ｃ
+TFLAG:671 = JUEL:快Ｖ
+TFLAG:672 = JUEL:快Ａ
+TFLAG:673 = JUEL:快Ｂ
+TFLAG:674 = JUEL:恭順
+TFLAG:675 = JUEL:欲情
+TFLAG:676 = JUEL:屈服
+TFLAG:677 = JUEL:恥情
+
+;経験変化量も記録
+TFLAG:680 = EXP:Ｖ経験
+TFLAG:681 = EXP:Ａ経験
+TFLAG:682 = EXP:射精経験
+TFLAG:683 = EXP:噴乳経験
+TFLAG:684 = EXP:自慰経験
+TFLAG:685 = EXP:調教自慰経験
+TFLAG:686 = EXP:奉仕快楽経験
+
+;自慰中毒を見る
+IF ABL:自慰中毒 == 0
+	LOCAL:1 = 0
+ELSEIF ABL:自慰中毒 == 1
+	LOCAL:1 = 1
+ELSEIF ABL:自慰中毒 == 2
+	LOCAL:1 = 2
+ELSEIF ABL:自慰中毒 == 3
+	LOCAL:1 = 4
+ELSEIF ABL:自慰中毒 == 4
+	LOCAL:1 = 6
+ELSE
+	LOCAL:1 = 9
+ENDIF
+
+;Ｃ感覚が4以上かつ欲望のパラメーターが10000を超えていた場合、欲望が4以上なら追加
+IF ABL:Ｃ感覚 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 == 4
+		LOCAL:1 += 1
+	ELSEIF ABL:欲望 == 5
+		LOCAL:1 += 2
+	ENDIF
+ENDIF
+
+;自慰しやすい
+IF TALENT:自慰しやすい
+	LOCAL:1 *= 2
+	;欲望ＬＶ３でもAに+1する
+	SIF ABL:Ｃ感覚 >= 3 && ABL:欲望 == 3 && PALAM:欲情 >= PALAMLV:3
+		LOCAL:1 += 1
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL:1
+	LOCAL:1 += 1
+ELSEIF TALENT:快感の否定 && LOCAL:1
+	LOCAL:1 -= 2
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL:1
+	LOCAL:1 += 1
+
+;助手が鼓舞
+SIF ASSI >= 0 && TALENT:ASSI:鼓舞 && LOCAL:1
+	LOCAL:1 += 1
+
+;残り体力が100未満
+IF BASE:体力 < 100
+	LOCAL:1 = 0
+;残り体力が250未満
+ELSEIF BASE:体力 < 250
+	LOCAL:1 -= 2
+;残り体力が500未満
+ELSEIF BASE:体力 < 500
+	LOCAL:1 -= 1
+ENDIF
+;ある程度時間が経過している
+IF TFLAG:107 > 50
+	TIMES LOCAL:1 , 0.50
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	TIMES LOCAL:1 , 1.50
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL:1 < 1
+	RETURN 0
+
+;自慰回数制限(自慰経験以外の処理はそのまま)
+LOCAL = LOCAL:1
+LOCAL = TABLE_CALC(LOCAL, 5, 2)
+LOCAL = TABLE_CALC(LOCAL, 10, 5)
+LOCAL = MIN(LOCAL, 20)
+;時間切れで終了した場合
+SIF TFLAG:107 > 100
+	LOCAL /= 2
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;Ａ系拡張コマンドＯＮのときにはアナニーをする可能性がある
+IF FLAG:15 & 4
+	;自慰、アナニー判定。ポイントが同じ場合は自慰優先(Ｃ感覚が０の場合はアナニーのみ)
+	;Ａ感覚見る
+	LOCAL:2 = ABL:Ａ感覚
+	;Ｃ感覚見る
+	LOCAL:3 = ABL:Ｃ感覚
+
+	;調教時にＡ快楽、Ｃ快楽をより稼いだほうに+1
+	IF PALAM:快Ａ > PALAM:快Ｃ
+		LOCAL:2 += 1
+	ELSEIF PALAM:快Ｃ > PALAM:快Ａ
+		LOCAL:3 += 1
+	ENDIF
+
+	;尻穴狂いだとアナニーしやすい+
+	;淫核／淫茎だと通常の自慰しやすい+
+	IF TALENT:淫尻
+		LOCAL:2 += 1
+	ELSEIF TALENT:淫核／淫茎
+		LOCAL:3 += 1
+	ENDIF
+ELSE
+	;Ａ系拡張コマンド（アナニーパッチ）が有効でないなら両方の判定を0に(強制的に通常自慰になる)
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+ENDIF
+
+;貞操帯を装着している場合、自慰できなくなって悶々とすることに
+IF CFLAG:42 & 2
+	CALL SELF_CHECK9, LOCAL:1, ARG
+	RETURN 0
+ENDIF
+
+;自慰隠蔽発覚モードＯＮのときの処理
+IF FLAG:16 & 8
+	IF CHECK_BARE(LOCAL:1) > RAND:100
+		;ばれた場合
+		CALL SELF_BARE, LOCAL
+	ELSE
+		;ばれなかった場合
+		;自慰の報告　従順+露出+マゾ-反発刻印*2
+		LOCAL:4 = ABL:従順 + ABL:露出癖 + ABL:マゾっ気 - ( MARK:反発刻印 * 2 )
+		;確定値になってる場合は確率次第ということで1/2で
+		SIF LOCAL:4 >= 10
+			LOCAL:4 = RAND:11 + 5
+		;素直か幼稚だと言いやすい
+		SIF TALENT:素直 || TALENT:幼稚
+			LOCAL:4 += 2
+		;服従系素質を持っていれば言いやすい
+		SIF CFLAG:15
+			LOCAL:4 += 1
+		IF LOCAL:4 >= 10 && MARK:反発刻印 < 2 || TALENT:弱味
+			DRAWLINE
+			IF LOCAL:2 > LOCAL:3
+				;調教後アナニーのイベント口上呼び出し
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 152, LOCAL
+
+				;Ａ経験
+				CALL COMMON_UP_EXP,TARGET, 1, LOCAL, 0
+				;自慰経験
+				CALL COMMON_UP_EXP,TARGET, 10, LOCAL, 0
+			ELSE
+				;調教後自慰のイベント口上呼び出し
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 151, LOCAL
+
+				;自慰経験
+				CALL COMMON_UP_EXP,TARGET, 10, LOCAL, 0
+			ENDIF
+		ENDIF
+	ENDIF
+;自慰隠蔽発覚パッチＯＦＦのときの処理
+ELSE
+	DRAWLINE
+	IF LOCAL:2 > LOCAL:3
+		;調教後アナニーのイベント口上呼び出し
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 152, LOCAL
+
+		;Ａ経験
+		CALL COMMON_UP_EXP,TARGET, 1, LOCAL, 0
+		;自慰経験
+		CALL COMMON_UP_EXP,TARGET, 10, LOCAL, 0
+	ELSE
+		;調教後自慰のイベント口上呼び出し
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 151, LOCAL
+
+		;自慰経験
+		CALL COMMON_UP_EXP,TARGET, 10, LOCAL, 0
+	ENDIF
+ENDIF
+WAIT
+
+;-----------------------------------------------
+;調教後搾乳自慰処理
+;-----------------------------------------------
+@SELF_CHECK4
+VARSET LOCAL, 0
+;噴乳中毒による搾乳チェック
+;オトコだとダメ
+SIF TALENT:オトコ
+	RETURN 0
+;母乳体質必要
+SIF TALENT:母乳体質 == 0
+	RETURN 0
+;Ｂ感覚及び欲望2以上、かつ技巧及び噴乳中毒1以上必要
+SIF ABL:Ｂ感覚 < 2 || ABL:欲望 < 2 || ABL:技巧 == 0 || ABL:噴乳中毒 == 0
+	RETURN 0
+;体力必要
+SIF BASE:体力 < 500
+	RETURN 0
+;時間も必要
+SIF TFLAG:107 > 100
+	RETURN 0
+;噴乳中毒をみる
+LOCAL = (ABL:噴乳中毒 > 3) ? 1+ABL:噴乳中毒 # ABL:噴乳中毒
+LOCAL += (ABL:噴乳中毒 > 4) ? 1 # 0
+;Ｂ感覚が4以上かつ欲望のパラメーターが10000を超えていた場合、欲望が4以上なら追加
+IF ABL:Ｂ感覚 >= 4 && PALAM:欲情 >= PALAMLV:4
+	IF ABL:欲望 == 4
+		LOCAL += 1
+	ELSEIF ABL:欲望 == 5
+		LOCAL += 2
+	ENDIF
+ENDIF
+;自慰しやすい
+IF TALENT:自慰しやすい
+	LOCAL += 2
+	;欲望ＬＶ３でもLOCALに+1する
+	SIF ABL:欲望 == 3 && ABL:Ｂ感覚 >= 3 && PALAM:欲情 >= PALAMLV:3
+		LOCAL += 1
+ENDIF
+;快感に素直、快感の否定
+IF TALENT:快感に素直 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:快感の否定 && LOCAL
+	LOCAL -= 2
+ENDIF
+;Ｂ敏感、Ｂ鈍感
+IF TALENT:Ｂ敏感 && LOCAL
+	LOCAL += 1
+ELSEIF TALENT:Ｂ鈍感 && LOCAL
+	LOCAL -= 1
+ENDIF
+;淫乱
+SIF TALENT:淫乱 && LOCAL
+	LOCAL += 1
+
+;残り体力が100未満
+IF BASE:体力 < 100
+	LOCAL = 0
+;残り体力が250未満
+ELSEIF BASE:体力 < 250
+	LOCAL -= 2
+;残り体力が500未満
+ELSEIF BASE:体力 < 500
+	LOCAL -= 1
+ENDIF
+;ある程度時間が経過している
+IF TFLAG:107 > 50
+	TIMES LOCAL , 0.75
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	TIMES LOCAL , 1.50
+ENDIF
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+;自慰回数制限(噴乳経験以外の処理はそのまま)
+TFLAG:226 = LOCAL
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = TABLE_CALC(TFLAG:226, 10, 5)
+TFLAG:226 = TABLE_CALC(TFLAG:226, 25, 10)
+TFLAG:226 = TABLE_CALC(TFLAG:226, 40, 20)
+DRAWLINE
+TFLAG:227 = 50*TFLAG:226
+TFLAG:227 = TABLE_CALC(TFLAG:227, 50, 2)
+TFLAG:227 = TABLE_CALC(TFLAG:227, 100, 5)
+TFLAG:227 = TABLE_CALC(TFLAG:227, 200, 10)
+TFLAG:227 = MIN(TFLAG:227, 300)
+
+;調教後自慰搾乳のイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 153
+
+;噴乳経験
+CALL COMMON_UP_EXP,TARGET, 5, TFLAG:226, 0
+;対象奴隷の従順＋露出癖＋マゾっ気の合計が10以上であるなら母乳を主人のもとに持ってくる
+IF (ABL:従順 + ABL:露出癖 + ABL:マゾっ気) >= 10
+	;CONFIGで展示室がＯＮであり蓋付き瓶があるとき対象奴隷の母乳蒐集がまだなら蒐集する
+	SIF (CFLAG:10 & 256) == 0 && ITEM:蓋付き瓶 > 0 && FLAG:12 & 8
+		CALL SWEET_POTATO_MILK_2, LOCAL
+ENDIF
+WAIT
+
+;-----------------------------------------------
+;調教後レズプレイ処理
+;-----------------------------------------------
+@SELF_CHECK5
+;貞操帯装着時は不可能(前提で助手がいないときは弾いている)
+SIF CFLAG:42 & 2 || CFLAG:ASSI:42 & 2
+	RETURN 0
+;レズ中毒によるレズチェック
+;Ｃ感覚3以上及び従順、欲望、レズっ気全て2以上必要
+SIF ABL:Ｃ感覚 < 3 || ABL:従順 < 2 || ABL:欲望 < 2 || ABL:レズっ気 < 2
+	RETURN 0
+;体力必要
+SIF BASE:体力 < 500 || BASE:ASSI:体力 < 500
+	RETURN 0
+;レズ中毒をみる
+TFLAG:220 = (ABL:レズ中毒 > 3) ? 1+ABL:レズ中毒 # ABL:レズ中毒
+TFLAG:220 += (ABL:レズ中毒 > 4) ? 1 # 0
+;助手のレズ中毒をみる
+TFLAG:220 += (ABL:ASSI:レズ中毒 > 3) ? 1+ABL:ASSI:レズ中毒 # ABL:ASSI:レズ中毒
+TFLAG:220 += (ABL:ASSI:レズ中毒 > 4) ? 1 # 0
+;ある程度時間が経過している
+IF TFLAG:107 > 50
+	TIMES TFLAG:220 , 0.50
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	TIMES TFLAG:220 , 1.50
+ENDIF
+;調教対象と助手の相性をみる
+LOCAL:1 = NO:ASSI
+IF RELATION:(LOCAL:1) > 0
+	TFLAG:220 *= RELATION:(LOCAL:1)
+	TFLAG:220 /= 100
+ENDIF
+
+;レズプレイ回数制限(レズ経験以外の処理はそのまま)
+TFLAG:226 = TFLAG:220
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = TABLE_CALC(TFLAG:226, 10, 5)
+TFLAG:226 = MIN(TFLAG:226, 25)
+
+;調教後レズプレイのイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 154
+
+;レズ経験(助手にもつけるけど表示はしない)
+CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
+CALL COMMON_UP_EXP,ASSI, 12, TFLAG:226, 2
+;絶頂経験
+CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:従順) / 5), 0
+LOCAL = TFLAG:220*50*(ABL:技巧+ABL:奉仕精神)
+;助手がふたなりならば対象奴隷に精液経験加算
+IF TALENT:ASSI:ふたなり
+	;精液経験
+	CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
+	LOCAL *= 2
+ENDIF
+;対象奴隷がふたなりならば射精経験加算
+IF TALENT:ふたなり
+	;射精経験
+	CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
+	;LUNATIC以上は射精するたびに体力が減少
+	CALL EXHAUST_EJAC, TARGET, TFLAG:220
+ENDIF
+;助手が[ドＳ]または[サド]かつサドっ気Lv5
+IF (ABL:ASSI:サドっ気 > 4 && TALENT:ASSI:サド) || TALENT:ASSI:ドＳ
+	;苦痛快楽経験
+	CALL COMMON_UP_EXP,TARGET, 30, TFLAG:220, 0
+ENDIF
+WAIT
+
+;-----------------------------------------------
+;調教後レズプレイ処理（双方ふたなり）
+;-----------------------------------------------
+@SELF_CHECK6
+;貞操帯装着時は不可能(前提で助手がいないときは弾いている)
+SIF CFLAG:42 & 2 || CFLAG:ASSI:42 & 2
+	RETURN 0
+;奉仕精神、精液中毒がともに3以上ないとダメ
+SIF ABL:奉仕精神 < 3 || ABL:精液中毒 < 3
+	RETURN 0
+;条件を満たさない場合は処理をここで終了させる(前のレズプレイで判断)
+SIF TFLAG:220 < 1
+	RETURN 0
+
+;調教後レズプレイ(69)のイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 155
+
+;射精経験
+CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
+;精液経験
+CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
+;奉仕快楽経験
+CALL COMMON_UP_EXP,TARGET, 20, TFLAG:220, 0
+;フェラ経験
+CALL COMMON_UP_EXP,TARGET, 22, TFLAG:220, 0
+CALL COMMON_UP_EXP,ASSI, 22, TFLAG:220, 2
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, TARGET, TFLAG:220
+WAIT
+
+;-----------------------------------------------
+;調教後ＢＬプレイ処理
+;-----------------------------------------------
+@SELF_CHECK7
+;貞操帯装着時は不可能(前提で助手がいないときは弾いている)
+SIF CFLAG:42 & 2 || CFLAG:ASSI:42 & 2
+	RETURN 0
+;ＢＬ中毒によるＢＬチェック
+;Ｃ感覚3以上及び従順、欲望、ＢＬっ気全て2以上必要
+SIF ABL:Ｃ感覚 < 3 || ABL:従順 < 2 || ABL:欲望 < 2 || ABL:ＢＬっ気 < 2
+	RETURN 0
+;体力必要
+SIF BASE:体力 < 500 || BASE:ASSI:体力 < 500
+	RETURN 0
+;ＢＬ中毒をみる
+TFLAG:220 = (ABL:ＢＬ中毒 > 3) ? 1+ABL:ＢＬ中毒 # ABL:ＢＬ中毒
+TFLAG:220 += (ABL:ＢＬ中毒 > 4) ? 1 # 0
+;助手のＢＬ中毒を見る
+TFLAG:220 += (ABL:ASSI:ＢＬ中毒 > 3) ? 1+ABL:ASSI:ＢＬ中毒 # ABL:ASSI:ＢＬ中毒
+TFLAG:220 += (ABL:ASSI:ＢＬ中毒 > 4) ? 1 # 0
+;ある程度時間が経過している
+IF TFLAG:107 > 50
+	TIMES TFLAG:220 , 0.50
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	TIMES TFLAG:220 , 1.50
+ENDIF
+;調教対象と助手との相性をみる
+LOCAL:1 = NO:ASSI
+IF RELATION:(LOCAL:1) > 0
+	TFLAG:220 *= RELATION:(LOCAL:1)
+	TFLAG:220 /= 100
+ENDIF
+
+;ＢＬプレイ回数制限(ＢＬ経験以外の処理はそのまま)
+TFLAG:226 = TFLAG:220
+TFLAG:226 = TABLE_CALC(TFLAG:226, 5, 2)
+TFLAG:226 = TABLE_CALC(TFLAG:226, 10, 5)
+TFLAG:226 = MIN(TFLAG:226, 25)
+
+;調教後ＢＬプレイのイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 156
+
+;絶頂経験
+CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:従順) / 5), 0
+;射精経験
+CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
+;精液経験
+CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
+;ＢＬ経験
+CALL COMMON_UP_EXP,TARGET, 13, TFLAG:226, 0
+CALL COMMON_UP_EXP,ASSI, 13, TFLAG:226, 2
+
+;助手がサドっ気Lv5＋サドかドＳ
+IF (ABL:ASSI:サドっ気 > 4 && TALENT:ASSI:サド) || TALENT:ASSI:ドＳ
+	;苦痛快楽経験
+	CALL COMMON_UP_EXP,TARGET, 30, TFLAG:220, 0
+ENDIF
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, TARGET, TFLAG:220
+WAIT
+
+;-----------------------------------------------
+;延長戦行ってみよーっ！
+;-----------------------------------------------
+;奉仕精神、精液中毒がともに3以上ないとダメ
+SIF ABL:奉仕精神 < 3 || ABL:精液中毒 < 3
+	RETURN 0
+
+;調教後ＢＬプレイ(69)のイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 157
+
+;射精経験
+CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
+;精液経験
+CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
+;奉仕快楽経験
+CALL COMMON_UP_EXP,TARGET, 20, TFLAG:220, 0
+;フェラ経験
+CALL COMMON_UP_EXP,TARGET, 22, TFLAG:220, 0
+CALL COMMON_UP_EXP,ASSI, 22, TFLAG:220, 2
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, TARGET, TFLAG:220
+WAIT
+
+;-----------------------------------------------
+;調教後夜這い処理
+;-----------------------------------------------
+@SELF_CHECK8
+;貞操帯装着時は不可能
+SIF CFLAG:42 & 2 || CFLAG:MASTER:42 & 2
+	RETURN 0
+;主人が女性で調教対象が男性のときは別処理へ
+SIF TALENT:MASTER:オトコ == 0 && TALENT:オトコ
+	JUMP SELF_CHECK8_2
+;調教対象が男性もしくは調教者が女性だとダメ
+SIF TALENT:オトコ || TALENT:MASTER:オトコ == 0
+	RETURN 0
+;恋慕または淫乱でないとダメ
+SIF TALENT:恋慕 == 0 && TALENT:淫乱 == 0
+	RETURN 0
+;非処女じゃないとダメ
+SIF TALENT:処女 || EXP:Ｖ経験 <= 0
+	RETURN 0
+;Ｖ感覚＋従順＋欲望＋奉仕精神の合計値が19以上じゃないとダメ
+SIF (ABL:Ｖ感覚+ABL:従順+ABL:欲望+ABL:奉仕精神) < 19
+	RETURN 0
+;体力必要
+SIF BASE:体力 < 500 || BASE:MASTER:体力 < 500
+	RETURN 0
+;時間も必要
+SIF TFLAG:107 > 100
+	RETURN 0
+;昼間はダメ
+SIF TIME == 0
+	RETURN 0
+
+;Ｖ感覚をみる
+IF ABL:Ｖ感覚 <= 3
+	TFLAG:226 = 0
+ELSEIF ABL:Ｖ感覚 == 3
+	TFLAG:226 = 1
+ELSEIF ABL:Ｖ感覚 == 4
+	TFLAG:226 = 2
+ELSE
+	TFLAG:226 = 4
+ENDIF
+;ある程度時間が経過している
+IF TFLAG:107 > 50
+	TFLAG:226 /= 2
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	TFLAG:226 *= 2
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる
+SIF TFLAG:226 < 1
+	RETURN 0
+
+DRAWLINE
+;調教後夜這いのイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 158, 1
+
+;Ｖ経験
+CALL COMMON_UP_EXP,TARGET, 0, TFLAG:226, 0
+CFLAG:主人にＶ捧げ回数 += TFLAG:226
+;精液経験
+CALL COMMON_UP_EXP,TARGET, 4, (TFLAG:226/2), 0
+IF COM_ABLE_CHECK_FEMALE(TARGET) && !TALENT:処女 && TFLAG:226/2 > 0
+	C_NUMBER = MAX(RAND:(TFLAG:226/2 + 1), 0)
+	CFLAG:3666 += C_NUMBER
+	CALL CALCULATE_LIMIT, TARGET
+ENDIF
+;Ｖ調律経験
+CALL COMMON_UP_EXP,TARGET, 42, TFLAG:226, 0
+WAIT
+
+;-----------------------------------------------
+;調教後夜這い処理
+;-----------------------------------------------
+;調教者が女性で調教対象が男性のときの専用処理
+@SELF_CHECK8_2
+;恋慕または淫乱でないとダメ
+SIF TALENT:恋慕 == 0 && TALENT:淫乱 == 0
+	RETURN 0
+;調教者が非処女じゃないとダメ
+SIF TALENT:MASTER:処女 || EXP:MASTER:Ｖ経験 <= 0
+	RETURN 0
+;Ｃ感覚＋従順＋欲望＋奉仕精神の合計値が19以上じゃないとダメ
+SIF (ABL:Ｃ感覚+ABL:従順+ABL:欲望+ABL:奉仕精神) < 19
+	RETURN 0
+;体力必要
+SIF BASE:体力 < 500 || BASE:MASTER:体力 < 500
+	RETURN 0
+;時間も必要
+SIF TFLAG:107 > 100
+	RETURN 0
+;昼間はダメ
+SIF TIME == 0
+	RETURN 0
+
+;Ｃ感覚をみる
+IF ABL:Ｃ感覚 <= 3
+	TFLAG:226 = 0
+ELSEIF ABL:Ｃ感覚 == 3
+	TFLAG:226 = 1
+ELSEIF ABL:Ｃ感覚 == 4
+	TFLAG:226 = 2
+ELSE
+	TFLAG:226 = 4
+ENDIF
+;ある程度時間が経過している
+IF TFLAG:107 > 50
+	TFLAG:226 /= 2
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	TFLAG:226 *= 2
+ENDIF
+
+;条件を満たさない場合は処理をここで終了させる(前のレズプレイで判断)
+SIF TFLAG:226 < 1
+	RETURN 0
+
+DRAWLINE
+;調教後夜這いのイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 158, 2
+
+PRINTL 
+;主人のＶ経験
+CALL COMMON_UP_EXP,MASTER, 0, TFLAG:226, 0
+CFLAG:MASTER:主人にＶ捧げ回数 += TFLAG:226
+;精液経験
+CALL COMMON_UP_EXP,MASTER, 4, (TFLAG:226/2), 0
+;Ｃ調律経験
+CALL COMMON_UP_EXP,TARGET, 41, TFLAG:226, 0
+WAIT
+
+;-----------------------------------------------
+;貞操帯による悶絶処理
+;-----------------------------------------------
+@SELF_CHECK9, ARG, ARG:1
+VARSET LOCAL, 0
+;Ａ感覚を見る
+LOCAL:1 = ABL:Ａ感覚
+;Ｃ感覚を見る
+LOCAL:2 = ABL:Ｃ感覚
+;Ｖ感覚を見る
+LOCAL:3 = ABL:Ｖ感覚
+
+;淫核／淫茎
+SIF TALENT:淫核／淫茎
+	LOCAL:2 += 1
+;淫壷
+SIF TALENT:淫壷
+	LOCAL:3 += 1
+;淫尻
+SIF TALENT:淫尻
+	LOCAL:1 += 1
+;尿道狂
+SIF TALENT:尿道狂
+	LOCAL:2 += 1
+
+REPEAT 3
+	LOCAL:(COUNT+1) *= ARG
+	TIMES LOCAL:(COUNT+1), 0.60
+REND
+
+DRAWLINE
+;調教後自慰できないことによる悶絶のイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 160, (LOCAL:1 > LOCAL:2) ? 1 # 0
+
+PRINTL 
+;対象奴隷がオトコでないならＶ経験追加
+SIF TALENT:オトコ ==0
+	CALL COMMON_UP_EXP,TARGET, 0, (LOCAL:3/2), 0
+;Ａ経験
+CALL COMMON_UP_EXP,TARGET, 1, (LOCAL:1/2), 0
+;放尿経験
+CALL COMMON_UP_EXP,TARGET, 6, (LOCAL:2/12), 0
+;尿道開発経験
+CALL COMMON_UP_EXP,TARGET, 46, (LOCAL:2/6), 0
+WAIT
+
+;-----------------------------------------------
+;触手による陵辱処理
+;-----------------------------------------------
+@SELF_CHECK10
+;ローカル変数初期化
+VARSET LOCAL, 0
+;触手使役を見る
+LOCAL = (ABL:MASTER:触手使役 > 3) ? 1+ABL:MASTER:触手使役 # ABL:MASTER:触手使役
+LOCAL += (ABL:MASTER:触手使役 > 4) ? 2 # 0
+;触手中毒を見る
+LOCAL += ABL:触手中毒 / 2
+;進化の秘法
+SIF ITEM:進化の秘法
+	LOCAL *= 2
+;時間切れの場合
+IF TFLAG:107 > 100
+	LOCAL /= 5
+;ある程度時間が経過している
+ELSEIF TFLAG:107 > 50
+	LOCAL /= 2
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	LOCAL *= 2
+ENDIF
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+DRAWLINE
+;調教後に触手に襲われるイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 161, LOCAL
+
+LOCAL:1 = LOCAL/2 + RAND:(1 + LOCAL/2)
+LOCAL:2 = LOCAL/2 + RAND:(1 + LOCAL/2)
+LOCAL:3 = 1 + RAND:LOCAL
+LOCAL:4 = 1 + RAND:LOCAL
+LOCAL:5 = (LOCAL:1+LOCAL:2+LOCAL:3+LOCAL:4)/4
+LOCAL:5 = MAX(LOCAL:5, 1)
+
+;対象奴隷の処女は失われる。入手苦痛と否定の珠がより増える
+IF TALENT:処女
+	PRINTL 処女喪失
+	LOCAL:7 = 50
+	LOCAL:8 = 1
+	IF EXP:Ｖ経験 == 0
+		LOCAL:7 += 100
+		LOCAL:8 +=1
+	ENDIF
+ENDIF
+TALENT:処女 = 0
+
+;触手経験
+CALL COMMON_UP_EXP,TARGET, 53, LOCAL, 0
+;対象奴隷がオトコでないならＶ経験追加
+SIF TALENT:オトコ ==0
+	CALL COMMON_UP_EXP,TARGET, 0, LOCAL:2, 0
+;Ａ経験
+CALL COMMON_UP_EXP,TARGET, 1, LOCAL:3, 0
+;フェラ経験
+CALL COMMON_UP_EXP,TARGET, 22, LOCAL:2, 0
+;侵蝕の珠
+CALL COMMON_UP_JUEL, TARGET, 31, (LOCAL*100), 0
+;否定の珠
+LOCAL:6 = 5 - (ABL:従順 + ABL:触手中毒) + MARK:反発刻印 * 3
+CALL COMMON_UP_JUEL, TARGET, 100, (((LOCAL:7)/2)+(LOCAL:5*LOCAL:6*500)), 1
+WAIT
+
+;触手寄生LV
+IF FLAG:15 & 4096 && TALENT:寄生
+	BASE:触手 += LOCAL:5*50
+	BASE:触手 = MIN(BASE:触手, MAXBASE:6)
+ENDIF
+;体力減少処理
+BASE:体力 -= (LOCAL + RAND:(LOCAL:5))*50
+BASE:体力 -= LOCAL:8
+BASE:体力 = MAX(BASE:体力, 1)
+
+;-----------------------------------------------
+;触手による眠っている対象陵辱処理
+;-----------------------------------------------
+@SELF_CHECK11
+;ローカル変数初期化
+VARSET LOCAL, 0
+;触手使役を見る
+LOCAL = (ABL:MASTER:触手使役 > 3) ? 1+ABL:MASTER:触手使役 # ABL:MASTER:触手使役
+LOCAL += (ABL:MASTER:触手使役 > 4) ? 2 # 0
+;触手中毒を見る
+LOCAL += ABL:触手中毒 / 2
+;進化の秘法
+SIF ITEM:進化の秘法
+	LOCAL *= 2
+;時間切れの場合
+IF TFLAG:107 > 100
+	LOCAL /= 5
+;ある程度時間が経過している
+ELSEIF TFLAG:107 > 50
+	LOCAL /= 2
+;殆ど時間が経過していない
+ELSEIF TFLAG:107 < 10
+	LOCAL *= 2
+ENDIF
+;条件を満たさない場合は処理をここで終了させる
+SIF LOCAL < 1
+	RETURN 0
+
+DRAWLINE
+;睡眠中に触手に襲われるイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 162, LOCAL
+
+LOCAL:1 = LOCAL/2 + RAND:(1 + LOCAL/2)
+LOCAL:2 = LOCAL/2 + RAND:(1 + LOCAL/2)
+LOCAL:3 = 1 + RAND:LOCAL
+LOCAL:4 = 1 + RAND:LOCAL
+LOCAL:5 = (LOCAL:1+LOCAL:2+LOCAL:3+LOCAL:4)/4
+LOCAL:5 = MAX(LOCAL:5, 1)
+
+;対象奴隷の処女は失われる。入手苦痛と否定の珠がより増える
+IF TALENT:処女
+	PRINTL 処女喪失
+	LOCAL:7 = 75
+	LOCAL:8 = 1
+	IF EXP:Ｖ経験 == 0
+		LOCAL:7 += 150
+		LOCAL:8 +=1
+	ENDIF
+ENDIF
+TALENT:処女 = 0
+
+;触手経験
+CALL COMMON_UP_EXP,TARGET, 53, LOCAL, 0
+;対象奴隷がオトコでないならＶ経験追加
+SIF TALENT:オトコ ==0
+	CALL COMMON_UP_EXP,TARGET, 0, LOCAL:2, 0
+;Ａ経験
+CALL COMMON_UP_EXP,TARGET, 1, LOCAL:3, 0
+;フェラ経験
+CALL COMMON_UP_EXP,TARGET, 22, LOCAL:2, 0
+;侵蝕の珠
+CALL COMMON_UP_JUEL, TARGET, 31, (LOCAL*150), 0
+;否定の珠
+LOCAL:6 = 5 - (ABL:従順 + ABL:触手中毒) + MARK:反発刻印 * 3
+CALL COMMON_UP_JUEL, TARGET, 100, (((LOCAL:7)/2)+(LOCAL:5*LOCAL:6*800)), 1
+WAIT
+
+;触手寄生LV
+IF FLAG:15 & 4096 && TALENT:寄生
+	BASE:触手 += LOCAL:5*50
+	BASE:触手 = MIN(BASE:触手, MAXBASE:6)
+ENDIF
+;体力減少処理
+BASE:体力 -= (LOCAL + RAND:(LOCAL:5))*75
+BASE:体力 -= LOCAL:8
+BASE:体力 = MAX(BASE:体力, 1)
+
+;=============================================================================
+;自慰バレ処理関連
+;=============================================================================
+;-------------------------------------------------
+;バレ判定
+;-------------------------------------------------
+@CHECK_BARE(ARG)
+#FUNCTION
+;補正前自慰回数がそのまま発見確率
+LOCAL = ARG
+
+;助手が鼓舞だと我慢が効かなくなり発見されやすい
+IF ASSI >= 0 && TALENT:ASSI:鼓舞
+	LOCAL += 5
+
+	;その状態で媚薬を盛られているとさらに発見されやすくなる
+	SIF TEQUIP:媚薬 == 1
+		LOCAL += 5
+ENDIF
+
+;Ａ敏感もしくは淫尻でアナルバイブが刺さったままだと発見されやすくなる
+IF TEQUIP:Ａ系装着器具 == 1 && (TALENT:Ａ敏感 || TALENT:淫尻)
+	LOCAL += 5
+
+	;両方だとさらに声が大きくなり、周囲にも気付けなくなる
+	SIF TALENT:Ａ敏感 && TALENT:淫尻
+		LOCAL += 5
+
+	;両方ささってて、Ｖ敏感もしくは淫壺だとさらに気付けません
+	SIF TEQUIP:Ｖ系装着器具 == 1 && (TALENT:Ｖ敏感 || TALENT:淫壷)
+		LOCAL += 5
+ENDIF
+
+;Ｖ敏感もしくは淫壺でバイブが刺さったままだと発見されやすくなる
+IF TEQUIP:Ｖ系装着器具 == 1 && (TALENT:Ｖ敏感 || TALENT:淫壷)
+	LOCAL += 5
+	
+	;両方だとさらに声が大きくなり、周囲にも気付けなくなる
+	SIF TALENT:Ｖ敏感 && TALENT:淫壷
+		LOCAL += 5
+
+	;両方ささってて、Ａ敏感もしくは尻穴狂いだとさらに気付けません
+	SIF TEQUIP:Ａ系装着器具 == 1 && (TALENT:Ａ敏感 || TALENT:淫尻)
+		LOCAL += 5
+ENDIF
+	
+;臆病だとばれることを怖がって声も物音も小さくなる
+SIF TALENT:臆病
+	LOCAL -= 10
+
+;露出癖とマゾッ気が見られたがり補正。それに自慰中毒と技巧がさらに補正
+LOCAL += (ABL:露出癖 + ABL:マゾっ気 + ABL:自慰中毒 + ABL:技巧) / 2
+
+;快感に素直、解放だと素直に声を上げるので発見されやすい
+SIF TALENT:解放 || TALENT:快感に素直
+	LOCAL += 5
+
+;媚薬を使うと出やすくなる
+SIF TEQUIP:媚薬 == 1
+	LOCAL += 15
+
+;恥薄いと声が大きい為発見されやすい
+SIF TALENT:恥薄い
+	LOCAL += 5
+
+;自制心、抑圧、抵抗、快感の否定だと声を抑えようとするので発見されにくい
+;ただし助手が鼓舞持ちだとあまり抵抗できない
+SIF ASSI < 0 && (TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗 || TALENT:快感の否定)
+	LOCAL /= 2
+
+IF ASSI >= 0
+	;助手が鼓舞を持っていない
+	IF TALENT:ASSI:鼓舞 == 0 
+		SIF TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗 || TALENT:快感の否定
+			LOCAL /= 2
+	ELSE
+		;鼓舞
+		SIF TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗 || TALENT:快感の否定
+			LOCAL -= 5
+	ENDIF
+ENDIF
+
+;恥じらいだと声が小さい為発見されにくい
+;ただし助手が鼓舞持ちだと(あくまでも)若干気がゆるむ。
+IF TALENT:恥じらい
+	LOCAL /= 2
+	SIF ASSI >= 0 && TALENT:ASSI:鼓舞
+		LOCAL += 3
+ENDIF
+
+;反発刻印の5倍(最大15)がマイナス補正
+LOCAL -= MARK:反発刻印 * 5
+
+RETURNF LOCAL
+
+;-------------------------------------------------
+;調教後自慰がばれた場合の処理
+;-------------------------------------------------
+@SELF_BARE, ARG
+VARSET LOCAL, 0
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 350
+
+;弱みを握る（恋慕系・服従系・淫乱系・崩壊系素質習得済みでなければ）
+IF TALENT:弱味 == 0 && CFLAG:14 == 0 && CFLAG:15 == 0 && CFLAG:16 == 0 && CFLAG:17 == 0
+	;弱みを握った時の口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 351
+
+	;自慰経験
+	CALL COMMON_UP_EXP,TARGET, 10, 1, 0
+	;前につっこんでた
+	IF TEQUIP:Ｖ系装着器具 == 1
+		;Ｖ経験
+		CALL COMMON_UP_EXP,TARGET, 0, 1, 0
+	ENDIF
+	;後ろにつっこんでた
+	IF TEQUIP:Ａ系装着器具 == 1
+		;Ａ経験
+		CALL COMMON_UP_EXP,TARGET, 1, 1, 0
+	ENDIF
+
+	PRINTFORMW %CALLNAME:TARGET%の[弱味]を握った。
+	TALENT:弱味 = 1
+	;反発刻印が2以上なら1つ下がる
+	IF MARK:反発刻印 > 1
+		PRINTFORM 反発刻印がLv{MARK:反発刻印-1}になった
+		MARK:反発刻印 -= 1
+	ENDIF
+ELSE
+	;好感系
+	IF TALENT:恋慕 || TALENT:妄信 || TALENT:親愛
+		;自慰よりも精液の方が好きなら求愛へ行きやすい
+		IF ABL:精液中毒 - ABL:自慰中毒 + 6 > RAND:12
+			;自慰見つかり後分岐ランダム計画
+			;後ろ　ランダム0-9 + AのLV + A敏なら3 + A狂なら+3 ただしA経験が50未満なら問答無用で 0
+			;前　 　ランダム0-9 + VのLV + V敏なら3 + 淫壺なら+3　ただし処女かオトコなら 問答無用で 0
+			;精子ほしがる　ランダム0-9 + (精液中毒 + 奉仕) / 2
+			;それ以外　ランダム0-9 + CのLV +　自慰中毒 + C敏なら3
+			LOCAL = RAND:10 + ABL:Ａ感覚
+			SIF TALENT:淫尻
+				LOCAL += 3
+			SIF TALENT:Ａ敏感
+				LOCAL += 3
+			SIF EXP:Ａ経験 < 50
+				LOCAL = 0
+			SIF (FLAG:15 & 4) == 0
+				LOCAL = 0
+
+			LOCAL:1 = RAND:10 + ABL:Ｖ感覚
+			SIF TALENT:Ｖ敏感
+				LOCAL:1 += 3
+			SIF TALENT:淫壷
+				LOCAL:1 += 3
+			SIF TALENT:処女 || TALENT:オトコ
+				LOCAL:1 = 0
+
+			LOCAL:2 = RAND:10 + (ABL:精液中毒 + ABL:奉仕精神) / 2
+			LOCAL:3 = RAND:10 + (ABL:Ｃ感覚 + ABL:自慰中毒) / 2
+			SIF TALENT:Ｖ敏感
+				LOCAL:3 += 3
+
+			IF TEQUIP:Ａ系装着器具 == 1 && TEQUIP:Ｖ系装着器具 == 1
+				;二穴バイブオナニーバレ後(好感系・求愛)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 352
+
+				;Ｖ経験
+				CALL COMMON_UP_EXP,TARGET, 0, (ARG / 3), 0
+				;Ａ経験
+				CALL COMMON_UP_EXP,TARGET, 1, ((5 * ARG) / 3), 0
+			ELSEIF TEQUIP:Ａ系装着器具 == 1 && TEQUIP:Ｖ系装着器具 == 0 || (LOCAL > 0 && (LOCAL >= LOCAL:1 && LOCAL >= LOCAL:2 && LOCAL >= LOCAL:3))
+				;アナルバイブオナニーバレ後(好感系・求愛)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 353
+
+				;Ａ経験
+				CALL COMMON_UP_EXP,TARGET, 1, ((5 * ARG) / 2), 0
+			ELSEIF TEQUIP:Ｖ系装着器具 == 1 || (LOCAL:1 > 0 && (LOCAL:1 >= LOCAL && LOCAL:1 >= LOCAL:2 && LOCAL:1 >= LOCAL:3))
+				;バイブオナニーバレ後(好感系・求愛)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 354
+
+				;Ｖ経験
+				CALL COMMON_UP_EXP,TARGET, 0, (ARG / 2), 0
+			ELSEIF ABL:精液中毒 > 3 && (LOCAL:2 >= LOCAL && LOCAL:2 >= LOCAL:1 && LOCAL:2 >= LOCAL:3)
+				;自慰バレ後の精液おねだり(好感系・求愛)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 355
+
+				;奉仕快楽経験
+				CALL COMMON_UP_EXP,TARGET, 20, (3 * ARG), 0
+			ELSE
+				;通常の自慰バレ(好感系・求愛)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 355
+			ENDIF
+			;自慰経験
+			CALL COMMON_UP_EXP,TARGET, 10, (ARG / 2), 0
+			;調教自慰経験
+			CALL COMMON_UP_EXP,TARGET, 11, (ARG / 2), 0
+			;射精経験・噴乳経験上昇判定
+			LOCAL:4 = ARG / 4
+		ELSE
+			;自慰の方が好き
+			;[恥じらい]を持っていない状態で、欲望＋露出＋マゾっ気が11以上または[解放]か[快感に素直]を持っている
+			IF (ABL:欲望 + ABL:露出癖 + ABL:マゾっ気 > 10 || TALENT:363 || TALENT:快感に素直) && TALENT:恥じらい == 0
+				;自慰がバレた後も公開自慰続行(好感係)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 356
+
+				;露出快楽経験
+				CALL COMMON_UP_EXP,TARGET, 14, 2, 0
+			ELSE
+				;自慰がバレた後もおそるおそる自慰続行(好感係)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 357
+
+				;露出快楽経験
+				CALL COMMON_UP_EXP,TARGET, 14, 1, 0
+			ENDIF
+			;自慰経験
+			CALL COMMON_UP_EXP,TARGET, 10, (ARG / 2), 0
+			;調教自慰経験
+			CALL COMMON_UP_EXP,TARGET, 11, (ARG / 2), 0
+			;前につっこんでた
+			IF TEQUIP:Ｖ系装着器具 == 1
+				;Ｖ経験
+				CALL COMMON_UP_EXP,TARGET, 0, ARG, 0
+			ENDIF
+			;後ろにつっこんでた
+			IF TEQUIP:Ａ系装着器具 == 1
+				;Ａ経験
+				CALL COMMON_UP_EXP,TARGET, 1, ARG, 0
+			ENDIF
+			;射精経験・噴乳経験上昇判定
+			LOCAL:4 = ARG / 4
+		ENDIF
+	ELSE
+		;屈服が3か反感が1以下
+		IF MARK:屈服刻印 == 3 || MARK:反発刻印 < 2
+			;自慰よりも精液の方が好きなら求愛に行きやすい(まあ抱かないけど)
+			IF ABL:精液中毒 - ABL:自慰中毒 + 6 > RAND:12
+				;自慰バレ後の精液おねだり(非好感系・求愛)の口上・地の文の表示
+				CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 359
+
+				;自慰経験
+				CALL COMMON_UP_EXP,TARGET, 10, (ARG / 2), 0
+				;前につっこんでた
+				IF TEQUIP:Ｖ系装着器具 == 1
+					;Ｖ経験
+					CALL COMMON_UP_EXP,TARGET, 0, ARG, 0
+				ENDIF
+				;後ろにつっこんでた
+				IF TEQUIP:Ａ系装着器具 == 1
+					;Ａ経験
+					CALL COMMON_UP_EXP,TARGET, 1, ARG, 0
+				ENDIF
+				;射精経験・噴乳経験上昇判定
+				LOCAL:4 = ARG / 4
+			ELSE
+				;自慰の方が好き
+				;( 欲望 + 露出 + マゾが11以上か 解放か快感に素直を持ち) かつはじらいをもっていない
+				IF (ABL:欲望 + ABL:露出癖 + ABL:マゾっ気 > 10 || TALENT:解放 || TALENT:快感に素直) && TALENT:恥じらい == 0
+					;自慰がバレた後も公開自慰続行(非好感係)の口上・地の文の表示
+					CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 360
+
+					;露出快楽経験
+					CALL COMMON_UP_EXP,TARGET, 14, 2, 0
+				ELSE
+					;自慰がバレた後もおそるおそる自慰続行(非好感係)の口上・地の文の表示
+					CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 361
+
+					;露出快楽経験
+					CALL COMMON_UP_EXP,TARGET, 14, 1, 0
+				ENDIF
+				;自慰経験
+				CALL COMMON_UP_EXP,TARGET, 10, (ARG / 2), 0
+				;調教自慰経験
+				CALL COMMON_UP_EXP,TARGET, 11, (ARG / 2), 0
+				;前につっこんでた
+				IF TEQUIP:Ｖ系装着器具 == 1
+					;Ｖ経験
+					CALL COMMON_UP_EXP,TARGET, 0, ARG, 0
+				ENDIF
+				;後ろにつっこんでた
+				IF TEQUIP:Ａ系装着器具 == 1
+					;Ａ経験
+					CALL COMMON_UP_EXP,TARGET, 1, ARG, 0
+				ENDIF
+				;射精経験・噴乳経験上昇判定
+				LOCAL:4 = ARG / 4
+			ENDIF
+		ELSE
+			;自慰がバレた後で屈辱にまみれながらも自慰続行(非好感係)の口上・地の文の表示
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 362
+
+			;自慰経験
+			CALL COMMON_UP_EXP,TARGET, 10, (ARG / 3), 0
+			;調教自慰経験
+			CALL COMMON_UP_EXP,TARGET, 11, (ARG / 3), 0
+			;前につっこんでた
+			IF TEQUIP:Ｖ系装着器具 == 1
+				;Ｖ経験
+				CALL COMMON_UP_EXP,TARGET, 0, ARG, 0
+			ENDIF
+			;後ろにつっこんでた
+			IF TEQUIP:Ａ系装着器具 == 1
+				;Ａ経験
+				CALL COMMON_UP_EXP,TARGET, 1, ARG, 0
+			ENDIF
+			;射精経験・噴乳経験上昇判定
+			LOCAL:4 = ARG / 6
+		ENDIF
+	ENDIF
+	;[ふたなり]だと射精経験も上昇
+	SIF TALENT:ふたなり
+		CALL COMMON_UP_EXP,TARGET, 3, LOCAL:4, 0
+	;[母乳体質]だと噴乳経験も上昇
+	SIF TALENT:母乳体質
+		CALL COMMON_UP_EXP,TARGET, 5, LOCAL:4, 0
+ENDIF
+;WAIT

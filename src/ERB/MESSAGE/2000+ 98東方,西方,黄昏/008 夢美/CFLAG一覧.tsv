@@ -1,0 +1,33 @@
+﻿▼CFLAG番号	内容	#DIM CONST	
+5000	口上テンプレ判別用として確保済み（？）		
+5001	開始時口上分岐	__K108N_CFLAG_FIRST__	
+5002	調教開始時点での評価ランク	__K108N_CFLAG_STARTRANK__	
+			
+5010	コマンド回数	__K108N_CFLAG_COUNTCOM__	
+5011	終了時口上で利用		
+			
+5019	最後に調教された日付	__K108N_CFLAG_LASTTRAINDAY__	
+			
+			
+5101	周回回数カウント（初回＝１）	__K108N_CFLAG_NEWGAMECOUNT__	
+			
+5300～5399	PALAM管理用		
+5400～5419	EX管理用		
+			
+5500～5510	MARK管理用		
+			
+7100			
+7101	SOURCE変動履歴	__K108N_CFLAG_SOURCEHISTORY__	
+7110	執筆者が管理する拒否履歴（最大64個）	__K108N_CFLAG_DENYHISTORY__	
+7200	ペニスとCの接触回数	__K108N_CFLAG_COUNT_PTOC__	
+7201	ペニスとVの接触回数	__K108N_CFLAG_COUNT_PTOV__	
+7202	ペニスとAの接触回数	__K108N_CFLAG_COUNT_PTOA__	
+7203	ペニスとBの接触回数	__K108N_CFLAG_COUNT_PTOB__	
+7204	ペニスとUの接触回数	__K108N_CFLAG_COUNT_PTOU__	
+7205	ペニスと口の接触回数	__K108N_CFLAG_COUNT_PTOMOUTH__	
+7206	ペニスと手の接触回数	__K108N_CFLAG_COUNT_PTOHAND__	
+			
+7211	陰毛処理の回数	__K108N_CFLAG_REMOVE_PUBIC_HAIR__	
+			
+8000～8999	コマンド用で予約	__K108N_CFLAG_SELECTCOM__	これのみCONSTではない。外部から参照時はK108F_CFLAGCOM("コマンド名")を推奨
+9000～9099	コマンドの初回実行管理（システム側で使用中）		

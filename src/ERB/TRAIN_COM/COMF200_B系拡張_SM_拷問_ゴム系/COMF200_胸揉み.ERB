@@ -1,0 +1,168 @@
+﻿;=============================================================================
+;胸揉み
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE200
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:200 > 0
+	RETURN 0
+;Ｂ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;調教者がウェディングドレス・ゴスロリ着用中の場合調教者に技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 200) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM200
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;母乳体質の場合搾乳に飛ぶ。でも、魅魔様の搾乳ならちょっと見てみたいかも
+SIF TALENT:母乳体質
+	JUMP COM626
+
+PRINTL 胸揉み
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 200
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 胸揉み
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:性行動 = 30
+SOURCE:不潔 = 10
+SOURCE:露出 = 50
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 10
+	SOURCE:情愛 = 20
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 50
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 250
+	SOURCE:情愛 = 80
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 600
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 1000
+	SOURCE:情愛 = 120
+ELSE
+	SOURCE:快Ｂ = 1600
+	SOURCE:情愛 = 200
+ENDIF
+
+;淫乳
+IF TALENT:淫乳
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:不潔 , 0.80
+	TIMES SOURCE:快Ｂ , 1.40
+ENDIF
+
+;調教者が［幼児］、［幼稚］
+IF TALENT:PLAYER:幼児 || TALENT:PLAYER:幼稚
+	TIMES SOURCE:快Ｂ , 1.20
+	TIMES SOURCE:情愛 , 1.20
+ENDIF
+;調教者が［幼児退行］
+SIF TALENT:PLAYER:幼児退行
+	TIMES SOURCE:情愛 , 1.20
+
+;奴隷のＢ⇔調教者の指の汚れが移動
+STAIN:胸 |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:胸
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_200
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	PRINTFORM %CALLNAME:TARGET%の
+	IF TALENT:絶壁
+		PRINT ほぼ無に等しい
+	ELSEIF TALENT:小柄体型 && TALENT:貧乳
+		PRINT 僅かに膨らみが感じられる程度の
+	ELSEIF TALENT:貧乳
+		PRINT 標準よりやや小さめの
+	ELSEIF TALENT:巨乳
+		PRINT 手から溢れそうなほどの
+	ELSEIF TALENT:爆乳
+		PRINT 手に余るほど大きな
+	ENDIF
+	IF TALENT:絶壁
+		PRINTL 胸を優しく撫でるように触れた…
+	ELSEIF TEQUIP:焦らしプレイ
+		PRINTL 胸を下からそっと揉み上げた…
+	ELSEIF PALAM:欲情 > PALAMLV:3
+		PRINTL 胸を強く揉みしだいた…
+	ELSE
+		PRINTL 胸を揉みしだいた…
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:TARGET%の
+	SIF PALAM:欲情 > PALAMLV:3
+		PRINT 期待に震える
+
+	IF TALENT:絶壁
+		PRINT ほぼ無に等しい
+	ELSEIF TALENT:小柄体型 && TALENT:貧乳
+		PRINT 僅かに膨らみが感じられる程度の
+	ELSEIF TALENT:貧乳
+		PRINT 標準よりやや小さめの
+	ELSEIF TALENT:巨乳
+		PRINT 手から溢れそうなほどの
+	ELSEIF TALENT:爆乳
+		PRINT 手に余るほど大きな
+	ENDIF
+
+	IF PALAM:欲情 > PALAMLV:3 && TALENT:恋慕
+		PRINTL 胸を優しく撫でてやると、
+		PRINTFORML %CALLNAME:TARGET%は少し恥ずかしそうにしながら胸を突き出すようにして激しい愛撫を求めた…
+	ELSEIF TALENT:絶壁
+		PRINTL 胸を優しく撫でるように触れた…
+	ELSEIF TEQUIP:焦らしプレイ
+		PRINTL 胸を下からそっと揉み上げた…
+	ELSEIF PALAM:欲情 > PALAMLV:3 && TALENT:恋慕
+		PRINTL 胸を強く揉みしだいてやると、
+		PRINTFORM %CALLNAME:TARGET%は嬌声をあげて
+		IF TALENT:貧乳
+			PRINT その控えめな
+		ELSEIF TALENT:巨乳
+			PRINT その大きな
+		ELSEIF TALENT:爆乳
+			PRINT その巨大な
+		ENDIF
+		PRINTL 胸を強調するように突き出し、より強い愛撫を求めた…
+	ELSEIF PALAM:欲情 > PALAMLV:3
+		PRINTL 胸を強く揉みしだいた…
+	ELSE
+		PRINTL 胸を揉みしだいた…
+	ENDIF
+ENDIF

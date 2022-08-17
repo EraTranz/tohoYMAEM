@@ -1,0 +1,295 @@
+﻿;=============================================================================
+;触手鼻穴挿入
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE508
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:508 > 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;鼻フックか洗濯バサミ装着中だとダメ
+SIF TEQUIP:鼻装着器具 == 1 || TEQUIP:鼻装着器具 == 5
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 508) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM508
+PRINTL 触手鼻穴挿入
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 508
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手鼻穴挿入
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 80
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 50
+ELSE
+	DOWNBASE:0 += 20
+	DOWNBASE:1 += 25
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 50
+	LOCAL:2 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 150
+	LOCAL:2 = 100
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 300
+	LOCAL:2 = 150
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 500
+	LOCAL:2 = 200
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 750
+	LOCAL:2 = 300
+ELSE
+	LOCAL:1 = 1000
+	LOCAL:2 = 450
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 0.70
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.80
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 0.90
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.70
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:2 , 1.00
+ELSE
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.10
+ENDIF
+
+;汚臭鈍感をみる
+IF TALENT:汚臭鈍感
+	TIMES LOCAL:2 , 0.50
+;汚臭敏感をみる
+ELSEIF TALENT:汚臭敏感
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 2.00
+ENDIF
+;倒錯的をみる
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.40
+ENDIF
+;中毒しやすいをみる
+IF TALENT:中毒しやすい
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.80
+ENDIF
+;精神崩壊をみる
+IF TALENT:精神崩壊
+	TIMES LOCAL:1 , 0.10
+	TIMES LOCAL:2 , 0.10
+ENDIF
+;ドＭをみる
+IF TALENT:ドＭ
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 1.80
+ENDIF
+
+SOURCE:露出 = LOCAL:1
+SOURCE:痛み = 100 + (LOCAL:1 + LOCAL:2)/4
+SOURCE:屈従 = LOCAL:1
+SOURCE:中毒充足 = LOCAL:2
+SOURCE:トラウマ = (LOCAL:1 + LOCAL:2)/2
+SOURCE:逸脱 = LOCAL:1 * 2
+
+;触手の抜き挿し
+IF TEQUIP:鼻装着器具
+	TEQUIP:鼻装着器具 = 0
+ELSE
+	TEQUIP:鼻装着器具 = 2
+ENDIF
+;触手経験フラグ
+TFLAG:90 = 0
+
+TCVAR:緊縛経験 += 2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+RETURN 1
+
+;-------------------------------------------------
+;触手鼻穴挿入中
+;-------------------------------------------------
+;鼻フックを参考
+@EQUIP_COM508
+PRINTL ＜触手鼻穴挿入中＞
+
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 80
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 50
+ELSE
+	DOWNBASE:0 += 20
+	DOWNBASE:1 += 25
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL = 30
+	LOCAL:1 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL = 80
+	LOCAL:1 = 60
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL = 150
+	LOCAL:1 = 100
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL = 300
+	LOCAL:1 = 150
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL = 500
+	LOCAL:1 = 250
+ELSE
+	LOCAL = 750
+	LOCAL:1 = 400
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 0.70
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL , 1.30
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 0.70
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.10
+ENDIF
+
+;汚臭鈍感をみる
+IF TALENT:汚臭鈍感
+	TIMES LOCAL:1 , 0.50
+;汚臭敏感をみる
+ELSEIF TALENT:汚臭敏感
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 2.00
+ENDIF
+;倒錯的をみる
+IF TALENT:倒錯的
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.40
+ENDIF
+;中毒しやすいをみる
+IF TALENT:中毒しやすい
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.80
+ENDIF
+;精神崩壊をみる
+IF TALENT:精神崩壊
+	TIMES LOCAL , 0.10
+	TIMES LOCAL:1 , 0.10
+ENDIF
+;ドＭをみる
+IF TALENT:ドＭ
+	TIMES LOCAL , 2.00
+	TIMES LOCAL:1 , 1.80
+ENDIF
+
+;触手口辱or触手強制回復(口内)時は苦痛・消耗アップ
+IF TEQUIP:口装着器具 == 2 || TEQUIP:触手強制回復 == 1
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 20
+	SOURCE:痛み += (LOCAL + LOCAL:1)/2
+ENDIF
+
+SOURCE:露出 += LOCAL
+SOURCE:痛み += (LOCAL + LOCAL:1)/4
+SOURCE:屈従 += LOCAL
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:トラウマ += (LOCAL + LOCAL:1)/2
+SOURCE:逸脱 += LOCAL * 2
+
+TCVAR:緊縛経験 += 1
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_508
+IF TEQUIP:鼻装着器具
+	PRINTFORML 触手は%CALLNAME:TARGET%の鼻穴から引き抜かれた
+ELSE
+	PRINTFORML 不気味な色をした細長い触手が%CALLNAME:TARGET%の鼻の穴に侵入した
+ENDIF

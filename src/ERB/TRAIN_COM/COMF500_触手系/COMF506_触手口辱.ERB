@@ -1,0 +1,164 @@
+﻿;=============================================================================
+;触手口辱
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE506
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:506 > 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;口が塞がっているときは不可
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 2
+	RETURN 0
+;触手貫通中はダメ
+SIF TEQUIP:Ａ系装着器具 == 3
+	RETURN 0
+;触手強制回復中(口内)はダメ
+SIF TEQUIP:触手強制回復 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 506) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM506
+PRINTL 触手口辱
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 506
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手口辱
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 80
+DOWNBASE:1 += 100
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 += 200
+	 LOCAL:1 = 100
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 += 300
+	LOCAL:1 = 200
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:性行動 += 400
+	LOCAL:1 = 400
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:性行動 += 500
+	LOCAL:1 = 600
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:性行動 += 600
+	LOCAL:1 = 800
+ELSE
+	SOURCE:性行動 += 800
+	LOCAL:1 = 1100
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.50
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.20
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+ENDIF
+
+SOURCE:屈従 += LOCAL:1
+SOURCE:恭順追加 += LOCAL:1
+
+;触手の抜き挿し
+IF TEQUIP:口装着器具
+	TEQUIP:口装着器具 = 0
+ELSE
+	TEQUIP:口装着器具 = 2
+	STAIN:口 |= 2
+	STAIN:口 |= 4
+	STAIN:口 |= 64
+ENDIF
+;触手経験フラグ
+TFLAG:90 = 0
+
+TCVAR:フェラ経験 += 1
+
+;コマンド属性：触手
+TFLAG:98 = 8
+RETURN 1
+
+;-------------------------------------------------
+;触手口辱中
+;-------------------------------------------------
+@EQUIP_COM506
+PRINTL ＜触手口辱中＞
+
+DOWNBASE:0 += 80
+DOWNBASE:1 += 100
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 += 200
+	 LOCAL = 100
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 += 300
+	LOCAL = 200
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:性行動 += 400
+	LOCAL = 400
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:性行動 += 500
+	LOCAL = 600
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:性行動 += 600
+	LOCAL = 800
+ELSE
+	SOURCE:性行動 += 800
+	LOCAL = 1100
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.50
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.20
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+ENDIF
+
+SOURCE:屈従 += LOCAL
+SOURCE:恭順追加 += LOCAL
+
+TCVAR:フェラ経験 += 1
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_506
+IF TEQUIP:口装着器具
+	PRINTFORML 触手は%CALLNAME:TARGET%の口から引き抜かれた
+ELSE
+	PRINTFORML 濡れ光る触手が%CALLNAME:TARGET%の口に侵入した
+ENDIF

@@ -1,0 +1,29 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;尿道挿入
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+
+;-------------------------------------------------
+;プレイヤーを射精させた口上
+;-------------------------------------------------
+;	射精箇所が変更された場合は呼ばれないので注意
+;-------------------------------------------------
+@K2008_EJAC_COM_146
+;@K2008_RANK0_EJAC_COM_146
+SELECTCASE EXP:Ｕ拡張経験
+	CASE IS <= EXPLV:3
+		PRINTFORM %CALLNAME:TARGET%の尿道にペニスの先端を収めたまま
+	CASE EXPLV:3 TO EXPLV:5
+		PRINTFORM %CALLNAME:TARGET%の尿道にペニスを根元まで飲み込ませて
+	CASEELSE
+		PRINTFORM %CALLNAME:TARGET%の膀胱にまでペニスを深々と押し込んで
+ENDSELECT
+
+SELECTCASE TFLAG:91
+	CASE IS >= 2
+		PRINTFORMW 大量の精液を注ぎ込んだ
+	CASEELSE
+		PRINTFORMW 精液を注ぎ込んだ
+ENDSELECT
+

@@ -1,0 +1,2010 @@
+﻿;=============================================================================
+;名無しキャラステータス生成処理
+;=============================================================================
+;ここでは名無しキャラの体力・気力・素質・経験・能力などをランダムに決定。
+;-----------------------------------------------
+;奴隷用ランダムステータス生成処理
+;-----------------------------------------------
+;その名の通り奴隷用の処理。SHOP2またはSYSTEMより呼び出される。
+@CHARA_RANDOM_STATE
+;性別
+;名無しキャラ性別ランダムが有効のとき、アリスの人形か魔界人以外の場合、ランダムで[オトコ]になる
+IF FLAG:12 & 2048 && RAND:4 == 0 && (FLAG:570 & 8) == 0
+	SIF NO:TARGET != 3016 && NO:TARGET != 3017
+		CALL RANDOM_CHARA_MALE_SET, TARGET
+ENDIF
+
+;デフォルト名管理
+CALL CHARA_RANDOM_NAME_DEFAULT
+
+;素質
+;黒妖精判定
+SIF NO:TARGET >= 3007 && NO:TARGET < 3014
+	CFLAG:0 = 1
+FOR LOCAL, 0, 28
+	CALLFORM RANDOM_CHARA_TALENT_SET_{LOCAL}, TARGET
+NEXT
+
+;淫乱系素質(悪魔専用)
+SIF NO:TARGET == 3020 && RAND:32 == 0
+	CALL STATE_LITTLE_DEAMON_RANDOM
+;爆発物(アリスの人形専用)
+SIF NO:TARGET == 3016 && RAND:32 == 0
+	TALENT:爆発物 = 14
+;能力
+FOR LOCAL, 0, 9
+	CALLFORM RANDOM_CHARA_ABL_SET_{LOCAL}, TARGET
+NEXT
+;経験
+FOR LOCAL, 0, 9
+	CALLFORM RANDOM_CHARA_EXP_SET_{LOCAL}, TARGET
+NEXT
+;反発刻印(黒妖精のみ)
+IF CFLAG:0 == 1 && RAND:4 == 0
+	MARK:反発刻印 += RAND:2
+	MARK:97 = MARK:反発刻印
+ENDIF
+
+;Ｖ経験が有り、異常経験が有るなら低確率で被強姦経験や被輪姦経験が入る。
+;攫われる前からあったのか、攫われてくる最中に襲われたのかはご想像に。
+IF RAND:20 == 0 && EXP:Ｖ経験 > 0 && EXP:精液経験 > 0 && EXP:異常経験 > 0
+	IF RAND:2 == 0 && EXP:Ｖ経験 > 1
+		EXP:被輪姦経験 += 1
+	ELSE
+		EXP:被強姦経験 += 1 + RAND:(EXP:Ｖ経験)
+		EXP:被強姦経験 = MIN(EXP:被強姦経験, EXP:精液経験)
+	ENDIF
+;むしろ強姦していた場合。
+;犯罪率からいえば、本来は遥かに低いわけだが、そういう奴が[周囲からはぶられて奴隷に身を落とした]的な解釈で。
+ELSEIF RAND:50 == 0 && (TALENT:オトコ || TALENT:ふたなり) && EXP:射精経験 > 0 && EXP:異常経験 > 0
+	EXP:強姦経験 += 1 + RAND:(EXP:射精経験)
+	EXP:強姦経験 = MIN(EXP:強姦経験, EXP:射精経験)
+ENDIF
+
+;最後に体力と気力を全快させ、黒妖精判定を解除する処理を噛ます
+CALL RANDOM_CHARA_FINISH, TARGET
+
+;名前ランダム生成
+IF FLAG:4 >= 50
+	CALL CHARA_RANDOM_NAME_C
+ELSE
+	CALL CHARA_RANDOM_NAME
+	;外見
+	CALLFORM RANDOM_CHARA_HAIR_SET, TARGET
+ENDIF
+CALLFORM RANDOM_CHARA_OTHER_SET, TARGET
+
+RETURN 1
+
+
+;その名の通り奴隷用の処理。SUBPLAYERより呼び出される。
+@CHARA_RANDOM_STATE_2, ARG
+
+LOCAL:2 = TARGET
+TARGET = ARG
+
+;性別
+;名無しキャラ性別ランダムが有効のとき、アリスの人形か魔界人以外の場合、ランダムで[オトコ]になる
+IF FLAG:12 & 2048 && RAND:4 == 0 && (FLAG:570 & 8) == 0
+	SIF NO:TARGET != 3016 && NO:TARGET != 3017
+		CALL RANDOM_CHARA_MALE_SET, TARGET
+ENDIF
+
+;デフォルト名管理
+CALL CHARA_RANDOM_NAME_DEFAULT
+
+;素質
+;黒妖精判定
+SIF NO:TARGET >= 3007 && NO:TARGET < 3014
+	CFLAG:0 = 1
+FOR LOCAL, 0, 28
+	CALLFORM RANDOM_CHARA_TALENT_SET_{LOCAL}, TARGET
+NEXT
+
+;淫乱系素質(悪魔専用)
+SIF NO:TARGET == 3020 && RAND:32 == 0
+	CALL STATE_LITTLE_DEAMON_RANDOM
+;爆発物(アリスの人形専用)
+SIF NO:TARGET == 3016 && RAND:32 == 0
+	TALENT:爆発物 = 14
+;能力
+FOR LOCAL, 0, 9
+	CALLFORM RANDOM_CHARA_ABL_SET_{LOCAL}, TARGET
+NEXT
+;経験
+FOR LOCAL, 0, 9
+	CALLFORM RANDOM_CHARA_EXP_SET_{LOCAL}, TARGET
+NEXT
+;反発刻印(黒妖精のみ)
+IF CFLAG:0 == 1 && RAND:4 == 0
+	MARK:反発刻印 += RAND:2
+	MARK:97 = MARK:反発刻印
+ENDIF
+
+;Ｖ経験が有り、異常経験が有るなら低確率で被強姦経験や被輪姦経験が入る。
+;攫われる前からあったのか、攫われてくる最中に襲われたのかはご想像に。
+IF RAND:20 == 0 && EXP:Ｖ経験 > 0 && EXP:精液経験 > 0 && EXP:異常経験 > 0
+	IF RAND:2 == 0 && EXP:Ｖ経験 > 1
+		EXP:被輪姦経験 += 1
+	ELSE
+		EXP:被強姦経験 += 1 + RAND:(EXP:Ｖ経験)
+		EXP:被強姦経験 = MIN(EXP:被強姦経験, EXP:精液経験)
+	ENDIF
+;むしろ強姦していた場合。
+;犯罪率からいえば、本来は遥かに低いわけだが、そういう奴が[周囲からはぶられて奴隷に身を落とした]的な解釈で。
+ELSEIF RAND:50 == 0 && (TALENT:オトコ || TALENT:ふたなり) && EXP:射精経験 > 0 && EXP:異常経験 > 0
+	EXP:強姦経験 += 1 + RAND:(EXP:射精経験)
+	EXP:強姦経験 = MIN(EXP:強姦経験, EXP:射精経験)
+ENDIF
+
+;最後に体力と気力を全快させ、黒妖精判定を解除する処理を噛ます
+CALL RANDOM_CHARA_FINISH, TARGET
+
+CALL CHARA_RANDOM_NAME_C
+
+;外見
+CALLFORM RANDOM_CHARA_OTHER_SET, TARGET
+
+; 外見定義のデフォルト指定
+CALL RESET_HAIR_CFLAG, ARG
+CFLAG:ARG:元の瞳色 = 2100
+CFLAG:ARG:元の服色 = 2150
+
+TARGET = LOCAL:2
+
+RETURN 1
+
+;-----------------------------------------------
+;淫乱系素質初期追加処理
+;-----------------------------------------------
+;今のところここぁ専用欄
+;ごく稀に生まれながらにしてえっちな素質持ちのここぁが出ますって解釈の元に
+;淫乱系の素質が始めから付いている(引き継ぎも有効)
+@STATE_LITTLE_DEAMON_RANDOM
+TALENT:淫乱 = 1
+CFLAG:16 |= 1
+LOCAL = RAND:105
+IF LOCAL < 10
+	;淫核／淫茎
+	TALENT:淫核／淫茎 = 1
+	CFLAG:16 |= 2
+ELSEIF LOCAL < 20
+	;[オトコ]持ちは弾く
+	SIF TALENT:オトコ
+		RESTART
+	;淫壷
+	TALENT:淫壷 = 1
+	CFLAG:16 |= 4
+ELSEIF LOCAL < 30
+	;尻穴狂い
+	TALENT:淫尻 = 1
+	CFLAG:16 |= 8
+ELSEIF LOCAL < 40
+	;淫乳
+	TALENT:淫乳 = 1
+	CFLAG:16 |= 16
+ELSEIF LOCAL < 45
+	;尿道狂
+	TALENT:尿道狂 = 1
+	CFLAG:16 |= 32
+ELSEIF LOCAL < 50
+	;キス魔
+	TALENT:キス魔 = 1
+	CFLAG:16 |= 64
+ELSEIF LOCAL < 60
+	;ドＳ
+	TALENT:ドＳ = 1
+	CFLAG:16 |= 128
+ELSEIF LOCAL < 70
+	;ドＭ
+	TALENT:ドＭ = 1
+	CFLAG:16 |= 256
+ELSEIF LOCAL < 70
+	;常時発情
+	TALENT:常時発情 = 1
+	;CFLAG:16 |= 2048
+ELSEIF LOCAL == 99
+	;即落ち
+	TALENT:即落ち = 1
+	CFLAG:16 |= 512
+ENDIF
+
+;-----------------------------------------------
+;主人用ランダムステータス生成処理
+;-----------------------------------------------
+;SYSTEM.ERBより呼び出される
+;EXモードで主人を名無しキャラに設定した場合、ここでその処理を行う
+;大まかな処理は奴隷用と変わりはないが、[快感の否定]など一部の素質を取得しないようになっている
+@CHARA_RANDOM_STATE_M
+;サイズ縮小のため、主人＝調教対象にする
+;能力生成中は対象と主人の登録番号は一致しているため、NO:MASTERの処理は変更しないことに(だって、めんどくさいかｒ(ry
+
+LOCAL:1 = TARGET
+TARGET = MASTER
+
+;性別
+;アリスの人形、魔界人以外は性別の選択が可能
+IF NO:MASTER != 3016 && NO:MASTER != 3017
+	PRINTFORML %CALLNAME:MASTER%の性別を選択してください
+	PRINTL [0]♂
+	PRINTL [1]♀
+	PRINTL 
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		CALL RANDOM_CHARA_MALE_SET, TARGET
+		PRINTW 性別:♂で始めます
+	ELSEIF RESULT == 1
+		CALL RANDOM_CHARA_FEMALE_SET, TARGET
+		PRINTW 性別:♀で始めます
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+ENDIF
+
+;デフォルト名管理
+CALL CHARA_RANDOM_NAME_DEFAULT
+
+;素質
+;黒妖精判定
+SIF NO:MASTER >= 3007 && NO:MASTER < 3014
+	CFLAG:0 = 1
+FOR LOCAL, 0, 23
+	SELECTCASE LOCAL
+		CASE 0 TO 20
+			CALLFORM RANDOM_CHARA_TALENT_SET_{LOCAL}, TARGET
+		CASE 21
+			CALLFORM RANDOM_MASTER_TALENT_SET_{LOCAL}, TARGET
+	ENDSELECT
+NEXT
+;能力
+FOR LOCAL, 1, 9
+	SIF LOCAL == 3 || LOCAL == 4
+		CONTINUE
+	CALLFORM RANDOM_CHARA_ABL_SET_{LOCAL}, TARGET
+NEXT
+;経験
+FOR LOCAL, 0, 5
+	CALLFORM RANDOM_CHARA_EXP_SET_{LOCAL}, TARGET
+NEXT
+
+;最後に体力と気力を全快させ、黒妖精判定を解除する処理を噛ます
+CALL RANDOM_CHARA_FINISH, TARGET
+
+;名前ランダム生成
+CALL CHARA_RANDOM_NAME_M
+
+;調教対象解除処理
+TARGET = LOCAL:1 
+RETURN 1
+
+;-----------------------------------------------
+;デフォルト名管理
+;-----------------------------------------------
+@CHARA_RANDOM_NAME_DEFAULT
+;性別♂の名無しキャラのデフォルト名
+IF TALENT:オトコ
+	;ひまわり妖精
+	SIF NO:TARGET == 3000
+		CALLNAME:TARGET = 李野
+	;メイド妖精
+	IF NO:TARGET == 3001
+		IF RAND:3 == 0
+			CALLNAME:TARGET = アーヴィン
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = ラトランド
+		ELSE
+			CALLNAME:TARGET = ギルバート
+		ENDIF
+	ENDIF
+	;赤妖精
+	SIF NO:TARGET == 3002
+		CALLNAME:TARGET = グレン
+	;青妖精
+	SIF NO:TARGET == 3003
+		CALLNAME:TARGET = アオバ
+	;緑妖精
+	SIF NO:TARGET == 3004
+		CALLNAME:TARGET = アサギ
+	;黄妖精
+	SIF NO:TARGET == 3005
+		CALLNAME:TARGET = オウレン
+	;ゾンビフェアリー
+	IF NO:TARGET == 3006
+		IF RAND:100 == 0
+			CALLNAME:TARGET = リンヌ
+		ELSE
+			CALLNAME:TARGET = ニビ
+		ENDIF
+	ENDIF
+	;黒ひまわり妖精
+	SIF NO:TARGET == 3007
+		CALLNAME:TARGET = 玲
+	;黒メイド妖精
+	SIF NO:TARGET == 3008
+		CALLNAME:TARGET = ブラニー
+	;朱妖精
+	SIF NO:TARGET == 3009
+		CALLNAME:TARGET = クリムゾン
+	;蒼妖精
+	SIF NO:TARGET == 3010
+		CALLNAME:TARGET = シアン
+	;翠妖精
+	SIF NO:TARGET == 3011
+		CALLNAME:TARGET = ジェイド
+	;金妖精
+	SIF NO:TARGET == 3012
+		CALLNAME:TARGET = ゴールド
+	;黒呪精
+	SIF NO:TARGET == 3013
+		CALLNAME:TARGET = アシュレイ
+	;地上の兎
+	SIF NO:TARGET == 3014
+		CALLNAME:TARGET = イナバ
+	;里の人間
+	IF NO:TARGET == 3015
+		NAME:TARGET = 里の青年
+		IF RAND:2 == 0
+			CALLNAME:TARGET = 秋高
+		ELSE
+			CALLNAME:TARGET = 権兵衛
+		ENDIF
+	ENDIF
+	;鴉天狗
+	SIF NO:TARGET == 3018
+		CALLNAME:TARGET = 九郎
+	;白狼天狗
+	SIF NO:TARGET == 3019
+		CALLNAME:TARGET = ハク
+	;ここぁ
+	SIF NO:TARGET == 3020
+		CALLNAME:TARGET = モレク
+	;夜雀
+	SIF NO:TARGET == 3021
+		CALLNAME:TARGET = 大シラガ
+	;地獄鴉
+	SIF NO:TARGET == 3022
+		CALLNAME:TARGET = 熊野
+	;亡霊
+	SIF NO:TARGET == 3023
+		CALLNAME:TARGET = 幽玄
+	;河童
+	IF NO:TARGET == 3024
+		IF RAND:2 == 0
+			CALLNAME:TARGET = 菊蔵
+		ELSE
+			CALLNAME:TARGET = 龍之介
+		ENDIF
+	ENDIF
+	;旧都鬼
+	SIF NO:TARGET == 3025
+		CALLNAME:TARGET = 牛頭
+	;地獄鬼
+	SIF NO:TARGET == 3026
+		CALLNAME:TARGET = 百目鬼
+	;死神
+	IF NO:TARGET == 3027
+		IF RAND:2 == 0
+			CALLNAME:TARGET = デス
+		ELSE
+			CALLNAME:TARGET = 夜蘇
+		ENDIF
+	ENDIF
+	;玉兎
+	IF NO:TARGET == 3028
+		IF RAND:3 == 0
+			CALLNAME:TARGET = 雹次
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = 有明
+		ELSE
+			CALLNAME:TARGET = 弓張
+		ENDIF
+	ENDIF
+	;天人
+	IF NO:TARGET == 3029
+		IF RAND:3 == 0
+			CALLNAME:TARGET = 四禅定
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = 垢膩
+		ELSE
+			CALLNAME:TARGET = 臭穢
+		ENDIF
+	ENDIF
+	;化け猫
+	SIF NO:TARGET == 3030
+		CALLNAME:TARGET = ボス
+	;化け狐
+	SIF NO:TARGET == 3031
+		CALLNAME:TARGET = 玄
+	;化け鼠
+	SIF NO:TARGET == 3032
+		CALLNAME:TARGET = 黒鉄
+	;仙人
+	IF NO:TARGET == 3033
+		IF RAND:3 == 0
+			CALLNAME:TARGET = 無迷
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = 言上
+		ELSE
+			CALLNAME:TARGET = 威風
+		ENDIF
+	ENDIF
+	;吸血鬼
+	IF NO:TARGET == 3034
+		IF RAND:3 == 0
+			CALLNAME:TARGET = アーカード
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = フレディック
+		ELSE
+			CALLNAME:TARGET = ダグラス
+		ENDIF
+	ENDIF
+	;人魚
+	SIF NO:TARGET == 3035
+		CALLNAME:TARGET = きよ
+	;人狼
+	SIF NO:TARGET == 3036
+		CALLNAME:TARGET = 月影
+	;小人
+	SIF NO:TARGET == 3037
+		CALLNAME:TARGET = たた
+;性別♀の名無しキャラのデフォルト名
+ELSE
+	;ひまわり妖精
+	SIF NO:TARGET == 3000
+		CALLNAME:TARGET = ひまわり
+	;メイド妖精
+	SIF NO:TARGET == 3001
+		CALLNAME:TARGET = めい
+	;赤妖精
+	SIF NO:TARGET == 3002
+		CALLNAME:TARGET = あかね
+	;青妖精
+	SIF NO:TARGET == 3003
+		CALLNAME:TARGET = るりね
+	;緑妖精
+	SIF NO:TARGET == 3004
+		CALLNAME:TARGET = みどり
+	;黄妖精
+	SIF NO:TARGET == 3005
+		CALLNAME:TARGET = きひろ
+	;ゾンビフェアリー
+	SIF NO:TARGET == 3006
+		CALLNAME:TARGET = ふぇあ
+	;黒ひまわり妖精
+	SIF NO:TARGET == 3007
+		CALLNAME:TARGET = 黒ひまわり
+	;黒メイド妖精
+	SIF NO:TARGET == 3008
+		CALLNAME:TARGET = ブローネ
+	;朱妖精
+	SIF NO:TARGET == 3009
+		CALLNAME:TARGET = カーマイン
+	;蒼妖精
+	SIF NO:TARGET == 3010
+		CALLNAME:TARGET = アズール
+	;翠妖精
+	SIF NO:TARGET == 3011
+		CALLNAME:TARGET = エメラルド
+	;金妖精
+	SIF NO:TARGET == 3012
+		CALLNAME:TARGET = アウルム
+	;黒呪精
+	SIF NO:TARGET == 3013
+		CALLNAME:TARGET = アシュリー
+	;地上の兎
+	SIF NO:TARGET == 3014
+		CALLNAME:TARGET = イナバ
+	;里の人間
+	IF NO:TARGET == 3015
+		NAME:TARGET = 里の娘
+		CALLNAME:TARGET = メイ
+	ENDIF
+	;アリスの人形
+	IF NO:TARGET == 3016
+		IF RAND:2 == 0
+			CALLNAME:TARGET = ファサリナ
+		ELSE
+			CALLNAME:TARGET = クラリッサ
+		ENDIF
+	ENDIF
+	;魔界人
+	IF NO:TARGET == 3017
+		IF RAND:3 == 0
+			CALLNAME:TARGET = ロギアンナ
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = アンペロイ
+		ELSE
+			CALLNAME:TARGET = デューメイ
+		ENDIF
+	ENDIF
+	;鴉天狗
+	SIF NO:TARGET == 3018
+		CALLNAME:TARGET = 濡羽
+	;白狼天狗
+	SIF NO:TARGET == 3019
+		CALLNAME:TARGET = 月白
+	;ここぁ
+	SIF NO:TARGET == 3020
+		CALLNAME:TARGET = ここぁ
+	;夜雀
+	SIF NO:TARGET == 3021
+		CALLNAME:TARGET = よっちゃん
+	;地獄鴉
+	SIF NO:TARGET == 3022
+		CALLNAME:TARGET = へる
+	;亡霊
+	IF NO:TARGET == 3023
+		IF RAND:2 == 0
+			CALLNAME:TARGET = みたま
+		ELSE
+			CALLNAME:TARGET = 幽
+		ENDIF
+	ENDIF
+	;河童
+	IF NO:TARGET == 3024
+		IF RAND:2 == 0
+			CALLNAME:TARGET = まごめ
+		ELSE
+			CALLNAME:TARGET = 四葉
+		ENDIF
+	ENDIF
+	;旧都鬼
+	SIF NO:TARGET == 3025
+		CALLNAME:TARGET = 亜乃
+	;地獄鬼
+	SIF NO:TARGET == 3026
+		CALLNAME:TARGET = 迩摩
+	;死神
+	IF NO:TARGET == 3027
+		IF RAND:2 == 0
+			CALLNAME:TARGET = 千魄
+		ELSE
+			CALLNAME:TARGET = 野丹
+		ENDIF
+	ENDIF
+	;玉兎
+	IF NO:TARGET == 3028
+		IF RAND:3 == 0
+			CALLNAME:TARGET = 月華
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = 朝月
+		ELSE
+			CALLNAME:TARGET = 望
+		ENDIF
+	ENDIF
+	;天人
+	IF NO:TARGET == 3029
+		IF RAND:3 == 0
+			CALLNAME:TARGET = 無色
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = 華萎
+		ELSE
+			CALLNAME:TARGET = 不楽
+		ENDIF
+	ENDIF
+	;化け猫
+	IF NO:TARGET == 3030
+		IF RAND:3 ==0
+			CALLNAME:TARGET = ミケ
+		ELSEIF RAND:2 ==0
+			CALLNAME:TARGET = カッツェ
+		ELSE
+			CALLNAME:TARGET = 真央
+		ENDIF
+	ENDIF
+	;化け狐
+	IF NO:TARGET == 3031
+		IF RAND:3 ==0
+			CALLNAME:TARGET = うい
+		ELSEIF RAND:2 ==0
+			CALLNAME:TARGET = テン
+		ELSE
+			CALLNAME:TARGET = 銀
+		ENDIF
+	ENDIF
+	;化け鼠
+	IF NO:TARGET == 3032
+		IF RAND:3 ==0
+			CALLNAME:TARGET = ハツネ
+		ELSEIF RAND:2 ==0
+			CALLNAME:TARGET = ムース
+		ELSE
+			CALLNAME:TARGET = 小鞠
+		ENDIF
+	ENDIF
+	;仙人
+	IF NO:TARGET == 3033
+		IF RAND:3 == 0
+			CALLNAME:TARGET = 狂仙
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = 夢仙
+		ELSE
+			CALLNAME:TARGET = 舞仙
+		ENDIF
+	ENDIF
+	;吸血鬼
+	IF NO:TARGET == 3034
+		IF RAND:3 == 0
+			CALLNAME:TARGET = アルク
+		ELSEIF RAND:2 == 0
+			CALLNAME:TARGET = マリア
+		ELSE
+			CALLNAME:TARGET = モーラ
+		ENDIF
+	ENDIF
+	;人魚
+	SIF NO:TARGET == 3035
+		CALLNAME:TARGET = きよ
+	;人狼
+	SIF NO:TARGET == 3036
+		CALLNAME:TARGET = 月風
+	;小人
+	SIF NO:TARGET == 3037
+		CALLNAME:TARGET = りり
+ENDIF
+
+;-----------------------------------------------
+;オトコになった場合
+;-----------------------------------------------
+@RANDOM_CHARA_MALE_SET, ARG
+TALENT:ARG:処女 = 0
+TALENT:ARG:絶壁 = 0
+TALENT:ARG:貧乳 = 0
+TALENT:ARG:巨乳 = 0
+TALENT:ARG:爆乳 = 0
+TALENT:ARG:オトコ = 1
+TALENT:ARG:ふたなり = 0
+ABL:ARG:レズっ気 = 0
+ABL:ARG:レズ中毒 = 0
+EXP:ARG:Ｖ経験 = 0
+EXP:ARG:レズ経験 = 0
+EXP:ARG:Ｖ拡張経験 = 0
+EXP:ARG:Ｖ調律経験 = 0
+EXP:ARG:乳腺開発経験 = 0
+EXP:ARG:産卵経験 = 0
+EXP:ARG:出産経験 = 0
+MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+
+;-----------------------------------------------
+;オンナになった場合
+;-----------------------------------------------
+@RANDOM_CHARA_FEMALE_SET, ARG
+TALENT:ARG:オトコ = 0
+TALENT:ARG:ふたなり = 0
+ABL:ARG:ＢＬっ気 = 0
+ABL:ARG:ＢＬ中毒 = 0
+EXP:ARG:ＢＬ経験 = 0
+MAXBASE:ARG:2 = 0
+
+;-----------------------------------------------
+;体力の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_0, ARG
+MAXBASE:ARG:0 += (TALENT:ARG:オトコ) ? 50 * RAND:22 + 100 # 50 * RAND:22
+
+;-----------------------------------------------
+;気力の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_1, ARG
+MAXBASE:ARG:1 += (TALENT:ARG:オトコ) ? 50 * RAND:20 # 50 * RAND:22
+
+;-----------------------------------------------
+;理性の設定
+;-----------------------------------------------
+SIF MAXBASE:ARG:9 <= 0
+	MAXBASE:ARG:9 = 9500 + 25 * RAND:101
+BASE:ARG:理性 = MAXBASE:ARG:9
+TALENT:ARG:理性 = 1
+
+;-----------------------------------------------
+;調教度ゲージ設定
+;-----------------------------------------------
+CALL CHECK_ACCEPTANCE, ARG
+
+;-----------------------------------------------
+;発情設定
+;-----------------------------------------------
+SIF TALENT:ARG:動物耳 || TALENT:ARG:淫魔 || TALENT:ARG:悪魔 || TALENT:ARG:妖狐 || TALENT:ARG:半白澤 || TALENT:ARG:鬼 || TALENT:ARG:鵺 || TALENT:ARG:化け狸 || TALENT:ARG:人狼
+	TALENT:ARG:発情可 = 1
+	
+;-----------------------------------------------
+;初期月経周期を設定
+;-----------------------------------------------
+CALL EVENT_ADD_CHARA_MENSTRUATION, ARG
+
+;-----------------------------------------------
+;処女かどうかの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_2, ARG
+SIF TALENT:ARG:オトコ
+	RETURN 0
+;人形は処女膜が作られないことが多い
+LOCAL = (TALENT:ARG:人形) ? RAND:100 # RAND:4
+SIF LOCAL < 3
+	TALENT:処女 = 1
+
+;-----------------------------------------------
+;臆病および気丈の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_3, ARG
+IF NO:ARG == 3024
+	;河童の場合
+	LOCAL = RAND:8
+	IF LOCAL <= 1 && TALENT:ARG:気丈 == 0
+		TALENT:ARG:臆病 = 1
+	ELSEIF LOCAL == 3 && TALENT:ARG:臆病 == 0
+		TALENT:ARG:気丈 = 1
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:気丈 == 0
+		TALENT:ARG:臆病 = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:臆病 == 0
+		TALENT:ARG:気丈 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;好奇心・楽観的・悲観的の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_4, ARG
+IF NO:ARG == 3029 || NO:ARG == 3033
+	;天人・仙人の場合
+	SIF RAND:16 == 0
+		TALENT:ARG:好奇心 = 1
+	LOCAL = RAND:16
+	IF LOCAL < 5 && TALENT:ARG:悲観的 == 0
+		TALENT:ARG:楽観的 = 1
+	ELSEIF LOCAL == 7 && TALENT:ARG:楽観的 == 0
+		TALENT:ARG:悲観的 = 1
+	ENDIF
+ELSE
+	;その他の場合
+	SIF RAND:4 == 0
+		TALENT:ARG:好奇心 = 1
+	LOCAL = RAND:12
+	SIF CFLAG:ARG:0 == 1 && LOCAL < 1
+		LOCAL = 5
+	IF LOCAL < 2 && TALENT:ARG:悲観的 == 0
+		TALENT:ARG:楽観的 = 1
+	ELSEIF LOCAL == 5 && TALENT:ARG:楽観的 == 0
+		TALENT:ARG:悲観的 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;恥じらい・恥薄いの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_5, ARG
+IF NO:ARG == 3020 && ARG != MASTER
+	;ここぁの場合
+	LOCAL = RAND:16
+	IF (LOCAL == 0 || LOCAL == 1) && TALENT:ARG:恥薄い == 0
+		TALENT:ARG:恥じらい = 1
+	ELSEIF LOCAL <= 4 && TALENT:ARG:恥じらい == 0
+		TALENT:ARG:恥薄い = 1
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:恥薄い == 0
+		TALENT:ARG:恥じらい = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:恥じらい == 0
+		TALENT:ARG:恥薄い = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;痛みに弱い/強い・サド/マゾの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_6, ARG
+;痛みに弱い/強い
+IF NO:ARG == 3025 || NO:ARG == 3026
+	;鬼たち
+	LOCAL = RAND:12
+	IF LOCAL == 0 && TALENT:ARG:痛みに強い == 0
+		TALENT:ARG:痛みに弱い = 1
+	ELSEIF LOCAL >= 3 && TALENT:ARG:痛みに弱い == 0
+		TALENT:ARG:痛みに強い = 1
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:痛みに強い == 0
+		TALENT:ARG:痛みに弱い = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:痛みに弱い == 0
+		TALENT:ARG:痛みに強い = 1
+	ENDIF
+ENDIF
+;サド/マゾ
+LOCAL = RAND:10
+IF LOCAL <= 2 && (NO:ARG == 3018 || NO:ARG == 3019)
+	;天狗の場合
+	TALENT:ARG:サド = 1
+ELSEIF LOCAL <= 1 && (NO:ARG == 3020 || NO:ARG == 3034) && ARG != MASTER
+	;ここぁ・吸血鬼の場合
+	TALENT:ARG:サド = 1
+ELSEIF LOCAL == 0
+	;その他の場合
+	TALENT:ARG:サド = 1
+ENDIF
+LOCAL = (ARG == MASTER) ? RAND:16 # RAND:8
+SIF LOCAL == 0
+	TALENT:ARG:マゾ = 1
+
+;-----------------------------------------------
+;濡れやすい・濡れにくいの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_7, ARG
+IF NO:ARG == 3023 || TALENT:ARG:オトコ
+	;亡霊・オトコの場合
+	LOCAL = RAND:16
+	IF LOCAL == 0 && TALENT:ARG:濡れにくい == 0
+		TALENT:ARG:濡れやすい = 1
+	ELSEIF LOCAL >= 3 && TALENT:ARG:濡れやすい == 0
+		TALENT:ARG:濡れにくい = 1
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:濡れにくい == 0
+		TALENT:ARG:濡れやすい = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:濡れやすい == 0
+		TALENT:ARG:濡れにくい = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;習得早い・習得遅いの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_8, ARG
+LOCAL = RAND:8
+IF LOCAL == 0 && TALENT:ARG:習得遅い == 0
+	TALENT:ARG:習得早い = 1
+ELSEIF LOCAL == 1 && TALENT:ARG:習得早い == 0
+	TALENT:ARG:習得遅い = 1
+ENDIF
+
+;-----------------------------------------------
+;汚臭鈍感・汚臭敏感・汚れ無視の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_9, ARG
+;汚臭鈍感・汚臭敏感
+LOCAL = RAND:8
+IF LOCAL == 0 && TALENT:ARG:汚臭敏感 == 0
+	TALENT:ARG:汚臭鈍感 = 1
+ELSEIF LOCAL == 1 && TALENT:ARG:汚臭鈍感 == 0
+	TALENT:ARG:汚臭敏感 = 1
+ENDIF
+SIF TALENT:ARG:汚臭敏感 || ARG == MASTER
+	RETURN 0
+;汚れ無視
+LOCAL = (TALENT:ARG:汚臭鈍感) ? RAND:50 # RAND:120
+SIF LOCAL == 0
+	TALENT:ARG:汚れ無視 = 1
+
+;-----------------------------------------------
+;自慰しやすい・中毒しやすい・献身的の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_10, ARG
+;自慰しやすい
+LOCAL = (CFLAG:ARG:0 == 1) ? RAND:6 # RAND:3
+SIF LOCAL == 0
+	TALENT:ARG:自慰しやすい = 1
+;献身的
+LOCAL = (CFLAG:ARG:0 == 1) ? RAND:6 # RAND:3
+SIF LOCAL == 0
+	TALENT:ARG:献身的 = 1
+;中毒しやすい
+LOCAL = (CFLAG:ARG:0 == 1) ? RAND:6 # RAND:3
+SIF LOCAL == 0
+	TALENT:ARG:中毒しやすい = 1
+;中毒しにくい
+LOCAL = (CFLAG:ARG:0 == 1) ? RAND:18 # RAND:9
+SIF LOCAL == 0 && TALENT:ARG:中毒しやすい == 0
+	TALENT:ARG:中毒しにくい = 1
+
+;-----------------------------------------------
+;Ｃ鈍感・Ｃ敏感の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_11, ARG
+IF NO:ARG == 3025 || NO:ARG == 3026
+	;鬼(きゅうしょに　あたった！)
+	LOCAL = RAND:10
+	IF LOCAL == 0 && TALENT:ARG:Ｃ敏感 == 0
+		TALENT:ARG:Ｃ鈍感 = 1
+	ELSEIF LOCAL >= 5 && TALENT:ARG:Ｃ鈍感 == 0
+		TALENT:ARG:Ｃ敏感 = 1
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:Ｃ敏感 == 0
+		TALENT:ARG:Ｃ鈍感 = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:Ｃ鈍感 == 0
+		TALENT:ARG:Ｃ敏感 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;Ｖ鈍感・Ｖ敏感の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_12, ARG
+IF TALENT:ARG:オトコ
+	;オトコの場合
+	TALENT:ARG:Ｖ鈍感 = 0
+	TALENT:ARG:Ｖ敏感 = 0
+ELSEIF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:10
+	IF LOCAL == 0
+		TALENT:ARG:Ｖ鈍感 = 1
+		TALENT:ARG:Ｖ敏感 = 0
+	ELSEIF LOCAL == 1 || LOCAL == 2
+		TALENT:ARG:Ｖ敏感 = 0
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:Ｖ敏感 == 0
+		TALENT:ARG:Ｖ鈍感 = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:Ｖ鈍感 == 0
+		TALENT:ARG:Ｖ敏感 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;Ａ鈍感・Ａ敏感の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_13, ARG
+IF NO:ARG == 3024
+	;河童の場合
+	LOCAL = RAND:10
+	IF LOCAL == 0
+		TALENT:ARG:Ａ鈍感 = 1
+		TALENT:ARG:Ａ敏感 = 0
+	ELSEIF LOCAL == 1 || LOCAL == 2
+		TALENT:ARG:Ａ敏感 = 0
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0 && TALENT:ARG:Ａ敏感 == 0
+		TALENT:ARG:Ａ鈍感 = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:Ａ鈍感 == 0
+		TALENT:ARG:Ａ敏感 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;Ｂ鈍感・Ｂ敏感の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_14, ARG
+IF TALENT:ARG:オトコ
+	;オトコはあまり敏感じゃない
+	IF NO:ARG == 3025 || NO:ARG == 3026
+		;鬼(こうかは　ばつぐんだ！)
+		LOCAL = RAND:8
+		IF LOCAL >= 4 && TALENT:ARG:Ｂ敏感 == 0
+			TALENT:ARG:Ｂ鈍感 = 1
+		ELSEIF LOCAL == 0 && TALENT:ARG:Ｂ鈍感 == 0
+			TALENT:ARG:Ｂ敏感 = 1
+		ENDIF
+	ELSE
+		;その他（オトコ）の場合
+		LOCAL = RAND:16
+		IF LOCAL >= 8 && TALENT:ARG:Ｂ敏感 == 0
+			TALENT:ARG:Ｂ鈍感 = 1
+		ELSEIF LOCAL == 0 && TALENT:ARG:Ｂ鈍感 == 0
+			TALENT:ARG:Ｂ敏感 = 1
+		ENDIF
+	ENDIF
+ELSE
+	;オンナの場合
+	IF NO:ARG == 3025 || NO:ARG == 3026
+		;鬼(こうかは　ばつぐんだ！)
+		LOCAL = RAND:10
+		IF LOCAL == 0 && TALENT:ARG:Ｂ敏感 == 0
+			TALENT:ARG:Ｂ鈍感 = 1
+		ELSEIF LOCAL >= 5 && TALENT:ARG:Ｂ鈍感 == 0
+			TALENT:ARG:Ｂ敏感 = 1
+		ENDIF
+	ELSE
+		;その他（オンナ）の場合
+		LOCAL = RAND:8
+		IF LOCAL == 0 && TALENT:ARG:Ｂ敏感 == 0
+			TALENT:ARG:Ｂ鈍感 = 1
+		ELSEIF LOCAL == 1 && TALENT:ARG:Ｂ鈍感 == 0
+			TALENT:ARG:Ｂ敏感 = 1
+		ENDIF
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;おっぱいの大きさの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_15, ARG
+LOCAL = RAND:20
+IF TALENT:ARG:オトコ
+	;オトコの場合
+	TALENT:ARG:絶壁 = 0
+	TALENT:ARG:貧乳 = 0
+	TALENT:ARG:巨乳 = 0
+	TALENT:ARG:爆乳 = 0
+ELSEIF LOCAL < 5
+	;貧乳
+	TALENT:ARG:絶壁 = 0
+	TALENT:ARG:貧乳 = 1
+	TALENT:ARG:巨乳 = 0
+	TALENT:ARG:爆乳 = 0
+ELSEIF LOCAL < 10
+	;巨乳
+	TALENT:ARG:絶壁 = 0
+	TALENT:ARG:貧乳 = 0
+	TALENT:ARG:巨乳 = 1
+	TALENT:ARG:爆乳 = 0
+ELSEIF LOCAL == 17 || LOCAL == 18
+	;絶壁
+	TALENT:ARG:絶壁 = 1
+	TALENT:ARG:貧乳 = 0
+	TALENT:ARG:巨乳 = 0
+	TALENT:ARG:爆乳 = 0
+ELSEIF LOCAL == 19
+	;爆乳
+	TALENT:ARG:絶壁 = 0
+	TALENT:ARG:貧乳 = 0
+	TALENT:ARG:巨乳 = 0
+	TALENT:ARG:爆乳 = 1
+ENDIF
+
+;-----------------------------------------------
+;回復早い・回復遅いの設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_16, ARG
+IF NO:ARG >= 3000 && NO:ARG < 3014
+	;妖精の場合
+	LOCAL = RAND:5
+	IF LOCAL > 0
+		IF TALENT:ARG:回復遅い
+			TALENT:ARG:回復遅い = 0
+		ELSE
+			TALENT:ARG:回復早い = 1
+		ENDIF
+	ENDIF
+ELSEIF NO:ARG == 3015 || NO:ARG == 3033 || NO:ARG == 3037
+	;人間・小人の場合
+	LOCAL = RAND:10
+	IF LOCAL < 2
+		IF TALENT:ARG:回復遅い
+			TALENT:ARG:回復遅い = 0
+		ELSE
+			TALENT:ARG:回復早い = 1
+		ENDIF
+	ELSEIF LOCAL > 6
+		IF TALENT:ARG:回復早い
+			TALENT:ARG:回復早い = 0
+		ELSE
+			TALENT:ARG:回復遅い = 1
+		ENDIF
+	ENDIF
+ELSEIF NO:ARG == 3014 || NO:ARG == 3018 || NO:ARG == 3019 || NO:ARG == 3021 || NO:ARG == 3022 || NO:ARG == 3028 || NO:ARG == 3030 || NO:ARG == 3031 || NO:ARG == 3032 || NO:ARG == 3035 || NO:ARG == 3036
+	;妖怪兎・天狗・夜雀・地獄鴉・玉兎・化け猫・化け狐・化け鼠・人魚・人狼の場合
+	LOCAL = RAND:10
+	IF LOCAL < 4
+		IF TALENT:ARG:回復遅い
+			TALENT:ARG:回復遅い = 0
+		ELSE
+			TALENT:ARG:回復早い = 1
+		ENDIF
+	ELSEIF LOCAL > 7
+		IF TALENT:ARG:回復早い
+			TALENT:ARG:回復早い = 0
+		ELSE
+			TALENT:ARG:回復遅い = 1
+		ENDIF
+	ENDIF
+ELSEIF NO:ARG == 3016 || NO:ARG == 3023
+	;人形・亡霊の場合
+	LOCAL = RAND:10
+	IF LOCAL < 1
+		IF TALENT:ARG:回復遅い
+			TALENT:ARG:回復遅い = 0
+		ELSE
+			TALENT:ARG:回復早い = 1
+		ENDIF
+	ELSEIF LOCAL > 5
+		IF TALENT:ARG:回復早い
+			TALENT:ARG:回復早い = 0
+		ELSE
+			TALENT:ARG:回復遅い = 1
+		ENDIF
+	ENDIF
+ELSEIF NO:ARG == 3017 || NO:ARG == 3020 || NO:ARG == 3034
+	;魔界人・ここぁ・吸血鬼の場合
+	LOCAL = RAND:10
+	IF LOCAL < 3
+		IF TALENT:ARG:回復遅い
+			TALENT:ARG:回復遅い = 0
+		ELSE
+			TALENT:ARG:回復早い = 1
+		ENDIF
+	ELSEIF LOCAL > 6
+		IF TALENT:ARG:回復早い
+			TALENT:ARG:回復早い = 0
+		ELSE
+			TALENT:ARG:回復遅い = 1
+		ENDIF
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;両刀・魅力の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_17, ARG
+;両刀
+LOCAL = RAND:16
+IF LOCAL <= 3 && (NO:ARG == 3018 || NO:ARG == 3019)
+	;天狗の場合
+	TALENT:ARG:両刀 = 1
+ELSEIF LOCAL <= 1 && (NO:ARG == 3014 || NO:ARG == 3028)
+	;妖怪兎・玉兎の場合
+	TALENT:ARG:両刀 = 1
+ELSEIF LOCAL == 0
+	;その他の場合
+	TALENT:ARG:両刀 = 1
+ENDIF
+;魅力
+SIF RAND:4 > 1
+	TALENT:ARG:魅力 = 1
+
+;-----------------------------------------------
+;日光浴・月光浴の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_18, ARG
+IF NO:ARG >= 3000 && NO:ARG < 3014
+	;妖精の場合
+	LOCAL = RAND:4
+	IF LOCAL == 0
+		TALENT:ARG:日光浴 = 1
+	ELSEIF LOCAL == 1
+		TALENT:ARG:月光浴 = 1
+	ENDIF
+ELSEIF NO:ARG == 3015 || NO:ARG == 3016 || NO:ARG == 3033 || NO:ARG == 3037
+	;人間、人形、小人の場合
+	LOCAL = RAND:16
+	IF LOCAL == 0
+		TALENT:ARG:日光浴 = 1
+	ELSEIF LOCAL == 1
+		TALENT:ARG:月光浴 = 1
+	ENDIF
+ELSEIF NO:ARG == 3014 || NO:ARG == 3018 || NO:ARG == 3019 || NO:ARG == 3022 || NO:ARG == 3028 || NO:ARG == 3030 || NO:ARG == 3031 || NO:ARG == 3032 || NO:ARG == 3035 || NO:ARG == 3036
+	;妖怪兎・天狗・地獄鴉・玉兎・化け猫・化け狐・化け鼠・人魚・人狼の場合
+	LOCAL = RAND:8
+	IF LOCAL == 0
+		TALENT:ARG:日光浴 = 1
+	ELSEIF LOCAL == 1
+		TALENT:ARG:月光浴 = 1
+	ENDIF
+ELSEIF NO:ARG == 3017
+	;魔界人の場合
+	LOCAL = RAND:6
+	IF LOCAL == 0
+		TALENT:ARG:日光浴 = 1
+	ELSEIF LOCAL <= 3
+		TALENT:ARG:月光浴 = 1
+	ENDIF
+ELSEIF NO:ARG == 3021
+	;夜雀の場合
+	LOCAL = RAND:16
+	IF LOCAL == 0
+		TALENT:ARG:日光浴 = 1
+	ELSEIF LOCAL >= 8
+		TALENT:ARG:月光浴 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;鼓舞の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_19, ARG
+SIF RAND:8 == 0
+	TALENT:ARG:鼓舞 = 1
+
+;-----------------------------------------------
+;幼稚・小悪魔の設定
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_20, ARG
+;幼稚
+IF NO:ARG >= 3000 && NO:ARG < 3014
+	;妖精の場合
+	LOCAL = RAND:8
+	SIF LOCAL == 0
+		TALENT:ARG:幼稚 = 1
+ELSE
+	;その他の場合
+	LOCAL = RAND:100
+	SIF LOCAL == 0
+		TALENT:ARG:幼稚 = 1
+ENDIF
+;小悪魔
+LOCAL = RAND:8
+SIF LOCAL == 1
+	TALENT:ARG:小悪魔 = 1
+
+;-----------------------------------------------
+;プライド高い・プライド低いの設定(奴隷専用)
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_21, ARG
+LOCAL = RAND:6
+;黒妖精の場合
+SIF CFLAG:ARG:0 == 1
+	LOCAL = 0
+IF LOCAL == 0
+	TALENT:ARG:プライド高い = 1
+	TALENT:ARG:プライド低い = 0
+ELSEIF LOCAL == 1
+	TALENT:ARG:プライド高い = 0
+	TALENT:ARG:プライド低い = 1
+ENDIF
+
+;-----------------------------------------------
+;貞操観念・貞操無頓着の設定(奴隷専用)
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_22, ARG
+IF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:10
+	IF LOCAL == 0 && TALENT:ARG:貞操無頓着 == 0
+		TALENT:ARG:貞操観念 = 1
+	ELSEIF LOCAL <= 2 && TALENT:ARG:貞操観念 == 0
+		TALENT:ARG:貞操無頓着 = 1
+	ENDIF
+ELSEIF CFLAG:ARG:0 == 1
+	;黒妖精の場合
+	LOCAL = RAND:4
+	IF LOCAL == 0
+		TALENT:ARG:貞操観念 = 1
+		TALENT:ARG:貞操無頓着 = 0
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:5
+	IF LOCAL == 0 && TALENT:ARG:貞操無頓着 == 0
+		TALENT:ARG:貞操観念 = 1
+	ELSEIF LOCAL == 1 && TALENT:ARG:貞操観念 == 0
+		TALENT:ARG:貞操無頓着 = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;ツンデレの設定(奴隷専用)
+;-----------------------------------------------
+;ツンデレが付加する場合、反抗的も付加し、素直は削除される
+@RANDOM_CHARA_TALENT_SET_23, ARG
+LOCAL = RAND:10
+;黒妖精の場合
+SIF CFLAG:ARG:0 == 1
+	LOCAL = 0
+IF LOCAL == 0 || TALENT:ARG:ツンデレ
+	TALENT:ARG:反抗的 = 1
+	TALENT:ARG:素直 = 0
+	TALENT:ARG:ツンデレ = 1
+ENDIF
+
+;-----------------------------------------------
+;マイナス素質各種設定(奴隷専用)
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_24, ARG
+LOCAL = (CFLAG:ARG:0 == 1) ? 0 # RAND:2
+IF LOCAL == 0
+	;男嫌い
+	SIF RAND:12 < 3
+		TALENT:ARG:男嫌い = 1
+	;女嫌い
+	SIF RAND:12 < 3
+		TALENT:ARG:女嫌い = 1
+	;嫉妬しやすい
+	SIF RAND:6 == 0
+		TALENT:ARG:嫉妬しやすい = 1
+	;快感の否定・一線越えない
+	LOCAL = RAND:16
+	SIF LOCAL < 2
+		TALENT:ARG:快感の否定 = 1
+	SIF LOCAL >= 1 && LOCAL <= 3
+		TALENT:ARG:一線越えない = 1
+	;抑圧
+	SIF RAND:8 == 0
+		TALENT:ARG:抑圧 = 1
+	;保守的
+	SIF RAND:8 == 0
+		TALENT:ARG:保守的 = 1
+	;抵抗
+	SIF RAND:8 == 0
+		TALENT:ARG:抵抗 = 1
+	;反抗的
+	LOCAL = RAND:8
+	SIF LOCAL == 0 && TALENT:ARG:素直 == 0
+		TALENT:ARG:反抗的 = 1
+	IF CFLAG:ARG:0 == 1
+		;感情乏しい(黒妖精のみ)
+		LOCAL = RAND:4
+		SIF LOCAL == 0 && TALENT:ARG:感情乏しい == 0
+			TALENT:ARG:感情乏しい = 1
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;プラス素質各種設定(奴隷専用)
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_25, ARG
+;舌使い
+IF NO:ARG == 3021
+	;夜雀の場合
+	LOCAL = RAND:5
+ELSEIF CFLAG:ARG:0 == 1
+	;黒妖精の場合
+	LOCAL = RAND:14
+ELSE
+	;その他の場合
+	LOCAL = RAND:12
+ENDIF
+SIF LOCAL == 0
+	TALENT:ARG:舌使い = 1
+;針さばき
+LOCAL = RAND:12
+IF CFLAG:ARG:0 == 1 && LOCAL < 4
+	;黒妖精の場合
+	LOCAL = 0
+ELSEIF NO:ARG == 3022 && LOCAL < 4
+	;地獄鬼の場合
+	LOCAL = 0
+ENDIF
+SIF LOCAL == 0
+	TALENT:ARG:針さばき = 1
+;倒錯的
+SIF RAND:14 == 0
+	TALENT:ARG:倒錯的 = 1
+;不思議な根
+IF (NO:ARG >= 3000 && NO:ARG < 3014) || NO:ARG == 3017 || NO:ARG == 3020
+	;妖精・魔界人・ここぁの場合
+	LOCAL = RAND:16
+	SIF LOCAL == 0 && TALENT:ARG:オトコ == 0
+		TALENT:ARG:不思議な根 = 1
+ENDIF
+;調合知識、禁断の知識
+IF NO:ARG == 3000 || NO:ARG == 3006
+	;(独断と偏見により)ひまわり・黒ひまわりは恐るべきポテンシャルを秘めています
+	IF TALENT:ARG:プライド高い && TALENT:ARG:保守的 && TALENT:ARG:悲観的 && TALENT:ARG:貞操観念 && TALENT:ARG:抑圧 && TALENT:ARG:抵抗 && TALENT:ARG:汚臭敏感
+		LOCAL = RAND:4
+	ELSE
+		LOCAL = RAND:100
+	ENDIF
+	SIF LOCAL <= 1 && TALENT:ARG:調合知識 == 0
+		TALENT:ARG:調合知識 = 1
+	SIF LOCAL == 0 && TALENT:ARG:禁断の知識 == 0
+		TALENT:ARG:禁断の知識 = 1
+ELSE
+	;その他の無名キャラでも禁断の知識持ちが現れるように
+	LOCAL = RAND:255
+	SIF LOCAL == 0 && TALENT:ARG:禁断の知識 == 0
+		TALENT:ARG:禁断の知識 = 1
+ENDIF
+;料理苦手・料理得意
+IF NO:ARG == 3001 || NO:ARG == 3008 || NO:ARG == 3015 || NO:ARG == 3033
+	;メイド妖精・黒メイド妖精・人間の場合
+	LOCAL = RAND:15
+ELSE
+	;その他の場合
+	LOCAL = RAND:10
+ENDIF
+IF LOCAL <= 3 && TALENT:ARG:料理苦手 == 0 && TALENT:ARG:料理得意 == 0 && TALENT:ARG:調理名人 == 0
+	TALENT:ARG:料理苦手 = 1
+ELSEIF LOCAL >= 12 && TALENT:ARG:料理苦手 == 0 && TALENT:ARG:料理得意 == 0 && TALENT:ARG:調理名人 == 0
+	TALENT:ARG:料理得意 = 1
+ENDIF
+
+;-----------------------------------------------
+;おちんちん関連素質設定(奴隷専用)
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_26, ARG
+IF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+	LOCAL = RAND:16
+	IF LOCAL <= 2
+		TALENT:ARG:早漏 = 1
+		TALENT:ARG:遅漏 = 0
+	ELSEIF LOCAL >= 10
+		TALENT:ARG:早漏 = 0
+		TALENT:ARG:遅漏 = 1
+	ENDIF
+	MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+ENDIF
+
+;-----------------------------------------------
+;レア素質各種設定(奴隷専用)
+;-----------------------------------------------
+@RANDOM_CHARA_TALENT_SET_27, ARG
+;魔術技能
+SIF RAND:60 < 1
+	TALENT:ARG:魔術技能 = 1
+;報道者
+SIF RAND:60 < 1
+	TALENT:ARG:報道者 = 1
+;工作名人
+SIF RAND:60 < 1
+	TALENT:ARG:工作名人 = 1
+;音痴or音感
+LOCAL = RAND:30
+IF LOCAL <= 1
+	TALENT:ARG:音痴 = 1
+	TALENT:ARG:音感 = 0
+ELSEIF LOCAL >= 28
+	TALENT:ARG:音痴 = 0
+	TALENT:ARG:音感 = 1
+ENDIF
+;大乳導orつるぺた堕し
+LOCAL = RAND:120
+IF LOCAL <= 1
+	TALENT:ARG:大乳導 = 1
+	TALENT:ARG:つるぺた堕し = 0
+ELSEIF LOCAL >= 118
+	TALENT:ARG:大乳導 = 0
+	TALENT:ARG:つるぺた堕し = 1
+ENDIF
+;大甲斐性(意味がｗ)
+SIF RAND:150 == 0
+	TALENT:ARG:大甲斐性 = 1
+;喘息
+SIF RAND:60 < 1
+	TALENT:ARG:喘息 = 1
+;淫具知識
+SIF RAND:120 == 0
+	TALENT:ARG:淫具知識 = 1
+;狂気
+SIF RAND:666 == 0
+	TALENT:ARG:狂気 = 1
+
+;-----------------------------------------------
+;プラス素質各種設定(主人専用)
+;-----------------------------------------------
+@RANDOM_MASTER_TALENT_SET_21, ARG
+;舌使い
+IF NO:ARG == 3021
+	;夜雀の場合
+	LOCAL = RAND:5
+ELSEIF CFLAG:ARG:0 == 1
+	;黒妖精の場合
+	LOCAL = RAND:14
+ELSE
+	;その他の場合
+	LOCAL = RAND:10
+ENDIF
+SIF LOCAL == 0
+	TALENT:ARG:舌使い = 1
+;針さばき
+LOCAL = RAND:10
+IF CFLAG:ARG:0 == 1 && LOCAL < 4
+	;黒妖精の場合
+	LOCAL = 0
+ELSEIF NO:ARG == 3026 && LOCAL < 4
+	;地獄鬼の場合
+	LOCAL = 0
+ENDIF
+SIF LOCAL == 0
+	TALENT:ARG:針さばき = 1
+;倒錯的
+SIF RAND:12 == 0
+	TALENT:ARG:倒錯的 = 1
+;不思議な根
+IF (NO:ARG >= 3000 && NO:ARG < 3014) || NO:ARG == 3017 || NO:ARG == 3020
+	;妖精・魔界人・ここぁの場合
+	LOCAL = RAND:16
+	SIF LOCAL == 0 && TALENT:ARG:オトコ == 0
+		TALENT:ARG:不思議な根 = 1
+ENDIF
+;料理苦手・料理得意
+;メイド妖精・黒メイド妖精・人間の場合は多少確率が違う
+LOCAL = (NO:ARG == 3001 || NO:ARG == 3008 || NO:ARG == 3015 || NO:ARG == 3033) ? RAND:15 # RAND:10
+IF LOCAL <= 3 && TALENT:ARG:料理苦手 == 0 && TALENT:ARG:料理得意 == 0 && TALENT:ARG:調理名人 == 0
+	TALENT:ARG:料理苦手 = 1
+ELSEIF LOCAL >= 12 && TALENT:ARG:料理苦手 == 0 && TALENT:ARG:料理得意 == 0 && TALENT:ARG:調理名人 == 0
+	TALENT:ARG:料理得意 = 1
+ENDIF
+
+;-----------------------------------------------
+;レア素質各種設定(主人専用)
+;-----------------------------------------------
+@RANDOM_MASTER_TALENT_SET_22, ARG
+;淫具知識
+SIF RAND:200 == 0
+	TALENT:ARG:淫具知識 = 1
+;中毒扇動(意味ないけどｗ)
+SIF RAND:200 == 0
+	TALENT:ARG:中毒扇動 = 1
+;工作名人
+SIF RAND:200 == 0
+	TALENT:ARG:工作名人 = 1
+;報道者
+SIF RAND:200 == 0
+	TALENT:ARG:報道者 = 1
+;魔術技能
+SIF RAND:200 == 0
+	TALENT:ARG:魔術技能 = 1
+;超常目算(死神のみ)
+SIF NO:ARG == 3027 && RAND:200 == 0
+	TALENT:ARG:超常目算 = 1
+
+;-----------------------------------------------
+;従順Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_0, ARG
+;黒妖精の場合は確率が違う
+LOCAL = (CFLAG:ARG:0 == 1) ? RAND:4 # RAND:2
+SIF LOCAL > 0
+	ABL:ARG:従順 += RAND:2
+
+;-----------------------------------------------
+;欲望Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_1, ARG
+IF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:3
+	SIF LOCAL > 0
+		ABL:ARG:欲望 += RAND:2
+ELSEIF NO:ARG == 3029
+	;天人の場合
+	LOCAL = RAND:6
+	SIF LOCAL == 0
+		ABL:ARG:欲望 += RAND:2
+ELSE
+	;黒妖精の場合
+	LOCAL = (CFLAG:0 == 1 && ARG != MASTER) ? RAND:6 # RAND:3
+	SIF LOCAL == 0
+		ABL:ARG:欲望 += RAND:2
+ENDIF
+
+;-----------------------------------------------
+;技巧Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_2, ARG
+IF CFLAG:ARG:0 == 1
+	;黒妖精の場合
+	LOCAL = RAND:8
+ELSEIF NO:ARG == 3024
+	;河童の場合
+	LOCAL = RAND:2
+ELSE
+	;その他の場合
+	LOCAL = RAND:4
+ENDIF
+SIF LOCAL == 0
+	ABL:ARG:技巧 += 1 + RAND:2
+
+;-----------------------------------------------
+;奉仕精神Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_3, ARG
+;素質によってはパス
+SIF TALENT:ARG:素直 == 0 && TALENT:ARG:プライド低い == 0 && TALENT:ARG:解放 == 0 && TALENT:ARG:献身的 == 0 && TALENT:ARG:中毒扇動 == 0 && TALENT:ARG:小悪魔 == 0 && TALENT:ARG:鼓舞 == 0
+	RETURN 0
+IF NO:ARG == 3001 || NO:ARG == 3008 || NO:ARG == 3033
+	;メイド妖精・仙人の場合
+	LOCAL = RAND:48
+ELSE
+	;その他の場合
+	LOCAL = RAND:96
+ENDIF
+SIF LOCAL == 0
+	ABL:ARG:奉仕精神 += 1 + RAND:2
+
+;-----------------------------------------------
+;露出癖Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_4, ARG
+;素質によってはパス
+SIF TALENT:ARG:プライド低い == 0 && TALENT:ARG:目立ちたがり == 0 && TALENT:ARG:貞操無頓着 == 0 && TALENT:ARG:解放 == 0 && TALENT:ARG:恥薄い == 0 && TALENT:ARG:倒錯的 == 0 && TALENT:ARG:人気 == 0 && TALENT:ARG:狂気 == 0
+	RETURN 0
+LOCAL = RAND:64
+SIF LOCAL == 0
+	ABL:ARG:露出癖 += 1 + RAND:2
+
+;-----------------------------------------------
+;レズっ気・BLっ気Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_5, ARG
+LOCAL = RAND:16
+IF NO:ARG == 3020
+	;ここぁの場合
+	IF LOCAL > 2 && TALENT:ARG:オトコ == 0
+		ABL:ARG:レズっ気 += RAND:3
+	ELSEIF LOCAL > 2 && TALENT:ARG:オトコ
+		ABL:ARG:ＢＬっ気 += RAND:3
+	ENDIF
+ELSEIF NO:ARG == 3028
+	;玉兎の場合
+	IF LOCAL > 7 && TALENT:ARG:オトコ == 0
+		ABL:ARG:レズっ気 += RAND:3
+	ELSEIF LOCAL > 7 && TALENT:ARG:オトコ
+		ABL:ARG:ＢＬっ気 += RAND:3
+	ENDIF
+ELSE
+	;その他の場合
+	IF LOCAL > 11 && TALENT:ARG:オトコ == 0
+		ABL:ARG:レズっ気 += RAND:3
+	ELSEIF LOCAL > 11 && TALENT:ARG:オトコ
+		ABL:ARG:ＢＬっ気 += RAND:3
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;マゾっ気Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_6, ARG
+IF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:16
+	IF LOCAL == 0
+		ABL:ARG:マゾっ気 = 4+RAND:2
+	ELSEIF LOCAL < 6
+		ABL:ARG:マゾっ気 += RAND:3
+	ENDIF
+ELSE
+	LOCAL = RAND:16
+	SIF LOCAL > 11
+		ABL:ARG:マゾっ気 += RAND:3
+ENDIF
+
+;-----------------------------------------------
+;サドっ気Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_7, ARG
+IF NO:ARG == 3020 || NO:ARG == 3034
+	;ここぁ・吸血鬼の場合
+	LOCAL = RAND:16
+	IF LOCAL == 0
+		ABL:ARG:サドっ気 = 4+RAND:2
+	ELSEIF LOCAL < 6
+		ABL:ARG:サドっ気 += RAND:3
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:16
+	SIF LOCAL > 11
+		ABL:ARG:サドっ気 += RAND:3
+ENDIF
+
+;-----------------------------------------------
+;工作技能Lvの設定
+;-----------------------------------------------
+@RANDOM_CHARA_ABL_SET_8, ARG
+IF NO:ARG == 3024 || TALENT:ARG:工作名人
+	;河童or工作名人の場合
+	LOCAL = RAND:16
+	IF LOCAL == 0
+		ABL:ARG:工作技能 = 4+RAND:2
+	ELSEIF LOCAL < 6
+		ABL:ARG:工作技能 += RAND:3
+	ENDIF
+ELSE
+	;その他の場合
+	LOCAL = RAND:16
+	SIF LOCAL > 11
+		ABL:ARG:工作技能 += RAND:3
+ENDIF
+
+;-----------------------------------------------
+;Ｖ経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_0, ARG
+;処女かオトコはＶ経験はない(処女でＶ経験持ちはユニークキャラのみ)
+SIF TALENT:ARG:処女 || TALENT:ARG:オトコ
+	RETURN 0
+IF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:8
+	SIF LOCAL > 0
+		EXP:ARG:Ｖ経験 += 1 + RAND:5
+ELSEIF NO:ARG == 3014 && ARG != MASTER
+	;妖怪兎の場合
+	LOCAL = RAND:6
+	SIF LOCAL > 0
+		EXP:ARG:Ｖ経験 += 1 + RAND:4
+ELSE
+	;その他の場合
+	LOCAL = RAND:4
+	SIF LOCAL > 0
+		EXP:ARG:Ｖ経験 += 1 + RAND:2
+ENDIF
+
+;-----------------------------------------------
+;Ａ経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_1, ARG
+;河童の場合は確率が違う
+LOCAL = (NO:ARG == 3024) ? RAND:12 # RAND:8
+SIF LOCAL > 3
+	EXP:ARG:Ａ経験 += RAND:4
+
+;-----------------------------------------------
+;絶頂経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_2, ARG
+IF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:4
+	SIF LOCAL > 0
+		EXP:ARG:絶頂経験 += 1 + RAND:10
+ELSE
+	;その他の場合
+	LOCAL = RAND:4
+	SIF LOCAL > 1
+		EXP:ARG:絶頂経験 += RAND:5
+ENDIF
+
+;-----------------------------------------------
+;自慰経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_3, ARG
+IF NO:ARG == 3020
+	;ここぁの場合
+	LOCAL = RAND:4
+	SIF LOCAL > 0
+		EXP:ARG:自慰経験 += RAND:7
+ELSE
+	;その他の場合
+	LOCAL = RAND:4
+	SIF LOCAL > 1
+		EXP:ARG:自慰経験 += RAND:4
+ENDIF
+
+;-----------------------------------------------
+;異常経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_4, ARG
+LOCAL = RAND:4
+SIF LOCAL == 0
+	EXP:ARG:異常経験 += RAND:2
+
+;-----------------------------------------------
+;キス経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_5, ARG
+LOCAL = RAND:6
+SIF LOCAL == 0
+	EXP:ARG:キス経験 += RAND:3
+
+;-----------------------------------------------
+;薬物経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_6, ARG
+LOCAL = RAND:8
+SIF LOCAL == 0
+	EXP:ARG:薬物経験 += RAND:2
+
+;-----------------------------------------------
+;射精経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_7, ARG
+;オトコかふたなりである必要あり、また絶頂経験も必要(ええと、自慰経験は要らないよねｗ)
+SIF EXP:ARG:絶頂経験 == 0 || (TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0)
+	RETURN 0
+LOCAL = RAND:12
+IF LOCAL == 0
+	LOCAL:1 = RAND:5 + 1
+	LOCAL:1 = LIMIT(LOCAL:1, 1,EXP:ARG:絶頂経験)
+	EXP:ARG:射精経験 += LOCAL:1
+ENDIF
+
+;-----------------------------------------------
+;精液経験の設定
+;-----------------------------------------------
+@RANDOM_CHARA_EXP_SET_8, ARG
+;Ａ経験かＶ経験もしくは射精経験（自分が発射する場合）2以上が必要である
+SIF EXP:ARG:Ｖ経験 == 0 && EXP:ARG:Ａ経験 == 0 && EXP:ARG:射精経験 < 2
+	RETURN 0
+LOCAL = RAND:12
+IF LOCAL == 0
+	LOCAL:1 = RAND:5 + 1
+	LOCAL:2 = MAX(EXP:ARG:Ｖ経験 , EXP:ARG:Ａ経験, EXP:ARG:射精経験)
+	LOCAL:1 = LIMIT(LOCAL:1, 1, LOCAL:2)
+	EXP:ARG:精液経験 += LOCAL:1
+ENDIF
+
+;-----------------------------------------------
+;キャラ製作の後処理をおこなう
+;-----------------------------------------------
+@RANDOM_CHARA_FINISH, ARG
+;オトコの場合はＶ系のものをリセット
+IF TALENT:ARG:オトコ
+	ABL:ARG:Ｖ感覚 = 0
+	EXP:ARG:Ｖ経験 = 0
+ENDIF
+;体力・気力を全快させる
+BASE:ARG:体力 = MAXBASE:ARG:0
+BASE:ARG:気力 = MAXBASE:ARG:1
+;黒妖精判定の解除
+CFLAG:ARG:0 = 0
+;主人が自分に従順というのも変なのでここで0にする処理を加える
+SIF ARG == MASTER
+	ABL:ARG:従順 = 0
+;特殊な素質があることによるフラグ設定
+;恋慕系素質
+REPEAT 4
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	SIF TALENT:ARG:(150+COUNT)
+		CFLAG:ARG:14 |= LOCAL
+REND
+;服従系素質
+REPEAT 3
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	SIF TALENT:ARG:(160+COUNT)
+		CFLAG:ARG:15 |= LOCAL
+REND
+;淫乱系素質
+REPEAT 11
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	SIF TALENT:ARG:(170+COUNT)
+		CFLAG:ARG:16 |= LOCAL
+REND
+;崩壊系素質（ただし、狂気に関してはフラグ設定しない＝有名キャラの処理を参考にした）
+SIF TALENT:ARG:幼児退行
+	CFLAG:ARG:17 |= 1
+SIF TALENT:ARG:精神崩壊
+	CFLAG:ARG:17 |= 4
+SIF TALENT:ARG:傀儡
+	CFLAG:ARG:17 |= 8
+SIF TALENT:ARG:壊造人格
+	CFLAG:ARG:17 |= 32
+
+;-----------------------------------------------
+;外見
+;-----------------------------------------------
+@RANDOM_CHARA_OTHER_SET, ARG
+SIF RAND:6 == 0
+	TALENT:ARG:眼鏡っ子 = 1
+IF RAND:8 == 0
+	SELECTCASE RAND:9
+		CASE 0 TO 3
+			TALENT:ARG:思い人あり = 1
+		CASE 4 TO 6
+			TALENT:ARG:彼氏あり = 1
+			CFLAG:ARG:好感度 -= 50
+			CFLAG:ARG:3668 -= 25
+			SIF TALENT:ARG:オトコ == 0 && EXP:ARG:フェラ経験 <= 0 && RAND:3 == 0
+				EXP:ARG:フェラ経験 += RAND:4
+			SIF EXP:ARG:キス経験 <= 0 && RAND:3 != 0
+				EXP:ARG:キス経験 += RAND:4
+		CASE 7 TO 8
+			TALENT:ARG:旦那あり = 1
+			CFLAG:ARG:好感度 -= 100
+			CFLAG:ARG:3668 -= 50
+			IF TALENT:ARG:オトコ
+				SIF EXP:ARG:射精経験 <= 0 && RAND:4 == 0 && RAND:2
+					EXP:ARG:射精経験 += MAX(RAND:5, 1)
+			ELSE
+				;出産経験
+				IF RAND:7 == 0
+					IF TALENT:ARG:卵生 || TALENT:ARG:産卵体質
+						SIF EXP:ARG:産卵経験 <= 0 && RAND:2
+							EXP:ARG:産卵経験 += RAND:2
+					ELSE
+						SIF EXP:ARG:出産経験 <= 0
+							EXP:ARG:出産経験 += RAND:2
+					ENDIF
+				ENDIF
+				;対応
+				IF EXP:ARG:産卵経験 > 0 || EXP:ARG:出産経験 > 0
+					TALENT:ARG:処女 = 0
+					SIF EXP:ARG:Ｖ経験 <= 0
+						EXP:ARG:Ｖ経験 += MAX(RAND:10, 1)
+					SIF EXP:ARG:精液経験 <= 0
+						EXP:ARG:精液経験 += MAX(RAND:5, 1)
+				ELSEIF RAND:4 == 0
+					TALENT:ARG:処女 = 0
+					SIF EXP:ARG:Ｖ経験 <= 0
+						EXP:ARG:Ｖ経験 += 1 + RAND:5
+					SIF EXP:ARG:精液経験 <= 0
+						EXP:ARG:精液経験 += MAX(RAND:5 - 1, 0)
+				ENDIF
+				SIF ABL:ARG:Ｖ感覚 <= 0 && EXP:ARG:Ｖ経験 > 0 && RAND:5
+					ABL:ARG:Ｖ感覚 += 1
+				;妊娠中
+				IF !TALENT:ARG:卵生 && !TALENT:ARG:産卵体質 && RAND:100 == 0
+					LOCAL = ASSI
+					ADDCHARA 2047
+					ASSI = CHARANUM - 1
+					TALENT:ARG:妊娠 = 1
+					;体力上限を減らす
+					MAXBASE:ARG:0 -= 500
+					BASE:ARG:体力 = MAXBASE:ARG:0
+					CSTR:ARG:8 = 
+					CSTR:ARG:9 = 
+					CSTR:ARG:10 = 
+					;出産系のフラグ設定
+					CFLAG:ARG:77 = MAX(DAY + FLAG:600 - RAND:10,DAY + 3)
+					LOCAL:1 = ASSI
+					CFLAG:ARG:78 = NO:(LOCAL:1)
+					CFLAG:ARG:3004 = CFLAG:(LOCAL:1):3109
+					LOCAL:2 = CFLAG:ARG:78 + 10000
+					;身体測定フラグを寝せる(次回身体測定を行うため)
+					CFLAG:ARG:508 = 0
+					;父親の名前を母親で仮保存
+					CSTR:ARG:8 = %CALLNAME:(LOCAL:1)%
+					;母親の名前を母親で仮保存
+					CSTR:ARG:9 = %CALLNAME:ARG%
+					;貞操観念
+					IF TALENT:ARG:淫魔 == 0
+						TALENT:ARG:貞操観念 = 1
+						TALENT:ARG:貞操無頓着 = 0
+					ENDIF
+					;妊婦の胸の大きさをフラグに代入する処理
+					CFLAG:ARG:3006 = 0
+					;絶壁
+					IF TALENT:ARG:絶壁 
+						CFLAG:ARG:3006 = 1
+					;貧乳
+					ELSEIF TALENT:ARG:貧乳
+						CFLAG:ARG:3006 = 2
+					;巨乳
+					ELSEIF TALENT:ARG:巨乳
+						CFLAG:ARG:3006 = 4
+					;爆乳
+					ELSEIF TALENT:ARG:爆乳
+						CFLAG:ARG:3006 = 5
+					;普通
+					ELSE
+						CFLAG:ARG:3006 = 3
+					ENDIF
+					;乳がワンランクパワーアップする
+					;絶→貧　貧→普　普→巨　巨・爆→そのまま
+					IF TALENT:ARG:巨乳 == 0 && TALENT:ARG:爆乳 == 0
+						IF TALENT:ARG:絶壁 == 1
+							TALENT:ARG:絶壁 = 0
+							TALENT:ARG:貧乳 = 1
+						ELSEIF TALENT:ARG:貧乳 == 1
+							TALENT:ARG:貧乳 = 0
+						ELSE
+							TALENT:ARG:巨乳 = 1
+						ENDIF
+					ENDIF
+					;妊娠（SPバッド）フラグ
+					CFLAG:ARG:76 = 3
+					;母乳出るようになる
+					IF TALENT:ARG:母乳体質 == 0
+						TALENT:ARG:母乳体質 = 1
+						CALL CALC_GAUGE3_SLAVE, ARG, 1
+					ELSE
+						;すでに母乳体質の場合はそのフラグを持っておく
+						MARK:ARG:89 = 1
+					ENDIF
+					ASSI = LOCAL
+					DELCHARA CHARANUM - 1
+				ENDIF
+			ENDIF
+	ENDSELECT
+	CFLAG:ARG:好感度 = MAX(CFLAG:ARG:好感度 - 100, -999999)
+	CFLAG:ARG:3668 = MAX(CFLAG:ARG:3668 - 100, -1000)
+ENDIF
+
+@RANDOM_CHARA_HAIR_SET, ARG
+CALL SELECT_HAIR_DISPLAY, ARG
+
+;IF TALENT:ARG:人形 && RAND:5 != 0
+;	TALENT:ARG:金髪 = 1
+;ELSE
+;	TALENT:ARG:(560 + RAND:13) = 1
+;ENDIF
+;IF TALENT:ARG:オトコ && RAND:3 != 0
+;	TALENT:ARG:ショートカット = 1
+;ELSEIF !TALENT:ARG:オトコ && RAND:15 == 0
+;	TALENT:ARG:長髪 = 1
+;ELSE
+;	TALENT:ARG:(580 + RAND:22) = 1
+;ENDIF

@@ -1,0 +1,43 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝の新妻プレイ
+;TFLAG:99で絶頂経験増加量を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE145
+SELECTCASE RAND:3
+	CASE 2 && TFLAG:99 >= 3
+		PRINTFORML ――キッチンを訪れると、裸エプロン姿の夢美が朝食を作っていた
+		PRINTFORMW 料理のいい匂いと扇情的な姿に、空腹と理性は瞬く間に降参してしまった
+		PRINTFORML 
+		PRINTFORML 「ぁン！　おはよう%CALLNAME:MASTER%って、ちょっと、ゥンっ！」
+		PRINTFORML 「駄目だって！　ごはん食べてから、ね？　んくぅ！」
+		CALL K2008_ORGASM("並")
+		PRINTFORML 
+		PRINTFORMW 「はぁーふぅ、んもう、朝からこんなじゃ夜まで持たないわよ」
+		PRINTFORML 「朝食前に汗かいちゃったじゃない、はぁ～涼しい」
+		PRINTFORML 
+		PRINTFORML エプロンの裾をパタパタ扇いで体の熱を冷ましている
+		PRINTFORMW 愛液がポタポタと滴り、湿った秘部が見え隠れするたびに欲求が高まっていく……
+	CASE 1 * K2008F_CASEIF( K2008F_CAN_EJAC(MASTER) )
+		PRINTFORML 「おはよう、%CALLNAME:MASTER%」
+		PRINTFORMW 「もうすぐ朝ごはんできるから……　『ソッチ』は今日も元気で何よりだわ」
+		PRINTFORML 
+		PRINTFORML 裸体にエプロンしか纏っていない恥ずかしい恰好をした夢美が、さらに恥ずかしそうに目線を逸らす
+		PRINTFORMW ちらちらと気になっている視線の先は、どうやらあなたの剛直のようだ
+		PRINTFORML
+		PRINTFORML 「えーと、その、朝立ち……　ってやつよね」
+		PRINTFORMW 「ン、じゃあ朝ごはん前に%K2008FS_CALL_MY_V()%を召し上がってね」
+		CALL K2008_COM("快楽")
+		CALL K2008_ORGASM("並")
+	CASEELSE
+		PRINTFORML ――キッチンを訪れると、朝食を用意する夢美の姿が目に入った
+		PRINTFORMW なぜかエプロン以外は下着すら身に着けていない
+		PRINTFORML 
+		PRINTFORML 「あら、もう少ししたら起こしに行こうと思ってたんだけど」
+		PRINTFORMW 「すぐできるから待ってて頂戴ね」
+		PRINTFORML 
+		PRINTFORML アレやコレが丸見えな姿に感化されてしまい、夢美に襲い掛かった
+		PRINTFORML 
+		CALL K2008_COM("快楽")
+		CALL K2008_ORGASM("並")
+ENDSELECT

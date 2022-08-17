@@ -1,0 +1,172 @@
+﻿;=============================================================================
+;操りの糸
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE412
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:412 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者がＥＸ化していないアリスでないとダメ
+SIF NO:PLAYER != 1014 || CFLAG:PLAYER:0
+	RETURN 0
+;調教者の技巧が対象の反発刻印を上回っていないとできない(解除する場合はこの条件を無視できる)
+SIF ABL:PLAYER:技巧 <= MARK:反発刻印 && TEQUIP:精神制御系 == 0
+	RETURN 0
+;緊縛中はダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 412) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM412
+PRINTL 操りの糸
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 412
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 操りの糸
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 15
+DOWNBASE:1 += 75
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:屈従 = 50
+	SOURCE:トラウマ = 2500
+	SOURCE:反感追加 = 4000
+ELSEIF ABL:従順 == 1
+	SOURCE:屈従 = 180
+	SOURCE:トラウマ = 1800
+	SOURCE:反感追加 = 2500
+ELSEIF ABL:従順 == 2
+	SOURCE:屈従 = 360
+	SOURCE:トラウマ = 1000
+	SOURCE:反感追加 = 1700
+ELSEIF ABL:従順 == 3
+	SOURCE:屈従 = 800
+	SOURCE:トラウマ = 500
+	SOURCE:反感追加 = 800
+ELSEIF ABL:従順 == 4
+	SOURCE:屈従 = 1700
+	SOURCE:トラウマ = 50
+	SOURCE:反感追加 = 100
+ELSE
+	SOURCE:屈従 = 2500
+	SOURCE:トラウマ = 0
+	SOURCE:反感追加 = 50
+ENDIF
+
+;プレイヤーのABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	SOURCE:支配 = 200
+ELSEIF ABL:PLAYER:技巧 == 1
+	SOURCE:支配 = 500
+ELSEIF ABL:PLAYER:技巧 == 2
+	SOURCE:支配 = 1000
+ELSEIF ABL:PLAYER:技巧 == 3
+	SOURCE:支配 = 1800
+ELSEIF ABL:PLAYER:技巧 == 4
+	SOURCE:支配 = 2500
+ELSE
+	SOURCE:支配 = 3600
+ENDIF
+
+;服従
+IF TALENT:服従
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:支配 , 1.20
+	TIMES SOURCE:トラウマ , 0.80
+	TIMES SOURCE:反感追加 , 0.20
+ENDIF
+
+;MARK:恐怖刻印をみる
+IF MARK:恐怖刻印 == 1
+	TIMES SOURCE:トラウマ , 1.20
+ELSEIF MARK:恐怖刻印 == 2
+	TIMES SOURCE:トラウマ , 1.50
+ELSEIF MARK:恐怖刻印 >= 3
+	TIMES SOURCE:トラウマ , 2.00
+ENDIF
+
+;MARK:反発刻印をみる
+IF MARK:反発刻印 == 1
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF MARK:反発刻印 == 2
+	TIMES SOURCE:反感追加 , 4.50
+ELSEIF MARK:反発刻印 >= 3
+	TIMES SOURCE:反感追加 , 7.50
+ENDIF
+
+IF TEQUIP:精神制御系
+	TEQUIP:精神制御系 = 0
+ELSE
+	TEQUIP:精神制御系 = 1
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;操りの糸発動中
+;-------------------------------------------------
+@EQUIP_COM412
+PRINTL ＜操りの糸発動中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 10
+
+SOURCE:逸脱 += 1000
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_412
+IF TEQUIP:精神制御系
+	PRINTFORML %CALLNAME:PLAYER%は魔力を遮断し、%CALLNAME:TARGET%に絡まれていた糸を消し去った
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		;恐怖刻印持ちか服従なし
+		IF MARK:恐怖刻印 || TALENT:服従 == 0
+			PRINTFORML %CALLNAME:TARGET%は自分の身体が自由になったことに少し安堵しているようだ…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は自分の身体が自由になったことをどうでもいいように思っているようだ…
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の指先から目に見えない魔力の糸が伸び、%CALLNAME:TARGET%の躰に纏わりついた
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		;恐怖刻印持ちか服従なし
+		IF MARK:恐怖刻印 || TALENT:服従 == 0
+			PRINTFORML %CALLNAME:TARGET%は自分の身体が%CALLNAME:PLAYER%によって操られていることに気付いたのかどことなく顔が青白い…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は自分の身体が%CALLNAME:PLAYER%によって操られていることに気付いたらしいが気にしていないようだ…
+		ENDIF
+	ENDIF
+ENDIF

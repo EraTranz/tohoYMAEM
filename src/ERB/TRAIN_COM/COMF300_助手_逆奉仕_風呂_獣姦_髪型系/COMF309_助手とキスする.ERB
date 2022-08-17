@@ -1,0 +1,398 @@
+﻿;=============================================================================
+;助手とキスする
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE309
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:309 > 0
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;助手の口が汚れており、調教者が[汚れ無視]でない場合(愛液、母乳の汚れは条件対象外)
+IF COM_ABLE_STAIN(ASSI, 0, 17) == 0 && TALENT:PLAYER:汚れ無視 == 0
+	;調教者が助手で[汚臭敏感]を持ち、《従順》4未満の場合はダメ
+	SIF ASSIPLAY && TALENT:PLAYER:汚臭敏感 && ABL:PLAYER:従順 < 4
+		RETURN 0
+ENDIF
+;主人が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:MASTER:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;助手が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:ASSI:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;助手か主人が[猫舌]だと二人の技巧が足して7必要
+IF TALENT:MASTER:猫舌 || TALENT:ASSI:猫舌
+	SIF ABL:MASTER:技巧 + ABL:ASSI:技巧 < 7
+		RETURN 0
+ENDIF
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;眼隠しと耳栓両方つけていた場合は意味がないので実行できない
+SIF TEQUIP:目装着器具 && TEQUIP:耳装着器具
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 309) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM309
+PRINTL 助手とキスする
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 309
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 助手とキスする
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック（ふたなり・オトコの場合）
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:助手の技巧をみる
+IF ABL:ASSI:技巧 == 0
+	LOCAL = 50
+ELSEIF ABL:ASSI:技巧 == 1
+	LOCAL = 200
+ELSEIF ABL:ASSI:技巧 == 2
+	LOCAL = 300
+ELSEIF ABL:ASSI:技巧 == 3
+	LOCAL = 400
+ELSEIF ABL:ASSI:技巧 == 4
+	LOCAL = 500
+ELSE
+	LOCAL = 600
+ENDIF
+
+;助手の従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(ASSI, LOCAL)
+;助手の奉仕精神をみる
+LOCAL = EJACULATIONCHECK_ABL_13_1(ASSI, LOCAL)
+
+;助手の舌使いをみる
+SIF TALENT:ASSI:舌使い
+	TIMES LOCAL , 2.00
+;助手の猫舌をみる
+SIF TALENT:ASSI:猫舌
+	TIMES LOCAL , 0.70
+
+;調教者のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+SIF EXIST_PENIS(PLAYER)
+	BASE:PLAYER:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:1 += 10
+DOWNBASE:ASSI:1 += 20
+
+SOURCE:屈従 = 60
+SOURCE:逸脱 = 15
+SOURCE:性行動 = 20
+SOURCE:欲情追加 = 10
+SOURCE:情愛 = 150
+
+;ABL:欲望をみる
+IF ABL:欲望 == 0
+	SOURCE:液体追加 = 10
+	SOURCE:屈従 += 0
+ELSEIF ABL:欲望 == 1
+	SOURCE:液体追加 = 20
+	SOURCE:屈従 += 60
+ELSEIF ABL:欲望 == 2
+	SOURCE:液体追加 = 35
+	SOURCE:屈従 += 140
+ELSEIF ABL:欲望 == 3
+	SOURCE:液体追加 = 60
+	SOURCE:屈従 += 220
+ELSEIF ABL:欲望 == 4
+	SOURCE:液体追加 = 85
+	SOURCE:屈従 += 300
+ELSE
+	SOURCE:液体追加 = 120
+	SOURCE:屈従 += 380
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES SOURCE:情愛 , 0.10
+	TIMES SOURCE:液体追加 , 0.50
+ELSEIF ABL:奉仕精神 == 1
+	TIMES SOURCE:情愛 , 0.40
+	TIMES SOURCE:液体追加 , 0.80
+ELSEIF ABL:奉仕精神 == 2
+	TIMES SOURCE:情愛 , 0.70
+	TIMES SOURCE:液体追加 , 1.00
+ELSEIF ABL:奉仕精神 == 3
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:液体追加 , 1.50
+ELSEIF ABL:奉仕精神 == 4
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:液体追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:液体追加 , 2.50
+ENDIF
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+IF TFLAG:91
+	;ABL:精液中毒をみる
+	IF ABL:精液中毒 == 0
+		TIMES SOURCE:屈従 , 2.00
+		SOURCE:中毒充足 = 0
+	ELSEIF ABL:精液中毒 == 1
+		TIMES SOURCE:屈従 , 1.60
+		SOURCE:中毒充足 = 100
+	ELSEIF ABL:精液中毒 == 2
+		TIMES SOURCE:屈従 , 1.00
+		SOURCE:中毒充足 = 300
+	ELSEIF ABL:精液中毒 == 3
+		TIMES SOURCE:屈従 , 0.70
+		SOURCE:中毒充足 = 700
+	ELSEIF ABL:精液中毒 == 4
+		TIMES SOURCE:屈従 , 0.40
+		SOURCE:中毒充足 = 1500
+	ELSE
+		TIMES SOURCE:屈従 , 0.10
+		SOURCE:中毒充足 = 6000
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = PLAYER
+	;射精された人物を設定
+	TFLAG:94 = ASSI
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_309
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;助手の口⇔主人の口の汚れが移動
+STAIN:ASSI:口 |= STAIN:MASTER:口
+STAIN:MASTER:口 |= STAIN:ASSI:口
+
+;[傀儡]と[精神崩壊]と[壊造人格]を持っておらず、[親愛]か[恋慕][妄信]持ちだと助手に愛情経験が加算
+SIF ((TALENT:ASSI:恋慕 && TALENT:ASSI:妄信) || TALENT:ASSI:親愛) && TALENT:ASSI:精神崩壊 == 0 && TALENT:ASSI:傀儡 == 0 && TALENT:ASSI:壊造人格 == 0
+	TCVAR:ASSI:愛情経験 += 1
+
+TCVAR:ASSI:キス経験 += 1
+TCVAR:MASTER:キス経験 += 1
+CFLAG:ASSI:主人と調教キス数 += 1
+
+IF TALENT:ASSI:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:ASSI:オトコ && TALENT:MASTER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+TCVAR:ASSI:主人調教経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_309
+PRINTFORML %CALLNAME:ASSI%に自分とキスするように命令してみたが拒否された。
+PRINTFORML %CALLNAME:ASSI%にはまだまだ躾が足りないようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_309
+PRINTFORM %CALLNAME:TARGET%の目の前で、%CALLNAME:MASTER%は
+;猫舌(自分)
+IF TALENT:PLAYER:猫舌
+	PRINTFORM 痛みを与えないよう注意し、%CALLNAME:ASSI%の口に舌を入れ
+	IF ABL:ASSI:従順 >= 2 && ((EXP:ASSI:レズ経験 >= 1000 && TALENT:PLAYER:オトコ == 0 && TALENT:ASSI:オトコ == 0) || (EXP:ASSI:ＢＬ経験 >= 1000 && TALENT:PLAYER:オトコ && TALENT:ASSI:オトコ))
+		PRINTFORML 、舌先をつつき合いながら唾液を交換した…
+	ELSEIF ABL:ASSI:従順 >= 2
+		PRINTFORML ると、%CALLNAME:ASSI%は舌の棘を舌先でつついてきた…
+	ELSE
+		PRINTL た…
+	ENDIF
+;猫舌(助手)
+ELSEIF TALENT:ASSI:猫舌
+	PRINTFORM %CALLNAME:ASSI%の口に舌を入れ、ざらつく舌を舌でそっと押
+	IF ABL:ASSI:従順 >= 2 && ((EXP:ASSI:レズ経験 >= 1000 && TALENT:PLAYER:オトコ == 0 && TALENT:ASSI:オトコ == 0) || (EXP:ASSI:ＢＬ経験 >= 1000 && TALENT:PLAYER:オトコ && TALENT:ASSI:オトコ))
+		PRINTFORML し、優しく舐めながら唾液を交換した…
+	ELSEIF ABL:ASSI:従順 >= 2
+		PRINTFORML すと、%CALLNAME:ASSI%は傷付けないよう舌の力を抜いた…
+	ELSE
+		PRINTL してやった…
+	ENDIF
+;ノーマル
+ELSE
+	PRINTFORM %CALLNAME:ASSI%の口腔を隅々まで舐め回
+	IF ABL:ASSI:従順 >= 2 && ((EXP:ASSI:レズ経験 >= 1000 && TALENT:PLAYER:オトコ == 0 && TALENT:ASSI:オトコ == 0) || (EXP:ASSI:ＢＬ経験 >= 1000 && TALENT:PLAYER:オトコ && TALENT:ASSI:オトコ))
+		PRINTFORML し、ねっとりと舌を絡めあいながら唾液を交換した…
+	ELSEIF ABL:ASSI:従順 >= 2
+		PRINTFORML すと、%CALLNAME:ASSI%も積極的に舌を絡めてきた…
+	ELSE
+		PRINTL した…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_309, ARG
+LOCAL:99 = ARG
+;ABL:助手の欲望
+IF ABL:ASSI:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:ASSI:欲望
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手の%ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:助手の奉仕精神
+IF ABL:ASSI:奉仕精神
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:ASSI:奉仕精神
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% 助手の%ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+;助手の快楽刻印
+IF MARK:ASSI:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:ASSI:快楽刻印
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% 助手の%MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;※助手パラ関連の宿題
+;PALAM:助手の欲情
+;GETPALAMLV PALAM:ASSI:欲情, 5
+;LOCAL:2 = RESULT
+;IF LOCAL:2
+;	SIF LOCAL:99
+;		RESULTS = %RESULTS% + 
+;	LOCAL:99 = LOCAL:2
+;	TFLAG:240 += LOCAL:99
+;	RESULTS = %RESULTS% 助手の%PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+;ENDIF
+
+;助手が恥じらい
+IF TALENT:ASSI:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:35%({LOCAL:99})
+ENDIF
+;助手が汚臭鈍感
+IF TALENT:ASSI:汚臭鈍感
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 1
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:61%({LOCAL:99})
+;助手が汚臭敏感
+ELSEIF TALENT:ASSI:汚臭敏感
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:62%({LOCAL:99})
+ENDIF
+;助手が献身的
+IF TALENT:ASSI:献身的
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 6
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:63%({LOCAL:99})
+ENDIF
+;助手が快感の否定
+IF TALENT:ASSI:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:71%({LOCAL:99})
+ENDIF
+;助手が恋慕
+IF TALENT:ASSI:恋慕
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:150%({LOCAL:99})
+ENDIF
+;助手がキス魔
+IF TALENT:ASSI:キス魔
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 10
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:176%({LOCAL:99})
+ENDIF
+
+;調教者の口の汚れ(助手の修整なので、対象を退避して計算したあとに戻す)
+LOCAL:98 = TARGET
+TARGET = ASSI
+TFLAG:242 = COMORDER_STAIN_CALC(0, 0)
+TARGET = LOCAL:98
+;キスでは汚れがそれほど影響しない
+TFLAG:242 /= 2
+
+;汚れあり
+IF TFLAG:242
+	RESULTS = %RESULTS% - 
+	TFLAG:240 -= TFLAG:242
+	RESULTS = %RESULTS% 汚れあり
+	;汚臭鈍感
+	IF TALENT:ASSI:汚臭鈍感
+		RESULTS = %RESULTS%、%CALLNAME:ASSI%が%TALENTNAME:61%
+	ELSEIF TALENT:ASSI:汚臭敏感
+		RESULTS = %RESULTS%、%CALLNAME:ASSI%が%TALENTNAME:62%
+	ENDIF
+	RESULTS = %RESULTS%({TFLAG:242})
+	LOCAL:99 = 1
+ENDIF
+
+TFLAG:241 = 15
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_309
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 15
+;射精箇所選択の可・不可
+TFLAG:704 = 0

@@ -1,0 +1,119 @@
+﻿;=============================================================================
+;ローション練成
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE490
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:490 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が[野菜の錬金術師]じゃないとダメ
+SIF TALENT:PLAYER:野菜の錬金術師 == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF FLAG:574 == 0
+	RETURN 0
+;潤滑が20000以上の時は使えない
+SIF PALAM:潤滑 > 20000
+	RETURN 0
+;シャワー中、○○風呂入浴中はダメ
+SIF TEQUIP:シャワープレイ || TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 490) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM490
+PRINTL 消費した野菜の数だけ、潤滑を増やすことができます
+PRINTFORML 野菜をいくつ消費しますか？（1-{FLAG:574}）
+SIF FLAG:574 > 1000
+	PRINTLC [1000]1000消費
+SIF FLAG:574 > 5000
+	PRINTLC [5000]5000消費
+SIF FLAG:574 > 10000
+	PRINTLC [10000]10000消費
+SIF FLAG:574 > 50000
+	PRINTLC [50000]50000消費
+PRINTFORMLC [{FLAG:574}]{FLAG:574}消費
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT <= 0 || RESULT > FLAG:574
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSE
+	LOCAL = RESULT
+	FLAG:574 = MAX(FLAG:574 - LOCAL, 0)
+ENDIF
+PRINTL ローション練成
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 490
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ローション練成
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 0
+
+SOURCE:露出 = 300
+SOURCE:液体追加 = LOCAL
+
+LOCAL:1 = 0
+;幽香、深疫、ドリアードは効果アップ
+IF GROUPMATCH(NO:TARGET, 1034, 4010, 5002)
+	SOURCE:情愛 = 500
+	TIMES SOURCE:露出 , 1.50
+	TIMES SOURCE:液体追加 , 1.25
+;既に塗られている場合は効果減衰
+ELSEIF TEQUIP:ローション
+	TIMES SOURCE:露出 , 0.60
+	TIMES SOURCE:液体追加 , 0.75
+	;陥落してない奴隷は既に効果あるのに塗られると反感をおぼえる
+	SIF TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+		LOCAL:1 = 100
+;既に潤滑が5000以上の時も効果減衰
+ELSEIF PALAM:潤滑 > 20000
+	TIMES SOURCE:液体追加 , 0.75
+ENDIF
+
+;調教者の手に汚れが付いている
+SIF STAIN:PLAYER:手
+	LOCAL:1 += 100
+;反発刻印持ち奴隷は反感をおぼえる
+LOCAL:1 += 50 * MARK:反発刻印
+
+SOURCE:反感追加 = LOCAL:1
+
+TEQUIP:ローション = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_490
+PRINTFORML %CALLNAME:PLAYER%は野菜からローションを練成し、\@(TEQUIP:ローション) ? 既にぬるぬるな # \@%CALLNAME:TARGET%の身体にぬりたくった…

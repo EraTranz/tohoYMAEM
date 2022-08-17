@@ -1,0 +1,143 @@
+﻿;=============================================================================
+;ビデオ鑑賞
+;=============================================================================
+;口上で使う場合はTEQUIP:野外プレイ = 1(ビデオ鑑賞中)を条件にしてください
+;TFLAG:123　;TFLAG:123は上映の部分、2なら撮影2回目
+;TFLAG:119に鑑賞するビデオの撮影回数
+;とすることで上映中のビデオの内容を口上に反映させられます
+;録画ビデオを持っていない場合とビデオ撮影中や鑑賞中には実行できない
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE101
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:101 > 0
+	RETURN 0
+;撮影コマンド拡張の設定が有効でないとダメ
+SIF (FLAG:15 & 128) == 0
+	RETURN 0
+;録画ビデオを持っていないとだめ
+SIF FLAG:62 != 1
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;ビデオ撮影中はだめ
+SIF TEQUIP:ビデオ撮影
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 101) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM101
+PRINTL ビデオ鑑賞
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 101
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ビデオ鑑賞
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:ビデオ鑑賞
+;テープが終わったのでビデオ鑑賞終了
+;テープは終了時に破棄
+	TEQUIP:ビデオ鑑賞 = 0
+	FLAG:62 = 0
+	TFLAG:119 = 0
+	PRINTL ★★★ビデオ鑑賞を終了します★★★
+ELSE
+;ビデオ鑑賞開始
+	TEQUIP:ビデオ鑑賞 = 1
+	TFLAG:123 = 0
+	PRINTL ★★★ビデオ鑑賞を開始します★★★
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;ビデオ鑑賞中
+;-------------------------------------------------
+@EQUIP_COM101
+;カウントは撮影回数（１～１０）とします
+REPEAT 10
+	LOCAL = COUNT+51
+	SIF FLAG:LOCAL != -1
+		TFLAG:119 = COUNT + 1
+REND
+
+;初回はカウントに入れない
+IF TFLAG:123 == 0
+	TFLAG:123 += 1
+;それ以外は映っているコマンドを表示する
+ELSEIF TFLAG:123 > 0 && TFLAG:123 <= TFLAG:119
+	LOCAL = TFLAG:123 + 50
+	PRINTFORML ＜ビデオ鑑賞中{TFLAG:123}/{TFLAG:119}＞
+	PRINTFORML ビデオの内容：[%VIDEO_COMF(FLAG:LOCAL)%]
+	PRINTL 
+	TFLAG:123 += 1
+
+	;パラメータ変化 (バランスを考えるのが難しいので放置)
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 50
+	;ABL:欲望をみる（露出のみわずかに上昇）
+	IF ABL:欲望 == 0
+		SOURCE:露出 += 10
+	ELSEIF ABL:欲望 == 1
+		SOURCE:露出 += 30
+	ELSEIF ABL:欲望 == 2
+		SOURCE:露出 += 50
+	ELSEIF ABL:欲望 == 3
+		SOURCE:露出 += 70
+	ELSEIF ABL:欲望 == 4
+		SOURCE:露出 += 100
+	ELSE
+		SOURCE:露出 += 150
+	ENDIF
+ENDIF
+
+;放映時間がなくなると強制的にEQUIPフラグを外す
+IF TFLAG:123 <= 0 || TFLAG:123 > TFLAG:119
+	TEQUIP:ビデオ鑑賞 = 0
+	FLAG:62 = 0
+	TFLAG:123 = 0
+	TFLAG:119 = 0
+	PRINTL ＜テープの残量がなくなりました。ビデオ鑑賞を終了します＞
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:露出癖 >= 3
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_101
+IF TEQUIP:ビデオ鑑賞
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%はビデオを見終わった
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%はビデオを再生し、%CALLNAME:TARGET%に見せた
+ENDIF

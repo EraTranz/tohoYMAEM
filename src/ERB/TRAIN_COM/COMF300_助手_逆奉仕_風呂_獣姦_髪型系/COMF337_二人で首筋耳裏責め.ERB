@@ -1,0 +1,231 @@
+﻿;=============================================================================
+;二人で首筋耳裏責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE337
+
+RETURN (EXCOM_ABLE337() == 1) ? 1 # 0
+
+;………………………………………………
+;補助判定
+;………………………………………………
+@EXCOM_ABLE337
+#FUNCTION
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:337 > 0
+	RETURNF 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURNF 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURNF 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURNF 0
+ENDIF
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURNF 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 337) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM337
+PRINTL 二人で首筋耳裏責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 337
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 二人で首筋耳裏責め
+SELECTCOM = 337
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:1 += 40
+
+;快Ｃ
+SOURCE:快Ｃ = 0
+;快Ｖ
+SOURCE:快Ｖ = 0
+;情愛
+SOURCE:情愛 = 100
+;性行動
+SOURCE:性行動 = 50
+;痛み
+SOURCE:痛み = 0
+;接触
+SOURCE:接触 = 200
+;液体追加
+SOURCE:液体追加 = 50
+;欲情追加
+SOURCE:欲情追加 = 80
+;逸脱
+SOURCE:逸脱 = 0
+;反感追加
+SOURCE:反感追加 = 0
+;恭順追加
+SOURCE:恭順追加 = 50
+;快Ｂ
+SOURCE:快Ｂ = 0
+
+;ダブル
+DOWNBASE:1 += 40
+TIMES SOURCE:情愛 , 0.80
+TIMES SOURCE:性行動 , 3.00
+TIMES SOURCE:接触 , 1.50
+TIMES SOURCE:液体追加 , 2.00
+TIMES SOURCE:欲情追加 , 2.00
+SOURCE:逸脱 += 100
+TIMES SOURCE:恭順追加 , 0.80
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:液体追加 , 1.00
+	TIMES SOURCE:欲情追加 , 1.00
+	TIMES SOURCE:恭順追加 , 1.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:液体追加 , 1.40
+	TIMES SOURCE:欲情追加 , 1.40
+	TIMES SOURCE:恭順追加 , 1.10
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:液体追加 , 2.20
+	TIMES SOURCE:欲情追加 , 2.20
+	TIMES SOURCE:恭順追加 , 1.30
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:情愛 , 2.20
+	TIMES SOURCE:液体追加 , 3.40
+	TIMES SOURCE:欲情追加 , 3.40
+	TIMES SOURCE:恭順追加 , 1.60
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:情愛 , 3.00
+	TIMES SOURCE:液体追加 , 5.00
+	TIMES SOURCE:欲情追加 , 5.00
+	TIMES SOURCE:恭順追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 4.00
+	TIMES SOURCE:液体追加 , 7.00
+	TIMES SOURCE:欲情追加 , 7.00
+	TIMES SOURCE:恭順追加 , 2.50
+ENDIF
+
+;ABL:欲望をみる
+IF ABL:欲望 == 0
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:液体追加 , 1.00
+	TIMES SOURCE:欲情追加 , 1.00
+ELSEIF ABL:欲望 == 1
+	TIMES SOURCE:情愛 , 1.10
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:液体追加 , 1.10
+	TIMES SOURCE:欲情追加 , 1.10
+ELSEIF ABL:欲望 == 2
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:性行動 , 1.60
+	TIMES SOURCE:液体追加 , 1.30
+	TIMES SOURCE:欲情追加 , 1.30
+ELSEIF ABL:欲望 == 3
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:性行動 , 2.20
+	TIMES SOURCE:液体追加 , 1.60
+	TIMES SOURCE:欲情追加 , 1.60
+ELSEIF ABL:欲望 == 4
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:性行動 , 3.00
+	TIMES SOURCE:液体追加 , 2.00
+	TIMES SOURCE:欲情追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:性行動 , 4.00
+	TIMES SOURCE:液体追加 , 2.50
+	TIMES SOURCE:欲情追加 , 2.50
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 >= 3
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:恭順追加 , 1.50
+ENDIF
+
+;TALENT:淫乱をみる
+IF TALENT:淫乳
+	TIMES SOURCE:液体追加 , 1.50
+	TIMES SOURCE:欲情追加 , 1.20
+ENDIF
+
+;主人および助手のTALENT:舌使いをみる
+IF TALENT:MASTER:舌使い
+	TIMES SOURCE:液体追加 , 1.15
+	TIMES SOURCE:欲情追加 , 1.40
+ENDIF
+IF TALENT:ASSI:舌使い
+	TIMES SOURCE:液体追加 , 1.15
+	TIMES SOURCE:欲情追加 , 1.40
+ENDIF
+
+;媚薬による欲情ボーナス
+SIF TEQUIP:媚薬
+	TIMES SOURCE:欲情追加 , 1.50
+
+;反発刻印によるペナルティ
+IF MARK:反発刻印 >= 2
+	TIMES SOURCE:情愛 , 0.50
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:反感追加 , 2.00
+	TIMES SOURCE:恭順追加 , 0.20
+ENDIF
+
+;主人の口⇔助手の口の汚れが移動
+STAIN:PLAYER:口 |= STAIN:ASSI:口
+STAIN:ASSI:口 |= STAIN:PLAYER:口
+
+LOCAL:3 = 0
+LOCAL:4 = 0
+;まずは主人
+IF TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	LOCAL:3 += 3
+ELSEIF TALENT:オトコ && TALENT:MASTER:オトコ
+	LOCAL:4 += 3
+ENDIF
+;次は助手
+IF TALENT:オトコ == 0 && TALENT:ASSI:オトコ == 0
+	LOCAL:3 += 3
+ELSEIF TALENT:オトコ && TALENT:ASSI:オトコ
+	LOCAL:4 += 3
+ENDIF
+
+;加算・表示
+SIF LOCAL:3
+	TCVAR:レズ経験 += LOCAL:3
+SIF LOCAL:4
+	TCVAR:ＢＬ経験 += LOCAL:4
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_337
+PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%は二人で向かい合うようにして%CALLNAME:TARGET%を抱き締め、
+PRINTL その肩や首がお互いの唾液でベチャベチャになるまで嘗め回し続けた…

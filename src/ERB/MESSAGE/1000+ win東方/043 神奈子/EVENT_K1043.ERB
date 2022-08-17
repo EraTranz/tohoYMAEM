@@ -1,0 +1,6183 @@
+﻿;-------------------------------------------------
+;YM版神奈子口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;
+;-------------------------------------------------
+;ケロたんや早苗さんが口上あるんだから、神奈子しゃまだってあっていいじゃない！！！
+;-------------------------------------------------
+;口上設定雛形
+;43とX2をキャラ番号に置換し、Y1を助手のキャラ番号に置換する。
+;ただし、キャラ番号が3桁未満のキャラの場合、43,Y1は1、X2は001のように変える必要がある
+;そしてコマンド内の適当な条件の下のPRINTFORMWの後ろに半角スペースを置いてセリフを追加してください。
+;テンプレートが更新された際には、新しいテンプレをベースにして、
+;該等する条件のPRINTFORMWの行をコピー＆ペーストしていくことをお勧めします。（手間はかかるが、エラーは起こりえない）
+;口上を追加しないコマンドには行頭に『;』をつけましょう。後で追加した際に初めての口上が出ないなどの弊害が起こります。
+;また、口上を追加したコマンドの『;』をきちんと外しましょう。これだと条件を満たしても口上がでません
+;条件の追加や変更は自由ですが、その際には随時テストをしていくとよいでしょう。（エラーの原因は、ほぼ確実に手を加えた部分にあるため）
+;最後にできればread meも読んで下さい
+
+;-------------------------------------------------
+;個人メモ　A = RAND:数字　で乱数処理ができる
+
+;--------------------------------------------------
+;口上ファイルの存在判定（X2をキャラ番号に置換）
+;--------------------------------------------------
+;口上の存在判定（YM版）
+@TRY_1043
+RETURN 1
+
+;--------------------------------------------------
+;エキストラモード構文　CFLAG:5020を使用(暫定)
+;はいを選ぶと【解放】を失い、代わりに【抵抗】【反抗的】【男嫌い】【一線越えない】素質を得て即落ちしにくくなります。(各マイナス素質は調教次第で克服可能)
+;-------------------------------------------------
+@KOJO_1043_EXTRA_INITIALIZATION
+IF CFLAG:5020 == 0
+	;対永琳相性上昇　※古事記の国譲りネタです。神奈子様をsenkaしてリョナって半殺しにした「タケミカヅチ」という天津神を選定したのが「オモヒカネ(えーりん先生の元ネタ)」
+	;挙句に父親の「オオクニヌシ」も殺されているので、神奈子様にとってえーりん先生は悪夢の様な存在なのです＾ｑ＾
+	SIF RELATION:29 < 150
+		RELATION:29 = 150
+	PRINTL 神奈子様「くっ…殺せ！」
+	PRINTL [0] チンコに絶対負けなそう(素質変化、難易度上昇)
+	PRINTL [1] チョロい……(素質変化無し)
+	$INPUT_MAKENAI_LOOP
+	INPUT
+	IF RESULT == 0
+		PRINTFORMW ―姫騎士・神奈子様モードで開始します―
+		TALENT:抵抗 = 1
+		TALENT:解放 = 0
+		TALENT:楽観的 = 0
+		TALENT:貞操無頓着 = 0
+		TALENT:男嫌い = 1
+		TALENT:反抗的 = 1
+		TALENT:一線越えない = 1
+		JUEL:否定 += 10000
+		MARK:反発刻印 = 1
+		ABL:欲望 = 0
+	ELSEIF RESULT == 1
+		PRINTFORMW ―通常モードで調教を開始します―
+	ELSE
+		GOTO INPUT_MAKENAI_LOOP
+	ENDIF
+	PRINTL 神奈子様って言ったらオンバシラだよね！ご立派だよね！
+	PRINTL [0] 黒光りする極太オンバシラ！（最初からふたなり、精通による異常経験回避）
+	PRINTL [1] サイズだけの桃色童貞オンバシラ！(最初からふたなり、精通による異常経験発生)
+	PRINTL [2] そんなのついてないよ！……(素質変化無し)
+	$INPUT_HUTANARI_LOOP
+	INPUT
+	IF RESULT == 0
+		PRINTFORMW 【ふたなり】【Ｃ敏感】を取得。
+		TALENT:Ｃ敏感 = 1
+		TALENT:ふたなり = 1
+		SIF EXP:射精経験 == 0
+			EXP:射精経験 = 30
+		BASE:15 = 1200
+		BASE:16 = 7
+	ELSEIF RESULT == 1
+		TALENT:Ｃ敏感 = 1
+		TALENT:ふたなり = 1
+		SIF EXP:射精経験 >= 0
+			EXP:射精経験 = 0
+		BASE:15 = 1200
+		BASE:16 = 7
+	ELSEIF RESULT == 2
+		PRINTFORMW ふたなり関係の素質変化無し
+	ELSE
+		GOTO INPUT_HUTANARI_LOOP
+	ENDIF
+	CFLAG:5020 = 1
+ENDIF
+
+;--------------------------------------------------
+;調教開始時のセリフ CFLAG 201～219を使用
+;-------------------------------------------------
+@KOJO_1043_SLAVE_MESSAGE_TRAIN_START
+;--------------------------------------------------
+;特定助手、主人時に特殊助手口上を呼び出す(Y1を特定助手、43を主人のキャラ番号に置換）
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;	CALL LES_EVENTTRAIN_K1043_MY1
+;	RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;	IF NO:ASSI == Y1
+;		CALL LES_EVENTTRAIN_K1043_MY1
+;		RETURN 0
+;	ENDIF
+;ENDIF
+;--------------------------------------------------
+;簡易助手口上の発動時に初調教時口上をスキップ（Y1を助手のキャラ番号にする）
+;複数人いる際には、SIF NO:ASSI == Y1 || NO:ASSI == Z1と追加していく
+;--------------------------------------------------
+;IF CFLAG:5021 == 0 && ASSI > 0
+;	SIF NO:ASSI == Y1
+;		CFLAG:5021 =1
+;ENDIF
+;-------------------------------------------------
+;初調教時 CFLAG:5001
+;-------------------------------------------------
+
+IF CFLAG:5001 == 0
+	DRAWLINE
+	WAIT
+	PRINTFORMW 「迂闊、怠慢……」
+	PRINTFORMW 「杯に一服盛られるとは、軍神が聞いて呆れる……」
+	PRINTFORMW 調教部屋に閉じ込められた神奈子は、自嘲気味に呟くと、眉間に幾重も皺を寄せた。
+	PRINTFORMW 「……鬼畜の巣窟か、ここは」
+	PRINTFORMW 部屋の隅々に並べられた、禍々しい形状の調教器具……
+	PRINTFORMW むせ返る程に染み付いた、血と汗と精液の臭い……
+	PRINTFORMW 自分がこれから何をされるのか、それは聞くまでも無い事だった。
+	PRINTFORMW 「早苗や諏訪子が無事だとイイが……」
+	PRINTFORMW 気を失う寸前まで、一緒にいたはずの二柱を案ずる神奈子。
+	PRINTFORMW こんな状況でも、神奈子の心は折れていない様だ。
+;諏訪子又は早苗を購入済み。
+	IF ITEM:早苗 == 1 || ITEM:諏訪子 == 1
+		WAIT
+		PRINTFORMW 『その子なら、すぐに会える』
+		PRINTFORMW 調教部屋にやってきた%CALLNAME:MASTER%は、神奈子の口にした覚えのある名を聞いて、サディスティックに口元を歪める。
+		PRINTFORMW そして彼女らが、自分の手によって調教され、どれ程無様に苦しみもがき、浅ましく泣き叫んだかを、事細かく神奈子に聞かせてやった。
+		PRINTFORMW 「―――!!」	
+		PRINTFORMW 「おのれ！外道がっ！！！」
+		PRINTFORMW 親しい者達らが辱めを受けた事実を知った神奈子は激昂し、殺気に満ちた神通力を%CALLNAME:MASTER%に放たんとした。
+		PRINTFORMW しかし……
+		WAIT
+		PRINTFORMW 「―――がはあ゛あ゛ッ？！」	
+		PRINTFORMW 調教部屋に張られていた特殊な結界は、神奈子の力に即座に反応し、その身を焼いた。
+		PRINTFORMW まるでイカズチのような閃光が幾度も神奈子を打ちのめし、痛々しくのたうつグラマラスな身体から煙が立ち昇る。
+		WAIT
+		PRINTFORMW 「ア……ァァ……ウゥ……」
+		PRINTFORMW 息も絶え絶え、死にかけた虫の様に痙攣する軍神の身体をベッドに引きずり、%CALLNAME:MASTER%は最初の調教メニューに取り掛かった。
+		PRINTFORMW 神奈子の【苦痛刻印】が1になった。
+		PRINTFORMW 苦痛の珠200取得
+		MARK:苦痛刻印 = 1
+		JUEL:苦痛 += 200
+		WAIT
+;諏訪子又は早苗を購入していない。
+	ELSE
+	WAIT
+		PRINTFORMW 『他人の心配をしている場合か？』
+		PRINTFORMW 調教部屋にやってきた%CALLNAME:MASTER%は、そう言ってサディスティックに口元を歪める。
+	WAIT
+		PRINTFORMW 「ゲスのやる事は、いつの時代も、どの世界でも同じだな」
+		PRINTFORMW 「辱めを受けるのは、これが初めてではない」
+		PRINTFORMW 「そう簡単に手篭めにできると思わない事だ」
+		PRINTFORMW 流石は軍神、面白い……。	
+		PRINTFORMW その方が“壊し甲斐がある”。
+		PRINTFORMW %CALLNAME:MASTER%は調教を前に、
+		PRINTFORMW 神奈子のグラマラスな身体が苦痛にのたうち
+		PRINTFORMW 反抗的な瞳が恐怖に曇り
+		PRINTFORMW 神々しい唇が屈服の言葉を口にする様を想像し
+		PRINTFORMW 堪らず、舌なめずりをした。
+	WAIT
+	ENDIF
+	CFLAG:5001 = 1
+	RETURN 1
+
+;-------------------------------------------------
+;調教開始時（一回のみ） CFLAG:5001
+;-------------------------------------------------
+
+;屈服刻印Lv1
+ELSEIF CFLAG:5001 < 2 && MARK:屈服刻印 == 1
+	DRAWLINE
+	PRINTFORMW 「前回は不覚を取ったけが……同じ手が通用するとは思わない事だ」
+	PRINTFORMW 神奈子から反抗的な視線が向けられる。まだまだ調教が足らないようだ。
+	CFLAG:5001 = 2
+	RETURN 1
+
+;屈服刻印Lv2
+ELSEIF CFLAG:5001 < 3 && MARK:屈服刻印 == 2
+	DRAWLINE
+	PRINTFORMW 「くそッ――おのれ……おのれぇッ！」
+	PRINTFORMW 神奈子の表情は屈辱に歪んでいる。いい兆候だ。
+	CFLAG:5001 = 3
+	RETURN 1
+
+;屈服刻印Lv3
+ELSEIF CFLAG:5001 < 4 && MARK:屈服刻印 == 3 && TALENT:恋慕 == 0
+	DRAWLINE
+		PRINTFORMW 「……諏訪子、早苗……すまない……私、もう駄目みたい……」
+		PRINTFORMW 「もう、逆らわないから……せめて、優しくして――」
+		PRINTFORMW 神奈子は自身の身体を両腕で抱えながら震えている。
+		PRINTFORMW 調教に屈し、心が折れてしまったようだ…… 
+		CFLAG:5001 = 4
+	RETURN 1
+
+;YM神奈子口上専用【淫堕】イベント　※素質変化を選択しなくてもイベント自体は発生します。
+;条件は　「ＣＡＶＢ感覚・マゾっ気４以上」　「反発・恐怖刻印３以上」　「緊縛・奉仕快楽経験100以上」　「欲情・屈服の珠50000以上」「苦痛の珠5000以上」「【弱味】【母乳体質】【おもらし癖】取得」
+ELSEIF CFLAG:5001 < 5 && MARK:反発刻印 >= 3 && MARK:恐怖刻印 >= 3 && ABL:Ｃ感覚 >= 4 && ABL:Ａ感覚 >= 4 && ABL:Ｖ感覚 >= 4 && ABL:Ｂ感覚 >= 4 && ABL:マゾっ気 >= 4 && EXP:奉仕快楽経験 >= 100 && EXP:緊縛経験 >=100 && JUEL:欲情 >= 50000 && JUEL:屈服 >= 50000 && JUEL:苦痛 >= 5000 && TALENT:弱味 && TALENT:母乳体質 && TALENT:おもらし癖
+	DRAWLINE
+	WAIT
+	PRINTFORMW 「どうして……何故こんなに気持ちが良いんだ……」
+	PRINTFORMW 「タケミカヅチに嬲られた時は、あんなに苦しかったのに……」
+	PRINTFORMW 「%CALLNAME:MASTER%にされると……私は何もかも受け入れたくなってしまう！！」
+	PRINTFORMW 神奈子は身体が調教に順応してしまっているという事実に身震いし、脅えている。
+	PRINTFORMW それを聞いた%CALLNAME:MASTER%は、彼女に最後のトドメをくれてやった。
+	WAIT
+	PRINTFORMW 『最初から……此処につれて来られた時から、お前は“雌の目”をしていたぞ』
+	PRINTFORMW 「――――――――ッ！！！！」
+	WAIT
+	PRINTFORMW ―――――　　ジュンッ…　　―――――	
+	WAIT
+	PRINTFORMW 首筋から背筋……
+	PRINTFORMW 母乳を噴出さんと先端を固く屹立させ、自己主張する両乳首……
+		IF TALENT:ふたなり == 1
+			PRINTFORMW 天井を仰ぐ程に勃起し、今にも射精しそうな陰茎……
+		ELSEIF TALENT:ふたなり == 0
+			PRINTFORMW カチコチに勃起した女核……
+		ENDIF
+	PRINTFORMW 蜜壷と化し愛液を垂れ流す秘裂……
+	PRINTFORMW 堪え性を失い、絶頂の度に粗相を繰り返す尿道……
+	PRINTFORMW 今や第二の性器として開発され、常に挿入を待ちわびる肛門……
+	PRINTFORMW それら全ての性感帯にビリビリと電流が走り、一斉に悲鳴をあげる。
+	PRINTFORMW %CALLNAME:MASTER%の放った、その一言だけで絶頂してしまう程に、神奈子の中の雌は、完全に調教し尽くされていた。
+	WAIT
+	PRINTFORMW ―――――　　トクンッ…　　―――――
+	WAIT
+	PRINTFORMW (私は雌)
+	PRINTFORMW 「―――んッふうぅぅッッ！！」
+	PRINTFORMW 　絶頂経験＋5
+	WAIT
+	PRINTFORMW (私は雌)
+	PRINTFORMW 「―――イィッッ……ぅヒィィ～～～ッ！！」
+	PRINTFORMW 　絶頂経験＋5
+	WAIT
+	PRINTFORMW (私は雌)
+	PRINTFORMW 「―――ぉアアッ……ああぁッ！！」
+	PRINTFORMW 　絶頂経験＋5
+	WAIT
+	PRINTFORMW (私は雌！　私は雌！　私は雌！　私は%CALLNAME:MASTER%の雌奴隷！)
+	PRINTFORMW 「んアアッッ！！………ぅア゛ア゛ア゛アアアぅああぉおあおあおぉおあッッ❤❤！！」
+	PRINTFORMW 　絶頂経験＋5　欲情・屈服・恭順の珠＋5000取得
+	WAIT
+	PRINTFORMW 神奈子は%CALLNAME:MASTER%の言葉を何度も脳裏に反芻し、繰り返す度に全身でイき狂い、冷たい床に体液をぶちまけながら転げまわった。
+	PRINTFORMW もはや%CALLNAME:MASTER%が手を触れるまでも無い……
+	PRINTFORMW 今や『軍神・八坂神奈子』は『淫乱な肉奴隷』として、%CALLNAME:MASTER%の前に平伏していた。
+	WAIT
+	PRINTFORMW 「――あ………ぉ……んぅッ………」
+	PRINTFORMW 浅ましく連続アクメをキメて気をやり、痙攣する神奈子……
+	PRINTFORMW %CALLNAME:MASTER%は嗜虐的な笑みを浮かべると、失神した神奈子の身体を乱暴に引きずって、調教部屋へと放り込んだ。
+	PRINTFORMW まだ……まだまだ……これからだ……
+	PRINTFORMW これから、もっと虐め続けてやろう……
+	PRINTFORMW 飽きたら新しい方法で虐めてやろう……
+	PRINTFORMW 他の奴隷にも虐めさせてやろう……
+	PRINTFORMW お高くとまった軍神様の体と精神に、苦痛と快楽の味をたっぷり刻み込み、征服し尽くしてやろう。
+	PRINTFORMW 神奈子への調教は、まだ始まったばかりだ。
+	WAIT
+	PRINTFORMW 神奈子の反抗的な精神が弱っていく。
+	PRINTFORMW 【反発刻印】が1まで下がった。
+	PRINTFORMW 神奈子の体は度重なる陵辱と調教によって開発され、苦痛に対し欲情するようになった。
+	PRINTFORMW 神奈子は【マゾ】になった。
+	PRINTFORMW 雌奴隷としての自覚を叩き込まれた神奈子は、性行為に対して全く抵抗を抱かなくなった。
+	PRINTFORMW 神奈子は【貞操無頓着】を得た。
+			IF TALENT:ふたなり == 1
+				PRINTFORMW 射精・放尿・噴乳経験＋4
+			ELSEIF TALENT:ふたなり == 0
+				PRINTFORMW 放尿・噴乳経験＋4
+			ENDIF
+	WAIT
+		TALENT:抵抗 = 0
+		TALENT:解放 = 1
+		TALENT:貞操無頓着 = 1
+		TALENT:男嫌い = 0
+		TALENT:反抗的 = 0
+		TALENT:一線越えない = 0
+		TALENT:マゾ = 1
+		MARK:反発刻印 = 1
+		JUEL:欲情 += 5000
+		JUEL:恭順 += 5000
+		JUEL:屈服 += 5000
+		EXP:絶頂経験 += 20
+		EXP:噴乳経験 += 4
+		EXP:放尿経験 += 4
+			IF TALENT:ふたなり
+				EXP:射精経験 += 4
+			ELSE
+			ENDIF
+
+		CFLAG:5001 = 5
+		
+	RETURN 1
+;恋慕
+ELSEIF CFLAG:5001 < 6 && TALENT:恋慕
+	DRAWLINE
+	PRINTFORMW 「これまでだな……」
+	PRINTFORMW 調教部屋で待っていた神奈子は、突然そんな事を口にし、%CALLNAME:MASTER%にしなだれかかって来た。
+	PRINTFORMW その表情には、どこか哀愁が漂っている。
+	PRINTFORMW 「神は信仰が無ければ生きていけない」
+	PRINTFORMW 「しかし肉欲に溺れ、%CALLNAME:MASTER%如きの手に堕ちてしまった神を、一体誰が信仰すると言うんだい？」
+	PRINTFORMW 「私は、もう自分では生きていけない……」
+	PRINTFORMW 「殺してやりたい程に憎たらしい%CALLNAME:MASTER%に縋る以外に――！」
+	PRINTFORMW 神奈子は%CALLNAME:MASTER%の首筋に口づけすると、静かに嗚咽して震えた。
+	PRINTFORMW 「神は死んだ……今、お前が殺したのだ」
+	PRINTFORMW 「お前は、神の殺害者だ――%CALLNAME:MASTER%！」
+	PRINTFORMW それだけ言うと、神奈子は%CALLNAME:MASTER%の目の前で服を脱ぎ始めた。
+	PRINTFORMW 「……もう、捨てられるのは、嫌……」
+	CFLAG:5001 = 6
+	RETURN 1
+;恋慕イベントを見た上で【人気】を得ているとあなたを肥大陰核化、又は超巨根化
+ELSEIF CFLAG:5001 < 7 && CFLAG:5001 >= 6 && TALENT:人気
+	DRAWLINE
+	PRINTFORMW 調教部屋に入ると、神奈子は今や結界の制御限界を超える程に神徳の力を漲らせ、空中で胡坐をかいて待ち構えていた。
+	PRINTFORMW 神奈子の力の源は信仰……どうやら彼女のエロ人気が信仰に直結してしまったようだ。
+	PRINTFORMW 「ふふふ……ハメ撮りＡＶに陰毛に母乳……よくもまぁ、私の身体を食い物にしてくれたもんだよ」
+	PRINTFORMW 「神をも弄ぶ罰当たりめ、どうやって仕返ししてやろうか……」
+	PRINTFORMW 『……(あぁ……こりゃダメだ)』
+	PRINTFORMW %CALLNAME:MASTER%は己の傲慢さを呪いながら、人生の幕を閉じるかのように、そっと瞼を下ろした……
+	PRINTFORMW ・・・・・
+	PRINTFORMW 　・・・
+	PRINTFORMW 　　・
+	PRINTFORMW 「とまぁ、少し前なら%CALLNAME:MASTER%みたいな悪党は『神徳少女やさか☆カナコ』がギッタンギッタンにしてやるところなんだが」
+	PRINTFORMW 『……あ゛？　少女？＃』
+	PRINTFORMW 「こうして%CALLNAME:MASTER%と一緒に暮らしてみると、不思議だね、前よりもずっと信仰の力が高まっているよ」
+	PRINTFORMW 「お礼と言ってはなんだけど、少しばかり%CALLNAME:MASTER%に、私の神徳を授けてあげましょう(外交モード)」
+	WAIT
+	PRINTL 神奈子は慈しむ様な目で%CALLNAME:MASTER%の股間を見つめている。
+	PRINTL [0] ペニス、又は陰核のサイズをスーパーサイズにしてもらう(現状、元には戻せません)
+	PRINTL [1] 遠慮する……(サイズ変化無し、この周回ではもう変更できません)
+	$INPUT_JINTOKU_LOOP
+	INPUT
+		IF RESULT == 0
+			IF TALENT:オトコ || TALENT:ふたなり
+				PRINTFORMW 「ミラクルゴッドブレス～～☆%CALLNAME:MASTER%チンコ大きくな～ぁれ☆」
+				BASE:MASTER:15 = 1200
+				BASE:MASTER:16 = 7
+				TALENT:MASTER:Ｃ敏感 = 1
+				PRINTFORMW 神奈子の神徳を授かった%CALLNAME:MASTER%のペニスは、凄まじいサイズに成長した。
+			ELSE
+				PRINTFORMW 「ミラクルゴッドブレス～～☆%CALLNAME:MASTER%お豆大きくな～ぁれ☆」
+				BASE:MASTER:陰核 = 250
+				TALENT:MASTER:Ｃ敏感 = 1
+				TALENT:MASTER: 肥大陰核 = 1
+				PRINTFORMW 神奈子の神徳を授かった%CALLNAME:MASTER%のクリトリスは、限界サイズに成長した。
+			ENDIF
+			PRINTFORMW 「はぁーッはぁーーッッ❤……さぁ、早くヤろうよ❤」
+			PRINTFORMW 神奈子は%CALLNAME:MASTER%の“超根”にぶち抜かれたくてうずうずしている。
+		ELSEIF RESULT == 1
+			PRINTFORMW 「むぅぅ～～……別に大きい方がイイとかそんなんじゃないし今のままでもいいけどさゴニョゴニョ……」
+			PRINTFORMW 神奈子は心底不服そうにしている。
+			PRINTFORMW その分調教でたっぷり満足させてやるべきだろう。
+		ELSE
+			GOTO INPUT_JINTOKU_LOOP
+		ENDIF
+	CFLAG:5001 = 7
+	RETURN 1
+;助手の有無をチェック（いない場合は二回目以降へ飛ぶ）
+ELSEIF ASSI < 0 
+	CALL K1043_KOJO2
+
+;-------------------------------------------------
+;簡易助手口上（Y1を助手のキャラ番号に置換、43をキャラ番号に変更する) CFLAG:5002
+;掛け合いをするキャラを増やす場合は、コピー＆ペーストをして、CFLAGの数を5003、5004と増やす
+;-------------------------------------------------
+;助手が早苗さん
+ELSEIF NO:ASSI == 1042
+	DRAWLINE
+	;初めて
+	IF CFLAG:5002 == 0
+		;恋慕＋恋慕時初口上（陥落イベント）が発生済み
+		IF TALENT:恋慕 && CFLAG:5001 >= 6
+	WAIT
+			PRINTFORMW 「早苗！良かった、%CALLNAME:MASTER%の元に居てくれて……」
+			PRINTFORMW 『なんですか神奈子様、完全に出来上がってるじゃないですか』
+			PRINTFORMW 「堕ちるのは別に恥ずかしい事じゃないんだよ早苗。一緒に%CALLNAME:MASTER%に身を委ねましょう」
+			PRINTFORMW 『面白くありませんね。こんな駄神に今まで仕えていたなんて……』
+			PRINTFORMW 「なっ――！」
+	WAIT
+			PRINTFORMW 『徹底的に壊して差し上げますよ。神❤奈❤子❤さ❤ま。今までのアナタを帳消しにするくらいに……』
+			PRINTFORMW 「小娘が、生意気を！」
+	WAIT
+		;それ以外
+		ELSE
+	WAIT
+			PRINTFORMW 「早苗！？良かった、無事だったか……」
+			PRINTFORMW 『気安く名前を呼ばないで頂けますか？』
+			PRINTFORMW 「え……早苗？」
+			PRINTFORMW 『胸の鏡でご自分の様を御覧になっては如何ですか？そんな浅ましい神を、誰が信仰するもんですか』
+			PRINTFORMW 「何を言っているんだよ、早苗！お前は、私達守矢の巫女だろう！」
+			PRINTFORMW 『……アナタは守矢じゃないでしょう？天津神に破れて落ちのびた負け犬ですよ……』
+			PRINTFORMW 「なっ――！」
+	WAIT
+			PRINTFORMW 『その負け犬に負けた諏訪子様も負け犬です。私が信じるのは%CALLNAME:MASTER%だけ……』
+			PRINTFORMW 「そんな……早苗まで……うそだ……嘘だぁ！」
+	WAIT
+			PRINTFORMW 『んふふ、もっと泣き喚いてください、神☆奈☆子☆さ☆ま。その方が、ずっと、ずっとソソリますから……』
+			PRINTFORMW どうやら早苗がいれば、軍神を堕とすのに時間はかからなそうだ。
+	WAIT
+		ENDIF
+			CFLAG:5002 = 1
+			RETURN 1
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あら早苗。また来てくれたのかい？けどお前は見ていなさい。%CALLNAME:MASTER%を満たすのは私の務めだから」
+			PRINTFORMW 『完全に雌神(めがみ)に成り下がってますね神奈子様』
+			PRINTFORMW 「お前もその内分るようになるよ……神だって、誰かに縋りたくなる事があるんだ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「早苗か……お前の顔は、もう見たくない……」
+	WAIT
+			PRINTFORMW 『……%CALLNAME:MASTER%様、神奈子様のお相手、任せてくださいませんか？』
+			PRINTFORMW 『――凄く……ムラムラしてきちゃいました☆』
+			PRINTFORMW 「堕ちる所まで堕ちたか……守矢は、もう終わりだ」
+		ENDIF
+			RETURN 1
+	ENDIF
+;助手がケロたん
+ELSEIF NO:ASSI == 1044
+	DRAWLINE
+	;初めて
+	IF CFLAG:5003 == 0
+		;恋慕＋恋慕時初口上（陥落イベント）が発生済み
+		IF TALENT:恋慕 && CFLAG:5001 >= 6
+	WAIT
+			PRINTFORMW 「諏訪子！良かった、%CALLNAME:MASTER%の元に居てくれて……」
+			PRINTFORMW 『ちっ……何よ、すっかり出来上がってるじゃない。たっぷり虐めてやろうと思ったのに』
+			PRINTFORMW 「私より先に堕ちた貴様が言う言葉か？」
+			PRINTFORMW 『何をー？！アンタがよがり狂って泣きわめく様、動画撮ってバラ撒いてやるんだから！』
+			PRINTFORMW 「来いよケロたん！カメラなんて捨ててかかって来い！」
+			PRINTFORMW 『やろうブッ調教してやあぁぁぁる！』
+	WAIT
+		;それ以外
+		ELSE
+	WAIT
+			PRINTFORMW 「諏訪子！？良かった、無事だったか……さっさと此処から――」
+			PRINTFORMW 『逃げられるとでも思った？』
+	WAIT
+			PRINTFORMW 「……諏訪子？」
+	WAIT
+			PRINTFORMW 『天津神から逃げて外界からも逃げて、今度は%CALLNAME:MASTER%からも逃げるつもり？』
+			PRINTFORMW 「違う！私は逃げてなど……お前を助け出して一緒に――！」
+			PRINTFORMW 『……アンタは負け犬よ八坂神奈子、今も昔もこれからも、誰もアンタなんか信じない』
+			PRINTFORMW 「やめろ……やめろッ―――」
+			PRINTFORMW 『でも、もう心配しないでいいの……私と%CALLNAME:MASTER%で、神奈子に本当の幸福の味を憶え込ませてやるから……』
+			PRINTFORMW 「諏訪子……お前はもうっ……うぅうゥゥッ！」
+	WAIT
+			PRINTFORMW 『ハァ…アンタの泣き顔見ただけで濡れてきちゃった……身も心もぶっ壊してやるわ』
+			PRINTFORMW 『たっぷり楽しみましょう……“諏訪大戦”のツ❤ヅ❤キ❤――神奈子にとっちゃ“国譲り”か――今度は私が、アンタを征服してアゲル❤』
+			PRINTFORMW 「何で……どうして、こんな事に……」
+			PRINTFORMW どうやら諏訪子がいれば、軍神を堕とすのに時間はかからなそうだ。
+	WAIT
+		ENDIF
+			CFLAG:5003 = 1
+			RETURN 1
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あら諏訪子。また来てくれたのかい？悪いけどお前の出番は無いよ。%CALLNAME:MASTER%を満たすのは私の務めだから」
+			PRINTFORMW 『はぁ？アンタなんかに%CALLNAME:MASTER%を取られてたまるもんか。その前にアンタをボロボロになるまで犯しつくしてやるわ』
+			PRINTFORMW 「やってごらんよカエルちゃん＃」
+			PRINTFORMW  いったい何が始まるんです？
+			PRINTFORMW 「第二次諏訪大戦だ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「諏訪子、教えてくれ……どうしてお前が……」
+			PRINTFORMW 『あんたの口は喋る為にあるんじゃないでしょ？』
+			PRINTFORMW 『無駄話する暇があったら、ザーメン飲む準備するのよ☆』
+			PRINTFORMW 「……いっそ私も壊れて……」
+	WAIT
+			PRINTFORMW 「いや、駄目だ――」
+			PRINTFORMW 「まだ、早苗が残っている！」 
+		ENDIF
+			RETURN 1
+	ENDIF
+;えーりん先生
+ELSEIF NO:ASSI == 1029
+	DRAWLINE
+	;初めて
+	IF CFLAG:5004 == 0
+		;恋慕＋恋慕時初口上（陥落イベント）が発生済み
+		IF TALENT:恋慕 && CFLAG:5001 >= 6
+	WAIT
+			PRINTFORMW 「八意永琳？ふふ……お前まで%CALLNAME:MASTER%に陥落したとはね」
+			PRINTFORMW 『アナタと一緒にしないで欲しいわ、敗北者の分際で……“タケミカヅチ”が会いたがってたわよ？』
+			PRINTFORMW 「―――ヒィッ！！！」
+			PRINTFORMW 永琳の一言に、神奈子の表情は一瞬で凍りついてしまった。
+	WAIT
+			PRINTFORMW 『……私の事をタダの便利な医者だと思ってた？あなた達『国津神』はどこまで愚かで矮小なのかしらねぇ？』
+			PRINTFORMW 「おおぉまえは……お前はいったい――！」
+	WAIT
+			PRINTFORMW 『“オモヒカネ”……』
+			PRINTFORMW 『ニニギノミコトの補佐にして、天津神が一柱……』
+			PRINTFORMW 『国譲りでアナタを“可愛がった”タケミカヅチは、私が選定したのよ❤』
+			PRINTFORMW 「……そんな……おまえが“アレ”を……嫌あぁあああ！！」
+			PRINTFORMW 『“両腕引きちぎって半殺しにして嬲りものにして命乞いさせて諏訪から出ないように言いつけた”……あの子そう言ってわねぇ』
+			PRINTFORMW 「アァ……アァッッ………」
+	WAIT
+			PRINTFORMW 『なんでアナタ、諏訪から出て、こんな所にいるの？』
+			PRINTFORMW 『私達“アマツカミ”の言いつけが守れなかったの？』
+	WAIT
+			PRINTFORMW 『私の%CALLNAME:MASTER%を横取りしようっていうの？？』
+	WAIT
+			PRINTFORMW 「違……わた…わたし……そんなんじゃ……いやぁああ！！」
+			PRINTFORMW 『ふふふ……もう一度躾け直しが必要なようね……』
+			PRINTFORMW 「嫌ァ！！助けて%CALLNAME:MASTER%！！お願いだから！！コイツを私に近づけないでぇ！！！」
+			PRINTFORMW ・
+			PRINTFORMW ・・
+			PRINTFORMW ・・・
+			PRINTFORMW ・・・これはイイモノが見れそうだ。
+	WAIT
+		;それ以外
+		ELSE
+	WAIT
+			PRINTFORMW 「八意永琳？良かった、お前がいれば心強――」
+			PRINTFORMW 『……何言ってるの、汚らわしい地上の神が……』
+			PRINTFORMW 「――なッ？」
+	WAIT
+			PRINTFORMW 『“タケミカヅチ”が会いたがっていたわよ？』
+			PRINTFORMW 「……アッ……ああぁあっ！！うわああああああぁぁ！！！」
+			PRINTFORMW 永琳の一言に、神奈子は半狂乱になって脅え始めた。
+	WAIT
+			PRINTFORMW 『……私の事をタダの便利な医者だと思ってた？あなた達『国津神』はどこまで愚かで矮小なのかしらねぇ？』
+			PRINTFORMW 「おおぉまえは……お前はいったい――！」
+	WAIT
+			PRINTFORMW 『“オモヒカネ”……』
+			PRINTFORMW 『ニニギノミコトの補佐にして、天津神が一柱……』
+			PRINTFORMW 『国譲りでアナタを“可愛がった”タケミカヅチは、私が選定したのよ❤』
+			PRINTFORMW 「……そんな……おまえが“アレ”を……嫌あぁあああ！！」
+			PRINTFORMW 『“両腕引きちぎって半殺しにして嬲りものにして命乞いさせて諏訪から出ないように言いつけた”……あの子そう言ってわねぇ』
+			PRINTFORMW 『それがなに？諏訪の土着神を征服して平らげた軍神？偉くなったものねぇ』
+			PRINTFORMW 「やだ！助けて！やめてええ！！！」
+	WAIT
+			PRINTFORMW 『もう一度躾けしてあげる……%CALLNAME:MASTER%の言う事をしっかり聞けるようにね❤』
+			PRINTFORMW ・
+			PRINTFORMW ・・
+			PRINTFORMW ・・・
+			PRINTFORMW ・・・これはイイモノが見れそうだ。
+	WAIT
+		ENDIF
+			CFLAG:5004 = 1
+			RETURN 1
+	;二回目以降
+	ELSE
+		PRINTFORMW 「………ァッ」
+		PRINTFORMW 『ごきげんよう、国津神……診察の時間よ❤』
+		PRINTFORMW 「嫌あぁッッ！！もうやめてぇッ！！これいじょう“アレ”を思い出させないでッ！！！」
+		PRINTFORMW 『軍神様が何を弱音吐いてるの。お楽しみはこれからでしょう？』
+	WAIT
+		PRINTFORMW 「ううぅ……ぁあ……いっそ殺してよぉ……！」 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;調教開始時（2回目以降、43をキャラ番号に変更する） CFLAGなし 
+;-------------------------------------------------
+@K1043_KOJO2
+;恐怖刻印Lv3
+IF MARK:恐怖刻印 == 3
+	DRAWLINE
+	PRINTFORMW 「ヒィッ！……やぁ、やだぁ――！」
+	PRINTFORMW 神奈子はこちらの姿を目にした途端、脅えきった表情で部屋の隅に逃れ身を震わせた。
+	PRINTFORMW どうやら前回の調教が相当堪えた様だ。
+	RETURN 1
+
+;反発刻印Lv3
+ELSEIF MARK:反発刻印 == 3
+	DRAWLINE
+	PRINTFORMW 「神罰をくれてやる……絶対にッ！」
+	PRINTFORMW 神奈子は蛇のような瞳でこちらを睨んだ。
+	PRINTFORMW どう料理したものか……。
+	RETURN 1
+
+;恐怖刻印Lv2
+ELSEIF MARK:恐怖刻印 == 2
+	DRAWLINE
+	PRINTFORMW 「後生だから手加減してくれ……神だって、不死身じゃないんだよ」
+	PRINTFORMW 弱々しく震える神奈子の瞳には、恐怖の色が浮かんでいる。
+	PRINTFORMW どうやら調教が堪えている様だ。
+	RETURN 1
+
+;屈服刻印Lv0
+ELSEIF MARK:屈服刻印 == 0
+	DRAWLINE
+	PRINTFORMW 「……次はどうするつもりだ？」
+	RETURN 1
+
+;屈服刻印Lv1
+ELSEIF MARK:屈服刻印 == 1
+	DRAWLINE
+	PRINTFORMW 「飽きもせず同じ事をダラダラと……」
+	RETURN 1
+
+;屈服刻印Lv2
+ELSEIF MARK:屈服刻印 == 2
+	DRAWLINE
+	PRINTFORMW 「……父上……」
+	PRINTFORMW 背を向けたまま服を脱ぐ神奈子が、震える声でそう零した。
+	PRINTFORMW 出雲の軍神の父？……オオクニヌシの事だろうか？
+	RETURN 1
+
+;屈服刻印Lv3＋恋慕無し
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕 == 0
+	DRAWLINE
+	PRINTFORMW 「せめて……諏訪子か早苗に一目会わせて……」
+	PRINTFORMW 神奈子の神徳は、完全に地に堕ちたようだ。
+	RETURN 1
+
+;恋慕
+ELSEIF TALENT:恋慕
+	DRAWLINE
+	IF RAND:3 == 0
+		PRINTFORMW 「あ……、%CALLNAME:MASTER%じゃないか」
+		PRINTFORMW 「ふふふ……おかしな話だねぇ。もう誰も、私なんか信仰していないっていうのに……私はこうして、まだ生きている」
+		PRINTFORMW 「どうしてだろう――ねぇ？」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「%CALLNAME:MASTER%、好き……%CALLNAME:MASTER%とずっと一緒に居たい」
+		PRINTFORMW 「お願いだよ……何処へも行きたくないんだ」
+	ELSE
+		PRINTFORMW 「もうお前なしじゃ、生きていけないんだよ……冗談抜きでね」
+		PRINTFORMW 「言葉はいいから――はやく、気持ちよくして……」
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 0
+
+;-------------------------------------------------
+;調教終了時のセリフ
+;-------------------------------------------------
+@KOJO_1043_SLAVE_MESSAGE_TRAIN_END
+;--------------------------------------------------
+;特定助手、主人時に特殊助手口上を呼び出す(Y1を特定助手、43を主人のキャラ番号に置換）
+;--------------------------------------------------
+;IF NO:MASTER == 42
+;	CALL LES_EVENTEND_K1043_M42
+;	RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;	SIF NO:ASSI == Y1
+;	CALL LES_EVENTEND_K1043_M42
+;	RETURN 0
+;ENDIF
+;--------------------------------------------------
+;調教終了時のセリフ
+;--------------------------------------------------
+;反発刻印Lv3
+IF MARK:反発刻印 == 3
+	DRAWLINE
+	PRINTFORMW 「……諏訪子ではないが……祟ってやるぞ」
+	PRINTFORMW 神奈子の目は殺気に満ち満ちている。
+	PRINTFORMW おおこわいこわい
+	RETURN 1
+
+;屈服刻印Lv1以下
+ELSEIF MARK:屈服刻印 <= 1
+	DRAWLINE
+	PRINTFORMW 「この程度……天津神共に比べれたら」
+	RETURN 1
+
+;屈服刻印Lv2
+ELSEIF MARK:屈服刻印 == 2
+	DRAWLINE
+	PRINTFORMW 「はぅっ！……ううぅッ……」
+	PRINTFORMW 神奈子は調教による苦痛と快楽に、息も絶え絶えのようだ。
+	PRINTFORMW 次回はどうやって虐めてやろうか。
+	RETURN 1
+
+;屈服刻印Lv3
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕 == 0
+	DRAWLINE
+	PRINTFORMW 「はっ！……あぁぁ……うぅぅんッ！！」
+	PRINTFORMW 調教により、苦痛と快楽をたっぷり刻み込まれた神奈子の身体は、すえた臭いの立ち上る体液にまみれ、床に転がり痙攣し続けている。
+	PRINTFORMW 天辺を泳ぐ瞳からは以前の気高さは消え去り、だらしなく開かれた口からは唾液と、浅ましい呻き声を吐き出していた。
+	RETURN 1
+
+;恋慕＋体力500未満
+;ELSEIF TALENT:恋慕 && BASE:体力 < 500
+;	DRAWLINE
+;	PRINTFORMW 「はふゥゥッ……もぅらめえぇぇ❤……イグのもぅっ休ませてぇっ～………❤❤」
+;	RETURN 1
+
+;恋慕
+ELSEIF TALENT:恋慕
+	DRAWLINE
+	PRINTFORMW 「もっと虐めておくれよぉ……私はまだまだいけるゾっ❤」
+	RETURN 1
+ENDIF
+RETURN 0
+
+;--------------------------------------------------
+;@KOJO_MESSAGE_COM関係（43をキャラ番号に置換）
+;コマンド実行時に出力されます
+;--------------------------------------------------
+;========================================================
+;コマンド口上前の共通関数
+;特定の条件下でコマンド口上を表示させないようにする場合はRETURN 1
+;1以外を返した場合はコマンド口上は表示される 				CALL K1043_GAG
+;========================================================
+@KOJO_1043_TRAIN_MESSAGE_S_BEFORE
+
+@KOJO_1043_TRAIN_MESSAGE_S_GENERAL
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF ASSI > 0 && ASSIPLAY
+;	RETURN 0 
+;睡眠・時止め・失神時に口上をスキップする（OFFだと寝言が凄いことに）
+SIF EQUIP:睡眠薬 || (TEQUIP:時間止め && SELECTCOM != 418) || TFLAG:899 > 0 || TFLAG:898 == 1
+	RETURN 0
+;ボールギャグ・猿轡(?)・触手口屈辱時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）
+IF TEQUIP:口装着器具 == 1 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SELECTCOM != 583)
+CALL K1043_GAG
+	RETURN 0 
+ELSEIF TEQUIP:口装着器具 == 0
+ENDIF
+;--------------------------------------------------
+;特定助手、主人時に特殊助手口上を呼び出す(Y1を特定助手、43を主人のキャラ番号に置換）
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;	CALL LES_MESSAGE_COM_K1043_MY1
+;	RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;	IF NO:ASSI == Y1
+;		CALL LES_MESSAGE_COM_K1043_MY1
+;		RETURN 0
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;コマンド実行時のセリフ CFLAG:9000～9999を使用（コマンド番号＋9000）
+;-------------------------------------------------
+;-------------------------------------------------
+;愛撫 CFLAG:9000
+;-------------------------------------------------
+IF SELECTCOM == 0
+	;初めて
+	IF CFLAG:9000 == 0
+		;屈服刻印Lv2以上
+		IF MARK:屈服刻印 >= 2
+			PRINTFORMW 「ふん……お手並み拝見、と…ア……ッ……」
+			PRINTFORMW 「あっ…………んっ……はぁ～～…❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「本当に女の扱いを知っているのか？」
+			PRINTFORMW 「んっ、く……やっ、ぁあ……❤」 
+		ENDIF
+		CFLAG:9000 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んんっふぅああ、あっ！ぎも゛ぢ❤❤……%CALLNAME:MASTER%～……！」
+			PRINTFORMW 「もっと、もっとぉ～～❤…感じさせてぇ……お願っぁ！……❤❤！」
+			CFLAG:9000 = 5
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「アァッ！……アッァァ～ッ❤❤あッ！ひゃめろォォッ～～！」
+			PRINTFORMW 「……そんなッ…なんれこんな奴に❤……触るなあっァァっっ❤」
+			CFLAG:9000 = 4
+		;屈服刻印Lv2
+		ELSEIF MARK:屈服刻印 == 2
+			PRINTFORMW 「ひっ！んんッッ？！……うそ…ンアァッ！……わたし……感じて……ひぃッ？！」
+			CFLAG:9000 = 3
+		;それ以外
+		ELSEIF MARK:屈服刻印 <= 1
+			PRINTFORMW 「んッ――くっ！このっ……触れるな、けがらわしい！」
+			CFLAG:9000 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ペッティング CFLAG:9000
+;-------------------------------------------------
+IF SELECTCOM == 606
+	;初めて
+	IF CFLAG:9000 == 0
+		;屈服刻印Lv2以上
+		IF MARK:屈服刻印 >= 2
+			PRINTFORMW 「ふん……お手並み拝見、と…むンッ……ッ……」
+			PRINTFORMW 「んむぅっ…………んっ……はぁ～～…❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「本当におんなの扱いを知っているのか……ンッ」
+		ENDIF
+		CFLAG:9000 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んんっむぅ！！んぐっ！ぎも゛ぢ❤❤……%CALLNAME:MASTER%～……！」
+			PRINTFORMW 「もっと、もっとぉ～～❤…感じさせてぇ……お願っぁ！……❤❤！」
+			CFLAG:9000 = 5
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ンンッ！……ンッンン～ッ～～～❤❤ああッ！ひゃめろォォッ～～！」
+			PRINTFORMW 「……そんなッ…なんれこんな奴に❤……触るなあっァァっっ❤」
+			CFLAG:9000 = 4
+		;屈服刻印Lv2
+		ELSEIF MARK:屈服刻印 == 2
+			PRINTFORMW 「っあむぅぅ……、ぷはぁ……もう……いっ――ひゃあぁ！？」
+			CFLAG:9000 = 3
+		;それ以外
+		ELSEIF MARK:屈服刻印 <= 1
+			PRINTFORMW 「ぅむぅんぐッッ！んんッ！……くッ！このっ……触れるな、けがらわしい！」」
+			CFLAG:9000 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;クンニ CFLAG:9001
+;岩清水 CFLAG:9611
+;-------------------------------------------------
+;クンニ
+IF SELECTCOM == 1 && TEQUIP:羞恥プレイ == 0
+	;初めて
+	IF CFLAG:9001 == 0
+		;屈服刻印Lv2以上
+		IF MARK:屈服刻印 >= 2
+			PRINTFORMW 「あ！だめ……汚……！」
+			PRINTFORMW 「んあぁ……あぁぁっ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「❤―――ッッ！」
+			PRINTFORMW 神奈子は%CALLNAME:MASTER%の頭を震える手で押さえ、淫核を嘗め回される感覚に必死に耐えている様だ。
+		ENDIF
+		CFLAG:9001 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ひゃはぁあ%CALLNAME:MASTER%――ッ！もっとクリチュッチュして❤」
+			PRINTFORMW 「クンニきぼぢイイぃイっのぉずごイイよぉっ❤クリ舐めきもぢよずぎりゅぅぅ❤！！」
+			CFLAG:9001 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「あァァッ❤❤嫌あぁアァっヒィ～～～きもち❤こんなの駄目ェ❤」
+			PRINTFORMW 「アヒィィッー…クリちゅばきもちよちゅぎるうぅっ！！」
+			CFLAG:9001 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「くっ！いい加減に――いン゛ッ?!」
+			PRINTFORMW 局部を執拗に不規則に舐められる感覚に、神奈子は思わず悲鳴を上げた。
+			CFLAG:9001 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;岩清水
+IF SELECTCOM == 611
+	;恋慕+露出癖Lv3以上+C感覚Lv3以上
+	IF TALENT:恋慕 && ABL:露出癖 >= 3 && ABL:Ｃ感覚 >= 3
+		PRINTFORMW 「アァァヒイッイィィィッーー！！！きもちよしゅぎるっ❤」
+		PRINTFORMW 「かにゃこのぉ淫乱牝豆見ながらいっぱいイィッッじめてくださイィィッーー❤❤」
+		CFLAG:9611 = 6
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「あっ！！ばかぁ……そんな、恥ずかし……んんっ！」
+		CFLAG:9611 = 5
+	;屈服刻印Lv3+露出癖Lv3以上+C感覚Lv3以上
+	ELSEIF MARK:屈服刻印 == 3 && ABL:Ｃ感覚 >= 3 && ABL:露出癖 >= 3
+		PRINTFORMW 「アァァヒイッッーー！！！そんな！きもちぃなんてぇ❤………」
+		PRINTFORMW 「かにゃこの淫乱お豆見られていじめてるぅうーー❤❤」
+		CFLAG:9611 = 4
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「うわぁぁあやめ……！やめろぉお……なんでこんな辱めを……！いっそ死んで…ひぃぃん❤！」
+		CFLAG:9611 = 3
+	;それ以外
+	ELSE
+		PRINTFORMW 「くぅ！…どこまでヘンタイなんだ貴様は！」
+		PRINTFORMW そう反抗的な口調で言いながら、神奈子の女核は明らかに固さを増し始めている。
+		CFLAG:9611 = 2
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;アナル愛撫 CFLAG:9002
+;-------------------------------------------------
+IF SELECTCOM == 2
+	;初めて
+	IF CFLAG:9002 == 0
+		PRINTFORMW 「貴様何を…そっちは汚――ひぐぅっ！」
+		PRINTFORMW 神奈子は咄嗟に手で%CALLNAME:MASTER%を振り払おうとしたが、痛みで力が出ないようだった 
+		CFLAG:9002 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		LOCAL = PALAM:潤滑 + UP:10
+		;恋慕+潤滑Lv2以上
+		IF TALENT:恋慕 && LOCAL >= PALAMLV:2
+			PRINTFORMW 「はびいィッッケツマンコ気持ぢよずぎるうゥゥッ❤」
+			PRINTFORMW 「神奈子のウンチ穴あぁ奥までほじきゅりまわじてぇぇ❤こわじれぐらさひぃぃっ！！❤❤」
+			CFLAG:9002 = 5
+		;恋慕+潤滑Lv2未満
+		ELSEIF TALENT:恋慕 && LOCAL < PALAMLV:2
+			PRINTFORMW 「あつっ！んんん！！……イイ❤❤……けど、もっと優しんんっ！」
+			CFLAG:9002 = 4
+		;潤滑Lv2以上＋A感覚Lv3以上
+		ELSEIF LOCAL >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「ひゃぃっ？！ンあぁアッッ！なんでぇ❤」
+			PRINTFORMW 「おひりの穴でぇ❤感じるなんてぇッ！んひぃぃい❤❤！」
+			CFLAG:9002 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぎぃ！……く……ぁッ」
+			PRINTFORMW 「――ッ(これは痛みだ！感じてなどいるものか！)」
+			CFLAG:9002 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;胸愛撫 CFLAG:9003
+;-------------------------------------------------
+IF SELECTCOM == 3
+	;初めて
+	IF CFLAG:9003 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふふふ、自慢の胸だ。土着神なんぞよりずっと大きいだろう？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「好きで大きくなったわけではない……まして貴様を楽しませる為にッ！―――ンッ！」
+			PRINTFORMW 神奈子は頬を紅に染め、口を真一文字に結んで耐えている。どうやら軍神様は胸がお好みの様だ。
+		ENDIF
+		CFLAG:9003 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「おっぱいぎもぢイイのぉッッッ～❤！！乳首いぃじっへ！！ぼっとはげしくしでェ❤❤❤おっぱい搾り出ぢてェェッッ！！！」
+			PRINTFORMW 神奈子は愛する人の愛撫に髪を振り乱し、感じまくっている。この分なら胸だけで絶頂してしまうだろう。
+			CFLAG:9003 = 4
+		;B感覚Lv3以上
+		ELSEIF ABL:Ｂ感覚 >= 3
+			PRINTFORMW 「はふっ……アッ！……胸は…ぅくッ！駄目えぇッッ！」
+			CFLAG:9003 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「へたくそめ、それで女が喜ぶか……(駄目だ…意識するな！)」
+			PRINTFORMW 口ではそう言っておきながら、神奈子の先端は明らかに固くシコりを増しつつあった。
+			CFLAG:9003 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;指挿入れ CFLAG:9004
+;Gスポット刺激 CFLAG:9600
+;-------------------------------------------------
+;指挿入れ
+IF SELECTCOM == 4
+	;処女
+	IF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ウッ――くぅぅッッ！……❤ハァ……ハァ……まさか、今更になってこの痛みを思い出すとは……」
+			PRINTFORMW 「ならばいっそ、%CALLNAME:MASTER%のモノで始末して欲しい」
+			PRINTFORMW 神奈子は目じりに涙を浮かべつつ、幸せそうに微笑んだ。
+		;それ以外
+		ELSE
+		 	PRINTFORMW 「いっ―――つぅッッ！」
+			PRINTFORMW 「再生させてから改めて穢すか……悪趣味にも、程があるぞ！」
+		ENDIF
+		RETURN 0	
+	;初めて＆非処女
+	ELSEIF CFLAG:9004 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ンンッ！はぁん❤❤……ようやく、その気になってくれたか？……早く！…これ以上ッ焦らさないでぇ❤❤！！」
+			PRINTFORMW 神奈子は既に準備万端のようだ。秘裂からグチョグチョとヨダレを垂らし%CALLNAME:MASTER%の挿入を待ち受けている。
+		;V感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「ンッ！あぁぅッッ…ちが…お前なんかにぃ……気持ちよくされてなんか……あんんんッッ❤❤！」
+			PRINTFORMW ――等と口では反抗しておきながら、%CALLNAME:MASTER%の指を締め付ける神奈子の膣肉は、完全に敗北を宣言していた。
+		;それ以外
+		ELSE
+			PRINTFORMW 「触るな！汚らわしい！」
+		ENDIF
+		CFLAG:9004 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あんんっ❤……もう……めぇ❤%CALLNAME:MASTER%～～……焦らさないで、おくれょぉ❤❤……」
+			CFLAG:9004 = 4
+		;V感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「んんんッ！……アッ！アアァッ～～～❤！」
+			PRINTFORMW 神奈子の牝は、もはや声を堪える事も叶わぬ程に出来上がっているようだ。
+			CFLAG:9004 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……諦めろ、お前如きに私の相手は務まら――ンッ！」
+			PRINTFORMW 「違う……感じてなどいない！」
+			CFLAG:9004 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;Gスポット刺激
+IF SELECTCOM == 600
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「あっ！……ハアァンンッッ❤❤……そこ、イッ……んあぁうぅっ！！」
+		CFLAG:9600 = 4
+	;V感覚Lv3以上
+	ELSEIF ABL:Ｖ感覚 >= 3
+		PRINTFORMW 「やぁああぁッッめぇ……アッアァッ❤❤……らめえぇてえぇぇッ……❤❤！！！」
+		PRINTFORMW 膣壁を裏側から抉られる快感に、神奈子は呼吸もままならない様子だ。
+		CFLAG:9600 = 3
+	;それ以外
+	ELSE
+		PRINTFORMW 「くっ……んぅうッッ！」
+		PRINTFORMW 「(考えるな！意識するな！腹を抉られているだけだ！)」
+		CFLAG:9600 = 2
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;フェラする(ふたなり/オトコのみ) CFLAG:9005
+;-------------------------------------------------
+IF SELECTCOM == 5
+	;初めて
+	IF CFLAG:9005 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「神奈子チンポォギモヂィッ～❤射精ぢだイっ～～❤❤これすきぃッー❤❤」
+			PRINTFORMW 「%CALLNAME:MASTER%のちんぽキシュぎぼぢイイよぉぉーッッ！❤凄すぎるゥっっおぉおっ！❤❤❤」
+			PRINTFORMW 初めてのフェラチオにも関わらず神奈子はよがりまくっている。今にも鈴口から精を吐き出しそうだ。
+		;それ以外
+		ELSE
+			PRINTFORMW 「くぅ……あっ！なにを……ンあうぅッ！」
+			PRINTFORMW 女としてありえない感触に、神奈子は戸惑いを隠せない。
+		ENDIF
+		CFLAG:9005 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ぬふほぉぉー…かにゃこ淫乱牝ちんぽいいよぉっっ……ちんぽミルク出さちェてぐらさひィっ…❤」
+			PRINTFORMW 「ザーメン出さぢぇへ～～～❤❤淫乱神奈子のぉぉ肉オンバシラぁぁ❤もうしゅぐひィぢゃううっ❤❤❤」
+			CFLAG:9005 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ふぅぁあっ！……アッ……やめっ！……んんんんっ❤❤！」
+			PRINTFORMW 具現化された神奈子のペニスの先端から先走りが顔を出し、口内にカウパーの生臭さが広がった。
+			CFLAG:9005 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「やあぁ！やめ……やめろぉ！！けがらわし……ひィィンッ！！」
+			PRINTFORMW 神奈子は必死に%CALLNAME:MASTER%の頭を押し退けようとするが、ペニスが音を立てて啜り上げられる度に、その力は弱まっていった。
+			CFLAG:9005 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;キスする CFLAG:9006
+;-------------------------------------------------
+IF SELECTCOM == 6
+	;初めて
+	IF CFLAG:9006 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んむぅ――はぁッ！……甘い……❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「むっ……く！……」
+			PRINTFORMW 「……プッ――！」
+			PRINTFORMW 乱暴な口付けから解放されるやいなや、神奈子は口から血の混じった唾を吐き捨て、挑発的にこちらを睨んできた。
+		ENDIF
+		CFLAG:9006 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「もっとして、%CALLNAME:MASTER%……何も分からなくなるまで……」
+			CFLAG:9006 = 4
+		;従順Lv2以上
+		ELSEIF ABL:従順 >=2
+			PRINTFORMW 「……ンッ……フゥ――ッ……んんっ……」
+			PRINTFORMW 「(くそ、鼻息がこそばゆい！)」
+			CFLAG:9006 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ンンッ！……ん！」
+			CFLAG:9006 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;自慰 CFLAG:9007
+;シャワーオナニー CFLAG:8801
+;-------------------------------------------------
+;通常自慰（シャワー無し）
+IF SELECTCOM == 7 && TEQUIP:シャワープレイ == 0
+	;初めて
+	IF CFLAG:9007 == 0
+		PRINTFORMW 「クッ……自分でしろと……目の前で！……うぅぅッ！」
+		PRINTFORMW 神奈子は悔しさと恥ずかしさから歯を食いしばり、目じりに雫を称えながら、自らの性感帯を愛撫しはじめた。
+		CFLAG:9007 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋自慰中毒Lv3以上
+		IF TALENT:恋慕 && ABL:自慰中毒 >= 3
+			PRINTFORMW 「うっんっ……いいィ❤❤❤オナ牝神奈子のイグとこ見てくださイイィッ❤❤❤❤あッッ…うんッうんッうッんッッ❤❤！！」
+			PRINTFORMW 「ひとりえっちすごグいいッよォッ…オナニーぎぼぢぃぃぃぃっぃっぃぃぃぃっ❤❤」
+			CFLAG:9007 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「ねぇ%CALLNAME:MASTER%！見て❤神奈子%CALLNAME:MASTER%の為にオナニーするから❤❤牝神かにゃこの恥ずかしいオナニー、全部見てて❤❤」
+			CFLAG:9007 = 4
+		;自慰中毒Lv3以上
+		ELSEIF ABL:自慰中毒 >= 3
+			PRINTFORMW 「止まんないッ！見られてるのにぃ❤！！オナニー止められないィ❤❤！！」
+			PRINTFORMW 「オナバカ神奈子変になッぢゃうゥゥゥゥッーー❤アアアふゥーー…もうダメぇッッ――❤❤」
+			CFLAG:9007 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「――くっ…またか！」。
+			CFLAG:9007 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;シャワーオナニー
+ELSEIF SELECTCOM == 7 && TEQUIP:シャワープレイ
+	;初めて
+	IF CFLAG:8800 == 0
+			PRINTFORMW 「これは外の世界での身体を洗う道具だ。これで早苗の身体を洗ってやった事だってある………」
+			PRINTFORMW 「決してそんな事に使うものでは……」
+			PRINTFORMW 『拒否するなら早苗を嬲り殺す。指を一本一本そぎ落とし、それを本人に食べさせ、女性器を……』
+			PRINTFORMW %CALLNAME:MASTER%の脅し文句の途中で、軍神はあっけなく折れた。
+		CFLAG:8800 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋自慰中毒Lv3以上
+		IF TALENT:恋慕 && ABL:自慰中毒 >= 3
+			PRINTFORMW 「はぁーっ❤❤はぁぁーっ❤❤お水遊びぃい、いいよぉお❤❤❤❤♪」
+			CFLAG:8800 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「――ァッッ❤❤」
+			PRINTFORMW 「(見られてる❤❤❤%CALLNAME:MASTER%にシャワーでしてる所❤❤見られちゃうッ❤❤❤❤❤❤)」
+			CFLAG:8800 = 4
+		;自慰中毒Lv3以上
+		ELSEIF ABL:自慰中毒 >= 3
+			PRINTFORMW 「あぁぁ❤オナニー止まんないッ――！水かけオナニぃ……止まんないよぉぉ❤❤」
+			CFLAG:8800 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「またこれか……せめて後で身体を拭かせてくれ。湯冷めしてかなわん。」
+			CFLAG:8800 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;何もしない CFLAG:9009
+;-------------------------------------------------
+IF SELECTCOM == 9
+	;初めて
+	IF CFLAG:9009 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ほぅ……この私を焦らすか……他でもない%CALLNAME:MASTER%の為に付き合ってやる。」
+			PRINTFORMW 「ふふふ……ちゃんと最後までヤッてくれるんだろうねぇ？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「私が焦がれているのは、お前を屠る事だけだ」
+		ENDIF
+		CFLAG:9009 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋欲情Lv3以上
+		IF TALENT:恋慕 && PALAM:欲情 >= PALAMLV:3
+			PRINTFORMW 「はゥッッ……後生だ……身体が、疼くんだ……切ないんだよぉッ！」
+			CFLAG:9009 = 4
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「焦らし焦らされるのも房事の嗜み……でも、ちゃんと始末はつけておくれよ？」
+			CFLAG:9009 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「それで焦らしているつもりか？感じてもいない女を？」
+			PRINTFORMW 「(クソッ！どうして、こうも身体が疼く！)」
+			CFLAG:9009 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ローター CFLAG:9010
+;-------------------------------------------------
+IF SELECTCOM == 10
+	;初めて
+	IF CFLAG:9010 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あら❤幻想郷にも流れ着いていたのか……それ大好きだよ。早苗達には内緒だぞ❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「――クッ！スキマ妖怪め、幻想郷に流れ着くものの管理くらい―――」
+			PRINTFORMW 「……知らんぞ！私はそんなもの使った事はない！！」
+		ENDIF
+		CFLAG:9010 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ローターもイイけど、私は%CALLNAME:MASTER%の手で愛して欲しいんだよ」
+			CFLAG:9010 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「アッ！アァアアアッッ――だめッ！それ、強すぎ……ひぃンッ！❤」
+			CFLAG:9010 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「自分の手で何とかしようとは思わんのか……」
+			PRINTFORMW 「科学技術とはそんな事の為にあるのではひぃンッ――！！」
+			CFLAG:9010 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;電気按摩 CFLAG:9011
+;-------------------------------------------------
+IF SELECTCOM == 11
+	;初めて
+	IF CFLAG:9011 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あら❤幻想郷にも流れ着いていたのか……そう言えば早苗の机の中にも隠してあったねぇ❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うっ……なぜそんな物が幻想郷に―――！」
+			PRINTFORMW 「それは電気マッサージ機だ！決して性的なものでは……近寄るなぁ！」
+		ENDIF
+		CFLAG:9011 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ああぅああ❤❤アアッッ！……んひぃぃ❤❤❤」
+			CFLAG:9011 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「――やあぁ……やめ、あ！あアッ！あああんん！❤」
+			CFLAG:9011 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろ、やめろ！やめて……それ駄め……嫌ぁああああ！！！」
+			CFLAG:9011 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;バイブ CFLAG:9012　CFLAG:8811
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 12 && TEQUIP:Ｖ系装着器具
+	;処女
+	IF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「薬で蘇った紛い物だ、別に惜しくはないが……」
+			PRINTFORMW 「――どうせ痛い想いをするなら、%CALLNAME:MASTER%にくれてやりたかったよ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「――ッッ！ゲスめ！……薬で生娘に戻した挙句、そんなもので散らそうというのか！」
+			PRINTFORMW 「……いったい何処まで神を貶めれば(ブヂッ)―――ィきゃああぁァッ！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9012 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「バイブレーター？外の世界でお世話になったよ……でも、%CALLNAME:MASTER%にされる方がずっと好き❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「――クッ！スキマ妖怪め、幻想郷に流れ着くものの管理くらい―――」
+			PRINTFORMW 「……知らんぞ！私はそんなもの使った事はない！！」
+		ENDIF
+		CFLAG:9012 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「膣穴ジュポジュポきもちいいぃっ！！バイブうごいてるッ❤❤牝神かにゃこの奥でギュンギュン動いてりゅうぅぅッッ❤❤❤」
+			PRINTFORMW 「もっと膣穴バイブしてェェェっ❤❤神奈子のバカマンコ御仕置きしてぇッッ❤❤❤」
+			CFLAG:9012 = 4
+		;V感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「やめろぉッ～～！気持ちよくなんかないぃぃッ！バイブなんてぇ～～❤気持ちよクなんかないッ❤気持ちよクないー❤❤！！」
+			PRINTFORMW そこまで言うので振動の強度を最大レベルまで上げてやる事にした。
+			CFLAG:9012 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「道具に頼る臆病者め。まぁ、お前のモノよりバイブの方が余程マシだがな！」
+			PRINTFORMW 口ではそう言いつつ、神奈子の下半身は小刻みに震えていた。恐怖からか、それとも期待からか……？
+			CFLAG:9012 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 12 && TEQUIP:Ｖ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「はぁ、はぁぁ～……ウうンッ～～……次は%CALLNAME:MASTER%のが欲しいよぉ❤❤」
+		CFLAG:8811 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「アッ……うぅうぅ――くッ！」
+		PRINTFORMW 「(無様なところを見られた無様なところを見られた無様なところを見られたッッ！！！)」
+		CFLAG:8811 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;アナルバイブ CFLAG:9013　CFLAG:8812
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 13 && TEQUIP:Ａ系装着器具
+	;初めて
+	IF CFLAG:9013 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「それバイブレーターだろう？外の世界でお世話になったよ……でもそれはソッチに挿れるものじゃンギッッヒィッッ―――❤❤❤！！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「い、嫌……そっちは不浄の……そんな物を入れるな！やめろ……やめろぉ！やめンア゛ァァア゛ア゛ッッ！！」
+		ENDIF
+		CFLAG:9013 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv4以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 4
+			PRINTFORMW 「いひぃぃぃぃ～んぎぼぢっ❤おしりもっと虐めれぇぇッ！！❤ヒギィィィっィっンンッーーー……アァァヒィ❤❤❤」
+			PRINTFORMW 「かにゃこのをウンチ穴ほじくりまわじでぇぇッ❤❤尻豚神奈子にぃぃバイブちょうだいィーッ❤❤❤」
+			CFLAG:9013 = 6
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「―――つッ！あぁァァッ！ぎひぃいッ……痛い！痛いよ！！」
+			PRINTFORMW 「痛いけど……%CALLNAME:MASTER%のくれたバイブだから……全部好きだよぉ❤❤」
+			CFLAG:9013 = 5
+		;A感覚Lv4以上
+		ELSEIF ABL:Ａ感覚 >= 4
+			PRINTFORMW 「ヒャアァッ！……がハッ―――おぉ……んんッ❤」
+			PRINTFORMW 「おし……おひりィ……うひろのあにゃなんかでぇ―――ンンアァッ！❤」
+			CFLAG:9013 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ッんひィィィ嫌ぁぁ～～！！バイブとめてぇぇッ！それ抜いてえぇっ！！お尻壊されるぅーーーもぅダメェ苦じい痛いぃぃい！！」
+			PRINTFORMW 「もう限界ッ！！！！アナル拡がッちゃうッッ！ウンチ穴ダメになッちゃうぅぅッ！！！ンアァァッ！！」
+			PRINTFORMW 神奈子は直腸をバイブで抉られる感覚の前に完全に屈している。気の強い女はアナルが弱い。
+			CFLAG:9013 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「くアァッッ！！――がハッ……アアああっ！！！！」
+			CFLAG:9013 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 13 && TEQUIP:Ａ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ンンッ！んむぅぅう～～❤……お尻が熱いよぉ～～……❤❤」
+		PRINTFORMW 「はやくぅ……%CALLNAME:MASTER%のをちょうだいっ！ねぇ……冷めちゃうまえにぃ～～❤❤」
+		CFLAG:8812 = 4
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「は……はヒィ……おひ……わらひのおひりィッ……ぁが……ぁ」
+		PRINTFORMW バイブの蹂躙から解放された神奈子は、完全に腰砕けの状態だ。
+		PRINTFORMW 気の強い女はアナルがｒｙ
+		CFLAG:8812 = 3
+	;A感覚Lv3以上
+	ELSEIF ABL:Ａ感覚 >= 3
+		PRINTFORMW 「ああぁぁ……なんでお尻……こんなに疼いて………」
+		PRINTFORMW 「――ッ！！違う、違うぞ……私は感じてなど……そんな……ウソだぁッ！！……ううううぅっッ！！」
+		CFLAG:8812 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「くゥゥッ！！……この私が、こんな辱めをッ！！」
+		CFLAG:8812 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;クリキャップ CFLAG:9014　CFLAG:8813
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 14 && TEQUIP:Ｃ系装着器具
+	;初めて
+	IF CFLAG:9014 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ん？！ちょ……なんでそんなのが幻想郷に……」
+			PRINTFORMW 「いや、まぁ別に嫌いじゃないけどね……特に、%CALLNAME:MASTER%がくれるものだったらさ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「チッ！……次から次へと小道具を……クリキャップ等に頼らなければ女一人………」
+			PRINTFORMW 「ッ！―――早苗の机に入っていたのを見ただけだ！！断じて私は使った事等無いぞ！！！」
+			PRINTFORMW そういう事にしておこう。
+		ENDIF
+		CFLAG:9014 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はぁぁあん……それ好きぃ❤はやくぅ～お豆コリコリしてェ❤❤」
+			CFLAG:9014 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌ぁ！もうそれはやめて！それ以上されたら、私……ひゃいぃぃッ！」
+			CFLAG:9014 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 14 && TEQUIP:Ｃ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「はぁ…ぁんッ！……見て……神奈子のお豆❤いっぱいコリコリされて固くなってる❤❤」
+		CFLAG:8813 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「二度とつけるな！こんなものぉ！！」
+		CFLAG:8813 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;ニプルキャップ CFLAG:9015　CFLAG:8814
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 15 && TEQUIP:Ｂ系装着器具
+	;初めて
+	IF CFLAG:9015 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ハァ……ハァ～ッ❤オッパイにつけるんだろそれ❤……大好きなんだ❤❤」
+			PRINTFORMW 守矢神社の精事情が少し心配になってきた。
+		;それ以外
+		ELSE
+			PRINTFORMW 「くッ！よりによって“それ”が幻想郷に？！……やめてくれ！乳房は本当に弱……ふわあぁぁッッ❤！」
+			PRINTFORMW 効果は絶大だ。
+		ENDIF
+		CFLAG:9015 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「もう❤%CALLNAME:MASTER%は本当に私の身体を知り尽くしるねぇ……ほら、早くつけておくれ❤とっくに先っちょカチカチだよぉ❤❤」
+			CFLAG:9015 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「くそぉッ！貴様なぞにいい様にされ……ひゃぁいぃいぃい❤❤！！」
+			PRINTFORMW 「もうだめぇ……わらひぃおっぱいだめなのぉ……❤❤」
+			CFLAG:9015 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 15 && TEQUIP:Ｂ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ハァ……あぁぁん❤乳首こんなにカチコチだよぉ❤❤」
+		CFLAG:8814 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「あぁぁ……うンぅッ……うぅぅぅッッ！」
+		PRINTFORMW キャップを外してやった後も、神奈子は胸の疼きにガタガタと震えている。
+		CFLAG:8814 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;オナホール(ふたなり/オトコのみ) CFLAG:9016　CFLAG:8815
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 16 && TEQUIP:Ｃ系装着器具
+	;初めて
+	IF CFLAG:9016 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「？……その道具は見た事ないぞ……男が竿を扱くものだって？！」
+			PRINTFORMW 「ちょっと待って！まだ心の準備が……ひゃぁぁぁあんっ❤！！」
+			PRINTFORMW 神奈子は未知の感覚に早速嬌声をあげ、屈服を宣言している。
+		;それ以外
+		ELSE
+			PRINTFORMW 「オナホール？何に使う道具だ……竿を？！ふざけるな！誰がそんなものを……」
+			PRINTFORMW 『嫌なら諏訪子を細切れにして食事に混ぜる』
+			PRINTFORMW 「――くそっ！おのれ！おのれェェッ！！」
+		ENDIF
+		CFLAG:9016 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ヌボッヌボッ❤❤神奈子メスちんぽギモヂィッー！！！❤❤❤もうザーメン射精る射精るうゥゥ！！」
+			PRINTFORMW 「かにゃこオンバシラ精子でりゅ❤オナホしゃん癖になりゅぅ！！❤❤❤淫乱おんばしらオナホしゅきしゅきィィィッ❤❤」
+			CFLAG:9016 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「や、やめて！！……それ嫌……ああぁんんんんッッ❤！！」
+			CFLAG:9016 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 16 && TEQUIP:Ｃ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「うッ！んうぅぅ～……こんなイイモノがあったなんてねぇ❤❤」
+		CFLAG:8815 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「きいぃぃっ！！！」
+		PRINTFORMW 神奈子は涙目のまま、外したオナホールを%CALLNAME:MASTER%の顔めがけて投げつけてきた。
+		CFLAG:8815 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;正常位 CFLAG:9020
+;-------------------------------------------------
+IF SELECTCOM == 20
+	;処女
+	IF TALENT:処女 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふふっ……偽の初物だがな」
+			PRINTFORMW 「%CALLNAME:MASTER%となら、何だってうれし……ンッ！❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「どうせニセモノだ。今さら“やめろ”とは言わん……ただ、この痛みは兆倍にして返(ブズリッ)――いギィッ！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9020 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「やっと愛してくれるんだね……%CALLNAME:MASTER%のが欲しい！欲しかったんだよ！…はあぁんっ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「犯されるのも(ミチッ)……グゥッ！！痛めつけられるのも(ギチッ)……あッつぅぅッッ！！初めてではない！！！」
+			PRINTFORMW 「ただ、お前にされるのだけは絶対にぃいいいッ！！(ズブリッ)うわぁぁあッッ！！！」
+		ENDIF
+		CFLAG:9020 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はっ！ハッ！好き！%CALLNAME:MASTER%好きっ！もっと繋がりたい❤顔見せて！もっと愛して❤❤！」
+			PRINTFORMW 「かにゃこ肉便器になりましゅ❤！！！！めす駄神孕ませてぇ❤❤赤ちゃん袋に精子くださいぃ❤❤❤！」
+			CFLAG:9020 = 5
+		;屈服刻印Lv3＋V感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「ああんんっッ❤❤！！戻れなくなっぢゃう！！かにゃこ肉穴もうイィっキちょうぅぅなのぉっ❤❤❤❤！！！」
+			PRINTFORMW 「牝神マンコギモヂィィィィッギモヂィッッーーー！肉穴バカになッちゃぅぅッーッッ❤❤❤奥もっとゴリゴリ激しくしてぇええ！！❤❤」
+			CFLAG:9020 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「はっ！うぅんんんっ！！……やぁ……やめてぇっ！！」
+			PRINTFORMW 「せめて、中はやめてくれ！！後生だから堪忍して！！！」
+			CFLAG:9020 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぅあァッ！！絶対許さん！！祟ってやるぞ%CALLNAME:MASTER%！！」
+			PRINTFORMW 「子を孕んだら、貴様を恨むよう産んでくれる！！呪うよう育ててくれるッ！！！殺すよう躾けてくれるぅッッ！！！！ぐゥウゥゥッ！！」
+			CFLAG:9020 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位 CFLAG:9021
+;-------------------------------------------------
+IF SELECTCOM == 21
+	;処女
+	IF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「いいのかい？紛い物の生娘だぞ？それも、こんな畜生みたいな姿勢でさ……」
+			PRINTFORMW 「いや、いい……%CALLNAME:MASTER%となら、なんだって嬉しい……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぅぅ！！こんな、犬のような格好で再び穢されるのかッ！！」
+			PRINTFORMW 「覚えておけよ%CALLNAME:MASTER%！！必ずこの手で(ブヂィッ)――がはアァァァッッ！！！！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9021 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はぁ――❤、いいよいつでも❤❤神奈子%CALLNAME:MASTER%のメス犬になる❤❤」
+			PRINTFORMW 「神奈子は駄神ですッ！！駄牝神かにゃこの肉ジャッキはやくジュボジュボして❤❤❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……まるで犬のようだ……この私が……まるで……」
+			PRINTFORMW 「違う、私は負け犬じゃない……私は最後まで……最後まで戦っ(ズブリ)アァんんんッ！！」
+		ENDIF
+	CFLAG:9021 = 1
+	RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「アッ……あんっ❤ぁんんっ❤もっと……奥突いてぇッッ❤❤❤駄神かにゃこの肉穴ぁ～めちゃくちゃにしてぇぇええ❤❤❤❤」
+			CFLAG:9021 = 5
+		;屈服刻印Lv3＋V感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「ン゛ア゛ァッ！！おぉ……んうぅッ❤❤奥イい……かにゃこ牝いぬになりゅ！！もうマンコ犬でいいのおおお❤❤」
+			PRINTFORMW 「もうだめぇ！堕ちりゅぅぅう❤❤マンコ犬神奈子にオチンポジュボジュボくだしゃいいいッ！❤❤❤❤」
+			CFLAG:9021 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「アッ！うわぁああっ！！いやだぁ！……こんなのダメ！もう、耐えられないッ！！」
+			PRINTFORMW 「お願いだから中はやめて！！お許しを！！諏訪から一歩も出ない！！もう天津神に逆らわないからぁ！！」
+			PRINTFORMW 神奈子は過去のトラウマを思い出し、混乱しているようだ。
+			CFLAG:9021 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「犬のように盛るがいい……狗の様に殺してやる！！！」
+			CFLAG:9021 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;対面座位 CFLAG:9022
+;-------------------------------------------------
+IF SELECTCOM == 22
+	;処女
+	IF TALENT:処女
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「これ好きだ……%CALLNAME:MASTER%の顔が近くに見える……」
+			PRINTFORMW 「この痛みが紛い物なのが口惜しい……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「お前を殺したがっている相手に、こうも顔を近づけるとは、その胆力だけは認めてやる！」
+			PRINTFORMW 「ついでに突いてみるがいい。下の口で噛み千切って(プツッ)――ッあァァッ！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9022 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あんっっ！んあぁンッ❤いいよぉ！❤❤これスゴイィ好きぃ❤%CALLNAME:MASTER%が全部感じるよぉ～ッ❤❤❤」
+			PRINTFORMW 「%CALLNAME:MASTER%好きぃ❤ぁんッ❤❤突いて❤❤下からギュっギュって❤❤神奈子の奥まで貫いてぇぇ❤❤❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……うぅうっ！！おのれ！おのれぇえ！！許さん！！ゆるさんゆるさん！！！お前だけは絶対ゆる……」
+			PRINTFORMW 『なら“他の二人に”代わりをしてもらおう』
+			PRINTFORMW 「――――ッ！……ぅ…ああぁ……うわぁああん！！」
+			PRINTFORMW 泣き喚く神奈子の姿を楽しみながら、%CALLNAME:MASTER%は幾度も突き上げた。
+		ENDIF
+		CFLAG:9022 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふあぁあ！イイ！肉穴すごくいいよぉ❤❤%CALLNAME:MASTER%に抱っこされたまま繋がってる❤❤❤好き好きしゅきぃ❤❤」
+			PRINTFORMW 「熱くて好きぃ～❤%CALLNAME:MASTER%のあったかいのちょうだいぃ！牝かにゃこの膣穴にちょうだい！！❤❤」
+			CFLAG:9022 = 5
+		;屈服刻印Lv3＋V感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「ヒャァあぃいんんッッ！ぎぼぢいよぉおお！！❤❤おマンこイっちゃうッッ！！%CALLNAME:MASTER%なんかにぃイがされるぅぅ！！」
+			PRINTFORMW 「もうダメェ～～ッ❤神奈子信仰なんてイラナイ気持ちいのだけ欲しい！！もう牝穴でいいよぉお！牝駄神だよぉおッ❤❤」
+			CFLAG:9022 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ごめんなさいごめんなざいゴメンナサイ～～ッ！！もう許してくださいもうやだあぁ！！」
+			PRINTFORMW 「助けて父上ぇッ！もうこんなの嫌ぁああ！！」
+			PRINTFORMW 神奈子は過去のトラウマを思い出し、混乱しているようだ。
+			CFLAG:9022 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「暑苦しい！離れろ！！！」
+			PRINTFORMW 「離れてくれよ……頼むからッ――」
+			CFLAG:9022 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;背面座位 CFLAG:9023
+;乱れ牡丹 CFLAG:9612
+;-------------------------------------------------
+;背面座位
+IF SELECTCOM == 23
+	;処女
+	IF TALENT:処女 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んぐうぅうぅッ！！……痛い……くるしイッ！……でも……%CALLNAME:MASTER%が、いっぱい感じるよ……❤❤」
+			PRINTFORMW 「私の二度目の初めて、%CALLNAME:MASTER%で良かった……そのまま――動いて！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「きゃあぁぅぅッ！！うううううッ！！」
+			PRINTFORMW 「例え紛い物であっても、この痛みは忘れぬぞ！必ず仕返ししてやる！ハラワタを引きずり出しギヒィッッ？うあぁやめッ……動かないでぇ！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9023 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「うんっっ！はあぁッ……❤%CALLNAME:MASTER%の熱いのが来る❤❤神奈子の牝穴にくりゅうぅ❤❤❤❤」
+			PRINTFORMW 「抱っこして❤❤もっと強く抱きしめて❤❤❤そのまま動いて！神奈子のお腹かき回してぇ❤❤❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……うぅうっ！！おのれ！おのれぇえ！！許さん！！ゆるさんゆるさん！！！お前だけは絶対ゆる……」
+			PRINTFORMW 『なら“他の二人に”代わりをしてもらおう』
+			PRINTFORMW 「――――ッ！……ぅ…ああぁ……うわぁああん！！」
+			PRINTFORMW 泣き喚く神奈子の姿を楽しみながら、%CALLNAME:MASTER%は幾度も突き上げた。
+		ENDIF
+		CFLAG:9023 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふあぁあ！イイ！肉穴すごくいいよぉ❤❤%CALLNAME:MASTER%に抱っこされたまま繋がってる❤❤❤好き好きしゅきぃ❤❤」
+			PRINTFORMW 「熱くて好きぃ～❤%CALLNAME:MASTER%のあったかいのちょうだいぃ！牝かにゃこの膣穴にちょうだい！！❤❤」
+			CFLAG:9023 = 5
+		;屈服刻印Lv3＋V感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「ヒャァあぃいんんッッ！ぎぼぢいよぉおお！！❤❤おマンこイっちゃうッッ！！%CALLNAME:MASTER%なんかにぃイがされるぅぅ！！」
+			PRINTFORMW 「もうダメェ～～ッ❤神奈子信仰なんてイラナイ気持ちいのだけ欲しい！！もう牝穴でいいよぉお！牝駄神だよぉおッ❤❤」
+			CFLAG:9023 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「ごめんなさいごめんなざいゴメンナサイ～～ッ！！もう許してくださいもうやだあぁ！！」
+			PRINTFORMW 「助けて父上ぇッ！もうこんなの嫌ぁああ！！」
+			PRINTFORMW 神奈子は過去のトラウマを思い出し、混乱しているようだ。
+			CFLAG:9023 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「暑苦しい！離れろ！！！」
+			PRINTFORMW 「離れてよぉ……頼むからッ――」
+			CFLAG:9023 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;乱れ牡丹
+IF SELECTCOM == 612
+	;処女
+	IF TALENT:処女 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んぐうぅうぅッ！！……深いィィッ！……%CALLNAME:MASTER%と繋がってるの見えるよぉ……❤❤」
+			PRINTFORMW 「私の二度目の初めて、%CALLNAME:MASTER%で良かった……もっと見せて❤❤私が牝になる所もっと見せてぇぇ～～ッ❤❤！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぅッ！！！鏡の前で！！！二度目は鏡の前で散らされるのか！！！」
+			PRINTFORMW 「この屈辱も、痛みも！！決して忘れぬぞ！神罰をくれてやる！！貴様の子々孫々に至るまで(ブヂィッ)――ギひィィッ！！！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9023 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あはぁ❤%CALLNAME:MASTER%に愛されてるのが見える❤❤いっぱい愛されてるの見える❤❤❤❤」
+			PRINTFORMW 「そのまま放さないで❤抱きしめたまま貫いて❤❤神奈子の牝穴バカになるまで抉って！！！❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「鏡の前で辱めようというのか……悪趣味だ！」
+			PRINTFORMW ズッチュッ！……ぬぶゅッ……
+			PRINTFORMW 「ッ！……うぅ……おのれ！！おのれぇ！！！」
+		ENDIF
+		CFLAG:9612 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あぁまた❤これ大好き！！神奈子の肉穴ジュボジュボってされるの❤%CALLNAME:MASTER%と繋がるの見えるの❤好きぃぃッ❤❤」
+			PRINTFORMW 「早く神奈子ダメにして！❤❤滅茶苦茶に犯すところいっぱい見せて❤❤❤❤」
+			CFLAG:9612 = 5
+		;屈服刻印Lv3＋V感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「ヒィいいんッ！見られて……見られてるのにぃ❤恥ずかしい所全部見らてるのにぃ❤❤気持ちいの止まらない！！止まらないよぉぉ❤❤」
+			PRINTFORMW 「神奈子マンコ狂いになっちゃったッ！もうちんぽ無しじゃ生きられなくなっちゃったよぉ～～！もっと神奈マンコぶち抜いてぇ❤❤狂う所見せてぇ❤❤❤❤」
+			CFLAG:9612 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「あぁああ！！いやだ……嫌だぁ！！こんな恥ずかしいのダメェ！！」
+			PRINTFORMW 「もうダメだよぉ……信仰されなくなっちゃうよぉ……うぅぅうぅっ！」
+			CFLAG:9612 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「くっ！%CALLNAME:MASTER%如きに遊ばれるなんて……なんて様だよマッタク！」
+			CFLAG:9612 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;騎乗位 CFLAG:9024
+;-------------------------------------------------
+IF SELECTCOM == 24
+	;処女
+	IF TALENT:処女 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はあぁ❤……ぶち抜いてくれるんだね？いいよ%CALLNAME:MASTER%だったら……紛い物だけどね……」
+			PRINTFORMW 「ね……手握ってて……！ちょっとでも多く%CALLNAME:MASTER%と触れていたいの❤❤それじゃ……おねがい！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「くぅぁァアァッッッ！！……ウウゥゥッ！！」
+			PRINTFORMW 「初めてではないはずなのに……どうしてこうも辛い！！これは痛みの所為ではないはずだ……相手がお前だからだよ！！！！」
+		ENDIF
+		RETURN 0
+	;初めて＆非処女
+	ELSEIF CFLAG:9024 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ああぁんんっッ！！いいよぉ❤❤……マンコいい！❤肉穴%CALLNAME:MASTER%に突き上げられて子宮喜んでるぅぅッッ❤❤凄いよぉぉっ！❤❤」
+			PRINTFORMW 「もっと突いて！子宮こんこんノックしてぇええ……❤❤赤ちゃん袋突き上げてぇぇぇぇッ！！❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……ひッ……！んんんっ！……感じるものか！感じるものか！！」
+			PRINTFORMW 神奈子は両目をキッと閉じ、歯を剥いて快感を否定し続けた。
+		ENDIF
+		CFLAG:9024 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んあぁああぁあ気持ちい気持ちい気持ちイイよおおおお❤❤もっと突いて！！突いて突いて貫いてぇえ！！」
+			PRINTFORMW 「神奈子のマンコ%CALLNAME:MASTER%のオチンポいっぱい入ってる！！！！オチンチン喜ばせたい❤❤牝穴でおちんちん喜ばせるのぉぉっ！！❤」
+			CFLAG:9024 = 5
+		;屈服刻印Lv3＋V感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:Ｖ感覚 >= 3
+			PRINTFORMW 「アアァっっァっーーあぁあんんっ！❤ジュポジュポぎもちいぃぃいいいいぃでずぅっ！！！奥までゴリゴリぢでェェェェっっっ……アアっびゃアァァっ！❤❤！！」
+			PRINTFORMW 「牝壷にチンポくだしゃいッ！！神奈マンコにオチンポくださいイッ～～……❤❤淫乱牝神の膣壷ペニスケースにしてぇぇ～～～❤！！」
+			CFLAG:9024 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「あぁあ！……うわぁあああ！！動くな！うご……かないでぇ！！」
+			PRINTFORMW 「奥にあたって……いやぁ！！感じてなんかいない！！膣気持ちよくなんかなってないぃぃっ！！」
+			CFLAG:9024 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふぅっ…あ……！」
+			PRINTFORMW 「こ……この程度、なんとも――ぁンッ！」
+			CFLAG:9024 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;逆レイプ CFLAG:9025
+;(主人が非オトコ、奴隷がオトコ/ふたなりのみ)
+;-------------------------------------------------
+IF SELECTCOM == 25
+	;初めて
+	IF CFLAG:9025 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「本当にいいのか？自慢ではないが、私の竿は業物だぞ？……まぁ%CALLNAME:MASTER%がそう言うなら遠慮なく❤❤」
+			PRINTFORMW 「んひぃぃ！！きつッ……！言わんこっちゃない！痛ければやめてもいいんだぞ❤❤正直私はもう……限界んんあっ！急に動かないで！！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「調子にのるなよ小娘！私のオンバシラは貴様如きに征服できる安物ではないわ！」
+			PRINTFORMW 「試してみるがいい……その穴、二度と使い物になら（ヌブリッ）―――かはァッ……ァ……ァ？！」
+			PRINTFORMW %CALLNAME:MASTER%が下の口で剛直を咥え込み、身体ごと上下運動を繰り返す度に、神奈子は獣じみた嬌声を上げてよがり狂った。
+		ENDIF
+		CFLAG:9025 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ンアっっアァァッ～❤ンヒィッッィィッイィッッ牝チンコ気持ちぃぃ……❤❤本気汁射精る❤❤❤淫肉オンバシラすぐイかされちゃぅっ❤❤❤」
+			PRINTFORMW 「神奈ちんこしぼりとられりゅぅぅッ！❤❤%CALLNAME:MASTER%マンコに精子袋全部飲み干されちゃいましゅうぅっ……❤❤」
+			PRINTFORMW 「んほぉぉっ❤%CALLNAME:MASTER%のマンコ好き❤❤射精したい❤❤❤%CALLNAME:MASTER%マンコにオンバシラビュービューッてしたいよぉッッ❤❤！！」
+			CFLAG:9025 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ああッ……ンッ！くうぅ～～ンッ❤この……中々やるじゃないか！」
+			PRINTFORMW 「――だが、本番はこれからああんんぁああああそんなは激じぐ動かないでぇえええ！！！」
+			CFLAG:9025 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;助手を犯す CFLAG:9026
+;-------------------------------------------------
+IF SELECTCOM == 26
+	;初めて
+	IF CFLAG:9026 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はぁーーッ❤神奈子の前で%CALLNAME:MASTER%が他の女とセックスしてる❤❤スゴイ……気持ちよさそ……」
+			PRINTFORMW 「あれ？……なんで？なんでこんなにコーフンするのぉ❤❤？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「チッ！……目的は私だろう！！私ならいくらでも責めるがいい！！その子は見逃してやってくれ！!」
+			PRINTFORMW 「え……ちが……べつに羨ましくなんか……そんな目で見るなぁ！！」
+		ENDIF
+		CFLAG:9026 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ハァッハァッハァッ❤次？神奈子次？❤❤はあぁン～～～！神奈子も欲しいよぉ❤❤%CALLNAME:MASTER%のオチンポ、神奈子も欲しいよぉぉッッ！！」
+			CFLAG:9026 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……そうか……その子は、もう%CALLNAME:MASTER%に……私もいっそ……そっち側へ………」
+			PRINTFORMW 「――いや、駄目だ！……私は、絶対に屈しない！！！」
+			CFLAG:9026 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;------------------------------------------------
+;正常位アナル CFLAG:9030
+;-------------------------------------------------
+IF SELECTCOM == 30
+	;初めて
+	IF CFLAG:9030 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「え、おい！そっちは汚いぞ？……まぁ、%CALLNAME:MASTER%のがどうしてもって言うなら、どんな穴だってくれてやるよ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろぉぉ！！そっちは違う！！そっちは不浄の穴だ！！」
+			PRINTFORMW 「不潔にも程がある！！一体どういう神経――ふぎゃあぁああっ！！」
+		ENDIF
+		CFLAG:9030 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		LOCAL = PALAM:潤滑 + UP:10
+		;恋慕+潤滑Lv2以上
+		IF TALENT:恋慕 && LOCAL >= PALAMLV:2
+			PRINTFORMW 「アッ❤……お尻……いい❤❤」
+			CFLAG:9030 = 5
+		;恋慕+潤滑Lv2未満
+		ELSEIF TALENT:恋慕 && LOCAL < PALAMLV:2
+			PRINTFORMW 「ンァアアあんんんんんっッ！！！……痛ッ……でも、きもちいよぉ……」
+			CFLAG:9030 = 4
+		;潤滑Lv2以上＋A感覚Lv3以上
+		ELSEIF LOCAL >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「んぎぃいぃいい？！……おひり……なんで……私のお尻どうなって……んああっ❤❤」
+			CFLAG:9030 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ガハァッ……！！」
+			CFLAG:9030 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位アナル CFLAG:9031
+;-------------------------------------------------
+IF SELECTCOM == 31
+	;初めて
+	IF CFLAG:9031 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「え、おい！そっちは汚いぞ？……まぁ、%CALLNAME:MASTER%のがどうしてもって言うなら、どんな穴だってくれてやるよ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろぉぉ！！そっちは違う！！そっちは不浄の穴だ！！」
+			PRINTFORMW 「不潔にも程がある！！一体どういう神経――ふぎゃあぁああっ！！」
+		ENDIF
+		CFLAG:9031 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		LOCAL = PALAM:潤滑 + UP:10
+		;恋慕+潤滑Lv2以上
+		IF TALENT:恋慕 && LOCAL >= PALAMLV:2
+			PRINTFORMW 「アッ❤……お尻……いい❤❤」
+			CFLAG:9031 = 5
+		;恋慕+潤滑Lv2未満
+		ELSEIF TALENT:恋慕 && LOCAL < PALAMLV:2
+			PRINTFORMW 「ンァアアあんんんんんっッ！！！……痛ッ……でも、きもちいよぉ……」
+			CFLAG:9031 = 4
+		;潤滑Lv2以上＋A感覚Lv3以上
+		ELSEIF LOCAL >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「んぎぃいぃいい？！……おひり……なんで……私のお尻どうなって……んああっ❤❤」
+			CFLAG:9031 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ガハァッ……！！」
+			CFLAG:9031 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;対面座位アナル CFLAG:9032
+;-------------------------------------------------
+IF SELECTCOM == 32
+;	;初めて
+	IF CFLAG:9032 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「え、おい！そっちは汚いぞ？……まぁ、%CALLNAME:MASTER%のがどうしてもって言うなら、どんな穴だってくれてやるよ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろぉぉ！！そっちは違う！！そっちは不浄の穴だ！！」
+			PRINTFORMW 「不潔にも程がある！！一体どういう神経――ふぎゃあぁああっ！！」
+		ENDIF
+		CFLAG:9032 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		LOCAL = PALAM:潤滑 + UP:10
+		;恋慕+潤滑Lv2以上
+		IF TALENT:恋慕 && LOCAL >= PALAMLV:2
+			PRINTFORMW 「アッ❤……お尻……いい❤❤」
+			CFLAG:9032 = 5
+		;恋慕+潤滑Lv2未満
+		ELSEIF TALENT:恋慕 && LOCAL < PALAMLV:2
+			PRINTFORMW 「ンァアアあんんんんんっッ！！！……痛ッ……でも、きもちいよぉ……」
+			CFLAG:9032 = 4
+		;潤滑Lv2以上＋A感覚Lv3以上
+		ELSEIF LOCAL >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「んぎぃいぃいい？！……おひり……なんで……私のお尻どうなって……んああっ❤❤」
+			CFLAG:9032 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ガハァッ……！！」
+			CFLAG:9032 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;
+;-------------------------------------------------
+;背面座位アナル CFLAG:9033
+;-------------------------------------------------
+IF SELECTCOM == 33
+;	;初めて
+	IF CFLAG:9033 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「え、おい！そっちは汚いぞ？……まぁ、%CALLNAME:MASTER%のがどうしてもって言うなら、どんな穴だってくれてやるよ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろぉぉ！！そっちは違う！！そっちは不浄の穴だ！！」
+			PRINTFORMW 「不潔にも程がある！！一体どういう神経――ふぎゃあぁああっ！！」
+		ENDIF
+		CFLAG:9033 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		LOCAL = PALAM:潤滑 + UP:10
+		;恋慕+潤滑Lv2以上
+		IF TALENT:恋慕 && LOCAL >= PALAMLV:2
+			PRINTFORMW 「アッ❤……お尻……いい❤❤」
+			CFLAG:9033 = 5
+		;恋慕+潤滑Lv2未満
+		ELSEIF TALENT:恋慕 && LOCAL < PALAMLV:2
+			PRINTFORMW 「ンァアアあんんんんんっッ！！！……痛ッ……でも、きもちいよぉ……」
+			CFLAG:9033 = 4
+		;潤滑Lv2以上＋A感覚Lv3以上
+		ELSEIF LOCAL >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「んぎぃいぃいい？！……おひり……なんで……私のお尻どうなって……んああっ❤❤」
+			CFLAG:9033 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ガハァッ……！！」
+			CFLAG:9033 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;
+;-------------------------------------------------
+;騎乗位アナル CFLAG:9034
+;-------------------------------------------------
+IF SELECTCOM == 34
+	;初めて
+	IF CFLAG:9034 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はぁッ！はぁ―ッ！、%CALLNAME:MASTER%のおちんぽ……これから、お尻に……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うわぁあああ！やめろ！！そんなものを尻に挿れ……(ヌムゥッ)」
+			PRINTFORMW 「――ンゃゃぁああああ！！！」
+		ENDIF
+		CFLAG:9034 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		LOCAL = PALAM:潤滑 + UP:10
+		;恋慕+潤滑Lv2以上
+		IF TALENT:恋慕 && LOCAL >= PALAMLV:2
+			PRINTFORMW 「ふわぁッ！…はあッ！はぁッ！……下から…何か……来る！」
+			CFLAG:9034 = 5
+		;恋慕+潤滑Lv2未満
+		ELSEIF TALENT:恋慕 && LOCAL < PALAMLV:2
+			PRINTFORMW 「待って！お願い…！もう少し、塗らしてから……だめかい？」
+			CFLAG:9034 = 4
+		;潤滑Lv2以上＋A感覚Lv3以上
+		ELSEIF LOCAL >= PALAMLV:2 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 「かはッ―――！」
+			CFLAG:9034 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「んぎィッッ！！」
+			CFLAG:9034 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;手淫 CFLAG:9040
+;-------------------------------------------------
+IF SELECTCOM == 40
+	;初めて
+	IF CFLAG:9040 == 0
+		;奉仕精神Lv3以上
+		IF ABL:奉仕精神 >= 3
+			PRINTFORMW 「どうだい？私の手はガサガサだろう？」
+			PRINTFORMW 「得物ばかり握ってきたからね……今はこうして、肉の竿を握る事になってしまったよ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……(一思いに握りつぶしてやろうか)」
+			PRINTFORMW 『余計な事を考えているなら早苗と諏訪子を解体して犬の餌に……』
+			PRINTFORMW 「やめろ！」
+		ENDIF
+		CFLAG:9040 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋奉仕精神Lv5
+		IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+			PRINTFORMW 「気持ちいだろう？慣れたもんさ❤荒れたガサガサの掌も使い様❤」
+			CFLAG:9040 = 4
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「こういうのには、コツがいるんだよ」
+			CFLAG:9040 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……なんで私がこんな事を」
+			CFLAG:9040 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フェラチオ CFLAG:9041
+;-------------------------------------------------
+IF SELECTCOM == 41
+	;初めて
+	IF CFLAG:9041 == 0
+		;奉仕精神Lv3以上
+		IF ABL:奉仕精神 >= 3
+			PRINTFORMW 「……尺八かい？最後に咥えたのは、いつ頃だったか……」 
+		;それ以外
+		ELSE
+			PRINTFORMW 「……尺八か……奴隷の基本だな……」
+			PRINTFORMW 「だが、憶えておけよ%CALLNAME:MASTER%……いつか必ず、この粗末な物を噛み千切ってやる！……んむっ」
+		ENDIF
+		CFLAG:9041 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋奉仕精神Lv5
+		IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+			PRINTFORMW 「ふぅーっ、んんっ❤%CALLNAME:MASTER%の欲しい！濃いの、口の中に！んッ❤んっ❤」
+			CFLAG:9041 = 4
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「ん……、はぅ……んはぁッ……」
+			PRINTFORMW 「そっと頼むよ……昔これのやり過ぎで顎を外された事があるんだ」
+			CFLAG:9041 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ぐぶぅッ！んんんッ！（くそっ！なんて臭いだ！）」
+			CFLAG:9041 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;パイズリ CFLAG:9042
+;-------------------------------------------------
+IF SELECTCOM == 42
+	;初めて
+	IF CFLAG:9042 == 0
+		;奉仕精神Lv3以上
+		IF ABL:奉仕精神 >= 3
+			PRINTFORMW 「自慢じゃないが……私の胸は逸品だぞ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「竿を胸で挟めとな……お次は何だ、腹芸でもしてやろうか？」
+			PRINTFORMW 『軽口を叩く余裕があるようだな、早苗を叩きのめしてからの方がいいか？』
+			PRINTFORMW 「悪かった！何でもするから早苗は見逃してくれ！」
+		ENDIF
+		CFLAG:9042 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋奉仕精神Lv5
+		IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+			PRINTFORMW 「ははっ！どうだい%CALLNAME:MASTER%。どこぞの蛙なんぞより、ずっとイイだろう？」
+			CFLAG:9042 = 4
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「土着神には到底マネできないだろうねぇ」
+			CFLAG:9042 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……間違っても“真澄の鏡”は汚さないで……」
+			PRINTFORMW 首から提げた鏡……神格を維持するのに必要な神器なのだろうか？
+			CFLAG:9042 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;素股 CFLAG:9043
+;-------------------------------------------------
+IF SELECTCOM == 43
+	;初めて
+	IF CFLAG:9043 == 0
+		;恋慕有り
+		IF TALENT:恋慕
+			PRINTFORMW 「あっ……膣内（なか）に挿っ……入れないのかい？！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「女に挿れる度胸もないか……」
+		ENDIF
+		CFLAG:9043 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕有り
+		IF TALENT:恋慕
+			PRINTFORMW 「そんなに焦らさないでぇ……ブチ込んでおくれよう……切ないんだよぉ❤」
+			CFLAG:9043 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「はぅ……このッ！馬鹿にして……！」
+			CFLAG:9043 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナル奉仕強制 CFLAG:9044
+;-------------------------------------------------
+IF SELECTCOM == 44
+	;初めて
+	IF CFLAG:9044 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「き、菊門を舐めろって？！……ぁあんもう！どこまで業が深いんだい！コーフンするじゃないかぁ❤」
+			PRINTFORMW 神奈子は%CALLNAME:MASTER%の尻に顔をうずめると、嬉しそうに肛門を舐め始めた。
+		;それ以外
+		ELSE
+			PRINTFORMW 「不浄の穴を舐めろだと？！……うぅぅッ！やらなければ……早苗や諏訪子が……」
+			PRINTFORMW 神奈子は鼻を摘みながら、心底嫌そうな表情で、震える舌を%CALLNAME:MASTER%の肛門に這わせた。
+		ENDIF
+		CFLAG:9044 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕+従順Lv5以上
+		IF TALENT:恋慕 && ABL:従順 >= 5
+			PRINTFORMW 「ん……ちゅ…ぺチャ……クチュ……%CALLNAME:MASTER%のおひり……きれいにきれいに～～❤」
+			CFLAG:9044 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「せめて綺麗にしておいてくれよ？この後接吻もできやしない」
+			CFLAG:9044 = 4
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「チュッ……くちゅ……ぬちゃ……（うぅぅっ！屈辱的なはずなのに、どうしてこうも身体が疼く！）」
+			CFLAG:9044 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……（考えるな！考えるな！考えるな！……ううぅ、臭い！）」
+			CFLAG:9044 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ローション CFLAG:9060
+;-------------------------------------------------
+IF SELECTCOM == 60
+	;初めて
+	IF CFLAG:9060 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「こんなもの使わなくとも、%CALLNAME:MASTER%が目の前に居るだけで、私はもうグチョグチョだよ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「こんなものに頼らなくては、女一人湿らせられんとはね……」
+		ENDIF
+		CFLAG:9060 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「……別に構わんが、%CALLNAME:MASTER%の手で濡らして欲しいな」
+			CFLAG:9060 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「少しは自分の腕を磨いたらどうだ」
+			CFLAG:9060 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;媚薬 CFLAG:9061
+;-------------------------------------------------
+IF SELECTCOM == 61
+	;初めて
+	IF CFLAG:9061 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「薬？、そんなのいらないよ、%CALLNAME:MASTER%こそが最高の媚や……ンッ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ッはぁ……ッはぁ……何の薬だこれは！……貴様、私に何を飲ませ……あぁぁあぁあ！！な゛に゛こ゛れ゛？！！！」
+		ENDIF
+		CFLAG:9061 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;媚薬中毒
+		IF TALENT:媚薬中毒
+			PRINTFORMW 「あ゛あ゛あァァッ！それ！それぇッ！はやく！！！お゛ぐずり゛ぢょうだい゛イイイッッ！！」
+			PRINTFORMW 完全に薬にハマッた神奈子の瞳には、以前の神々しさなど微塵も残されていなかった。
+			CFLAG:9061 = 4
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「あんまりそれは使いたくないよ、何も分からなくなってしまう……」
+			PRINTFORMW 「まぁ……使ってもいいけどさ、その代わり%CALLNAME:MASTER%……最後まで側に居て」
+			CFLAG:9061 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌！駄目だめだめぇ！！その薬は……んんんッ！！」
+			CFLAG:9061 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;利尿剤 CFLAG:9062
+;-------------------------------------------------
+IF SELECTCOM == 62
+	;恋慕+おもらし癖
+	IF TALENT:恋慕 && TALENT:おもらし癖
+		PRINTFORMW 「んんんあぁぁっ！！おしっこがまんできない！！はああああっ♪」
+		CFLAG:9062 = 4
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「あっ！やッ……おしっこが……んんんんっ！」
+		CFLAG:9062 = 3
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「うぅっ……！くそ、こんな奴の前で……」
+		CFLAG:9062 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「……っ、利尿剤だと……ヘンタイが！」
+		CFLAG:9062 = 1
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;裸エプロン(新妻プレイ) CFLAG:9090 解除 CFLAG:8823
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 90 && TEQUIP:コスチュームプレイ
+	;初めて
+	IF CFLAG:9090 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「新妻……私がねぇ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「何で私がこんな、企画もの安ＡＶみたいな格好を……見たことなんてないぞッ！」
+		ENDIF
+		CFLAG:9090 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ちょっと恥ずかしいけど、それがまたソソるよねぇ」
+			CFLAG:9090 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「はぁ……飽きんのか？」
+			CFLAG:9090 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 90 && TEQUIP:コスチュームプレイ == 0
+	;初めて
+	IF CFLAG:8823 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「いつか%CALLNAME:MASTER%の為に、本物の格好をしたいよ……遊びじゃなくて……ね」
+		;それ以外
+		ELSE
+			PRINTFORMW 「お次はなんだ？戦隊ヒーローモノか？セーラー服か？」
+		ENDIF
+		CFLAG:8823 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「いつかは本当に女の幸せを手にしたいと願っているよ……」
+			CFLAG:8823 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「セーラー服だけはやめてくれ。早苗のを黙って着たら怒られたんだ……」
+			CFLAG:8823 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ビデオ撮影（ビデオカメラ使用） CFLAG:9100
+;-------------------------------------------------
+IF SELECTCOM == 100 && TEQUIP:ビデオ撮影
+	;初めて
+	IF CFLAG:9100 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「！……それ、撮影してどうするつもり？……まさかバラ撒いたりしないだろうな？」
+			PRINTFORMW そうは言っているが、神奈子はモジモジと内腿をすり合わせ、顔を耳まで紅潮させて興奮している。
+		;それ以外
+		ELSE
+			PRINTFORMW 「うわ！やめろ！止めてくれ！こんな事が信徒達に知れたら、私への信仰が――！」
+		ENDIF
+		CFLAG:9100 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「これは新しい布教の形かもしれないね……前のテープは高く売れたかい？」
+			CFLAG:9100 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「せめて売るのは勘弁してくれ……それだけは……後生だよぉ……」
+			CFLAG:9100 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;羞恥プレイ CFLAG:9103 解除 CFLAG:8822
+;-------------------------------------------------
+IF SELECTCOM == 103 && TEQUIP:羞恥プレイ
+	;初めて
+	IF CFLAG:9103 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あはぁ❤%CALLNAME:MASTER%にイジめられる私の姿がよく見える❤もうグチョグチョだよぉ❤❤」
+			PRINTFORMW 「ね！早くやろう！」
+		;露出癖Lv3以上
+		ELSEIF ABL:露出癖 >= 3
+			PRINTFORMW 「あぁあなんで私こんな格好なのにコーフンして……違う！こんなの……私はヘンタイなんかじゃ……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「鏡なんぞ使ってどうするつもりだ」
+		ENDIF
+		CFLAG:9103 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕+露出癖Lv3以上
+		IF TALENT:恋慕 && ABL:露出癖 >= 3
+			PRINTFORMW 「すごいよぉ❤❤鏡の前でするのコーフンし過ぎて頭が沸騰しちゃいそう❤❤」
+			PRINTFORMW 「ね、%CALLNAME:MASTER%❤どうやって虐めてくれるんだい？！痛いの？！気持ちいの？！！早くしておくれよぉ❤❤」
+			CFLAG:9103 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「ちょっと恥ずかしいけど、それがまたソソるんだよねぇ❤」
+			CFLAG:9103 = 4
+		;露出癖Lv3以上
+		ELSEIF ABL:露出癖 >= 3
+			PRINTFORMW 「はぁ……はぁ……（またこれ……これから嬲られて、それを見せ付けられる……何されるんだろう……何されるんだろう？！）」
+			CFLAG:9103 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ヘンタイめ……」
+			CFLAG:9103 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 103 && TEQUIP:羞恥プレイ == 0
+	;初めて
+	IF CFLAG:8822 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:8822 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:8822 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:8822 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;野外プレイ CFLAG:9104　CFLAG:8821
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 104 && TEQUIP:野外プレイ
+	;初めて
+	IF CFLAG:9104 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「え？！ちょ！どこ連れて行くんだい？！まさか外に……この格好で？！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろおおお！！こんな格好で外になど行けるか……もし信徒達の目にでも入ったら……」
+			PRINTFORMW 『逆らうなら早苗のアソコを麻酔なしで縫い合わせる』
+			PRINTFORMW 「ううぅっ！！く……卑怯者が！！」
+		ENDIF
+		CFLAG:9104 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋露出癖Lv3以上
+		IF TALENT:恋慕 && ABL:露出癖 >= 3
+			PRINTFORMW 「お散歩の時間だね❤見られるの最高だよぉ❤❤でも不思議だね、こんな私を一体どこの誰が信仰してるんだろう……ねぇ？」
+			CFLAG:9104 = 4
+		;露出癖Lv3以上
+		ELSEIF ABL:露出癖 >= 3
+			PRINTFORMW 「はぁ……はぁ……(また見られちゃう全部見られちゃう！どうしようどうしよう！信仰心なくなっちゃのに、なんでコーフンするんだよぉ！)」
+			CFLAG:9104 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぅうっ……またか……もう私は神としてお終いだ……」
+			CFLAG:9104 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 104 && TEQUIP:野外プレイ == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		CFLAG:8821 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		CFLAG:8821 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;放尿 CFLAG:9111
+;強制放尿 CFLAG:9620
+;-------------------------------------------------
+;放尿
+IF SELECTCOM == 111
+	;恋慕+おもらし癖+野外プレイ
+	IF TALENT:恋慕 && TALENT:おもらし癖 && TEQUIP:野外プレイ
+		PRINTFORMW 「はぁーっ❤はぁーっ❤❤みんなに見られてる！おもらしかにゃこの恥ずかしい所全部見られてるッ❤❤❤」
+		CFLAG:9111 = 5
+	;恋慕+おもらし癖
+	ELSEIF TALENT:恋慕 && TALENT:おもらし癖
+		PRINTFORMW 「あはあぁ！おしっこ出うぅっ！！神奈子お漏らし好きのヘンタイになってるう❤❤」
+		CFLAG:9111 = 4
+	;露出癖Lv5
+	ELSEIF ABL:露出癖 >= 5
+		PRINTFORMW 「うわあぁぁあ駄目駄目駄目ぇ！もう我慢でき……あっ……あぁぁぁ……」
+		CFLAG:9111 = 3
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「うぅぅっ！こんな無様なところを見られるなんて……いっそ殺してくれ！」
+		CFLAG:9111 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「やだ……こんな所でおしっこなんて……もう……だめぇ！あぁっ……」
+		CFLAG:9111 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+;強制放尿
+IF SELECTCOM == 620
+	;恋慕+おもらし癖+野外プレイ
+	IF TALENT:恋慕 && TALENT:おもらし癖 && TEQUIP:野外プレイ
+		PRINTFORMW 「いやぁっ、私、%CALLNAME:MASTER%にっ、お外でおもらしさせられちゃうぅっ！」
+		CFLAG:9620 = 5
+	;恋慕+おもらし癖
+	ELSEIF TALENT:恋慕 && TALENT:おもらし癖
+		PRINTFORMW 「あーっ、おしっこ、おしっこ漏れちゃうぅっ！」
+		CFLAG:9620 = 4
+	;露出癖Lv5
+	ELSEIF ABL:露出癖 >= 5
+		PRINTFORMW 「ひっ、%CALLNAME:MASTER%っ、私のおしっこ見たいのぉっ！？」
+		CFLAG:9620 = 3
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「い、いやっ、出ちゃうっ！出ちゃう出ちゃ――ぅあ……」
+		CFLAG:9620 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「や、やだ、やめてやめて！出ちゃ……あ、あぁ――……っ」
+		CFLAG:9620 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;アナル電極 開始時CFLAG:9171 終了時CFLAG:8851
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 171 && TEQUIP:Ａ系装着器具
+	;初めて
+	IF CFLAG:9171 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ちょ……ちょっとまて！電極は流石に洒落にンあぁアアあああああああアアッ！！！！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ちょ……ちょっとまて！それは電極じゃないか！……後ろの穴に？……ヒィッ？！」
+		ENDIF
+		CFLAG:9171 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「あぁッ！❤やあぁあんッ❤んッあぁぁ❤あん❤❤！ぁんんっ！❤❤おひり！おひりビリビリんぎもぢいいぃんんあああっ！！❤❤」
+			PRINTFORMW 「かにゃこああッマゾ神になってりゅぅ❤お尻ビリビリでアクメとまんにゃいいイッ！！❤❤」
+			CFLAG:9171 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「かハッ……あっぁぁっあっ……これ……無理…あがががッ……死ぬ……」
+			PRINTFORMW とても嬉しそうなので電圧を上げてやる事にした。
+			CFLAG:9171 = 4
+		;A感覚Lv3以上＋マゾっ気Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「んやぁあぁあっ❤ぁああぁッ❤❤なんれええ！！痛いのにぃいい苦しいのにいいい！！！」
+			PRINTFORMW 「助けて！止めれぇええ！ケツアクメとまんないぃいいんあァあぁアアァッ❤❤！！」
+			CFLAG:9171 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌ぁぁあああ！！！！痛い痛い痛い痛いぃいいい！！！」
+			PRINTFORMW 「もう無理！！！これ取って止めて死んじゃうぅう(電圧アップ)んあああああがががががっ」
+			CFLAG:9171 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 171 && TEQUIP:Ａ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「―――ッがはぁ……あぁ…うぅ……」
+		PRINTFORMW 「少しでいいから……休ませて……」
+		CFLAG:8851 = 3
+	;A感覚Lv3以上＋マゾっ気Lv3以上
+	ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+		PRINTFORMW 「あ……あぁ……あはッ❤……んぎ……ぁ……❤」
+		PRINTFORMW 電極を取り外してやったにも関わらず、神奈子はイキ狂った顔のまま痙攣し、肛門をヒクつかせている。
+		CFLAG:8851 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「うぅあ………あぁぁ……ヒィぃッ……」
+		PRINTFORMW アナル電極から解放された神奈子は、小刻みに震えながら嗚咽を繰り返した。
+		CFLAG:8851 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;アナルビーズ 開始時CFLAG:9172 終了時CFLAG:8852
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 172 && TEQUIP:Ａ系装着器具
+	;初めて
+	IF CFLAG:9172 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あはっ❤それ早苗の部屋で見たことあるよ。でも使い方知らないんだよねぇ……」
+			PRINTFORMW 神奈子は期待に満ちた眼差しを%CALLNAME:MASTER%に送っている。
+		;それ以外
+		ELSE
+			PRINTFORMW 「――！」
+			PRINTFORMW 「……見るからにロクでもなさそうな道具だね」
+		ENDIF
+		CFLAG:9172 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「おほぉおぉぉおぉ❤神奈子こりぇ好きぃぃ❤❤❤おちりの口でゴキュゴキュしゅりゅのぉぉっっ❤❤❤」
+			PRINTFORMW 「ちょうらい！全部頂戴ぃ❤❤かにゃこのケツマンコに全部ちょうらいぃぃ❤❤❤❤」
+			CFLAG:9172 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「はぁ❤ひぃ❤」
+			PRINTFORMW 「もう少しぃ❤……んうぅぅっ❤❤❤❤」
+			CFLAG:9172 = 4
+		;A感覚Lv3以上＋マゾっ気Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「んほぉぉぉーーーッッ❤おひりぃ……お尻ぃぃぃいッ！！」
+			PRINTFORMW 「中に入って動いてりゅぅぅ❤❤お腹の中ゴリュゴリュ動いてりゅぅぅぅっっ❤❤」
+			CFLAG:9172 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「アッ！……んぅうぅ……ッ！」
+			CFLAG:9172 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 172 && TEQUIP:Ａ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「お願い……優しくんんうぅぅぅうぅぅぅッッ！！❤❤」
+		CFLAG:8852 = 3
+	;A感覚Lv3以上＋マゾっ気Lv3以上
+	ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+		PRINTFORMW 「んひぃぃいぃぃぃいぃっ❤❤ケツマンコ裏返ってイッグぅぅぅぅぅ！！❤❤❤❤」
+		CFLAG:8852 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「あぁあああぁ駄目！駄目駄目駄目ぇええ！！んぎぃぃいぃいぃッッ！！」
+		CFLAG:8852 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;拡張バルーン 開始時CFLAG:9173 終了時CFLAG:8853
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 173 && TEQUIP:Ａ系装着器具
+	;初めて
+	IF CFLAG:9173 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あら？今回は随分と小さいねぇ……？空気入れ？それで一体(プシュー)ひギィぃぃいいぃィんッ！！！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……？！空気入れ……風船？！……ま、まさかそれを中で(プシュー)ひぎゃあぁあああぁぁィィッ！！！」
+		ENDIF
+		CFLAG:9173 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「んひぃぃぃぃぃ！❤かにゃこのお尻広がってりゅぅ❤❤もっと……もっとしてぇ❤❤」
+			PRINTFORMW 「淫乱なケツマンコぉ❤ガバガバにしてくらひゃぃぃいぃい❤❤」
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「はぅ……ぁあぁッッッ❤ァあんッ❤アッ……ぁぁああぁッッ❤❤」
+			PRINTFORMW 神奈子は体内の風船が大きくなる度に、大きく痙攣しながら悶絶した。
+			CFLAG:9173 = 4
+		;A感覚Lv3以上＋マゾっ気Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「んはぁぁあぁ……❤おひり……おひりがぁ……❤❤」
+			PRINTFORMW 「けちゅマンコ広がっちゃうよぉぉ❤❤あひゃひゃ……かにゃこケツ穴バカになっちゃった❤❤」
+			CFLAG:9173 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「がハッッッ！！も……それ、やめ(シューッ)んアァァあぁああぁあぁアッッッ！！」
+			CFLAG:9173 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 173 && TEQUIP:Ａ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ぉぉおぉ……んうぅぅん❤❤」
+		PRINTFORMW 神奈子は開ききった肛門を愛おしそうに指で撫で回している。
+		CFLAG:8853 = 3
+	;A感覚Lv3以上＋マゾっ気Lv3以上
+	ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+		PRINTFORMW 「あぁ……あひ……❤」
+		PRINTFORMW 神奈子のアナルは、肛虐によって開きっぱなしになった。
+		CFLAG:8853 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「がっ……あが……」
+		PRINTFORMW 強すぎる肛虐にから解放された神奈子は、自力で立ち上がる事もできなさそうだ。
+		CFLAG:8853 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;浣腸 CFLAG:9174
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 174 && TEQUIP:Ａ系装着器具
+	;初めて
+	IF CFLAG:9174 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:9174 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9174 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9174 = 4
+		;A感覚Lv3以上＋マゾっ気Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9174 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:9174 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;排泄（浣腸プレイ） CFLAG:8851
+;-------------------------------------------------
+IF SELECTCOM == 174 && TEQUIP:Ａ系装着器具 == 0
+	;初めて
+	IF CFLAG:8854 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:8854 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:8854 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:8854 = 4
+		;A感覚Lv3以上＋マゾっ気Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:8854 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:8854 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;空気浣腸 開始時CFLAG:9175 終了時CFLAG:8855
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 175 && TEQUIP:Ａ系装着器具
+	;初めて
+	IF CFLAG:9175 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:9175 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
+		IF TALENT:恋慕 && ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9175 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9175 = 4
+		;A感覚Lv3以上＋マゾっ気Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9175 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:9175 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 175 && TEQUIP:Ａ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		CFLAG:8855 = 3
+	;A感覚Lv3以上＋マゾっ気Lv3以上
+	ELSEIF ABL:Ａ感覚 >= 3 && ABL:マゾっ気 >= 3
+		PRINTFORMW 
+		CFLAG:8855 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		CFLAG:8855 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;アナル舐め CFLAG:9180
+;-------------------------------------------------
+IF SELECTCOM == 180
+	;初めて
+	IF CFLAG:9180 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んひぃ？！……いきなりビックリするじゃないかぁ……でも、気持ちいいよ❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふ……不潔だよ！お前は！！！」
+		ENDIF
+		CFLAG:9180 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「はぁー！ぁはあぁんッ……❤後ろの穴に舌が入ってきて……んうぅっ！❤」
+			CFLAG:9180 = 4
+		;A感覚Lv3以上
+		ELSEIF ABL:Ａ感覚 >= 3
+			PRINTFORMW 「あッ、うあああぁっ！？、不浄の穴で感じて……こんなのウソ……ぁんんぅっ❤」
+			CFLAG:9180 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「ヘンタイ！ヘンタイ！ヘンタイ！ヘンタイ！」
+			CFLAG:9180 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;搾乳機(母乳体質のみ) CFLAG:9191　CFLAG:8861
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 191 && TEQUIP:Ｂ系装着器具
+	;初めて
+	IF CFLAG:9191 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:9191 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9191 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:9191 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;脱着時
+ELSEIF SELECTCOM == 191 && TEQUIP:Ｂ系装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		CFLAG:8861 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		CFLAG:8861 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+;-------------------------------------------------
+;スパンキング CFLAG:9220
+;-------------------------------------------------
+IF SELECTCOM == 220
+	;初めて
+	IF CFLAG:9220 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あぅっ！痛っ！！……簡便しておくれよ、大事なお尻なんだからぁ……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「あッつぅ！……くそ……これではまるで、子供の折檻ではないかッ……！」
+		ENDIF
+		CFLAG:9220 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「んあぅぅ❤❤あひぃぃぃっ❤❤❤……もっとブッてぇ❤❤かにゃこの淫乱ケツ肉ぅ❤❤もっと虐めてぇえ❤❤」
+			CFLAG:9220 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「んうぅ❤あひゃぅうぅっ❤❤……お尻痛いのにぃ……だんだん気持ちよくなってきたよぉ❤❤」
+			CFLAG:9220 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「あんっ！あんっ❤！……はぁ❤……はぁ❤……お尻腫れてないかい？」
+			PRINTFORMW 「これ以上大きくして、どうするつもりだい？❤❤」
+			CFLAG:9220 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「あぁぁぅっ！……んうぅ❤……いや違……叩かれて感じてなんてンひぃぃぃッ！！❤❤」
+			CFLAG:9220 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「くうぅっ！！……痛ぅぅぅ！！おぼえてろ……兆倍にして返してやる！！！」
+			CFLAG:9220 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;鞭 CFLAG:9221
+;-------------------------------------------------
+IF SELECTCOM == 221
+	;初めて
+	IF CFLAG:9221 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あ、や！痛！！……ちょっと待って%CALLNAME:MASTER%っ！……んひぃッ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「あうぅぅっ！！……ちぃ、お次は拷問と来たか！！……つうぅっ！」
+			PRINTFORMW 「いいだろう、やってみるがいい！天津神共は、こんなものではなかったぞ！！……んぎゃうぅっ！！」
+			PRINTFORMW 神奈子は気丈に啖呵を切るが、その足元は早速震え始めている。
+		ENDIF
+		CFLAG:9221 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「んあうぅっ……❤❤もっと❤もっとぉ❤❤……ッんうぅぅっ！！❤❤御仕置きしてくだしゃい❤❤」
+			PRINTFORMW 「かにゃこは痛いの好きなマゾ神でしゅ❤……んひゅぅぅぅっ！もっと痛いのくだしゃいぃぃ❤……ひぎゃうううぅぅっ❤❤」
+			CFLAG:9221 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「あッ❤……んんふぅぅん❤❤……ひぃぃい……痛いよぉ……痛いけどぉ……んひぃっ！❤」
+			PRINTFORMW 「……これ、好きになってきちゃったよぉ❤❤……あうぅうんんっ！！❤❤」
+			CFLAG:9221 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「あぁっ！んうぅ！！痛いよ%CALLNAME:MASTER%！神だって、痛いものは痛いんだからさぁ……もう少し、優しくしておくれよ……」
+			CFLAG:9221 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「ふん！こちとら戦場で散々負傷してるんだ。その程度で折れるとでも思っているのかい？」
+			PRINTFORMW 「(なぜ……どうして身体が疼くんだ！)」
+			CFLAG:9221 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぐッ！！……あぅぅぅッ！！おぼえてろ……兆倍にして返してやる！！！！」
+			CFLAG:9221 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;針 CFLAG:9222
+;-------------------------------------------------
+IF SELECTCOM == 222
+	;初めて
+	IF CFLAG:9222 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「え、針？……それ何に……！？ぐはぁあッッッ！！？」
+			PRINTFORMW 「うぅぅぅぅうっっ……これは流石に、洒落にならないぞ……！」
+			PRINTFORMW 神奈子は涙目で眉間に皺を刻んでいるが……その股間は明らかに湿ってきている。
+		;それ以外
+		ELSE
+			PRINTFORMW 「お、おい……冗談だろう？それは流石に……うわあ゛あ゛ぁぁぁあっぁぁぁッッ！！！」
+		ENDIF
+		CFLAG:9222 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「ぐひぃぃ！！❤ああぁぁ……あははぁ……痛いのぎもぢ……んぎぃぃ❤❤！！」
+			PRINTFORMW 「あはっ…❤……マゾ神かにゃこ、痛いのだーいすきぃ❤❤……ひぐぅあぁッッ❤❤」
+			CFLAG:9222 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「くひぃぃ❤……はぁ❤……はぁ❤……こんな世界があったなんてねぇ❤❤」
+			PRINTFORMW 「戦の最中に気付かなくて良かったよ……うぎひぃぃっ❤❤！」
+			CFLAG:9222 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「わっ！ちょっとそれやめ……んあぁぁぅっ！」
+			CFLAG:9222 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「痛～～～～ッ！……フーっ！……フぅーッ！❤……あれ、うそ……濡れて……」
+			CFLAG:9222 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめろ！！それは本当にダメぇがあぁあああッ！！！」
+			CFLAG:9222 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;縄 普通に縛るCFLAG:9224　四肢緊縛CFLAG:9622　亀甲縛りCFLAG:9623　吊り下げCFLAG:9624　解放CFLAG:8872
+;-------------------------------------------------
+;開始時　普通に縛る
+IF SELECTCOM == 224 && TEQUIP:緊縛関連
+	;初めて
+	IF CFLAG:9224 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「……え？緊縛プレイ？！……まぁ、ＡＶで観た事はあるけどさぁ……実際にやるのは少し怖いねぇ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふんッ……縛り上げないと女一人相手できないのかねぇ……」
+		ENDIF
+		CFLAG:9224 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「あひッ❤いひぃ～ッッ❤❤……そこぉ❤❤もっと❤もっときつくぅっ❤❤❤❤」
+			PRINTFORMW 「淫乱マゾ神かなこ、ギッチギチに縛り上げくだしゃい❤❤❤❤ボンレスハムみたいにぃ❤❤❤❤」
+			CFLAG:9224 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「あっ❤❤あひぃぃ～～❤❤%CALLNAME:MASTER%に縛られちゃった❤❤ＡＶみたいに❤❤❤❤」
+			PRINTFORMW 「緊縛気持ちよすぎぃ❤神奈子マゾ神になっちゃう～～ッッ❤❤」
+			CFLAG:9224 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「んうぅあッ！ちょっと……緩めて、苦し……んひぃぃっ❤！！」
+			PRINTFORMW 嬉しそうなので、もう少しだけキツく絞めてやる事にした。
+			CFLAG:9224 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「んあぁぁっ！！キツ……痛いっ！！……ぅあんッ❤」
+			PRINTFORMW 身動きの取れなくなった神奈子の股間を弄り、指についた液体を頬に擦り付けてやった。
+			PRINTFORMW 「う……ウソだ……私は縛られて……こんなの気持ちいわけが！(ギチィッ！)んあぁああぅぅぅッッ❤❤」
+			CFLAG:9224 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「あっ！……うぅっ……くッ！」
+			CFLAG:9224 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;四肢緊縛
+ELSEIF SELECTCOM == 622 && TEQUIP:緊縛関連
+	;初めて
+	IF CFLAG:9224 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「……え？緊縛プレイ？！……まぁ、ＡＶで観た事はあるけどさぁ……実際にやるのは少し怖いねぇ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふんッ……縛り上げないと女一人相手できないのかねぇ……」
+		ENDIF
+		CFLAG:9224 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「～～ッ❤❤……神奈子の手足❤❤動かせなくなっちゃたよぉ❤❤」
+			PRINTFORMW 「ね、%CALLNAME:MASTER%！、早く虐めておくれよぉ❤❤逃げられやしないからさ、痛めつけておくれよぉ❤❤」
+			CFLAG:9224 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「あっ❤❤あひぃぃ～～❤❤%CALLNAME:MASTER%に縛られちゃった❤❤ＡＶみたいに❤❤❤❤」
+			PRINTFORMW 「緊縛気持ちよすぎぃ❤神奈子マゾ神になっちゃう～～ッッ❤❤」
+			CFLAG:9224 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「んうぅあッ！ちょっと……緩めて、苦し……んひぃぃっ❤！！」
+			PRINTFORMW 嬉しそうなので、もう少しだけキツく絞めてやる事にした。
+			CFLAG:9224 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「んあぁぁっ！！キツ……痛いっ！！……ぅあんッ❤」
+			PRINTFORMW 身動きの取れなくなった神奈子の股間を弄り、指についた液体を頬に擦り付けてやった。
+			PRINTFORMW 「う……ウソだ……私は縛られて……こんなの気持ちいわけが！(ギチィッ！)んあぁああぅぅぅッッ❤❤」
+			CFLAG:9224 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「あっ！……うぅっ……くッ！」
+			CFLAG:9224 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;亀甲縛り
+ELSEIF SELECTCOM == 623 && TEQUIP:緊縛関連
+	;初めて
+	IF CFLAG:9224 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「……え？緊縛プレイ？！……まぁ、ＡＶで観た事はあるけどさぁ……実際にやるのは少し怖いねぇ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふんッ……縛り上げないと女一人相手できないのかねぇ……」
+		ENDIF
+		CFLAG:9224 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「んッッッひぃ～ッッ❤❤……おぉぉっ…おまたとぉ❤❤❤お尻とおっぱいに食い込んでぇ❤」
+			PRINTFORMW 「ぎひぃぃい❤❤痛いよぉ❤❤❤いたくて……いたぎもぢいぃいよぉぉぉッッ❤❤❤❤」
+			CFLAG:9224 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「あっ❤❤あひぃぃ～～❤❤%CALLNAME:MASTER%に縛られちゃった❤❤ＡＶみたいに❤❤❤❤」
+			PRINTFORMW 「緊縛気持ちよすぎぃ❤神奈子マゾ神になっちゃう～～ッッ❤❤」
+			CFLAG:9224 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「んうぅあッ！ちょっと……緩めて、苦し……んひぃぃっ❤！！」
+			PRINTFORMW 嬉しそうなので、もう少しだけキツく絞めてやる事にした。
+			CFLAG:9224 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「んあぁぁっ！！キツ……痛いっ！！……ぅあんッ❤」
+			PRINTFORMW 身動きの取れなくなった神奈子の股間を弄り、指についた液体を頬に擦り付けてやった。
+			PRINTFORMW 「う……ウソだ……私は縛られて……こんなの気持ちいわけが！(ギチィッ！)んあぁああぅぅぅッッ❤❤」
+			CFLAG:9224 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「あっ！……うぅっ……くッ！」
+			CFLAG:9224 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;吊り下げ
+ELSEIF SELECTCOM == 624 && TEQUIP:緊縛関連
+	;初めて
+	IF CFLAG:9224 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「……え？緊縛プレイ？！……まぁ、ＡＶで観た事はあるけどさぁ……実際にやるのは少し怖いねぇ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふんッ……縛り上げないと女一人相手できないのかねぇ……」
+		ENDIF
+		CFLAG:9224 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「んあぁあッッ……ああぁぁあぁ❤❤……これ……い……最こ…❤❤❤」
+			PRINTFORMW 緊縛によって完全に宙に浮いた神奈子は、自身の体重と重力によって強まる苦痛を存分に味わっている。
+			CFLAG:9224 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「あひぃいあが❤❤あぎぃぃ～～❤❤いだいぃぃぃ❤❤いだいけどぉお❤❤気持ちいよぉぉッ❤❤」
+			PRINTFORMW 緊縛によって完全に宙に浮いた神奈子は、自身の体重と重力がもたらす苦痛を大変気に入ったようだ。
+			CFLAG:9224 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「がはぁあ？！……これ、ちょ……無理ぃっ❤！！」
+			PRINTFORMW 嬉しそうなので吊り下げている荒縄をグイグイと上下させやった。
+			CFLAG:9224 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「んあぁあぁあひぃぃい❤体浮いて……あひぃぃぃぃッ？！❤❤」
+			PRINTFORMW 普段なら神通力を駆使して自在に空を飛べるはずが、今神奈子を空中に留めているのは、豊満な肉体に食い込む荒縄だけだ。
+			PRINTFORMW 「ぎぃぃいッッ……そんな、うそ……痛いはず……なのにぃ❤❤」
+			CFLAG:9224 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「あっ！……うぅっ……くッ！」
+			CFLAG:9224 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 224 && TEQUIP:緊縛関連 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「うぅ～～ん❤……気持ちよかったけど、痕が残っちゃうのがねぇ……乙女の柔肌だぞ？」
+		PRINTFORMW ………あっ？＃
+		CFLAG:8872 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「はぁーーっ……ふぅーーッ……もう終わりか？痛くも痒くもない！」
+		PRINTFORMW 『強がるなら足の震えは隠した方がいい……』
+		PRINTFORMW 「――くッ！」
+		CFLAG:8872 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;アイマスク CFLAG:9225　CFLAG:8871
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 225 && TEQUIP:目装着器具
+	;初めて
+	IF CFLAG:9225 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 「私は両腕引き千切られた事だってあるんだよ……今更この程度で動じるとでも……(父上、どうかお力を…)」
+		ENDIF
+		CFLAG:9225 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 
+			CFLAG:9225 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9225 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9225 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9225 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……(大丈夫だ、怖くない、怖くないッ！)」
+			CFLAG:9225 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 225 && TEQUIP:目装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		CFLAG:8871 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「いっそ両目を潰してみたらどうだ？奴隷としても売れなくなるだろうけどねぇ」
+		PRINTFORMW …………考えておこう。
+		CFLAG:8871 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;ボールギャグ CFLAG:9226　CFLAG:8872
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 226 && TEQUIP:口装着器具
+	;初めて
+	IF CFLAG:9226 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ははーん、ＳＭで使うあれだねぇ？……んむぅっ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「く！そんなものを口に……んぐぅ！？」
+		ENDIF
+		CFLAG:9226 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「おごッ……おっ❤❤……おぉっ❤❤」
+			CFLAG:9226 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「ぉんんッ……んふぅっ……❤」
+			CFLAG:9226 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「私との口吸い……そんなに嫌……かい？」
+			CFLAG:9226 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「このっ！やめ……ぉんぅ❤」
+			CFLAG:9226 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「またか！いいかげんに……んぐ！」
+			CFLAG:9226 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 226 && TEQUIP:口装着器具 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ぁはあぁ……終わったなら、唇も愛しておくれよ❤」
+		CFLAG:8872 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「ッあが……えふッ！げはッ……」
+		CFLAG:8872 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;イラマチオ CFLAG:9230
+;-------------------------------------------------
+IF SELECTCOM == 230
+	;初めて
+	IF CFLAG:9230 == 0
+		;奉仕精神Lv3以上
+		IF ABL:奉仕精神 >= 3
+			PRINTFORMW 「ちょっとまって！乱暴は……んうぅっ！……んッ❤んッ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やめッんぐぅぅう！！……おおごぉ！！んゴッ！」
+		ENDIF
+		CFLAG:9230 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋奉仕精神Lv5
+		IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+			PRINTFORMW 「ぉんッ❤んッ……❤んぅッ❤❤んッ❤」
+			CFLAG:9230 = 4
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「おご……んんぅッ❤んぉッ！んッ❤」
+			CFLAG:9230 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「んんっ！！……ッッえゲッ！……んごぉぉっ！……えぅっ！！！」
+			CFLAG:9230 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フィストファック CFLAG:9231
+;-------------------------------------------------
+IF SELECTCOM == 231
+	;初めて
+	IF CFLAG:9231 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:9231 = 1
+		RETURN 0
+	;二回目以降
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 
+			CFLAG:9231 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 」
+			CFLAG:9231 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9231 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9231 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:9231 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナルフィスト CFLAG:9232
+;-------------------------------------------------
+IF SELECTCOM == 232
+	;初めて
+	IF CFLAG:9232 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んほぉぉぉぉ❤？！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「嫌ぁぁあ？！お尻が……お尻がぁーーーッ！」
+		ENDIF
+		CFLAG:9232 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 「んほぉぉぉぉ❤❤お尻広がっちゃうよぉ❤❤」
+			CFLAG:9232 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 「んふぅぉ❤！」
+			CFLAG:9232 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「がはぁあ……ッおしり……すご……」
+			CFLAG:9232 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 「んひぃぃぃいい❤かにゃこのお尻に全部入っちゃっ……私のウンチ穴どうなっちゃうのぉ❤」
+			CFLAG:9232 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「んあぁあああぎゃぁあぁ！やめでぇぇ！お尻壊れちゃうぅぅうっっ！」
+			CFLAG:9232 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;両穴フィスト CFLAG:9233
+;-------------------------------------------------
+IF SELECTCOM == 233
+	;初めて
+	IF CFLAG:9233 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:9233 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋マゾっ気Lv5以上
+		IF TALENT:恋慕 && ABL:マゾっ気 >= 5
+			PRINTFORMW 
+			CFLAG:9233 = 6
+		;恋慕＋マゾっ気Lv3以上
+		ELSEIF TALENT:恋慕 && ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9233 = 5
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9233 = 4
+		;マゾっ気Lv3以上
+		ELSEIF ABL:マゾっ気 >= 3
+			PRINTFORMW 
+			CFLAG:9233 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:9233 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;お風呂場プレイ CFLAG:9350 解除 CFLAG:8824
+;-------------------------------------------------
+IF SELECTCOM == 350 && TEQUIP:お風呂場プレイ
+	;初めて
+	IF CFLAG:9350 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あら、お風呂ねぇ……ふふふ、%CALLNAME:MASTER%の背中、流してあげたいねぇ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「風呂か……お前の薄汚れた魂は、どんなに禊いだ所で無駄だろうよ」
+		ENDIF
+		CFLAG:9350 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふふふ……どう？湯船で神酒を一杯……のぼせるまでさ……」
+			CFLAG:9350 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「湯船で一杯やりたいねぇ……%CALLNAME:MASTER%が居なければ」
+			CFLAG:9350 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 350 && TEQUIP:お風呂場プレイ == 0
+	;初めて
+	IF CFLAG:8824 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「こういうのなら毎日でもやってほしいよ」
+		;それ以外
+		ELSE
+			PRINTFORMW 「次は貴様が入るがいい……逆さ吊りでな」
+			PRINTFORMW 逆さ吊りで風呂に沈めるか……中々いいアイデアだ。
+		ENDIF
+		CFLAG:8824 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「お風呂の次はご飯？それとも……」
+			CFLAG:8824 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「風呂に入って汚れた気分だよ」
+			CFLAG:8824 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;シャワー CFLAG:9351
+;-------------------------------------------------
+IF SELECTCOM == 351 && TEQUIP:シャワープレイ
+	;初めて
+	IF CFLAG:9351 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あらシャワー！しかも温度調整付き？こっち(幻想郷)来て初めてだよぉ❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「……温度調整付きのシャワー……そんな技術は幻想郷には無い筈だが……どうやって手に入れた？真っ当な方法ではあるまい」
+		ENDIF
+		CFLAG:9351 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ふふふ、背中流してくれるかい？」
+			CFLAG:9351 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「自分で出来るから“絶対に私に触るな”」
+			CFLAG:9351 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;泡踊り CFLAG:9352
+;-------------------------------------------------
+IF SELECTCOM == 352
+	;初めて
+	IF CFLAG:9352 == 0
+		;奉仕精神Lv3以上
+		IF ABL:奉仕精神 >= 3
+			PRINTFORMW 「こうやればいいんだな？……(早苗に内緒でソープ行ってたなんて言えない)」
+		;それ以外
+		ELSE
+			PRINTFORMW 「なんで私が、こんなソープ嬢みたいな真似を…………」
+			PRINTFORMW 『働いてたのか？』
+			PRINTFORMW 「ばっ！！！そんなわけないだろう！！！！！！！一回行った事がるだけで……いや、ないぞ！！！！！！」
+			PRINTFORMW 外の世界の性事情が心配だ。
+		ENDIF
+		CFLAG:9352 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕＋奉仕精神Lv5
+		IF TALENT:恋慕 && ABL:奉仕精神 >= 5
+			PRINTFORMW 「ふふっ、もう大分上手くなっただろう？」
+			CFLAG:9352 = 4
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「うぅ……(無駄に上手くなっている自分が虚しいよ)」
+			CFLAG:9352 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「……(考えるな。考えるな！早苗や諏訪子の安全の為だ！)」
+			CFLAG:9352 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;触手召喚 CFLAG:9500　CFLAG:8901
+;-------------------------------------------------
+;開始時
+IF SELECTCOM == 500 && TEQUIP:触手調教
+	;初めて
+	IF CFLAG:9500 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ひぃっ！？な、なんだそれ……%CALLNAME:MASTER%……お前一体何の力を！」
+			PRINTFORMW 「やだ……嫌ぁああ！！助けてくれよぉ%CALLNAME:MASTER%ーっ！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ッ！！何だコレは！！！」
+			PRINTFORMW 「%CALLNAME:MASTER%ーッ！！まさか貴様、外法に手を……嫌ぁぁああああ！！」
+		ENDIF
+		CFLAG:9500 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕+触手経験20以上（消費基本値が三分の一になる）
+		IF TALENT:恋慕 && EXP:触手経験 >= 20
+			PRINTFORMW 「ハァーッ❤❤それ❤大好きになっちゃった❤❤」
+			PRINTFORMW 「早く！たくさん滅茶苦茶にしておくれよ❤❤」
+			CFLAG:9500 = 4
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「これは嫌なんだよぉ！簡便しておくれよぉ%CALLNAME:MASTER%ーっ！」
+			CFLAG:9500 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「貴様、いつか“それ”に食われるぞ！」
+			PRINTFORMW 「外法に手を染めれば必ず……うわぁぁあああぁっ！！！！」
+			CFLAG:9500 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+;終了時
+ELSEIF SELECTCOM == 500 && TEQUIP:触手調教 == 0
+	;恋慕+触手経験20以上（消費基本値が三分の一になる）
+	IF TALENT:恋慕 && EXP:触手経験 >= 20
+		PRINTFORMW 「あーん❤もう終わりなのかい？」
+		CFLAG:8901 = 3
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「あぁっ……あぁぁ……っ」
+		PRINTFORMW 神奈子は恐怖と不快感にガタガタと震えている。
+		CFLAG:8901 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「あっ……あぁ……父上……お助けください……父上……」
+		PRINTFORMW 触手による調教で精神を相当すり減らされているようだ。
+		CFLAG:8901 = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;シックスナイン CFLAG:9602
+;-------------------------------------------------
+IF SELECTCOM == 602
+	;初めて
+	IF CFLAG:9602 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「６９か……ふふふっ、懐かしいねぇ❤……早苗には内緒だぞ？」
+			PRINTFORMW 性欲を持て余した神々の遊びか？
+		;それ以外
+		ELSE
+			PRINTFORMW 「くっ……よりによって%CALLNAME:MASTER%相手に69とは……」
+			PRINTFORMW 『なるほど、今までは早苗か諏訪子が相手だったわけだな？』
+			PRINTFORMW 「―――ッッ！！！！」
+		ENDIF
+		CFLAG:9602 = 1
+		RETURN 0
+	ELSE
+		;恋慕+奉仕精神Lv3以上+C感覚Lv3以上
+		IF TALENT:恋慕 && ABL:奉仕精神 >= 3 && ABL:Ｃ感覚 >= 3
+			PRINTFORMW 「ッむはぁ……❤、きもちぃ❤❤%CALLNAME:MASTER%とのしゃぶりっこ癖になるぅ～～……んんっ！❤❤」
+			CFLAG:9602 = 6
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「あぁぁっ！、んぅぅ、んあァッ❤、んむぅっ❤もっと吸ってぇ❤❤」
+			CFLAG:9602 = 5
+		;屈服刻印Lv3+奉仕精神Lv3以上+C感覚Lv3以上
+		ELSEIF MARK:屈服刻印 == 3 && ABL:奉仕精神 >= 3 && ABL:Ｃ感覚 >= 3
+			PRINTFORMW 「ぁあんっ！んんぅっ、やだっ、んあぁ❤、あんうぅっ❤」
+			PRINTFORMW 「(！！！だめだ！！！！もう……堕ちる！！！！)」
+			CFLAG:9602 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 「くちゅっ、んぐっ、あんんっっ！、くふぅうぅっッ！」
+			PRINTFORMW 「(うぅぅ……逆らえば早苗達が……)」
+			CFLAG:9602 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 「んんッ……！んくっ？！……またこれか」
+			PRINTFORMW 『嫌なら早苗と諏訪子の上と下を切り落として、あべこべに繋げてやろう』
+			PRINTFORMW 「――ッ！！……んっうぅ、んっ……(おのれ！おのれぇ！)」
+			CFLAG:9602 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;３P CFLAG:9610
+;-------------------------------------------------
+IF SELECTCOM == 610
+	;初めて
+	IF CFLAG:9610 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:9610 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:9610 = 5
+		;V感覚Lv3以上＋A感覚Lv3以上
+		ELSEIF ABL:Ｖ感覚 >= 3 && ABL:Ａ感覚 >= 3
+			PRINTFORMW 
+			CFLAG:9610 = 4
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 
+			CFLAG:9610 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:9610 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_PALAMCNG関係（43をキャラ番号に置換）
+;パラメータ変動をトリガーにした口上
+;パラメータ変動後に口上を発動します
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_PALAMCNG
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF ASSI > 0 && ASSIPLAY
+;	RETURN 0 
+;睡眠・時止め・失神時に口上をスキップする（OFFだと寝言が凄いことに）
+SIF EQUIP:睡眠薬 || TEQUIP:時間止め || TFLAG:899 > 0 || TFLAG:898 == 1
+	RETURN 0
+;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）
+IF TEQUIP:口装着器具 == 1
+CALL K1043_GAGORGASM
+	RETURN 0 
+ELSEIF TEQUIP:口装着器具 == 0
+ENDIF
+
+;--------------------------------------------------
+;特定助手、主人時に特殊助手口上を呼び出す(Y1を特定助手、43を主人のキャラ番号に置換）
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;	CALL LES_MESSAGE_PALAMCNG_K1043_MY1
+;	RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;	IF NO:ASSI == Y1
+;		CALL LES_MESSAGE_PALAMCNG_K1043_MY1
+;		RETURN 0
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;パラメータ変動時のセリフ CFLAG:8001～8020を使用
+;-------------------------------------------------
+;-------------------------------------------------
+;初めて潤滑がLV2超えた CFLAG:8001
+;-------------------------------------------------
+LOCAL = PALAM:潤滑 + UP:10
+IF LOCAL > PALAMLV:2 && CFLAG:8001 == 0
+	;恋慕
+	IF TALENT:恋慕
+		;ローションを使った場合
+		IF SELECTCOM == 60
+			PRINTFORMW 「ローションなんていらないよ。%CALLNAME:MASTER%の命令があれば、いつだってグチョグチョになれるから……」
+		;それ以外
+		ELSE
+			PRINTFORMW 神奈子は%CALLNAME:MASTER%に見える様、自分のヴァギナから滴る愛液を指ですくうと、自慢げに糸を引いて見せた。
+			PRINTFORMW 「見て%CALLNAME:MASTER%……お前の命令を聞いただけで、これだ……」
+		ENDIF
+	;それ以外
+	ELSE
+		;ローションを使った場合
+		IF SELECTCOM == 60
+			PRINTFORMW 「これが終わったら、全部洗い落としてやる」
+		;それ以外
+		ELSE
+			PRINTFORMW %CALLNAME:MASTER%は神奈子が垂れ流した潤滑液を指ですくい、彼女の頬に擦り付けた。
+			PRINTFORMW 「え……なんで私濡れて……そんな！！」
+		ENDIF
+	ENDIF
+	CFLAG:8001 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて欲情がLV2超えた CFLAG:8002
+;-------------------------------------------------
+LOCAL = PALAM:欲情 + UP:13
+IF LOCAL > PALAMLV:2 && CFLAG:8002 == 0
+	;恋慕
+	IF TALENT:恋慕
+		;媚薬を使った場合
+		IF SELECTCOM == 61
+			PRINTFORMW 調教前から完ッ全に出来上がっていた神奈子は、媚薬一つで完全にのぼせ上がってしまった。
+			PRINTFORMW 「あふぅぅッ❤……今更、薬なんていらないのにぃ……とっくに%CALLNAME:MASTER%中毒なんだからっ❤❤」
+			PRINTFORMW 『ダメだこの神、早く何とかしないと』
+		;それ以外
+		ELSE
+			PRINTFORMW 調教前から完ッ全に出来上がっていた神奈子は、%CALLNAME:MASTER%が触れるまでもなく勝手に盛り出した。
+			PRINTFORMW 「あぁぁっあぁあぁ❤……%CALLNAME:MASTER%❤……%CALLNAME:MASTER%が、もっと欲しくなるよぉ❤」
+			PRINTFORMW 『ダメだこの神、早く何とかしないと』
+		ENDIF
+	;それ以外
+	ELSE
+		;媚薬を使った場合
+		IF SELECTCOM == 61
+			PRINTFORMW 神奈子の身体は媚薬のもたらす抗い難い快感を前に、早くも屈服を宣言していた。
+			PRINTFORMW 「は……。ふあぁ……❤……薬の所為だっ！……」
+			PRINTFORMW 『さっさと受け入れた方が楽だぞ』
+		;それ以外
+		ELSE
+			PRINTFORMW 神奈子は%CALLNAME:MASTER%が施した嗜虐的調教に、ありえない快感を覚えてしまった。
+			PRINTFORMW 「んうぅっ！！……違う！違うぅ❤！……私は……%CALLNAME:MASTER%なんかにぃ！……あんっぅう❤❤！」
+			PRINTFORMW 『チョロい……』
+		ENDIF
+	ENDIF
+	CFLAG:8002 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恥情がLV2超えた CFLAG:8003
+;-------------------------------------------------
+LOCAL = PALAM:恥情 + UP:15
+IF LOCAL > PALAMLV:2 && CFLAG:8003 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 神奈子は調教による羞恥心に身悶えしつつも、明らかに快感を覚えつつあった。
+		PRINTFORMW 「ちょ、ちょっと%CALLNAME:MASTER%！、幾らなんでもこれは……嫌っ！」
+	;それ以外
+	ELSE
+		PRINTFORMW 神奈子は調教のもたらす羞恥に堪えかね、感情を剥き出しにして%CALLNAME:MASTER%に喚き散らした。
+		PRINTFORMW 「―――ッ！！おのれぇッ！！よくもこんな辱めをっ！！」
+	ENDIF
+	CFLAG:8003 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恐怖がLV3超えた CFLAG:8004
+;-------------------------------------------------
+LOCAL = PALAM:恐怖 + UP:17
+IF LOCAL > PALAMLV:2 && CFLAG:8004 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「頼む%CALLNAME:MASTER%……いい子にするから……」
+		PRINTFORMW 神奈子は震えながら%CALLNAME:MASTER%の前に跪き、脅えた声色で懇願している。
+	;それ以外
+	ELSE
+		PRINTFORMW 「ごめんなさい……ごめんなさいッ……諏訪から一歩も出ません天津神にも逆らいませんごめんなさい殺さないでッッ……」
+		PRINTFORMW どうやら%CALLNAME:MASTER%の調教による恐怖心が、神奈子のトラウマを呼び覚ましたようだ。
+	ENDIF
+	CFLAG:8004 = 1
+ENDIF
+
+;----------------------------------------------------------
+;絶頂時の口上 CFLAG 5300～を使用
+;@KOJO_1043_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;絶頂関係は幽々子様口上から拝借(ー人ー)
+;-------------------------------------------------
+;四重絶頂	CFLAG:9019
+;-------------------------------------------------
+IF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+　	;恋慕
+	IF TALENT:恋慕
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「あぁぁイグ！❤…乳首で……イッ――んあぁああお尻？！」
+			PRINTFORMW 「胸でイってるのにぃお尻までぇッ！❤❤あああっ！イクううぅぅっ！❤❤」
+			PRINTFORMW 「ひゃぃぃい？！おマンコも！マンコもイグぅぅう？！❤❤」
+			IF TALENT:ふたなり
+				PRINTFORMW 「おおオチンポもぉ❤オンバシラまでぇッ？！❤❤❤」
+				PRINTFORMW 「しゅごぃいい！❤❤かにゃこのえっちな部分、全部でアクメきちゃうぅうぅっ！！❤❤」
+				PRINTFORMW 「アッアァァ……ッ！」
+				PRINTFORMW 「！！―――ンあぁアアアア゛ア゛～～～ッッ❤❤❤❤」
+				PRINTFORMW 胸、肛門、女性器、そして双成……
+				PRINTFORMW 全ての性感帯を同時に絶頂させられ、神奈子は獣じみた嬌声をあげてよがり狂った。
+			ELSE
+				PRINTFORMW 「おおお豆もぉ❤クリトリスまでぇッ？！❤❤❤」
+				PRINTFORMW 「しゅごぃいい！❤❤かにゃこのえっちな部分、全部にアクメきちゃうぅうぅっ！！❤❤」
+				PRINTFORMW 「アッアァァ……ッ！」
+				PRINTFORMW 「！！―――ンあぁアアアア゛ア゛～～～ッッ❤❤❤❤」
+				PRINTFORMW 胸、肛門、女性器、そして女核……
+				PRINTFORMW 全ての性感帯を同時に絶頂させられ、神奈子は獣じみた嬌声をあげてよがり狂った
+			ENDIF
+		ELSE
+			PRINTFORMW 「ア゛ッ！！……アあぁン゛ン゛ッ！……❤これぇ……凄すぎぃ❤」
+			PRINTFORMW 「胸でイキながらマンコとオシリも……」
+			IF TALENT:ふたなり
+				PRINTFORMW 「って……アッアァァ！！これ以上むりぃ！！」
+				PRINTFORMW 「体全部イってるのにぃ！……オチンポ……おおオンバシラまでぇええぇ❤❤」
+				PRINTFORMW 「だっ……だめ……こんなの、壊れちゃ―――アァッ！！」
+				PRINTFORMW 「―――ンアァァアアアァアッッ❤❤❤❤！！」
+				PRINTFORMW 胸、肛門、女性器、そして双成……
+				PRINTFORMW 全ての性感帯を同時に絶頂させられ、神奈子は獣じみた嬌声をあげてよがり狂った
+			ELSE
+				PRINTFORMW 「って……アッアァァ！！これ以上むりぃ！！」
+				PRINTFORMW 「体全部イってるのにぃ！……お豆……お豆までぇええぇ❤❤」
+				PRINTFORMW 「だっ……だめ……こんなの、壊れちゃ―――アァッ！！」
+				PRINTFORMW 「―――ンアァァアアアァアッッ❤❤❤❤！！」
+				PRINTFORMW 胸、肛門、女性器、そして女核……
+				PRINTFORMW 全ての性感帯を同時に絶頂させられ、神奈子は獣じみた嬌声をあげてよがり狂った
+			ENDIF
+		ENDIF
+			IF BASE:体力 < 500
+				PRINTFORMW 「んんぅ……はぁ…ん❤……も……無理………ごめんね………」
+				PRINTFORMW 「次は、もっと頑張るから……だから、お願い%CALLNAME:MASTER%……」
+				PRINTFORMW 「少しの間だけ、こうして触れていさせて……」
+				PRINTFORMW 絶頂の果てに体力の限界を迎えた神奈子は、%CALLNAME:MASTER%の腕に抱かれたまま、幸せそうな顔を浮かべて目を閉じた。
+				WAIT
+				PRINTFORMW 欲情・恭順・屈服の珠それぞれ5000取得
+				PRINTFORMW 愛情経験＋1
+				EXP:愛情経験 += 1
+				JUEL:欲情 += 5000
+				JUEL:恭順 += 5000
+				JUEL:屈服 += 5000
+			ENDIF
+	;それ以外
+	;エクスタシーKOでアヘ顔
+	ELSE
+		PRINTFORMW 「ひやあぁあやめてぇぇ！こんなの無理！これ、強すぎるのぉぉ！！」
+		PRINTFORMW 「全部ぅ…わらひのからだ……ぜんぶいっぢゃうぅ…ッッ！」
+		PRINTFORMW 「あぁ……あぁぁぁああッ」
+		PRINTFORMW 全ての性感帯を絶頂寸前にまで高められ、次に訪れるであろう快感の暴虐を前に、神奈子は女々しく泣きながら懇願してきた。
+		PRINTFORMW 「お願い、許して……こんなのダメェ……死んじゃうよぉッ！」
+		PRINTFORMW %CALLNAME:MASTER%はサディスティックにほくそ笑み、その願いを蹂躙すべく、最後のトドメをくれてやった。
+		WAIT
+		PRINTFORMW 「――ッ！」
+		WAIT
+		PRINTFORMW 「―――ッッ！！」
+		WAIT
+		PRINTFORMW 「――――ッッッ！！！！！！！」
+		PRINTFORMW 残虐なまでのアクメによって全身を嬲り尽くされた神奈子は
+		PRINTFORMW 背骨を折らんとまで仰け反らし
+		PRINTFORMW 舌を突き出した口から、声にもならない悲鳴をあげて悶絶した。
+		IF BASE:体力 < 500
+			PRINTFORMW 「んぉッ……アが…ァ………ヒィッ………❤❤」
+			PRINTFORMW 余りに強烈な絶頂を前に完全敗北した神奈子は
+			PRINTFORMW 白目を剥いて痙攣し、みっともなく開いた口からヨダレを垂れ流しながら失神した。
+			WAIT
+			PRINTFORMW 欲情・屈服の珠それぞれ5000取得
+			JUEL:欲情 += 5000
+			JUEL:屈服 += 5000
+		ENDIF
+	ENDIF
+;三重絶頂以下
+ELSEIF INRANGE(SIGN(NOWEX:0) + SIGN(NOWEX:1)+ SIGN(NOWEX:2) + SIGN(NOWEX:3),1,3)
+;-------------------------------------------------
+;V+A+B絶頂	CFLAG:8237
+;-------------------------------------------------
+;IF NOWEX:0 <= 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+	;恋慕
+;	IF TALENT:恋慕
+;	;それ以外
+;	ELSE
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;C+A+B絶頂	CFLAG:9021
+;-------------------------------------------------
+;IF NOWEX:0 > 0 && NOWEX:1 <= 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+	;恋慕
+;	IF TALENT:恋慕
+	;それ以外
+;	ELSE
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;C+V+B絶頂	CFLAG:9022
+;-------------------------------------------------
+;IF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 <= 0 && NOWEX:3 > 0
+	;恋慕
+;	IF TALENT:恋慕
+	;それ以外
+;	ELSE
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;C+V+A絶頂	CFLAG:9023
+;-------------------------------------------------
+IF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 < 0
+	;両穴電極
+	IF (SELECTCOM == 155 && TEQUIP:Ａ系装着器具 == 4) || (SELECTCOM == 171 && TEQUIP:Ｖ系装着器具 == 4) || (TEQUIP:Ａ系装着器具 == 4 && TEQUIP:Ｖ系装着器具 == 4)
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「――ひぃギャァァアアッ……アァァアッッ！！これ…ダメぇぇ……助け……ッ！」
+			PRINTFORMW 「……ぁあぁ死んじゃうぅッ―――ひゃいぃいぃぃぃッ！！」
+				IF TALENT:ふたなり
+					PRINTFORMW 前後の穴に差し込まれた電極により、強制的に勃起させられた神奈子の陰茎は
+						IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+							PRINTFORMW 更に別の電極が繋がれたオナホールによって焼かれている。
+							PRINTFORMW 三箇所の性感帯を電極に焼かれる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+							PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+						ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+							PRINTFORMW 更にローター内臓のオナホールによって扱きあげられている。
+							PRINTFORMW 二穴を焼かれ、ペニスを扱き上げられる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+							PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+						ELSE
+							PRINTFORMW %CALLNAME:MASTER%の絶妙なテクニックによって、絶え間なく攻め立てられている。
+							PRINTFORMW 二穴を焼かれ、具現化したオンバシラを愛撫される苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+							PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+						ENDIF
+				ELSEIF TALENT:ふたなり == 0
+					PRINTFORMW 前後の穴に差し込まれた電極により、強制的に勃起させられた神奈子の淫核は
+						IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+							PRINTFORMW 更に別の電極が繋がれたクリップによって焼かれている。
+							PRINTFORMW 三箇所の性感帯を電極に焼かれる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+							PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+						ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+							PRINTFORMW 更にローター内臓のクリキャップによって扱きあげられている。
+							PRINTFORMW 二穴を焼かれ、クリトリスを扱き上げられる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+							PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+						ELSE
+							PRINTFORMW %CALLNAME:MASTER%の絶妙なテクニックによって、絶え間なく攻め立てられている。
+							PRINTFORMW 二穴を焼かれ、信管と化したクリトリスを愛撫される苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+							PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+						ENDIF
+				ENDIF
+		ELSE
+			PRINTFORMW 「んおおおあぉあぁぁあッッッダメえぇッ！………これ無理ぃぃッ！…………」
+			PRINTFORMW 「……死んじゃう！！こんなの、刺激……強すぎてェェエエッ！！嫌あぁぁぁあアァアッ！！！」
+				IF TALENT:ふたなり
+					PRINTFORMW ヴァギナから肛門に向けて貫く電流により、神奈子の意志とは無関係に無理やりエレクトさせられたオンバシラ……
+						IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+							PRINTFORMW 高々と屹立した剛直は、さらに電極内臓のオナホールによって容赦なく電撃が浴びせられた。
+							PRINTFORMW 下半身を徹底的に痛めつけられる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+							PRINTFORMW 絶え間なく押し寄せるアクメによって幾度も悲鳴を挙げながら、イキ苦しんだ。
+						ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+							PRINTFORMW 高々と屹立した剛直は、さらにローター内臓のオナホールによって容赦なく扱きあげられた。
+							PRINTFORMW 下半身を徹底的に弄ばれる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+							PRINTFORMW 絶え間なく押し寄せるアクメによって幾度も悲鳴を挙げながら、イキ苦しんだ
+						ELSE
+							PRINTFORMW %CALLNAME:MASTER%は神奈子の浅ましい嬌声と苦悶の表情を愉しむように弄び、アクメの高みへと導いた。
+							PRINTFORMW 前後の穴を電撃によって痛めつけられ、信仰の象徴であるオンバシラをも絶頂させられる神奈子は
+							PRINTFORMW 軍神としての気高さを失い、単なる雌奴隷に成り下がっていた。
+						ENDIF
+				ELSEIF TALENT:ふたなり == 0
+					PRINTFORMW ヴァギナから肛門に向けて貫く電流により、神奈子の意志とは無関係に無理やり勃起させられた淫核……
+						IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+							PRINTFORMW 真っ赤に充血した女核は、さらに電極内臓のクリップによって容赦なく電撃が浴びせられた。
+							PRINTFORMW 下半身を徹底的に痛めつけられる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+							PRINTFORMW 絶え間なく押し寄せるアクメによって幾度も悲鳴を挙げながら、イキ苦しんだ。
+						ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+							PRINTFORMW 真っ赤に充血した女核は、さらにローター内臓のクリキャップによって容赦なく扱きあげられた。
+							PRINTFORMW 下半身を徹底的に弄ばれる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+							PRINTFORMW 絶え間なく押し寄せるアクメによって幾度も悲鳴を挙げながら、イキ苦しんだ。
+						ELSE
+							PRINTFORMW %CALLNAME:MASTER%は神奈子の浅ましい嬌声と苦悶の表情を愉しむように弄び、アクメの高みへと導いた。
+							PRINTFORMW 前後の穴を電撃によって痛めつけられ、女の象徴であるクリトリスをも絶頂させられる神奈子は
+							PRINTFORMW 軍神としての気高さを失い、単なる雌奴隷に成り下がっていた。
+						ENDIF
+				ENDIF
+		ENDIF
+	;両穴バイブ
+	ELSEIF (SELECTCOM == 12 && TEQUIP:Ａ系装着器具 == 1) || (SELECTCOM == 13 && TEQUIP:Ｖ系装着器具 == 1) || (TEQUIP:Ａ系装着器具 == 1 && TEQUIP:Ｖ系装着器具 == 1)
+		;恋慕
+		IF TALENT:恋慕
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「アッ❤ああぁぁっ―――気持ちい気持ちい気持ちいィィィッ！！❤前も後ろもバイブで犯されてるのぉ❤❤」
+				PRINTFORMW 「かにゃこのお腹のなか、バイブ二本でかき回されてるぅぅッッ……❤❤もうそれだけで気持ちよすぎるのにぃ❤❤」
+					IF TALENT:ふたなり
+						PRINTFORMW 「オチンポもっ！オンバシラもエレクテッドさせられてぇ……イカされちゃうのぉぉッッ❤❤ア゛ッひぃぃぃぃっ❤❤❤❤」
+						PRINTFORMW 両方の穴をバイブで抉られる衝撃を、快感として完全に受け入れた神奈子は
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 条件反射的に勃起したペニスを電極内臓オナホールで痛めつけられ
+								PRINTFORMW マゾ奴隷として調教され尽くした剛直は、その苦痛にすら欲情し、なんら抵抗する事もなくアクメに達した。
+								PRINTFORMW 三箇所の性感帯で同時に絶頂しながら、神奈子は%CALLNAME:MASTER%に調教される喜びに悶えていた。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 条件反射的に勃起したペニスをオナホールで扱き上げられ
+								PRINTFORMW 淫蕩に調教され尽くした剛直は、即座に刺激に欲情し、なんら抵抗する事もなくアクメに達した。
+								PRINTFORMW 三箇所の性感帯で同時に絶頂しながら、神奈子は%CALLNAME:MASTER%に調教される喜びに悶えていた。
+							ELSE
+								PRINTFORMW その性感帯を知り尽くした%CALLNAME:MASTER%によって、ペニスを絶頂スレスレまで攻め立てられた。
+								PRINTFORMW アナルとヴァギナが達するのを見計らい、%CALLNAME:MASTER%は神奈子の双成にトドメの一撃をくれてやった。
+								PRINTFORMW 「いぃい――ィグッ！！……オチンポ❤……いぐッ！！――マンコも、アナルもぉ！！……同時に、イっっグうぅぅぅッッ❤❤！！」
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「お豆もっ！クリトリスも、虐められてぇ……イカされちゃうのぉぉッッ❤❤ア゛ッひぃぃぃぃっ❤❤❤❤」
+						PRINTFORMW 両方の穴をバイブで抉られる衝撃を、快感として完全に受け入れた神奈子は
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 条件反射的に勃起したクリトリスを電極付きクリップで痛めつけられ
+								PRINTFORMW マゾ奴隷として調教され尽くした淫核は、その苦痛にすら欲情し、なんら抵抗する事もなくアクメに達した。
+								PRINTFORMW 三箇所の性感帯で同時に絶頂しながら、神奈子は%CALLNAME:MASTER%に調教される喜びに悶えていた。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 条件反射的に勃起したクリトリスをクリキャップで扱き上げられ
+								PRINTFORMW 淫蕩に調教され尽くした女核は、即座に刺激に欲情し、なんら抵抗する事もなくアクメに達した。
+								PRINTFORMW 三箇所の性感帯で同時に絶頂しながら、神奈子は%CALLNAME:MASTER%に調教される喜びに悶えていた。
+							ELSE
+								PRINTFORMW その性感帯を知り尽くした%CALLNAME:MASTER%によって、女核を絶頂スレスレまで攻め立てられた。
+								PRINTFORMW アナルとヴァギナが達するのを見計らい、%CALLNAME:MASTER%は神奈子のクリトリスにトドメの一撃をくれてやった。
+								PRINTFORMW 「いぃい――ィグッ！！……クリトリス❤……いぐッ！！――マンコも、アナルもぉ！！……同時に、イっっグうぅぅぅッッ❤❤！！」
+							ENDIF
+					ENDIF
+			ELSE
+				PRINTFORMW 「あっ❤……ああぁっ❤……これ❤❤………気持ちよすぎぃ❤❤」
+				PRINTFORMW 「……ウンチ穴もぉ❤❤メス穴もぉぉ❤❤……イキまくりなのぉ❤❤」
+					IF TALENT:ふたなり
+						PRINTFORMW 「んヒィィィイッ？！オチンポぉ❤❤……雌チンポまでえぇッ！！❤❤」
+						PRINTFORMW 「らめぇ～～❤三ヶ所なんてイッたらぁ……ぉぉおかひくらっひゃうよぉぉ～～❤❤」
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW ヴァギナとアナルはバイブに抉られ、ガチガチに勃起したペニスは電極で焼かれ
+								PRINTFORMW 強烈な苦痛と快楽によって、神奈子の下半身は弾け飛びそうな程の絶頂を迎えた。
+								PRINTFORMW 二本のバイブの振動音と、通電による肉の焼ける音と共に、神奈子のマゾヒスティックな絶叫が木霊した。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW ヴァギナとアナルはバイブに抉られ、より強い刺激をせがむ淫蕩な肉棒は、電動オナホールで扱かれ
+								PRINTFORMW 絶え間なく打ち付けられる快楽によって、神奈子の下半身は弾け飛びそうな程の絶頂を迎えた。
+								PRINTFORMW 二本のバイブとオナホールの振動音をバックに、神奈子の嬌声が奏でるのは、肉欲に塗れた調教の唄であった。
+							ELSE
+								PRINTFORMW ヴァギナとアナルはバイブに抉られ、怒張したオンバシラを%CALLNAME:MASTER%によって攻め立てられ
+								PRINTFORMW まるで計算され尽くしたかのように、下半身の性感帯を同時に絶頂させられ
+								PRINTFORMW 神奈子は%CALLNAME:MASTER%の与える調教の快楽に屈し、性奴隷の道に堕ちた事を、自ら再確認した。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「んヒィィィイッ？！クリぃぃッ❤❤……クリトリスまでえぇッ！！❤❤」
+						PRINTFORMW 「らめぇ～～❤三ヶ所なんてイッたらぁ……ぉぉおかひくらっひゃうよぉぉ～～❤❤」
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW ヴァギナとアナルはバイブに抉られ、プックリと腫れた淫核は電極で焼かれ
+								PRINTFORMW 強烈な苦痛と快楽によって、神奈子の下半身は弾け飛びそうな程の絶頂を迎えた。
+								PRINTFORMW 二本のバイブの振動音と、通電による肉の焼ける音と共に、神奈子のマゾヒスティックな絶叫が木霊した
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW ヴァギナとアナルはバイブに抉られ、より強い刺激をせがむ淫蕩な淫核は、クリキャップで扱かれ
+								PRINTFORMW 絶え間なく打ち付けられる快楽によって、神奈子の下半身は弾け飛びそうな程の絶頂を迎えた。
+								PRINTFORMW 二本のバイブとオナホールの振動音をバックに、神奈子の嬌声が奏でるのは、肉欲に塗れた調教の唄であった
+							ELSE
+								PRINTFORMW ヴァギナとアナルはバイブに抉られ、勃起したクリトリスを%CALLNAME:MASTER%によって攻め立てられ
+								PRINTFORMW まるで計算され尽くしたかのように、下半身の性感帯を同時に絶頂させられ
+								PRINTFORMW 神奈子は%CALLNAME:MASTER%の与える調教の快楽に屈し、性奴隷の道に堕ちた事を、自ら再確認した
+							ENDIF
+					ENDIF
+			ENDIF
+		;恋慕でない
+		ELSEIF TALENT:恋慕 == 0
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「――ヒャィイいぃぃっ！バイブ！！バイブとめてえぇえ！！二本なんてぇ！！両穴なんて無理ぃぃいッ！！」
+				PRINTFORMW 「いいぃいぃイグ！バイブ二本でイッてるのぉぉ！……イキながら、イッてるのにぃぃ――ッ！！」
+					IF TALENT:ふたなり
+						PRINTFORMW 「両穴バイブでイッてるのにぃ！！――んひぃいぃッ！！……おぉ、オンバヒラ虐めないれぇぇッ！！」
+						PRINTFORMW 前後の穴に差し込まれたバイブの振動により、強制的に勃起させられた神奈子の陰茎は
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 更に別の電極が繋がれたオナホールによって焼かれている。
+								PRINTFORMW 前後の穴を抉られ、具現化したオンバシラを電極に焼かれる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+								PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 更にローター内臓のオナホールによって扱きあげられている。
+								PRINTFORMW 二穴を蹂躙され、ペニスを扱き上げられる快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+								PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%の絶妙なテクニックによって、絶え間なく攻め立てられている。
+								PRINTFORMW 二穴を蹂躙され、具現化したオンバシラを愛撫される快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+								PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「両穴バイブでイッてるのにぃ！！――んひぃいぃッ！！……おぉ、お豆虐めないれぇぇッ！！」
+						PRINTFORMW 前後の穴に差し込まれたバイブの振動により、強制的に勃起させられた神奈子の淫核は
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 更に別の電極が繋がれたクリップによって焼かれている。
+								PRINTFORMW 三箇所の性感帯を電極に焼かれる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+								PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 更にローター内臓のクリキャップによって扱きあげられている。
+								PRINTFORMW 二穴を焼かれ、クリトリスを扱き上げられる苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+								PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%の絶妙なテクニックによって、絶え間なく攻め立てられている。
+								PRINTFORMW 二穴を焼かれ、信管と化したクリトリスを愛撫される苦痛と快楽に屈し、みっともない悲鳴をあげながらイき狂う神奈子には
+								PRINTFORMW 以前の気高さなど微塵も残されてはいなかった。
+							ENDIF
+					ENDIF
+			ELSE
+				PRINTFORMW 「んおおおあぉあぁぁあッッッダメえぇッ！………これ無理ぃぃッ！…………」
+				PRINTFORMW 「……死んじゃう！！こんなの、刺激……強すぎてェェエエッ！！嫌あぁぁぁあアァアッ！！！」
+					IF TALENT:ふたなり
+						PRINTFORMW ヴァギナと肛門を貫く二本のバイブにより、神奈子の意志とは無関係に無理やりエレクトさせられたオンバシラ……
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 高々と屹立した剛直は、さらに電極内臓のオナホールによって容赦なく電撃が浴びせられた。
+								PRINTFORMW 下半身を徹底的に痛めつけられる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+								PRINTFORMW 絶え間なく押し寄せるアクメによって幾度も悲鳴を挙げながら、イキ苦しんだ。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 高々と屹立した剛直は、さらにローター内臓のオナホールによって容赦なく扱きあげられた。
+								PRINTFORMW 下半身を徹底的に弄ばれる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+								PRINTFORMW 絶え間なく押し寄せるアクメによって、幾度も悲鳴を挙げて悶絶した。
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%は神奈子の浅ましい嬌声と苦悶の表情を愉しむように弄び、アクメの高みへと導いた。
+								PRINTFORMW 前後の穴を電撃によって痛めつけられ、信仰の象徴であるオンバシラをも絶頂させられる神奈子は
+								PRINTFORMW 軍神としての気高さを失い、単なる雌奴隷へと成り下がった。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW ヴァギナから肛門を貫く二本のバイブにより、神奈子の意志とは無関係に無理やり勃起させられた淫核……
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 真っ赤に充血した女核は、さらに電極付きクリップによって容赦なく電撃が浴びせられた。
+								PRINTFORMW 下半身を徹底的に痛めつけられる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+								PRINTFORMW 絶え間なく押し寄せるアクメによって幾度も悲鳴を挙げながら、イキ苦しんだ。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 真っ赤に充血した女核は、さらにローター内臓のクリキャップによって容赦なく扱きあげられた。
+								PRINTFORMW 下半身を徹底的に弄ばれる悪夢の様な陵辱により、快楽地獄へと叩き落された神奈子は
+								PRINTFORMW 絶え間なく押し寄せるアクメによって、幾度も悲鳴を挙げて悶絶した。
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%は神奈子の浅ましい嬌声と苦悶の表情を愉しむように弄び、アクメの高みへと導いた。
+								PRINTFORMW 前後の穴を電撃によって痛めつけられ、女の象徴であるクリトリスをも絶頂させられる神奈子は
+								PRINTFORMW 軍神としての気高さを失い、単なる雌奴隷へと成り下がった。
+							ENDIF
+					ENDIF
+			ENDIF
+		ENDIF
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「……アッ――アアァ～ッ❤❤……イグッ❤❤……またイっくぅ❤❤！」
+				PRINTFORMW 「オひリもぉ、オマンコもぉッッ❤❤……ひイィッ――イギながらッッ――またイクぅぅぃ❤❤」
+					IF TALENT:ふたなり
+						PRINTFORMW 「おぉぉッオチンポ……オンバシラまでぇッッ❤❤……あんんぅッ❤❤あぁぁあぁんッ❤❤」
+						PRINTFORMW ヴァギナとアナルを責められ、具現化したオンバシラを
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 更に電極内臓のオナホールの電流で止め処なくアクメを決めさせられ
+								PRINTFORMW 完全に%CALLNAME:MASTER%の奴隷として調教された神奈子は、まるで壊れた玩具のように
+								PRINTFORMW 呂律の回らぬ口調で嬌声を上げ続けた。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 更にローター内臓のオナホールで止め処なくアクメを決めさせられ
+								PRINTFORMW 完全に%CALLNAME:MASTER%の奴隷として調教された神奈子は、まるで壊れた玩具のように
+								PRINTFORMW 呂律の回らぬ口調で嬌声を上げ続けた。
+							ELSE
+								PRINTFORMW その性感帯を完全に知り尽くした%CALLNAME:MASTER%の責めによって、絶え間ないアクメの濁流に飲み込まれ
+								PRINTFORMW 与えられる快楽を貪る事しか考えられなくなった神奈子は、「もっと強烈な責めを」と
+								PRINTFORMW ふやけた声色で%CALLNAME:MASTER%にねだるだけの、完全なる雌と化していた。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「おぉぉッお豆ぇ……エッチなお豆までぇッッ❤❤……あんんぅッ❤❤あぁぁあぁんッ❤❤」
+						PRINTFORMW ヴァギナとアナルを責められ、いやらしく充血し固くシコったクリトリスを
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 更に電極付きクリップの電流で止め処なくアクメを決めさせられ
+								PRINTFORMW 完全に%CALLNAME:MASTER%の奴隷として調教された神奈子は、まるで壊れた玩具のように
+								PRINTFORMW 呂律の回らぬ口調で嬌声を上げ続けた。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 更にローター内臓のクリキャップで止め処なくアクメを決めさせられ
+								PRINTFORMW 完全に%CALLNAME:MASTER%の奴隷として調教された神奈子は、まるで壊れた玩具のように
+								PRINTFORMW 呂律の回らぬ口調で嬌声を上げ続けた。
+							ELSE
+								PRINTFORMW その性感帯を完全に知り尽くした%CALLNAME:MASTER%の責めによって、絶え間ないアクメの濁流に飲み込まれ
+								PRINTFORMW 与えられる快楽を貪る事しか考えられなくなった神奈子は、「もっと強烈な責めを」と
+								PRINTFORMW ふやけた声色で%CALLNAME:MASTER%にねだるだけの、完全なる雌と化していた。
+							ENDIF
+					ENDIF
+			ELSE
+				PRINTFORMW 「アァァッぎもぢイィッ❤ぎもぢいいよぉぉぉッッ❤❤おしりもぉッ、おマンコもぉぉっ！！両方イッてるぅっ！！イッテるのぉぉっ！！❤❤」
+				PRINTFORMW 「んほぉぉぉぉっ❤❤イギ過ぎてぇ、かにゃこおかしくなっちゃうのぉぉぉッッ❤❤」
+					IF TALENT:ふたなり
+						PRINTFORMW 「オチンポまでイかされたらぁ、かにゃこバカになっちゃうぅぅ❤オンバシラアクメでぶっ壊されるぅぅッッ❤❤」
+						PRINTFORMW 「お願い%CALLNAME:MASTER%❤❤もっとアクメちょうだぃっ！！かにゃこのバカお股！滅茶苦茶に……イィィッ！！イグうぅぅああぁア゛ア゛ッ！！」
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 両穴で連続絶頂を決められながら、いきり立ったペニスにまでアクメをねだる神奈子の言葉は
+								PRINTFORMW 陰茎を甚振る電極オナホールが放つスパーク音と同時に、嬌声によってかき消された。
+								PRINTFORMW 彼女の言葉どおり、調教を完全に受け入れた肉奴隷・八坂神奈子には、軍神としての気高さなど欠片も残っていなかった。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 両穴で連続絶頂を決められながら、いきり立ったペニスにまでアクメをねだる神奈子の言葉は
+								PRINTFORMW 陰茎を扱きあげる電動オナホールから響く振動音と同時に、嬌声によってかき消された。
+								PRINTFORMW 彼女の言葉どおり、調教を完全に受け入れた肉奴隷・八坂神奈子には、軍神としての気高さなど欠片も残っていなかった。
+							ELSE
+								PRINTFORMW 両穴で連続絶頂を決められながら、いきり立ったペニスにまでアクメをねだる神奈子の言葉は
+								PRINTFORMW 陰茎を攻め立てる%CALLNAME:MASTER%の嘲り笑いと共に、嬌声によってかき消された。
+								PRINTFORMW 彼女の言葉どおり、調教を完全に受け入れた肉奴隷・八坂神奈子には、軍神としての気高さなど欠片も残っていなかった。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「インランお豆までイかされたらぁ、かにゃこバカになっちゃうぅぅ❤クリアクメでぶっ壊されるぅぅッッ❤❤」
+						PRINTFORMW 「お願い%CALLNAME:MASTER%❤❤もっとアクメちょうだぃっ！！かにゃこのバカお股！滅茶苦茶に……イィィッ！！イグうぅぅああぁア゛ア゛ッ！！」
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 両穴で連続絶頂を決められながら、しこりきったクリトリスにまでアクメをねだる神奈子の言葉は
+								PRINTFORMW 陰核を甚振る電極クリップが放つスパーク音と同時に、嬌声によってかき消された。
+								PRINTFORMW 彼女の言葉どおり、調教を完全に受け入れた肉奴隷・八坂神奈子には、軍神としての気高さなど欠片も残っていなかった。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 両穴で連続絶頂を決められながら、しこりきったクリトリスにまでアクメをねだる神奈子の言葉は
+								PRINTFORMW 陰核を扱きあげる電動クリキャップから響く振動音と同時に、嬌声によってかき消された。
+								PRINTFORMW 彼女の言葉どおり、調教を完全に受け入れた肉奴隷・八坂神奈子には、軍神としての気高さなど欠片も残っていなかった。
+							ELSE
+								PRINTFORMW 両穴で連続絶頂を決められながら、しこりきったクリトリスにまでアクメをねだる神奈子の言葉は
+								PRINTFORMW 陰核を攻め立てる%CALLNAME:MASTER%の嘲り笑いと共に、嬌声によってかき消された。
+								PRINTFORMW 彼女の言葉どおり、調教を完全に受け入れた肉奴隷・八坂神奈子には、軍神としての気高さなど欠片も残っていなかった。
+							ENDIF
+					ENDIF
+			ENDIF
+		;恋慕でない
+		ELSEIF TALENT:恋慕 == 0
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「……やっ――やあぁ～ッ！……これ以上……らメェぇ！」
+				PRINTFORMW 「オひリもぉ、オマンコもぉッッ……ひイィッ――ヒッてるッッ――ろにぃ！」
+					IF TALENT:ふたなり
+						PRINTFORMW 「おぉぉッ……オチンポ……オンバシラまでぇッッ……ッッんんぅっ！んうぅうあぁぁあぁ！！」
+						PRINTFORMW 前後の穴を責められ、その刺激によって強制的に勃起させられたペニスを
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 更に電極内臓のオナホールで強引に絶頂させられるアクメ地獄に叩き落された神奈子は
+								PRINTFORMW 国津神としてのプライドも打ち砕かれ、ただただ悲鳴をあげてよがり続ける快楽狂いに成り果てていた。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 更にローター内臓のオナホールで強引に絶頂させられるアクメ地獄に叩き落された神奈子は
+								PRINTFORMW 国津神としてのプライドも打ち砕かれ、ただただ悲鳴をあげてよがり続ける快楽狂いに成り果てていた。
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%の責めによって連続的に絶頂させられる快楽にドハマリした
+								PRINTFORMW 軍神・八坂神奈子は完全に敗北を喫し、無様な悲鳴をあげながら痙攣して果てた。
+								PRINTFORMW しかし、哀れな敗者が辿る末路は、更なる調教による屈従と陵辱の地獄絵図であった。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「おぉぉッ……お豆……クリトリスまでぇッッ……ッッんんぅっ！んうぅうあぁぁあぁ！！」
+						PRINTFORMW 前後の穴を責められ、その刺激によって強制的に勃起させられた淫核を
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 更に電極内臓のクリキャップで強引に絶頂させられるアクメ地獄に叩き落された神奈子は
+								PRINTFORMW 国津神としてのプライドも打ち砕かれ、ただただ悲鳴をあげてよがり続ける快楽狂いに成り果てていた。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 更にローター内臓のクリキャップで強引に絶頂させられるアクメ地獄に叩き落された神奈子は
+								PRINTFORMW 国津神としてのプライドも打ち砕かれ、ただただ悲鳴をあげてよがり続ける快楽狂いに成り果てていた。
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%の責めによって連続的に絶頂させられる快楽にドハマリした
+								PRINTFORMW 軍神・八坂神奈子は完全に敗北を喫し、無様な悲鳴をあげながら痙攣して果てた。
+								PRINTFORMW しかし、哀れな敗者が辿る末路は、更なる調教による屈従と陵辱の地獄絵図であった。
+							ENDIF
+					ENDIF
+			ELSE
+				PRINTFORMW 「イグッ……いいぃぃいぐぅ！………オマンコも――んひぃぃっ！ケツマンコもぉッ！！……イキながらイグぅぅゥッッ！！」
+					IF TALENT:ふたなり
+						PRINTFORMW 「ひゃあぁぁ？！――もうらめぇ！これ以上は……おおぉぉオンバシラだめぇぇッッ！！」
+						PRINTFORMW 「ッッ！！―――んんあぁあうぅッ……アアアァァア゛ア゛ッッ！！！」
+							IF SELECTCOM == 17 || TEQUIP:Ｃ系装着器具 == 6
+								PRINTFORMW 完全に雌の快感を覚えこんだ両穴を責められ、ガチガチに硬直したペニスを電極で焼かれ
+								PRINTFORMW 三つの性感帯で同時に絶頂させられた神奈子は、まるでケダモノの様な浅ましい悲鳴をあげた。
+								PRINTFORMW もはや神奈子に、調教に抗うだけの気力は残されていないようだ。
+							ELSEIF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+								PRINTFORMW 完全に雌の快感を覚えこんだ両穴を責められ、ガチガチに硬直したペニスをオナホールで扱き上げられ
+								PRINTFORMW 三つの性感帯で同時に絶頂させられた神奈子は、まるでケダモノの様な浅ましい悲鳴をあげた。
+								PRINTFORMW もはや神奈子に、調教に抗うだけの気力は残されていないようだ。
+							ELSE
+								PRINTFORMW 完全に雌の快感を覚えこんだ両穴を責められ、ガチガチに硬直したペニスを%CALLNAME:MASTER%に嬲られ
+								PRINTFORMW 三つの性感帯で同時に絶頂させられた神奈子は、まるでケダモノの様な浅ましい悲鳴をあげた。
+								PRINTFORMW もはや神奈子に、調教に抗うだけの気力は残されていないようだ。
+							ENDIF
+					ELSEIF TALENT:ふたなり == 0
+						PRINTFORMW 「ひゃあぁぁ？！――もうらめぇ！これ以上は……おおぉぉお豆だめぇぇッッ！！」
+						PRINTFORMW 「ッッ！！―――んんあぁあうぅッ……アアアァァア゛ア゛ッッ！！！」
+							IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+								PRINTFORMW 完全に雌の快感を覚えこんだ両穴を責められ、カチコチに硬直した女核を電極で焼かれ
+								PRINTFORMW 三つの性感帯で同時に絶頂させられた神奈子は、まるでケダモノの様な浅ましい悲鳴をあげた。
+								PRINTFORMW もはや神奈子に、調教に抗うだけの気力は残されていないようだ。
+							ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+								PRINTFORMW 完全に雌の快感を覚えこんだ両穴を責められ、カチコチに硬直した女核をクリキャップで扱きあげられ
+								PRINTFORMW 三つの性感帯で同時に絶頂させられた神奈子は、まるでケダモノの様な浅ましい悲鳴をあげた。
+								PRINTFORMW もはや神奈子に、調教に抗うだけの気力は残されていないようだ。
+							ELSE
+								PRINTFORMW 完全に雌の快感を覚えこんだ両穴を責められ、カチコチに硬直したクリトリスを%CALLNAME:MASTER%に嬲られ
+								PRINTFORMW 三つの性感帯で同時に絶頂させられた神奈子は、まるでケダモノの様な浅ましい悲鳴をあげた。
+								PRINTFORMW もはや神奈子に、調教に抗うだけの気力は残されていないようだ。
+							ENDIF
+					ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;A+B絶頂	CFLAG:9024
+;-------------------------------------------------
+;IF NOWEX:0 <= 0 && NOWEX:1 <= 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+	;恋慕
+;	IF TALENT:恋慕
+
+	;それ以外
+;	ELSE
+
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;V+B絶頂	CFLAG:9025
+;-------------------------------------------------
+;IF NOWEX:0 <= 0 && NOWEX:1 > 0 && NOWEX:2 <= 0 && NOWEX:3 > 0
+	;恋慕
+;	IF TALENT:恋慕
+
+	;それ以外
+;	ELSE
+
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;V+A絶頂	CFLAG:9026 || TEQUIP:Ａ系装着器具 == 4　SELECTCOM == 12 || TEQUIP:Ｖ系装着器具 == 1　SELECTCOM == 13 || TEQUIP:Ａ系装着器具 == 1
+;-------------------------------------------------
+IF NOWEX:0 <= 0 && NOWEX:1 > 0 && NOWEX:2 > 0
+	;両穴電極
+	IF (SELECTCOM == 155 && TEQUIP:Ａ系装着器具 == 4) || (SELECTCOM == 171 && TEQUIP:Ｖ系装着器具 == 4) || (TEQUIP:Ａ系装着器具 == 4 && TEQUIP:Ｖ系装着器具 == 4)
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「んあああがあぁああぁがががもうダメやめでこれ止めて取って死んじゃううぅぅぅっッ！！」
+			PRINTFORMW 「ひゃあがぁあががぎゃぁぁあぁあア゛ア゛ア゛ア゛―――ッッ！！」
+			PRINTFORMW 前後両穴に電極を差し込まれ、逃げ場のない電撃責めの前に屈した神奈子は
+			PRINTFORMW 無様に泣き叫びながら強制的に絶頂させられた。
+		ELSE
+			PRINTFORMW 「ぎひぃぃぃああぁあぁあッッ！！……だ…だめ……死んじゃぅぅッ……！」
+			PRINTFORMW 「おッ…ご……あぎッ！……アッ…――ア゛ア゛アァァッッ！……」
+			PRINTFORMW ヴァギナとアヌス、それぞれ＋と－の電極をねじ込まれた神奈子は
+			PRINTFORMW 体内を貫く直流電流によって嬲り犯され、白目を剥きながらアクメに達した。
+		ENDIF
+	;両穴バイブ
+	ELSEIF (SELECTCOM == 12 && TEQUIP:Ａ系装着器具 == 1) || (SELECTCOM == 13 && TEQUIP:Ｖ系装着器具 == 1) || (TEQUIP:Ａ系装着器具 == 1 && TEQUIP:Ｖ系装着器具 == 1)
+		IF TALENT:恋慕
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「んぅッ❤……アァァ～～❤❤……中で二本……擦れ合ってぇ❤」
+				PRINTFORMW 「これ……凄―――ン゛ン゛ッ…あぁぁぁあぁッ❤❤！！」
+				PRINTFORMW 神奈子の両穴は極太のバイブが与える刺激を完全に受け入れた。
+				PRINTFORMW 二本のバイブが内臓を抉り挟むよう、自分から膣肉と肛門括約筋を硬直させ、苦痛と快感を貪りながら絶頂に達した。
+			ELSE
+				PRINTFORMW 「アァッ……おッ……んあぁぁあッッ❤お尻と……オマンコぉ～❤❤同時にバイブしゃぶってぇ❤」
+				PRINTFORMW 「かにゃこのハラワタぁッ…ギュリッギュリッこしゅれてッ……イグぅうぅぅっ❤❤」
+				PRINTFORMW 開発されきった両穴をバイブに貫かれ、子宮とハラワタを振動によって捻られる快感に
+				PRINTFORMW 神奈子は早速理性をかなぐり捨てて、気が触れた様にイキまくった。
+			ENDIF
+		ELSE
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「ひいぃぃぃぃッ？！なッ、中でぶつかって！！……もう、らめぇぇえぇッ！」
+				PRINTFORMW 「おながのなが抉れちゃ……アァッ！……イッぐぅうああぁぁあ゛あ゛―――ッッ！！」
+				PRINTFORMW 神奈子の両穴にねじ込まれた二本のバイブは、体内で内臓の肉壁を挟むように接触し、互いに共振し合った。
+				PRINTFORMW その強烈な絶頂を前に、さしもの軍神も早速敗北を宣言したようだ。
+			ELSE
+				PRINTFORMW 「アアァァア゛ッ！……駄目、だめぇえぇッ！前も後ろもバイブなんて……壊れちゃうッ！」
+				PRINTFORMW 「こんなの嫌あぁッ！両穴バイブでイかされちゃうぅッ！………んんうぅアァァアッッ！！」
+				PRINTFORMW 前後の穴を凶悪なバイブで蹂躙される快感に、神奈子は嫌だ嫌だと小娘のように泣き叫んだ。
+				PRINTFORMW 顔を涙と鼻水とヨダレで汚れた顔を左右に振り、みっともなく悲鳴をあげながら、神奈子は幾度も絶頂させられた。
+			ENDIF
+		ENDIF
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORMW 「ひぅぅぅぅぅぅううぅッぅッ～～！！ごんなのだめぇぇぇぇぇぇッッ！！神奈子の淫乱穴両方壊れちゃうぅぅ❤❤」
+			PRINTFORMW 「ああァッッァァァッッあァーッー❤❤…ぉおぉおちんぽ穴もぉぉ…オケツマンコもッ！アクメ止まらなイぃのオォッ～～❤！！」
+			PRINTFORMW 常に挿入を求めて収縮を繰り返すヴァギナと、完全に性感帯と化したアナルを同時に責め立てられ
+			PRINTFORMW 神奈子は幾度も絶頂に達し、髪を振り乱しながらヨガリまくった。
+		ELSE
+			PRINTFORMW 「やめろ！やめろ！！やめろぉおぉぉっ！！こんなの嫌ぁ……両方でなんて……マンコと肛門でなんてぇ！！」
+			PRINTFORMW 「イキたくないィィッ！！両穴でなんて、イかされたくないぃぃぃっ！！………アァッ……アァア駄目ッ！ダめえぇぇェッ❤❤」
+			PRINTFORMW ヴァギナとアナルによる屈辱的な同時絶頂を必死に否定しようとする神奈子だったが
+			PRINTFORMW 彼女の身体は、その意志に反し、快感に屈服する事を選んだようだ。
+		ENDIF
+	ENDIF
+;-------------------------------------------------
+;C+B絶頂	CFLAG:9027
+;-------------------------------------------------
+;IF NOWEX:0 > 0 && NOWEX:1 <= 0 && NOWEX:2 <= 0 && NOWEX:3 > 0
+	;恋慕
+;	IF TALENT:恋慕
+	;それ以外
+;	ELSE
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;C+A絶頂	CFLAG:9028 
+;-------------------------------------------------
+ELSEIF NOWEX:0 > 0 && NOWEX:1 <= 0 && NOWEX:2 > 0
+	;アナル電極＋オナホ電極
+	IF (SELECTCOM == 171 && TEQUIP:Ｃ系装着器具 == 6) || (SELECTCOM == 17 && TEQUIP:Ａ系装着器具 == 4)
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「や…やめてッあああぁあがががが……それ、嫌アァァアアァッ！」
+			PRINTFORMW アナルを電極で攻め立てられ、呼吸を整える事も叶わない神奈子目の前で
+		ELSE
+			PRINTFORMW 「ひぃぃぃッ！もうビリビリ嫌ぁッ！！……それ――ダメえぇッ！！」
+			PRINTFORMW 肛門から直腸を貫く強烈な電流の前に、早速屈服を宣言し脅える神奈子の表情を愉しみながら
+		ENDIF
+	B = RAND:3
+		IF B == 0
+			PRINTFORMW %CALLNAME:MASTER%はサディスティックな笑みを浮かべ、できの悪い奴隷を矯正すべく
+			PRINTFORMW ガチガチに勃起して屹立する神奈子の竿に電極オナホールを被せ、スイッチを見せ付けるように撫でた。
+			PRINTFORMW 「ま…待って！それだけはダメ！！本当に死んじゃう！」
+			PRINTFORMW 「おぉぉオンバシラ、壊れちゃうからぁあ！」
+		ELSE
+			PRINTFORMW 浅ましく快楽を求めて屹立するオンバシラに仕置きをくれてやるべく
+			PRINTFORMW 電極オナホールのスイッチに指を添えた。
+			PRINTFORMW 「嫌……嫌ァァァッ！！ダメぇぇ！！それは本当にダメえェェッ！！」
+			PRINTFORMW 「後生だよ%CALLNAME:MASTER%ぉ！！いくら私でも、お尻とオンバシラはぁ――っ！」
+		ENDIF
+			PRINTFORMW 神奈子の懇願を聞き流し、益々冷酷な笑みを浮かべながらスイッチを入れる。
+	C = RAND:3
+		IF C == 0
+			PRINTFORMW 「ヒャアァががっぐうううぐぐあがががぎうぎいぃぎ！！」
+			PRINTFORMW 「ああぃぎいああひぃいやああぁああゃめでえしんじゃうあううあああぁッッッ！！！」
+			PRINTFORMW アナルから亀頭にかけて迸る直流電流によって、限界を超えた苦痛と快楽を叩き込まれた神奈子は
+			PRINTFORMW 無様な悲鳴をあげながら泡を吹き、白目を剥いて痙攣ながら、絶頂地獄に堕ちていった。
+		ELSE
+			PRINTFORMW 「んんんごぉぉおあぁぁッッ！！ああがぁぁあぎゃあががががぁああぁアッ！！！」
+			PRINTFORMW 「らめえぇえとめてぇぇ！もうゆるじでくださいい嫌ああぁぁあぁあがあぁぁぁ！！」
+			PRINTFORMW 神奈子の懇願は悲鳴によって聞き取れない。
+			PRINTFORMW アナルからペニスをぶち抜く直流電流は、神奈子が限界に達し果てるまで、その体に苦痛と絶頂を刻み込むだろう。
+		ENDIF
+	;アナル電極＋陰核電極
+	ELSEIF (SELECTCOM == 171 && TEQUIP:Ｃ系装着器具 == 4) || (SELECTCOM == 131 && TEQUIP:Ａ系装着器具 == 4)
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「や…やめてっあああぁあがががが……それ、嫌アァァアアァッ！」
+			PRINTFORMW アナルを電極で攻め立てられ、呼吸を整える事も叶わない神奈子目の前で
+		ELSE
+			PRINTFORMW 「ひぃぃぃッ！もうビリビリ嫌ぁッ！！……それ――ダメえぇッ！！」
+			PRINTFORMW 肛門から直腸を貫く強烈な電流の前に、早速屈服を宣言し脅える神奈子の表情を愉しみながら
+		ENDIF
+	B = RAND:3
+		IF B == 0
+			PRINTFORMW %CALLNAME:MASTER%はサディスティックな笑みを浮かべ、できの悪い奴隷を矯正すべく
+			PRINTFORMW しこり固まり自己主張する神奈子のサネに電極クリップを繋ぎ、スイッチを見せ付けるように撫でた。
+			PRINTFORMW 「ま…待って！それだけはダメ！！本当に死んじゃう！」
+			PRINTFORMW 「おぉぉお豆、壊れちゃうからぁあ！」
+		ELSE
+			PRINTFORMW 浅ましく快楽を求めて勃起するクリトリスに仕置きをくれてやるべく
+			PRINTFORMW 電極クリップのスイッチに指を添えた。
+			PRINTFORMW 「嫌……嫌ァァァッ！！ダメぇぇ！！それは本当にダメえェェッ！！」
+			PRINTFORMW 「後生だよ%CALLNAME:MASTER%ぉ！！いくら私でも、お尻と女核はぁ――っ！」
+		ENDIF
+			PRINTFORMW 神奈子の懇願を聞き流し、益々冷酷な笑みを浮かべながらスイッチを入れる。
+	C = RAND:3
+		IF C == 0
+			PRINTFORMW 「ヒャアァががっぐうううぐぐあがががぎうぎいぃぎ！！」
+			PRINTFORMW 「ああぃぎいああひぃいやああぁああゃめでえしんじゃうあううあああぁッッッ！！！」
+			PRINTFORMW アナルから陰核にかけて迸る直流電流によって、限界を超えた苦痛と快楽を叩き込まれた神奈子は
+			PRINTFORMW 無様な悲鳴をあげながら泡を吹き、白目を剥いて痙攣ながら、絶頂地獄に堕ちていった。
+		ELSE
+			PRINTFORMW 「んんんごぉぉおあぁぁッッ！！ああがぁぁあぎゃあががががぁああぁアッ！！！」
+			PRINTFORMW 「らめえぇえとめてぇぇ！もうゆるじでくださいい嫌ああぁぁあぁあがあぁぁぁ！！」
+			PRINTFORMW 神奈子の懇願は悲鳴によって聞き取れない。
+			PRINTFORMW 肛門から女核をぶち抜く直流電流は、神奈子が限界に達し果てるまで、その体に苦痛と快楽を刻み込むだろう。
+		ENDIF
+	;アナルバイブ
+	ELSEIF SELECTCOM == 13 || TEQUIP:Ａ系装着器具 == 1
+		;＋オナホール
+		IF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「んッんんぅぅっ❤……お尻の穴ぁ、ゴリゴリされてッ❤❤オンバシラも敏感になってるぅう❤❤」
+					PRINTFORMW 「イグぅッ！オナホ扱かれて同時イグッ！！❤お尻とチンポでイキながらイッぐぅぅう～～～っ❤❤❤」
+					PRINTFORMW 肛門をバイブで抉られ、エレクトした双成を電動オナホールで責められる快感の前に、調教の味を覚えた神奈子の忍耐は、そう長く持たなかった。
+					PRINTFORMW 堪え性のない奴隷は主人の前で、はした無く嬌声を上げ、肛門とペニスで二重の絶頂を味わった。
+				ELSE
+					PRINTFORMW 「――おおおぉッ…お尻ッ❤❤……ケツ穴バイブいいのぉぉ❤……お腹の中抉られてッ！オチンポも気持ちよくなるぅう❤❤」
+					PRINTFORMW 「はひぃぃっ？！オナホの振動強くしちゃらめえぇッ❤❤しゅぐいっちゃうぅ！！インランかニャ子のチンポとアナルッ！いっぺんにイグぅぅぅ❤❤！」
+					PRINTFORMW バイブの唸る肛門は、その快感を擬似陰茎にまで流し込み、具現化されたペニスは反射的に勃起してオナホールの快感を貪った。
+					PRINTFORMW 二箇所の性感帯を責められた神奈子は、押し寄せる絶頂の波に飲み込まれ、背を痙攣させ仰け反りながらアクメに達した。
+				ENDIF
+			ELSE
+				PRINTFORMW 「くひぃぃぃっ！……やめろぉぉっ…やめろぉぉっ！！尻にバイブなんかでッ何故オンバシラがぁッ？！」
+				PRINTFORMW 「嫌だ……嫌だぁ！イキたくない！！お願いだから……今、オナホールなんか付けないでよぉ！」
+				PRINTFORMW アクメを否定しようと喚き続ける神奈子に『奴隷の身である事』を自覚させる為、%CALLNAME:MASTER%は容赦なく、バイブとオナホールの振動をＭＡＸに切り替えた。
+				PRINTFORMW 「ひやああぁあだめイッぢゃうぅうぅっっ！！お尻もオチンポも！グリグリされてイグぅぅぅぅぅっ！―――ッッ！うわああア゛ア゛ッ！！」
+			ENDIF
+		;Ａバイブ＋クリキャップ
+		ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「んッんんぅぅっ❤……お尻の穴ぁ、ゴリゴリされてッ❤❤クリトリスも敏感になってるぅう❤❤」
+					PRINTFORMW 「イグぅッ！クリキャプ扱かれて同時イグッ！！❤お尻とお豆でイキながらイッぐぅぅう～～～っ❤❤❤」
+					PRINTFORMW 肛門をバイブで抉られ、勃起した陰核をクリキャップで責められる快感の前に、調教の味を覚えた神奈子の忍耐は、そう長く持たなかった。
+					PRINTFORMW 堪え性のない奴隷は主人の前で、はした無く嬌声を上げ、アナルとクリトリスで二重の絶頂を味わった。
+				ELSE
+					PRINTFORMW 「――おおおぉッ…お尻ッ❤❤……ケツ穴バイブいいのぉぉ❤……お腹の中抉られてッ！お豆も気持ちよくなるぅう❤❤」
+					PRINTFORMW 「はひぃぃっ？！キャップの振動強くしちゃらめえぇッ❤❤しゅぐいっちゃうぅ！！インランかニャ子のお豆とアナルッ！いっぺんにイグぅぅぅ❤❤！」
+					PRINTFORMW バイブの唸る肛門は、その快感を擬似陰茎にまで流し込み、敏感になった女核は反射的に勃起してオナホールの快感を貪った。
+					PRINTFORMW 二箇所の性感帯を責められた神奈子は、押し寄せる絶頂の波に飲み込まれ、背を痙攣させ仰け反りながらアクメに達した。
+				ENDIF
+			ELSE
+				PRINTFORMW 「くひぃぃぃっ！……やめろぉぉっ…やめろぉぉっ！！尻にバイブなんかでッ何故女核がぁッ？！」
+				PRINTFORMW 「嫌だ……嫌だぁ！イキたくない！！お願いだから……今、キャップなんか付けないでよぉ！」
+				PRINTFORMW アクメを否定しようと喚き続ける神奈子に『奴隷の身である事』を自覚させる為、%CALLNAME:MASTER%は容赦なく、バイブとクリキャップの振動をＭＡＸに切り替えた。
+				PRINTFORMW 「ひやああぁあだめイッぢゃうぅうぅっっ！！お尻もお豆も！グリグリされてイグぅぅぅぅぅっ！―――ッッ！うわああア゛ア゛ッ！！」
+			ENDIF
+		;Ａバイブ＋Ｃそれ以外
+		ELSE
+			IF TALENT:恋慕
+				IF TALENT:ふたなり == 1
+					PRINTFORMW 「アッ…･あふぅぅん❤……お尻バイブ、グリグリされてるよぉっッ❤❤おおぉッおちんちん勃起しちゃうぅっッ❤❤」
+					PRINTFORMW 「ふぎぃぃッ！❤オチンポもイっちゃうッ！ケツバイブでアクメきめながら、オンバシライグゥゥゥうっ！❤❤❤」
+				ELSEIF TALENT:ふたなり == 0
+					PRINTFORMW 「アッ…･あふぅぅん❤……お尻バイブ、グリグリされてるよぉっッ❤❤くっ、クリトリス勃起しちゃうぅっッ❤❤」
+					PRINTFORMW 「ふぎぃぃッ！❤お豆もイっちゃうッ！ケツバイブでアクメきめながら、クリトリスイグゥゥゥうっ！❤❤❤」
+				ENDIF
+			ELSE
+				IF TALENT:ふたなり == 1
+					PRINTFORMW 「ひゃぁああ！らめぇぇえ！……お尻バイブ取ってぇぇ！ッおおぉッおちんちん勃起しちゃうぅっッ！！」
+					PRINTFORMW 「ひゃぎぃぃぃぃッ！今だめぇ！オンバシラ虐められたらぁ……イギたくない！！イぎた……アアッ！ダメ！ダメええェェッ！！」
+				ELSEIF TALENT:ふたなり == 0
+					PRINTFORMW 「ひゃぁああ！らめぇぇえ！……お尻バイブ取ってぇぇ！ッおおぉッお豆勃起しちゃうぅっッ！！」
+					PRINTFORMW 「ひゃぎぃぃぃぃッ！今だめぇ！お豆虐められたらぁ……イギたくない！！イぎた……アアッ！ダメ！ダメええェェッ！！」
+				ENDIF
+			ENDIF
+		ENDIF
+	;アナルバイブ以外
+	ELSE
+		IF TALENT:ふたなり == 1
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あっ❤あああっ！ああっ！！❤はやく御仕置きくらしゃいッッ！！かにゃこのオンバシラはぁ❤❤お尻の穴ほじられて勃起するインランなんですぅッ❤」
+					PRINTFORMW 「見てて%CALLNAME:MASTER%～❤かにゃこが尻とチンポでイクところぉ、全部見て！！ンアァァあっ！！あひぃぃぃぃっ！！❤❤❤」 
+				ELSE
+					PRINTFORMW 「――おほぉぉぉっ❤❤きもちいいきもちい～～ッッ❤❤❤チンコもアナルもイキっぱなしなのぉぉお❤❤」
+					PRINTFORMW 「あッ❤❤ああぁッんあぁぁあぁあぁ❤❤ケツアクメしながらチンポイクッ！！❤―――あひぃぃぃぃイイッッｘッ❤❤❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ギヒィィイッッ！オンバシラぁぁッ？！ダメ！ダメえェェッ！」
+					PRINTFORMW 「尻穴と同時になんて……あぁぁ！！あああああぁあっぁアア゛ア゛ア゛！！」
+					PRINTFORMW 不浄の穴と具現化したオンバシラを同時に攻められ、呆気なく絶頂させられた神奈子は
+					PRINTFORMW 軍神とは到底思えない、情け無い悲鳴をあげながら、浅ましくよがり狂った。
+				ELSE
+					PRINTFORMW 「ッッ！――くはぁぁあぁッッ……おしり……だめぇぇえ！もう、イきたくないのにぃぃ～～ッッ！！」
+					PRINTFORMW 「ヒャいいィィぎィッ！……オンバシラァッ……今はだめぇ！おひりアクメで敏感になって……んごおおっぉおっっ！！」
+					PRINTFORMW 肛門でイかされ、信管の如く鋭敏になったペニスも同時に弄ばれ、神奈子は自分の身体が
+					PRINTFORMW 調教によって完全に奴隷になりさがっている事を思い知らされながら、アクメに達した。
+				ENDIF
+			ENDIF
+		ELSEIF TALENT:ふたなり == 0
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あっ❤あああっ！ああっ！！❤はやく御仕置きくらしゃいッッ！！かにゃこのクリトリスはぁ❤❤お尻の穴ほじられて勃起するインランなんですぅッ❤」
+					PRINTFORMW 「見てて%CALLNAME:MASTER%～❤かにゃこが尻とクリでイクところぉ、全部見て！！ンアァァあっ！！あひぃぃぃぃっ！！❤❤❤」 
+				ELSE
+					PRINTFORMW 「――おほぉぉぉっ❤❤きもちいいきもちい～～ッッ❤❤❤クリもアナルもイキっぱなしなのぉぉお❤❤」
+					PRINTFORMW 「あッ❤❤ああぁッんあぁぁあぁあぁ❤❤ケツアクメしながらお豆イクッ！！❤―――あひぃぃぃぃイイッッｘッ❤❤❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ギヒィィイッッ！クリトリスぅぅッ？！ダメ！ダメえェェッ！」
+					PRINTFORMW 「尻穴と同時になんて……あぁぁ！！あああああぁあっぁアア゛ア゛ア゛！！」
+					PRINTFORMW 不浄の穴と勃起したクリトリスを同時に攻められ、呆気なく絶頂させられた神奈子は
+					PRINTFORMW 軍神とは到底思えない、情け無い悲鳴をあげながら、浅ましくよがり狂った。
+				ELSE
+					PRINTFORMW 「ッッ！――くはぁぁあぁッッ……おしり……だめぇぇえ！もう、イきたくないのにぃぃ～～ッッ！！」
+					PRINTFORMW 「ヒャいいィィぎィッ！……お豆……今はだめぇ！おひりアクメで敏感になって……んごおおっぉおっっ！！」
+					PRINTFORMW 肛門でイかされ、信管の如く鋭敏になったクリトリスも同時に弄ばれ、神奈子は自分の身体が
+					PRINTFORMW 調教によって完全に奴隷になりさがっている事を思い知らされながら、アクメに達した。
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+;-------------------------------------------------
+;C+V絶頂	CFLAG:9029
+;-------------------------------------------------
+ELSEIF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 <= 0 && NOWEX:3 <= 0
+	;ヴァギナ電極＋オナホ電極
+	IF (SELECTCOM == 155 && TEQUIP:Ｃ系装着器具 == 6) || (SELECTCOM == 17 && TEQUIP:Ｖ系装着器具 == 4)
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「ひぐッ！！――ッんアァアァアァッ！！やめてええぇぇえ！」
+			PRINTFORMW ヴァギナに繋がれた電極によって、神奈子は絶え間なく苦痛を味わわされ
+		ELSE
+			PRINTFORMW 「フギャァアァァがああぁァァッ！！ダメ！ダメぇええ！！んおおぉおぉおぉッッ！！」
+			PRINTFORMW 神奈子の女性器を嬲る電流は、気絶させる事も許さずに快感と苦痛をその身体に叩き込み続け
+		ENDIF
+	B = RAND:3
+		IF B == 0
+			PRINTFORMW その様を嗜虐的な目で愉しむ%CALLNAME:MASTER%は、一つ舌なめずりした後
+			PRINTFORMW 先走りを滴らせる神奈子の剛直に電極オナホールを被せ、そのスイッチに手を触れた。
+			PRINTFORMW 「ひぃぃぃっ！！もう無理ぃぃ！！……ビリビリ嫌ああぁぁあ！！」
+			PRINTFORMW 「ダメになっちゃう！！マンコとオンバシラ、ぶっ壊れちゃうぅぅぅうっ！！」
+		ELSE
+			PRINTFORMW その衝撃によって強制的に屹立したペニスには、さらに電極オナホールが繋がれた。
+			PRINTFORMW %CALLNAME:MASTER%は無様に喘ぐインランな奴隷にとどめを刺すべく、電流を直流に流れるようスイッチを切り替えた。
+			PRINTFORMW 「―――ひぃぃっ？！それダメ！！やめてぇぇッ！！」
+			PRINTFORMW 「無理！！絶対無理ぃぃッッ！！いくら神でも、死んじゃうよぉぉっ！！」
+		ENDIF
+			PRINTFORMW 神奈子の懇願を聞き流し、益々冷酷な笑みを浮かべながら電源を入れる。
+	C = RAND:3
+		IF C == 0
+			PRINTFORMW 「ひぐぅああぁぁあがががががッッ！！これ止めてぇえ許してくだだしゃいッッ」
+			PRINTFORMW 「あがはがぁがががっ！！ん゛あ゛ああぁおぉオぉぉぉぉぉぉッッ！！！」
+			PRINTFORMW 子宮から亀頭までを串刺しにされるような苦痛と快感に、神奈子は泡を吹きながらのた打ち回った。
+			PRINTFORMW 人間には到底耐えられない、惨たらしい調教にも関わらず、神としての強靭な精神と肉体は、彼女に失神と言う救済すら許さなかった。
+		ELSE
+			PRINTFORMW 「ふぎゃぁおおあぁぁッッ！！いぎゃががぁぁあギヒィィィィイィッッっッ！！！」
+			PRINTFORMW 「ムりっ！！ダメ！ダメ！！えああああがが止めて！許してぇえぇぇッ！！」
+			PRINTFORMW ペニスとヴァギナを貫く直流電流の苦痛を前に、神奈子は軍神として誇りもかなぐり捨て、無様に懇願し始めた。
+			PRINTFORMW しかし%CALLNAME:MASTER%は『こんなものは序の口だ』と吐き捨て、電圧を最大レベルにまで上げ、神奈子の悲鳴を堪能した。
+		ENDIF
+	;ヴァギナ電極＋陰核電極
+	ELSEIF (SELECTCOM == 155 && TEQUIP:Ｃ系装着器具 == 4) || (SELECTCOM == 131 && TEQUIP:Ｖ系装着器具 == 4)
+	A = RAND:3
+		IF A == 0
+			PRINTFORMW 「ひぐッ！！――ッんアァアァアァッ！！やめてええぇぇえ！」
+			PRINTFORMW ヴァギナに繋がれた電極によって、神奈子は絶え間なく苦痛を味わわされ
+		ELSE
+			PRINTFORMW 「フギャァアァァがああぁァァッ！！ダメ！ダメぇええ！！んおおぉおぉおぉッッ！！」
+			PRINTFORMW 神奈子の女性器を嬲る電流は、気絶させる事も許さずに快感と苦痛をその身体に叩き込み続け
+		ENDIF
+	B = RAND:3
+		IF B == 0
+			PRINTFORMW その様を嗜虐的な目で愉しむ%CALLNAME:MASTER%は、一つ舌なめずりした後
+			PRINTFORMW いやらしく自己主張を始めた神奈子の陰核に電極クリップを被せ、そのスイッチに手を触れた。
+			PRINTFORMW 「ひぃぃぃっ！！もう無理ぃぃ！！……ビリビリ嫌ああぁぁあ！！」
+			PRINTFORMW 「ダメになっちゃう！！マンコとクリトリス、ぶっ壊れちゃうぅぅぅうっ！！」
+		ELSE
+			PRINTFORMW その衝撃によって強制的に勃起したクリトリスには、さらに電極クリップが繋がれた。
+			PRINTFORMW %CALLNAME:MASTER%は無様に喘ぐインランな奴隷にとどめを刺すべく、電流を直流に流れるようスイッチを切り替えた。
+			PRINTFORMW 「―――ひぃぃっ？！それダメ！！やめてぇぇッ！！」
+			PRINTFORMW 「無理！！絶対無理ぃぃッッ！！いくら神でも、死んじゃうよぉぉっ！！」
+		ENDIF
+			PRINTFORMW 神奈子の懇願を聞き流し、益々冷酷な笑みを浮かべながら電源を入れる。
+	C = RAND:3
+		IF C == 0
+			PRINTFORMW 「ひぐぅああぁぁあがががががッッ！！これ止めてぇえ許してくだだしゃいッッ」
+			PRINTFORMW 「あがはがぁがががっ！！ん゛あ゛ああぁおぉオぉぉぉぉぉぉッッ！！！」
+			PRINTFORMW 子宮から陰核までを串刺しにされるような苦痛と快感に、神奈子は泡を吹きながらのた打ち回った。
+			PRINTFORMW 人間には到底耐えられない、惨たらしい調教にも関わらず、神としての強靭な精神と肉体は、彼女に失神と言う救済すら許さなかった。
+		ELSE
+			PRINTFORMW 「ふぎゃぁおおあぁぁッッ！！いぎゃががぁぁあギヒィィィィイィッッっッ！！！」
+			PRINTFORMW 「ムりっ！！ダメ！ダメ！！えああああがが止めて！許してぇえぇぇッ！！」
+			PRINTFORMW クリトリスとヴァギナを貫く直流電流の苦痛を前に、神奈子は軍神として誇りもかなぐり捨て、無様に懇願し始めた。
+			PRINTFORMW しかし%CALLNAME:MASTER%は『こんなものは序の口だ』と吐き捨て、電圧を最大レベルにまで上げ、神奈子の悲鳴を堪能した。
+		ENDIF
+	;バイブ
+	ELSEIF SELECTCOM == 12 || TEQUIP:Ｖ系装着器具 == 1
+		;＋オナホール
+		IF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あっ❤アァッ！……子宮の入り口ぃ、バイブされてッ❤❤オチンチンもビクッビクッ！って喜んでるッ❤❤」
+					PRINTFORMW 「んふうぅうぅッオンバシラアクメ来るぅぅッ！！❤雌穴とチンポでダブルアクメＫＯされりゅうぅぅっ❤❤❤」
+					PRINTFORMW ヴァギナを貫くバイブの感触がダイレクトにペニスに響き、さらに電動オナホールによって亀頭を扱かれる快感によって
+					PRINTFORMW 調教済みの雌である神奈子は容易に絶頂させられてしまった。
+				ELSE
+					PRINTFORMW 「おほぉぉぉ――ッ❤❤……肉穴バイブ穿られてぇ❤……お腹の奥からぁッチンポまで気持ちいの響くのぉぉ❤❤」
+					PRINTFORMW 「ぃぃいいぃっ？！オナホぉ！❤❤先っちょ敏感になってりゅのぉお！オンバシラアクメッッ我慢できなッッンンア゛ア゛ッッッア！❤❤」
+					PRINTFORMW ただ快感を貪るだけの器官になり果てた女性器はバイブで責められ、腹を打つ程に反り返ったペニスは電動オナホールによって扱き抜かれ
+					PRINTFORMW 神奈子は二つの性感帯を同時に絶頂させられる度、嬌声をあげて仰け反り、全身を痙攣させて悦んだ。
+				ENDIF
+			ELSE
+				PRINTFORMW 「ぐはあぁああぁッッ？！……ウソ……こんなのウソッッ！！……バイブ刺されて竿が……勝手に……？！」
+				PRINTFORMW 「嫌だ……嫌だぁ！イキたくない！！……やめてぇ！！今オナホホールなんかされたらぁ！！！」
+				PRINTFORMW 神奈子は必死に首を振ってアクメを否定しようとするが、%CALLNAME:MASTER%は容赦なくバイブとオナホールの振動レベルを最大にした。
+				PRINTFORMW 「んぁぁあっァッ！……ああッ！！……アァァァァあんっッッ！！」
+			ENDIF
+		;バイブ＋クリキャップ
+		ELSEIF SELECTCOM == 14 || TEQUIP:Ｃ系装着器具 == 1
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あっ❤アァッ！……子宮の入り口ぃ、バイブされてッ❤❤お豆もピクッピクッ！って喜んでるッ❤❤」
+					PRINTFORMW 「んふうぅうぅックリトリスアクメ来るぅぅッ！！❤雌穴とクリでダブルアクメＫＯされりゅうぅぅっ❤❤❤」
+					PRINTFORMW ヴァギナを貫くバイブの感触がダイレクトに陰核に響き、さらにクリキャップによって敏感部分を扱かれる快感によって
+					PRINTFORMW 調教済みの雌である神奈子は容易に絶頂させられてしまった。
+				ELSE
+					PRINTFORMW 「おほぉぉぉ――ッ❤❤……肉穴バイブ穿られてぇ❤……お腹の奥からぁックリトリスまで気持ちいの響くのぉぉ❤❤」
+					PRINTFORMW 「ぃぃいいぃっ？！クリローターいいのぉ！❤❤先っちょ敏感になってりゅのぉお！お豆アクメッッ我慢できなッッンンア゛ア゛ッッッア！❤❤」
+					PRINTFORMW ただ快感を貪るだけの器官になり果てた女性器はバイブで責められ、はち切れそうな程に腫れ上がった陰核はクリキャップによって扱き抜かれ
+					PRINTFORMW 神奈子は二つの性感帯を同時に絶頂させられる度、嬌声をあげて仰け反り、全身を痙攣させて悦んだ
+				ENDIF
+			ELSE
+				PRINTFORMW 「ぐはあぁああぁッッ？！……ウソ……こんなのウソッッ！！……バイブ刺されて豆が……勝手に……？！」
+				PRINTFORMW 「嫌だ……嫌だぁ！イキたくない！！……やめてぇ！！今クリキャップなんかされたらぁ！！！」
+				PRINTFORMW 神奈子は必死に首を振ってアクメを否定しようとするが、%CALLNAME:MASTER%は容赦なくバイブとクリキャップの振動レベルを最大にした。
+				PRINTFORMW 「んぁぁあっァッ！……ああッ！！……アァァァァあんっッッ！！」
+			ENDIF
+		;バイブ＋Ｃそれ以外
+		ELSE
+			IF TALENT:恋慕
+				IF TALENT:ふたなり == 1
+					PRINTFORMW 「あっ❤！…アアッ❤❤……おまんこ❤バイブグリグリされてっッ❤おちんちん敏感になりゅぅっッ❤❤」
+					PRINTFORMW 「ひぃぃぃイイクッ！……かにゃこのスケベ棒ぉッマンコでイキながらいぐぅうっ！❤❤」
+				ELSEIF TALENT:ふたなり == 0
+					PRINTFORMW 「んんうぅｘ❤……これ❤きもぢいよぉっ❤…下の口でバイブしゃぶるのぉぉっ、お豆勃起しちゃうぅっッ❤❤」
+					PRINTFORMW 「ひぃぃぃイイクッ！……かにゃこのスケベ豆ぇッマンコでイキながらいぐぅうっ！❤❤」
+				ENDIF
+			ELSE
+				IF TALENT:ふたなり == 1
+					PRINTFORMW 「くあぁぁあッ！……やめ……くっオンバシラが……勝手にぃ…ッ！」
+					PRINTFORMW 「嫌ぁッ！……こんなのぉっ！！……マンコと同時なんてぇッ……アッッ！ッンああぁアアア゛ッ！！」
+				ELSEIF TALENT:ふたなり == 0
+					PRINTFORMW 「くあぁぁあッ！……やめ……くっ女核が……敏感にぃ…ッ！」
+					PRINTFORMW 「嫌ぁッ！……こんなのぉっ！！……マンコと同時なんてぇッ……アッッ！ッンああぁアアア゛ッ！！」
+				ENDIF
+			ENDIF
+		ENDIF
+	;バイブ以外
+	ELSE
+		IF TALENT:ふたなり == 1
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「おほぉぉ！❤これっ……気持ちよすぎッ❤❤オマンコと……オチンポッ同時イグッ！！❤❤」
+					PRINTFORMW 「ぎもぢいぎもぢいぎもぢイィィッ！！アソコとオンバシラでイグうぅぅぅぅっ！！！」 
+				ELSE
+					PRINTFORMW 「――あひゃぁぁああぁぃぃ～～❤❤おまんことぉおちんぽぉ……らめなのぉぉ❤❤」
+					PRINTFORMW 「いっひょにいかひゃれたらぁ……かにゃこバカに❤❤なっひゃッッアアァァアッッ❤❤❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あっ！……あぁぁあっ！これ……だめ…ダメェ～～ッッ！！」
+					PRINTFORMW 「アソコとっ……オンバシラッ！……同時なんてぇ！！……嫌あッッアアアァア゛ッッ！！」
+					PRINTFORMW 神奈子は必死に否定するが、その身体は易々と快感を受け入れ、泡立つ秘裂と反り返ったペニスは同時に絶頂に達した。
+					PRINTFORMW %CALLNAME:MASTER%にいい様にイかされる度、神奈子は自身から、信仰の力が奪われて行くのを感じた。
+				ELSE
+					PRINTFORMW 「嫌ああぁッ！……もうや…やめてェッ！！……こんなのっダメェェッ！！マンコとオンバシラ同時なんてぇ！」
+					PRINTFORMW 「イキたくない！！イキたくなイッッ！！%CALLNAME:MASTER%なんかにッ……%CALLNAME:MASTER%なんかにぃぃぃぃッ！」
+					PRINTFORMW %CALLNAME:MASTER%の巧みな調教によって、神奈子のヴァギナは愛液を迸らせながら絶頂に達した。
+					PRINTFORMW 同時に攻め立てられていたペニスも、それに応えるかのように痙攣し、肉棒がビクビクと反り返りながら神奈子自身の腹を打った。
+				ENDIF
+			ENDIF
+		ELSEIF TALENT:ふたなり == 0
+			IF TALENT:恋慕
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「おほぉぉ！❤これっ……気持ちよすぎッ❤❤オマンコと……クリトリスッ同時イグッ！！❤❤」
+					PRINTFORMW 「ぎもぢいぎもぢいぎもぢイィィッ！！アソコとクリでイグうぅぅぅぅっ！！！」
+				ELSE
+					PRINTFORMW 「――あひゃぁぁああぁぃぃ～～❤❤おまんことぉお豆ぇ……らめなのぉぉ❤❤」
+					PRINTFORMW 「いっひょにいかひゃれたらぁ……かにゃこバカに❤❤なっひゃッッアアァァアッッ❤❤❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あっ！……あぁぁあっ！これ……だめ…ダメェ～～ッッ！！」
+					PRINTFORMW 「アソコとっ……お豆ぇッ！……同時なんてぇ！！……嫌あッッアアアァア゛ッッ！！」
+					PRINTFORMW 神奈子は必死に否定するが、その身体は易々と快感を受け入れ、泡立つ秘裂と勃起したクリトリスは同時に絶頂に達した。
+					PRINTFORMW %CALLNAME:MASTER%にいい様にイかされる度、神奈子は自身から、信仰の力が奪われて行くのを感じた。
+				ELSE
+					PRINTFORMW 「嫌ああぁッ！……もうや…やめてェッ！！……こんなのっダメェェッ！！マンコとクリトリスッ同時なんてぇ！」
+					PRINTFORMW 「イキたくない！！イキたくなイッッ！！%CALLNAME:MASTER%なんかにッ……%CALLNAME:MASTER%なんかにぃぃぃぃッ！」
+					PRINTFORMW %CALLNAME:MASTER%の巧みな調教によって、神奈子のヴァギナは愛液を迸らせながら絶頂に達した。
+					PRINTFORMW 同時に攻め立てられていた女核も同時に絶頂させられ、その度に神奈子はヨダレを撒き散らしながら仰け反り、白目を剥いて痙攣した。
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+;-------------------------------------------------
+;Ｃ絶頂 CFLAG:5300
+;-------------------------------------------------
+;@K1043_MESSAGE_ORGASM_0
+ELSEIF NOWEX:1 <= 0 || NOWEX:2 <= 0
+	IF NOWEX:0 > 0
+		IF CFLAG:5300 == 0
+			;恋慕
+			IF TALENT:恋慕
+				;かつ、ふたなり
+				IF TALENT:ふたなり
+					PRINTFORMW 「あっ❤んあぁっ❤イグぅっ❤！嬉しい❤❤やっと%CALLNAME:MASTER%にオチンポでイかされ……」
+					PRINTFORMW 「んああぁああひぃぃッ―――❤❤❤❤❤！」
+				;かつ、非ふたなり
+				ELSE
+					PRINTFORMW 「あっ❤んあぁっ❤❤イグぅっ❤❤！嬉しい❤❤❤❤やっと%CALLNAME:MASTER%にお豆イかされ……」
+					PRINTFORMW 「ああぁあああああッ―――❤❤❤❤❤❤！」
+				ENDIF
+			;それ以外
+			ELSE
+				PRINTFORMW 「ぁぁああっ……駄目っ！ダメダメ！ダメえぇっ！」 
+				PRINTFORMW 「%CALLNAME:MASTER%なんか……%CALLNAME:MASTER%なんかにぃ――っあ」
+				PRINTFORMW 「んぁぁああああああああああっ❤❤」
+			ENDIF
+			CFLAG:5300 = 1
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				IF TALENT:ふたなり
+					;オナホールで
+					IF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「んんほぉぉおぉっッ！おおおおにゃほ……オナホしゅごいのぉぉおお❤❤おお玩具なのにぃぃヒダヒダマンコの中みたいぃッ❤」
+							PRINTFORMW 「おぉぉオンバシラぎゅりぎゅり扱かれてぇえしゅぐイッちゃ……あぁッ！おぉあぁぁア゛ア゛ア゛ッッ❤❤」
+						ELSE
+							PRINTFORMW 「ひゃぁぁあいぃぃぃ❤❤いいいぃぃいいぐ！イッちゃャうううッッ！！……オンバシライッグゥゥゥうっ！❤❤」
+							PRINTFORMW 「かにゃこの淫乱肉柱ぁあオナホしゃんに完全敗北なのぉぉおお❤❤もっともっとぉお雌チンポアクメくだしゃいいぃぃい❤❤」
+						ENDIF
+					;電極オナホール又は触手放電ペニス責め
+					ELSEIF SELECTCOM == 17 || SELECTCOM == 515 || TEQUIP:Ｃ系装着器具 == 6
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「あわわわわわぁぁぎゃあぁあがががあオチンポビリビリしゅごしゅぎるのおおぉぉお刺激強すぎりゅぅうぅぅッッ❤❤」
+							PRINTFORMW 神奈子の具現化した男根は、電流で焼かれる激痛を繰り返し浴びせられ、強制的に絶頂させられている。
+						ELSE
+							PRINTFORMW 「おおぉぉおぉっ……んほぉぉおぉぉぉ❤❤おおちんぽぉお……雌チンポびりびりいぐうぅうぅぅッッ❤❤」
+							PRINTFORMW 「マゾ神かにゃこの肉オンバシラぁああ電気ビリビリで虐められで喜んでりゅよおぉお❤❤んあひぃぃいぃぃいッッ❤❤❤❤」
+						ENDIF
+					ELSE
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「アアァッ！ア゛ッ❤……オヂンポイグッ！！❤❤」
+							PRINTFORMW 「見てて%CALLNAME:MASTER%❤❤神奈子の肉オンバシラいくとこ見……ンあぁア゛ア゛ッッ❤❤」
+							ELSE
+							PRINTFORMW 「んほおおおぉおーーーーっ❤おちんぽイクの気持ちいーーーっ❤❤」
+							PRINTFORMW 「オンバシラアクメ癖ににゃるぅ❤かにゃこ雌チンポエクステンドしっぱなしーぃッッ❤❤」
+						ENDIF
+					ENDIF
+				;恋慕で非ふたなり
+				ELSE
+					;淫核電極
+					IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「あひぃいぃいぃぁあああああッッ❤おおぉッ…お豆痺れるうぅぅぅッッ❤❤」
+							PRINTFORMW 「アアァッ！……アッ❤……イグッ❤……いぐぅぅぅぅうっ！……んあぁああぁおぅうぅ❤❤❤」
+						ELSE
+							PRINTFORMW 「んひゃあああああぁーーーーッッ❤クリトリスビリビリしゅごしゅぎーーーッ❤❤」
+							PRINTFORMW 「刺激強すぎてぇぇ❤かにゃこのマゾ豆しゅぐイッちゃうのぉぉッ❤❤……アッ……あぁぁアアァァンンッ❤❤❤」
+						ENDIF
+					ELSE
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「アアァッ！ア゛ッ❤……お豆イグッ！！❤❤」
+							PRINTFORMW 「見てて%CALLNAME:MASTER%❤❤神奈子の淫乱クリトリスいくとこ見……ンあぁア゛ア゛ッッ❤❤」
+						ELSE
+							PRINTFORMW 「んほおおおぉおーーーーっ❤お豆イクの気持ちいーーーっ❤❤」
+							PRINTFORMW 「クリトリスアクメ癖ににゃるぅ❤かにゃこ雌豆エクステンドしっぱなしーぃッッ❤❤」
+						ENDIF
+					ENDIF
+				ENDIF
+			;恋慕でない
+			ELSE
+				IF TALENT:ふたなり
+					;オナホールで
+					IF SELECTCOM == 16 || TEQUIP:Ｃ系装着器具 == 2
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「いやぁあぁああ！！らめ……らめぇええ！こんなの嫌ぁああぁあぁッッ……」
+							PRINTFORMW 「淫具なんかにぃッ！オナホールなんかにチンポイカされるなんてぇッッ！！……アァッ！……んあぁぁぁア゛ア゛ッッ❤」
+						ELSE
+							PRINTFORMW 「うわ…ぁぁあぁ……ああぁあひぃぃぃぃぃぃいいぃッッ！！これやめて取って取ってぇぇ！！」
+							PRINTFORMW 「おちんちんがぁ……オンバシラがアクメきちゃうぅぅう！！……んッひィィイィイィッッ❤❤」
+						ENDIF
+					;電極オナホール又は触手放電ペニス責め
+					ELSEIF SELECTCOM == 17 || SELECTCOM == 515 || TEQUIP:Ｃ系装着器具 == 6
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「ひぎゃああががががぁあがががやめでだじげでもうゆるじでぐださいぃいぃおちんぽがぁあオンバシラ焼けちゃうぅぅうぅっッッ！！」
+							PRINTFORMW 神奈子の具現化した男根は、電流で焼かれる激痛を繰り返し浴びせられ、強制的に絶頂させられている。
+						ELSE
+							PRINTFORMW 「うわぁあぁああぁあぁッ！！もうッ……ダメぇエ゛エ゛ェッ！！痛い痛い痛いぃぃ死んじゃうぅぅぅうッッ！！」
+							PRINTFORMW 「オチンポ焼けちゃう！！オンバシラぶっ壊れちゃううぅぅうッッ！！誰か助けて……諏訪子！早苗ぇえ！……父上ぇえああががが！！」
+						ENDIF
+					ELSE
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「あぁあッッッ！駄目！だめえぇ～～ッ！！おちんぽッ！……オンバシラがぁあッ！」
+							PRINTFORMW 「アッ…ッあぁぁあぁぁ～～～ッッ❤❤」
+						ELSE
+							PRINTFORMW 「嫌ぁぁああっ！やめ……もうオチンポアクメ許してぇ❤」
+							PRINTFORMW 「オンバシラ駄目ぇええあぁぁあぁああぁーーッッ❤❤❤❤」
+						ENDIF
+					ENDIF
+				;恋慕でなくて非ふたなり
+				ELSE
+					;淫核電極
+					IF SELECTCOM == 131 || TEQUIP:Ｃ系装着器具 == 4
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「嫌ぁぁぁああ痛い痛い！いだいイイッ！！これだめぇえ！死んじゃうぅぅぅ！！」
+							PRINTFORMW 「クリトリス焼けちゃうぅうぅっ！！これ止めてェエエッ！！うわぁがががががぁあぁがあッッ」
+						ELSE
+							PRINTFORMW 「いぎゃぁあああぁぁぁあッッ！！もうゆるじてぐださいいィッ！！お豆ビリビリ止めてェェッ！！」
+							PRINTFORMW 「お願いじまずこれ外してもう逆らわないかｒ(電圧アップ)ひぐあああああぁあ゛あ゛ッッッ！！！」
+						ENDIF
+					ELSE
+					A = RAND:3
+						IF A == 0
+							PRINTFORMW 「あぁあッッッ！駄目！だめえぇ～～ッ！！女核が……クリトリスがぁあッ！」
+							PRINTFORMW 「アッ…ッあぁぁあぁぁ～～～ッッ❤❤」
+						ELSE
+							PRINTFORMW 「嫌ぁぁああっ！やめ……もうクリアクメ許してぇ❤」
+							PRINTFORMW 「雌お豆駄目ぇええあぁぁあぁああぁーーッッ❤❤❤❤」
+						ENDIF
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+;ＡＣ、ＶＣ、ＡＣＶ絶頂排除処理ここまで
+;-------------------------------------------------
+;Ｖ絶頂 CFLAG:5301
+;-------------------------------------------------
+;@K1043_MESSAGE_ORGASM_1
+;ＣＶ、ＶＡ、ＣＶＡ同時絶頂の場合は表示されない(単発Ｂのみ同時に表示される)
+ELSEIF NOWEX:0 <= 0 || NOWEX:2 <= 0
+IF NOWEX:1 > 0
+	;初めて
+	IF CFLAG:5301 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「あぁッあぁあぁ！❤❤いぐうぅうぅっ！！神奈マンコいくぅぅっ！！❤❤❤」
+			PRINTFORMW 「いいよッ❤❤%CALLNAME:MASTER%だったら私、肉便器になっても………んひぃぃっ！！アクメきたーーーっ❤❤❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うあぁあ！！ああぁ！あんんっ❤！！%CALLNAME:MASTER%なんかに！！%CALLNAME:MASTER%なんかにイカされ……」
+			PRINTFORMW 「嫌ああぁア゛ァァァァア゛ッ！！！❤❤」
+		ENDIF
+			CFLAG:5301 = 1
+	ELSE
+		;恋慕
+		IF TALENT:恋慕 == 1
+			;バイブで
+			IF SELECTCOM == 12 || TEQUIP:Ｖ系装着器具 == 1
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「いいイィグッ！バイブ刺激強過ぎてぇ…肉マンコすぐイッ……ッあ！！ああああア゛ア゛ッ❤❤」
+
+				ELSE
+					PRINTFORMW 「んあぁあああイぐッ！！！かにゃこのスケベ穴……バイブしゃぶってイッぐーーーぅッ❤❤」
+				ENDIF
+			;ヴァギナ電極で
+			ELSEIF SELECTCOM == 155 || TEQUIP:Ｖ系装着器具 == 4
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「うぁあががががっ！！これ刺激強すぎマンコビリビリすぐイッチャうぅぅうあああああっぁア゛ア゛ア゛ッ❤！！」
+					PRINTFORMW 神奈子は、ヴァギナを焦がす電流の刺激に、快楽と苦痛の区別も付かなくなっている様だ。
+				ELSE
+					PRINTFORMW 「あひぃいああマ゛ン゛コ゛ビリビリ最高ーッもっとぉもっと電圧あげてかにゃこの雌穴ぶっ壊してぇえぇッッ！んがぁあぁぎゃぎゃ！！❤❤」
+					PRINTFORMW 神奈子は自分で電極の電圧を上げた挙句、白目を剥きながら絶頂を迎えた。
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あッぁあッ！かにゃこの肉穴！喜んでるぅッッ❤」
+					PRINTFORMW 「アクメきまってマンコバカになってるよぉぉぉッ❤❤」
+				ELSE
+					PRINTFORMW 「ああふぁあぁ～～ッ❤❤おおおぉッ…おマンコ……マンコいぐぅぅーーッッ❤❤」
+				ENDIF
+			ENDIF
+		;それ以外
+		ELSE
+			;バイブで
+			IF SELECTCOM == 12 || TEQUIP:Ｖ系装着器具 == 1
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ひぃやぁぁああぁぁやめでもうだめぇぇええっ！！バイブ強すぎ……刺激強すぎるのおぉぉっ！！」
+					PRINTFORMW 「おマンコイッちゃぅうぅぅッ！！嫌あぁあぁぁッああぅぅうぅんん❤❤」
+				ELSE
+					PRINTFORMW 「やだ、やだぁ～～ッッ！…バイブなんか……バイブなんかにぃッッ！んあぁあぁ～～～❤❤うぅ………」
+					PRINTFORMW 簡単に絶頂した所を見ると、やはり神奈子の女裂はバイブを相当使い込んでいたようだ。
+				ENDIF
+			;ヴァギナ電極で
+			ELSEIF SELECTCOM == 155 || TEQUIP:Ｖ系装着器具 == 4
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「うわぁぁあぎゃああぁあががががっ！！マンコビリビリ嫌ぁああもう許じで死んじゃうぅぅぁあぁあぁあッッ！！」
+					PRINTFORMW 神奈子は、女裂を電極で焼かれる地獄の様な苦痛と恐怖に嬲りまわされながら、絶頂を迎えた。
+				ELSE
+					PRINTFORMW 「ひいぃあぁあこんなの駄目ぇえ！おマンコ焼けちゃうぅぅっ！！これ取ってェェッ……あがあぁぁががああぁッッ！」
+					PRINTFORMW のたうち回りながら絶頂を迎えた神奈子の秘部からは、肉の焦げた香ばしい臭いが立ち上った。
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あぁっ！あああんんんッッ！！、おまんこ……おまんこイッチャうぅぅウッッ！！」
+					PRINTFORMW 「嫌だ！嫌だよぉッ！%CALLNAME:MASTER%なんかに……%CALLNAME:MASTER%なんかにぃぃ……んあぁうぅぅッッッ❤」
+				ELSE
+					PRINTFORMW 「嫌ぁぁッ！もうやめてぇぇッ！！おまんこイキたくない！！これ以上辱めないでぇ！！」
+					PRINTFORMW 「ああぁあぁまた……またイカされちゃうッ……%CALLNAME:MASTER%なんかにイカされるぅッッ！……キャァあぁあぁんッッ❤」
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;ＣＶ、ＶＡ、ＣＶＡ絶頂排除処理ここまで
+;-------------------------------------------------
+;Ａ絶頂 CFLAG:5302
+;-------------------------------------------------
+;@K1043_MESSAGE_ORGASM_2
+;ＣＡ、ＶＡ、ＣＶＡ同時絶頂の場合は表示されない(単発Ｂのみ同時に表示される)
+ELSEIF NOWEX:0 <= 0 || NOWEX:1 <= 0
+IF NOWEX:2 > 0
+	;初めて
+	IF CFLAG:5302 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んほぉぉぉぉおッ❤お尻イグッッ！！ケツマンコしゅごいよぉぉ❤❤かにゃこのオシリ性感帯になっちゃったよぉぉぉ❤❤」
+			PRINTFORMW 「ケツアクメいぎゅぅぅぅっ！❤❤かにゃこウンチの穴でイッちゃうぅぅぅぅッッ❤んあぁおぉぉぉぉっっ❤❤！！」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ぅわぁあァァッ？！……ウソだ！こんなのウソぉ……ッ！」
+			PRINTFORMW 「後ろの穴なんかでぇ……尻の穴なんか、気持ちよくないいいのにぃぃ！……ッァ！！！！！」
+		ENDIF
+			CFLAG:5302 = 1
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;バイブ・アナルビーズで
+			IF SELECTCOM == 13 || TEQUIP:Ａ系装着器具 == 1 || SELECTCOM == 172 || TEQUIP:Ａ系装着器具 == 5
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「んひぃぃぃ❤❤ぎもぢいいぃぃい❤❤❤❤しょとのしぇかいのぉえっちな道具で尻穴イグゥゥゥゥッ❤❤！」
+					PRINTFORMW 「かにゃこのウンチ穴玩具でイギまぐりっッ！……アナルあくめキマりっぱなしなのぉぉっッ❤❤んッほぉぉお……ぉぉ❤❤」
+				ELSE
+					PRINTFORMW 「ああぁあああアナルいぐぅううぅぅぅッッ！！これしゅごしゅぎなのおぉぉぉおッッ！❤❤」
+					PRINTFORMW 「かにゃこの尻マンコぉッ！……エッチアイテムでグリグリされてぇイキまくっちゃうのぉぉぉおッッ❤アひぃぃいぃぃッ❤❤！」
+				ENDIF
+			;アナル電極で
+			ELSEIF SELECTCOM == 171 || TEQUIP:Ａ系装着器具 == 4
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あひぃぃぃいッ！ケツマンコ熱いいぃぃッッ！」
+					PRINTFORMW 「かにゃこの淫乱ウンチ穴ビリビリされてイッぢゃうううぅぅぅっ！！ンあぁぁああぁア゛ア゛ァッ❤❤」
+				ELSE
+					PRINTFORMW 「んぁああぁあああがががががお尻ビリビリ強すぎるのぉぉおッ❤これぇすぐイっちゃうよおぉぉッッ❤❤」
+					PRINTFORMW 「ら…らめぇッ！……電圧あげちゃらめぇぇあぁがぎゃががががががあぁががア゛ア゛ァァ…❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「あッぁあッ！かにゃこの尻穴！喜んでるぅッッ❤」
+					PRINTFORMW 「アクメきまってケツマンコバカになってるよぉぉぉッ❤❤」
+				ELSE
+					PRINTFORMW 「ああふぁあぁ～～ッ❤❤尻マンコ……ケツマンコいぐぅぅーーッッ❤❤」
+				ENDIF
+			ENDIF
+		;それ以外
+		ELSE
+			;バイブ・アナルビーズで
+			IF SELECTCOM == 13 || TEQUIP:Ａ系装着器具 == 1 || SELECTCOM == 172 || TEQUIP:Ａ系装着器具 == 5
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ンんんぐぐうぅッ！！くはぁぁあああぁ❤もう、ダメぇ！……ケツアクメ……我慢できないぃぃ❤❤」
+					PRINTFORMW 「お尻イカされちゃう！！道具なんかでぇ……アナルッイカされちゃ……あぁああぁあんんッ❤❤」
+				ELSE
+					PRINTFORMW 「んああぁぁあぁあぁ！！ダメ！ダメ！ダメェェェエッ！お尻の中グリグリされてイッちゃぅうっ！！」
+					PRINTFORMW 「嫌ぁあ！イギたくない！道具なんか…おもちゃなんかでぇ！アナルアクメなんかしたくないいいぃっ！！アアッ……ああぁぁあっぁあううぅぅっ❤❤」
+				ENDIF
+			;アナル電極で
+			ELSEIF SELECTCOM == 171 || TEQUIP:Ａ系装着器具 == 4
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「いやぁぁあぁぎゃあぁががががぁ痛い痛い痛いぃぃい！！これ抜いて止めてぇええ！！」
+					PRINTFORMW 「おおぉ…お尻の穴焼けちゃうぅッ！！アナル壊れちゃうぅっ！！アァァッ！！んんぁアアあぁぁああア゛ア゛ァッ！！」
+				ELSE
+					PRINTFORMW 「やらあぁあああらめぇえもうらめ助けてぇええ！！これ嫌なのおぉぉおっ！」
+					PRINTFORMW 「おひりがびりびりしてぇ無理矢理いがされちゃうのぉぉッ！……んんんう！！うほぉおおぉぉぉおおおぉっ！❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「やだぁぁあ！もう嫌ぁあ！尻穴なんかでイキたくない！！やめてぇ！！」
+					PRINTFORMW 「これ以上イかさな……ンンンアァああぁああぁアッッッ！！」
+				ELSE
+					PRINTFORMW 「ダメぇえ！尻アクメなんて嫌ぁあ！！」
+					PRINTFORMW 「んぅぅぅッッ……ううぅぅぅっっんッ！！」
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;ＣＡ、ＶＡ、ＣＶＡ絶頂排除処理ここまで
+ENDIF
+;-------------------------------------------------
+;Ｂ絶頂 CFLAG:5303
+;-------------------------------------------------
+;@K1043_MESSAGE_ORGASM_3
+;単発Ｂ絶頂口上は四重以外全ての同時絶頂と合わせて表示される
+IF NOWEX:3 > 0
+	;初めて
+	IF CFLAG:5303 == 0
+		;恋慕
+		IF TALENT:恋慕 == 1
+			PRINTFORMW 「あんんうぅっッ！❤❤いいッ……イイよぉ❤❤%CALLNAME:MASTER%に虐められて………おっぱいの奥がうずうず感じちゃうッ！」
+			PRINTFORMW 「おっぱいアクメ来ちゃぅぅ！お願い%CALLNAME:MASTER%！かにゃこの淫乱乳袋アクメきめさせてぇ……ッんんぁあひぃィィイッ❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「ひぃぃぃぎッ！やめ……やめろぉお！これ以上胸を……アアッ…ぁぁああア……」
+			PRINTFORMW 「もうだめぇ！ぉおっ……おっぱいイッちゃぅうぅっッ！！……ンあぁあぁぁァッッ❤❤」
+			PRINTFORMW 『胸だけでイクとは相当な好きモノだな』
+			PRINTFORMW 「うぅぅぅぐぅッッ……くそぉ……ッ……くそぉぉッッ！」
+		ENDIF
+			CFLAG:5303 = 1
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			;搾乳機で
+			IF SELECTCOM == 191 || TEQUIP:Ｂ系装着器具 == 2
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「んあぁあッ❤❤あびゃぁぁあぎもぢいいぃいッ❤❤機械におっぱいギュッポギュッポ絞られてぇ射乳しっぱなしなのぉぉッッ❤❤」
+					PRINTFORMW 「あひぃぃいッ！搾乳機最高ーーッ❤❤雌牛かにゃこおっぱいでイクぅッッ❤❤乳タンクいっくぅぅウーーッ！！❤❤」
+				ELSE
+					PRINTFORMW 「うひぃぃいっ❤搾乳機いいよぉ❤❤もう神奈子は%CALLNAME:MASTER%専用の乳家畜ですぅ❤❤もっと淫乱ミルク絞り出してくらしゃいッ❤❤」
+					PRINTFORMW 「あぁアアァッまたくりゅ❤❤乳搾られてアクメくりゅうぅ！！❤❤アッッ………んああぁぁぁあぁあぁぁぁッ！！❤❤❤❤❤」
+				ENDIF
+			;乳房電極で
+			ELSEIF SELECTCOM == 193 || TEQUIP:Ｂ系装着器具 == 4
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ンアアッッ！ああぁあひいいぃぃッッ❤❤おおぉ…おっぱいビリビリ焦げりゅぅぅう❤❤」
+					PRINTFORMW 「い、淫乱かにゃこのぉマゾ乳袋ッ！…ビリビリ虐められながらぁァッ！アアァッ！！！❤❤イグゥーッ！！❤❤」
+				ELSE
+					PRINTFORMW 「ひゃいいぃぃいぎぎぎぎぎいぎぎもぢいィィイッッ！！❤❤おおおおおおっぱいもっと焼いてぇええ！！❤❤」
+					PRINTFORMW 「かなこのおっぱいぃいぃすぐアクメる悪い子なのぉぉ！！もっと電圧あげて御仕置きくださいぃぃぃいッッ…アッッ！……あひいいぃぃッッ❤❤」
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ぅっひぃイイっイっ…ぎぼぢィィィっっぎぼぢィィっーーー！！淫乱おっぱいでまたいイィクぅ～❤❤」
+					PRINTFORMW 「ンアァァァっッ❤ずごいのクるよオっ…ギボヂイィィの、くりゅぅぅッ❤❤……かにゃこ乳袋アクメとまんないぃぃぃッ！！❤❤」
+				ELSE
+					PRINTFORMW 「ぎぼぢぃぃっぃっぎぼぢぃぃぃっ～～っっ❤❤おっぱいすごイっのくるすごイのくるぅぅぅっ❤❤」
+					PRINTFORMW 「駄神かなこは胸でイク変態なんれすぅうッ❤もっと乳袋虐めてぇぇ！！……ンあぁアッ、んッひぃぃぃっッ！淫乱おっぱいでイっクーっ❤❤」
+				ENDIF
+			ENDIF
+		;それ以外
+		ELSE
+			;搾乳機で
+			IF SELECTCOM == 191 || TEQUIP:Ｂ系装着器具 == 2
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「ひゃぁぁああら、らめぇぇ！！これらめぇ！止め……ンギィィィィイィッおっぱい絞らないでェェッ」
+					PRINTFORMW 「あぁ……もうだめ、イグッ！……いっちゃうぅぅっ！！乳絞りでイッ……ひゃぁぁいいぃぃッッ❤❤」
+				ELSE
+					PRINTFORMW 「うわぁあぁあやめろぉぉおっ！私は牛じゃないっ！こんな機械にィィッ！！……くはぁぁあアッ……！」
+					PRINTFORMW 「あぁあ……あひぃぃぃっ！……こんにゃのらめぇ……おっぱい絞られしゅぎてぇ……イグぅぅぅっ！！❤❤」
+				ENDIF
+			;乳房電極で
+			ELSEIF SELECTCOM == 193 || TEQUIP:Ｂ系装着器具 == 4
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「嫌ぁぁぁぁああぁぁやめてええええこれ取って取ってぇええ！！死んじゃうううう！！」
+					PRINTFORMW 「おっぱい壊れちゃうッ！！お願いだからもう(電圧アップ)ぎゃぁああがあががががががガガッッ！」
+				ELSE
+					PRINTFORMW 「ひやぁがあがあががあもう許してぇええ乳首焦げちゃううぅぅビリビリ嫌ぁぁぁあッッ！！んあぁあがァァァァァアァッ！！」
+					PRINTFORMW 神奈子は乳房を甚振る電撃の苦痛と快楽に、のたうち回りながら絶頂を迎えた。
+				ENDIF
+			ELSE
+			A = RAND:3
+				IF A == 0
+					PRINTFORMW 「もうやめて～ッッ！！乳首もうイイキだクないっー…んあぁあっっぁっーーだめ！ダメぇッ嫌ァァっっ～～～ッ！！」
+					PRINTFORMW 「かにゃこ乳首アクメで変にかなっちゃうッ！！…もう許してえっっーっっ……んんッ！ンアアァァッアァッッ❤❤」
+				ELSE
+					PRINTFORMW 「あひぃィィッ乳首おぉがじクなっちゃううっ！！……もう許ぢてェェーかにゃこのおっぱいぃおかしクなっちゃうのぉっっ！」
+					PRINTFORMW 「こんなのらめぇぇっ……もうアクメとめてェっっ！！……神奈子胸らめぇなのぉおぉッ……ぅンッギッッひぃぃぃぃっ❤❤」
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+ENDIF 
+
+
+
+;-------------------------------------------------
+;処女喪失(処女のみ) CFLAG:8009
+;-------------------------------------------------
+LOCAL = UP:20 + UP:21
+IF TFLAG:0 > 0 && CFLAG:8009 == 0
+	;恋慕かつ主人のセックスによる処女喪失
+	IF TALENT:恋慕 && TFLAG:2
+		;恋慕かつ反発刻印未取得
+		IF TALENT:恋慕 && LOCAL < 500
+			PRINTFORMW 「ウッ――くっ……ぅぅッッ！……」
+			PRINTFORMW 「ハァ……ハァ……まさか、今更になってこの痛みを思い出すとはな……」
+
+		ENDIF
+	;指挿入れで処女喪失（反感がかなり少ない）
+	ELSEIF SELECTCOM == 4
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「ウッ――くぅぅッッ！……」
+			PRINTFORMW 「ハァ……ハァ……まさか、今更になってこの痛みを思い出すとはな……どうせなら、%CALLNAME:MASTER%のモノにして欲しかった……」
+		;それ以外
+		ELSE
+			PRINTFORMW 「…………ち！…わざわざ再生させてまで穢そうというのか……悪趣味も大概にしろ！」
+		ENDIF
+	;それ以外の時に処女喪失
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「――ッ！……どうせ薬でデチあげた初物だったが……竿で味わわなくてよかったのかい？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「…………ち！…わざわざ再生させてまで穢そうというのか……悪趣味も大概にしろ！」
+		ENDIF
+	ENDIF
+	CFLAG:8009 = 1
+ENDIF
+
+;-------------------------------------------------
+;セックスで射精させた CFLAG:8010 CFLAG:8011
+;-------------------------------------------------
+;アナルセックス
+IF TFLAG:12 > 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「あぁぁんッ！お尻の穴……%CALLNAME:MASTER%の熱いのがドピュって❤❤」
+		CFLAG:8011 = 4
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「お願いだからやめてぇえ！……そんな所に出さ(ビュるッ)……んあああぁぅぅっ！」
+		CFLAG:8011 = 3
+	;それ以外
+	ELSE
+		PRINTFORMW 「うぅぅ……っ！あああぁ……クソよりも汚れた気分だ！！」
+		CFLAG:8011 = 2
+	ENDIF
+;それ以外（膣内射精）
+ELSEIF TFLAG:11 > 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ああぁあっっ！入ってきた❤❤%CALLNAME:MASTER%の子種汁入ってりゅ❤❤神奈子の子宮がゴキュゴキュ飲んで喜んでるよぉぉ❤❤❤」
+		PRINTFORMW 「もっと❤もっと膣内射精して❤❤❤❤お腹ダボダボになるまでして❤❤❤❤神奈子の子袋孕ませてぇぇ❤❤❤❤」
+		CFLAG:8010 = 5
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「うあぁあッッ……中に%CALLNAME:MASTER%のザーメンが……私……もう……」
+		CFLAG:8010 = 4
+	;反発刻印Lv3
+	ELSEIF MARK:反発刻印 == 3
+		PRINTFORMW 「おのれ%CALLNAME:MASTER%……私の子宮に注ぎおったな………」
+		PRINTFORMW 「……孕んだなら、産んでやろう……その子に、必ずお前を殺させてやる！！」
+		PRINTFORMW その子を母親の目の前で痛めつけるのも面白そうだ。
+		CFLAG:8010 = 3
+	;それ以外
+	ELSE
+		PRINTFORMW 「やめてぇ！中は嫌ぁあーーッッ！%CALLNAME:MASTER%の子種なんてい(どプッ)……ぎひぃぃいぃっ！！」
+		CFLAG:8010 = 2
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;手で射精させた CFLAG:8012
+;-------------------------------------------------
+IF TFLAG:19 > 0
+	;奉仕精神Lv5
+	IF ABL:奉仕精神 >= 5
+		PRINTFORMW 「はぁ、ザーメンで手荒れが治ればねぇ……」
+		CFLAG:8012 = 3
+	;奉仕精神Lv3
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「……ふん、随分と早かったねぇ」
+		CFLAG:8012 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「……汚らわしい」
+		CFLAG:8012 = 1
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;口で射精させた
+;-------------------------------------------------
+IF TFLAG:15 > 0 
+	;精液中毒Lv5
+	IF ABL:精液中毒 >= 5
+		PRINTFORMW 「ッくはぁ❤……精液美味し❤❤もっと……もっとザーメンちょうだい❤❤❤」
+		CFLAG:8013 = 5
+	;精液中毒Lv3
+	ELSEIF ABL:精液中毒 >= 3
+		PRINTFORMW 「……んはァッ……はぁ……はぁ❤……(何故だ……ザーメンが美味いはずないのに！)」
+		CFLAG:8013 = 3
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「くはぁ…んっ……にがっ」
+		CFLAG:8013 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「んぶゥッ！……むぐググッ……………プッ……！」
+		PRINTFORMW 無理に剛直をねじ込まれ、唇が裂けたのだろうか。
+		PRINTFORMW 神奈子は血と陰毛の混じったザーメンを床に吐き出し、%CALLNAME:MASTER%に反抗的な視線を送ってきた。
+		CFLAG:8013 = 1
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;胸で射精させた
+;-------------------------------------------------
+IF TFLAG:16 > 0 
+	;奉仕精神Lv5
+	IF ABL:奉仕精神 >= 5
+		PRINTFORMW 「ふふふ……たっぷり出たじゃないか……昔から、これは得意でねぇ」
+		CFLAG:8014 = 3
+	;奉仕精神Lv3以上
+	ELSEIF ABL:奉仕精神 >= 3
+		PRINTFORMW 「んふぅっ……胸がベタベタだよ……」
+		CFLAG:8014 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「くっ！……出す前に言え！真澄の鏡が汚れたらどうするつもりだ！」
+		CFLAG:8014 = 1
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精した(ふたなり/オトコのみ) CFLAG:8015
+;-------------------------------------------------
+IF TFLAG:30 > 0
+	;初めて
+	IF CFLAG:8015 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んぎいぃぃッッ！、神の粥でちゃぅぅ！！オンバシラチンコでギトギト精子射精るぅうぅぅッ！！！❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「うッ……あぁぁアッ！やめ……オチンチンが……射精る……んんううぅーーーッッ！！❤」
+		ENDIF
+		CFLAG:8015 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+		A = RAND:3
+			IF A == 0
+				PRINTFORMW 「んあぁ❤❤おぉぉっ❤❤精子とまんない！！！肉オンバシラ射精とまんなぃいぃぃっ！！❤❤」
+			ELSEIF A == 1
+				PRINTFORMW 「かにゃこ雌ちんぽでザー汁出すの好きぃぃぃ❤❤んほぉぉぉぉぉっっ！！❤❤❤❤」
+			ELSEIF A == 2
+				PRINTFORMW 「んひぃいぃ…❤オンバシラ汁止まんないッ！！射精しすぎて神奈子バカになっちゃうぅぅぅッッ❤❤」
+			CFLAG:8015 = 3
+			ENDIF
+		;それ以外
+		ELSE
+			PRINTFORMW 「ぁぁあああ！また精液が……ダメ！ダメだめぇえええ！！❤んうぅぅうぅうぅっっ！！❤❤❤」
+			CFLAG:8015 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;空射精した　　CFLAG:8021
+;-------------------------------------------------
+IF NOWEX:40 > 0 && CFLAG:5340 == 1
+	;初めて
+	IF CFLAG:8021 == 0
+		IF ABL:射精中毒 >= 3
+			PRINTFORML 「んひぃぃいっ？！何で……なんで射精できないのおぉ？！」
+			PRINTFORML 「ザー汁射精させてぇ！！オンバシラ虐めないでぇええ！！」
+			PRINTFORMW 「オチンチン壊れちゃう！！かにゃこの精子タンク破裂しちゃぅううう！！」
+		ELSE
+			PRINTFORML 「うアッ――がッ……ぃぎっ！？…」
+			PRINTFORML 「あぁあ射精できない！？……やァッ…もぅ……許して……んひぃぃぃぃ！！」
+		ENDIF
+		CFLAG:8021 = 1
+	ELSE
+		IF ABL:射精中毒 >= 3
+			IF RAND:3 == 0
+				PRINTFORML 「んぎぃいぃぃぃ！！！もうオンバシラ虐めないでえぇぇッッ！！！おねがいだがら射精させてぇーーー！！！」
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「おおぉおおねがいじまずっ　もう許じで射精させてぇぇぇッ……」
+				PRINTFORML 「これ以上我慢しだら死んじゃうよぉぉおっっ！！！オンバシラ破裂しちゃぅぅぅ！！！」
+				PRINTFORMW 神奈子の剛直は既にオーガズムに達しているが、奥底から込み上げる熱い精液の滾りをする事は許されなかった。
+			ELSE
+				PRINTFORML 「あはァッ❤……あ……ぁッ……かにゃこのおんばしらぁ……しゃせー管理されちゃったぁ……❤❤」
+				PRINTFORML 「かにゃこおちんぽ奴隷でしゅ❤……%CALLNAME:MASTER%に射精管理されて喜ぶヘンタイれすぅ❤……おんうぅッ❤❤」
+				PRINTFORML 「おッ………あぉッ……ぅぐッ……」
+				PRINTFORML 神奈子は射精を禁じられたペニスを握り締めたまま、白目を向いて痙攣し始めた。
+				PRINTFORMW ……そろそろヤバイか？
+			ENDIF
+		ELSE
+			PRINTFORML 「うわっ！……がッ！……うぅぅ！いつまでこうさせておくつもりだ！！」
+			PRINTFORMW 神奈子は射精を禁じられた肉棒を握り締め、全身汗だくになって悶絶している。
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;噴乳した(母乳体質のみ) CFLAG:8016
+;-------------------------------------------------
+IF TFLAG:31 > 0
+	;初めて
+	IF CFLAG:8016 == 0
+		;従順Lv4以上
+		IF ABL:従順 >= 4
+			PRINTFORMW 「ぼ、母乳ぅッ？！かにゃこミルクタンクになっちゃったよぉお！！んッひぃいぃぃ！！❤❤」
+		;それ以外
+		ELSE
+			PRINTFORMW 「んひぃぃぃ？！うそ……なんで母乳が……あぁぁッッ……嫌ぁぁぁぁッ」
+		ENDIF
+		CFLAG:8016 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;従順Lv4以上
+		IF ABL:従順 >= 4
+		A = RAND:2
+			IF A == 0
+				PRINTFORMW 「あっひぃぃぃ！❤❤おっぱいまたでりゅぅぅ！かにゃこ射乳でイく淫乱おっぱいになっちゃうぅうぅ！！❤❤」
+			ELSE
+				PRINTFORMW 「うひぃぃっ！！……母乳がぁ！乳射精びゅーびゅー出てりゅうう！！❤」
+			ENDIF
+			CFLAG:8016 = 3
+		;それ以外
+		ELSE
+		A = RAND:2
+			IF A == 0
+				PRINTFORMW 「嫌ァァア゛ア゛ッッ！お願いやめでぇ！！おっばい止めてぇ！！母乳絞らないでええぇッッ！！」
+			ELSE
+				PRINTFORMW 「もうおっぱい嫌ぁぁあッッ！！許してぇ！！母乳出しすぎで壊れちゃううぅぅッ！！」
+			ENDIF
+			CFLAG:8016 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｃ感覚Lv5でＣ絶頂50以上 CFLAG:8017
+;-------------------------------------------------
+IF ABL:Ｃ感覚 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
+	;初めて
+	IF CFLAG:8017 == 0
+		;恋慕
+		IF TALENT:恋慕
+			IF TALENT:ふたなり
+				PRINTFORMW 「あぁッ…！……ッあ！　くりゅ……おぉぉおオンバシラ……なんか凄いの来ちゃうッ……！」
+				PRINTFORMW 「怖いよ%CALLNAME:MASTER%……私これ……んッッ！んぉおあぁぁあ゛あ゛ッッ……❤❤」
+				PRINTFORMW 今まで感じた事のない強烈過ぎるＣ絶頂に打ちのめされ、神奈子は白目を向いてよがり狂った。
+			ELSE
+				PRINTFORMW 「あぁッ…！……ッあ！　くりゅ……おぉぉお豆……なんか凄いの来ちゃうッ……！」
+				PRINTFORMW 「怖いよ%CALLNAME:MASTER%……私これ……んッッ！んぉおあぁぁあ゛あ゛ッッ……❤❤」
+				PRINTFORMW 今まで感じた事のない強烈過ぎるＣ絶頂に打ちのめされ、神奈子は白目を向いてよがり狂った。
+			ENDIF
+		;それ以外
+		ELSE
+			IF TALENT:ふたなり
+				PRINTFORMW 「あぁッ…！……ッあ！何これ……おぉぉおオンバシラ……なんか凄いのッ……！」
+				PRINTFORMW 「やぁあやだ！やだこれぇ！！助け……んッッ！んぉおあぁぁあ゛あ゛ッッ……❤❤」
+				PRINTFORMW 今まで感じた事のない強烈過ぎるＣ絶頂に打ちのめされ、神奈子は白目を向いてよがり狂った。
+			ELSE
+				PRINTFORMW 「あぁッ…！……ッあ！何これ……おぉぉお豆…なんか凄いのッ……！」
+				PRINTFORMW 「やぁあやだ！やだこれぇ！！助け……んッッ！んぉおあぁぁあ゛あ゛ッッ……❤❤」
+				PRINTFORMW 今まで感じた事のない強烈過ぎるＣ絶頂に打ちのめされ、神奈子は白目を向いてよがり狂った。
+			ENDIF
+		ENDIF
+		CFLAG:8017 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:8017 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:8017 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｖ感覚Lv5でＶ絶頂50以上 CFLAG:8018
+;-------------------------------------------------
+IF ABL:Ｖ感覚 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
+	;初めて
+	IF CFLAG:8018 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		CFLAG:8018 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:8018 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:8018 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ａ感覚Lv5でＡ絶頂50以上 CFLAG:8019
+;-------------------------------------------------
+IF ABL:Ａ感覚 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
+	;初めて
+	IF CFLAG:8019 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 「あ……あはぁぁ。も……だめ……かにゃこのお尻……ダメになっちゃったよぉ……❤❤」
+		ENDIF
+		CFLAG:8019 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:8019 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:8019 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｂ感覚Lv5でＢ絶頂50以上 CFLAG:8020
+;-------------------------------------------------
+IF ABL:Ｂ感覚 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
+	;初めて
+	IF CFLAG:8020 == 0
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 「……アハハッ……あハッ❤……かにゃこ、おっぱいバカになっちゃったぁ❤❤」
+		ENDIF
+		CFLAG:8020 = 1
+		RETURN 0
+	;二回目以降
+	ELSE
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			CFLAG:8020 = 3
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			CFLAG:8020 = 2
+		ENDIF
+		RETURN 0
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;精飲絶頂 CFLAG:8030
+;-------------------------------------------------
+IF TFLAG:33 > 0
+A = RAND:2
+	IF A == 0
+		PRINTFORMW 「んんんぐっ！(どびゅっゴクン)……ンフぅーーーーッッ❤❤」
+		PRINTFORMW 神奈子は大好物のザーメンが胃に流し込まれる感覚に、全身を痙攣させて悦んでいる。
+	ELSE
+		PRINTFORMW 「んッ……んッ…んッ…んッんッんッ！(どびゅっゴきゅっ)ンンンンーーーーッッ❤❤」
+		PRINTFORMW 神奈子はザーメンが食道をうつ感覚だけで絶頂に達し、だらしない表情を浮かべて呆けている。
+	ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_MARKCNG関係（43をキャラ番号に置換）
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を発動します
+;-------------------------------------------------
+@KOJO_MESSAGE_MARKCNG_43
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF ASSI > 0 && ASSIPLAY
+;	RETURN 0 
+;ボールギャグ着用時には口上をスキップする（OFFだと口を塞いでるのに喋りまくる）
+SIF TEQUIP:口装着器具
+	RETURN 0
+;睡眠・時止め・失神時に口上をスキップする（OFFだと寝言が凄いことに）
+SIF EQUIP:睡眠薬 || TEQUIP:時間止め || TFLAG:899 > 0 || TFLAG:898 == 1
+	RETURN 0
+;--------------------------------------------------
+;特定助手、主人時に特殊助手口上を呼び出す(Y1を特定助手、43を主人のキャラ番号に置換）
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;	CALL LES_MESSAGE_MARKCNG_K1043_MY1
+;	RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;	IF NO:ASSI == Y1
+;		CALL LES_MESSAGE_MARKCNG_K1043_MY1
+;		RETURN 0
+;	ENDIF
+;ENDIF
+;-------------------------------------------------
+;苦痛刻印Lv3取得 CFLAG:8096
+;-------------------------------------------------
+IF TFLAG:40 == 3 && CFLAG:8096 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+	ELSE
+		PRINTFORMW 「あぁああぁいたい、いだいいぃい！……もうやめでぇぇえッ！、」
+		PRINTFORMW 苦痛に喘ぎ泣き叫ぶ神奈子には、もはや歴戦の軍神としての威厳は欠片も残されていなかった。
+	ENDIF
+	CFLAG:8096 = 1
+ENDIF
+
+;-------------------------------------------------
+;快楽刻印Lv3取得 CFLAG:8097
+;-------------------------------------------------
+IF TFLAG:41 == 3 && CFLAG:8097 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+	ELSE
+		PRINTFORMW 「はぁ❤……あはぁぁ❤……駄目だ……気持ちよすぎる……❤❤❤」
+	ENDIF
+	CFLAG:8097 = 1
+ENDIF
+
+;-------------------------------------------------
+;屈服刻印Lv3取得 CFLAG:8098
+;-------------------------------------------------
+IF TFLAG:42 == 3 && CFLAG:8098 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+	ELSE
+		PRINTFORMW 「すまない……諏訪子…早苗……私は、もう駄目だ」
+		PRINTFORMW 「……好きにするがいい……」
+	ENDIF
+	CFLAG:8098 = 1
+ENDIF
+
+;-------------------------------------------------
+;反発刻印Lv3取得 CFLAG:8099
+;-------------------------------------------------
+IF TFLAG:43 == 3 && CFLAG:8099 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+	ELSE
+		PRINTFORMW 「殺してやる殺してやる殺してやるッッッ！！」
+	ENDIF
+	CFLAG:8099 = 1
+ENDIF
+
+;-------------------------------------------------
+;恥辱刻印Lv3取得 CFLAG:8100
+;-------------------------------------------------
+IF TFLAG:46 == 3 && CFLAG:8100 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+	ELSE
+		PRINTFORMW 「もう駄目だ……これ以上の恥辱は、堪えられない！……信仰の力が、消えてしまう……」
+	ENDIF
+	CFLAG:8100 = 1
+ENDIF
+
+;-------------------------------------------------
+;イベント口上集（43、X2をキャラ番号に置換する） FLAG(TFLAG200の中身＋8100)
+;-------------------------------------------------
+;========================================================
+;イベント口上前の共通関数
+;特定の条件下でイベント口上を表示させないようにする場合はRETURN 1
+;1以外を返した場合はイベント口上は表示される
+;========================================================
+@KOJO_1043_MESSAGE_SUB_EVENT_BEFORE
+
+;-------------------------------------------------
+;売却
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_SUB_EVENT_SCENE130
+IF 1
+	;恋慕+反発刻印Lv3未満
+	IF TALENT:恋慕 && MARK:反発刻印 < 3
+		PRINTFORMW 「え……私、売られ……」
+		PRINTFORMW 「嫌……嫌だよぉ！！」
+		PRINTFORMW 「おねがいだよ！何でもするからぁっ――！私をここに置いておくれよぉ！！」
+		PRINTFORMW 「私は“お前無しでは生きて行けないんだ”！！考え直しておくれよぉ！！」
+		PRINTFORMW 喚き散らす神奈子を奴隷商人に引き渡した後、%CALLNAME:MASTER%は金を受け取り、書類にサインをした……
+		PRINTFORMW これが仕事だ、私情を挟むべきではない。
+		PRINTFORMW 「%CALLNAME:MASTER%！後生だよぉ！%CALLNAME:MASTER%ーーーっ！！」
+		PRINTFORMW 　　・
+		PRINTFORMW 　・・・
+		PRINTFORMW ・・・・・
+		PRINTFORMW 神奈子を売り払った後、%CALLNAME:MASTER%が監禁房の掃除を行っていると、壁の一角に食器の先端で文字が掘られているのに気付く。
+		PRINTFORMW それは神奈子が此処に連れて来られてから、正気と意志を保つ為に記し続けた日記だった。
+		PRINTFORMW 【奴は悪鬼にも劣る、%CALLNAME:MASTER%という名の畜生だ】
+		PRINTFORMW 【必ず脱出し、諏訪子や早苗らと共に、必ず復讐してやる！】
+		PRINTFORMW 若い日付には、%CALLNAME:MASTER%に対する憎しみと復讐の誓いが血文字と共に刻まれていたが……
+		PRINTFORMW 【私の意志が挫けて行くのが分る……やがて信仰の力も消えるだろう】
+		PRINTFORMW 【信仰の力が底をついた……もう、これ以上は無理だ……早苗、諏訪子……すまない……先に逝く……】
+		PRINTFORMW その日付は、丁度神奈子の態度が従順になり始めた頃であった。
+		PRINTFORMW そして……
+		PRINTFORMW 【今日は普段より苦痛が少なかった気がする……私が抵抗を止めてから、%CALLNAME:MASTER%は時々優しくしてくれるようになった……もう、私は先が長くないというのにねぇ……】
+		PRINTFORMW 【何故だ……何故、私はまだ生きている……信仰の力がなければ、神は存在する事ができない……それに、何故か%CALLNAME:MASTER%の声を聞くと満たされる】
+		PRINTFORMW 【今日はとても良かった……%CALLNAME:MASTER%もとても喜んでいた……まさか私は、%CALLNAME:MASTER%を……】
+		PRINTFORMW 神奈子が%CALLNAME:MASTER%に依存し始めた頃だ……神である八坂神奈子が、他の誰かに依存するという事は……
+		PRINTFORMW 【これで、もうはっきりした……私が消える事はない……私はもう、信徒の信仰心がなくとも生きられる……
+		PRINTFORMW ――私が%CALLNAME:MASTER%を信じている限り……
+		PRINTFORMW ――そして%CALLNAME:MASTER%が、“私を必要としてくれている限り”……】
+		PRINTFORMW 　　・
+		PRINTFORMW 　・・・
+		PRINTFORMW ・・・・・
+		PRINTFORMW 一月後、%CALLNAME:MASTER%の元に、神奈子を買った奴隷商人から苦情の手紙が送られてきた。
+		PRINTFORMW 『購入した奴隷が死んだぞ！お前の所からは二度と買わん！』
+		PRINTFORMW 　　・
+		PRINTFORMW 　・・・
+		PRINTFORMW ・・・・・
+		PRINTFORMW 八坂神奈子は%CALLNAME:MASTER%に見捨てられた後、全ての生命力を失い、枯れ木の様に干からびて息絶えてしまった。
+		PRINTFORMW 首から提げていた“真澄の鏡”は砕け散り、その破片が、まるで涙の様に光っていたそうだ。
+	;幼児退行
+	ELSEIF TALENT:幼児退行
+		PRINTFORMW 「やだぁ！やだよぉぉ！父上ぇ！行きたくないよぉ！」
+		PRINTFORMW 「かなこイイ子にするからっ……父上と一緒に、お家に居たいよぉっ！」
+		PRINTFORMW 奴隷商人に縄を引かれ、泣き喚く神奈子の姿は、まるで子供そのものだった。
+	;反発刻印Lv3
+	ELSEIF MARK:反発刻印 == 3
+		PRINTFORMW 「……憶えておくがいい……蛇の毒は、後からゆっくりと効くものだ……」
+		PRINTFORMW ……くわばら、くわばら。
+	;淫乱
+	ELSEIF TALENT:淫乱
+		;PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 「……顔と名は憶えた」
+		PRINTFORMW 「必ず殺してやるから、楽しみにしていなさい」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;朝フェラ CFLAG:8240
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_SUB_EVENT_SCENE140
+IF 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「んむぁッ……やっとお目覚めかい？……んくッ……寝顔を見てたら、つい欲しくなっちゃってねぇ」
+		CFLAG:8240 = 3
+	;奉仕精神Lv5以上
+	ELSEIF ABL:奉仕精神 >= 5
+		PRINTFORMW 「むはぁ……どうだ、私の舌使いは……慣れたもんだろう？」
+		CFLAG:8240 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「んっく……ちっ！もう起きたか……寝ている間に搾り出せば、ヤル気を削げると思ったのに……」
+		CFLAG:8240 = 1
+	ENDIF
+ENDIF
+
+
+
+;-------------------------------------------------
+;調教後自慰 CFLAG:8251
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_SUB_EVENT_SCENE151
+IF 1
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「はッ❤……はぁんんぅッ❤……%CALLNAME:MASTER%っ！%CALLNAME:MASTER%っ！%CALLNAME:MASTER%―――ッ！！❤❤」
+		CFLAG:8251 = 3
+	;自慰中毒Lv3以上
+	ELSEIF ABL:自慰中毒 >= 3
+		PRINTFORMW 「んんぅ❤……くッ！いつから私は、こんなに淫蕩に……ッ！！んふぅううっ！！❤❤」
+		CFLAG:8251 = 2
+	;それ以外
+	ELSE
+		PRINTFORMW 「うぅぅっ！身体が疼いて……治まらぬっ！……一回だけ……一回だけ❤」
+		CFLAG:8251 = 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;エンゲージリング使用時
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_SUB_EVENT_SCENE200
+IF 1
+	PRINTFORMW 「………ッ！！！」
+	PRINTFORMW エンゲージリングを渡された神奈子は感極まり、涙が零れ落ちぬよう、天井を見つめながら大きく息を吸った。
+	PRINTFORMW 「……バカだねぇ、まったく……！」
+	PRINTFORMW 「こういうのは……基督教(キリスト教)の、しきたりだろう！」
+	PRINTFORMW それから神奈子は笑顔を浮かべ、%CALLNAME:MASTER%の身体に抱きつき、益々嬉し涙を流す。
+	PRINTFORMW 「国を取ったり取られたり……殺したり殺されたり……信仰を奪ったり奪われたり……」
+	PRINTFORMW 「今まで、そんな事ばかりだった……でも、私はもう軍神じゃない……%CALLNAME:MASTER%が居れば生きていける」
+	PRINTFORMW 「私も……女だったんだ……」
+	PRINTFORMW そんな神奈子の震える身体を、%CALLNAME:MASTER%は優しく抱きしめ返した。
+ENDIF
+
+;-------------------------------------------------
+;赤い首輪使用時
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_SUB_EVENT_SCENE201
+IF 1
+	PRINTFORMW 「あぁ……やっと私を……これを待っていたんだよ」
+	PRINTFORMW 「これでようやく軍神をやめられる……信仰心を求めて国を奪い合う必要も無い……」
+	PRINTFORMW 「%CALLNAME:MASTER%の奴隷でいられるから……私はずっと生きていられる……」
+	PRINTFORMW 「さぁ、さっそく最初の命令を……どんな恥ずかしい事でも致しましょう……%CALLNAME:MASTER%様」
+	PRINTFORMW 『では最初の命令だ……“様”を付けて呼ぶのは止めろ』
+ENDIF
+
+TFLAG:200 = 0
+RETURN 0
+
+;-------------------------------------------------
+;@単体エンディング関係(43、X2をキャラ番号に置換する)
+;-------------------------------------------------
+@KOJO_1043_MESSAGE_SINGLE_ENDING
+DRAWLINE
+PRINTFORMW ―――単体エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW 
+
+PRINTFORMW その後、%CALLNAME:MASTER%は神奈子と共に守矢神社へと拠点を移し、再び調教師としての道を歩み続けた。
+PRINTFORMW 幻想郷中から浚われてきた少女達が次々と陥落し、%CALLNAME:MASTER%の前に跪く異様な光景……。
+PRINTFORMW その傍らには、常に不敵な笑みを浮かべる一人の神の姿があった。
+PRINTL
+PRINTFORMW 【山坂と湖の権化】【独立不撓の神様】【軍神】……かつて、それらの二つ名で呼ばれた守矢の一柱……
+PRINTFORMW 『八坂……神奈子！』
+PRINTL
+PRINTFORMW %CALLNAME:MASTER%の前に引きずられてきた新たな調教対象は、神奈子の名を驚愕の面持ちで叫んだ。
+PRINTFORMW 神奈子はそれに応えるように、うっとりした表情をうかべて服を脱ぎ、その少女の目の前で%CALLNAME:MASTER%の剛直を自ら秘裂にねじ込んだ。
+PRINTFORMW 神奈子の新たな二つ名は……【%CALLNAME:MASTER%の肉便器】……
+PRINTFORMW 神奈子程の実力者が屈服したという事実を前に、ほとんどの少女達は、%CALLNAME:MASTER%が調教を施すまでもなく心を折られるだろう。
+PRINTFORMW 「ふふふ……これが新しい信仰の形……」
+PRINTFORMW 「守矢の新たなる主柱……%CALLNAME:MASTER%の前に、幻想郷の全ての女達がひれ伏すのです」
+PRINTFORMW %CALLNAME:MASTER%の完全なる奴隷となった後も、神奈子のカリスマは健在であった。
+PRINTFORMW ただ、それは信仰の力を得る為ではなく……全ては%CALLNAME:MASTER%の為に捧げられている。
+PRINTL
+PRINTFORMW 　　　　　　　　―― Ending No.11043 (神奈子ハッピーエンド)
+
+RETURN 0
+
+;-------------------------------------------------
+;@奴隷エンディング関係(43、X2をキャラ番号に置換する)
+;-------------------------------------------------
+;@SLAVE_ENDING_K1043
+;DRAWLINE
+;PRINTFORMW ―――単体エンド条件達成―――
+;PRINTFORMW …………
+;PRINTFORMW ………
+;PRINTFORMW ……
+;PRINTFORMW 
+
+;PRINTFORMW PRINTFORMW その後、%CALLNAME:MASTER%は神奈子と共に守矢神社へと拠点を移し、再び調教師としての道を歩み続けた。
+PRINTFORMW 幻想郷中から浚われてきた少女達が次々と陥落し、%CALLNAME:MASTER%の前に跪く異様な光景……。
+PRINTFORMW その傍らには、常に不敵な笑みを浮かべる一人の神の姿があった。
+PRINTL
+PRINTFORMW 【山坂と湖の権化】【独立不撓の神様】【軍神】……かつて、それらの二つ名で呼ばれた守矢の一柱……
+PRINTFORMW 『八坂……神奈子！』
+PRINTL
+PRINTFORMW %CALLNAME:MASTER%の前に引きずられてきた新たな調教対象は、神奈子の名を驚愕の面持ちで叫んだ。
+PRINTFORMW 神奈子はそれに応えるように、うっとりした表情をうかべて服を脱ぎ、その少女の目の前で%CALLNAME:MASTER%の剛直を自ら秘裂にねじ込んだ。
+PRINTFORMW 神奈子の新たな二つ名は……【%CALLNAME:MASTER%の肉便器】……
+PRINTFORMW 神奈子程の実力者が屈服したという事実を前に、ほとんどの少女達は、%CALLNAME:MASTER%が調教を施すまでもなく心を折られるだろう。
+PRINTFORMW 「ふふふ……これが新しい信仰の形……」
+PRINTFORMW 「守矢の新たなる主柱……%CALLNAME:MASTER%の前に、幻想郷の全ての女達がひれ伏すのです」
+PRINTFORMW %CALLNAME:MASTER%の完全なる奴隷となった後も、神奈子のカリスマは健在であった。
+PRINTFORMW ただそれは、信仰の力を得る為ではなく……全ては%CALLNAME:MASTER%の為に捧げられている。
+PRINTL
+PRINTFORMW 　　　　　　　　―― Ending No.11043 (神奈子奴隷エンド)
+
+;RETURN 0
+

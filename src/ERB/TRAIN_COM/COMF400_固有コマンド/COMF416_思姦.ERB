@@ -1,0 +1,111 @@
+﻿;=============================================================================
+;思姦
+;=============================================================================
+;思姦は心の目を閉ざしていない[覚]持ちのキャラに使用可能です
+;特にネタも無いので簡素な作り
+;序に効果もそこまで考えてません、従順なら効果が高まる程度ですし書き方も粗いです
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE416
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:416 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が心の目を閉ざしている[覚]だとダメ
+SIF TALENT:PLAYER:覚 == 2
+	RETURN 0
+;調教対象が心の目を閉ざしていない[覚]でないとダメ
+SIF TALENT:覚 != 1
+	RETURN 0
+;気力が0の時はダメ
+SIF BASE:気力 <= 0 && !(FLAG:16 & 32)
+	RETURN 0
+;調教対象が[精神崩壊]または[傀儡]だとダメ
+SIF TALENT:精神崩壊 || TALENT:傀儡
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 416) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM416
+PRINTL 思姦
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 416
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 思姦
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 50
+
+SOURCE:性行動 = 50
+SOURCE:液体追加 = 5000
+SOURCE:欲情追加 = 3000
+SOURCE:露出 = 500
+SOURCE:逸脱 = 200
+SOURCE:反感追加 = 200
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:露出 , 6.00
+	TIMES SOURCE:逸脱 , 6.00
+	TIMES SOURCE:反感追加 , 6.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:露出 , 5.00
+	TIMES SOURCE:逸脱 , 5.00
+	TIMES SOURCE:反感追加 , 5.00
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:露出 , 4.00
+	TIMES SOURCE:逸脱 , 4.00
+	TIMES SOURCE:反感追加 , 4.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:露出 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:露出 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSE
+	TIMES SOURCE:露出 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_416
+PRINTFORML %CALLNAME:PLAYER%は心の中で%CALLNAME:TARGET%を犯している
+PRINTFORM %CALLNAME:PLAYER%の心を読んだ%CALLNAME:TARGET%は、
+IF TALENT:壊造人格
+	PRINTFORML 想像したものを実際にやって欲しそうなな眼で%CALLNAME:PLAYER%を見ている…
+ELSEIF TALENT:淫乱
+	PRINTL 何かを期待するような眼でこっちを見ている…
+ELSEIF TALENT:親愛 || TALENT:相愛
+	PRINTFORML 顔を真っ赤にしつつも、どことなく期待を込めて%CALLNAME:PLAYER%を見ている…
+ELSEIF TALENT:恋慕 || TALENT:服従
+	PRINTL 顔を真っ赤にして、顔をそむけた…
+ELSEIF MARK:反発刻印 > 1
+	PRINTFORML 蔑みつつも少し怯えを感じさせるような目で%CALLNAME:PLAYER%を見ている…
+ELSE
+	PRINTFORML 怯えたような目つきで%CALLNAME:PLAYER%を見ている…
+ENDIF

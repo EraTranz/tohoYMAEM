@@ -1,0 +1,79 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;汎用戦闘口上
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;口上のないキャラをなんとかそれらしく喋らせるファイルです
+;eratohoYM Mk-3にて口上表示の仕様を変更するにあたり、改造中
+;@KOJO_X_SLAVE_MESSAGE_BATTLE_START	:戦闘開始口上
+;@KOJO_X_SLAVE_MESSAGE_BATTLE_END	:戦闘終了口上
+;@KOJO_X_ASSI_MESSAGE_BATTLE_START	:戦闘開始口上（助手）
+;@KOJO_X_ASSI_MESSAGE_BATTLE_END	:戦闘終了口上（助手）
+;@KOJO_X_DODGE_MESSAGE				:調教者の攻撃（セクハラ）が失敗した時のセリフ
+;@KOJO_X_MISS_MESSAGE				:奴隷の攻撃が失敗した時のセリフ
+;@KOJO_X_TRAIN_MESSAGE_S_COM_{Train.csv参照、700～800、奴隷用}
+
+;=============================================================================
+;戦闘開始時のセリフ
+;=============================================================================
+@KOJO_X_SLAVE_MESSAGE_BATTLE_START
+;口上を表示できるか判定
+SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 0
+	RETURN 0
+;初戦じゃないとダメ
+SIF EQUIP:戦闘中 != 3
+	RETURN 0
+
+DRAWLINE
+
+;=============================================================================
+;戦闘終了時のセリフ
+;=============================================================================
+@KOJO_X_SLAVE_MESSAGE_BATTLE_END
+;口上を表示できるか判定
+SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 0
+	RETURN 0
+
+DRAWLINE
+
+;=============================================================================
+;調教者の攻撃（セクハラ）が失敗した時のセリフ
+;=============================================================================
+@KOJO_X_DODGE_MESSAGE
+;口上を表示できるか判定
+SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 0
+	RETURN 0
+
+IF CFLAG:43 == 1
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 2
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 3
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 4
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 5
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 6
+	;PRINTFORMW 
+ENDIF
+
+;=============================================================================
+;奴隷の攻撃が失敗した時のセリフ
+;=============================================================================
+@KOJO_X_MISS_MESSAGE
+;口上を表示できるか判定
+SIF KOJO_X_MESSAGE_DISPLAYCHECK(TARGET) == 0
+	RETURN 0
+
+IF CFLAG:43 == 1
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 2
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 3
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 4
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 5
+	;PRINTFORMW 
+ELSEIF CFLAG:43 == 6
+	;PRINTFORMW 
+ENDIF

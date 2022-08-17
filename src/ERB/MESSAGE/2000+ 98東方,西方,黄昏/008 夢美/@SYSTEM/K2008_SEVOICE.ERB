@@ -1,0 +1,87 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;汎用音源
+;-------------------------------------------------
+;拡張のため、ARGも受信可能にしておく
+;========================================================
+@K2008_SE(ARGS = "", ARG = 0)
+SELECTCASE ARGS
+	CASE "放屁", "弱放屁", "すかし屁", "空気漏れ"
+		PRINTFORMW %K2008FS_SE11_TEXT(ARG)%
+	CASE "強放屁"
+		PRINTFORMW %K2008FS_SE12_TEXT(ARG)%
+	CASE "液便", "下痢便", "液漏れ"
+		PRINTFORMW %K2008FS_SE13_TEXT(ARG)%
+	CASE "脱糞"
+		PRINTFORMW %K2008FS_SE14_TEXT(ARG)%
+	CASE "飛沫", "潮吹"
+		PRINTFORMW %K2008FS_SE15_TEXT(ARG)%
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+@K2008FS_SE(ARGS = "", ARG = 0)
+#FUNCTIONS
+#DIMS _SOUND
+_SOUND =
+SELECTCASE ARGS
+	CASE "放屁", "弱放屁", "すかし屁", "空気漏れ"
+		_SOUND = %K2008FS_SE11_TEXT(ARG)%
+	CASE "強放屁"
+		_SOUND = %K2008FS_SE12_TEXT(ARG)%
+	CASE "液便", "下痢便", "液漏れ"
+		_SOUND = %K2008FS_SE13_TEXT(ARG)%
+	CASE "脱糞"
+		_SOUND = %K2008FS_SE14_TEXT(ARG)%
+	CASE "飛沫", "潮吹"
+		_SOUND = %K2008FS_SE15_TEXT(ARG)%
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+RETURNF _SOUND
+
+;========================================================
+;汎用音声
+;========================================================
+@K2008_VOICE(ARGS="")
+SELECTCASE ARGS
+	CASE "キス", "舐める", "口で触れる"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE1
+		CATCH
+			TRYCALLFORM K2008_VOICE1
+		ENDCATCH
+	CASE "フェラ", "しゃぶる", "咥える"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE2
+		CATCH
+			TRYCALLFORM K2008_VOICE2
+		ENDCATCH
+	CASE "イラマチオ", "喉奥挿入"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE3
+		CATCH
+			TRYCALLFORM K2008_VOICE3
+		ENDCATCH
+	CASE "口内射精", "フェラで射精"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE4
+		CATCH
+			TRYCALLFORM K2008_VOICE4
+		ENDCATCH
+	CASE "喉奥射精", "イラマチオで射精"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE5
+		CATCH
+			TRYCALLFORM K2008_VOICE5
+		ENDCATCH
+	CASE "苦痛"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE1{SOURCE:痛み > (PALAMLV:3 * (1 + TALENT:マゾ + TALENT:ドＭ) )}
+		CATCH
+			TRYCALLFORM K2008_VOICE1{SOURCE:痛み > (PALAMLV:3 * (1 + TALENT:マゾ + TALENT:ドＭ) )}
+		ENDCATCH
+	CASE "激痛"
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_VOICE11
+		CATCH
+			TRYCALLFORM K2008_VOICE11
+		ENDCATCH
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+

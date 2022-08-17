@@ -1,0 +1,323 @@
+﻿;=============================================================================
+;奉仕精神
+;=============================================================================
+@ABLUP13
+DRAWLINE
+SIF ABL:奉仕精神 >= 5
+	JUMP ABLUP_MAX
+
+;従順が奉仕精神＋１レベルでないといけない
+PRINTFORML %ABLNAME:10%{ABL:奉仕精神 + 1}LV以上、かつ
+
+;ＬＶ３から４、４から５に上げるときは異常経験必要（素質：[妄信]なら無視できる）
+SIF COST13(5)
+	PRINTFORML %EXPNAME:50%{COST13(5)}以上、かつ
+
+PRINTFORM [0] - %PALAMNAME:14%の珠×{COST13(0)}
+SIF COST13(4) > 0
+	PRINTFORM 、%EXPNAME:2%{COST13(4)}以上、%EXPNAME:4%{COST13(4)}以上
+PRINT ……
+CALL SHOW_ISABLUP_COMMON, CAN13(0)
+
+PRINTFORM [1] - %PALAMNAME:12%の珠×{COST13(1)}
+SIF COST13(3) > 0
+	PRINTFORM 、%EXPNAME:20%{COST13(3)}以上
+PRINT ……
+CALL SHOW_ISABLUP_COMMON, CAN13(1)
+
+IF COST13(2) > 0
+	PRINTFORM [2] - %PALAMNAME:11%の珠×{COST13(2)}、%EXPNAME:2%1以上……
+	CALL SHOW_ISABLUP_COMMON, CAN13(2)
+ENDIF
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT >= 0 && RESULT <= 2) && CAN13(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:屈服 -= COST13(0)
+ELSEIF RESULT == 1
+	JUEL:恭順 -= COST13(1)
+ELSEIF RESULT == 2
+	JUEL:習得 -= COST13(2)
+ELSE
+	RETURN 0
+ENDIF
+
+ABL:奉仕精神 += 1
+PRINTFORMW %ABLNAME:13%のレベルが{ABL:奉仕精神}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP13
+SIF ABL:奉仕精神 >= 5
+	RETURN 0
+
+CALLF CALC_COST13, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP13("CHECK")
+
+@COST13(ARG)
+#FUNCTION
+RETURNF CALC_COST13("GET", ARG)
+
+@CALC_COST13(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:奉仕精神 == 0
+	LOCAL:0 = 100
+	LOCAL:1 = 20
+	LOCAL:2 = 100
+	LOCAL:3 = 1
+	LOCAL:4 = 1
+ELSEIF ABL:奉仕精神 == 1
+	LOCAL:0 = 1200
+	LOCAL:1 = 100
+	LOCAL:2 = 0
+	LOCAL:3 = 1
+	LOCAL:4 = 3
+ELSEIF ABL:奉仕精神 == 2
+	LOCAL:0 = 5000
+	LOCAL:1 = 600
+	LOCAL:2 = 0
+	LOCAL:3 = 5
+	LOCAL:4 = 6
+ELSEIF ABL:奉仕精神 == 3
+	LOCAL:0 = 10000
+	LOCAL:1 = 2000
+	LOCAL:2 = 0
+	LOCAL:3 = 20
+	LOCAL:4 = 10
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+		TIMES LOCAL:3 , 1.50
+		TIMES LOCAL:4 , 1.50
+	ENDIF
+ELSEIF ABL:奉仕精神 == 4
+	LOCAL:0 = 30000
+	LOCAL:1 = 8000
+	LOCAL:2 = 0
+	LOCAL:3 = 100
+	LOCAL:4 = 20
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 3.00
+		TIMES LOCAL:1 , 3.00
+		TIMES LOCAL:3 , 2.50
+		TIMES LOCAL:4 , 2.50
+	ENDIF
+ENDIF
+
+;反抗的
+IF TALENT:反抗的
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.40
+	TIMES LOCAL:3 , 1.20
+;素直
+ELSEIF TALENT:素直
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:3 , 0.70
+ENDIF
+;気丈
+IF TALENT:気丈
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:3 , 1.20
+ENDIF
+;生意気
+IF TALENT:生意気
+	TIMES LOCAL:0 , 1.10
+	TIMES LOCAL:1 , 1.10
+ENDIF
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:0 , 1.40
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:3 , 1.20
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:3 , 0.80
+ENDIF
+;自制心
+IF TALENT:自制心
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:3 , 1.20
+	TIMES LOCAL:4 , 1.20
+ENDIF
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:0 , 1.10
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:3 , 1.10
+ENDIF
+;感情乏しい
+IF TALENT:感情乏しい
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:3 , 1.40
+ENDIF
+;保守的
+IF TALENT:保守的
+	TIMES LOCAL:0 , 1.30
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 1.30
+	TIMES LOCAL:3 , 1.20
+	TIMES LOCAL:4 , 1.20
+ENDIF
+;楽観的
+IF TALENT:楽観的
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:3 , 0.70
+	TIMES LOCAL:4 , 0.75
+;悲観的
+ELSEIF TALENT:悲観的
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:4 , 0.80
+ENDIF
+;目立ちたがり
+IF TALENT:目立ちたがり
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 0.80
+ENDIF
+;習得早い
+IF TALENT:習得早い
+	TIMES LOCAL:2 , 0.80
+;習得遅い
+ELSEIF TALENT:習得遅い
+	TIMES LOCAL:2 , 1.60
+ENDIF
+;舌使い
+SIF TALENT:舌使い
+	TIMES LOCAL:2 , 0.80
+
+;献身的
+IF TALENT:献身的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:3 , 0.60
+ENDIF
+
+;快感に素直
+IF TALENT:快感に素直
+	TIMES LOCAL:4 , 0.70
+;快感の否定
+ELSEIF TALENT:快感の否定
+	TIMES LOCAL:4 , 1.40
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 0.75
+	TIMES LOCAL:3 , 0.75
+ENDIF
+;サド
+IF TALENT:サド
+	TIMES LOCAL:0 , 1.30
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:3 , 1.30
+ENDIF
+;小悪魔
+IF TALENT:小悪魔
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+	TIMES LOCAL:3 , 1.20
+ENDIF
+
+;キョンシー
+IF TALENT:キョンシー
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+ENDIF
+
+;《恭順の珠》を使って上昇させる事は常に可能
+LOCAL:1 = MAX(LOCAL:1, 1)
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 5
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+;ＬＶ３から４、４から５に上げるときは異常経験必要（素質：[妄信]、[服従]なら無視できる）
+SIF ABL:奉仕精神 >= 3 && TALENT:妄信 == 0 && TALENT:服従 == 0
+	LOCAL:5 = ABL:奉仕精神 - 2
+
+RETURNF 0
+
+@CAN13(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP13("GET", ARG)
+
+@CAN_ABLUP13(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;従順が奉仕精神＋１レベルでないといけない
+IF ABL:従順 < ABL:奉仕精神 + 1
+	;従順が不足
+	LOCAL:0 |= 4
+	LOCAL:1 |= 4
+	LOCAL:2 |= 4
+ENDIF
+
+;異常経験が必要な場合
+IF EXP:異常経験 < COST13(5)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+	LOCAL:2 |= 2
+ENDIF
+
+;屈服の珠で上げる
+SIF JUEL:屈服 < COST13(0)
+	LOCAL:0 |= 1
+;絶頂経験が必要な場合
+SIF EXP:絶頂経験 < COST13(4)
+	LOCAL:0 |= 2
+;精液経験が必要な場合
+SIF EXP:精液経験 < COST13(4)
+	LOCAL:0 |= 2
+
+;恭順の珠で上げる
+SIF JUEL:恭順 < COST13(1)
+	LOCAL:1 |= 1
+;この場合奉仕快楽経験が必要なことあり
+SIF EXP:奉仕快楽経験 < COST13(3)
+	LOCAL:1 |= 2
+
+;習得の珠で上げる
+IF COST13(2) > 0
+	SIF JUEL:習得 < COST13(2)
+		LOCAL:2 |= 1
+	;この場合絶頂経験が1以上必要
+	SIF EXP:絶頂経験 < 1
+		LOCAL:2 |= 2
+ELSE
+	LOCAL:2 = 256
+ENDIF
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0 || LOCAL:2 == 0)

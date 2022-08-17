@@ -1,0 +1,1745 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;X1をキャラ番号に置換して使用してください(霊夢なら1、蓮子なら49、魅魔なら100)。
+;
+;このファイルでは調教開始時・終了時・調教中イベント・エンディング口上用関数などが置いてあります。
+;このファイル内で他の関数を呼び出す処理のある関数は、削除せず残すことを推奨します。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;口上
+;eratohoYM Mk-3改8proto6用です。
+;==============================================================
+;========================================================
+;口上ファイルの存在判定
+;========================================================
+;口上の存在判定（YM版）
+@TRY_1107
+RETURN 1
+
+;========================================================
+;専用口上表示の固定化判定
+;========================================================
+;口上表示の専用口上使用設定において、選択肢を専用口上のみに固定化させたい場合は2を、専用口上＋地の文のみに固定化させたい場合は3を返すようにしてください
+;なお、1を返した(またはこの関数をコメントアウト等で使用できないようにした)場合は両方の選択肢が出るように、1・2・3以外の数値を返した時はエラー回避のため専用口上を使用できないようになっています
+;@KOJO_1107_DISPLAY_SETTINGS
+;RETURN 1
+
+;========================================================
+;エキストラモード構文
+;自らの理想の嫁を表現するのに使う
+;========================================================
+@KOJO_1107_EXTRA_INITIALIZATION
+IF CFLAG:7001 == 0
+	PRINTL そういやサグメさんって処女？
+	PRINTL [0] 当然（素質：処女を獲得）
+	PRINTL [1] 意外とエッチ（変化なし）
+	$INPUT_LOOP0
+	INPUT
+	IF RESULT == 0
+		PRINTFORMW ―素質、能力を変更します―
+		TALENT:TARGET:処女 = 1
+		EXP:TARGET:自慰経験 = 0
+		EXP:TARGET:キス経験 = 0
+		ABL:TARGET:レズっ気 = 0
+		EXP:TARGET:レズ経験 = 0
+	ELSEIF RESULT == 1
+		PRINTFORMW ―通常モードで調教を開始します―
+	ELSE
+		GOTO INPUT_LOOP0
+	ENDIF
+
+	PRINTL 
+	PRINTL サグメさんのおっぱいの大きさは？
+	PRINTL [0] 乳神サグメ（巨乳）
+	PRINTL [1] 普通乳（デフォルト）
+	PRINTL [2] 貧乳（貧乳）
+	$INPUT_LOOP1
+	INPUT
+	IF RESULT == 0
+		PRINTFORMW ―素質、能力を変更します―
+		TALENT:TARGET:巨乳 = 1
+	ELSEIF RESULT == 1
+		PRINTFORMW ―通常モードで調教を開始します―
+	ELSEIF RESULT == 2
+		PRINTFORMW ―素質、能力を変更します―
+		TALENT:TARGET:貧乳 = 1
+	ELSE
+		GOTO INPUT_LOOP1
+	ENDIF
+
+	PRINTL 
+	PRINTL ところでサグメさんの音感は？
+	PRINTL [0] ある（音感を獲得）
+	PRINTL [1] ない（素質の変動は起こりません）
+	PRINTL [2] 音痴（音痴獲得）
+	$INPUT_LOOP2
+	INPUT
+	IF RESULT == 0
+		PRINTFORMW ―素質、能力を変更します―
+		TALENT:TARGET:音感 = 1
+	ELSEIF RESULT == 1
+		PRINTFORMW ―通常モードで調教を開始します―
+	ELSEIF RESULT == 2
+		PRINTFORMW ―素質、能力を変更します―
+		TALENT:TARGET:音痴 = 1
+	ELSE
+		GOTO INPUT_LOOP2
+	ENDIF
+	CFLAG:7001 = 1
+ENDIF
+
+
+;========================================================
+;調教開始口上
+;========================================================
+@KOJO_1107_SLAVE_MESSAGE_TRAIN_START
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中も戻る
+SIF TFLAG:899 >= 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+DRAWLINE
+
+;調教開始口上分岐
+IF CFLAG:5201 == 0
+	TRYCALL K1107_MESSAGE_START_1
+ELSE
+	TRYCALL K1107_MESSAGE_START_2
+ENDIF
+
+;-------------------------------------------------
+;初調教時
+;-------------------------------------------------
+@K1107_MESSAGE_START_1
+IF CFLAG:5201 == 0
+	PRINTFORMW 「…」
+	PRINTFORMW 「……」
+	PRINTFORMW 「………」
+	PRINTFORMW （何故私は拘束されているのだろうか…）
+	PRINTFORMW 「…そこの貴方、これは一体どういうことなのですか？」
+	PRINTFORMW 「…」
+	PRINTFORMW 「……！？！？！？」
+	PRINTFORMW この場と自身の周りでは能力が使えないこと、奴隷商人から買ってきたことをサグメに伝えた
+	PRINTFORMW 「そ、そうですか…大枚叩いて私を買い付けてきて慰み者にすると」
+	PRINTFORMW 「そこまで言ってない？…わかるものですよそういうの」
+	PRINTFORMW 「ともかく下賎な地上人の慰み者に成り下がるつもりはありませんよ」
+	PRINTFORMW 「精々粋がる事ですね」
+	CFLAG:5201 = 1
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;調教開始時
+;-------------------------------------------------
+@K1107_MESSAGE_START_2
+;相愛
+IF CFLAG:5201 < 4 && TALENT:相愛
+	PRINTFORMW 「あ、おはようございます%CALLNAME:MASTER%」
+	PRINTFORMW 「あら？どうしたのかしら、随分と喋るんだなって表情で」
+	PRINTFORMW 「別に話すことそのものは嫌いじゃないですし」
+	PRINTFORMW 「能力が発動してしまわないかって？」
+	PRINTFORMW 「…意外と心配症ね」
+	PRINTFORMW 「………」
+	PRINTFORMW 「…貴方となら何があっても構わないもの、それだけよ」
+	CFLAG:5201 = 4
+	RETURN 1
+;恋慕
+ELSEIF CFLAG:5201 < 3 && TALENT:恋慕
+	PRINTFORMW 「…」
+	PRINTFORMW 「……」
+	PRINTFORMW サグメはぼうっとこちらを見ながら何か考えている
+	PRINTFORMW 「…」
+	PRINTFORMW 「……」
+	PRINTFORMW 「………」
+	PRINTFORMW 何も言わずにサグメは抱きついてきた
+	PRINTFORMW 「…」
+	PRINTFORMW 「好きです…」
+	PRINTFORMW 「…あ、貴方のことが…忘れられなくて…」
+	PRINTFORMW 「%CALLNAME:MASTER%…私を…見て…」
+	PRINTFORMW 「貴方となら…どこまでも堕ちてもいい、貴方となら誰に弓を引くことになってもかまわない」
+	PRINTFORMW 「%CALLNAME:MASTER%…私は貴方のことが好きなの」
+	PRINTFORMW 「だから…どうか私と―――」
+	PRINTFORMW 「―――ずっと一緒に―――」
+	CFLAG:5201 = 3
+	RETURN 1
+;屈服刻印Lv3
+ELSEIF CFLAG:5201 < 2 && MARK:屈服刻印 == 3
+	PRINTFORMW 「ん…ああ…」
+	PRINTFORMW 「もう…好きにすればいいじゃない…」
+	PRINTFORMW 「…変態…」
+	CFLAG:5201 = 2
+	RETURN 1
+
+;助手の有無をチェック（いない場合は二回目以降へ飛ぶ）
+ELSEIF ASSI < 0 
+	CALL K1107_MESSAGE_START_3
+
+;-------------------------------------------------
+;助手との掛け合い
+;ドレミー、永琳と一緒にえろいことする用
+;-------------------------------------------------
+;助手がドレミー
+ELSEIF NO:ASSI == 1106
+	;初めて
+	IF CFLAG:5202 == 0
+		;2人に恋慕
+		IF TALENT:恋慕 && TALENT:ASSI:恋慕
+			PRINTFORMW 『おや、こんなところでも会いましたか』
+			PRINTFORMW 「貴方も…こんなところに居たのですね」
+			PRINTFORMW 『ここでは色々なモノを視ることが出来ますからね』
+			PRINTFORMW 『夢の中では視れないモノも色々と』
+			PRINTFORMW 「…そういう趣味を持っていたのね、貴方」
+			PRINTFORMW 「まぁ私も人のことは言えないのだけれど」
+			PRINTFORMW 『月人でも欲求貯まる時ってあるのですね、楽しい事になりそうね』
+			PRINTFORMW 「…そういう所で波長が合っているのかしらね」
+		;サグメのみ恋慕
+		ELSEIF TALENT:恋慕 && TALENT:ASSI:恋慕 == 0
+			PRINTFORMW 「あら？夢の支配者も桃源郷への欲望には堪え切れなかったの？」
+			PRINTFORMW 『…言葉も出ませんね』
+			PRINTFORMW 『月人ともあろうものがこのような所で快楽に溺れるだなんて』
+			PRINTFORMW 『まぁあまり期待はしていませんでしたが』
+			PRINTFORMW 「…どの道快楽を忘れ享楽に生きるなどできる者は限られている」
+			PRINTFORMW 「日々の安寧より一時の快楽ですよ」
+			PRINTFORMW 「それともそういうのは好みじゃないの？」
+			PRINTFORMW 『ああ…これが夢だったならどれだけいいことか…』
+		;ドレミーのみ恋慕
+		ELSEIF TALENT:恋慕 == 0 && TALENT:ASSI:恋慕
+			PRINTFORMW 『おや？このような所で会うとは奇遇ですね』
+			PRINTFORMW 「………」
+			PRINTFORMW サグメは呆然とした様子で弱々しく知り合いに話しかける
+			PRINTFORMW 「…何故…貴方…」
+			PRINTFORMW 『その節はどうも、この度もよろしく』
+			PRINTFORMW 『終わらない夢、結局生きている限りは続くのです』
+			PRINTFORMW 『別にここで悪夢終わるというわけはないとなれば』
+			PRINTFORMW 『快楽に応じ享楽に耽り淫夢に堕ちるのもまた一つの手です』
+			PRINTFORMW 「………」
+		;その他
+		ELSE
+			PRINTFORMW 「…」
+			PRINTFORMW 「………」
+			PRINTFORMW 『まぁ、淫夢かと思えば悪夢ですか』
+			PRINTFORMW 「…私が…」
+			PRINTFORMW 『別に貴方が悪いというわけでは…』
+			PRINTFORMW 『どうにかしたい所ではあるけど…』
+			PRINTFORMW （何としてでも…ここから…）
+		ENDIF
+		CFLAG:5202 = 1
+		RETURN 1
+	;2回目以降
+	ELSEIF CFLAG:5202 == 1
+		;2人に恋慕
+		IF TALENT:恋慕 && TALENT:ASSI:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 『あら、もう我慢出来ないという風ね』
+				PRINTFORMW 「………二人同時では吸い尽くされてしまいますよ？」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「………淫魔と一緒、というのも妬けるわね」
+				PRINTFORMW 『寵愛を独り占めというのはあまり良くないものね』
+			ELSE
+				PRINTFORMW 「…流石に知り合いに見られながらというのは…」
+				PRINTFORMW 『そういう恥じらいが男を奮い立たせるのかしらね』
+			ENDIF
+		;サグメのみ恋慕
+		ELSEIF TALENT:恋慕 && TALENT:ASSI:恋慕 == 0
+			IF RAND:3 == 0
+				PRINTFORMW 「………」
+				PRINTFORMW 『…黙っていても…その目は分かりやすいわね』
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「夢の支配者が淫夢には慣れていない、というのは面白いわね」
+				PRINTFORMW 『………』
+			ELSE
+				PRINTFORMW 『どうしてこうなってしまったのでしょう…』
+				PRINTFORMW 「享楽に耽ることは悪いことでもないでしょう…」
+			ENDIF
+		;永琳のみ恋慕
+		ELSEIF TALENT:恋慕 == 0 && TALENT:ASSI:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 「……どうにかならないの…」
+				PRINTFORMW 『どうもこうも淫夢のまっただ中で何をするかといえば』
+				PRINTFORMW 『常識的な判断で非常識を生きるべきなのよ』
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 『もう少し素直な方が可愛らしいわよ』
+				PRINTFORMW 「………」
+			ELSE
+				PRINTFORMW 『状況に対応できないならできないなりに行動するべきなのよ』
+				PRINTFORMW 「………」
+			ENDIF
+		;その他
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「………」
+				PRINTFORMW 『私だけなら…まだよかったのに…』
+			ELSE
+				PRINTFORMW 『あまり好きではないわね、この状況』
+				PRINTFORMW 「………」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+;助手が永琳
+ELSEIF NO:ASSI == 1029
+	;初めて
+	IF CFLAG:5203 == 0
+		;2人に恋慕
+		IF TALENT:恋慕 && TALENT:ASSI:恋慕
+			PRINTFORMW 『あら、月人がまた一人』
+			PRINTFORMW 「八意様…こちらにいらしたのですね…」
+			PRINTFORMW 『そんなに固くならなくてもいいわよ』
+			PRINTFORMW 『どの道こうしていられる幸せというものが長く続くかは疑問だけど』
+			PRINTFORMW 「そうは言いましても私としてはこのままで構いませんよ」
+			PRINTFORMW 「打破できない状況で挙句よりかはご主人様に仕えているほうが幸せですから」
+			PRINTFORMW 『殊勝な態度ね、虐め甲斐がないわ』
+			PRINTFORMW 「そ、そんなこと言われましても…困ります…」
+		;サグメのみ恋慕
+		ELSEIF TALENT:恋慕 && TALENT:ASSI:恋慕 == 0
+			PRINTFORMW 「あら？八意様、こちらにいらしたのですか？」
+			PRINTFORMW 『生と死と穢を忌み嫌う月人がこのような所で何をしているのか』
+			PRINTFORMW 『言わなくてもいいけれど、あまり面白くはないわね』
+			PRINTFORMW 『…ここから出る策でもあるといいのだけれど』
+			PRINTFORMW 「あはっ…何を言っておられるのですか八意様」
+			PRINTFORMW 「ご主人様から離れるわけないじゃないですか」
+			PRINTFORMW 「何故、ここから出る必要でもあるのですか？」
+			PRINTFORMW 『そうね…ごめんなさい、私あなたのこと嫌いではないわ』
+			PRINTFORMW 「？」
+			PRINTFORMW 永琳は引きつった表情を浮かべながらサグメに話しかけている
+		;永琳のみ恋慕
+		ELSEIF TALENT:恋慕 == 0 && TALENT:ASSI:恋慕
+			PRINTFORMW 『ああ、今日の患者さん？』
+			PRINTFORMW 「………！？」
+			PRINTFORMW サグメは絶望的な表情を浮かべ、ぺたんと座り込んでしまった
+			PRINTFORMW 「…何故…なんで…八意様…が…」
+			PRINTFORMW 『ああ、私が何故ここにいるか？』
+			PRINTFORMW 『構わないでしょう？千年の恋が冷めないものだからここにいても』
+			PRINTFORMW 『あなたもしばらくすればわかるわよ』
+			PRINTFORMW 『そうは言っても慣れないときついかもしれないけど、何かあれば私が治してあげるわ』
+			PRINTFORMW 「………」
+			PRINTFORMW 「………あ………」
+			PRINTFORMW 「ああ…ｸﾞｽｯ……ﾋｸﾞｯ……あああああ…」
+			PRINTFORMW サグメは床に手を付けて座り込みながらすすり泣いている
+		;その他
+		ELSE
+			PRINTFORMW 「…」
+			PRINTFORMW 「………なんで…？」
+			PRINTFORMW 『これはまた…悪夢を見ているようだわ』
+			PRINTFORMW 「なんで…八意…様…」
+			PRINTFORMW 『ごめんなさいね、今の私にはどうすることもできない』
+			PRINTFORMW 『だけどせめて…』
+			PRINTFORMW 「…私も尽力します…ですからここから―――」
+		ENDIF
+		CFLAG:5203 = 1
+		RETURN 1
+	;2回目以降
+	ELSEIF CFLAG:5203 == 1
+		;2人に恋慕
+		IF TALENT:恋慕 && TALENT:ASSI:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 『今日も三人で？数寄者ね』
+				PRINTFORMW 「………構わない、ですが…恥ずかしい…」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「………あまり体を他人に見られたくないのですが」
+				PRINTFORMW 『いいじゃないの、いい体しているんだから、減るもんじゃないし』
+			ELSE
+				PRINTFORMW 「…流石に八意様にこうジロジロと見られるのは…」
+				PRINTFORMW 『そういう恥じらいのある所、素敵よ』
+			ENDIF
+		;サグメのみ恋慕
+		ELSEIF TALENT:恋慕 && TALENT:ASSI:恋慕 == 0
+			IF RAND:3 == 0
+				PRINTFORMW 「八意様もこういうのに早く慣れたほうがいいですよ」
+				PRINTFORMW 『…こんなに喋る子だったかしら…』
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「今日は何をなさいますか？ご主人様？」
+				PRINTFORMW 『…ひどく頭が痛いわ…獏に夢を食べてもらいたいわね…』
+			ELSE
+				PRINTFORMW 『せめて起きた時に全てが夢になっていればいいのに…』
+				PRINTFORMW 「生憎と夢の世界が平和だとは限らないのですよ八意様」
+			ENDIF
+		;永琳のみ恋慕
+		ELSEIF TALENT:恋慕 == 0 && TALENT:ASSI:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 「……なんで…こんな…」
+				PRINTFORMW 『セックスは生と死の始まりでしょう？』
+				PRINTFORMW 『もっとも神話の世界だと木の股から生まれてもおかしくないけど』
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 『自分が愛しているもののために身を捧げることは不自然ではないのよ』
+				PRINTFORMW 「………」
+				PRINTFORMW (この状況のどこに自然なものがあるというのか…！)
+			ELSE
+				PRINTFORMW 『あんなにぐちょぐちょにされてまだ抵抗するの？もったいないなぁ』
+				PRINTFORMW 「もうやだぁ…誰か…助けて…」
+			ENDIF
+		;その他
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「………」
+				PRINTFORMW 『貴女までこんなことになるなんてね…』
+			ELSE
+				PRINTFORMW 『違うのよ…まったく…どうしてこんなことに…』
+				PRINTFORMW 「………」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+;口上のある助手が居ない場合は、通常の二回目以降の口上へ飛ぶ
+ELSE
+	CALL K1107_MESSAGE_START_3
+ENDIF
+
+;-------------------------------------------------
+;調教開始時（2回目以降)
+;-------------------------------------------------
+@K1107_MESSAGE_START_3
+;相愛
+IF TALENT:相愛
+	IF RAND:4 == 0
+		PRINTFORMW 「…では、よろしくお願いします」
+		PRINTFORMW 「私はこういう事、慣れてないから…相も変わらず下手だと思うから…」
+		PRINTFORMW 「だから…リードして、下さい…」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「ごきげんよう今日も元気そうね」
+		PRINTFORMW 「…こういうの、うまくいえないけど」
+		PRINTFORMW 「………気持よく…してね…」
+		PRINTFORMW 「………」
+		PRINTFORMW 「………ダメ？」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「………」
+		PRINTFORMW 「…このまま貴方と永遠に居られるのならどれほど嬉しいことか…」
+	ELSE
+		PRINTFORMW 「…」
+		PRINTFORMW 「……」
+		PRINTFORMW 「………」
+		PRINTFORMW 「………優しくしてね？」
+	ENDIF
+	RETURN 1
+;恋慕2回目以降
+ELSEIF TALENT:恋慕
+	IF RAND:5 == 0
+		PRINTFORMW 「…おはようございます」
+		PRINTFORMW 「……喋る子の方がお好みですか？」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「………あ…」
+		PRINTFORMW 「今日は…何をするの…？」
+		PRINTFORMW 「………」
+		PRINTFORMW 「まぁ、好きにして下さい…」
+		PRINTFORMW 「…できるだけ、ご奉仕させていただきますから…」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「～♪～～～♪～～♪～」
+		PRINTFORMW 「…！」
+		PRINTFORMW 「…聞いていたの…？」
+		PRINTFORMW 「…能力の関係で歌などあまり歌えないから」
+		PRINTFORMW 「一杯歌えたらさぞかし気持ちいいのでしょうね」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「…他の子の所へいっちゃダメよ」
+		PRINTFORMW 「あまり浮気すると私が嫌いになってしまうから…」
+	ELSE
+		PRINTFORMW 「…やはりこういった退廃的な行為は…」
+		PRINTFORMW 「あまり好きじゃないわね…」
+	ENDIF
+	RETURN 1
+;反発刻印Lv3
+ELSEIF MARK:反発刻印 == 3
+	IF RAND:3 == 0
+		PRINTFORMW 「……」
+		PRINTFORMW 「………」
+		PRINTFORMW サグメこちらをは気丈に睨みつけている
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「…こんな非道を…」
+		PRINTFORMW 「…人の体を好きにして…」
+		PRINTFORMW サグメは珍しく声を上げて怒鳴りつけてくる
+		PRINTFORMW 「…天津神を怒らせたことを後悔するといい…！」
+	ELSE
+		PRINTFORMW 「来ないで！」
+		PRINTFORMW サグメは声を荒げながら丸くなって体を守ろうとしている
+		PRINTFORMW しかし抵抗むなしく押し倒されてしまった
+	ENDIF
+	RETURN 1
+;屈服刻印Lv1
+ELSEIF MARK:屈服刻印 == 1
+	IF RAND:2 == 0
+		PRINTFORMW 「………」
+		PRINTFORMW 「…分かったから…もう抵抗しないから…」
+		PRINTFORMW 「お願い…優しくして…」
+	ELSE
+		PRINTFORMW 「…」
+		PRINTFORMW 「…黙っていても私の体を弄ぶのでしょう？」
+		PRINTFORMW 「もう…好きにして…」
+	ENDIF
+	RETURN 1
+;屈服刻印Lv2
+ELSEIF MARK:屈服刻印 == 2
+	IF RAND:2 == 0
+		PRINTFORMW 「…こういったことをしていて虚しくならないの？」
+		PRINTFORMW 「まぁ…ならないからやっているのでしょうね…」
+		PRINTFORMW 「もう…好きにすればいい…」
+		PRINTFORMW 「だからせめて…優しく…して…」
+	ELSE
+		PRINTFORMW （この人は一体何を考えているのだろうか
+		PRINTFORMW 私にこんなことをして……私は…）
+	ENDIF
+	RETURN 1
+;屈服刻印Lv3
+ELSEIF MARK:屈服刻印 == 3
+	IF RAND:2 == 0
+		PRINTFORMW 「ああ、貴方ですか…」
+		PRINTFORMW 「さあ、狂宴を始めましょう…？」
+	ELSE
+		PRINTFORMW 「おはよう…」
+		PRINTFORMW 「どうするの？さっさと始めないの？」
+		PRINTFORMW 「まぁ…貴方の好きにすればいいわ」
+	ENDIF
+	RETURN 1
+;その他
+ELSE
+	IF RAND:2 == 0
+		PRINTFORMW 「………」
+		PRINTFORMW 「…頼むから…優しく…」
+	ELSE
+		PRINTFORMW 「………」
+	ENDIF
+ENDIF
+
+;========================================================
+;調教終了時の口上
+;========================================================
+@KOJO_1107_SLAVE_MESSAGE_TRAIN_END
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中も戻る
+SIF TFLAG:899 >= 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+DRAWLINE
+TRYCALL K1107_MESSAGE_END
+
+;--------------------------------------------------
+;調教終了時の口上
+;--------------------------------------------------
+@K1107_MESSAGE_END
+;PRINTFORMW 
+
+	;調教をすぐやめたとき
+	IF PREVCOM == -1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「もう…終わり…？」
+		;その他
+		ELSE
+			PRINTFORMW 「………？」
+		ENDIF
+	;相愛
+	ELSEIF TALENT:相愛
+		;体力500未満
+		IF BASE:体力 < 500
+			IF RAND:2 == 0
+				PRINTFORMW 「ん…流石に…疲れた…」
+			ELSE
+				PRINTFORMW 「あっ…ん…」
+				PRINTFORMW 「%CALLNAME:MASTER%…今日は終わり…？」
+			ENDIF
+		;体力500以上
+		ELSE
+			IF RAND:3 == 0
+				PRINTFORMW 「もう…終わり…？」
+				PRINTFORMW 「ちゃんと体力つけないとダメよ」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「今日はこれでお終い？」
+				PRINTFORMW 「…また…呼んでくださいね…」
+				PRINTFORMW 「他の仕事もお手伝いしますから…」
+				PRINTFORMW 「だから、だからまた―――」
+			ELSE
+				PRINTFORMW 「今日はこれで終わり？」
+				PRINTFORMW 「私はまだ出来るのだけど…」
+			ENDIF
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 == 1
+		;体力500未満
+		IF BASE:体力 < 500
+			PRINTFORMW 「あっ…終わり？」
+			PRINTFORMW 「そこまで体力に自信はなかったのだけれど…ここまでとはね…」
+			PRINTFORMW 「…できたらだけど…」
+			PRINTFORMW 「このまま一緒に寝てくれない？」
+			PRINTFORMW 「体が寂しいのよ…お願い…」
+		;その他
+		ELSE
+			IF RAND:3 == 0
+				PRINTFORMW 「終わり？」
+				PRINTFORMW 「………」
+				PRINTFORMW 「ねえ…もう少し…このままで…」
+				PRINTFORMW （この人と…一緒なら…）
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「あ…」
+				PRINTFORMW 「これで…終わり…？」
+				PRINTFORMW （次は…もっとうまく…）
+			ELSE
+				PRINTFORMW 「あ…今日は終わり？」
+				PRINTFORMW 「いや…なんでもない…」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;体力500未満
+		IF BASE:体力 < 500
+			PRINTFORMW 「もう…ダメ…」
+			PRINTFORMW 「お願いだから…やめて…」
+		;体力500以上
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「月は…どうなってるのかな…」
+				PRINTFORMW 「私がいなくても…問題なければ…いいのだけれど…」
+			ELSE
+				PRINTFORMW 「まぁこういう状況を受け入れて楽しむのも一つの策なのでしょうけど」
+				PRINTFORMW 「どうにもこうにも忌避意識が…受け入れられませんね」
+				PRINTFORMW 「いっそ楽には…してくれないんでしょうね…」
+			ENDIF
+		ENDIF
+	;屈服刻印Lv2
+	ELSEIF MARK:屈服刻印 == 2
+		IF RAND:2 == 0
+			PRINTFORMW 「どうしてあなたはこんなことをしているの？」
+			PRINTFORMW 「持てる力を調和と協調に使えば国の一つでも興せたのかもしれないのに」
+		ELSE
+			PRINTFORMW （こんなの…いつまで…）
+		ENDIF
+	;屈服刻印Lv1
+	ELSEIF MARK:屈服刻印 == 1
+		IF RAND:2 == 0
+			PRINTFORMW 「…何？」
+			PRINTFORMW 「…大人しくしていれば…優しくしてくれるの？」
+			PRINTFORMW サグメは虚ろな目でそう問いかけてきた
+		ELSE
+			PRINTFORMW 「…」
+			PRINTFORMW （抵抗するだけ無駄なのだろうか…）
+		ENDIF
+	;反発刻印Lv3
+	ELSEIF MARK:反発刻印 == 3
+		PRINTFORMW 「…」
+		PRINTFORMW 「……」
+		PRINTFORMW 「………殺す…！」
+	;その他
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「…うぅ…」
+			PRINTFORMW 「………あ…」
+		ELSE
+			PRINTFORMW 「…」
+			PRINTFORMW サグメは未だ気丈にこちらを睨みつけている
+		ENDIF
+	ENDIF
+;========================================================
+;@KOJO_X_MESSAGE_PALAMCNG
+;パラメータ変動をトリガーにした口上
+;パラメータ変動後に口上を発動します
+;========================================================
+@KOJO_1107_MESSAGE_PALAMCNG
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+
+;処女喪失時のメッセージ呼び出し
+SIF TFLAG:0
+	TRYCALL K1107_MESSAGE_LOST_VIRGIN
+;初めてPALAMがLV2超えた時の口上呼び出し
+FOR LOCAL, 0, 35
+	SIF PALAM:LOCAL + UP:LOCAL > PALAMLV:2 && CFLAG:(5320 + LOCAL) == 0
+		TRYCALLFORM K1107_MESSAGE_OVERLV2_{LOCAL}
+NEXT
+;絶頂時の口上呼び出し
+FOR LOCAL, 0, 50
+	SIF NOWEX:LOCAL
+		TRYCALLFORM K1107_MESSAGE_ORGASM_{LOCAL}
+NEXT
+;射精させた
+FOR LOCAL, 11, 29
+	SIF TFLAG:LOCAL
+		TRYCALLFORM K1107_MESSAGE_EJAC_PLAYER_{LOCAL}
+NEXT
+
+;-------------------------------------------------
+;処女喪失
+;-------------------------------------------------
+IF TFLAG:0 > 0 && CFLAG:9009 == 0
+	;恋慕+反発刻印Lv3
+	IF TALENT:恋慕 == 1 && MARK:反発刻印 == 3 && CFLAG:9009 < 5
+		;主人による調教
+		IF ASSIPLAY == 0
+			;前コマンドが挿入系列
+			IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28
+				PRINTFORMW 「…」
+				PRINTFORMW 「……」
+				PRINTFORMW 「………」
+				PRINTFORMW 「………もう…離さない…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「…」
+				PRINTFORMW 「…許さない、から…」
+			ENDIF
+			CFLAG:9009 = 5
+		;その他の場合
+		ELSE
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 == 1 && CFLAG:9009 < 4
+		;主人による調教
+		IF ASSIPLAY == 0
+			;コマンド騎乗位
+			IF SELECTCOM == 24
+				PRINTFORMW 「………」
+				PRINTFORMW 「…こういう形で処女を捧げたからには…」
+				PRINTFORMW 「責任取ってもらうからね…」
+			;コマンドが挿入系列
+			ELSEIF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 27 || SELECTCOM == 28
+				PRINTFORMW 「……」
+				PRINTFORMW 「…初めてって…こんなに…」
+				PRINTFORMW 「…変な声してたら…ごめんね…」
+			;その他の場合
+			ELSE
+				PRINTFORMW 「こんな…」
+				PRINTFORMW 「こんなあっさり……」
+			ENDIF
+		;その他の場合
+		ELSE
+		ENDIF
+		CFLAG:9009 = 4
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3 && CFLAG:9009 < 3
+		;コマンド騎乗位
+		IF SELECTCOM == 24
+			PRINTFORMW 「こんな形で…無理やりさせて…」
+			PRINTFORMW 「満足なんでしょう…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「…」
+			PRINTFORMW 「……」
+			PRINTFORMW 「……許さない…」
+		ENDIF
+		CFLAG:9009 = 3
+	;その他の場合
+	ELSE
+		;前コマンドが挿入系列
+		IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 27 || SELECTCOM == 28
+			PRINTFORMW 「やだ…止めて…」
+			PRINTFORMW 「…お願いだから…もう…」
+			PRINTFORMW 「…あああ…」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「…こんな…簡単に…」
+		ENDIF
+		CFLAG:9009 = 2
+	ENDIF
+ENDIF
+;----------------------------------------------------------
+;初めてPALAMがLV2超えた時の口上 CFLAG 5320～5355を使用
+;@KOJO_1107_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;初めて潤滑がLV2超えた CFLAG:5330
+;-------------------------------------------------
+@K1107_MESSAGE_OVERLV2_10
+IF (PALAM:潤滑 + UP:10) > PALAMLV:2 && CFLAG:5330 == 0
+	;恋慕
+	IF TALENT:恋慕 == 1
+		RETURN 0
+	;前コマンドローション
+	ELSEIF SELECTCOM == 60
+		PRINTFORMW 「…ぬるぬる…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「…っ…！」
+		PRINTFORMW （体が勝手に…発情してる…）
+	ENDIF
+	CFLAG:5330 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて欲情がLV2超えた CFLAG:5333
+;-------------------------------------------------
+@K1107_MESSAGE_OVERLV2_13
+IF (PALAM:欲情 + UP:13) > PALAMLV:2 && CFLAG:5333 == 0
+	;恋慕
+	IF TALENT:恋慕 == 1
+		RETURN 0
+	;前コマンド媚薬
+	ELSEIF SELECTCOM == 61
+		PRINTFORMW 「………」
+		PRINTFORMW （体が熱くなってきた…アレのせいか…）
+	;その他の場合
+	ELSE
+		PRINTFORMW 「…？」
+		PRINTFORMW （なんだか…ぼうっとして…体が…）
+	ENDIF
+	CFLAG:5333 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恥情がLV2超えた CFLAG:5335
+;-------------------------------------------------
+@K1107_MESSAGE_OVERLV2_15
+IF (PALAM:恥情 + UP:15) > PALAMLV:2 && CFLAG:5335 == 0
+	PRINTFORMW 「…見ないで！…こんな…こんな私…」
+	CFLAG:5335 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恐怖がLV2超えた CFLAG:5337
+;-------------------------------------------------
+@K1107_MESSAGE_OVERLV2_17
+IF (PALAM:恐怖 + UP:17) > PALAMLV:2 && CFLAG:5337 == 0
+	;絶頂した時
+	IF NOWEX:0 + NOWEX:1 + NOWEX:2 + NOWEX:3 > 0
+		RETURN 0
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「…」
+		PRINTFORMW 「………やめて！…お願いだから優しくして…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「…あああああ！…やだ…来ないでよ…！」
+	ENDIF
+	CFLAG:5337 = 1
+ENDIF
+
+;----------------------------------------------------------
+;絶頂時の口上 CFLAG 5300～を使用
+;@KOJO_1107_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;Ｃ絶頂 CFLAG:5300
+;-------------------------------------------------
+@K1107_MESSAGE_ORGASM_0
+;初めて
+IF CFLAG:5300 == 0
+	;屈服刻印Lv3
+	IF MARK:屈服刻印 == 3
+		PRINTFORMW 「…………んんっ！…」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「……あっ……あぁあっあ！」
+		PRINTFORMW 「…やだ…ぁぁぁぁ！！！」
+	ENDIF
+	CFLAG:5300 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＣ絶頂が50以上
+	IF EX:0 >= 50
+		PRINTFORMW 「…っううぅううぅ……あんんっ！ぁあ！！！」
+	ELSE
+		PRINTFORMW 「…っあっぁあっぁあっんんっ！…」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｖ絶頂 CFLAG:5301
+;-------------------------------------------------
+@K1107_MESSAGE_ORGASM_1
+;初めて
+IF CFLAG:5301 == 0
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;中出し
+		IF TFLAG:11 > 0 && (SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28)
+			;Ｖ経験 1以上
+			IF EXP:Ｖ経験 >= 1
+				PRINTFORMW 「…！？……ぁあああぁっ！！」
+				PRINTFORMW （こんなに…気持ちいいなんて…）
+				PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+			;その他の場合
+			ELSE
+				PRINTFORMW 「……んんんっ！あっ…」
+				PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+			ENDIF
+		;コマンドが挿入系列
+		ELSEIF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28
+			;Ｖ経験 1以上
+			IF EXP:Ｖ経験 >= 1
+				PRINTFORMW 「っあっ……んんっ！」
+				PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+			;その他の場合
+			ELSE
+				PRINTFORMW 「………っっぁあっ！」
+				PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+			ENDIF
+		;その他の場合
+		ELSE
+			PRINTFORMW 「やだ…あっあううぅあっんんっ！」
+			PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;コマンドが挿入系列
+		IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28
+			PRINTFORMW 「…あん……んううぅあぁあっううぅ！」
+			PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+		;その他の場合
+		ELSE
+			PRINTFORMW 「ぁあっん……んんっ！…ダメ…これ以上は…あぁ！」
+			PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+		ENDIF
+	;その他の場合
+	ELSE
+		;前コマンドが挿入系列
+		IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 27 || SELECTCOM == 28
+			PRINTFORMW 「…あっふわっあううぅううぅふわっあっあっ……！」
+			PRINTFORMW 「い、今…私…イって…」
+			PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+		;その他の場合
+		ELSE
+			PRINTFORMW 「んんっ！…っんんっ！…あっ！」
+			PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+		ENDIF
+	ENDIF
+	CFLAG:5301 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＶ絶頂が50以上
+	IF EX:1 >= 50
+		PRINTFORMW 「…ううぅぁあっっっぁあ！」
+		PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+	ELSE
+		PRINTFORMW 「やぁぁ…ぁあっ…………ぁうあっっ！」
+		PRINTFORMW サグメは口に手を当てて声を押し殺そうとしているがうまくできないでいる
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ａ絶頂 CFLAG:5302
+;-------------------------------------------------
+@K1107_MESSAGE_ORGASM_2
+;初めて
+IF CFLAG:5302 == 0
+	;恋慕
+	IF TALENT:恋慕 == 1
+		;アナル中出し
+		IF TFLAG:12 > 0 && (SELECTCOM == 30 || SELECTCOM == 31 || SELECTCOM == 32 || SELECTCOM == 33 || SELECTCOM == 34 || SELECTCOM == 37 || SELECTCOM == 38)
+			PRINTFORMW 「…はぁっくっうふっううぅううぅはぁっああっ！」
+			PRINTFORMW 「やだ…こんなとこ…見ないで…」
+		;アナル挿入系列
+		ELSEIF SELECTCOM == 30 || SELECTCOM == 31 || SELECTCOM == 32 || SELECTCOM == 33 || SELECTCOM == 34 || SELECTCOM == 37 || SELECTCOM == 38
+			PRINTFORMW 「くっう…あああああ！！」
+			PRINTFORMW 「お尻…が…馬鹿になる…！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「こんな…不浄の穴で…くっ……ううぅ……ふっうっ！」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		;アナル挿入
+		IF SELECTCOM == 30 || SELECTCOM == 31 || SELECTCOM == 32 || SELECTCOM == 33 || SELECTCOM == 34 || SELECTCOM == 37 || SELECTCOM == 38
+			PRINTFORMW 「う……ふっはぁはぁっあぁはぁっはぁぐっ！？」
+			PRINTFORMW 「……くっああっ！」
+		;その他の場合
+		ELSE
+			PRINTFORMW 「うぅはぁっふっぐっはぁっくっううぅぅ！」
+		ENDIF
+	;その他の場合
+	ELSE
+		PRINTFORMW 「うっ！…ううぅああっあぁふっああっぐっふっ……！」
+	ENDIF
+	CFLAG:5302 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＡ絶頂が50以上
+	IF EX:2 >= 50
+		PRINTFORMW 「お尻で…いくっう……！」
+	ELSE
+		PRINTFORMW 「……ふっうっ！…はぁっああっ……！」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｂ絶頂 CFLAG:5303
+;-------------------------------------------------
+@K1107_MESSAGE_ORGASM_3
+;初めて
+IF CFLAG:5303 == 0
+	;屈服刻印Lv3
+	IF MARK:屈服刻印 == 3
+		PRINTFORMW 「やだ…胸…変に…！」
+	;その他の場合
+	ELSE
+		PRINTFORMW 「んっ…胸…気持ち…良く…！」
+	ENDIF
+	CFLAG:5303 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＢ絶頂が50以上
+	IF EX:3 >= 50
+		PRINTFORMW 「…んふわっ……ぁ！」
+	ELSE
+		PRINTFORMW 「あ…あ………っ…………ぁあっあっ！」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;噴乳 CFLAG:5304
+;-------------------------------------------------
+@K1107_MESSAGE_ORGASM_10
+;初めて
+IF CFLAG:5304 == 0
+	;恋慕
+	IF TALENT:恋慕 == 1
+		PRINTFORMW 「………！？」
+		PRINTFORMW 「妊娠したの…か…？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「……！？！！？！？」
+		PRINTFORMW 「胸が…？……嘘…！」
+	ENDIF
+		CFLAG:5304 = 1
+;２回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕 == 1
+		IF RAND:2 == 0
+			PRINTFORMW 「ん…はぅ…ん…♪」
+		ELSE
+			PRINTFORMW 「はぁっう…ん…♪」
+		ENDIF
+		CFLAG:5304 = 4
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:2 == 0
+			PRINTFORMW 「………」
+			PRINTFORMW 「…こんなの…やだ…」
+		ELSE
+			PRINTFORMW 「…ん…」
+			PRINTFORMW 「………どうして…」
+		ENDIF
+		CFLAG:5304 = 3
+	;それ以外
+	ELSE
+		PRINTFORMW 「…なんで…胸が…」
+		CFLAG:5304 = 2
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;放尿 CFLAG:5306
+;放尿または強制放尿コマンド時は呼び出さない
+;-------------------------------------------------
+@K1107_MESSAGE_ORGASM_12
+SIF SELECTCOM == 111 || SELECTCOM == 620
+	RETURN 0
+;初めて
+IF CFLAG:5306 == 0
+	;PRINTFORMW 「…ダメ…み、見ないで…！」
+	;CFLAG:5306 = 1
+;２回目以降
+ELSE
+	PRINTFORMW 「あ…う…ん…はぁ…」
+ENDIF
+
+;-------------------------------------------------
+;膣内に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_11
+;主人のペニス
+IF TFLAG:35
+	;恋慕
+	IF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「…！！」
+			PRINTFORMW 「…子供…出来るかな…」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「ん…貴方の…いっぱい…」
+		ELSE
+			PRINTFORMW 「…気持ち良かった？」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:2 == 0
+			PRINTFORMW 「…子供…」
+		ELSE
+			PRINTFORMW 「………あ…膣内で…」
+		ENDIF
+	;その他
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「…やだ…こんなの…」
+		ELSE
+			PRINTFORMW （…こんなに…出されて…）
+		ENDIF
+	ENDIF
+;それ以外
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;アナルに射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_12
+;主人のペニス
+IF TFLAG:35
+	;恋慕
+	IF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「ん…お尻に…熱いの…」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「…お尻は妊娠しませんよ」
+		ELSE
+			PRINTFORMW 「…んあっ……」
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:2 == 0
+			PRINTFORMW 「…こんな…屈辱的な…」
+		ELSE
+			PRINTFORMW 「…お尻で…イカれて…」
+		ENDIF
+	;その他
+	ELSE
+		PRINTFORMW 「…変態……」
+	ENDIF
+;それ以外
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;髪に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_13
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「…別にいいけど」
+	PRINTFORMW 「気乗りはしない…絡んだりしないの？」
+;その他
+ELSE
+	PRINTFORMW 「………気持ち悪い…」
+ENDIF
+
+;-------------------------------------------------
+;顔に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_14
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「ん…いっぱい出しすぎです！」
+;その他
+ELSE
+	PRINTFORMW 「こんなの…臭い付いちゃう…」
+ENDIF
+
+;-------------------------------------------------
+;口に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_15
+;フェラ
+IF SELECTCOM == 41
+		;精液中毒Lv5+精愛味覚
+		IF ABL:精液中毒 >= 5 && TALENT:精愛味覚 == 1
+			PRINTFORMW 「ん…あ…う…美味しい…」
+			PRINTFORMW サグメは喉に染み込ませるようにザーメンを味わっている
+		;精愛味覚
+		ELSEIF TALENT:TARGET:精愛味覚 == 1
+			PRINTFORMW 「…あ…う…ん…もっと…美味しいの…」
+			PRINTFORMW サグメは口内の精液を味わいながら恍惚としている
+		;精液中毒Lv5
+		ELSEIF ABL:精液中毒 >= 5
+			PRINTFORMW 「…ザーメン…口の中で…いっぱい…」
+			PRINTFORMW サグメは口の中の精液を味わうように飲み込んでいる
+		;精液中毒Lv3
+		ELSEIF ABL:精液中毒 >= 3
+			PRINTFORMW 「ん…これ…おいし…」
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「あ…ん…もっと…出して…」
+		;それ以外
+		ELSE 
+			PRINTFORMW 「…ん！…げほっ…ごほっ…！ 」
+		ENDIF
+;イマラチオ
+ELSEIF SELECTCOM == 230
+		;精液中毒Lv5+精愛味覚
+		IF ABL:精液中毒 >= 5 && TALENT:精愛味覚 == 1
+			PRINTFORMW 「ん…ご…ゲホッ…ごほっ…じゅる…！」
+			PRINTFORMW サグメは喉に流し込まれながら恍惚としている
+		;精愛味覚
+		ELSEIF TALENT:TARGET:精愛味覚 == 1
+			PRINTFORMW 「…ん…がはっ…ん…じゅる…」
+			PRINTFORMW サグメは喉に流し込まれた精液を恍惚としながら受け入れている
+		;精液中毒Lv5
+		ELSEIF ABL:精液中毒 >= 5
+			PRINTFORMW 「んが…あ…ぐ…」
+			PRINTFORMW サグメは喉奥に突き込まれた陰茎から精液を流し込まれて恍惚としている
+			CFLAG:5233 = 5
+		;精液中毒Lv3
+		ELSEIF ABL:精液中毒 >= 3
+			PRINTFORMW 「んが…ぐ…ごほっ…」
+			CFLAG:5233 = 3
+		;奉仕精神Lv3以上
+		ELSEIF ABL:奉仕精神 >= 3
+			PRINTFORMW 「げほっ…ごほっ…ん…あ…」
+			CFLAG:5233 = 2
+		;それ以外
+		ELSE 
+			PRINTFORMW 「がぁ…ぐ…が…げほっ…」
+			CFLAG:5233 = 1
+		ENDIF
+ELSE
+	PRINTFORMW 「んくっ……ごほっ…ゲホッ…！」
+ENDIF
+
+;-------------------------------------------------
+;胸に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_16
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「………」
+	PRINTFORMW 「一杯でた…気持よかった？」
+;その他
+ELSE
+	PRINTFORMW 「…胸に…」
+ENDIF
+
+;-------------------------------------------------
+;腹に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_17
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「……あ…」
+	PRINTFORMW 「お腹…」
+;その他
+ELSE
+	PRINTFORMW 「…こんなとこに…」
+ENDIF
+
+;-------------------------------------------------
+;腋に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_18
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「……巫女の脇が空いているのはこういう理由ですか」
+	PRINTFORMW 「まあいいですけど…気持ち良かったみたいで」
+;その他
+ELSE
+	PRINTFORMW 「……！」
+ENDIF
+
+;-------------------------------------------------
+;手に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_19
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「手に…」
+	PRINTFORMW 「うまく…できた？」
+;その他
+ELSE
+	PRINTFORMW 「………気持ち悪い…」
+ENDIF
+
+;-------------------------------------------------
+;秘裂に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_20
+;恋慕
+IF TALENT:恋慕
+	IF RAND:2 == 0
+		PRINTFORMW 「……これ…ん…うまく出来た？」
+	ELSE
+		PRINTFORMW 「…中で出してもいいけど…」
+	ENDIF
+;その他
+ELSE
+	PRINTFORMW （…妊娠しない…はずだけど…）
+ENDIF
+
+;-------------------------------------------------
+;竿に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_21
+;PRINTFORMW
+
+;-------------------------------------------------
+;尻に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_22
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「…尻で…ね…いいけど…」
+;その他
+ELSE
+	PRINTFORMW 「…気持ち悪い…なんで…」
+ENDIF
+
+;-------------------------------------------------
+;太腿に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_23
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「…こんなところに…でも妊娠してしまいそう…」
+;その他
+ELSE
+	PRINTFORMW 「………？」
+ENDIF
+
+;-------------------------------------------------
+;足に射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_24
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「こ、こんな風で…いいの？」
+;その他
+ELSE
+	PRINTFORMW 「…足で…変態…！」
+ENDIF
+
+;-------------------------------------------------
+;調教者がキスで射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_26
+;キス魔
+IF TALENT:キス魔
+	IF RAND:2 == 0
+		PRINTFORMW 「………ふふ…」
+		PRINTFORMW 「こういうの…好きよ」
+	ELSE
+		PRINTFORMW 「…キスだけでイクなんて…」
+		PRINTFORMW 「わかるわよ…気持ちいいもの」
+	ENDIF
+;その他
+ELSEIF RAND:2 == 0
+	PRINTFORMW 「ちょ…ちょっと…！？」
+ELSE
+	PRINTFORMW （この人…ド変態ね…）
+ENDIF
+
+;-------------------------------------------------
+;主人が助手を犯すで射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_27
+;PRINTFORMW 
+
+;-------------------------------------------------
+;調教者がコンドームに射精
+;-------------------------------------------------
+@K1107_MESSAGE_EJAC_PLAYER_28
+;恋慕
+IF TALENT:恋慕
+	PRINTFORMW 「…あ…」
+	PRINTFORMW サグメは子種の溜まったコンドームを物欲しげ見つめている
+;その他
+ELSE
+	PRINTFORMW 「…そういう道具もあるのですね」
+ENDIF
+
+;========================================================
+;@KOJO_X_MESSAGE_MARKCNG
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を出力されます
+;========================================================
+@KOJO_1107_MESSAGE_MARKCNG
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+;刻印取得口上呼び出し
+FOR LOCAL, 0, 7
+	FOR LOCAL:1, 1, 4
+		SIF TFLAG:(LOCAL + 40) == LOCAL:1 && CFLAG:(LOCAL + 5310) < LOCAL:1
+			TRYCALLFORM K1107_MESSAGE_MARK{LOCAL}_{LOCAL:1}
+	NEXT
+NEXT
+
+;----------------------------------------------------------
+;刻印取得時の口上 CFLAG 5310～を使用
+;@KOJO_X_MESSAGE_MARKCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;苦痛刻印取得 CFLAG:5310
+;-------------------------------------------------
+@K1107_MESSAGE_MARK0_1
+PRINTFORMW 「あぐ…がぁ…ああ！」
+CFLAG:5310 = 1
+
+@K1107_MESSAGE_MARK0_2
+PRINTFORMW 「………止めて…お願いだから…」
+CFLAG:5310 = 2
+
+@K1107_MESSAGE_MARK0_3
+PRINTFORMW 「があ゛あ゛あ゛あ゛あ゛！！！」
+PRINTFORMW 「やめて…もう…あああああ！」
+CFLAG:5310 = 3
+
+;-------------------------------------------------
+;快楽刻印取得 CFLAG:5311
+;-------------------------------------------------
+@K1107_MESSAGE_MARK1_1
+PRINTFORMW 「あっ…あっ…ん…♪」
+CFLAG:5311 = 1
+
+@K1107_MESSAGE_MARK1_2
+PRINTFORMW 「も、もう…ダメ…気持ちいい…の…♪」
+CFLAG:5311 = 2
+
+@K1107_MESSAGE_MARK1_3
+PRINTFORMW （このまま…快楽に溺れてしまえば…）
+CFLAG:5311 = 3
+
+;-------------------------------------------------
+;屈服刻印取得 CFLAG:5312
+;-------------------------------------------------
+@K1107_MESSAGE_MARK2_1
+PRINTFORMW 「…これじゃ…このままだと…」
+CFLAG:5312 = 1
+
+@K1107_MESSAGE_MARK2_2
+PRINTFORMW （…いっそ身を委ねれば…）
+PRINTFORMW （だけど…それは…）
+CFLAG:5312 = 2
+
+@K1107_MESSAGE_MARK2_3
+PRINTFORMW 「あ…」
+PRINTFORMW （もう…このまま…）
+
+CFLAG:5312 = 3
+
+;-------------------------------------------------
+;恐怖刻印取得 CFLAG:5313
+;-------------------------------------------------
+@K1107_MESSAGE_MARK3_1
+PRINTFORMW 「…来るな！」
+CFLAG:5313 = 1
+
+@K1107_MESSAGE_MARK3_2
+PRINTFORMW 「…近寄るな…！」
+PRINTFORMW サグメはスタイルのいい体を震わせながらおびえた目でこちらを睨みつけている…
+CFLAG:5313 = 2
+
+@K1107_MESSAGE_MARK3_3
+PRINTFORMW 「いや…こんなの…」
+PRINTFORMW 「やめて！もう！来ないで！」
+PRINTFORMW サグメは恐怖と恥辱にまみれた表情で半狂乱に陥っている
+CFLAG:5313 = 3
+
+;-------------------------------------------------
+;反発刻印取得 CFLAG:5314
+;-------------------------------------------------
+@K1107_MESSAGE_MARK4_1
+PRINTFORMW 「こんな…どうかしてる…」
+CFLAG:5314 = 1
+
+@K1107_MESSAGE_MARK4_2
+PRINTFORMW 「貴様の思い通りなんかに…」
+CFLAG:5314 = 2
+
+@K1107_MESSAGE_MARK4_3
+PRINTFORMW 「いつか…殺す…」
+CFLAG:5314 = 3
+
+;-------------------------------------------------
+;恥辱刻印取得 CFLAG:5316
+;-------------------------------------------------
+@K1107_MESSAGE_MARK6_1
+PRINTFORMW 「こんな…辱めを…」
+CFLAG:5316 = 1
+
+@K1107_MESSAGE_MARK6_2
+PRINTFORMW 「…見ないで！」
+CFLAG:5316 = 2
+
+@K1107_MESSAGE_MARK6_3
+PRINTFORMW 「…やだ…もう…」
+PRINTFORMW サグメは辱めを受けて放心している
+CFLAG:5316 = 3
+
+;========================================================
+;@KOJO_X_MESSAGE_LOOK_VIDEO
+;ビデオを一緒に鑑賞する時の口上
+;売却前の選択肢で鑑賞を選んだ場合に呼び出される
+;========================================================
+@KOJO_1107_MESSAGE_LOOK_VIDEO
+;PRINTFORMW 
+
+;========================================================
+;@KOJO_X_MESSAGE_IMPRESSION関係
+;ステータス画面を見る時に出力されます
+;一言表示なのでセリフを一行で収めること
+;========================================================
+@KOJO_1107_MESSAGE_IMPRESSION
+IF TALENT:恋慕
+	IF RAND:3 == 0
+		PRINTFORML 「……まだかな…」
+	ELSEIF RAND:2 == 0
+		PRINTFORML 「……来ないの…」
+	ELSE
+		PRINTFORML 「……何しようかしら…」
+	ENDIF
+;その他
+ELSE
+	IF RAND:3 == 0
+		PRINTFORML 「………」
+	ELSEIF RAND:2 == 0
+		PRINTFORML 「………」
+	ELSE
+		PRINTFORML 「………」
+	ENDIF
+ENDIF
+
+;=============================================================================
+;エンディング口上の処理
+;=============================================================================
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING関係
+;単体エンディング
+;-------------------------------------------------
+@KOJO_1107_MESSAGE_SINGLE_ENDING
+DRAWLINE
+PRINTFORMW ―――単体エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW 「おはよう、%CALLNAME:MASTER%」
+PRINTFORMW 「今日も元気そうね、さて、どうする？」
+PRINTFORMW 「貴方の顔を見ていると何でも出来る気がするの」
+PRINTFORMW 「結局の所ここに落ち着く運命だったわけだけど」
+PRINTFORMW 「なんだか分からない内にここに連れてこられて」
+PRINTFORMW 「その内に貴方といることが楽しいことだって思うようになったの」
+PRINTFORMW 「何が起こるかわからない、という意味では今も昔も変わらないけど」
+PRINTFORMW 「どの道同じなら貴方といる方が、ね」
+PRINTFORMW 「…柄にもなく喋りすぎたわ」
+PRINTFORMW 「まあでも、こんな日があってもいいでしょう？」
+PRINTFORMW 「お互い、このままでいられる時間はそう長くない」
+PRINTFORMW 「そう思ってしまうとね、饒舌にもなるのよ」
+PRINTFORMW 「たまにはこうやって吐き出さないと」
+PRINTFORMW 「不安で押しつぶされてしまいそうになるしね」
+PRINTFORMW 「それで、今日はどうしたいの？」
+PRINTFORMW 
+PRINTFORMW 「…本当に？」
+PRINTFORMW 「ではお言葉に甘えて今日は一日寝ましょう、二人っきりで」
+PRINTFORMW 
+PRINTFORMW 　　　　　　　　―― Ending No.11107 (サグメエンド)
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING_AFTER関係
+;単体エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_1107_MESSAGE_SINGLE_ENDING_AFTER
+;PRINTFORMW 
+RETURN 0
+
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING関係
+;奴隷エンディング
+;-------------------------------------------------
+@KOJO_1107_MESSAGE_SLAVE_ENDING
+DRAWLINE
+PRINTFORMW ―――奴隷エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW いつもの通りの日常、変わらない現実
+PRINTFORMW 結局の所人の性というのは多少のことでは変化しない
+PRINTFORMW しかしここの所少しばかり面白いことはあった
+PRINTFORMW 「おはようございます、貴方、仕事進んでる？」
+PRINTFORMW 月人の一人、稀神サグメ、割合無口な彼女も奴隷としての役割に目覚めたようだ
+PRINTFORMW 「………」
+PRINTFORMW 「どうかした？今日の売却の予定は済んだでしょう？」
+PRINTFORMW 「ん…何？急に抱きついてきて」
+PRINTFORMW 「…職業柄奴隷に愛情を抱くのはあまりよした方が…」
+PRINTFORMW 「まあその辺りは貴方の自由だけど…」
+PRINTFORMW 「私も…いつああなるのか…」
+PRINTFORMW 「その時は…どうか…」
+PRINTFORMW 「どうか…」
+PRINTFORMW 「………」
+PRINTFORMW 「…なんでもないわ、その代わり、今は」
+PRINTFORMW 「今だけは優しくして、お願い」
+PRINTFORMW そう言うとサグメはキスを求めてきた
+PRINTFORMW 「ん…ちゅ…甘い…」
+PRINTFORMW 
+PRINTFORMW 　　　　　　　　―― Ending No.21107 (サグメエンド)
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING_AFTER関係
+;奴隷エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_1107_MESSAGE_SLAVE_ENDING_AFTER
+;PRINTFORMW 
+RETURN 0
+
+;=============================================================================
+;売却後エピソード
+;エンディング時に売ったキャラのエピソードを挿入できる
+;=============================================================================
+;-------------------------------------------------
+;エピソード番号決定など
+;-------------------------------------------------
+;@KOJO_1107_SET_SLAVE_AFTERWARDS
+;対象を退避してTFLAG:710を対象にする。
+;LOCAL = TARGET
+;TARGET = TFLAG:710
+
+;淫乱
+;IF TALENT:淫乱
+;	LOCAL:1 = 1
+;エピソードなし
+;ELSE
+;	LOCAL:1 = 0
+;ENDIF
+
+;退避した対象を元に戻す
+;TARGET = LOCAL
+;RETURN LOCAL:1
+
+;-------------------------------------------------
+;エピソード表示
+;-------------------------------------------------
+;@SHOW_SLAVE_AFTERWARDS_K1107, ARG, ARG:1
+;DRAWLINE
+;PRINTFORMW 　%CSVCALLNAME(1107,0)%のその後
+;DRAWLINE
+;IF ARG == 1
+	;PRINTFORMW 
+;ENDIF
+;DRAWLINE
+;RETURN 0
+
+;=============================================================================
+;eratohoYM用プロローグ(及びそれに対応したエピローグ)のテンプレ
+;プロローグNo.106 -(サブタイトル入力欄)-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.106の存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能になる
+@EXIST_PROLOGUE_YM_1107
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.106の表示
+;--------------------------------------------------
+;選択画面にてタイトルを記入する場合はここで
+@SHOW_PROLOGUE_YM_1107
+PRINTL [106] プロローグNo.106 -(サブタイトル入力欄)-
+
+;--------------------------------------------------
+;プロローグNo.106 -(サブタイトル入力欄)-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_YM_1107
+PRINTW 　　　　　　　　―― Prologue No.106 -(サブタイトル入力欄)- (eratohoYM)
+PRINTW  
+DRAWLINE
+PRINTL -------------------------------------GOODLUCK------------------------------------
+DRAWLINE
+PRINTW 
+
+;=============================================================================
+;プロローグNo.106に対応したエピローグ
+;=============================================================================
+;表示させたプロローグに対応するエピローグをノーマルエンドの代わりに表示させることが可能
+;なお、システム上プロローグを作成していないと表示されない
+;--------------------------------------------------
+;プロローグNo.106に対応したエピローグの存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能になる
+@EXIST_EPILOGUE_YM_1107
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.106に対応したエピローグ本文
+;--------------------------------------------------
+@EXE_EPILOGUE_YM_1107
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.01 (ノーマルエンド)
+
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+;■　　　　　　　　　　　　　 以下EXTRAモード用　　　　　　　　　　　　　　　　　　■
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+;EXTRAモードでは主人となったキャラの口上が読み込まれます
+;eratohoYM用とは違い、表示可能なのはデフォルトか主人口上のどちらかなので、選択肢の表示用の関数は存在しません
+;
+;例)○○はかねてから想いを寄せていた××を手中に収めるべく、行動を開始した……みたいな感じ?
+;
+;なおプロローグでキャラを追加したい場合、キャラIDの関係上直接「ADDCHARA Ｘ」を使うよりも
+;「CALL CHARA_STATE_BASIC, Ｘ」を使った方が望ましい。
+;その際、自動的に加入したキャラが調教対象として設定される。
+;また、「CALL CHARA_STATE_BASIC, Ｘ」の後に「CSTR:3 = ～～～～」を入力すると、
+;どのような方法で連れてこられたか記憶することができる。
+;=============================================================================
+;プロローグNo.106 -(サブタイトル入力欄)-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.106の存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能(存在していると判断)になる
+@EXIST_PROLOGUE_EXTRA_1107
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.106 -(サブタイトル入力欄)-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_EXTRA_1107
+
+;………………………………………………
+;キャラ追加イベントを盛り込む場合
+;………………………………………………
+;製作者各人の判断でプロローグにキャラを追加することが可能です。
+;ただし、初期金額以上の値段のキャラを追加する場合、
+;最悪ゲームバランスが崩壊する可能性があります。そのことを踏まえてイベントを追加してください。
+;
+;特定のキャラを追加する場合(Ｘにはキャラ番号を入力)
+;CALL CHARA_STATE_BASIC, Ｘ
+;どのように連れてこられたかを記憶(例：CSTR:3 = 誘拐した。)
+;※あまり長過ぎると表示がずれる可能性あり
+;CSTR:3 = 
+;以下の行を解禁すると上で追加したキャラを購入したことに出来る(＝所持金が減る。ただし0未満にはならない)
+;MONEY = MIN(MONEY - ITEMPRICE:(NO:TARGET), 0)
+;………………………………………………
+
+PRINTW 　　　　　　　　―― EXTRA Prologue No.106 -(サブタイトル入力欄)-
+PRINTW  
+DRAWLINE
+PRINTL ------------------------------------LET’S ENJOY----------------------------------
+DRAWLINE
+PRINTW 

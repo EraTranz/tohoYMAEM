@@ -1,0 +1,42 @@
+﻿;YM→YMAEコンバータによって作成されました
+;------------------------------------------------
+;特定のPALAMがPALAMLVを超えたとき
+;------------------------------------------------
+@K2008_PALAMCNG
+#DIM _COUNT
+#DIM _PALAMLV
+#DIM _53XX
+
+RESULT = -1
+
+;PALAM:(_COUNT)用
+FOR _COUNT, 0, VARSIZE("PALAM")
+	_PALAMLV = GETPALAMLV(PALAM:_COUNT, 100)
+
+	;今回のUPでPALAMLVがあがる場合
+	IF GETPALAMLV(PALAM:_COUNT + UP:_COUNT, 100) > _PALAMLV
+		;PALAMLVを上げる
+		_PALAMLV += 1
+		;「実行したコマンドでPALAMLVのUPが行われた」口上を呼ぶ
+		_53XX = 5300 + _COUNT
+		
+		IF RESULT == -1
+			;ランク指定の口上があればそちらを優先
+			TRYCCALLFORM K2008_RANK{K2008F_RANK()}_PALAM{_COUNT}_LV{_PALAMLV}, CFLAG:_53XX
+				;口上があった場合、RETURN 0なら次も表示させる
+				RESULT = -1 * (RESULT ==0)
+			CATCH
+				;ない場合は未指定に飛ばす
+				TRYCCALLFORM K2008_PALAM{_COUNT}_LV{_PALAMLV}, CFLAG:_53XX
+					;口上があった場合、RETURN 0なら次も表示させる
+					RESULT = -1 * (RESULT ==0)
+				CATCH
+				ENDCATCH
+			ENDCATCH
+		ENDIF
+		
+		;CFLAGに最大Lvを保持
+		SIF _PALAMLV > CFLAG:_53XX
+			CFLAG:_53XX = _PALAMLV
+	ENDIF
+NEXT

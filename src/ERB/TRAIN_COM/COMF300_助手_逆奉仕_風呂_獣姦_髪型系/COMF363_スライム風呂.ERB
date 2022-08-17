@@ -1,0 +1,432 @@
+﻿;=============================================================================
+;スライム風呂
+;=============================================================================
+;潤滑とスライムの粘液により痛みはほとんどない＋Ｖ経験をあげることなく、処女膜も傷付けることなく快Ｖの珠が入る
+;反面、逸脱と不潔の上昇数が高め＋異常経験が少ないと反発必須のデメリットも存在
+;また、調教開始からＶ経験を1つでも入れているかＶ感覚が1以上の場合はＶ絶頂と快Ｖの値が一定値を超えると処女膜を破られるようになる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE363
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:363 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 8) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;一度もスライム風呂に入ったことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:23 & 4) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 4
+	RETURN 1
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 4
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 363) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM363
+PRINTL スライム風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 363
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = スライム風呂
+
+LOCAL:2 = 1
+LOCAL:3 = 1
+;[オトコ]
+SIF TALENT:オトコ
+	LOCAL:2 = 0
+;バイブ等の器具を挿入している
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	LOCAL:2 = 0
+;アナルバイブ等の器具を挿入している
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	LOCAL:3 = 0
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 4
+	TEQUIP:特殊風呂入浴中 = 0
+	TFLAG:155 = 0
+ELSE
+	TEQUIP:特殊風呂入浴中 = 4
+	SOURCE:不潔 = 15000
+	SOURCE:液体追加 = 15000
+	SOURCE:逸脱 = 15000
+	IF LOCAL:2
+		;ABL:Ｖ感覚をみる
+		IF ABL:Ｖ感覚 == 0
+			SOURCE:快Ｖ = 20
+		ELSEIF ABL:Ｖ感覚 == 1
+			SOURCE:快Ｖ = 60
+		ELSEIF ABL:Ｖ感覚 == 2
+			SOURCE:快Ｖ = 180
+		ELSEIF ABL:Ｖ感覚 == 3
+			SOURCE:快Ｖ = 360
+		ELSEIF ABL:Ｖ感覚 == 4
+			SOURCE:快Ｖ = 600
+		ELSE
+			SOURCE:快Ｖ = 900
+		ENDIF
+		SOURCE:痛み += 300
+		SOURCE:不潔 += 3000
+		SOURCE:逸脱 += 5000
+	ENDIF
+	IF LOCAL:3
+		;ABL:Ａ感覚をみる
+		IF ABL:Ａ感覚 == 0
+			SOURCE:快Ａ = 40
+			SOURCE:屈従 = 500
+		ELSEIF ABL:Ａ感覚 == 1
+			SOURCE:快Ａ = 100
+			SOURCE:屈従 = 600
+		ELSEIF ABL:Ａ感覚 == 2
+			SOURCE:快Ａ = 200
+			SOURCE:屈従 = 800
+		ELSEIF ABL:Ａ感覚 == 3
+			SOURCE:快Ａ = 500
+			SOURCE:屈従 = 1100
+		ELSEIF ABL:Ａ感覚 == 4
+			SOURCE:快Ａ = 800
+			SOURCE:屈従 = 1500
+		ELSE
+			SOURCE:快Ａ = 1200
+			SOURCE:屈従 = 2000
+		ENDIF
+		SOURCE:痛み += 500
+		SOURCE:不潔 += 4000
+		SOURCE:逸脱 += 5000
+	ENDIF
+	IF LOCAL:2 || LOCAL:3
+		;PALAM:潤滑をみる
+		IF PALAM:潤滑 < PALAMLV:3
+			TIMES SOURCE:快Ｖ , 1.00
+			TIMES SOURCE:快Ａ , 1.00
+			SOURCE:不潔 += 1200
+		ELSEIF PALAM:潤滑 < PALAMLV:4
+			TIMES SOURCE:快Ｖ , 1.20
+			TIMES SOURCE:快Ａ , 1.20
+			SOURCE:不潔 += 1700
+		ELSE
+			TIMES SOURCE:快Ｖ , 1.40
+			TIMES SOURCE:快Ａ , 1.40
+			SOURCE:不潔 += 2200
+		ENDIF
+	ENDIF
+	LOCAL:1 = 100
+	;EXP:異常経験をみる
+	IF EXP:異常経験 < EXPLV:1
+		TIMES LOCAL:1 , 3.00
+	ELSEIF EXP:異常経験 < EXPLV:2
+		TIMES LOCAL:1 , 2.50
+	ELSEIF EXP:異常経験 < EXPLV:3
+		TIMES LOCAL:1 , 2.00
+	ELSEIF EXP:異常経験 < EXPLV:4
+		TIMES LOCAL:1 , 1.00
+	ELSEIF EXP:異常経験 < EXPLV:5
+		TIMES LOCAL:1 , 0.80
+	ELSE
+		TIMES LOCAL:1 , 0.60
+	ENDIF
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		SOURCE:快Ｃ = 50
+	ELSEIF ABL:Ｃ感覚 == 1
+		SOURCE:快Ｃ = 150
+	ELSEIF ABL:Ｃ感覚 == 2
+		SOURCE:快Ｃ = 800
+	ELSEIF ABL:Ｃ感覚 == 3
+		SOURCE:快Ｃ = 1400
+	ELSEIF ABL:Ｃ感覚 == 4
+		SOURCE:快Ｃ = 2000
+	ELSE
+		SOURCE:快Ｃ = 2700
+	ENDIF
+	;ABL:Ｂ感覚をみる
+	IF ABL:Ｂ感覚 == 0
+		SOURCE:快Ｂ = 40
+	ELSEIF ABL:Ｂ感覚 == 1
+		SOURCE:快Ｂ = 100
+	ELSEIF ABL:Ｂ感覚 == 2
+		SOURCE:快Ｂ = 250
+	ELSEIF ABL:Ｂ感覚 == 3
+		SOURCE:快Ｂ = 800
+	ELSEIF ABL:Ｂ感覚 == 4
+		SOURCE:快Ｂ = 1500
+	ELSE
+		SOURCE:快Ｂ = 2300
+	ENDIF
+	;感情乏しい
+	SIF TALENT:感情乏しい
+		TIMES LOCAL:1 , 0.60
+	;小柄体型
+	SIF TALENT:小柄体型
+		TIMES SOURCE:痛み , 1.20
+
+	SOURCE:トラウマ += LOCAL:1 * 8
+
+	;臆病
+	SIF TALENT:臆病
+		TIMES LOCAL:1 , 2.00
+
+	DOWNBASE:0 += LOCAL:1 / 4
+	DOWNBASE:1 += LOCAL:1 / 3
+	SOURCE:逸脱 += LOCAL:1 * 3
+
+	IF LOCAL:3
+		TFLAG:155 |= 2
+		STAIN:アナル = 8
+	ENDIF
+	IF LOCAL:2
+		TFLAG:155 |= 1
+		STAIN:ヴァギナ = 1
+	ENDIF
+	STAIN:手 = 0
+	STAIN:ペニス = 2
+	IF EXP:異常経験 < 3
+		;異常経験が少ないと反発刻印が付くがその処理はTRACHECK.ERBに委ねる。ここではフラグだけ立てておく。
+		IF MARK:反発刻印 <= 0 && MARK:快楽刻印 <= 1
+			TFLAG:84 = 1
+		ELSEIF MARK:反発刻印 <= 1 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:使い魔 == 0 && TALENT:淫乱 == 0 && (MARK:快楽刻印 <= 2 || EXP:異常経験 < 5)
+			TFLAG:84 = 2
+		ELSEIF MARK:反発刻印 <= 2 && TALENT:処女 == 1 && TALENT:処女 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:使い魔 == 0 && TALENT:淫乱 == 0 && EXP:異常経験 < 7
+			TFLAG:84 = 3
+		ENDIF
+	ENDIF
+	IF (CFLAG:23 & 4) == 0
+		TCVAR:異常経験 += 1
+		CFLAG:23 |= 4
+	ENDIF
+ENDIF
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;スライム風呂入浴中
+;--------------------------------------------------
+@EQUIP_COM363
+PRINTL ＜スライム風呂入浴中＞
+
+LOCAL:3 = 1
+LOCAL:4 = 1
+;[オトコ]
+SIF TALENT:オトコ
+	LOCAL:3 = 0
+;バイブ等の器具を挿入している
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	LOCAL:3 = 0
+;アナルバイブ等の器具を挿入している
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	LOCAL:4 = 0
+
+IF LOCAL:3 || TFLAG:155 & 1
+	IF TALENT:処女 && (ABL:Ｖ感覚 || CFLAG:11 & 1) && PALAM:快Ｖ >= 6000 && EX:1 > 9
+		TALENT:処女 = 0
+		SOURCE:痛み += 1000
+		PRINTFORML 子宮に入りきれなかったスライム達は、勢いあまって%CALLNAME:TARGET%の処女膜を破ってしまった…
+	ENDIF
+	;ABL:Ｖ感覚をみる
+	IF ABL:Ｖ感覚 == 0
+		LOCAL:1 = 10
+	ELSEIF ABL:Ｖ感覚 == 1
+		LOCAL:1 = 30
+	ELSEIF ABL:Ｖ感覚 == 2
+		LOCAL:1 = 60
+	ELSEIF ABL:Ｖ感覚 == 3
+		LOCAL:1 = 120
+	ELSEIF ABL:Ｖ感覚 == 4
+		LOCAL:1 = 240
+	ELSE
+		LOCAL:1 = 480
+	ENDIF
+	
+	SIF TFLAG:169 == 1 && LOCAL:3 == 0
+		TIMES LOCAL:1 , 0.80
+	
+	SOURCE:快Ｖ += LOCAL:1
+ENDIF
+IF LOCAL:4 || TFLAG:155 & 2
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		LOCAL:2 = 15
+	ELSEIF ABL:Ａ感覚 == 1
+		LOCAL:2 = 45
+	ELSEIF ABL:Ａ感覚 == 2
+		LOCAL:2 = 90
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL:2 = 180
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL:2 = 260
+	ELSE
+		LOCAL:2 = 520
+	ENDIF
+	
+	SIF TFLAG:170 == 1 && LOCAL:4 == 0
+		TIMES LOCAL:2 , 0.80
+	
+	SOURCE:快Ａ += LOCAL:2
+	SOURCE:屈従 += LOCAL:2
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ += 25
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ += 50
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ += 150
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ += 300
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ += 600
+ELSE
+	SOURCE:快Ｃ += 900
+ENDIF
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ += 20
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ += 40
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ += 80
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ += 160
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ += 320
+ELSE
+	SOURCE:快Ｂ += 640
+ENDIF
+
+LOCAL = 100
+;EXP:異常経験をみる
+IF EXP:異常経験 < EXPLV:1
+	TIMES LOCAL , 3.00
+ELSEIF EXP:異常経験 < EXPLV:2
+	TIMES LOCAL , 2.50
+ELSEIF EXP:異常経験 < EXPLV:3
+	TIMES LOCAL , 2.00
+ELSEIF EXP:異常経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+ELSEIF EXP:異常経験 < EXPLV:5
+	TIMES LOCAL , 0.80
+ELSE
+	TIMES LOCAL , 0.60
+ENDIF
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL , 0.60
+;小人体型
+SIF TALENT:小人体型
+	TIMES LOCAL , 1.80
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL , 1.20
+
+SOURCE:トラウマ += LOCAL * 5
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL , 2.00
+
+DOWNBASE:0 += LOCAL / 2
+DOWNBASE:1 += LOCAL / 3
+
+SOURCE:不潔 += LOCAL * 5
+SOURCE:液体追加 += 1000
+SOURCE:逸脱 += LOCAL * 2
+
+STAIN:手 = 0
+STAIN:ペニス = 2
+
+TIMES SOURCE:痛み , 1.20
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_363
+IF TEQUIP:特殊風呂入浴中 == 4
+	PRINTFORML %CALLNAME:TARGET%をスライムの溜りから引っ張り上げると、少しだけ安堵したような顔をしていた
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%をスライムで満たされた風呂桶の中へ突き落とした
+	PRINTFORML %CALLNAME:TARGET%はスライムが分泌する体液の感触に身震いしている……
+	IF TEQUIP:Ａ系装着器具 == 0 && TEQUIP:氷柱 == 0
+		PRINTFORML スライム達は%CALLNAME:TARGET%の無防備なアナルへの侵入を試みた
+		PRINTFORML %CALLNAME:TARGET%は侵入を阻止しようとするも彼らの体液のぬめりに阻まれ、
+		PRINTL 腸内を蹂躙されることを許してしまう……
+	ENDIF
+	IF TALENT:オトコ == 0 && TEQUIP:Ｖ系装着器具 == 0 && TEQUIP:クスコ == 0
+		SIF TEQUIP:Ａ系装着器具 == 0 && TEQUIP:氷柱 == 0
+			PRINT それとは別の
+		PRINTFORML スライム達はガラ空きとなっている%CALLNAME:TARGET%の膣口へと殺到した
+		IF TALENT:処女
+			PRINTFORML %CALLNAME:TARGET%は処女の膜を破られることなく、子宮内へ侵入したスライム達が
+			PRINTL ありとあらゆる襞を嬲っていくおぞましい感触に言葉を発することもできず、目を見開いたまま自分の秘所を眺めている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は通常では経験する事が出来ない膣壁を撫でまわされる感触に目を大きく開けたまま固まっている……
+		ENDIF
+	ENDIF
+ENDIF

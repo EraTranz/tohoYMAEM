@@ -1,0 +1,442 @@
+﻿;YM→YMAEコンバータによって作成されました
+;=================================================
+;RANK = 5
+;=================================================
+
+;-------------------------------------------------
+;前回調教からの経過時間で分岐
+;-------------------------------------------------
+@K2008_RANK5_START1(ARGS = "")
+;条件を記入する
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+;前回の調教からの経過時間＋αでいろいろ
+SELECTCASE DAY:0 - CFLAG:__K2008N_CFLAG_LASTTRAINDAY__
+	CASE 0
+		;午前に来て午後にも来た
+		PRINTFORMW 「今しがたぶりね。よっぽど私が気に入ってくれたのかしら」
+		PRINTFORMW 「またいっぱい楽しませてちょうだ……　あ、ぁあああ！？」
+		PRINTFORML
+		PRINTFORMW 自信満々だったのに、突然スカートを押さえ込むと凍り付いてしまった。
+		PRINTFORML
+		PRINTFORMW 「……れてた」
+		PRINTFORMW 「――さっきの後に下着取り替えるの忘れたのよ！」
+		PRINTFORMW 「嗅いじゃだめー！　っ馬鹿バカばかぁ！！」
+	CASE 1
+		;昨日も来た（午前午後問わず）
+		PRINTFORMW 「今日も来たんだ。毎日ご苦労様ね」
+		PRINTFORMW 「んー？　私も好きだからいいわよ」
+		PRINTFORMW 「さてさて、今日は何をするのかしら？　楽しみだわ」
+	CASEELSE
+		;特に期間は問わない
+		PRINTFORMW 「あら、いらっしゃい」
+		PRINTFORMW 「それじゃ早速だけど、今日も素敵な研究始めましょ」
+ENDSELECT
+
+;-------------------------------------------------
+;Ｃおねだり
+;-------------------------------------------------
+@K2008_RANK5_START2(ARGS = "")
+;C系調教が充実している
+SIF __K2008N_CAN_CALL__
+	RETURN ABL:欲望 >= 3 && ( K2008F_DEVRANK("C") >= 3 || TALENT:淫核／淫茎 || CFLAG:__K2008N_CFLAG_SOURCEHISTORY__ == 0b0001 )
+
+PRINTFORMW 「あら、来てくれたのね。歓迎するわ」
+PRINTFORML
+PRINTFORMW 夢美は%CALLNAME:MASTER%を押し倒すと、スカートをたくし上げて恥部をさらけ出した。
+
+IF K2008F_CAN_EJAC(TARGET)
+	;陰核肥大で爆根（264mm）以上を経験している
+	IF MAX(BASE:陰核, MAXBASE:陰核) >= 200
+		PRINTFORMW 信じがたい大きさの肉棒がヘソの上まで伸びており、半分以上が上着に隠れている。
+		PRINTFORMW 竿を掴んで無理やり服から引きずり出すと、たちまち充血しパンパンに膨らんだ。
+		PRINTFORML
+		PRINTFORMW 「はー、はーっ、こんな体にした責任……　とってもらうんだから」
+		PRINTFORML
+	;それ以外
+	ELSE
+		PRINTFORMW ショーツの中の肉塊がムクムクと膨らみ、薄布が限界まで伸びきっている。
+		PRINTFORML
+		PRINTFORMW 「んふふ……　勃起しちゃった♪」
+		PRINTFORMW 「興奮したのがすぐばれちゃうなんて、素敵」
+		PRINTFORML
+	ENDIF
+ELSEIF BASE:陰核 > 0
+	;陰核成長中
+	PRINTFORMW 下着に不自然な膨らみが見える。
+	PRINTFORML
+	PRINTFORMW 「ほらほら、またクリちゃん大きくなったのよ、わかる？」
+	PRINTFORMW 「下着に収まらなくなったら……　人前には出られなくなっちゃうかもね」
+	PRINTFORMW 「それとも見世物になっちゃうのかしら、それも素敵」
+	PRINTFORML
+ELSE
+	PRINTFORMW 下着は付けていない。
+	PRINTFORMW 跡もないところから察するに、ずっと脱いでいたのだろう。
+	PRINTFORML
+	PRINTFORMW 「ほらほら、こっちは準備万端よ。　%CALLNAME:MASTER%は？」
+	PRINTFORML
+ENDIF
+
+PRINTFORMW %CALLNAME:MASTER%にスカートの中身を見せつけ満足すると、いそいそと服を脱ぎ始めた。
+
+;-------------------------------------------------
+;Ｖおねだり
+;-------------------------------------------------
+@K2008_RANK5_START3(ARGS = "")
+;V系調教が充実している
+SIF __K2008N_CAN_CALL__
+	RETURN TALENT:オトコ == 0 && ABL:欲望 >= 3 && ( K2008F_DEVRANK("V") >= 3 || TALENT:淫壷 || CFLAG:__K2008N_CFLAG_SOURCEHISTORY__ == 0b0010 )
+
+PRINTFORMW 「あら、来てくれたのね。歓迎するわ」
+PRINTFORMW 「ん……　ここもホラ、寂しかった、会いたかったって言ってるし」
+PRINTFORML
+
+;処女（再生含む）
+IF TALENT:処女
+	PRINTFORMW 陰唇を開くと、処女膜で塞がった膣口がヒクヒクと蠢いている。
+;拡張経験多し
+ELSEIF EXP:Ｖ拡張経験 > EXPLV:3
+	PRINTFORMW だらしなく口を開く癖がついた膣肉の奥から子宮口が覗いている。
+	SIF TALENT:妊娠
+		PRINTFORMW 子を孕んでいるのに淫らに脈動を繰り返す姿は、卑猥としか形容できない。
+ELSE
+	PRINTFORMW 膣口を大きく開き、猥らに蠢く肉壁を指差してクスクスと笑っている。
+ENDIF
+PRINTFORMW 甘いような、発情したメスの匂いがあたりに漂い始めた……
+
+;-------------------------------------------------
+;Ａおねだり
+;-------------------------------------------------
+@K2008_RANK5_START4(ARGS = "")
+;A系調教が充実している
+SIF __K2008N_CAN_CALL__
+	RETURN ABL:欲望 >= 3 && ( K2008F_DEVRANK("A") >= 3 || TALENT:淫尻 || CFLAG:__K2008N_CFLAG_SOURCEHISTORY__ == 0b0100 )
+
+PRINTFORMW 「あら、来てくれたのね。歓迎するわ」
+PRINTFORMW 「ねえ、見て。すごい寂しかったの……」
+PRINTFORML
+PRINTFORMW 尻肉を指で押し分けて、キュッと締まった尻穴をこちらに向けている。
+PRINTFORMW 穴は少しずつ開いていき、やがて糸を引きながら奥まで見えるくらいに口を開いた。
+PRINTFORML 
+PRINTFORMW 「こんなの、おかしいって頭では理解してるつもり。普通じゃないって」
+PRINTFORMW 「けどね、体は従ってくれないの。だから……」
+PRINTFORMW 「我侭なお尻の穴……　奥まで躾をお願いします。%CALLNAME:MASTER%♪」
+
+;-------------------------------------------------
+;Ｂおねだり
+;-------------------------------------------------
+@K2008_RANK5_START5(ARGS = "")
+;B系調教が充実している
+SIF __K2008N_CAN_CALL__
+	RETURN ABL:欲望 >= 3 && ( K2008F_DEVRANK("B") >= 3 || TALENT:淫乳 || CFLAG:__K2008N_CFLAG_SOURCEHISTORY__ == 0b1000 )
+
+PRINTFORMW 「あら、来てくれたのね。歓迎するわ」
+PRINTFORML
+PRINTFORMW 言うが早いか、上着のボタンを僅かに残して前を一気にはだけた。
+PRINTFORM ブラは付けておらず、
+SELECTCASE K2008FS_BSIZE()
+	CASE "絶壁"
+		PRINTFORM 肋骨が僅かに浮き出るほどスリムな胸元が
+	CASE "貧乳"
+		PRINTFORM ささやかながら二つの膨らみが
+	CASE "並乳"
+		PRINTFORM 形よく張りもある二つの小山が
+	CASE "巨乳"
+		PRINTFORM 服を押しのけてまで自己主張する乳房が
+	CASE "爆乳"
+		PRINTFORM 圧迫の窮屈さから開放された巨球が二個、
+ENDSELECT
+PRINTFORMW 歓迎役を仰せつかったらしい。
+PRINTFORMW 両手で上着を左右に開いたまま、ゆっくりとこちらに歩み寄ってくる。
+
+;-------------------------------------------------
+;Ｕおねだり
+;-------------------------------------------------
+@K2008_RANK5_START6(ARGS = "")
+;U系調教が充実している
+SIF __K2008N_CAN_CALL__
+	RETURN ABL:欲望 >= 3 && K2008F_DEVRANK("U") >= 3 && TALENT:オトコ == 0
+
+PRINTFORMW 「あら、来てくれたのね。歓迎するわ」
+PRINTFORML
+PRINTFORMW いそいそとショーツを脱ぎ下ろすと、尿道口を指で目一杯に広げて見せ付けてきた
+
+;開発経験で分岐
+SELECTCASE EXP:尿道開発経験
+	CASE IS >= EXPLV:5
+		;開発完了済み
+		PRINTFORMW 「こっちの穴も……　女性器に開発されちゃったわね」
+	CASE IS >= EXPLV:4
+		;開発順調
+		PRINTFORMW 「今日もおしっこ穴の開発、よろしくお願いします」
+	CASEELSE
+		;開発序盤突破
+		PRINTFORMW 「尿道はエッチする場所じゃないんだけど……　気持ち良ければ何でもいいわね」
+ENDSELECT
+
+;拡張経験で分岐
+SELECTCASE EXP:Ｕ拡張経験
+	CASE IS >= EXPLV:5
+		;拡張完了済み
+		PRINTFORMW 「ほら、見える？　おしっこ穴の奥が膀胱よ」
+		PRINTFORMW 「まるで膣と子宮の関係みたいね」
+	CASE IS >= EXPLV:3
+		;拡張順調
+		PRINTFORMW 「ゆるゆるになっちゃって、おしっこ我慢するのも大変」
+		SIF EXP:放尿経験 >= EXPLV:3
+			PRINTFORMW 「だから、粗相しちゃうのは仕方ないの、そう、仕方ないことなのよ」
+	CASEELSE
+		;未拡張
+		PRINTFORMW 「おしっこ穴……　もっと気持ちよくなれるのかしら？」
+ENDSELECT
+
+IF TALENT:おもらし癖 && EXP:放尿経験 >= EXPLV:5 && ABL:露出癖 >= 5
+	PRINTFORMW 「あ……　溜まってたの出てきそう。　いいわよね？」
+	PRINTFORMW 「よいしょっと……　ん、ふぅー♪」
+	PRINTFORML 
+	PRINTFORMW 指で広げたままの尿道口から失禁水の放水が始まった
+	PRINTFORMW 着水地点は見る見る間に水溜りと水跳ねで黄色く染まっていく
+	PRINTFORMW 
+	PRINTFORMW 「はぁ～　すっきりしたぁ」
+	PRINTFORMW 「え？　トイレ？」
+	PRINTFORMW 「どうせすぐ垂れ流しのエッチになるんだからいいじゃない」
+ENDIF
+PRINTFORMW 「それじゃあ……　はしたない『おしも』の躾、よろしくお願いします♪」
+
+;-------------------------------------------------
+;脱衣挑発
+;-------------------------------------------------
+@K2008_RANK5_START10(ARGS = "")
+;条件を記入する
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+PRINTFORMW 「ん、%CALLNAME:MASTER%のこと見たら……　流石に我慢できないわね」
+PRINTFORMW 「ほら……こんなおねだりもできるようになったのよ。素敵でしょ」
+PRINTFORML
+PRINTFORMW 一枚、また一枚と着衣を脱ぎ捨て、そのたびにポーズをとり%CALLNAME:MASTER%を見つめてくる。
+PRINTFORML
+PRINTFORMW 「ねぇ、どれを脱いだときが一番良かったかしら。やっぱり下着？」
+PRINTFORMW 
+SELECTCASE RAND:8
+	CASE 7
+		PRINTFORMW 「着てる時が一番いいなんて、ひどいわ」
+		PRINTFORMW 「だってだって！　おねだりの意味がないじゃない。　んもう」
+	CASE 6
+		PRINTFORMW 「あら、最初から全裸がいい？　それは失礼したわ」
+		PRINTFORMW 「そうね、%CALLNAME:MASTER%も一緒に裸で居てくれるならいいわよ」
+	CASE 5
+		PRINTFORMW 「え、脱いだショーツ？　ここにあるけど」
+		PRINTFORMW 「広げて見せるの？　やだ、ちょっと汚れてる……」
+		PRINTFORMW 「こんなのがいいなんて悪趣味ね。　……けど、素敵」
+	CASE 4
+		PRINTFORMW 「え、靴下だけ残すの？　ふぇちずむ、って奥が深いわね」
+	CASE 3
+		PRINTFORMW 「あら、靴下なの？　意外な趣味だわ。素敵」
+	CASE 2
+		PRINTFORMW 「えー、いまいちだった？」
+		PRINTFORMW 「残念だわ。もっと研究が必要ね」
+	CASE 1
+		PRINTFORMW 「そう、やっぱり下着がすきなのね。　もっと可愛いほうがいいかしら」
+	CASEELSE
+		PRINTFORMW 「秘密？　そう、次は当てて見せるわ」
+ENDSELECT
+
+;-------------------------------------------------
+;アイテム保有時：浣腸器
+;-------------------------------------------------
+@K2008_RANK5_START30(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:浣腸器具一式 > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW 浣腸器を手に取ると、シリンダーを動かして動きを確認し始めた。
+IF K2008F_DEVRANK("排泄") >= 3
+	PRINTFORMW 「いーち、にーい、……」
+	PRINTFORMW 「……ん、次はこれくらい入れてくれると嬉しいわ」
+	;主人が調合知識か禁断の知識か淫具知識を持っている場合
+	SIF TALENT:MASTER:調合知識 || TALENT:MASTER:禁断の知識 || TALENT:MASTER:淫具知識
+		PRINTFORMW 「その薬液は？　試してのお楽しみってことね。素敵」
+ELSEIF K2008F_DEVRANK("排泄") >= 1
+	PRINTFORMW 「うわっ、こんなに入っちゃうのね」
+	PRINTFORMW 「私に使うの？　……恥ずかしいんだから、バカ」
+ELSE
+	PRINTFORMW 「こ、これが全部……　お腹に入っちゃうなんて……」
+	PRINTFORMW 「私には使わないわよね？　ね、ねぇ？」
+ENDIF
+
+;-------------------------------------------------
+;アイテム保有時：空気ポンプ
+;-------------------------------------------------
+@K2008_RANK5_START31(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:空気ポンプ > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW 空気ポンプを手に取ると、なにやら思いつめた表情をしている
+SELECTCASE K2008F_CFLAGCOM("空気浣腸")
+	CASE IS > 30
+		PRINTFORMW 「あ、あれ？　なんで%CALLNAME:MASTER%が持ってるの？」
+		PRINTFORMW 「私も今さっき使ってたはずなんだけ……　え、あれ……え？」
+		PRINTFORMW 
+		PRINTFORMW 「――いや、なんでもないわ。　何でもないったら、ないの！　あ、こらっ！」
+		PRINTFORML 
+		CALL K2008_SE("空気漏れ")
+		PRINTFORMW 「お腹触っちゃ駄目だって！　押さないで、押しちゃ！　あ、ぁああ！！」
+		PRINTFORML 
+		CALL K2008_SE("強放屁")
+		PRINTFORML 
+		PRINTFORMW 「だ……　だから、押さないでって……　ぐすん（涙）」
+		PRINTFORMW 「病み付きになっちゃったのよ、ばかぁ」
+	CASE IS > 5
+		PRINTFORMW 「また、これ使うんでしょ？　使うのよね？」
+		PRINTFORMW 「ええ、苦しいのは苦しかったけど、その……」
+		PRINTFORMW 「ちょーっとだけ、本当にちょーーーっとだけ！　……気持ちよかったわ♪」
+	CASE IS > 0
+		PRINTFORMW 「う……　これ、この間のやつじゃない」
+		PRINTFORMW 「すっごく、すごく恥ずかしかったんだから！」
+	CASEELSE
+		PRINTFORMW 「このポンプって、気体用よね」
+		PRINTFORMW 「ということは、ちょ、ちょっと、うわ……　え、本気なの？」
+		PRINTFORMW 
+		PRINTFORMW ポンプの用途に思いをめぐらせて、恥ずかしい未来にたどり着いたようだ
+ENDSELECT
+
+;-------------------------------------------------
+;アイテム保有時：搾乳機
+;-------------------------------------------------
+@K2008_RANK5_START32(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:搾乳器 > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW %CALLNAME:MASTER%が持参していた道具の中から、搾乳機を手に取ると興味深そうに観察しはじめた。
+PRINTFORMW 着用者にかかる負担を極力減らしつつ、効率よく搾る機能美に何かを見出したのか……
+PRINTFORML
+;母乳体質
+IF TALENT:母乳体質
+	PRINTFORMW 「こんなのに私のおっぱいも回収されて売られちゃうのね……」
+	;売却記録でセリフわけという無謀
+	SELECTCASE CFLAG:最高金額_母乳
+		CASE IS > 10000
+			PRINTFORMW 「まあ、なんだかすごい高級ブランドになってるとか聞いたし」
+			PRINTFORMW 「今度はいつ着けてくれるのかな？」
+		CASE IS > 5000
+			PRINTFORMW 「それなりの値になったって言ってたけど、母乳なんてどんな人が買うの？」
+		CASE IS > 500
+			PRINTFORMW 「乳牛の気持ちが少しだけ分かった気がするわ」
+			PRINTFORMW 「売られるのってさびしいものね」
+		CASE IS > 0
+			PRINTFORMW 「売っても二束三文にしかならなかった？」
+			PRINTFORMW 「それどういうことよ！　搾られ損じゃない！」
+		CASEELSE
+			;売った事がないので何もしゃべらない
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;アイテム保有時：鞭、針、スタンガン
+;-------------------------------------------------
+@K2008_RANK5_START33(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:鞭 > 0 || ITEM:針 > 0 || ITEM:スタンガン > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW 「これはこれは……　なかなか面白いの持ってるじゃない。素敵」
+PRINTFORML
+PRINTFORMW 凶器を手にした夢美から、よからぬオーラを感じる……
+PRINTFORML
+PRINTFORMW 「まさか私に使うつもり、じゃないわよね」
+PRINTFORMW 「――私が%CALLNAME:MASTER%に使えば丸く収まるわ（はぁと）」
+PRINTFORMW 「覚悟！！」
+
+;-------------------------------------------------
+;アイテム保有時：縄、アイマスク、ボールギャグ、強制開口器、鼻フック、豆つまみ
+;-------------------------------------------------
+@K2008_RANK5_START34(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:縄 > 0 || ITEM:アイマスク > 0 || ITEM:ボールギャグ > 0 ||  ITEM:強制開口器 > 0 || ITEM:鼻フック > 0 || ITEM:豆つまみ > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW 夢美はSMグッズを手に取ったが、あまりいい顔はしていない。
+PRINTFORML
+PRINTFORMW 「うーん、か弱い乙女にこんなもの着ける気なの？」
+PRINTFORMW 「お世辞にもいい趣味とは言えないわ……　けど……」
+PRINTFORMW 「ちょっとだけ、ちょっとだけだから！　%CALLNAME:MASTER%に着けさせて！」
+PRINTFORML
+PRINTFORMW 少し気を抜いた瞬間に後ろに回りこまれてしまった！
+PRINTFORMW 
+PRINTFORMW ・・・
+PRINTFORMW ・・・・・・
+PRINTFORMW 取り付けらる寸前で取り押さえ、一難を逃れることができた。
+PRINTFORMW さて、わがままな奴隷には、お仕置きをするとしよう……
+
+
+;-------------------------------------------------
+;アイテム保有時：コスプレ
+;-------------------------------------------------
+@K2008_RANK5_START35(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:仮装衣装一式 > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW 「……服があるじゃない。　プレゼントでもしてくれるの？」
+SIF RAND:3 == 0
+	PRINTFORMW 「って、なんで学校の服が……　これは、運動着と水着？」
+SIF RAND:3 == 0
+	PRINTFORMW 「このフリフリは、ゴスロリってヤツかしら。　意外と可愛いわね、素敵」
+SIF RAND:3 == 0
+	PRINTFORMW 「うわ、軍服まであるじゃない。どういう趣味してるのよ、%CALLNAME:MASTER%」
+SIF RAND:3 == 0
+	PRINTFORMW 「むむむ、これは民族衣装？　昔の日本のと、こっちは中国かしら」
+SIF RAND:3 == 0
+	PRINTFORMW 「あら、いつぞやの巫女さんの衣装かしら？　けど、ちょっと違うかも」
+SIF RAND:3 == 0
+	PRINTFORMW 「この長い布は何かしら。　ふんどし、って……　%CALLNAME:MASTER%が締めるの？」
+SIF RAND:3 == 0
+	PRINTFORMW 「あらら、こんな豪華なドレスまで」
+SIF RAND:3 == 0
+	PRINTFORMW 「ちょ、ちょっとこの水着は危なすぎるわ……」
+PRINTL 
+PRINTFORMW 「――うーん。あんまり目ぼしいのは見当たらないんだけど、どうする？」
+PRINTFORMW 「え？　%CALLNAME:MASTER%が着るのを選んでたんじゃないの？」
+PRINTFORMW 「わ、私が着るの！？　こんなのぜーったい無理ムリー！！」
+PRINTFORMW 「あ、こら！　脱がそうとするなー　あっ、ぁあっ、アッーーー！！」
+
+;-------------------------------------------------
+;アイテム保有時：ヲトナのオムツ、略してヲムツ
+;-------------------------------------------------
+@K2008_RANK5_START36(ARGS = "")
+;所有アイテムがある場合
+SIF __K2008N_CAN_CALL__
+	RETURN ITEM:ヲトナのオムツ > 0
+
+PRINTFORMW 「遅いじゃない。待ちくたびれちゃったわ」
+PRINTFORMW 「あら？　今度は何を持ってきたのかしら」
+PRINTFORMW 
+PRINTFORMW 「こ、これは……」
+PRINTFORMW 「紙オムツよね……　しかも小児用じゃないわね、この大きさは」
+PRINTFORMW 「まさか、%CALLNAME:MASTER%って……　いや、いいわよ。無理して言わないで」
+PRINTFORMW 「人には誰にだって言えない秘密の一つや二つ、あるものね。うんうん」
+PRINTFORMW 「安心して。%CALLNAME:MASTER%のお世話なら喜んでしてあげる」
+PRINTFORML
+PRINTFORMW 盛大な勘違いをして納得されてしまったようだが、あえて否定しないでおこう。

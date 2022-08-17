@@ -1,0 +1,754 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ぱんくしょんより機能移転した関数群
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ぱんくしょんより機能を移転
+;=============================================================================
+;自動喘ぎ関数及びその子供関数
+;=============================================================================
+;簡易喘ぎ声をある程度シチュに応じて自動生成
+;現在、調整不足のためネタ機能の域を出ないと思います
+;口上未実装のキャラに自動で喘ぎ声を付けるようにしてもいいですが
+;その場合素質を見て性格分岐させたいところ。
+;--------------------------------------------------
+;自動喘ぎ関数
+;--------------------------------------------------
+;喘ぎの種類判別処理
+@KOJO_X_TRAINVOICE_2(ARG)
+;NONE
+SIF ARG < 0
+	RETURN 0
+	
+TWAIT 75, 1
+
+;「人格設定」
+CALL DEFINE_JINKAKU_SELECT, TARGET
+
+;LOCALに喘ぎ回数を入れる処理
+;LOCAL:1に行為レベルをとりあえず0～3で規定
+
+LOCAL = 0
+LOCAL:1 = 0
+LOCAL:2 = 0
+
+;コマンドごとの喘ぎ数・基本行為レベル(激しさ数値)を設定
+;………………………………………………
+;愛撫・性交系
+;………………………………………………
+;最も軽い　C、V、A、B
+IF GROUPMATCH(ARG, 0, 1, 2, 3) && RAND:3 == 0
+	LOCAL = 1
+	LOCAL:1 = 0
+;軽め　C、V、A、B
+ELSEIF GROUPMATCH(ARG, 0, 1, 2, 3, 6, 7) && RAND:2 == 0
+	LOCAL = 2
+	LOCAL:1 = 1
+;ちょい重め　C、V、A、B
+ELSEIF GROUPMATCH(ARG, 0, 1, 2, 3, 7)
+	LOCAL = 3
+	LOCAL:1 = 2
+;本番　セックス系全部
+ELSEIF GROUPMATCH(ARG, 4, 5)
+	LOCAL = 3
+	LOCAL:1 = 3
+ENDIF
+
+;どれくらい感じてるかチェック
+IF LOCAL
+	;欲情が大きいと喘ぎ数は最大で＋3まで増えます
+	IF ABL:欲望 > 4 && RAND:3
+		LOCAL += 3
+	ELSEIF ABL:欲望 > 3 && RAND:2
+		LOCAL += 2
+	ELSEIF ABL:欲望 > 2
+		LOCAL += 1
+	ENDIF
+
+	;ソースに対応した感覚が2以上なら1、4以上なら2。高い方を優先
+	IF (ARG == 0 && ABL:Ｃ感覚 >= 4) || (ARG == 7 && ABL:Ｃ感覚 >= 4) || (ARG == 1 && ABL:Ｖ感覚 >= 4) || (ARG == 4 && ABL:Ｖ感覚 >= 4) || (ARG == 2 && ABL:Ａ感覚 >= 4) || (ARG == 5 && ABL:Ａ感覚 >= 4) || (ARG == 3 && ABL:Ｂ感覚 >= 4)
+		LOCAL:2 = 2
+	ELSEIF (ARG == 0 && ABL:Ｃ感覚 >= 2) || (ARG == 7 && ABL:Ｃ感覚 >= 2) || (ARG == 1 && ABL:Ｖ感覚 >= 2) || (ARG == 4 && ABL:Ｖ感覚 >= 2) || (ARG == 2 && ABL:Ａ感覚 >= 2) || (ARG == 5 && ABL:Ａ感覚 >= 2) || (ARG == 3 && ABL:Ｂ感覚 >= 2)
+		LOCAL:2 = 1
+	ENDIF
+	;感じていない口上へ
+	IF LOCAL:2 == 0
+		TRYCALL KOJO_X_TRAINVOICE_TYPE_B_2, LOCAL, LOCAL:1, ARG
+	;感覚4以上だと激しさ+1
+	ELSE
+		SIF LOCAL:2 == 2
+			LOCAL:1 += 1
+		TRYCALL KOJO_X_TRAINVOICE_TYPE_A_2, LOCAL, LOCAL:1, ARG
+	ENDIF
+	PRINTL 
+	TWAIT 75, 1
+	PRINTL 
+	RETURN 0
+ENDIF
+
+;………………………………………………
+;奉仕系
+;………………………………………………
+;キスする、アナル舐め強制、足舐め強制、指チュパ、玉舐め強制、クンニ強制
+IF ARG == 6 && !RAND:3
+	LOCAL = 6
+;アナル愛撫強制、玉揉み強制、
+ELSEIF ARG == 6 && ABL:欲望 > 2 && !RAND:3
+	LOCAL = 4
+;手淫、足こき、髪こき、全身こき、尻こき、竿こき
+ELSEIF ARG == 6 && !RAND:3
+	LOCAL = 3
+;パイズリ
+ELSEIF ARG == 6 && ABL:欲望 > 2 && !RAND:3
+	LOCAL = 4
+;フェラ・シックスナイン・Ｗフェラ
+ELSEIF ARG == 6
+	LOCAL = 6
+ENDIF
+
+;奉仕系口上へ
+IF LOCAL
+	TRYCALL KOJO_X_TRAINVOICE_TYPE_C_2, LOCAL, RAND:5
+	PRINTL 
+	TWAIT 75, 1
+	PRINTL 
+	RETURN 0
+ENDIF
+
+;………………………………………………
+;苦痛系
+;………………………………………………
+;苦しいの
+IF ARG == 10
+	LOCAL = 2
+	LOCAL:1 = 3
+;痛いの
+ELSEIF ARG == 9 && RAND:2
+	LOCAL = 3
+	LOCAL:1 = 1
+	SIF ARG == 9 && !RAND:3
+		LOCAL:1 += 1
+;苦しいの
+ELSE
+	LOCAL = 2
+	LOCAL:1 = 3
+ENDIF
+
+;苦痛系口上へ
+IF LOCAL
+	TRYCALL KOJO_X_TRAINVOICE_TYPE_D_2, LOCAL, LOCAL:1
+	PRINTL 
+	TWAIT 75, 1
+	PRINTL 
+ENDIF
+
+;--------------------------------------------------
+;各種喘ぎ声生成関数
+;--------------------------------------------------
+;………………………………………………
+;開発されている子
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_A_2, ARG, ARG:1, ARG:2
+PRINT 「
+
+LOCAL = -1
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;お尻判定
+	IF GROUPMATCH(ARG, 2, 5)
+		PRINTDATA
+			DATA そっちは…
+			DATA 後ろ？　
+			DATA う…
+		ENDDATA
+	ENDIF
+
+	IF ARG:1 < 2
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT あっ、
+				CASE 2
+					PRINT あ……
+				CASE 3
+					PRINT ん、
+				CASE 4
+					PRINT んっ、
+				CASE 5
+					PRINT ん……
+				CASE 6
+					PRINT んん、
+				CASE 7
+					PRINT あ、
+				CASE 8
+					PRINT ぅん……
+				CASE 9
+					PRINT くぅっ、
+			ENDSELECT
+		REND
+		SIF LOCAL == 0
+			PRINT ん、
+	ELSEIF ARG:1 > 1
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ああッ、
+				CASE 1
+					PRINT んぅっ、
+				CASE 2
+					PRINT は、
+				CASE 3
+					PRINT くうッ、
+				CASE 4
+					PRINT はあっ、
+				CASE 5
+					PRINT んっ！　
+				CASE 6
+					PRINT いっ、
+				CASE 7
+					PRINT それ、
+				CASE 8
+					PRINT っそこ、
+				CASE 9
+					PRINT あ、
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	IF ARG:1 < 2
+		PRINTDATA
+			DATA はあぁん♪
+			DATA 気持ちいい……
+			DATA っ！
+			DATA ふぁ♪
+			DATA は……
+			DATA んん
+			DATA んふ……
+			DATA ふふ……
+			DATA ぁ……
+			DATA んぅん♪
+		ENDDATA
+	ELSE
+		PRINTDATA
+			DATA くぅッ!
+			DATA あ、それっ！
+			DATA あああっ！！
+			DATA んんん……っ！！
+			DATA っ！　くッ……
+			DATA ……はあ、はあ
+			DATA っくひぃ♪
+			DATA い、っ！！
+			DATA ああっあ、あ……！
+			DATA く、くああっ！
+		ENDDATA
+	ENDIF
+ELSE
+	;お尻判定
+	IF GROUPMATCH(ARG, 2, 5)
+		PRINTDATA
+			DATA 後ろ……？　
+			DATA そ、そっちは、
+			DATA お、お尻っ、
+		ENDDATA
+	ENDIF
+
+	IF ARG:1 < 2
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT あっ、
+				CASE 2
+					PRINT あ……
+				CASE 3
+					PRINT ん、
+				CASE 4
+					PRINT んっ、
+				CASE 5
+					PRINT ん……
+				CASE 6
+					PRINT ふあ、
+				CASE 7
+					PRINT あぁっ、
+				CASE 8
+					PRINT ひっ……
+				CASE 9
+					PRINT くぅっ、
+			ENDSELECT
+		REND
+		SIF LOCAL == 0
+			PRINT ん、
+	ELSEIF ARG:1 > 1
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ああッ、
+				CASE 1
+					PRINT んぅっ、
+				CASE 2
+					PRINT は、
+				CASE 3
+					PRINT き、きもち、
+				CASE 4
+					PRINT いいっ、
+				CASE 5
+					PRINT んっ！　
+				CASE 6
+					PRINT いっ、
+				CASE 7
+					PRINT いいの、
+				CASE 8
+					PRINT っくうん、
+				CASE 9
+					PRINT あっあ、
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	IF ARG:1 < 2
+		PRINTDATA
+			DATA ふあぁ……♪
+			DATA ん……
+			DATA っ！
+			DATA ふぁっ♪
+			DATA は……
+			DATA んん
+			DATA んふぅ……
+			DATA やあ……
+			DATA ぁ……ん
+			DATA んぅ……？
+		ENDDATA
+	ELSE
+		PRINTDATA
+			DATA くぅッ!
+			DATA い、いいのっ！
+			DATA あああっ！！
+			DATA んんん……っ！！
+			DATA っ！　くぅ……
+			DATA はあ……はぁ……♪
+			DATA っくうん！
+			DATA い、っ！！
+			DATA ああっあ、あぁっ♪
+			DATA く、くぅぅんっ♪
+		ENDDATA
+	ENDIF
+ENDIF
+PRINT 」
+
+;………………………………………………
+;開発されていない子
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_B_2, ARG, ARG:1, ARG:2
+LOCAL = -1
+PRINT 「
+
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;お尻判定
+	IF GROUPMATCH(ARG, 2, 5)
+		PRINTDATA
+			DATA なっ、
+			DATA く、そっちは……
+			DATA くうっ、
+		ENDDATA
+	ENDIF
+	ARG = (ARG > 2) ? ARG - 2 # 1
+	REPEAT ARG
+		LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+		SELECTCASE LOCAL
+			CASE 0
+				PRINT ……
+			CASE 1
+				PRINT く、
+			CASE 2
+				PRINT うう……
+			CASE 3
+				PRINT ふう……
+			CASE 4 
+				PRINTFORM \@(SOURCE:痛み) ? いたッ、 # ひ……\@
+		ENDSELECT
+		SIF LOCAL == 0
+			PRINT っ、
+	REND
+	;セリフの締め
+	PRINTDATA
+		DATA こんな……
+		DATA どうして……
+		DATA く……
+		DATAFORM \@(ARG > 2) ? く、う…… # ひっ\@
+		DATAFORM \@(SOURCE:痛み) ? これ、痛い…… # んくぅ……\@
+	ENDDATA
+ELSE
+	;お尻判定
+	IF GROUPMATCH(ARG, 2, 5)
+		PRINTDATA
+			DATA そ、そっちは違っ、
+			DATA 嘘、お尻！？　
+			DATA い、嫌っ、
+		ENDDATA
+	ENDIF
+	ARG = (ARG > 2) ? ARG - 2 # 1
+	REPEAT ARG
+		LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+		SELECTCASE LOCAL
+			CASE 0
+				PRINT ……
+			CASE 1
+				PRINT く、
+			CASE 2
+				PRINT あ……
+			CASE 3
+				PRINT ん……
+			CASE 4
+				PRINTFORM \@(SOURCE:痛み) ? 痛っ…… # ひ……\@
+		ENDSELECT
+	REND
+	SIF LOCAL == 0
+		PRINT ん、
+	;セリフの締め
+	PRINTDATA
+		DATA うう……
+		DATA 嫌よ……
+		DATA んぅ……？
+		DATAFORM \@(ARG > 2) ? まだ……？ # んっ\@
+		DATAFORM \@(SOURCE:痛み) ? ん、あ、痛っ # やめて……\@
+	ENDDATA
+ENDIF
+PRINT 」
+
+;………………………………………………
+;奉仕系
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_C_2, ARG, ARG:1
+PRINT 「
+
+LOCAL = -1
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;手でする
+	IF ARG:1 == 0
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT ほら、
+				CASE 2
+					PRINT ふふ、
+				CASE 3
+					PRINT ここ？　
+				CASE 4
+					PRINT 硬い……
+			ENDSELECT
+		REND
+	;愛撫する
+	ELSEIF ARG:1 == 4
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT これ、
+				CASE 2
+					PRINT くにくに……
+				CASE 3
+					PRINT ふふっ、
+				CASE 4
+					PRINT ほぉら、
+			ENDSELECT
+		REND
+	;胸でする
+	ELSEIF ARG:1 == 1
+		PRINT 胸ね。
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT これ、
+				CASE 2
+					PRINT しゅっしゅ……
+				CASE 3
+					PRINT ふふっ、
+				CASE 4
+					PRINT いい？　
+			ENDSELECT
+		REND
+	;口でする
+	ELSEIF ARG:1 > 1
+		PRINTFORM \@(ARG:1 == 2) ? はむ、れろぉ、 # ちゅっ、\@
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT ちゅぷ、
+				CASE 2
+					PRINT れろ……
+				CASE 3
+					PRINT ぢゅる、
+				CASE 4
+					PRINT んん……
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	SIF LOCAL == 0
+		PRINT ん、
+		;手
+	IF ARG:1 == 0
+		PRINTDATA
+			DATA 可愛い……♪
+			DATA ほら、きゅっ
+			DATA たまらない？
+			DATA はしたないこと……
+			DATA イイのね？
+		ENDDATA
+	;愛撫
+	ELSEIF ARG:1 == 4
+		PRINTDATA
+			DATA ヒクヒクしてる……
+			DATA こんなのが、いいのね
+			DATA 不思議ね……
+		ENDDATA
+	;キス
+	ELSEIF ARG:1 == 3
+		PRINTDATA
+			DATA ……ぷぁ
+			DATA ……ふふっ
+		ENDDATA
+	;胸・フェラ
+	ELSEIF ARG:1 > 0
+		PRINTDATA
+			DATA 可愛いこと……♪
+			DATA れろぉ……っ♪
+			DATA ……出したい？
+			DATA ほら、言ってごらん
+			DATA 熱いわ……
+		ENDDATA
+	ENDIF
+ELSE
+	;手でする
+	IF ARG:1 == 0
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT くりゅ、
+				CASE 2
+					PRINT こう？　
+				CASE 3
+					PRINT しゅ、しゅ……
+				CASE 4
+					PRINT しゅしゅっ、
+			ENDSELECT
+		REND
+	;愛撫する
+	ELSEIF ARG:1 == 4
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT くにゅくにゅ、
+				CASE 2
+					PRINT こう？　
+				CASE 3
+					PRINT どうかな……
+				CASE 4
+					PRINT さすさす……
+			ENDSELECT
+		REND
+	;胸でする
+	ELSEIF ARG:1 == 1
+		PRINT 挟むね……
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT あ、
+				CASE 2
+					PRINT んぅ……
+				CASE 3
+					PRINT むにっ、
+				CASE 4
+					PRINT ふぁっ、
+			ENDSELECT
+		REND
+	;口でする
+	ELSEIF ARG:1 > 1
+		PRINTFORM \@(ARG:1 == 2) ? あむっ、ん、 # ん、ちゅう……\@
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT ちゅぷ、
+				CASE 2
+					PRINT れろ……
+				CASE 3
+					PRINT ぢゅる、
+				CASE 4
+					PRINT んん……
+			ENDSELECT
+		REND
+	ENDIF
+	SIF LOCAL == 0
+		PRINT ん、
+	;セリフの締め
+	;手
+	IF ARG:1 == 0
+		PRINTDATA
+			DATA ひっ、びくってした……
+			DATA かちかち……
+			DATA どう、気持ちいい……？
+			DATA ぬるぬる出てる……
+			DATA あ、ここね？
+		ENDDATA
+	;愛撫
+	ELSEIF ARG:1 == 4
+		PRINTDATA
+			DATA あったかい……
+			DATA いい、の？
+			DATA ヘンなの……
+		ENDDATA
+	;キス
+	ELSEIF ARG:1 == 3
+		PRINTDATA
+			DATA ……ぷぁ
+			DATA ……はふ
+		ENDDATA
+	;胸・フェラ
+	ELSEIF ARG:1 >= 1
+		PRINTDATA
+			DATA ……はぁ……♪
+			DATA ふふ、可愛い
+			DATA ……ちゅっ
+			DATA 気持ちいい？
+			DATA かちかち……
+		ENDDATA
+	ENDIF
+ENDIF
+PRINT 」
+
+;………………………………………………
+;苦痛系
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_D_2, ARG, ARG:1
+PRINT 「
+
+LOCAL = -1
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;痛いの
+	IF ARG:1 < 3
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT く、
+				CASE 1
+					PRINT やめ、
+				CASE 2
+					PRINT ゆ、許さ、
+				CASE 3
+					PRINT ぐぅッ！　
+				CASE 4
+					PRINT ひっ
+			ENDSELECT
+		REND
+	;苦しいの
+	ELSEIF ARG:1 == 3
+		PRINT ん、
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(3, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ぐぅ……
+				CASE 1
+					PRINT うう……
+				CASE 2
+					PRINT んぐ……
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	;痛い
+	IF ARG:1 == 1
+		PRINTDATA
+			DATA ひぎッ！
+			DATA っ、痛！！
+			DATA やめなさい……！
+			DATA どうして……
+			DATA ぐっう……
+		ENDDATA
+	;針
+	ELSEIF ARG:1 == 2
+		PRINTDATA
+			DATA く……！
+			DATA こ、こんなことで……
+		ENDDATA
+	ENDIF
+ELSE
+	;痛いの
+	IF ARG:1 < 3
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT いたっ！　
+				CASE 1
+					PRINT 痛い、
+				CASE 2
+					PRINT や、やだ、
+				CASE 3
+					PRINT くううッ！　
+				CASE 4
+					PRINT ひっ
+			ENDSELECT
+		REND
+	;苦しいの
+	ELSEIF ARG:1 == 3
+		PRINT ん、
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(3, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ぐぅ……
+				CASE 1
+					PRINT うう……
+				CASE 2
+					PRINT んぐ……
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	;痛い
+	IF ARG:1 == 1
+		PRINTDATA
+			DATA ひいぃっ！！
+			DATA 痛ぁっ！！
+			DATA ……酷い……
+			DATA ぐすっ……
+			DATA ぐっう……
+		ENDDATA
+	;針
+	ELSEIF ARG:1 == 2
+		PRINTDATA
+			DATA ち、血が……
+			DATA ひぎッ、も、もう……
+		ENDDATA
+	ENDIF
+ENDIF
+PRINT 」

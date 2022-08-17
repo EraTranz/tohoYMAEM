@@ -1,0 +1,411 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;エンディング関連処理
+;
+;ここでは主に各エンディングへの分岐処理がメインとなっている
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;エンディングチェック処理関連
+;=============================================================================
+;--------------------------------------------------
+;ターン終了時にエンディング判定を実行するかをチェック
+;--------------------------------------------------
+@CHECK_GOTO_ENDING
+IF FLAG:5 == 0
+	IF FLAG:4 != 3
+		;REVERSALモード以外のとき、主人の被強姦経験と被輪姦経験の合計が一定(50)以上を超えていて、なおかつ堕落度が256以上ならバッドエンド7へ
+		SIF (EXP:MASTER:被強姦経験 + EXP:MASTER:被輪姦経験) >= EXPLV:4 && CFLAG:MASTER:4066 >= 256
+			CALL BADEND_4
+	ENDIF
+	SIF CHECK_GAMEMODE_ENDING_EXIST() == 1 && ENDING_TIMEUP() == 1
+		CALL ENDING_CHECK_START
+ENDIF
+RETURN 0
+
+;--------------------------------------------------
+;エンディング判定処理
+;--------------------------------------------------
+@ENDING_CONFIRM
+DRAWLINE
+PRINTL 今の段階ですぐにエンディングを迎えることが出来ます
+PRINTL エンディングに行きますか？
+PRINTL [ 0] - はい
+PRINTL [ 1] - いいえ
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP
+ENDIF
+CALL ENDING_CHECK_START
+
+;--------------------------------------------------
+;期限判定処理
+;--------------------------------------------------
+@ENDING_TIMEUP
+#FUNCTION
+;NORMAL(男主人モード), ABNORMAL以外のゲームモード及びエンドレスモードは除外
+SIF (FLAG:4 != 0 && FLAG:4 != 1) || FLAG:5
+	RETURNF 0
+RETURNF (FLAG:999 < DAY)
+
+;--------------------------------------------------
+;エンディング判定処理
+;--------------------------------------------------
+@ENDING_CHECK_START
+;分けると一文字変数使わない限り処理ができないので、まとめてしまう
+;所持金が足りない時はバッドエンド
+SIF MONEY < MONEY:100 + FLAG:575
+	CALL BADEND_1
+FLAG:3004 = 0
+;生贄が一定数超えていると触手系エンド
+SIF FLAG:33 >= 10
+	JUMP ENDING_TENTACLE
+;相互調教エンド
+SIF EXP:MASTER:被強姦経験 >= 30
+	JUMP JUDGE_WRONGEND_1
+
+;--------------------------------------------------
+;エンディング分岐処理
+;--------------------------------------------------
+;完全に基本設計から変更
+;基本的には各エンディング毎の判定関数を呼び出して全部そこで判定
+;ENDING内での細かい分岐も返り値を変えることで判定内で分岐可能
+;詳細はENDING_JUDGE.ERBを参照
+VARSET LOCAL, 0
+;細かいエンド分岐用
+TFLAG:0 = 0
+
+;エンディング数カウント
+TFLAG:1 = 1
+;ノーマルエンド
+LOCAL:1 = 1
+;それ以外
+FOR LOCAL, 2, 100
+	TRYCCALLFORM ENDING_JUDGE{LOCAL}
+		LOCAL:LOCAL = RESULT
+		SIF RESULT
+			TFLAG:1 += 1
+	CATCH
+		CONTINUE
+	ENDCATCH
+NEXT
+
+;--------------------------------------------------
+;エンディング選択処理
+;--------------------------------------------------
+;引き継ぎ可能助手＋1の条件(同時に10種以上のハーレムエンドの条件を満たした)
+SIF TFLAG:1 > 10 && (FLAG:8 & 8192) == 0
+	FLAG:8 |= 8192
+
+IF TFLAG:1 == 1
+	RESULT = 1
+ELSE
+	PRINTL どのエンディングに行きますか？
+	DRAWLINE
+
+	FOR PC_VAR1, 1, 100, 1
+		SIF STRLENS(STR:(10000+PC_VAR1)) < 1
+			CONTINUE
+
+		SIF LOCAL:PC_VAR1
+			PRINTFORMLC [{PC_VAR1}] %STR:(10000+PC_VAR1)%
+	NEXT
+	SIF !LINEISEMPTY()
+		PRINTL 
+
+	DRAWLINE
+	$INPUT_LOOP
+	INPUT
+	IF RESULT < 1 || RESULT > 99
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ELSEIF LOCAL:RESULT == 0
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;エンディング実行処理
+;--------------------------------------------------
+;ノーマル・ハーレムエンド合計到達回数カウント
+SIF FLAG:(10000+RESULT) == 0
+	FLAG:10000 += 1
+DRAWLINE
+IF RESULT == 1
+	PRINTFORMW ―――所持金は{MONEY}圓。目標金額突破―――
+ELSEIF RESULT == 60 || RESULT == 61 || RESULT == 72
+	PRINTW ―――特殊エンド条件達成―――
+ELSE
+	PRINTW ―――ハーレム条件達成―――
+ENDIF
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+;予め所持金から目標金額分（初期なら100万圓)を減少させる
+MONEY -= MONEY:100 + FLAG:575
+TRYCALLFORM ENDING_{RESULT}, LOCAL:RESULT
+
+;=============================================================================
+;単体、奴隷またはグッド以上のエンディングを見た直後の処理関連
+;=============================================================================
+;--------------------------------------------------
+;　　　　　　一人の華奢な妖精が現れて告げた
+;
+;　　　　　　　　　　**おめでとう**
+;
+;　君達は大国主eratohoの試験に合格した。グッド以上の
+;　エンディングを迎えたことにより、eratohoは諸君に
+;　50,000圓の金と異常経験を与えたうえに諸君を近衛
+;　調教師に任命した。
+;
+;　　　誇りを持って階級章（＞）を付けるように。
+;
+;　ただし、諸君はさらなる鍛錬を続けなくてはならない。
+;　eratohoは限りなくレベルの高い調教師を必要としている。
+;　そしてそれは……
+;　新たなる調教への準備でもあるのだ。
+;--------------------------------------------------
+@GAME_CONTINUE, ARG, ARG:1
+;単体エンドの二重呼び出し防止処理
+TFLAG:201 = 0
+
+;--------------------------------------------------
+;特定難易度クリア判定追加処理
+;--------------------------------------------------
+;判定はFLAG:9を利用。ビット演算で1=EASY, 2=NORMAL, 4=HARD, 8=LUNATIC, 16=PAHANTASM, 64=ULTRA, 128=OVERDRIVEの難易度に対応している
+IF FLAG:3 == 1 && (FLAG:9 & 1) == 0
+	FLAG:9 |= 1
+	MONEY += 50000
+ELSEIF FLAG:3 == 2 && (FLAG:9 & 2) == 0
+	FLAG:9 |= 2
+	MONEY += 50000
+ELSEIF FLAG:3 == 3 && (FLAG:9 & 4) == 0
+	FLAG:9 |= 4
+	MONEY += 50000
+ELSEIF FLAG:3 == 4 && (FLAG:9 & 8) == 0
+	FLAG:9 |= 8
+	MONEY += 50000
+ELSEIF FLAG:3 == 5 && (FLAG:9 & 16) == 0
+	FLAG:9 |= 16
+	MONEY += 50000
+ELSEIF FLAG:9 == 31 && (FLAG:9 & 32) == 0
+	FLAG:9 |= 32
+	MONEY += 500000
+ELSEIF FLAG:3 == 6 && (FLAG:9 & 64) == 0
+	FLAG:9 |= 64
+	MONEY += 50000
+ELSEIF FLAG:3 == 7 && (FLAG:9 & 128) == 0
+	FLAG:9 |= 128
+	MONEY += 50000
+ENDIF
+FLAG:598 = ARG:1
+
+;ゲームを続けるかどうかの選択
+CALL SELECT_CONTINUE_GAME, ARG, ARG:1
+RETURN 1
+
+;--------------------------------------------------
+;ゲームを続けるかどうかの選択
+;--------------------------------------------------
+@SELECT_CONTINUE_GAME, ARG, ARG:1
+PRINTL ゲームを継続しますか？
+PRINTLC [0]終わる　　　　　
+PRINTLC [1]続ける　　　　　
+SIF FLAG:4 < 50 && FLAG:12 & 1
+	PRINTLC [2]強くてニューゲーム
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	;奴隷のエピソードを表示
+	CALL SHOW_AFTERWARDS, ARG:1
+	QUIT
+ELSEIF RESULT == 1
+	FLAG:5 |= 1
+	FLAG:5 |= 2
+	FLAG:575 = 0
+	FLAG:576 = 0
+ELSEIF RESULT == 2 && FLAG:4 < 50 && FLAG:12 & 1
+	;奴隷のエピソードを表示
+	CALL SHOW_AFTERWARDS, ARG:1
+	;単体エンド以外から飛んできた場合、目標金額分（初期だと100万圓）を戻す
+	SIF ARG == 1
+		MONEY += MONEY:100
+	CALL START_NEWGAME
+ELSE
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;奴隷のエピソードを表示
+SIF TFLAG:205 == 0
+	CALL SHOW_AFTERWARDS, ARG:1
+
+;--------------------------------------------------
+;SHOPメニューよりニューゲームを開始するかの選択肢
+;--------------------------------------------------
+;エンディング終了後もいつでもニューゲームが開始できるように
+@NEWGAME_SELECT
+PRINTL 強くてニューゲームを始めますか？
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+PRINTL 
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	CALL START_NEWGAME
+ELSEIF RESULT == 1
+	RETURN 0
+ELSE
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;=============================================================================
+;エンディング時のキャラ枠増設の処理
+;=============================================================================
+;--------------------------------------------------
+;幻想郷入手処理
+;--------------------------------------------------
+@GET_GENSOUKYOU
+SIF TFLAG:994
+	RETURN 0
+;ゆかれいむチェック
+LOCAL = 0
+REPEAT CHARANUM
+	SIF COUNT == 0 || CFLAG:COUNT:4 == 1 || CFLAG:COUNT:4 == 8192
+		CONTINUE
+	SIF (TALENT:COUNT:恋慕 || TALENT:COUNT:服従) && TALENT:COUNT:淫乱 && (NO:COUNT == 1001 || NO:COUNT == 1022)
+		LOCAL += 1
+REND
+SIF LOCAL < 2
+	RETURN 0
+PRINTFORML ＜%CALLNAME:MASTER%は幻想郷を乗っ取ることに成功しました＞
+PRINTFORMW ＜奴隷購入可能数の最大値が大幅に増えました＞
+SAVESTR:1 = 博麗神社
+FLAG:90 = 5
+FLAG:92 = 500
+FLAG:93 = 0
+
+;実績
+LOADGLOBAL
+SIF !(GLOBAL:2300 & 32)
+	GLOBAL:2300 |= 32
+SAVEGLOBAL
+
+RETURN 1
+
+;--------------------------------------------------
+;各キャラの自宅入手処理
+;--------------------------------------------------
+@GET_HOUSE
+SIF FLAG:90 >= 4 || TFLAG:994
+	RETURN 0
+CALL GET_GENSOUKYOU
+SIF RESULT == 1
+	RETURN 0
+SAVESTR:1 = %TSTR:3%
+PRINTFORML ＜%SAVESTR:1%を手に入れました＞
+PRINTFORMW ＜奴隷購入可能数が増えました＞
+FLAG:90 = 4
+FLAG:92 = 300
+FLAG:93 = 0
+
+;--------------------------------------------------
+;土地大量入手処理
+;--------------------------------------------------
+@GET_YARD
+SIF FLAG:93 >= 20 || TFLAG:994
+	RETURN 0
+CALL GET_GENSOUKYOU
+SIF RESULT == 1
+	RETURN 0
+PRINTFORML ＜%TSTR:4%の広大な土地を買えるだけ手に入れました＞
+PRINTFORMW ＜奴隷購入可能数が{20 - FLAG:93}増えました＞
+FLAG:93 = 20
+
+;=============================================================================
+;売却後エピソード関連の関数
+;=============================================================================
+;エンディング時に売却したキャラのエピソードを流す
+;エンディング後に呼ばれる。戻った後にゲーム終了ＯＲ強くてニューゲーム
+;-------------------------------------------------
+;エンディング後エピソードを表示させるか選択＆表示
+;-------------------------------------------------
+@SHOW_AFTERWARDS, ARG
+#LOCALSIZE 3
+;FLAG:580 = エピソードを表示する奴隷数
+;一人もエピソードがないなら何もせず終了
+SIF FLAG:580 == 0
+	RETURN 0
+
+;選択肢
+DRAWLINE
+PRINTFORML %CALLNAME:MASTER%が調教した奴隷\@(FLAG:580 > 1) ? 達 # \@のその後を……
+PRINTL [0]見る
+PRINTL [1]見ない
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL RESET_AFTERWARDS_FLAG
+	RETURN 0
+ELSEIF RESULT != 0
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;調教対象を一時的に口上を表示させるキャラに変更
+LOCAL:2 = TARGET
+;記録できる人数を超えた場合、古いものから順に表示するようにしたかったらしい
+LOCAL:1 = (FLAG:580 > 10) ? FLAG:580 % 10 # 0
+
+REPEAT LIMIT(FLAG:580, 1, 10)
+	LOCAL = 581 + (COUNT + LOCAL:1) % 10
+	;売却後エピソードの表示処理
+	;ARGはキャラ番号
+	CALL SHOW_SLAVE_AFTERWARDS, (FLAG:LOCAL % 10000), (FLAG:LOCAL / 100000), ARG, ((FLAG:LOCAL / 10000) % 10)
+REND
+
+;調教対象を元に戻す
+TARGET = LOCAL:2
+
+;エピソードフラグ消去処理
+CALL RESET_AFTERWARDS_FLAG
+;改行
+REPEAT 8
+	PRINTL 
+REND
+
+;………………………………………………
+;エピソードフラグ消去処理
+;………………………………………………
+@RESET_AFTERWARDS_FLAG
+;エピソードフラグ消去
+REPEAT 10
+	FLAG:(COUNT + 581) = 0
+REND
+;エピソードを表示する奴隷数リセット
+FLAG:580 = 0
+
+;-------------------------------------------------
+;売却時の処理
+;-------------------------------------------------
+@SET_AFTERWARDS, ARG
+;ヤンデレONかつ失踪の場合、戻ってくるので売却扱いしない
+SIF FLAG:14 & 4 && CFLAG:ARG:4 == 1
+	RETURN 0
+;表示キャラの登録キャラ番号をTFLAG:710に入れておく(口上側で参照できるように)
+TFLAG:710 = ARG
+;売却キャラエピソードをセット
+CALL SET_SLAVE_AFTERWARDS, ARG
+;表示しない場合は記録しない
+SIF RESULT <= 0
+	RETURN 0
+;%10+581の意味：エピソード関連で使用する変数がFLAG:581から10人分だから
+;個別口上設定をフラグに保存しないと表示処理が破綻する
+FLAG:((FLAG:580 % 10) + 581) = (CFLAG:ARG:9 * 10000) + (RESULT * 100000) + NO:ARG
+;エピソードを表示する奴隷数をカウント
+FLAG:580 += 1

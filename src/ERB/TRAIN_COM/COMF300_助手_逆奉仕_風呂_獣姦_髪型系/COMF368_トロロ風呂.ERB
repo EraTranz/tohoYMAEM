@@ -1,0 +1,309 @@
+﻿;=============================================================================
+;トロロ風呂
+;=============================================================================
+;ピリピリムズムズ……と、身体がとても若干痒くなります。追加ソース「痒み」(21番)を使用。
+;長く浸っているほど気力体力の消費が大きくなる。
+;女体とろろご飯は調教終了後、紳士たちがおいしく頂きましt(ry
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE368
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:368 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 256) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 10
+	RETURN 1
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;入浴1回1500圓也
+SIF MONEY < 1500
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 10
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 368) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM368
+PRINTL トロロ風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 368
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = トロロ風呂
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 10
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 50
+	TEQUIP:特殊風呂入浴中 = 0
+	TFLAG:155 = 0
+	RETURN 1
+ENDIF
+;浸けるときはまだ痒くならない
+DOWNBASE:0 += 0
+DOWNBASE:1 += 20
+
+SOURCE:反感追加 = 500
+
+TFLAG:155 = 0
+TEQUIP:特殊風呂入浴中 = 10
+MONEY -= 1500
+RETURN 1
+
+;--------------------------------------------------
+;トロロ風呂入浴中
+;--------------------------------------------------
+@EQUIP_COM368
+PRINTL ＜トロロ風呂入浴中＞
+
+TFLAG:155 += 1
+DOWNBASE:0 += 5 * TFLAG:155
+DOWNBASE:1 += 10 * TFLAG:155
+
+LOCAL:1 = 0
+LOCAL:2 = 0
+LOCAL:3 = 0
+LOCAL:4 = 0
+
+LOCAL = 0
+;オナホールを装着している
+SIF TEQUIP:Ｃ系装着器具 == 2
+	LOCAL |= 1
+;バイブ等の器具を挿入している(クスコ除く)
+SIF TEQUIP:Ｖ系装着器具
+	LOCAL |= 2
+;アナルバイブ等の器具を挿入している
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	LOCAL |= 4
+;搾乳器を装着している
+SIF TEQUIP:Ｂ系装着器具 == 2
+	LOCAL |= 8
+
+;マゾっ気
+IF ABL:マゾっ気 == 0
+	LOCAL:5 = 30
+	LOCAL:6 = 5
+	LOCAL:7 = 10
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:5 = 60
+	LOCAL:6 = 100
+	LOCAL:7 = 50
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:5 = 120
+	LOCAL:6 = 20
+	LOCAL:7 = 150
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:5 = 240
+	LOCAL:6 = 30
+	LOCAL:7 = 500
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:5 = 480
+	LOCAL:6 = 60
+	LOCAL:7 = 1000
+ELSE
+	LOCAL:5 = 960
+	LOCAL:6 = 120
+	LOCAL:7 = 1800
+ENDIF
+
+;自慰中毒
+IF ABL:自慰中毒 == 0
+	LOCAL:6 += 5
+	LOCAL:7 += 30
+ELSEIF ABL:自慰中毒 == 1
+	LOCAL:6 += 10
+	LOCAL:7 += 100
+ELSEIF ABL:自慰中毒 == 2
+	LOCAL:6 += 25
+	LOCAL:7 += 300
+ELSEIF ABL:自慰中毒 == 3
+	LOCAL:6 += 50
+	LOCAL:7 += 600
+ELSEIF ABL:自慰中毒 == 4
+	LOCAL:6 += 100
+	LOCAL:7 += 1000
+ELSE
+	LOCAL:6 += 200
+	LOCAL:7 += 1500
+ENDIF
+
+;Ｃ感覚
+IF (LOCAL & 1) == 0
+	IF ABL:Ｃ感覚 == 0
+		LOCAL:3 = 20
+		LOCAL:6 += 10
+	ELSEIF ABL:Ｃ感覚 == 1
+		LOCAL:3 = 80
+		LOCAL:6 += 40
+	ELSEIF ABL:Ｃ感覚 == 2
+		LOCAL:3 = 160
+		LOCAL:6 += 80
+	ELSEIF ABL:Ｃ感覚 == 3
+		LOCAL:3 = 400
+		LOCAL:6 += 130
+	ELSEIF ABL:Ｃ感覚 == 4
+		LOCAL:3 = 750
+		LOCAL:6 += 240
+	ELSE
+		LOCAL:3 = 1200
+		LOCAL:6 += 750
+	ENDIF
+	DOWNBASE:0 += 1
+	DOWNBASE:1 += 5
+ENDIF
+IF (LOCAL & 2) == 0 && TALENT:処女 == 0
+	;Ｖ感覚
+	IF ABL:Ｖ感覚 == 0
+		LOCAL:4 = 10
+		LOCAL:6 += 15
+	ELSEIF ABL:Ｖ感覚 == 1
+		LOCAL:4 = 40
+		LOCAL:6 += 25
+	ELSEIF ABL:Ｖ感覚 == 2
+		LOCAL:4 = 120
+		LOCAL:6 += 40
+	ELSEIF ABL:Ｖ感覚 == 3
+		LOCAL:4 = 240
+		LOCAL:6 += 70
+	ELSEIF ABL:Ｖ感覚 == 4
+		LOCAL:4 = 420
+		LOCAL:6 += 130
+	ELSE
+		LOCAL:4 = 900
+		LOCAL:6 += 200
+	ENDIF
+	DOWNBASE:0 += 3
+	DOWNBASE:1 += 8
+ENDIF
+IF (LOCAL & 4) == 0
+	;Ａ感覚
+	IF ABL:Ａ感覚 == 0
+		LOCAL:1 = 5
+		LOCAL:6 += 20
+	ELSEIF ABL:Ａ感覚 == 1
+		LOCAL:1 = 15
+		LOCAL:6 += 35
+	ELSEIF ABL:Ａ感覚 == 2
+		LOCAL:1 = 60
+		LOCAL:6 += 40
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL:1 = 150
+		LOCAL:6 += 65
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL:1 = 220
+		LOCAL:6 += 100
+	ELSE
+		LOCAL:1 = 300
+		LOCAL:6 += 150
+	ENDIF
+	DOWNBASE:0 += 2
+	DOWNBASE:1 += 10
+ENDIF
+IF (LOCAL & 8) == 0
+	;Ｂ感覚
+	IF ABL:Ｂ感覚 == 0
+		LOCAL:2 = 10
+		LOCAL:6 += 25
+	ELSEIF ABL:Ｂ感覚 == 1
+		LOCAL:2 = 50
+		LOCAL:6 += 50
+	ELSEIF ABL:Ｂ感覚 == 2
+		LOCAL:2 = 180
+		LOCAL:6 += 80
+	ELSEIF ABL:Ｂ感覚 == 3
+		LOCAL:2 = 420
+		LOCAL:6 += 130
+	ELSEIF ABL:Ｂ感覚 == 4
+		LOCAL:2 = 800
+		LOCAL:6 += 250
+	ELSE
+		LOCAL:2 = 1400
+		LOCAL:6 += 600
+	ENDIF
+	DOWNBASE:0 += 1
+	DOWNBASE:1 += 5
+ENDIF
+
+;クスコ
+IF TEQUIP:クスコ
+	TIMES LOCAL:4 , 1.80
+	TIMES LOCAL:6 , 1.70
+	TIMES LOCAL:7 , 2.50
+ENDIF
+;緊縛中
+IF TEQUIP:緊縛関連
+	TIMES LOCAL:6 , 3.70
+	TIMES LOCAL:7 , 7.50
+ENDIF
+
+SOURCE:快Ｃ += LOCAL:3
+SOURCE:快Ｖ += LOCAL:4
+SOURCE:快Ａ += LOCAL:1
+SOURCE:快Ｂ += LOCAL:2
+SOURCE:露出 += LOCAL:5
+SOURCE:痒み += LOCAL:6
+SOURCE:反感追加 += LOCAL:7
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_368
+IF TEQUIP:特殊風呂入浴中 == 10
+	PRINTFORML %CALLNAME:TARGET%をトロロ風呂から引き揚げた
+ELSE
+	PRINTFORML 山芋をふんだんに使ったトロロ風呂に%CALLNAME:TARGET%を浸からせた
+ENDIF

@@ -1,0 +1,154 @@
+﻿;=============================================================================
+;水を飲ませる
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE253
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:253 > 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;じょうごを購入(開発?)していないとダメ
+SIF (FLAG:73 & 64) == 0
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;助手がウェディングドレス・ゴスロリ着用中の場合助手に技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && (TEQUIP:ASSI:コスチュームプレイ == 19 || TEQUIP:ASSI:コスチュームプレイ == 20) && ABL:ASSI:技巧 < 4
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:技巧 < 4
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;水を大量に飲ませているとダメ
+SIF TEQUIP:46 >= 5
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 253) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM253
+PRINTL 水を飲ませる
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 253
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 水を飲ませる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:屈従 = 100
+SOURCE:逸脱 = 900
+
+;飲ませた量に比例して苦痛上昇
+SELECTCASE (TEQUIP:46)
+	CASE 0
+		SOURCE:痛み = 400
+	CASE 1
+		SOURCE:痛み = 550
+	CASE 2
+		SOURCE:痛み = 900
+	CASE 3
+		SOURCE:痛み = 1400
+	CASE 4
+		SOURCE:痛み = 1800
+	CASEELSE
+		SOURCE:痛み = 2300
+ENDSELECT
+
+;尿意を調べる
+SELECTCASE (CHECK_PERCENTAGE_BASE(TARGET, 4))
+	CASE IS >= 90
+		SOURCE:露出 += 1000
+		SOURCE:痛み += 700
+		SOURCE:屈従 += 1900
+		SOURCE:羞恥扇情 += 1600
+		SOURCE:反感追加 += 500
+	CASE IS >= 70
+		SOURCE:露出 += 300
+		SOURCE:痛み += 150
+		SOURCE:屈従 += 800
+		SOURCE:羞恥扇情 += 800
+		SOURCE:反感追加 += 100
+	CASE IS >= 50
+		SOURCE:露出 += 100
+		SOURCE:屈従 += 300
+		SOURCE:羞恥扇情 += 400
+		SOURCE:反感追加 += 50
+	CASE IS >= 30
+		SOURCE:屈従 += 100
+		SOURCE:羞恥扇情 += 50
+ENDSELECT
+
+IF TALENT:おもらし癖
+	SOURCE:羞恥扇情 += 200
+	IF EXP:放尿経験 >= 400 && ABL:露出癖 >= 4 && ABL:マゾっ気 >= 5
+		SOURCE:欲情追加 += 250
+		SOURCE:性技学習 += 100
+		TIMES SOURCE:露出 , 1.50
+		TIMES SOURCE:羞恥扇情 , 1.25
+	ENDIF
+ENDIF
+
+;飲水中
+TEQUIP:46 = MIN(TEQUIP:46 + 1, 5)
+
+;奴隷の口の汚れがなくなる
+STAIN:口 = 0
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 1
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_253
+PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%の口にじょうごを差し込み、\@(TEQUIP:46) ? 追加の # \@水を流し込んだ
+SELECTCASE (TEQUIP:46)
+	CASE IS <= 1
+		PRINTFORML %CALLNAME:TARGET%は強制的に水を飲まされた反動か、激しく咳込んでいる…
+	CASE IS <= 3
+		PRINTFORML %CALLNAME:TARGET%は腹を水で満たされて苦しいのか、額に脂汗が浮かんでいる…
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET%は大量の水で大きく腹が膨らみ、苦悶の表情を浮かべている…
+ENDSELECT

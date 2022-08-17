@@ -1,0 +1,664 @@
+﻿;=============================================================================
+;ビデオのタイトルボーナス付加処理
+;=============================================================================
+;俺のジャスティスがないぞって人は手動で追加してください
+;ないとは思いますが既存同人誌のタイトルとかぶっていたら代替案を添えて教えてください
+;正直ネタが滑ってる気もしなくもない
+;--------------------------------------------------
+;コマンド内容によるタイトル決定(優先度やや低)
+;--------------------------------------------------
+@VIDEO_TITLE_BONUS(ARG, ARG:1)
+#FUNCTION
+LOCAL = 0
+LOCAL:1 = JUDGE_VIDEOTITLE()
+;ボーナスは今後変化する可能性アリ(タイトルは組み合わせ優先)
+IF TFLAG:239 == 0
+	;特定の条件による優先度が高めなボーナス
+	IF LOCAL:1 == 98
+		TSTR:0 = 散潔性
+		LOCAL += 1500
+	ELSEIF LOCAL:1 == 97
+		IF TALENT:妊娠
+			TSTR:0 = 妊両天
+			LOCAL += 1100
+		ELSE
+			TSTR:0 = 二穴郷
+			LOCAL += 900
+		ENDIF
+		;調教対象が淫壷か淫尻なら追加ボーナス
+		SIF TALENT:淫壷 || TALENT:淫尻
+			LOCAL += 800
+	ELSEIF LOCAL:1 == 96
+		TSTR:0 = 薬獄亭
+		LOCAL += 1150
+		;調教対象がドＭでなおかつ薬毒耐性なら追加ボーナス
+		SIF TALENT:ドＭ && TALENT:薬毒耐性
+			LOCAL += 650
+		;調教対象がドＭでなおかつ媚薬中毒なら追加ボーナス
+		SIF TALENT:ドＭ && TALENT:媚薬中毒
+			LOCAL += 650
+
+	;調教内容の傾向が最も高いものが基準となるタイトルボーナス
+	ELSEIF LOCAL:1 == 0
+		TSTR:0 = 豆夢想
+		LOCAL += 800
+		;調教対象が淫核／淫茎なら追加ボーナス
+		SIF TALENT:淫核／淫茎
+			LOCAL += 700
+	ELSEIF LOCAL:1 == 1
+		IF TALENT:妊娠
+			TSTR:0 = 臨月抄
+			LOCAL += 1000
+		ELSE
+			TSTR:0 = 風膣録
+			LOCAL += 800
+		ENDIF
+		;調教対象が淫壷なら追加ボーナス
+		SIF TALENT:淫壷
+			LOCAL += 800
+	ELSEIF LOCAL:1 == 2
+		TSTR:0 = 肛魔狂
+		LOCAL += 700
+		;調教対象が尻穴狂いなら追加ボーナス
+		SIF TALENT:淫尻
+			LOCAL += 800
+	ELSEIF LOCAL:1 == 3
+		TSTR:0 = 乳々夢
+		LOCAL += 800
+		;調教対象が淫乳なら追加ボーナス
+		SIF TALENT:淫乳
+			LOCAL += 700
+	ELSEIF LOCAL:1 == 4
+		TSTR:0 = 愚息史記
+		LOCAL += 800
+		;調教対象が献身的なら追加ボーナス
+		SIF TALENT:献身的
+			LOCAL += 800
+	ELSEIF LOCAL:1 == 5
+		TSTR:0 = 性錬泉
+		LOCAL += 500
+		;調教対象がおもらし癖かつ幼児or幼稚or幼児退行なら追加ボーナス
+		IF TALENT:おもらし癖 && (TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行)
+			LOCAL += 900
+		;調教対象がおもらし癖なら追加ボーナス
+		ELSEIF TALENT:おもらし癖
+			LOCAL += 500
+		ENDIF
+		;調教対象が尿道狂なら追加ボーナス
+		SIF TALENT:尿道狂
+			LOCAL += 500
+	ELSEIF LOCAL:1 == 10
+		TSTR:0 = 恥令伝
+		LOCAL += 800
+		;調教対象が鼓舞なら追加ボーナス
+		SIF TALENT:鼓舞
+			LOCAL += 1000
+	ELSEIF LOCAL:1 == 11
+		TSTR:0 = 純情天
+		LOCAL += 700
+		;調教対象がキス魔なら追加ボーナス
+		SIF TALENT:キス魔
+			LOCAL += 900
+	ELSEIF LOCAL:1 == 12
+		TSTR:0 = 触手談
+		LOCAL += 600
+		;調教対象が寄生なら追加ボーナス
+		SIF TALENT:寄生
+			LOCAL += 600
+		;調教対象が懐卵なら追加ボーナス
+		SIF TALENT:懐卵
+			LOCAL += 600
+	ELSEIF LOCAL:1 == 13
+		TSTR:0 = 獣倫堂
+		LOCAL += 1000
+	ELSEIF LOCAL:1 == 14
+		TSTR:0 = 苛映束
+		LOCAL += 750
+		;調教対象がドＭなら追加ボーナス
+		SIF TALENT:ドＭ
+			LOCAL += 750
+	ELSEIF LOCAL:1 == 15
+		TSTR:0 = 薬餌空
+		LOCAL += 1000
+		;調教対象が薬毒耐性なら追加ボーナス
+		SIF TALENT:薬毒耐性
+			LOCAL += 600
+		;調教対象が媚薬中毒なら追加ボーナス
+		SIF TALENT:媚薬中毒
+			LOCAL += 600
+	ELSE
+		TSTR:0 = 映夜娼
+	ENDIF
+	SIF ASSI >= 0 && (TALENT:ASSI:恋慕 || TALENT:ASSI:服従 || TALENT:ASSI:壊造人格 || TALENT:ASSI:淫乱 || TALENT:ASSI:淫魔) && (TALENT:恋慕 || TALENT:服従 || TALENT:壊造人格 || TALENT:淫乱 || TALENT:淫魔)
+		LOCAL += VIDEO_EXTRA_TITLE(ARG, ARG:1)
+	TFLAG:239 = 1
+ENDIF
+RETURNF LOCAL
+
+;--------------------------------------------------
+;タイトル決定判別用
+;--------------------------------------------------
+@JUDGE_VIDEOTITLE
+#FUNCTION
+LOCAL:1 = 99
+IF TFLAG:120
+	LOCAL:1 = 98
+ELSEIF GET_GENRE(1) >= 8 && GET_GENRE(2) >= 8
+	LOCAL:1 = 97
+ELSEIF GET_GENRE(14) >= 8 && GET_GENRE(15) >= 8
+	LOCAL:1 = 96
+ELSE
+	FOR LOCAL, 0, 16
+		LOCAL:2 = GET_GENRE(LOCAL)
+		SIF LOCAL:2 >= 8 && LOCAL:2 >= GET_GENRE(LOCAL:1)
+				LOCAL:1 = LOCAL
+	NEXT
+ENDIF
+RETURNF LOCAL:1
+
+;--------------------------------------------------
+;特定キャラの組み合わせによるタイトル決定(優先度高)
+;--------------------------------------------------
+@VIDEO_EXTRA_TITLE(ARG, ARG:1)
+#FUNCTION
+;レティorチルノ＆鈴仙or永琳or輝夜orルナチャイルドor依姫or豊姫orレイセンorキクリ＆幽々子or幽香orメディスン
+IF (NO:MASTER == 1005 || NO:MASTER == 1012) && (ARG == 1028 || ARG == 1029 || ARG == 1030 || ARG == 1046 || ARG == 1053 || ARG == 1054 || ARG == 1055 || ARG == 2024) && (ARG:1 == 1020 || ARG:1 == 1033 || ARG:1 == 1034)
+	TSTR:0 = 乱れ雪月花
+	RETURNF 5000
+ELSEIF (ARG == 1005 || ARG == 1012) && (ARG:1 == 1028 || ARG:1 == 1029 || ARG:1 == 1030 || ARG:1 == 1046 || ARG:1 == 1053 || ARG:1 == 1054 || ARG:1 == 1055 || ARG:1 == 2024) && (NO:MASTER == 1020 || NO:MASTER == 1033 || NO:MASTER == 1034)
+	TSTR:0 = 淫れ雪月花
+	RETURNF 5000
+ELSEIF (ARG:1 == 1005 || ARG:1 == 1012) && (NO:MASTER == 1028 || NO:MASTER == 1029 || NO:MASTER == 1030 || NO:MASTER == 1046 || NO:MASTER == 1053 || NO:MASTER == 1054 || NO:MASTER == 1055 || NO:MASTER == 2024) && (ARG == 1020 || ARG == 1033 || ARG == 1034)
+	TSTR:0 = 身堕れ雪月花
+	RETURNF 5000
+
+;………………………………………………
+;原作よりのペア
+;………………………………………………
+;霊夢＆魔理沙
+ELSEIF (ARG == 1001 && ARG:1 == 1002) || (ARG == 102 && ARG:1 == 1001)
+	TSTR:0 = 普通の楽園のえらとほ
+	RETURNF 1000
+;霊夢＆ゆかりん
+ELSEIF (ARG == 1001 && ARG:1 == 1022) || (ARG == 1022 && ARG:1 == 1001)
+	TSTR:0 = 色魔結界
+	RETURNF 1000
+;霊夢＆萃香
+ELSEIF (ARG == 1001 && ARG:1 == 1023) || (ARG == 1023 && ARG:1 == 1001)
+	TSTR:0 = 真・豆無双
+	RETURNF 1000
+;霊夢＆早苗 
+ELSEIF (ARG == 1001 && ARG:1 == 1042) || (ARG == 1042 && ARG:1 == 1001)
+	TSTR:0 = 巫女パラダイス
+	RETURNF 1000
+;霊夢＆明羅
+ELSEIF (ARG == 1001 && ARG:1 == 2002) || (ARG == 2002 && ARG:1 == 1001)
+	TSTR:0 = 博麗の秘密を求めて
+	RETURNF 1000
+;霊夢＆小兎姫
+ELSEIF (ARG == 1001 && ARG:1 == 2004) || (ARG == 2004 && ARG:1 == 1001)
+	TSTR:0 = 恐怖警察・腋巫女拉致監禁編
+	RETURNF 1000
+;魔理沙＆パチェ
+ELSEIF (ARG == 1002 && ARG:1 == 1008) || (ARG == 1008 && ARG:1 == 1002)
+	TSTR:0 = 密室娼女
+	RETURNF 1000
+;魔理沙＆アリス
+ELSEIF (ARG == 1002 && ARG:1 == 1014) || (ARG == 1014 && ARG:1 == 1002)
+	TSTR:0 = ＴＭＡ
+	RETURNF 1000
+;魔理沙＆にとり
+ELSEIF (ARG == 1002 && ARG:1 == 1040) || (ARG == 1040 && ARG:1 == 1002)
+	TSTR:0 = カッパの飼い方 限定特別版
+	RETURNF 1000
+;魔理沙＆魅魔
+ELSEIF (ARG == 1002 && ARG:1 == 2000) || (ARG == 2000 && ARG:1 == 1002)
+	TSTR:0 = 邪恋怪綺談
+	RETURNF 1000
+;大ちゃん＆チルノ
+ELSEIF (ARG == 1004 && ARG:1 == 1005) || (ARG == 1005 && ARG:1 == 1004)
+	TSTR:0 = ドキッ☆妖精さんだらけのご奉仕大会！
+	RETURNF 1000
+;チルノ＆レティ
+ELSEIF (ARG == 1005 && ARG:1 == 1012) || (ARG == 1012 && ARG:1 == 1005)
+	TSTR:0 = ゾクッ☆妖精さんだらけのご奉仕大会！プラスレティ
+	RETURNF 1000
+;めーりん＆咲夜
+ELSEIF (ARG == 1006 && ARG:1 == 1009) || (ARG == 1009 && ARG:1 == 1006)
+	TSTR:0 = 性闘士☆咲夜 門番美鈴編
+	RETURNF 1000
+;こぁ＆パチェ
+ELSEIF (ARG == 1007 && ARG:1 == 1008) || (ARG == 1008 && ARG:1 == 1007)
+	TSTR:0 = 図書館性争
+	RETURNF 1000
+;パチェ＆レミリア
+ELSEIF (ARG == 1008 && ARG:1 == 1010) || (ARG == 1010 && ARG:1 == 1008)
+	TSTR:0 = 不夜城バイオレット
+	RETURNF 1000
+;咲夜＆レミリア
+ELSEIF (ARG == 1009 && ARG:1 == 1010) || (ARG == 1010 && ARG:1 == 1009)
+	TSTR:0 = 性闘士☆咲夜 夜王レミリア編
+	RETURNF 1000
+;レミリア＆フラン
+ELSEIF (ARG == 1010 && ARG:1 == 1011) || (ARG == 1011 && ARG:1 == 1010)
+	TSTR:0 = 姉妹丼～紅
+	RETURNF 1000
+;ちぇん＆らんさま
+ELSEIF (ARG == 1013 && ARG:1 == 1021) || (ARG == 1021 && ARG:1 == 1013)
+	TSTR:0 = 藍心
+	RETURNF 1000
+;ちぇん＆ゆかりん
+ELSEIF (ARG == 1013 && ARG:1 == 1022) || (ARG == 1022 && ARG:1 == 1013)
+	TSTR:0 = 禁じられた遊び～誘惑の隙間
+	RETURNF 1000
+;アリス＆神綺さま
+ELSEIF (ARG == 1014 && ARG:1 == 2019) || (ARG == 2019 && ARG:1 == 1014)
+	TSTR:0 = 母子相姦
+	RETURNF 1000
+;プリズムリバー三姉妹
+ELSEIF (ARG == 1016 && ARG:1 == 1017) || (ARG == 1017 && ARG:1 == 1016)
+	TSTR:0 = 姉妹丼～騒
+	RETURNF 1000
+ELSEIF (ARG == 1016 && ARG:1 == 1018) || (ARG == 1018 && ARG:1 == 1016)
+	TSTR:0 = 姉妹丼～霊
+	RETURNF 1000
+ELSEIF (ARG == 1017 && ARG:1 == 1018) || (ARG == 1018 && ARG:1 == 1017)
+	TSTR:0 = 姉妹丼～楽
+	RETURNF 1000
+;妖夢＆ゆゆ様
+ELSEIF (ARG == 1019 && ARG:1 == 1020) || (ARG == 1020 && ARG:1 == 1019)
+	TSTR:0 = 主従絶頂地獄 桜花散華
+	RETURNF 1000
+;ゆゆ様＆ゆかりん
+ELSEIF (ARG == 1020 && ARG:1 == 1022) || (ARG == 1022 && ARG:1 == 1020)
+	TSTR:0 = THE 妖女
+	RETURNF 1000
+;ゆゆ様＆みすちー
+ELSEIF (ARG == 1020 && ARG:1 == 1025) || (ARG == 1025 && ARG:1 == 1020)
+	TSTR:0 = 全自動小骨取り機
+	RETURNF 1000
+;らんさま＆ゆかりん
+ELSEIF (ARG == 1021 && ARG:1 == 1022) || (ARG == 1022 && ARG:1 == 1021)
+	TSTR:0 = 傾城妖女
+	RETURNF 1000
+;ゆかりん＆萃香
+ELSEIF (ARG == 1022 && ARG:1 == 1023) || (ARG == 1023 && ARG:1 == 1022)
+	TSTR:0 = 真・豆無双 夢想SUKIMA
+	RETURNF 1000
+;けーね＆もこ
+ELSEIF (ARG == 1026 && ARG:1 == 1031) || (ARG == 1031 && ARG:1 == 1026)
+	TSTR:0 = まいっちんぐけーね先生
+	RETURNF 1000
+;てゐ＆うどんげ
+ELSEIF (ARG == 1027 && ARG:1 == 1028) || (ARG == 1028 && ARG:1 == 1027)
+	TSTR:0 = きみはペット
+	RETURNF 1000
+;てゐ＆えーりん
+ELSEIF (ARG == 1027 && ARG:1 == 1029) || (ARG == 1029 && ARG:1 == 1027)
+	TSTR:0 = いけない秘密実験～永遠亭危機一髪
+	RETURNF 1000
+;てゐ＆輝夜
+ELSEIF (ARG == 1027 && ARG:1 == 1030) || (ARG == 1030 && ARG:1 == 1027)
+	TSTR:0 = 永遠絶頂素兎
+	RETURNF 1000
+;うどんげ＆えーりん
+ELSEIF (ARG == 1028 && ARG:1 == 1029) || (ARG == 1029 && ARG:1 == 1028)
+	TSTR:0 = 師匠と私 オモイカネ
+	RETURNF 1000
+;うどんげ＆輝夜
+ELSEIF (ARG == 1028 && ARG:1 == 1030) || (ARG == 1030 && ARG:1 == 1028)
+	TSTR:0 = 愛玩兎の憂鬱
+	RETURNF 1000
+;うどんげ＆レイセン
+ELSEIF (ARG == 1028 && ARG:1 == 1055) || (ARG == 1055 && ARG:1 == 1028)
+	TSTR:0 = 月兎遠隔催淫術
+	RETURNF 1000
+;えーりん＆輝夜
+ELSEIF (ARG == 1029 && ARG:1 == 1030) || (ARG == 1030 && ARG:1 == 1029)
+	TSTR:0 = 胡蝶夢丸ナイトメア
+	RETURNF 1000
+;輝夜＆もこ
+ELSEIF (ARG == 1030 && ARG:1 == 1031) || (ARG == 1031 && ARG:1 == 1030)
+	TSTR:0 = ホウライヴォルケイノ
+	RETURNF 1000
+;輝夜＆豊姫or依姫
+ELSEIF (ARG == 1030 && (ARG:1 == 1053 || ARG:1 == 1054)) || ((ARG == 1054 || ARG == 1053) && ARG:1 == 1030)
+	TSTR:0 = Dual Moon Princess
+	RETURNF 1000
+;あやや＆椛
+ELSEIF (ARG == 1032 && ARG:1 == 1041) || (ARG == 1041 && ARG:1 == 1032)
+	TSTR:0 = あややとスキャンダル
+	RETURNF 1000
+;あやや＆はたて
+ELSEIF (ARG == 1032 && ARG:1 == 1079) || (ARG == 1079 && ARG:1 == 1032)
+	TSTR:0 = ダブルスポ淫乱
+	RETURNF 1000
+;小町＆映姫
+ELSEIF (ARG == 1035 && ARG:1 == 1036) || (ARG == 1036 && ARG:1 == 1035)
+	TSTR:0 = 淫業裁判
+	RETURNF 1000
+;小町＆華扇
+ELSEIF (ARG == 1035 && ARG:1 == 1080) || (ARG == 1080 && ARG:1 == 1035)
+	TSTR:0 = 拓落失路の二人
+	RETURNF 1000
+;秋姉妹
+ELSEIF (ARG == 1037 && ARG:1 == 1038) || (ARG == 1038 && ARG:1 == 1037)
+	TSTR:0 = 姉妹丼～秋
+	RETURNF 1000
+;守矢神社
+ELSEIF (ARG == 1042 && ARG:1 == 1043) || (ARG == 1043 && ARG:1 == 1042)
+	TSTR:0 = 諏訪子さまがみてる
+	RETURNF 1000
+ELSEIF (ARG == 1042 && ARG:1 == 1044) || (ARG == 1044 && ARG:1 == 1042)
+	TSTR:0 = 神奈子さまがみてる
+	RETURNF 1000
+ELSEIF (ARG == 1043 && ARG:1 == 1044) || (ARG == 1044 && ARG:1 == 1043)
+	TSTR:0 = 人妻陵辱調教～失われた信仰心
+	RETURNF 1000
+;三月精
+ELSEIF (ARG == 1045 && ARG:1 == 1046) || (ARG == 1046 && ARG:1 == 1045)
+	TSTR:0 = 三穴精
+	RETURNF 1000
+ELSEIF (ARG == 1045 && ARG:1 == 1047) || (ARG == 1047 && ARG:1 == 1045)
+	TSTR:0 = 三尻精
+	RETURNF 1000
+ELSEIF (ARG == 1046 && ARG:1 == 1047) || (ARG == 1047 && ARG:1 == 1046)
+	TSTR:0 = 三結精
+	RETURNF 1000
+;秘封
+ELSEIF (ARG == 1049 && ARG:1 == 1050) || (ARG == 1050 && ARG:1 == 1049)
+	TSTR:0 = 秘棒倶楽部
+	RETURNF 1000
+;衣玖さん＆天子
+ELSEIF (ARG == 1051 && ARG:1 == 1052) || (ARG == 1052 && ARG:1 == 1051)
+	TSTR:0 = 要石ＦＥＶＥＲＯＮ
+	RETURNF 1000
+;豊姫＆依姫
+ELSEIF (ARG == 1053 && ARG:1 == 1054) || (ARG == 1054 && ARG:1 == 1053)
+	TSTR:0 = 姉妹丼～月
+	RETURNF 1000
+;さとり＆こいし
+ELSEIF (ARG == 1061 && ARG:1 == 1064) || (ARG == 1064 && ARG:1 == 1061)
+	TSTR:0 = 姉妹丼～覚
+	RETURNF 1000
+;お燐＆お空
+ELSEIF (ARG == 1062 && ARG:1 == 1063) || (ARG == 1063 && ARG:1 == 1062)
+	TSTR:0 = アンラッキー・デイズ
+	RETURNF 1000
+;ナズーリン＆星
+ELSEIF (ARG == 1071 && ARG:1 == 1076) || (ARG == 1076 && ARG:1 == 1071)
+	TSTR:0 = 主従の宝探し～裸体編
+	RETURNF 1000
+;一輪＆雲山
+ELSEIF (ARG == 1073 && ARG:1 == 1074) || (ARG == 1074 && ARG:1 == 1073)
+	TSTR:0 = 時代親父とハイカラ娼女
+	RETURNF 1000
+;ムラサ＆白蓮
+ELSEIF (ARG == 1075 && ARG:1 == 1077) || (ARG == 1077 && ARG:1 == 1075)
+	TSTR:0 = 蜜も滴る聖尼公
+	RETURNF 1000
+;星＆白蓮
+ELSEIF (ARG == 1076 && ARG:1 == 1077) || (ARG == 1077 && ARG:1 == 1076)
+	TSTR:0 = 性尼公のエア宝塔
+	RETURNF 1000
+;白蓮＆ぬえ
+ELSEIF (ARG == 1077 && ARG:1 == 1078) || (ARG == 1078 && ARG:1 == 1077)
+	TSTR:0 = ＵＦＯ！いい尼さん…
+	RETURNF 1000
+;ぬえ＆マミゾウ
+ELSEIF (ARG == 1078 && ARG:1 == 1087) || (ARG == 1087 && ARG:1 == 1078)
+	TSTR:0 = 性交変化十番勝負
+	RETURNF 1000
+;芳香＆青娥
+ELSEIF (ARG == 1082 && ARG:1 == 1083) || (ARG == 1083 && ARG:1 == 1082)
+	TSTR:0 = 通隷芳香
+	RETURNF 1000
+;青娥＆神子
+ELSEIF (ARG == 1082 && ARG:1 == 1086) || (ARG == 1086 && ARG:1 == 1082)
+	TSTR:0 = テン・デザイアズ
+	RETURNF 1000
+;屠自古＆布都
+ELSEIF (ARG == 1084 && ARG:1 == 1085) || (ARG == 1085 && ARG:1 == 1084)
+	TSTR:0 = 娼館「業族乱舞」
+	RETURNF 1000
+;屠自古＆神子
+ELSEIF (ARG == 1084 && ARG:1 == 1086) || (ARG == 1086 && ARG:1 == 1084)
+	TSTR:0 = 娼館「豪俗乱舞」
+	RETURNF 1000
+;布都＆神子
+ELSEIF (ARG == 1085 && ARG:1 == 1086) || (ARG == 1086 && ARG:1 == 1085)
+	TSTR:0 = 娼館「豪族乱撫」
+	RETURNF 1000
+;ちゆり＆夢美
+ELSEIF (ARG == 2007 && ARG:1 == 2008) || (ARG == 2008 && ARG:1 == 2007)
+	TSTR:0 = 実践・性の比較物理学講座
+	RETURNF 1000
+;夢月＆幻月
+ELSEIF (ARG == 2012 && ARG:1 == 2013) || (ARG == 2013 && ARG:1 == 2012)
+	TSTR:0 = 姉妹丼～悪
+	RETURNF 1000
+
+;………………………………………………
+;二次系ペア
+;………………………………………………
+;ここぁ＆こぁ
+ELSEIF ((ARG == 1007 && ARG:1 == 3020) || (ARG == 3020 && ARG:1 == 1007)) && RAND:2
+	TSTR:0 = KOADIUS
+	RETURNF 1000
+;ここぁ＆ここぁ
+ELSEIF (ARG == 1007 && ARG:1 == 3020) || (ARG == 3020 && ARG:1 == 1007)
+	TSTR:0 = KOADIUSⅡ　～ここぁの野望～
+	RETURNF 1000
+;美鈴＆小町
+ELSEIF (ARG == 1006 && ARG:1 == 1035) || (ARG == 1035 && ARG:1 == 1006)
+	TSTR:0 = サボマイスターとシエスタ・夢の競艶
+	RETURNF 1000
+;美鈴＆サラ
+ELSEIF (ARG == 1006 && ARG:1 == 2014) || (ARG == 2014 && ARG:1 == 1006)
+	TSTR:0 = 門番対決・死闘編
+	RETURNF 1000
+;咲夜＆夢子
+ELSEIF (ARG == 1009 && ARG:1 == 2018) || (ARG == 2018 && ARG:1 == 1009)
+	TSTR:0 = メイド対決・夜のご奉仕編
+	RETURNF 1000
+;レティ＆お空
+ELSEIF (ARG == 1012 && ARG:1 == 1063) || (ARG == 1063 && ARG:1 == 1012)
+	TSTR:0 = 北風と太陽
+	RETURNF 1000
+;ちぇん＆お燐
+ELSEIF (ARG == 1013 && ARG:1 == 1062) || (ARG == 1062 && ARG:1 == 1013)
+	TSTR:0 = 箱の猫
+	RETURNF 1000
+;白百合＆黒百合
+ELSEIF (ARG == 1015 && ARG:1 == 1056) || (ARG == 1056 && ARG:1 == 1015)
+	TSTR:0 = 春一番
+	RETURNF 1000
+;妖夢＆依姫
+ELSEIF (ARG == 1019 && ARG:1 == 1054) || (ARG == 1054 && ARG:1 == 1019)
+	TSTR:0 = 月下美刃
+	RETURNF 1000
+;早苗＆小傘
+ELSEIF (ARG == 1042 && ARG:1 == 1072) || (ARG == 1072 && ARG:1 == 1042)
+	TSTR:0 = 現人神さま、傘を拾う（陵辱編）
+	RETURNF 1000
+;雛＆神奈子様
+ELSEIF (ARG == 1039 && ARG:1 == 1043) || (ARG == 1043 && ARG:1 == 1039)
+	TSTR:0 = 昇天オンバシラＭⅠⅩ盛り
+	RETURNF 1500
+;雛＆衣玖さん
+ELSEIF (ARG == 1039 && ARG:1 == 1051) || (ARG == 1051 && ARG:1 == 1039)
+	TSTR:0 = 後光二重注連縄
+	RETURNF 1500
+;神奈子様＆衣玖さん
+ELSEIF (ARG == 1043 && ARG:1 == 1051) || (ARG == 1051 && ARG:1 == 1043)
+	TSTR:0 = サタデーナイト花魁アップ
+	RETURNF 1500
+;椛＆星
+ELSEIF (ARG == 1041 && ARG:1 == 1076) || (ARG == 1076 && ARG:1 == 1041)
+	TSTR:0 = 前門の寅・肛門の狼
+	RETURNF 1000
+
+;………………………………………………
+;特定の親子スペシャル
+;………………………………………………
+;けーね＆誰かの娘(＆主人が父親)
+ELSEIF (ARG == 1026 && ARG:1 == 2049 && CFLAG:ASSI:3100 != 1026 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1026 && CFLAG:3100 != 1026 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = イケナイ三者面談
+	RETURNF 1000
+;霊夢
+ELSEIF (ARG == 1001 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1001 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1001 && CFLAG:3100 == 1001 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 親子二重秘事大結界
+	RETURNF 1600
+;魔理沙(ねーよ)
+ELSEIF (ARG == 1002 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1002 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1002 && CFLAG:3100 == 1002 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 子づくりはパワーだぜ！
+	RETURNF 1600
+;こぁー！
+ELSEIF (ARG == 1007 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1007 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1007 && CFLAG:3100 == 1007 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = ボスラッシュ
+	RETURNF 1600
+;さくぽ
+ELSEIF (ARG == 1009 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1009 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1009 && CFLAG:3100 == 1009 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = マジカル咲夜ちゃん☆ドーター
+	RETURNF 1600
+;フ　ラ　ン　ち　ゃ　ん
+ELSEIF (ARG == 1011 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1011 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1011 && CFLAG:3100 == 1011 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 母娘丼～禁
+	RETURNF 1600
+;アリス×アリスの娘
+ELSEIF (ARG == 1014 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1014 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1014 && CFLAG:3100 == 1014 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 不修多羅(ふしだら)な国のアリス
+	RETURNF 1600
+;ゆゆこ
+ELSEIF (ARG == 1020 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1020 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1020 && CFLAG:3100 == 1020 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 親子の篤い法要
+	RETURNF 1600
+;あやや
+ELSEIF (ARG == 1032 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1032 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1032 && CFLAG:3100 == 1032 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 幻想郷最速の子作り
+	RETURNF 1600
+;えーきさま
+ELSEIF (ARG == 1036 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1036 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1036 && CFLAG:3100 == 1036 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = どきどき親娘裁判
+	RETURNF 1600
+;にゃーん
+ELSEIF (ARG == 1062 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 1062 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 1062 && CFLAG:3100 == 1062 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = おりんりんランド・真
+	RETURNF 1600
+;神綺さま
+ELSEIF (ARG == 2019 && ARG:1 == 2049 && CFLAG:ASSI:3100 == 2019 && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 2019 && CFLAG:3100 == 2019 && CFLAG:MASTER:3109 == CFLAG:3107)
+	TSTR:0 = 帰ってきた魔界創世・生命誕生の章
+	RETURNF 1600
+;特定の親子専用テンプレ(全4個所に同じキャラ番号を入力)
+;ELSEIF (ARG == 10 && ARG:1 == 2049 && CFLAG:ASSI:3100 ==  && CFLAG:MASTER:3109 == CFLAG:ASSI:3107) || (ARG == 2049 && ARG:1 == 10 && CFLAG:3100 ==  && CFLAG:MASTER:3109 == CFLAG:3107)
+;	TSTR:0 = 
+;	RETURNF 1600
+;親子(母親→娘)
+ELSEIF ARG == 2049 && CFLAG:ASSI:3109 == CFLAG:3105
+	IF CFLAG:MASTER:3109 == CFLAG:3107
+		TSTR:0 = 夜の子育て日記
+		RETURNF 1200
+	ELSE
+		TSTR:0 = 母娘の交姦日記
+		RETURNF 1000
+	ENDIF
+;親子(娘→母親)
+ELSEIF ARG:1 == 2049 && CFLAG:TARGET:3109 == CFLAG:ASSI:3105
+	IF CFLAG:MASTER:3109 == CFLAG:ASSI:3107
+		TSTR:0 = 母娘戦争～およめさんになるもん
+		RETURNF 1200
+	ELSE
+		TSTR:0 = 母娘の交姦日記
+		RETURNF 1000
+	ENDIF
+
+;………………………………………………
+;同種族同士(処理上素質の奴限定)のボーナス(他よりも低め)
+;………………………………………………
+;調教対象と助手が[妖精]
+ELSEIF TALENT:ASSI:妖精 && TALENT:妖精
+	TSTR:0 = 妖精乱撫
+	RETURNF 500
+;調教対象と助手が[吸血鬼]
+ELSEIF TALENT:ASSI:吸血鬼 && TALENT:吸血鬼
+	TSTR:0 = ダブル吸精鬼・堕落儀式
+	RETURNF 500
+;調教対象と助手が[機械]
+;ELSEIF TALENT:ASSI:機械 && TALENT:機械
+;	TSTR:0 = 
+;	RETURNF 500
+;調教対象と助手が[霊体]
+;ELSEIF TALENT:ASSI:霊体 && TALENT:霊体
+;	TSTR:0 = 
+;	RETURNF 500
+;調教対象と助手が[人形]
+ELSEIF TALENT:ASSI:人形 && TALENT:人形
+	TSTR:0 = エロメントドールズウォー
+	RETURNF 500
+;調教対象と助手が[悪魔]
+ELSEIF TALENT:ASSI:悪魔 && TALENT:悪魔
+	TSTR:0 = 悪魔の性宴　～えろサバト♪～
+	RETURNF 500
+;調教対象と助手が[河童]
+;ELSEIF TALENT:ASSI:河童 && TALENT:河童
+;	TSTR:0 = 
+;	RETURNF 500
+;調教対象と助手が[妖狐]
+;ELSEIF TALENT:ASSI:妖狐 && TALENT:妖狐
+;	TSTR:0 = 
+;	RETURNF 500
+;調教対象と助手が[半白澤]
+ELSEIF TALENT:ASSI:半白澤 && TALENT:半白澤
+	TSTR:0 = 告野家のハクタク丼
+	RETURNF 500
+;調教対象と助手が[覚]
+ELSEIF TALENT:ASSI:覚 && TALENT:覚
+	TSTR:0 = 魔淫奴・スキャン
+	RETURNF 500
+;調教対象と助手が[鬼]
+ELSEIF TALENT:ASSI:鬼 && TALENT:鬼
+	TSTR:0 = 渡る寝床は鬼ばかり
+	RETURNF 500
+;調教対象と助手が[天狗]
+ELSEIF TALENT:ASSI:天狗 && TALENT:天狗
+	TSTR:0 = 天狗の悪戯
+	RETURNF 500
+;調教対象と助手が[鵺]
+ELSEIF TALENT:ASSI:鵺 && TALENT:鵺
+	TSTR:0 = 娼退婦鳴
+	RETURNF 500
+;調教対象と助手が[神霊]
+ELSEIF TALENT:ASSI:神霊 && TALENT:神霊
+	TSTR:0 = 調教神話～創性記
+	RETURNF 500
+;調教対象と助手が[半神]
+ELSEIF TALENT:ASSI:半神 && TALENT:半神
+	TSTR:0 = 調教神話～神と人のまぐわい
+	RETURNF 500
+
+;………………………………………………
+;ちょっと特殊なボーナス
+;………………………………………………
+;調教対象と助手が[小悪魔]
+ELSEIF TALENT:ASSI:小悪魔 && TALENT:小悪魔
+	TSTR:0 = KOADIUS　外伝
+	RETURNF 300
+;調教対象が[貧乳]で助手が[巨乳]
+ELSEIF TALENT:ASSI:貧乳 && TALENT:巨乳
+	TSTR:0 = 勃発！おっぱい戦記Ⅰ
+	RETURNF 200
+;調教対象が[絶壁]で助手が[爆乳]
+ELSEIF TALENT:ASSI:絶壁 && TALENT:爆乳
+	TSTR:0 = 勃発！おっぱい戦記Ⅱ
+	RETURNF 200
+;調教対象が[巨乳]で助手が[貧乳]
+ELSEIF TALENT:ASSI:巨乳 && TALENT:貧乳
+	TSTR:0 = 勃発！おっぱい戦記Ⅲ
+	RETURNF 200
+;調教対象が[爆乳]で助手が[絶壁]
+ELSEIF TALENT:ASSI:爆乳 && TALENT:絶壁
+	TSTR:0 = 勃発！おっぱい戦記Ⅳ
+	RETURNF 200
+ELSE
+	RETURNF 0
+ENDIF

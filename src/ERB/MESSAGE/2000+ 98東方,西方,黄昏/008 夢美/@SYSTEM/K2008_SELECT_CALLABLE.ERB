@@ -1,0 +1,97 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;RANDでの乱数分岐関数名を生成し、呼び出し可能なものを1つ呼び出す関数
+;------------------------------------------------
+;■引数
+;	_FUNCNAME	関数名。RANDが入る部分を#にする。
+;	_OPTION		オプション、ほぼ未実装
+;■戻り値
+;	呼び出せたら、呼び出した関数の戻り値、無理なら０
+;================================================
+@K2008_SELECT_CALLABLE_FUNCTION(_FUNCNAME = "", _OPTION = "")
+#DIMS _TAG_ = "#" ; RANDで置き換える文字定数
+#DIMS _FUNCNAME
+#DIMS _OPTION
+#DIM _COUNT
+#DIM _CALLABLE
+#DIM _FUNCLIST, 100
+#DIM _LISTSIZE
+#DIM _RESULT
+#DIM _LINECOUNT
+_CALLABLE = 0
+VARSET _FUNCLIST, -1
+_LISTSIZE = VARSIZE("_FUNCLIST")
+
+SIF _FUNCNAME == ""
+	THROW 【K2008エラー】未登録の引数 %_FUNCNAME% が使用されました
+
+SIF 0 == INRANGE( STRCOUNT(_FUNCNAME, _TAG_), 0, 1)
+	THROW 【エラー】%_FUNCNAME%には過不足なく%_TAG_%を1個入れてください。
+	
+_FUNCNAME '= REPLACE(_FUNCNAME, _TAG_, "\{_COUNT\}")
+
+;RESULT退避
+_RESULT = RESULT
+
+;問い合わせ中はPRINT無効（デバッグモードは確認のためPRINT有効）
+SKIPDISP (__LINE__ == 0)
+;デバッグ用
+_LINECOUNT = LINECOUNT
+
+;問い合わせ用変数を有効にする
+__K2008N_CAN_CALL__ = 1
+
+FOR _COUNT, 1, _LISTSIZE
+	RESULT = -1
+	TRYCCALLFORM %STRFORM(_FUNCNAME)%
+		IF RESULT > 0
+			_FUNCLIST:(_CALLABLE) = _COUNT
+			_CALLABLE += 1
+			SIF _COUNT >= _LISTSIZE - 1
+				THROW 【エラー】口上【{_COUNT}】番で登録可能な口上の上限に到達しています。【加筆者へ】必要なら_FUNCLISTの配列上限を拡張してください。
+		ELSEIF RESULT == -1
+			THROW 【K2008エラー】適正なRETURN処理が得られませんでした。【加筆者へ】@%STRFORM(_FUNCNAME)%のRETURN処理を確認してください。
+		ENDIF
+	CATCH
+	ENDCATCH
+NEXT
+
+;問い合わせ用変数を無効にする
+__K2008N_CAN_CALL__ = 0
+
+;問い合わせ時にPRINTされてたらエラーで落とす
+SIF _LINECOUNT != LINECOUNT
+	THROW 【K2008エラー】@K2008_SELECT_CALLABLE_FUNCTIONで呼び出す際は、必ず呼び出し先の先頭で可否を返してください。
+;問い合わせ終了、PRINT有効
+SKIPDISP 0
+
+;RESULTを戻しておく
+RESULT = _RESULT
+
+;呼び出し可能なものがなければ戻る
+SIF _CALLABLE == 0
+	RETURN 0
+
+;呼べる関数があるかの確認だけの場合は、呼び出し可能数を返して終わり
+SELECTCASE _OPTION
+	CASE "ASKONLY"
+		RETURN _CALLABLE
+	CASE ""
+		;何もしないで次に進む
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %_OPTION% が使用されました
+ENDSELECT
+
+;_COUNTに呼び出し先の番号を代入する
+;関数名_FUNCNAMEの実体に{_COUNT}が含まれているため、_COUNTの変更だけで関数名が作れる
+_COUNT = _FUNCLIST:(RAND:_CALLABLE)
+
+;口上を呼び出す
+SIF __LINE__
+	CALL K2008D_PRINTFORML(STRFORM(_FUNCNAME) + "を呼び出します")
+
+TRYCCALLFORM %STRFORM(_FUNCNAME)%
+	RETURN RESULT
+CATCH
+	RETURN 0
+ENDCATCH

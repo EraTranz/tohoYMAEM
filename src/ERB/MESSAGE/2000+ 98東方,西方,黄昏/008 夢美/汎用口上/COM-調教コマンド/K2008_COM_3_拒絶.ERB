@@ -1,0 +1,147 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;（専用がないという意味で）汎用コマンド口上
+;========================================================
+
+;-------------------------------------------------
+;拒絶系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;苦痛＞快楽および苦痛＞好感の場合
+IF ARG:3 > ARG:0 && ARG:3 > ARG:1
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「小娘一人を押さえる程度で、暴力に訴えるとか最低ね」
+		CASEELSE
+			PRINTFORMW 「次は何？　鉄拳制裁でも飛んでくるのかしら？」
+	ENDSELECT
+;それ以外
+ELSE
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「怨みとか呪いとかで人を殺せないのかしら」
+			PRINTFORMW 「黒魔術……　そういう魔法を考えるのも悪くないわね」
+		CASE 2
+			PRINTFORMW 「ねえ、あなたを殴りたい気持ちで一杯なの」
+			PRINTFORMW 「じゃあ、殴るからよろしくね」
+		CASE 1
+			PRINTFORMW 「何よ、こんなこと……」
+		CASEELSE
+			PRINTFORMW 「そこいらの畜生のほうがあなたよりもマシね」
+			PRINTFORMW 「人語を解さないぶん、お付き合いも楽でいいのに」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;苦痛＞快楽および苦痛＞好感の場合
+IF ARG:3 > ARG:0 && ARG:3 > ARG:1
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「苦痛でしか人を抑えられないなんて哀れよね」
+		CASEELSE
+			PRINTFORMW 「こんな真似するなんて、獣の調教師のほうがお似合いね」
+	ENDSELECT
+;それ以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「あ～あ、どうしてこんな目にあってるのかしら」
+		CASEELSE
+			PRINTFORMW 「どうしてこう、ストレスが溜まるような真似ばかりするのかしら」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;苦痛＞快楽および苦痛＞好感の場合
+IF ARG:3 > ARG:0 && ARG:3 > ARG:1
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「こんな真似しか出来ないの？　軽蔑してあげるわ」
+		CASEELSE
+			PRINTFORMW 「ずいぶん酷いことをするのね……　お仕置きに苺クロスはいかが？」
+	ENDSELECT
+;それ以外
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「……へたくそ」
+		CASE 1
+			PRINTFORMW 「ろくでもない行動は……ろくでもない結果しか生まないわね」
+		CASEELSE
+			PRINTFORMW 「こんな無益な行為に何を見出してるのよ」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;苦痛＞快楽および苦痛＞好感の場合
+IF ARG:3 > ARG:0 && ARG:3 > ARG:1
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「え、ちょっと、そんなことするの！？」
+		CASEELSE
+			PRINTFORMW 「こんなの……　酷いじゃない」
+	ENDSELECT
+;それ以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%を、もっと嫌いになってもいいってことよね」
+		CASEELSE
+			PRINTFORMW 「もっとスマートに悦ばす方法を勉強してきなさい」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;苦痛＞快楽および苦痛＞好感の場合
+IF ARG:3 > ARG:0 && ARG:3 > ARG:1
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「――いいわ、付き合ってあげる。もっと激しいのを頂戴ね」
+		CASE 1
+			PRINTFORMW 「%K2008FS_CALL_YOUR_NAME()%って、平気でそういうことをするのね」
+		CASEELSE
+			PRINTFORMW 「あまり度が過ぎるようだと……　嫌いになっちゃうんだから」
+	ENDSELECT
+;それ以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 2
+			PRINTFORMW 「はぁ。できの悪い生徒を持つと教師が苦労するのね」
+		CASE 1
+			PRINTFORMW 「こういう時にやらしいのも変わらないわね」
+		CASEELSE
+			PRINTFORMW 「もう少し思いやりを持ってくれると素敵なんだけど」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+@K2008_RANK5_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)
+
+CALL K2008_RANK4_COM_GENERAL_REFUSAL(ARG:0, ARG:1, ARG:2, ARG:3)

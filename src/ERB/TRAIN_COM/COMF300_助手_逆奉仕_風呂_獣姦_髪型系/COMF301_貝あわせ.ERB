@@ -1,0 +1,244 @@
+﻿;=============================================================================
+;貝あわせ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE301
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:301 > 0
+	RETURN 0
+;調教者か調教対象が肥大陰核かオトコかふたなりだとダメ
+SIF EXIST_BAR(TARGET) || EXIST_BAR(PLAYER)
+	RETURN 0
+;主人が[禁断の知識]持ちじゃないとき、体格差が2段階以内か調教者が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+	RETURN 0
+;欲望3以下の場合貝あわせはできない（小悪魔、相性良好ならＯＫ）
+SIF ASSIPLAY && ABL:PLAYER:欲望 <= 3 && TALENT:PLAYER:小悪魔 == 0 && RELATION:(NO:PLAYER) < 150
+	RETURN 0
+;HARDモード以上は条件追加
+IF FLAG:3 >= 3
+	;バイブ挿入中はダメ
+	SIF TEQUIP:Ｖ系装着器具 == 1
+		RETURN 0
+	;Ｃ系装着具使用中は不可
+	SIF TEQUIP:Ｃ系装着器具
+		RETURN 0
+ENDIF
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;Ｕ系装着具使用中は不可
+SIF TEQUIP:Ｕ系装着器具
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手が褌着用中の場合はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;人魚はダメ
+SIF TALENT:人魚 == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 301) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM301
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;前回のコマンドが素股でサンドウィッチ実行可能の判定があるとチェック後サンドウィッチに派生
+IF PREVCOM == 43 && TFLAG:157
+	CALL JUDGE_TRAIN_PAIR, TARGET, ASSI
+	IF TFLAG:175 > 0
+		SIF EXCOM_ABLE629() == 1
+			JUMP COM629
+	ENDIF
+	TFLAG:157 = 0
+ENDIF
+
+PRINTL 貝あわせ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 301
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 貝あわせ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 30
+DOWNBASE:1 += 90
+
+SOURCE:接触 = 500
+SOURCE:露出 = 250
+SOURCE:屈従 = 400
+SOURCE:逸脱 = 300
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:欲情追加 = 200
+ELSEIF ABL:従順 == 1
+	SOURCE:欲情追加 = 120
+ELSEIF ABL:従順 == 2
+	SOURCE:欲情追加 = 60
+ELSEIF ABL:従順 == 3
+	SOURCE:欲情追加 = 20
+ELSEIF ABL:従順 == 4
+	SOURCE:欲情追加 = 0
+ELSE
+	SOURCE:欲情追加 = 0
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 20
+	SOURCE:性行動 = 0
+	SOURCE:達成感 = 0
+	TIMES SOURCE:露出 , 0.80
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 80
+	SOURCE:性行動 = 10
+	SOURCE:達成感 = 50
+	TIMES SOURCE:露出 , 0.90
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 350
+	SOURCE:性行動 = 50
+	SOURCE:達成感 = 100
+	TIMES SOURCE:露出 , 1.00
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 750
+	SOURCE:性行動 = 100
+	SOURCE:達成感 = 300
+	TIMES SOURCE:露出 , 1.10
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1200
+	SOURCE:性行動 = 700
+	SOURCE:達成感 = 600
+	TIMES SOURCE:露出 , 1.20
+ELSE
+	SOURCE:快Ｃ = 1750
+	SOURCE:性行動 = 2000
+	SOURCE:達成感 = 1000
+	TIMES SOURCE:露出 , 1.30
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.70
+	TIMES SOURCE:達成感 , 0.75
+	TIMES SOURCE:屈従 , 0.50
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.90
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+	TIMES SOURCE:屈従 , 0.70
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.25
+	TIMES SOURCE:屈従 , 0.80
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.40
+	TIMES SOURCE:達成感 , 1.50
+	TIMES SOURCE:屈従 , 0.90
+ELSE
+	TIMES SOURCE:性行動 , 1.60
+	TIMES SOURCE:達成感 , 1.75
+	TIMES SOURCE:屈従 , 1.00
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:奉仕精神 == 1
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:奉仕精神 == 2
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:奉仕精神 == 3
+	TIMES SOURCE:達成感 , 1.40
+ELSEIF ABL:奉仕精神 == 4
+	TIMES SOURCE:達成感 , 1.70
+ELSE
+	TIMES SOURCE:達成感 , 2.00
+ENDIF
+
+;調教者のABL:Ｃ感覚をみる
+IF ABL:PLAYER:Ｃ感覚 == 0
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:PLAYER:Ｃ感覚 == 1
+	TIMES SOURCE:性行動 , 0.90
+	TIMES SOURCE:達成感 , 0.70
+ELSEIF ABL:PLAYER:Ｃ感覚 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:PLAYER:Ｃ感覚 == 3
+	TIMES SOURCE:性行動 , 1.10
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:PLAYER:Ｃ感覚 == 4
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.40
+ELSE
+	TIMES SOURCE:性行動 , 1.30
+	TIMES SOURCE:達成感 , 1.70
+ENDIF
+
+;奴隷のＶ⇔調教者のＶの汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:ヴァギナ
+STAIN:PLAYER:ヴァギナ |= STAIN:ヴァギナ
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 8
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:Ｃ感覚 >= 3
+	TFLAG:50 += 1
+
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_301
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	PRINTFORML %CALLNAME:PLAYER%は性器を%CALLNAME:TARGET%の性器に擦りつけた…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いの性器を擦り合わせた…
+ENDIF

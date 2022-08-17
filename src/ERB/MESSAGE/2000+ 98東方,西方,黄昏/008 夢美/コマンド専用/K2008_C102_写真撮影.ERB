@@ -1,0 +1,85 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;写真撮影
+;CFLAG:__K2008N_CFLAG_SELECTCOM__を使用可
+;-------------------------------------------------
+@K2008_RANK5_COM_102
+;直前のコマンドで分岐する
+SELECTCASE PREVCOM
+	CASE 7, 124, 125, 182
+		;自慰系
+		PRINTFORMW 「あっ、カ、カメラ！？　まだっ手止まらないのにぃ」
+		PRINTFORMW 自慰の余韻に浸っているところにフラッシュを次々と浴びせた
+		PRINTFORMW 夢美のあられもない姿がフィルムに焼き付けられていく
+		PRINTFORMW 「オナニー姿撮られてばら撒かれて、誰かのオナペットになれるなんてステキぃ……」
+	CASE 41
+		;フェラチオ
+		PRINTFORMW 「咥えてるところ撮りたいの？」
+		PRINTFORMW 「あむっ　ほっへほっへー（撮って撮ってー）」
+	CASE 44
+		;アナル舐め強制
+		PRINTFORMW 「え、私が撮るの？」
+		PRINTFORMW 「まあご命令とあらば、やらせていただきますね」
+		PRINTFORMW 嬉しそうに%K2008FS_CALL_YOUR_NAME()%の尻穴を嘗め回す顔を自画撮りさせた
+	CASE 45
+		;アナルおねだり
+		PRINTFORMW 「このまま写真撮影ね。ほら、もっと近づきなさい」
+		PRINTFORMW 尻穴を目一杯開かせ、腸内の肉襞まで丸見えの状態で接写を繰り返した
+	CASE 61, 62, 65, 66, 68, 69, 70, 72
+		;薬飲用
+		PRINTFORMW 「服薬記念って変わったことするのね」
+		PRINTFORMW 「……我慢できなくなるから手短に撮って頂戴」
+	CASE 110
+		;秘貝開帳
+		PRINTFORMW 「え？そのまま待て？　……あら、カメラじゃない」
+		PRINTFORMW 「目一杯広げてあげるから可愛く撮って頂戴」
+		PRINTFORMW 大陰唇と小陰唇を別々の指で広げさせて何度も撮影を繰り返した
+	CASE 111, 620
+		;放尿
+		PRINTFORMW 「黄色い水溜りと一緒に写真撮影……　どう見てもおしっこよね」
+		PRINTFORMW 「…･･･出してる最中より恥ずかしいってどういうことかしら」
+	CASE 112, 113, 114
+		;陰毛処理
+		PRINTFORMW 「しょ、処理した毛をアソコと一緒に撮りたい！？」
+		PRINTFORMW 「どこまで変態なのよまったく……　ほら早くツルツルなとこ撮って♪」
+		PRINTFORMW 集めた陰毛と初々しくなった恥部との対比を楽しみつつシャッターを切った
+	CASE 135
+		;陰核測定
+		SELECTCASE BASE:陰核
+			CASE 1 TO 50
+				PRINTFORMW 「まだ小さいけど商品価値があるの？」
+			CASE 51 TO 100
+				PRINTFORMW 「んっ、子供おちんちんみたいな写真になっちゃう……　恥かしいわね」
+			CASE 101 TO 200
+				PRINTFORMW 「この写真を見た人、おちんちんと勘違いしちゃう？」
+			CASE IS > 200
+				PRINTFORMW 「グロテスクな肉塊だけど可愛く撮ってね」
+		ENDSELECT
+	CASE 150
+		IF TEQUIP:クスコ > 0
+			;クスコ（取り付け後）
+			PRINTFORMW 「%K2008FS_CALL_MY_V()%の中を撮りたいの？　変わってるわね」
+			PRINTFORMW 「……%K2008FS_CALL_YOUR_NAME()%と違って私は変態じゃないわよ、バカ」
+		ELSE
+			;クスコ（取り外し後）
+			PRINTFORMW 「あうぅ、まだ閉じてないってばぁ」
+			PRINTFORMW 「これじゃ、普段からユルユルみたいじゃない……　酷いわ」
+		ENDIF
+	CASE 174 * K2008F_CASEIF(TEQUIP:Ａ系装着器具 == 0)
+		;浣腸（取り外し後のみ）
+		IF K2008F_DEVRANK("排泄") > 0
+			;排泄中毒
+			PRINTFORMW 「カメラなんて持ってきて、%K2008FS_CALL_YOUR_NAME()%も変態さんね」
+			PRINTFORMW 「どうせならお尻から出してるところ撮ってくれればいいのに」
+			PRINTFORMW 「待ってて……お腹の中のもちょっと出せるかも　――んっ！ふっ！」
+		ELSE
+			PRINTFORMW 「うわっこんなに……私が出したの？　ってカメラ！？」
+			PRINTFORMW 「ダメダメダメ！　撮っちゃダメ！駄目だってばーーーー」
+		ENDIF
+	CASE PREVCOM * RAND:2
+		PRINTFORMW 「写真撮ってくれるの？　素敵」
+		PRINTFORMW 「ほらほらー　早く撮ってよ」
+	CASEELSE
+		CALL K2008_COM_GENERAL
+ENDSELECT
+

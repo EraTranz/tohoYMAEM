@@ -1,0 +1,104 @@
+﻿;=============================================================================
+;乳繰り合う
+;=============================================================================
+;完全趣味コマンドなので実用性０
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE342
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:342 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;恋慕時のみ使用可
+SIF TALENT:恋慕 == 0
+	RETURN 0
+;助手調教のときは助手も恋慕がないとダメ
+SIF ASSIPLAY && TALENT:PLAYER:恋慕 == 0
+	RETURN 0
+;欲情してると無理
+SIF PALAM:欲情 > PALAMLV:2
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;助手が褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF ASSIPLAY && TEQUIP:PLAYER:コスチュームプレイ > 2 && TEQUIP:PLAYER:コスチュームプレイ != 11 && TEQUIP:PLAYER:コスチュームプレイ != 17
+	RETURN 0
+;褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 11 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 342) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM342
+PRINTL 乳繰り合う
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 342
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 乳繰り合う
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+SOURCE:恭順追加 = 50
+
+;調教者と対象が双方[淫乱]と[淫乳]持ちで欲情追加
+SIF TALENT:PLAYER:淫乱 && TALENT:PLAYER:淫乳 && TALENT:淫乱 && TALENT:淫乳
+	SOURCE:欲情追加 = 30
+
+;[傀儡]と[精神崩壊]と[壊造人格]を持っておらず、[恋慕]持ちだと情愛のソースと愛情経験が加算
+IF TALENT:恋慕 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0
+	SOURCE:情愛 = 10
+	TCVAR:愛情経験 += 1
+ENDIF
+
+;奴隷のＢ⇔調教者の指の汚れが移動
+STAIN:胸 |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:胸
+;奴隷の指⇔調教者のＢの汚れが移動
+STAIN:手 |= STAIN:PLAYER:胸
+STAIN:PLAYER:胸 |= STAIN:手
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_342
+IF TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いの胸をいとおしげに乳繰り合った
+ELSEIF TALENT:PLAYER:淫乱 && TALENT:PLAYER:淫乳 && TALENT:淫乱 && TALENT:淫乳
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いの胸をいやらしい手つきで乳繰り合った
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いの胸を乳繰り合った
+ENDIF

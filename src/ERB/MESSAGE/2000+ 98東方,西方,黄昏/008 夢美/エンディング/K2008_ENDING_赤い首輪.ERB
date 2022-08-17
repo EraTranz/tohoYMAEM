@@ -1,0 +1,73 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING関係
+;奴隷エンディング
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SLAVE_ENDING
+DRAWLINE
+PRINTFORMW ―――奴隷エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+
+CALL K2008_SELECT_CALLABLE_FUNCTION("K2008_ENDING_SLAVE_#")
+
+PRINTFORMW 
+PRINTFORMW 　　　　　　　　―― Ending No.{10000+NO:TARGET}i (%CALLNAME:TARGET%奴隷エンド)
+
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING_AFTER関係
+;奴隷エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SLAVE_ENDING_AFTER
+;PRINTFORMW 
+RETURN 0
+
+
+;-------------------------------------------------
+;■標準
+;-------------------------------------------------
+@K2008_ENDING_SLAVE_1
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+PRINTFORML 
+PRINTFORMW それから少し後のお話...
+PRINTFORML 
+PRINTFORMW 「ほらほら、さっさと行くわよ」
+PRINTFORML 
+PRINTFORMW 真っ赤な髪、真っ赤な服に真っ赤な靴、真っ赤な首輪
+PRINTFORMW 赤尽くめの彼女の首には真っ赤な鎖が繋がれ、%CALLNAME:MASTER%の所有物であることを示している
+PRINTFORML 
+PRINTFORMW ……はずだが、なぜか今は%CALLNAME:MASTER%が彼女に引っ張られて、薄暗い路地を歩いている
+PRINTFORML
+PRINTFORMW 「今日はどんな子がいるかしら、楽しみだわ」
+PRINTFORML 
+PRINTFORMW もともと一人でやっていた調教師の仕事も、今では彼女と二人でやるようになった
+PRINTFORMW 性奴隷として優秀な彼女だが、躾ける側としても非凡な才能を発揮してくれるので助かっている
+PRINTFORML 
+PRINTFORMW 「いい子が居たら私が貰うわよ。　約束だからね！」
+PRINTFORMW 「この間の子も、せっかく選んで育ててたのに、%CALLNAME:MASTER%がお手付きしちゃうんだから」
+PRINTFORMW 「気に入った子とは無垢なまんまでラブラブちゅっちゅしたいのよ、分かる！？」
+PRINTFORML 
+PRINTFORMW 彼女が躾けた奴隷には不思議な魅力があり、なぜか無性に犯したい衝動にかられ、必ず実行してしまう
+PRINTFORML そのたびに『犯すなら私にしてよ！』とパイプ椅子で殴られてしまうのだが
+PRINTFORMW ちゃんと手加減もしてくれるし、今ではそれも楽しい日常の一コマだ
+PRINTFORML 
+PRINTFORMW 「ねぇ、あの子と私、どっちが気持ちよかった？」
+PRINTFORMW 「あっ何黙って逃げようとしてるのよ。　待ちなさい！　ちゃんと答えてよ！」
+PRINTFORML 
+PRINTFORMW ……もう少しで、いつも利用している奴隷商人の店に着く
+PRINTFORMW 奴隷を売りさばいて空き部屋ができたのもあるが、新しい『商品』が入荷したと知らせがあり、見に来たのだ
+PRINTFORMW 彼女の目に留まるような子がいるといいが
+PRINTFORML 
+PRINTFORMW 「よーし、分かったわ。　%CALLNAME:MASTER%にプレゼントするための子も今日探してあげる」
+PRINTFORMW 「私が一人で育てるから、いつもみたいなお手付きは厳禁だからね」
+PRINTFORMW 「それで育て上げたら、%CALLNAME:MASTER%の部屋に連れて行って」
+PRINTFORMW 
+PRINTFORMW 「……%CALLNAME:MASTER%を徹底的に、足腰立たなくなるまで、二人で犯してあげるわ」
+PRINTFORMW 「ふふふ、今から楽しみに待ってて頂戴ね、%CALLNAME:MASTER%♪」
+PRINTFORMW 
+PRINTFORMW ……どうしてこうなった
+

@@ -1,0 +1,206 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;汎用絶頂
+;================================================
+@K2008_ORGASM_GENERAL(ARG = __INT_MIN__)
+#DIM _COUNT
+#DIM _EXRANK
+#DIM _RANK
+
+
+;引数が与えられていない場合は、コマンド口上とみなす
+SELECTCASE ARG
+	CASE __INT_MIN__
+		;評価関数に投げる
+		_EXRANK = K2008F_ORGASMRANK()
+		ASSERT INRANGE(_EXRANK, 1, 3)
+	CASE IS < __INT_MIN__
+		THROW 【K2008エラー】未登録の引数 {ARG} が使用されました
+	CASEELSE
+		;引数が与えられている場合は、引数に従う
+		;ただし上限は3、下限は1
+		_EXRANK = LIMIT(ARG, 1, 3)
+ENDSELECT
+
+
+;ランク指定の汎用口上があればそちらを優先、ない場合は未指定に飛ばす
+;未指定もない場合、EXランクを1個ずつ下げて代用する
+_RANK = K2008F_RANK()
+
+SIF __LINE__
+	CALL K2008D_PRINTFORML(@"絶頂強度Lv{_EXRANK}")
+
+FOR _COUNT, _EXRANK, 1-1, -1
+	TRYCCALLFORM K2008_RANK{_RANK}_ORGASM_GENERAL_{_COUNT}
+		;口上が呼ばれたので終了
+		BREAK
+	CATCH
+		TRYCCALLFORM K2008_ORGASM_GENERAL_{_COUNT}
+			;口上が呼ばれたので終了
+			BREAK
+		CATCH
+			;EXランクを下げて続行
+			CONTINUE
+		ENDCATCH
+	ENDCATCH
+NEXT
+
+;================================================
+;汎用特殊絶頂
+;================================================
+@K2008_SP_ORGASM_GENERAL(ARGS = "")
+#DIM _NOWEX
+#DIM _COUNT
+#DIM _CALLABLE
+#DIM _LIST, 10
+
+_CALLABLE = 0
+VARSET _LIST, -1
+
+SELECTCASE ARGS
+	CASE ""
+		;引数が与えらていない場合は、コマンド口上とみなす
+		;特殊絶頂しているリストを取得
+		FOR _COUNT, 10, 19+1
+			;精飲絶頂は口上側から呼び出すので飛ばす
+			SIF _COUNT == 13
+				CONTINUE
+			IF NOWEX:_COUNT > 0
+				_LIST:(_CALLABLE) = _COUNT
+				_CALLABLE += 1
+			ENDIF
+		NEXT
+		;していなければ終わり
+		SIF _CALLABLE == 0
+			RETURN 0
+		;リストから1個選択
+		_CALLABLE = RAND:(_CALLABLE)
+		_NOWEX = _LIST:_CALLABLE
+	CASE "噴乳", "射精", "放尿", "精飲"
+		;引数が与えられている場合は、引数に従う
+		_NOWEX = GETNUM(NOWEX, ARGS)
+		SIF _NOWEX == -1
+			THROW 【K2008エラー】【加筆者の方へ】csvで定義されたNOWEXを指定してください
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+SIF __LINE__
+	CALL K2008D_PRINTFORML(@"特殊絶頂口上判定：%EXNAME:_NOWEX%　強度Lv{K2008F_ORGASMRANK()}")
+
+;ランク指定の汎用口上があればそちらを優先、ない場合は未指定に飛ばす
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_SP_ORGASM_GENERAL_{_NOWEX}
+CATCH
+	TRYCALLFORM K2008_SP_ORGASM_GENERAL_{_NOWEX}
+ENDCATCH
+
+;================================================
+;汎用寸止め絶頂
+;================================================
+@K2008_STAY_ORGASM_GENERAL
+#DIM _COUNT
+#DIM _EXLV
+
+;絶頂数を加算してそれっぽい強弱を作れたらなー
+_EXLV = 0
+FOR _COUNT, 20, 23+1
+	;PRINTFORML %EXNAME:_COUNT%【{NOWEX:_COUNT}】
+	_EXLV += NOWEX:_COUNT
+NEXT
+
+;淫魔は補正
+;SIF TALENT:淫魔
+;	_NOWEX /= 2
+
+SIF __LINE__
+	CALL K2008D_PRINTFORML("寸止め絶頂評価Lv" + TOSTR(_EXLV))
+
+SELECTCASE _EXLV
+	CASE IS <= 4
+		;目安は強絶頂＋強絶頂の二重絶頂まで
+		_EXLV = 1
+	CASE 5 TO 15
+		;目安は強絶頂＋強絶頂＋強絶頂の三重絶頂まで
+		_EXLV = 2
+	CASEELSE
+		;それ以上の発狂モード
+		_EXLV = 3
+ENDSELECT
+
+;ランク指定の汎用口上があればそちらを優先、ない場合は未指定に飛ばす
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_STAY_ORGASM_GENERAL_{_EXLV}
+CATCH
+	TRYCALLFORM K2008_STAY_ORGASM_GENERAL_{_EXLV}
+ENDCATCH
+
+;================================================
+;汎用おねだり
+;-------------------------------------------------
+;絶頂直前で止まっている状況で呼ばれる
+;================================================
+@K2008_NO_ORGASM_GENERAL
+#DIM _COUNT
+#DIM _EXRANK
+
+;絶頂直前の個数を調べる
+_EXRANK = 0
+;CVAB
+FOR _COUNT, 0, 3+1
+	SIF PALAM:_COUNT == PALAMLV:4 - 1
+		SETBIT _EXRANK, _COUNT
+NEXT
+
+;特殊絶頂のビットは絶頂に合わせる（BASEとは食い違う）
+;射精
+SIF BASE:射精 == MAXBASE:射精 - 1
+	SETBIT _EXRANK, GETNUM(NOWEX, "射精")
+;母乳
+SIF BASE:母乳 == MAXBASE:母乳 - 1
+	SETBIT _EXRANK, GETNUM(NOWEX, "噴乳")
+;尿意
+SIF BASE:尿意 == MAXBASE:尿意 - 1
+	SETBIT _EXRANK, GETNUM(NOWEX, "放尿")
+
+;おねだりなし
+SIF _EXRANK == 0
+	RETURN 0
+
+IF _EXRANK <= 0b1111
+	;CVABのみ
+	_EXRANK = 1
+ELSEIF (_EXRANK & 0b1111) == 0
+	;特殊絶頂前のみ
+	_EXRANK = 2
+ELSE
+	;複合
+	_EXRANK = 3
+ENDIF
+
+;ランク指定の汎用口上があればそちらを優先、ない場合は未指定に飛ばす
+TRYCCALLFORM K2008_RANK{K2008F_RANK()}_NO_ORGASM_GENERAL_{_EXRANK}
+CATCH
+	TRYCALLFORM K2008_NO_ORGASM_GENERAL_{_EXRANK}
+ENDCATCH
+
+;================================================
+;絶頂口上の簡易呼び出し関数
+;-------------------------------------------------
+;口上側で「ここで絶頂口上」とかいうときに呼びやすいように。
+;いちおう、指定した口上タイプへの評価値も与えられるようにしている。
+;================================================
+@K2008_ORGASM(ARGS = "")
+#DIM _EXRANK
+
+SELECTCASE ARGS
+	CASE "並", "弱"
+		_EXRANK = 1
+	CASE "大", "強"
+		_EXRANK = 2
+	CASE "特大", "最強"
+		_EXRANK = 3
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+CALL K2008_ORGASM_GENERAL(_EXRANK)
+

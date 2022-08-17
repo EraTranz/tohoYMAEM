@@ -1,0 +1,60 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;睡眠中
+;睡眠の判定 EQUIP:睡眠薬
+;         0 目覚め（この関数には来ない）
+;   1～2000 まどろみ
+;2001～5000 睡眠
+;5001～9000 熟睡
+;9001～     昏睡
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_SLEEP
+SELECTCASE EQUIP:睡眠薬
+	CASE IS > 2000
+		PRINT 　　　「
+		PRINTDATA
+			DATA zzzZZZ
+		ENDDATA
+		PRINTL 」
+	CASEELSE
+		;まどろみ
+		PRINT 　　　「
+		PRINTDATA
+			DATA ……zzzZZZ
+			DATA すぅ……　んっ……？　……すぅ
+			DATA ふぁ～よく寝たぁ……？　二度寝しよーっと
+		ENDDATA
+		PRINTL 」
+ENDSELECT
+
+;-------------------------------------------------
+;一度も調教していない
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_NEVER
+
+IF CFLAG:__K2008N_CFLAG_NEWGAMECOUNT__ >= 2
+	;周回済み
+	PRINT 　　　
+	PRINTDATA
+		DATA （まだかな、まだかな～）
+		DATA 「そろそろ来てくれてもいいんじゃない？」
+	ENDDATA
+	PRINTL
+ELSEIF CFLAG:46 > 0 && RAND:2 == 0
+	;睡眠薬を投与していると、本人に気が付かれず調教できる
+	PRINT 　　　「
+	PRINTDATA
+		DATA この間夜這いをかけた人、怒らないから出てきなさい
+		DATA 面と向かって手を出してこないなんて最低よ
+	ENDDATA
+	PRINTL 」
+ELSE
+	;変なことしてなければここ
+	PRINT 　　　「
+	PRINTDATA
+		DATA ちょっと、なんでこんな目に合わないといけないのよ
+		DATA ああ、もう！　部屋の外から鍵掛かってるとか最悪だわ
+	ENDDATA
+	PRINTL 」
+ENDIF
+

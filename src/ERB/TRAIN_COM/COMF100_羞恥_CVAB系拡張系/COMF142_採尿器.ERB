@@ -1,0 +1,300 @@
+﻿;=============================================================================
+;採尿器
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE142
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:142 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;尿道開発経験が1以下の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:尿道開発経験 <= 1
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;触手服が先に責めてるときはダメ
+SIF TEQUIP:触手服 & 32
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｕ系装着器具 == 2
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:採尿器 == 0
+	RETURN 0
+;[オトコ]の場合、技巧3以上じゃないと使えない
+SIF TALENT:オトコ && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;助手調教の場合、技巧4以上じゃないと使えない。
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;小人体型持ちは、双方が調教者と調教対象ならOK
+;それ以外の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && (TALENT:MASTER:禁断の知識 == 0 && TALENT:PLAYER:小人体型 == 0)
+	RETURN 0
+;尿道開発経験が10未満だとダメ
+SIF EXP:尿道開発経験 < 10
+	RETURN 0
+;他のＵ系装着具使用中は不可
+SIF (TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 2)
+	RETURN 0
+;オトコの場合、Ｃ系装着具使用中は不可
+SIF (TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム) && TALENT:オトコ
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 142) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM142
+PRINTL 採尿器
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 142
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 採尿器
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 75
+DOWNBASE:1 += 150
+
+SOURCE:露出 = 200
+SOURCE:達成感 = 200
+SOURCE:欲情追加 = 100
+SOURCE:痛み = 300
+SOURCE:屈従 = 500
+SOURCE:中毒充足 = 300
+SOURCE:逸脱 = 400
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 200
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 900
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 1600
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 2400
+ELSE
+	LOCAL:1 = 3000
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	TIMES LOCAL:1 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 60
+	TIMES LOCAL:1 , 1.10
+	TIMES SOURCE:逸脱 , 1.10
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 120
+	TIMES LOCAL:1 , 1.15
+	TIMES SOURCE:逸脱 , 1.25
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 240
+	TIMES LOCAL:1 , 1.25
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 480
+	TIMES LOCAL:1 , 1.30
+	TIMES SOURCE:逸脱 , 1.75
+ELSE
+	SOURCE:中毒充足 += 960
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:逸脱 , 2.00
+ENDIF
+
+;おもらし癖
+IF TALENT:おもらし癖
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:痛み , 1.75
+ENDIF
+;Ｃ敏感とＣ鈍感
+IF TALENT:Ｂ敏感
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL:1 , 0.60
+ENDIF
+;オトコ
+SIF TALENT:オトコ
+	TIMES SOURCE:痛み , 3.50
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES LOCAL:1 , 1.20
+
+SOURCE:快Ｃ += LOCAL:1
+
+;採尿器の着脱
+IF TEQUIP:Ｕ系装着器具 == 2
+	TEQUIP:Ｕ系装着器具 = 0
+	TCVAR:尿道開発経験 += 2
+ELSE
+	TCVAR:Ｕ拡張経験 += 1
+	TCVAR:尿道開発経験 += 1
+	TEQUIP:Ｕ系装着器具 = 2
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;採尿器装備中
+;-------------------------------------------------
+@EQUIP_COM142
+IF TEQUIP:触手調教 || TEQUIP:触手服 & 32
+	PRINTL ＜触手採尿中＞
+ELSE
+	PRINTL ＜採尿器装備中＞
+ENDIF
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 50
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 40
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 120
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL = 250
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL = 450
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL = 600
+ELSE
+	LOCAL = 750
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;EXP:放尿経験をみる
+IF EXP:放尿経験 <= EXPLV:0
+	TIMES LOCAL , 1.00
+ELSEIF EXP:放尿経験 <= EXPLV:1
+	TIMES LOCAL , 1.20
+ELSEIF EXP:放尿経験 <= EXPLV:2
+	TIMES LOCAL , 1.40
+ELSEIF EXP:放尿経験 <= EXPLV:3
+	TIMES LOCAL , 1.80
+ELSEIF EXP:放尿経験 <= EXPLV:4
+	TIMES LOCAL , 2.25
+ELSE
+	TIMES LOCAL , 4.00
+ENDIF
+
+;Ｃ敏感とＣ鈍感
+IF TALENT:Ｃ敏感
+	TIMES LOCAL , 1.40
+ELSEIF TALENT:Ｃ鈍感
+	TIMES LOCAL , 0.60
+ENDIF
+
+;おもらし癖
+SIF TALENT:おもらし癖
+	TIMES LOCAL , 1.30
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES LOCAL , 1.50
+
+SOURCE:快Ｃ += LOCAL
+SOURCE:露出 += 50
+SOURCE:達成感 += 150
+SOURCE:欲情追加 += 75
+SOURCE:痛み += 100
+SOURCE:屈従 += 50
+SOURCE:中毒充足 += 100
+SOURCE:逸脱 += 50
+
+;オトコ
+SIF TALENT:オトコ
+	SOURCE:痛み += 300
+
+TCVAR:尿道開発経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_142
+IF TEQUIP:Ｕ系装着器具 == 2
+	PRINTFORML %CALLNAME:TARGET%から採尿器を取り外した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の尿道にカテーテルを通して採尿器を取り付けた
+ENDIF

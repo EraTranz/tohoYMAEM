@@ -1,0 +1,32 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;COMxxx関連のコマンド固有処理を呼び出す関数
+;========================================================
+@K2008_COMSYSTEM(ARGS)
+#DIM _COUNT
+
+SELECTCASE ARGS
+	CASE "START"
+		;TRAIN_STARTで呼ばれるべき関数があれば呼ぶ
+		FOR _COUNT, 0, VARSIZE("TRAINNAME")
+			TRYCALLFORM K2008_COMSYSTEM_TRAINSTART_{_COUNT}
+		NEXT
+
+	CASE "SELECT"
+		;SELECTCOM直後なのでコマンド番号固定
+		TRYCALLFORM K2008_COMSYSTEM_SELECT_{SELECTCOM}
+
+	CASE "EQUIP", "TEQUIP"
+		;アイテム装備に関する処理があれば呼ぶ
+		FOR _COUNT, 0, VARSIZE("TRAINNAME")
+			TRYCALLFORM K2008_COMSYSTEM_EQUIPPING_{_COUNT}
+		NEXT
+
+	CASE "END"
+		;TRAIN_ENDで呼ばれるべき関数があれば呼ぶ
+		FOR _COUNT, 0, VARSIZE("TRAINNAME")
+			TRYCALLFORM K2008_COMSYSTEM_TRAINEND_{_COUNT}
+		NEXT
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT

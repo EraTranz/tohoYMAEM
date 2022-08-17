@@ -1,0 +1,249 @@
+﻿;=============================================================================
+;二人のＶをフィスト(ダブルフィスト)
+;=============================================================================
+;対象と助手の両方のＶに主人がフィストファック！
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE312
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:312 > 0
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ｖ経験LVが1未満で、調教者がオトコではない場合
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ｖ経験 < EXPLV:1 && TALENT:PLAYER:オトコ == 0
+	RETURN 0
+;対象か助手がオトコだとダメ
+SIF TALENT:オトコ || TALENT:ASSI:オトコ
+	RETURN 0
+;小柄体型なら従順が4以上かつマゾっ気が4以上じゃないと実行できない
+IF TALENT:小柄体型
+	SIF ABL:従順 < 4 || ABL:マゾっ気 < 4
+		RETURN 0
+ENDIF
+;助手も小柄体型なら従順が4以上かつマゾっ気が4以上じゃないと実行できない
+IF TALENT:ASSI:小柄体型
+	SIF ABL:ASSI:従順 < 4 || ABL:ASSI:マゾっ気 < 4
+		RETURN 0
+ENDIF
+;調教対象か助手が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF (TALENT:小人体型 || TALENT:ASSI:小人体型) && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;主人がサドか狂気じゃないとできない。
+SIF TALENT:MASTER:サド == 0 && TALENT:MASTER:狂気 == 0
+	RETURN 0
+;一定のＶ経験が必要([巨躯]の場合は軽減)
+IF TALENT:巨躯
+	LOCAL = 75
+ELSE
+	LOCAL = 150
+ENDIF
+SIF EXP:Ｖ経験 < LOCAL
+	RETURN 0
+;助手にも一定のＶ経験が必要([巨躯]の場合は軽減)
+IF TALENT:ASSI:巨躯
+	LOCAL = 75
+ELSE
+	LOCAL = 150
+ENDIF
+SIF EXP:ASSI:Ｖ経験 < LOCAL
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手コスプレ中はダメ
+SIF TEQUIP:ASSI:コスチュームプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 312) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM312
+PRINTL 二人のＶをフィスト
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 312
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 二人のＶをフィスト
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 550
+DOWNBASE:1 += 500
+DOWNBASE:ASSI:0 += 550
+DOWNBASE:ASSI:1 += 200
+
+
+SOURCE:痛み = 1200
+SOURCE:露出 = 1200
+SOURCE:屈従 = 1200
+SOURCE:逸脱 = 2000
+SOURCE:恭順追加 = 1200
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 2000
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 2500
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 3000
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 3300
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 3600
+ELSE
+	SOURCE:快Ｖ = 3800
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み += 20000
+	SOURCE:欲情追加 += 2000
+	SIF TALENT:PLAYER:オトコ == 0
+		TCVAR:異常経験 += 1
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み += 300
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み += 50
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:痛み += 10
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.40
+	SOURCE:痛み += 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	SOURCE:痛み += 0
+ENDIF
+
+;ABL:欲望をみる
+IF ABL:欲望 == 0
+	SOURCE:液体追加 = 100
+	SOURCE:屈従 += 3200
+ELSEIF ABL:欲望 == 1
+	SOURCE:液体追加 = 200
+	SOURCE:屈従 += 3800
+ELSEIF ABL:欲望 == 2
+	SOURCE:液体追加 = 350
+	SOURCE:屈従 += 4600
+ELSEIF ABL:欲望 == 3
+	SOURCE:液体追加 = 600
+	SOURCE:屈従 += 5400
+ELSEIF ABL:欲望 == 4
+	SOURCE:液体追加 = 850
+	SOURCE:屈従 += 6200
+ELSE
+	SOURCE:液体追加 = 1200
+	SOURCE:屈従 += 7000
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES SOURCE:液体追加 , 0.50
+ELSEIF ABL:奉仕精神 == 1
+	TIMES SOURCE:液体追加 , 0.80
+ELSEIF ABL:奉仕精神 == 2
+	TIMES SOURCE:液体追加 , 1.00
+ELSEIF ABL:奉仕精神 == 3
+	TIMES SOURCE:液体追加 , 1.50
+ELSEIF ABL:奉仕精神 == 4
+	TIMES SOURCE:液体追加 , 2.00
+ELSE
+	TIMES SOURCE:液体追加 , 2.50
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+SIF EXP:Ｖ拡張経験 == 0
+	TCVAR:異常経験 += 1
+TCVAR:Ｖ経験 += 25
+TCVAR:Ｖ拡張経験 += 1
+
+SIF TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+SIF EXP:ASSI:Ｖ拡張経験 == 0
+	TCVAR:ASSI:異常経験 += 1
+TCVAR:ASSI:Ｖ経験 += 25
+TCVAR:ASSI:Ｖ拡張経験 += 1
+
+SIF TALENT:ASSI:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:ASSI:レズ経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_312
+PRINTFORML %CALLNAME:TARGET%の膣と%CALLNAME:ASSI%の膣のそれぞれに、%CALLNAME:MASTER%は拳を入れてかき回してやった。
+PRINTFORM %CALLNAME:TARGET%
+IF ABL:Ｖ感覚 <= 1
+	PRINTL の膣は痙攣しているかのようにヒクついている
+ELSEIF ABL:Ｖ感覚 == 2
+	PRINTL の膣はぽっかり口を開いている
+ELSEIF ABL:Ｖ感覚 == 3
+	PRINTL の膣は拡がったままなかなか戻らない
+ELSEIF ABL:Ｖ感覚 == 4
+	PRINTL の性器からは肉ビラがはみ出し、ぽっかり開いた膣口のおくには子宮口が見えている
+ELSE
+	PRINTL は、自分の膣口を指で拡げ、恍惚としている
+ENDIF
+PRINTFORM 一方、%CALLNAME:ASSI%
+IF ABL:ASSI:Ｖ感覚 <= 1
+	PRINTL の膣は痙攣しているかのようにヒクついている
+ELSEIF ABL:ASSI:Ｖ感覚 == 2
+	PRINTL の膣はぽっかり口を開いている
+ELSEIF ABL:ASSI:Ｖ感覚 == 3
+	PRINTL の膣は拡がったままなかなか戻らない
+ELSEIF ABL:ASSI:Ｖ感覚 == 4
+	PRINTL の性器からは肉ビラがはみ出し、ぽっかり開いた膣口のおくには子宮口が見えている
+ELSE
+	PRINTL は、自分の膣口を指で拡げ、恍惚としている
+ENDIF

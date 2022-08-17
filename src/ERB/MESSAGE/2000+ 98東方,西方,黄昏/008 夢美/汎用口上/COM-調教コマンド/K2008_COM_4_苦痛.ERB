@@ -1,0 +1,197 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;（専用がないという意味で）汎用コマンド口上
+;========================================================
+
+;-------------------------------------------------
+;苦痛系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＋好感≧拒絶の場合
+IF ARG:0 + ARG:1 >= ARG:2
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「なによ、また酷いことするつもりなのね」
+			PRINTFORMW 「私……　貴方の玩具じゃないのよ、分かってる？」
+		CASE 2
+			PRINTFORMW 「痛みで好感が植えつけられるとでも？」
+			PRINTFORMW 「あきれたものね、馬鹿みたい」
+		CASE 1
+			PRINTFORMW 「……痛いだけよね」
+			PRINTFORMW 「そう、痛いだけ……　他には何もないの」
+		CASEELSE
+			PRINTFORMW 「苦痛が快楽にすり替わる、なんて本気で信じてるのかしら」
+			PRINTFORMW 「小賢しいわね……」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+;それ以外
+ELSE
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「痛いのが怖い？　フン、そんなの蚊に刺されるようなものよ」
+			PRINTFORMW 「姿を見ると無性に叩き潰したくなるのも蚊と同じ」
+		CASE 2
+			PRINTFORMW 「痛みで屈服させようなんて、野蛮な考えね」
+			PRINTFORMW 「野蛮な貴方にはとってもお似合いだわ」
+		CASE 1
+			PRINTFORMW 「へぇ、私を畜生か何かかと思ってるのね」
+			PRINTFORMW 「あなたも私から見たら立派な畜生だわ」
+		CASEELSE
+			PRINTFORMW 「次は拷問の真似事？　正気の沙汰じゃないわね……」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+ENDIF
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＋好感＞拒絶の場合
+IF ARG:0 + ARG:1 > ARG:2
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「こ、このっ！　もっと優しく扱いなさい！」
+		CASEELSE
+			PRINTFORMW 「痛みなんかで押さえ込もうなんて最低の発想だわ……」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+;それ以外
+ELSE
+	SELECTCASE RAND:5
+		CASE 4
+			PRINTFORMW 「痛ッ、くっ……　こ、このッ！」
+		CASE 3
+			PRINTFORMW 「このっ、そのうち仕返ししてやるから覚えてなさい！」
+		CASE 2
+			PRINTFORMW 「私が何したっていうのよ！　扱い方がなってないわね」
+		CASE 1
+			PRINTFORMW 「何するのよ！　痛いじゃない！」
+		CASEELSE
+			PRINTFORMW 「苛めて憂さ晴らしでもしようって魂胆なの？」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+ENDIF
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＋好感＞拒絶の場合
+IF ARG:0 + ARG:1 > ARG:2
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「この程度じゃ音は上げないからね！」
+		CASEELSE
+			PRINTFORMW 「痛みで従わせようって魂胆でしょ。みえみえよ」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+;それ以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「こ、このっ！　もっと優しく扱いなさい！」
+		CASEELSE
+			PRINTFORMW 「痛ッ！　あとでパイプ椅子でボコボコにしてやるんだから！」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+ENDIF
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＋好感＞拒絶の場合
+IF ARG:0 + ARG:1 > ARG:2
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「だっだめよ！　痛いのがクセになったらどうするのよ……」
+		CASE 2
+			PRINTFORMW 「す、素直になるからっ、だからもっとやさしくしてよ！」
+		CASE 1
+			PRINTFORMW 「んっ、ンンーーッ！」
+		CASEELSE
+			PRINTFORMW 「痛いのは嫌だから……　せめて気持ちよくお願いね」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+;それ以外
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「ぐぅッ！　いくらなんでもっ、これは酷いじゃない！」
+		CASEELSE
+			PRINTFORMW 「な、何よそれ。い、いやっ、やめてお願い！」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+ENDIF
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＋好感＞拒絶の場合
+IF ARG:0 + ARG:1 > ARG:2
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「あら、また痛い事をしてくれるの？　素敵」
+		CASE 1
+			PRINTFORMW 「いっ、痛いけどっ、いいの！　もっとぉ」
+		CASEELSE
+			PRINTFORMW 「痛くしてもいいけど、次はもっと気持ちよくしなさいよ」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+;それ以外
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「少しは加減して……ね、お願――！？」
+		CASE 1
+			PRINTFORMW 「や、やぁっ……　いっ痛！、痛ぃいいいい！！」
+		CASEELSE
+			PRINTFORMW 「くぅっ！　ま、まだ！　我慢してみせるわ！」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+ENDIF
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+@K2008_RANK5_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＋好感＞拒絶の場合
+IF ARG:0 + ARG:1 > ARG:2
+	CALL K2008_RANK4_COM_GENERAL_PAIN(ARG:0, ARG:1, ARG:2, ARG:3)
+;それ以外
+ELSE
+	SELECTCASE RAND:4
+		CASE 3
+			IF K2008F_HOWTIMES_COM(SELECTCOM) > 0
+				PRINTFORM 「ま、また！？　あうぅ……　
+			ELSE
+				PRINTFORM 「え、ちょ、ちょっと待って、
+			ENDIF
+			PRINTFORMW 少しだけ、すこーしだけ優しくして、ね？　……ね？　ヒィッ」
+		CASE 2
+			PRINTFORMW 「痛いだけなのにっ、んぅん！？　あっあぁああああ！！」
+		CASE 1
+			PRINTFORMW 「いったぁぁーーーい！！　いきなり何するのよ！」
+			PRINTFORMW 「……けど、たまにはこういうのもいいわね（ポッ）」
+		CASEELSE
+			PRINTFORMW 「え？　なに、何をするって言ったの？」
+			PRINTFORMW 「ん……　いいわよ、思いっきりやって頂戴」
+	ENDSELECT
+	CALL K2008_VOICE("苦痛")
+ENDIF
+

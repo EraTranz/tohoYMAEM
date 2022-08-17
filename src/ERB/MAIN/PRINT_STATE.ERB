@@ -1,0 +1,2576 @@
+﻿;=============================================================================
+;SHOPメニュー・能力確認での情報
+;=============================================================================
+;-------------------------------------------------
+;所持アイテム表示処理
+;-------------------------------------------------
+@ARRANGE_PRINT_ITEM
+PRINT 所持アイテム:
+LOCALS = 
+UNICODE 0x0020
+FOR LOCAL, 0, 90
+	SIF CHECK_ITEM_IS_VALID(LOCAL) && ITEM:LOCAL > 0
+		LOCALS = %LOCALS%%ITEMNAME:LOCAL%\@(LOCAL >= 60 && LOCAL < 90) ? ×{ITEM:LOCAL} # \@%RESULTS:0%
+NEXT
+FOR LOCAL, 600, 617
+	SIF ITEM:LOCAL > 0
+		LOCALS = %LOCALS%%ITEMNAME:LOCAL%×{ITEM:LOCAL}%RESULTS:0%
+NEXT
+
+SIF FLAG:15 & 16 && FLAG:73 & 1
+	LOCALS = %LOCALS% \@(FLAG:73 & 2) ? 三角木馬 # \@ \@(FLAG:73 & 4) ? 杭 # \@ \@(FLAG:73 & 8) ? ナイフ # \@ \@(FLAG:73 & 16) ? 鉈 # \@ \@(FLAG:73 & 32) ? アイアンメイデン # \@ %RESULTS:0%
+
+SIF FLAG:15 & 8192 && FLAG:72 & 1
+	LOCALS = %LOCALS% \@(FLAG:72 & 2) ? 「犬」 # \@ \@(FLAG:72 & 4) ? 「豚」 # \@ \@(FLAG:72 & 8) ? 「馬」 # \@ %RESULTS:0%
+
+SIF FLAG:71
+	LOCALS = %LOCALS%「庭園」 \@(FLAG:71 & 2) ? 石燈籠 # \@ \@(FLAG:71 & 4) ? 添水 # \@ \@(FLAG:71 & 8) ? 茶室 # \@ \@(FLAG:71 & 16) ? 池 # \@\@(FLAG:71 & 32) ? (魚) # \@ \@(FLAG:71 & 64) ? 噴水 # \@ \@(FLAG:71 & 128) ? 築山 # \@ \@(FLAG:71 & 256) ? (大樹) # \@ %RESULTS:0%
+
+SIF FLAG:79
+	LOCALS = %LOCALS%「ハーブ園」 \@(FLAG:79 & 2) ? ハーブ開発施設 # \@ \@(FLAG:79 & 4) ? ハーブ生産施設 # \@ %RESULTS:0%
+
+SIF ITEM:赤い首輪 > 0
+	LOCALS = %LOCALS% 《%ITEMNAME:98%》%RESULTS:0%
+SIF ITEM:エンゲージリング > 0
+	LOCALS = %LOCALS% 《%ITEMNAME:99%》%RESULTS:0%
+;SIF ITEM:東方調教典 > 0
+;	LOCALS = %LOCALS% 《%ITEMNAME:999%》
+IF FLAG:9549 & 2
+	PRINT 略 
+ELSE
+	IF STRLENS(LOCALS) <= 0
+		PRINT なし 
+	ELSE
+		PRINTFORM %LOCALS%
+	ENDIF
+ENDIF
+;………………………………………………
+;所持アイテム表示補助処理
+;………………………………………………
+;コンフィグを参照し、無効なコンフィグに対応するアイテムは表示しないようにする
+@CHECK_ITEM_IS_VALID(ARG)
+#FUNCTION
+;展示品
+IF ARG == 81 && (FLAG:12 & 8) == 0
+	RETURNF 0
+;特殊な薬系
+ELSEIF (ARG >= 62 && ARG <= 74) && (FLAG:13 & 1) == 0
+	RETURNF 0
+;Ｃ系拡張コマンド
+ELSEIF ((ARG >= 17 && ARG <= 19) || (ARG >= 25 && ARG <= 28)) && (FLAG:15 & 1) == 0
+	RETURNF 0
+;Ｖ系拡張コマンド
+ELSEIF (ARG >= 5 && ARG <= 8) && (FLAG:15 & 2) == 0
+	RETURNF 0
+;Ａ系拡張コマンド
+ELSEIF (ARG >= 10 && ARG <= 14 || ARG == 83) && (FLAG:15 & 4) == 0
+	RETURNF 0
+;Ｃ系とＡ系の両方に絡むもの
+ELSEIF ARG == 79 && (FLAG:15 & 1) == 0 && (FLAG:15 & 4) == 0
+	RETURNF 0
+;Ｖ系とＡ系の両方に絡むもの
+ELSEIF ARG == 4 && (FLAG:15 & 2) == 0 && (FLAG:15 & 4) == 0
+	RETURNF 0
+;Ｂ系拡張コマンド
+ELSEIF (ARG >= 21 && ARG <= 24) && (FLAG:15 & 8) == 0
+	RETURNF 0
+;注射系コマンド
+ELSEIF ARG == 53 && (FLAG:15 & 64) == 0
+	RETURNF 0
+;撮影コマンド拡張
+ELSEIF (ARG == 51 || ARG == 58 || ARG == 76) && (FLAG:15 & 128) == 0
+	RETURNF 0
+;羞恥プレイ系拡張コマンド
+ELSEIF (ARG == 40 || (ARG >= 43 && ARG <= 47) || ARG == 49 || ARG == 77 || ARG == 82) && (FLAG:15 & 512) == 0
+	RETURNF 0
+;調教者奉仕・ウフフ系拡張コマンド
+ELSEIF ARG == 78 && (FLAG:15 & 2048) == 0
+	RETURNF 0
+;紳士的な触手系コマンド
+ELSEIF ARG == 59 && (FLAG:15 & 4096) == 0
+	RETURNF 0
+ENDIF
+RETURNF 1
+
+;-------------------------------------------------
+;家の名前の表示処理
+;-------------------------------------------------
+@SHOW_HOUSE
+PRINT 住まい：
+SELECTCASE FLAG:90
+	CASE 0
+		PRINTFORM \@(STRLENS(CSTR:MASTER:1) > 0) ? %CSTR:MASTER:1% # 隠れ家\@ 
+	CASE 1
+		PRINT 豪邸
+	CASE 2
+		PRINT 小城
+	CASE 3
+		PRINT 隠れ里
+	CASEELSE
+		PRINTS SAVESTR:1
+ENDSELECT
+SIF ITEM:娼館 && FLAG:17 & 1
+	PRINT 　別館：娼館
+SIF TALENT:MASTER:野菜の錬金術師
+	PRINTFORM 　野菜畑：Lv \@(FLAG:573 < 20) ? {FLAG:573} # MAX\@
+PRINTL 
+
+LOCAL = CALC_SLAVE_CAPACITY() - CHARANUM
+PRINTFORML \@(LOCAL > 0) ? (後{LOCAL}人の奴隷を購入できます) #  (奴隷の数が限界です) \@
+
+;-------------------------------------------------
+;キャラ能力表示(種族他)
+;-------------------------------------------------
+;能力を見る選択のとき、各キャラの横で種族、体力、気力が表示されます。
+;一応完成。
+@SHOW_RACE, ARG
+PRINT 　　種族:
+IF NO:ARG == 1000 && TALENT:ARG:998 && TALENT:ARG:動物耳
+	PRINT チーター
+ELSEIF TALENT:ARG:呪精
+	PRINTS STR:145
+ELSEIF TALENT:ARG:妖精 && CFLAG:ARG:5 == 1
+	PRINTS STR:103
+ELSEIF TALENT:ARG:吸血鬼 && CFLAG:ARG:5 == 2
+	PRINTS STR:106
+ELSEIF TALENT:ARG:機械 && CFLAG:ARG:5 == 3
+	PRINTS STR:146
+ELSEIF TALENT:ARG:霊体 && CFLAG:ARG:5 == 4
+	PRINTS STR:143
+ELSEIF TALENT:ARG:人形 && CFLAG:ARG:5 == 5
+	PRINTS STR:121
+ELSEIF TALENT:ARG:悪魔 && CFLAG:ARG:5 == 6
+	PRINTS STR:104
+ELSEIF TALENT:ARG:河童 && CFLAG:ARG:5 == 7
+	PRINTS STR:127
+ELSEIF TALENT:ARG:妖狐 && CFLAG:ARG:5 == 8
+	PRINTS STR:112
+ELSEIF TALENT:ARG:半白澤 && CFLAG:ARG:5 == 9
+	PRINTS STR:116
+ELSE
+	PRINTS CSTR:ARG:33
+ENDIF
+SIF TALENT:MASTER:998
+	PRINTFORM 　キャラ番号:{NO:ARG}
+PRINTFORML 　体力:({BASE:ARG:体力, 4}/{MAXBASE:ARG:0, 4})　気力:({BASE:ARG:気力, 4}/{MAXBASE:ARG:1, 4})
+;一言口上呼び出し
+SIF ARG != MASTER && FLAG:10 & 4
+	CALL DISPLAY_KOJO_MESSAGE_IMPRESSION_MAIN, ARG
+IF ARG == MASTER && FLAG:12 & 4
+	CALL PRINT_MASTER_STATUS, ARG
+ELSEIF FLAG:12 & 4
+	CALL PRINT_SLAVE_STATUS, ARG
+ENDIF
+
+;-------------------------------------------------
+;主人用ステータス表示処理
+;-------------------------------------------------
+@PRINT_MASTER_STATUS, ARG
+PRINT 堕した奴隷の総数　　　　　:
+IF FLAG:30 > 9999
+	;エロ卿「にとり博士、事情を説明してもらおうかね?」
+	;にとり博士「今少し(自慰をする)時間と(ローターを買う)予算をいただければ……」
+	;エロ卿「弁解は罪悪と知り給え」
+	;PRINT [エロ卿のコレクション]
+	PRINT [萬 姦 全 籍]
+ELSEIF FLAG:30 > 999
+	PRINT [ミレニアム]
+ELSEIF FLAG:30 > 99
+	PRINT [百人斬り]
+ELSE
+	PRINTFORM {FLAG:30, 5}人
+ENDIF
+PRINTFORML 　(今回堕した人数:{CFLAG:ARG:98, 5}人)
+SIF FLAG:34
+	PRINTFORML 今まで売却した奴隷の総数　:{FLAG:34, 5}人
+SIF FLAG:31
+	PRINTFORML 今回烙印を押した奴隷の人数:{FLAG:31, 5}人
+SIF FLAG:33
+	PRINTFORML 今回生贄に捧げた奴隷の人数:{FLAG:33, 5}人
+;最後に調教されたキャラを表示
+IF FLAG:422 != CFLAG:MASTER:3109 && FLAG:422 != 0
+	LOCAL = SEARCH_CHARA_ID(FLAG:422 , 1)
+	IF LOCAL > 0
+		PRINTFORM 最後に調教したのは
+		PRINTFORM %SHOW_CALLNAME(LOCAL)%
+		PRINTFORML です。
+	ENDIF
+ENDIF
+;最後に調教で助手をしたキャラを表示
+IF FLAG:423 != CFLAG:MASTER:3109 && FLAG:423 != 0
+	LOCAL = SEARCH_CHARA_ID(FLAG:423 , 1)
+	IF LOCAL > 0
+		PRINTFORM 最後に調教で助手を担当したのは
+		PRINTFORM %SHOW_CALLNAME(LOCAL)%
+		PRINTFORML です。
+	ENDIF
+ENDIF
+
+;称号・エンディング到達表示
+STRLENS NICKNAME:MASTER
+SIF FLAG:9 || RESULT > 0
+	CALL PRINT_MASTER_MEDAL
+
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;称号・エンディング到達表示処理
+;-------------------------------------------------
+;特定難易度クリアで付加される
+@PRINT_MASTER_MEDAL
+STRLENS NICKNAME:MASTER
+SIF RESULT > 0
+	PRINTFORM 称号:%NICKNAME:MASTER% 
+
+;EASY
+SIF FLAG:9 & 1
+	PRINT ＞ 
+;NORMAL
+SIF FLAG:9 & 2
+	PRINT Ｇ 
+;HARD
+SIF FLAG:9 & 4
+	PRINT Ｋ 
+;LUNATIC
+SIF FLAG:9 & 8
+	PRINT ＊ 
+;PHANTASM
+SIF FLAG:9 & 16
+	PRINT α 
+;NORMAL～PHANTASMまで全制覇
+SIF FLAG:9 & 32
+	PRINT Α 
+;ULTRA
+SIF FLAG:9 & 64
+	PRINT S 
+;OVERDRIVE
+SIF FLAG:9 & 128
+	PRINT EX 
+;表2週と裏2週があってもいいじゃない
+SIF FLAG:9 & 64
+	PRINT † 
+SIF FLAG:9 & 128
+	PRINT ‡ 
+IF CFLAG:MASTER:157 & 32
+	PRINT 無敵 
+ELSEIF CFLAG:MASTER:157 & 16
+	PRINT 鬼才 
+ELSEIF CFLAG:MASTER:157 & 2
+	PRINT 天才 
+ELSEIF CFLAG:MASTER:157 & 1
+	PRINT 秀才 
+ENDIF
+SIF NICKNAME:MASTER != "『鬼畜』" && CFLAG:MASTER:157 & 8
+	PRINT おにちく 
+PRINTL 
+
+;-------------------------------------------------
+;奴隷用汎用ステータス表示処理
+;-------------------------------------------------
+@PRINT_SLAVE_STATUS, ARG
+PRINTFORM (主人調教経験:{EXP:ARG:主人調教経験} 調教度:{CFLAG:ARG:3668 / 10}.
+IF CFLAG:ARG:3668 >= 0
+	PRINTFORM {CFLAG:ARG:3668 % 10}
+ELSE
+	PRINTFORM {CFLAG:ARG:3668 % 10 * -1}
+ENDIF
+PRINT ％
+PRINTFORML  好感度:{CFLAG:ARG:好感度} ストレス:{CFLAG:ARG:ストレス} 異常経験:{EXP:ARG:異常経験} 娼婦人気度:{CFLAG:ARG:66})
+IF FLAG:15 & 4096 && TALENT:ARG:寄生
+	PRINTFORM 寄生触手成長LV
+	CALL PRINT_COLORBAR, MAX(BASE:ARG:触手, 0),MAXBASE:ARG:6, 20, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("紫"), RESULT:1
+	PRINTFORML ({BASE:ARG:触手, 4}/{MAXBASE:ARG:6, 4})
+ENDIF
+
+;称号表示
+SIF STRLENS(NICKNAME:ARG) > 0
+	PRINTFORML 称号:%NICKNAME:ARG% 
+;主人への呼び名（と呼ぶように命じただけでそう呼んでくれるかは奴隷次第）
+SIF STRLENS(MASTERNAME:ARG) > 0
+	PRINTFORML 主人のことを「%MASTERNAME:ARG%」と呼ぶように命じられている。
+;スペルカードの相手表示
+SIF TALENT:MASTER:998 && TALENT:ARG:スペルカード
+	PRINTFORML スペルカード使用者：%ITEMNAME:(100+TALENT:ARG:スペルカード)%
+;最後に調教された日数表示
+SIF CFLAG:ARG:46
+	PRINTFORML 調教を\@((DAY - CFLAG:ARG:46) <= 0) ? 受けたばっかりです # 受けてから{DAY - CFLAG:ARG:46}日ほど経過しています\@。
+;最後に助手を解任された日数表示
+SIF CFLAG:ARG:47 && ARG != ASSI
+	PRINTFORML 助手を解任\@((DAY - CFLAG:ARG:47) <= 0) ? されたばっかりです # されてから{DAY - CFLAG:ARG:47}日ほど経過しています\@。
+;現在ハーブ開発および生産中ならそれを表示。
+SIF CFLAG:ARG:4 == 2048
+	PRINTFORML 現在ハーブ開発施設にて、新種のハーブを開発中です。
+SIF CFLAG:ARG:4 == 4096
+	PRINTFORML 現在ハーブ生産施設にて、ハーブを生産中です。
+;睡眠薬の影響下にあれば表示
+SIF EQUIP:ARG:睡眠薬 > 0
+	PRINTFORML 睡眠薬の影響を受け\@(EQUIP:ARG:睡眠薬 >= 10000) ? 、熟睡し # て、眠っ \@ている。
+;桃の飴玉の影響をうけているなら表示
+SIF EQUIP:ARG:桃の飴玉 > 0
+	PRINTFORML 不思議な桃色の飴玉の影響を受けている。
+;紺の飴玉の影響をうけているなら表示
+SIF EQUIP:ARG:紺の飴玉 > 0
+	PRINTFORML 不思議な紺色の飴玉の影響を受けている。
+
+CALL NEW_DRAWLINE
+
+;=============================================================================
+;能力確認での情報個別関数(2ページ目)
+;=============================================================================
+;-------------------------------------------------
+;主人の○○数表示処理
+;-------------------------------------------------
+@PRINT_MASTER_NUMBER
+LOCALS:0 = %" " * 2%
+LOCALS:1 = ○
+
+SIF FLAG:32
+	PRINTFORML \@(FLAG:70 & 1) ? ○ # %" " * 2%\@妖精を堕した数　　　　　: %PRINT_FAIRY_NUMBER()%
+SIF FLAG:401
+	PRINTFORML \@(FLAG:70 & 16) ? ○ # %" " * 2%\@人形に変えた人数の合計　: {FLAG:401, 5}人
+SIF FLAG:402
+	PRINTFORML \@(FLAG:70 & 2) ? ○ # %" " * 2%\@吸血鬼化させた人数の合計: {FLAG:402, 5}人
+SIF FLAG:403
+	PRINTFORML \@(FLAG:70 & 4) ? ○ # %" " * 2%\@機械に改造した人数の合計: {FLAG:403, 5}人
+SIF FLAG:404
+	PRINTFORML \@(FLAG:70 & 8) ? ○ # %" " * 2%\@亡霊化させた人数の合計　: {FLAG:404, 5}人
+SIF FLAG:411
+	PRINTFORML \@(FLAG:70 & 1024) ? ○ # %" " * 2%\@僵尸化させた人数の合計　: {FLAG:411, 5}人
+SIF FLAG:405
+	PRINTFORML \@(FLAG:70 & 32) ? ○ # %" " * 2%\@傀儡にした人数の合計　　: {FLAG:405, 5}人
+SIF FLAG:406
+	PRINTFORML \@(FLAG:70 & 64) ? ○ # %" " * 2%\@食した尻子玉の合計　　　: {FLAG:406, 5}個
+SIF FLAG:408
+	PRINTFORML \@(FLAG:70 & 256) ? ○ # %" " * 2%\@ハクタク化を見た回数　　: {FLAG:408, 5}回
+SIF FLAG:409
+	PRINTFORML \@(FLAG:70 & 512) ? ○ # %" " * 2%\@同化刻印を捺した回数　　: {FLAG:409, 5}回
+SIF FLAG:400
+	PRINTFORML \@(FLAG:400 > 99) ? ○ # %" " * 2%\@恋慕処女を頂いた人数　　: {FLAG:400, 5}人
+SIF FLAG:11 & 8
+	PRINTFORML 　仕送りしてくれる人数　　: {PRINT_REMITTANCE_NUMBER(), 5}人
+
+CALL NEW_DRAWLINE
+
+;………………………………………………
+;妖精陥落数表示処理
+;………………………………………………
+@PRINT_FAIRY_NUMBER
+#FUNCTIONS
+SELECTCASE FLAG:32
+	CASE IS < 100
+		RETURNF @"{FLAG:32, 5}匹"
+	CASE IS < 500
+		RETURNF "[数え切れない]"
+	CASE IS < 1000
+		RETURNF "[星の数ほど]"
+	CASE IS < 10000
+		RETURNF "[見境無し]"
+	CASEELSE
+		;All your fairy are belong to us.だと長すぎたので
+		RETURNF "[All Your Fairy]"
+ENDSELECT
+
+;………………………………………………
+;仕送り人数総数のカウント処理
+;………………………………………………
+@PRINT_REMITTANCE_NUMBER
+#FUNCTION
+LOCAL = 0
+REPEAT CHARANUM
+	SIF COUNT == MASTER
+		CONTINUE
+	LOCAL += CFLAG:COUNT:3002
+REND
+RETURNF LOCAL
+
+;-------------------------------------------------
+;主人の触手関連のステータス表示処理
+;-------------------------------------------------
+@PRINT_MASTER_JUEL, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 触手関連 # 触手関連:\@
+
+PRINTFORML 　%ABLNAME:98%Lv:{ABL:ARG:触手使役}　%PALAMNAME:198%の珠:{JUEL:ARG:触手, 7}　触手エネルギー:{BASE:ARG:触手, 5}τ
+PRINTFORML 　触手の生贄:{FLAG:33, 3}人(累計:{FLAG:99, 3}人)
+PRINTFORM 　触手の能力:
+CALL SHOW_TENTACLE_ABL
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;記念日表示処理
+;-------------------------------------------------
+@PRINT_MEMORIALDAY, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 記念日 # 記念日:\@
+IF CFLAG:ARG:誕生日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:誕生日
+	PRINTFORM 誕生日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:購入された日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:購入された日
+	PRINTFORM 購入された日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:連れてこられた日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:連れてこられた日
+	PRINTFORM 連れてこられた日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:陥落した日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:陥落した日
+	PRINTFORM 陥落した日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:結婚記念日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:結婚記念日
+	PRINTFORM 結婚記念日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:契約記念日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:契約記念日
+	PRINTFORM 契約記念日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:初妊娠日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:初妊娠日
+	PRINTFORM 初めて妊娠した日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+IF CFLAG:ARG:初助手被任命日 > 0
+	CALL CALENDAR_CALC, CFLAG:ARG:初助手被任命日
+	PRINTFORM 初めて助手になった日は
+	CALL CALENDAR_PRINT, 0
+	PRINTL です。
+ENDIF
+CALL CALENDAR_CALC, DAY
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;親の名前表示
+;-------------------------------------------------
+;親の名前をステータスに表示します
+;使用変数一覧
+;LOCAL:0 父親
+;LOCAL:1 母親
+;LOCAL:2 父親の第×子
+;LOCAL:3 母親の第×子
+;LOCAL:4 育ての親
+@PRINT_PARENT, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 親子関係 # 親子関係:\@
+
+LOCAL:0 = CFLAG:ARG:3103
+LOCAL:1 = CFLAG:ARG:3100
+LOCAL:2 = CFLAG:ARG:3104
+LOCAL:3 = CFLAG:ARG:3102
+
+IF STRLENS(CSTR:ARG:5) > 0
+	PRINTFORML 父：%CSTR:ARG:5%(第{LOCAL:2}子) 母：%CSTR:ARG:6%(第{LOCAL:3}子)
+ELSE
+	PRINTFORML 父：%ITEMNAME:(LOCAL:0)%(第{LOCAL:2}子) 母：%ITEMNAME:(LOCAL:1)%(第{LOCAL:3}子)
+ENDIF
+
+IF CFLAG:ARG:3100 != CFLAG:ARG:3101
+	LOCAL:4 = CFLAG:ARG:3101
+	IF STRLENS(CSTR:ARG:7) > 0
+		PRINTFORML 育ての親は%CSTR:ARG:7%です。
+	ELSE
+		PRINTFORML 育ての親は%ITEMNAME:(LOCAL:4)%です。
+	ENDIF
+ENDIF
+CALL NEW_DRAWLINE
+CALL PRINT_MY_SISTERS, ARG
+
+;-------------------------------------------------
+;姉妹(元々ある姉妹ではない)の名前表示
+;-------------------------------------------------
+@PRINT_MY_SISTERS, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 子供の兄弟・姉妹関係 # 子供の兄弟・姉妹関係:\@
+
+PL_VAR_X:0 = 0
+PL_VAR_X:1 = 0
+PL_VAR_X:2 = 0
+PL_VAR_X:3 = 0
+PL_VAR_X:4 = 0
+PL_VAR_X:5 = 0
+PC_VAR2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:93 = 0
+	;自分自身はスキップ
+	SIF PC_VAR1 == ARG
+		CONTINUE
+	;手元にARG以外の子供がいて、かつ、ARGと同世代である
+	IF (NO:PC_VAR1 == 2048 || NO:PC_VAR1 == 2049) && CFLAG:PC_VAR1:3108 == CFLAG:ARG:3108
+		;PC_VAR1の両親とARGの両親は逆転させても完全に別人
+		SIF CFLAG:PC_VAR1:3107 != CFLAG:ARG:3107 && CFLAG:PC_VAR1:3105 != CFLAG:ARG:3105 && CFLAG:PC_VAR1:3107 != CFLAG:ARG:3105 && CFLAG:PC_VAR1:3105 != CFLAG:ARG:3107
+			CONTINUE
+		CALLF SET_LIST, PC_VAR2, PC_VAR1
+		PC_VAR2++
+		MARK:PC_VAR1:93 = 1
+	ENDIF
+NEXT
+PL_VAR_X:6 = PC_VAR2
+PL_VAR_L:1 = PC_VAR2 / 5
+PL_VAR_L:1 -= (PC_VAR2 % 5 == 0) ? 1 # 0
+
+
+IF PL_VAR_X:6
+	CALL MY_SISTERS_LIST, ARG
+	PRINTFORML {PL_VAR_X:6}人の兄弟・姉妹がいる。
+ELSEIF PL_VAR_X:6 == 0
+	PRINTFORML 現在、兄弟・姉妹がいない。
+ENDIF
+IF PL_VAR_L:1 > 0
+	PRINTFORMC \@(PL_VAR_L:0 > 0) ? [4]前の兄弟姉妹リスト # 　 \@
+	PRINTFORMC \@(PL_VAR_L:0 < PL_VAR_L:1) ? [6]次の兄弟姉妹リスト # 　 \@
+	PRINTL 
+ENDIF
+
+CALL NEW_DRAWLINE
+;-------------------------------------------------
+;姉妹の名前表示関数リスト
+;-------------------------------------------------
+@MY_SISTERS_LIST, ARG
+FOR PC_VAR1, 0, 5
+	PL_VAR_X:0 = GET_LIST(PC_VAR1 + PL_VAR_L:0 * 5)
+	IF MARK:(PL_VAR_X:0):93 == 0 && PL_VAR_L:1 > 0
+		PRINTL 
+		CONTINUE
+	ELSEIF PC_VAR2 <= PC_VAR1 && PL_VAR_L:1 == 0
+		CONTINUE
+	ENDIF
+	PRINTFORM %SHOW_CALLNAME3(PL_VAR_X:0, 12, 0)%　　(父:%CSTR:(PL_VAR_X:0):5, 12,LEFT%　母:%CSTR:(PL_VAR_X:0):6, 12,LEFT%)　
+	;(PL_VAR_X:0)とは異母兄弟
+	IF CFLAG:(PL_VAR_X:0):3107 == CFLAG:ARG:3107 && CFLAG:(PL_VAR_X:0):3105 != CFLAG:ARG:3105
+		PRINT (異母
+	;(PL_VAR_X:0)とは異父兄弟
+	ELSEIF (CFLAG:(PL_VAR_X:0):3107 != CFLAG:ARG:3107 || (CFLAG:ARG:3107 == 2046 && CFLAG:(PL_VAR_X:0):3107 == 2046) ) && CFLAG:(PL_VAR_X:0):3105 == CFLAG:ARG:3105
+		PRINT (異父
+	;(PL_VAR_X:0)とは純正
+	ELSEIF CFLAG:(PL_VAR_X:0):3107 == CFLAG:ARG:3107 && CFLAG:(PL_VAR_X:0):3105 == CFLAG:ARG:3105
+		PRINT (
+	;(PL_VAR_X:0)とは異母逆転兄弟
+	ELSEIF CFLAG:(PL_VAR_X:0):3107 == CFLAG:ARG:3105 && CFLAG:(PL_VAR_X:0):3105 != CFLAG:ARG:3107
+		PRINT (異母逆転
+	;(PL_VAR_X:0)とは異父逆転兄弟
+	ELSEIF CFLAG:(PL_VAR_X:0):3107 != CFLAG:ARG:3105 && CFLAG:(PL_VAR_X:0):3105 == CFLAG:ARG:3107
+		PRINT (異父逆転
+	;(PL_VAR_X:0)とは純正逆転
+	ELSEIF CFLAG:(PL_VAR_X:0):3107 == CFLAG:ARG:3105 && CFLAG:(PL_VAR_X:0):3105 == CFLAG:ARG:3107
+		PRINT (逆転
+	ENDIF
+	;共に引き継ぎ
+	IF CFLAG:ARG:18 > 0 && CFLAG:(PL_VAR_X:0):18 > 0
+		;ARGが兄姉
+		IF CFLAG:ARG:誕生日 <= CFLAG:(PL_VAR_X:0):3110 && (CFLAG:ARG:3102 <= CFLAG:(PL_VAR_X:0):3102 || CFLAG:ARG:3104 <= CFLAG:(PL_VAR_X:0):3104)
+			PRINTFORML \@(TALENT:ARG:オトコ) ? 兄 # 姉\@\@(TALENT:(PL_VAR_X:0):120) ? 弟 # 妹\@で\@(TALENT:ARG:オトコ) ? 兄 # 姉\@)
+		ELSE
+			PRINTFORML \@(TALENT:(PL_VAR_X:0):120) ? 兄 # 姉\@\@(TALENT:ARG:オトコ) ? 弟 # 妹\@で\@(TALENT:ARG:オトコ) ? 弟 # 妹\@)
+		ENDIF
+	;自分が引き継ぎ
+	ELSEIF CFLAG:ARG:18 > 0
+		PRINTFORML \@(TALENT:ARG:オトコ) ? 兄 # 姉\@\@(TALENT:(PL_VAR_X:0):120) ? 弟 # 妹\@で\@(TALENT:ARG:オトコ) ? 兄 # 姉\@)
+	;相手が引き継ぎ
+	ELSEIF CFLAG:(PL_VAR_X:0):18 > 0
+		PRINTFORML \@(TALENT:(PL_VAR_X:0):120) ? 兄 # 姉\@\@(TALENT:ARG:オトコ) ? 弟 # 妹\@で\@(TALENT:ARG:オトコ) ? 弟 # 妹\@)
+	;共に引き継ぎではない
+	ELSE
+		;ARGが兄姉
+		IF CFLAG:ARG:誕生日 <= CFLAG:(PL_VAR_X:0):3110 && (CFLAG:ARG:3102 <= CFLAG:(PL_VAR_X:0):3102 || CFLAG:ARG:3104 <= CFLAG:(PL_VAR_X:0):3104)
+			PRINTFORML \@(TALENT:ARG:オトコ) ? 兄 # 姉\@\@(TALENT:(PL_VAR_X:0):120) ? 弟 # 妹\@で\@(TALENT:ARG:オトコ) ? 兄 # 姉\@)
+		ELSE
+			PRINTFORML \@(TALENT:(PL_VAR_X:0):120) ? 兄 # 姉\@\@(TALENT:ARG:オトコ) ? 弟 # 妹\@で\@(TALENT:ARG:オトコ) ? 弟 # 妹\@)
+		ENDIF
+	ENDIF
+NEXT
+;-------------------------------------------------
+;子の名前表示
+;-------------------------------------------------
+;親の名前をステータスに表示します
+;使用変数一覧
+;LOCAL:0 父親
+;LOCAL:1 母親
+;LOCAL:2 父親の第×子
+;LOCAL:3 母親の第×子
+;LOCAL:4 育ての親
+@PRINT_MY_CHILDREN, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 子供関係 # 子供関係:\@
+PL_VAR_X:0 = 0
+PL_VAR_X:1 = 0
+
+PC_VAR2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:93 = 0
+	;手元に子供がいて、かつ、ARGの世代の一つ下である
+	IF (NO:PC_VAR1 == 2048 || NO:PC_VAR1 == 2049) && CFLAG:PC_VAR1:3108 > CFLAG:ARG:3108
+		;PC_VAR1がARGにとって他人
+		IF CFLAG:PC_VAR1:3107 != CFLAG:ARG:3109 && CFLAG:PC_VAR1:3105 != CFLAG:ARG:3109
+			CONTINUE
+		;PC_VAR1が父・母ARGの子供
+		ELSE
+			CALLF SET_LIST, PC_VAR2, PC_VAR1
+			PC_VAR2++
+			MARK:PC_VAR1:93 = 1
+			;PC_VAR1が父
+			IF CFLAG:PC_VAR1:3107 == CFLAG:ARG:3109
+				PL_VAR_X:0++
+			;PC_VAR1が母
+			ELSE
+				PL_VAR_X:1++
+			ENDIF
+		ENDIF
+	ENDIF
+NEXT
+PL_VAR_L:3 = PC_VAR2 / 5
+PL_VAR_L:3 -= (PC_VAR2 % 5 == 0) ? 1 # 0
+
+SIF PL_VAR_X:0 > 0 || PL_VAR_X:1 > 0
+	CALL MY_CHILDREN_LIST, ARG
+
+PRINT 今までに、
+IF PL_VAR_X:0 <= 0 && PL_VAR_X:1 <= 0
+	PRINTFORM {CFLAG:ARG:3001}人の子供が出来た。
+ELSE
+	SIF PL_VAR_X:0 > 0
+		PRINTFORM {PL_VAR_X:0}人の子供が出来\@(PL_VAR_X:1 > 0) ? て、 # た。\@
+	SIF PL_VAR_X:1 > 0
+		PRINTFORM {PL_VAR_X:1}人の子供を産んだ。
+ENDIF
+PRINTL 
+IF PL_VAR_L:3 > 0
+	PRINTFORMC \@(PL_VAR_L:2 > 0) ? [44]前の子供リスト # 　 \@
+	PRINTFORMC \@(PL_VAR_L:2 < PL_VAR_L:3) ? [66]次の子供リスト # 　 \@
+	PRINTL 
+ENDIF
+CALL NEW_DRAWLINE
+;-------------------------------------------------
+;子供の名前表示関数リスト
+;-------------------------------------------------
+@MY_CHILDREN_LIST, ARG
+FOR PC_VAR1, 0, 5
+	PL_VAR_X:3 = GET_LIST(PC_VAR1 + PL_VAR_L:2 * 5)
+	IF MARK:(PL_VAR_X:3):93 == 0 && PL_VAR_L:3 > 0
+		PRINTL 
+		CONTINUE
+	ELSEIF PC_VAR2 <= PC_VAR1 && PL_VAR_L:3 == 0
+		CONTINUE
+	ENDIF
+	PRINTFORM \@TALENT:(PL_VAR_X:3):120 ? 　息子　 # 　 娘 　\@:
+	PRINTFORML %SHOW_CALLNAME3(PL_VAR_X:3, 12, 0)%　第{CFLAG:(PL_VAR_X:3):3108}世代　(父:%CSTR:(PL_VAR_X:3):5, 12,LEFT%　母:%CSTR:(PL_VAR_X:3):6, 12,LEFT%)
+NEXT
+
+;-------------------------------------------------
+;キャラ同士の相性表示処理
+;-------------------------------------------------
+@PRINT_RELATION, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 相性 # 相性:\@
+
+CALL SET_CALLNAME
+LOCAL = 0
+
+PC_VAR2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:93 = 0
+	SIF PC_VAR1 == ARG
+		CONTINUE
+	LOCAL:1 = RELATION:ARG:(NO:PC_VAR1)
+	SIF LOCAL:1 <= 0 || LOCAL:1 == 100
+		CONTINUE
+	CALLF SET_LIST, PC_VAR2, PC_VAR1
+	PC_VAR2++
+	MARK:PC_VAR1:93 = 1
+NEXT
+IF PC_VAR2 == 0
+	PRINTL 特になし
+	CALL NEW_DRAWLINE
+	RETURN 1
+ENDIF
+PL_VAR_L:5 = PC_VAR2 / 15
+PL_VAR_L:5 -= (PC_VAR2 % 15 == 0) ? 1 # 0
+
+CALL RELATION_LIST, ARG
+
+IF PL_VAR_L:5 > 0
+	PRINTFORMC \@(PL_VAR_L:4 > 0) ? [444]前の相性リスト # 　 \@
+	PRINTFORMC \@(PL_VAR_L:4 < PL_VAR_L:5) ? [666]次の相性リスト # 　 \@
+	PRINTL 
+ENDIF
+CALL NEW_DRAWLINE
+;-------------------------------------------------
+;キャラ同士の相性表示処理
+;-------------------------------------------------
+@RELATION_LIST, ARG
+PC_VAR3 = 0
+FOR PC_VAR1, 0, 15
+	PL_VAR_X:3 = GET_LIST(PC_VAR1 + PL_VAR_L:4 * 15)
+	IF PC_VAR2 <= PC_VAR1 + PL_VAR_L:4 * 15 && PL_VAR_L:5 > 0
+		SIF (PC_VAR1 + 1) % 3 == 0
+			PRINTL 
+		CONTINUE
+	ELSEIF PC_VAR2 <= PC_VAR1 + PL_VAR_L:4 * 15 && PL_VAR_L:5 == 0
+		CONTINUE
+	ENDIF
+	PC_VAR3++
+	LOCAL:1 = RELATION:ARG:(NO:(PL_VAR_X:3))
+	PRINTFORM %SHOW_CALLNAME2(PL_VAR_X:3, 18)%×{LOCAL:1, 3}％
+	
+	IF (PC_VAR1 + 1) % 3 == 0
+		PRINTL 
+	ELSE
+		PRINT 　
+	ENDIF
+NEXT
+SIF PC_VAR3 % 3
+	PRINTL 
+
+;=============================================================================
+;能力確認での情報個別関数(3ページ目)
+;=============================================================================
+;--------------------------------------------------
+;難易度表示処理
+;--------------------------------------------------
+@SHOW_DIFFICULTY
+PRINTFORML \@(FLAG:12 & 2) ? □ 現在の難易度 # 現在の難易度:\@
+PRINTFORML %DISPLAY_DIFFICULTY(FLAG:3)%
+CALL NEW_DRAWLINE
+
+;--------------------------------------------------
+;迎えたエンディング表示処理
+;--------------------------------------------------
+@SHOW_ENDING
+PRINTFORML \@(FLAG:12 & 2) ? □ この周に迎えたエンディング # この周に迎えたエンディング:\@
+;現状FLAG:598は0～：通常・ハーレムエンド、11001～：単体エンド、21001～：奴隷エンドなので、これで分岐してみる
+IF FLAG:598 < 1001
+	STR:0 = %STR:(10000+FLAG:598)%\@(FLAG:599 & 2) ? Ⅱ#\@
+	PRINTFORML “Ending No.{FLAG:598, 2}\@(FLAG:599 & 1) ? +# \@ (%STR:0%)”
+ELSEIF FLAG:598 < 20000
+	PRINTFORML “Ending No.{FLAG:598} (%ITEMNAME:(FLAG:598 - 10000)%単体エンド)”
+ELSEIF FLAG:598 < 30000
+	PRINTFORML “Ending No.{FLAG:598 - 10000} (%ITEMNAME:(FLAG:598 - 20000)%奴隷エンド)”
+ENDIF
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;主人の引き継ぎ時に変化可能な種族の表示処理
+;-------------------------------------------------
+@PRINT_MASTER_CHANGEABLE_RACE
+SIF FLAG:4 > 1 || FLAG:3 < 1
+	RETURN 0
+
+PRINTFORML \@(FLAG:12 & 2) ? □ 種族知識 # 種族知識:\@
+
+SIF FLAG:70 & 1
+	PRINT [妖精] 
+SIF FLAG:70 & 2
+	PRINT [吸血鬼] 
+SIF FLAG:70 & 4
+	PRINT [機械] 
+SIF FLAG:70 & 8
+	PRINT [亡霊] 
+SIF FLAG:70 & 16
+	PRINT [人形] 
+SIF FLAG:70 & 32
+	PRINT [悪魔] 
+SIF FLAG:70 & 64
+	PRINT [河童] 
+SIF FLAG:70 & 128
+	PRINT [妖狐] 
+SIF FLAG:70 & 256
+	PRINT [ワーハクタク] 
+SIF FLAG:70 & 512
+	PRINT [ゾンビフェアリー] 
+SIF FLAG:400 > 99
+	PRINT [ヒト] 
+
+PRINTL 
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;引き継ぎ時助手可能人数増加フラグの表示処理
+;-------------------------------------------------
+@PRINT_ASSISTANT_SUCCESSION
+;ゲームモードがeratohoYM,ABNORMAL,PROSTITUEのみ
+SIF FLAG:4 != 0 && FLAG:4 != 1 && FLAG:4 != 4
+	RETURN 0
+;コンフィグで強くてニューゲームをONでないとだめ
+SIF (FLAG:12 & 1) == 0
+	RETURN 0
+
+PRINTFORML \@(FLAG:12 & 2) ? □ 助手引継ぎ可能人数増加状況 # 助手引継ぎ可能人数増加状況:\@
+SIF FLAG:8 & 1
+	PRINTL 大甲斐性持ち
+IF FLAG:8 & 2
+	IF FLAG:9 & 128
+		PRINTL OVERDRIVEクリア
+	ELSEIF FLAG:9 & 64
+		PRINTL ULTRAクリア
+	ELSE
+		PRINTL PHANTASMクリア
+	ENDIF
+ENDIF
+SIF FLAG:8 & 4
+	PRINTL 調教師Lv5到達
+SIF FLAG:8 & 8
+	PRINTL 処女百人斬り達成
+SIF FLAG:8 & 16
+	PRINTL 奴隷売却累計2500萬圓達成
+SIF FLAG:8 & 32
+	PRINTL 高級奴隷売却累計1000萬圓達成
+SIF FLAG:8 & 64
+	PRINTL 奴隷売却最高金額40萬圓達成
+SIF FLAG:8 & 128
+	PRINTL 主人の種族転生資格全種取得
+SIF FLAG:8 & 256
+	PRINTL 風呂改装＆特殊触手付加45種以上達成
+SIF FLAG:8 & 512
+	PRINTL 幻想郷秘宝館開館！
+SIF FLAG:8 & 1024
+	PRINTL ノーマルハーレムエンド20達成
+SIF FLAG:8 & 2048
+	PRINTL 幻想郷入手経験あり
+SIF FLAG:8 & 4096
+	PRINTL 触手姫エンド到達
+SIF FLAG:8 & 8192
+	PRINTL 10種以上ハーレム同時条件達成
+SIF FLAG:8 & 16384
+	PRINTL 妖精を統べる者となった
+SIF FLAG:8 & 32768
+	PRINTL [地獄の勲章]を入手
+
+CALL NEW_DRAWLINE
+
+;--------------------------------------------------
+;収入金額の最高額一覧
+;--------------------------------------------------
+;MONEY:970～998を使用
+@INCOME_LIST
+PRINTFORML \@(FLAG:12 & 2) ? □ 各収入の最高額一覧 # 各収入の最高額一覧:\@
+SIF MONEY:997 > 0
+	PRINTFORML 奴隷売却で稼いだ最高金額　　　:{MONEY:997}圓
+SIF MONEY:970 > 0
+	PRINTFORML ビデオで稼いだ最高金額　　　　:{MONEY:970}圓
+SIF MONEY:971 > 0
+	PRINTFORML 写真で稼いだ最高金額　　　　　:{MONEY:971}圓
+SIF MONEY:972 > 0
+	PRINTFORML 野外ライブで稼いだ最高金額　　:{MONEY:972}圓
+SIF MONEY:974 > 0
+	PRINTFORML 工作(主人)で稼いだ最高金額　　:{MONEY:976}圓
+SIF MONEY:974 > 0
+	PRINTFORML 工作(奴隷)で稼いだ最高金額　　:{MONEY:974}圓
+SIF MONEY:973 > 0
+	PRINTFORML 奴隷売春で稼いだ最高金額　　　:{MONEY:973}圓
+SIF MONEY:975 > 0
+	PRINTFORML 触手錬金で稼いだ最高金額　　　:{MONEY:975}圓
+
+SIF MONEY:980 > 0
+	PRINTFORML 搾乳器で稼いだ最高金額　　　　:{MONEY:980}圓
+SIF MONEY:981 > 0
+	PRINTFORML 採尿器で稼いだ最高金額　　　　:{MONEY:981}圓
+SIF MONEY:984 > 0
+	PRINTFORML 愛液で稼いだ最高金額　　　　　:{MONEY:984}圓
+SIF MONEY:982 > 0
+	PRINTFORML 産卵で稼いだ最高金額　　　　　:{MONEY:982}圓
+SIF MONEY:983 > 0
+	PRINTFORML 陰毛お守りで稼いだ最高金額　　:{MONEY:983}圓
+
+SIF MONEY:985 > 0
+	PRINTFORML スイートポテトで稼いだ最高金額:{MONEY:985}圓
+SIF MONEY:986 > 0
+	PRINTFORML ワインで稼いだ最高金額　　　　:{MONEY:986}圓
+SIF MONEY:987 > 0
+	PRINTFORML アスパラで稼いだ最高金額　　　:{MONEY:987}圓
+
+SIF MONEY:995 > 0
+	PRINTFORML 弁当(主人)で稼いだ最高金額　　:{MONEY:995}圓
+SIF MONEY:996 > 0
+	PRINTFORML 弁当(奴隷)で稼いだ最高金額　　:{MONEY:996}圓
+
+CUSTOMDRAWLINE =
+PRINTFORML 全部の収入の中の最高金額　　　:{MONEY:998}圓
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;酔い具合表示処理
+;-------------------------------------------------
+@PRINT_DRUNK_LIQUOR, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 酔い具合 # 酔い具合:\@
+
+CALL CALC_GAUGE8, ARG, 1
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;習得済みの陥落系素質表示処理
+;-------------------------------------------------
+@PRINT_SLAVE_TALENT_FALL, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 取得済み陥落系素質 # 取得済み陥落系素質:\@
+
+SIF CFLAG:ARG:14 & 1
+	PRINT [恋慕] 
+SIF CFLAG:ARG:14 & 2
+	PRINT [妄信] 
+SIF CFLAG:ARG:14 & 4
+	PRINT [親愛] 
+SIF CFLAG:ARG:14 & 8
+	PRINT [相愛] 
+SIF CFLAG:ARG:15 & 1
+	PRINT [服従] 
+SIF CFLAG:ARG:15 & 2
+	PRINT [烙印] 
+SIF CFLAG:ARG:15 & 4
+	PRINT [隷属] 
+SIF CFLAG:ARG:15 & 8 
+	PRINTFORM [\@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 式 # 使い魔\@] 
+SIF CFLAG:ARG:16 & 1
+	PRINT [淫乱] 
+SIF CFLAG:ARG:16 & 2
+	PRINT [淫核] 
+SIF CFLAG:ARG:16 & 4
+	PRINT [淫壷] 
+SIF CFLAG:ARG:16 & 8
+	PRINT [淫尻] 
+SIF CFLAG:ARG:16 & 16
+	PRINT [淫乳] 
+SIF CFLAG:ARG:16 & 32
+	PRINT [尿道狂] 
+SIF CFLAG:ARG:16 & 64
+	PRINT [キス魔] 
+;SIF CFLAG:ARG:16 & 2048
+;	PRINT [常時発情] 
+SIF CFLAG:ARG:16 & 128
+	PRINT [ドＳ] 
+SIF CFLAG:ARG:16 & 256
+	PRINT [ドＭ] 
+SIF CFLAG:ARG:16 & 512
+	PRINT [即落ち] 
+SIF CFLAG:ARG:16 & 1024
+	PRINT [淫魔] 
+SIF CFLAG:ARG:17 & 1
+	PRINT [幼児退行] 
+SIF CFLAG:ARG:17 & 2
+	PRINT [狂気] 
+SIF CFLAG:ARG:17 & 4
+	PRINT [精神崩壊] 
+SIF CFLAG:ARG:17 & 8
+	PRINT [傀儡] 
+SIF CFLAG:ARG:17 & 16
+	PRINT [記憶消去] 
+SIF CFLAG:ARG:17 & 32
+	PRINT [壊造人格] 
+
+PRINTL 
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;選択キャラの蒐集品表示処理
+;-------------------------------------------------
+;能力表示で蒐集品も表示パッチを大きく改変
+;LOCALが0の時、未回収。LOCALが1の時蒐集品回収済みと表示されるように
+;また調教中以外にSHOPメニューからも呼び出せるように変更
+;蒐集品の有無は元パッチ同様、展示室にあるかで判断(名無しキャラなど2重に回収できるものは考慮しない)
+@PRINT_COLLECTION_YN, ARG
+PRINTFORM \@(FLAG:12 & 2) ? □  # %CALLNAME:ARG%から入手した蒐集品:\@
+PRINTFORML \@(FLAG:12 & 2) ? %CALLNAME:ARG%から入手した蒐集品 # \@
+VARSET LOCALS, ""
+SPLIT "尻子玉　　,黄金水　　,愛液　　　,血液　　　,破瓜血　　,パンティー,写真集　　,ビデオ　　,母乳　　　,卵　　　　,触手　　　,陰毛　　　",",",LOCALS
+LOCAL:1 = 0
+LOCAL:2 = NO:ARG
+
+FOR LOCAL, 0, 12
+	PRINTFORM [%LOCALS:LOCAL%:\@(DA:(LOCAL:2):(1+LOCAL) > 0) ? 済 # 未 \@］
+
+	;改行判定
+	LOCAL:1 += 1
+	IF (LOCAL:1)%4 == 0
+		PRINTL 
+	ELSE
+		PRINT  
+	ENDIF
+NEXT
+;最後のループで改行してなかったら、ここで改行しておく
+SIF LOCAL:1%4 != 0
+	PRINTL 
+
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;陰核成長具合表示処理
+;-------------------------------------------------
+@PRINT_GROWTH_SLAVE_CLITORIS, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 陰核成長具合 # 陰核成長具合:\@
+
+PRINTFORML \@(BASE:ARG:陰核 >= 250) ? 《Lv.MAX》 # 《Lv.{BASE:ARG:陰核 / 50}》 \@
+
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;陰毛の状態表示処理
+;-------------------------------------------------
+@PRINT_PUBIC_HAIR, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 陰毛状態 # 陰毛状態:\@
+
+;小人体型か小柄体型の場合はデフォならつるつる
+IF (TALENT:ARG:小人体型 || TALENT:ARG:小柄体型) && CFLAG:ARG:36 != 2
+	PRINTFORML 陰毛は生えてません。\@(CFLAG:ARG:36 == 1) ? 脱毛処理をされているので、 # そして、\@生える気配もありません。
+;小人か小柄以外でデフォなら生えてる
+ELSEIF TALENT:ARG:小人体型 == 0 && TALENT:ARG:小柄体型 == 0 && CFLAG:ARG:36 == 0 && TALENT:ARG:パイパン == 0
+	PRINTL 陰毛が綺麗に生え揃っています。
+;それ以外はBASE:陰毛を参照
+ELSEIF BASE:ARG:陰毛 > 900
+	PRINTFORML 恥丘からアナルまで密生した陰毛に覆われています。\@(CFLAG:ARG:36 == 1) ? 脱毛処理はされているので今後さらに伸びることはないでしょう。 # \@
+ELSEIF BASE:ARG:陰毛 > 500
+	PRINTFORML 陰毛が鬱葱と生い繁っています。\@(CFLAG:ARG:36 == 1) ? 脱毛処理はされているので今後さらに伸びることはないでしょう。 # \@
+ELSEIF BASE:ARG:陰毛 > 250
+	PRINTFORML 陰毛が綺麗に生え揃っています。\@(CFLAG:ARG:36 == 1) ? 脱毛処理はされているので今後さらに伸びることはないでしょう。 # \@
+ELSEIF BASE:ARG:陰毛 > 125
+	PRINTFORML 陰毛がだいぶ生え揃いつつあるようで\@(CFLAG:ARG:36 == 1) ? すが、脱毛処理がされているので今後さらに伸びることはないでしょう。 # す。\@
+ELSEIF BASE:ARG:陰毛 > 51
+	PRINTFORML 陰毛が所々に生えつつあるようで\@(CFLAG:ARG:36 == 1) ? すが、脱毛処理がされているので今後さらに伸びることはないでしょう。 # す。\@
+ELSE
+	PRINTFORML 陰毛は生えてません。\@(CFLAG:ARG:36 == 1) ? 脱毛処理がされているので今後生えることはないでしょう。 # 今後生えてくることになるでしょう。\@
+ENDIF
+
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;烙印キャラ用特殊装備表示処理
+;-------------------------------------------------
+@PRINT_BRAND_SLAVE_EQUIPMENT, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 特殊装着具 # 特殊装着具:\@
+
+SIF CFLAG:ARG:42 & 1
+	PRINT 《クリトリスリング》 
+SIF CFLAG:ARG:42 & 2
+	PRINT 《奴隷管理用貞操帯》 
+SIF CFLAG:ARG:42 & 4
+	PRINT 《ベリージュエル》 
+SIF CFLAG:ARG:42 & 8
+	PRINT 《ボンデージ》 
+SIF CFLAG:ARG:42 & 16
+	PRINT 《ラビアピアス》 
+SIF CFLAG:ARG:42 & 32
+	PRINT 《ニプルピアス》 
+
+PRINTL 
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;触手インプラント表示処理
+;-------------------------------------------------
+@PRINT_TENTACLE_INPLANT_SLAVE, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 触手インプラント # 触手インプラント箇所:\@
+
+SIF CFLAG:ARG:41 & 1
+	PRINT 《クリトリス》 
+SIF CFLAG:ARG:41 & 2
+	PRINT 《子宮》 
+SIF CFLAG:ARG:41 & 4
+	PRINT 《直腸》 
+SIF CFLAG:ARG:41 & 8
+	PRINT 《乳房》 
+SIF CFLAG:ARG:41 & 16
+	PRINT 《ヘソ》 
+SIF CFLAG:ARG:41 & 32
+	PRINT 《舌根》 
+SIF CFLAG:ARG:41 & 64
+	PRINT 《膀胱》 
+SIF CFLAG:ARG:41 & 128
+	PRINT 《心臓》 
+SIF CFLAG:ARG:41 & 256
+	PRINT 《脊椎》 
+SIF CFLAG:ARG:41 & 512
+	PRINT 《額》
+
+PRINTL 
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;各種開発度表示処理
+;-------------------------------------------------
+@PRINT_DEVELOPMENT_LEVEL_SLAVE, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 各種開発度 # 各種開発度:\@
+
+LOCAL:1 = 0
+REPEAT 6
+	LOCAL = 0
+	SELECTCASE COUNT
+		CASE 0
+			IF CFLAG:ARG:Ｃ開発度
+				PRINTFORM 　Ｃ開発度:{CFLAG:ARG:Ｃ開発度, 4}
+				;改行判定
+				LOCAL:1 += 1
+			ENDIF
+		CASE 1
+			IF CFLAG:ARG:Ｖ開発度
+				PRINTFORM 　Ｖ開発度:{CFLAG:ARG:Ｖ開発度, 4}
+				;改行判定
+				LOCAL:1 += 1
+			ENDIF
+		CASE 2
+			IF CFLAG:ARG:Ａ開発度
+				PRINTFORM 　Ａ開発度:{CFLAG:ARG:Ａ開発度, 4}
+				;改行判定
+				LOCAL:1 += 1
+			ENDIF
+		CASE 3
+			IF CFLAG:ARG:Ｂ開発度
+				PRINTFORM 　Ｂ開発度:{CFLAG:ARG:Ｂ開発度, 4}
+				;改行判定
+				LOCAL:1 += 1
+			ENDIF
+		CASE 4
+			IF CFLAG:ARG:精飲開発度
+				PRINTFORM 精飲開発度:{CFLAG:ARG:精飲開発度, 4}
+				;改行判定
+				LOCAL:1 += 1
+			ENDIF
+		CASE 5
+			IF CFLAG:ARG:放尿レベル
+				PRINTFORM 放尿レベル:{CFLAG:ARG:放尿レベル, 4}
+				;改行判定
+				LOCAL:1 += 1
+			ENDIF
+	ENDSELECT
+	
+	IF (LOCAL:1)%4 == 0
+		PRINTL 
+	ELSE
+		PRINT  
+	ENDIF
+REND
+;最後のループで改行してなかったら、ここで改行しておく
+SIF LOCAL:1%4 != 0
+	PRINTL 
+
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;奴隷調教の進行状況表示処理
+;-------------------------------------------------
+@PRINT_SLAVE_TRAIN_PROCESS, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ 奴隷調教の進行状況 # 奴隷調教の進行状況:\@
+
+;どうやってここに来たか？
+STRLENS CSTR:ARG:3
+PRINTFORML \@(RESULT) ? %CSTR:ARG:3% # 何らかの方法で連れてきた。\@
+
+;調教したことは？
+FONTSTYLE (TALENT:ARG:恋慕 || TALENT:ARG:服従 || TALENT:ARG:淫乱) ? 1 # 0
+IF CFLAG:ARG:1610 == 0
+	PRINTL まだ調教したことがない。
+ELSEIF TALENT:ARG:死亡
+	PRINTL 調教による命が失われた。
+ELSEIF TALENT:ARG:恋慕 && TALENT:ARG:服従 && TALENT:ARG:淫乱 && !TALENT:ARG:理性
+	PRINTL 調教の結果、理性を失う、恋慕を抱き、服従を誓い、色欲に溺れているようだ。
+ELSEIF TALENT:ARG:恋慕 && TALENT:ARG:服従 && TALENT:ARG:淫乱
+	PRINTL 調教の結果、恋慕を抱き、服従を誓い、色欲に溺れているようだ。
+ELSEIF TALENT:ARG:恋慕 && TALENT:ARG:服従
+	PRINTL 調教により服従を誓いつつも、そこに愛があると信じているようだ。
+ELSEIF TALENT:ARG:恋慕 && TALENT:ARG:淫乱
+	PRINTL 調教による快楽を愛だと信じているようだ。
+ELSEIF TALENT:ARG:服従 && TALENT:ARG:淫乱
+	PRINTL 調教により与えられる肉欲の前に、服従を誓わされている。
+ELSEIF TALENT:ARG:恋慕
+	PRINTL 調教の中に、恋愛的な繋がりを見出しているようだ。
+ELSEIF TALENT:ARG:服従
+	PRINTL 調教により、服従を誓うまでになっている。
+ELSEIF TALENT:ARG:淫乱
+	PRINTL 調教により、淫乱の花が麗しく咲き始めている。
+ELSEIF !TALENT:ARG:理性
+	PRINTL 調教による理性が尽きた。
+ELSEIF MARK:ARG:屈服刻印 > 2
+	PRINTL 調教をだいぶ受け入れるようになってきた。
+ELSEIF MARK:ARG:快楽刻印 > 2
+	PRINTL 調教による快楽に夢中になっている。
+ELSEIF MARK:ARG:恥辱刻印 > 2
+	PRINTL 調教による恥辱にもだいぶ慣れてきたようだ。
+ELSEIF MARK:ARG:苦痛刻印 > 2
+	PRINTL 調教による苦痛に反応をするようになった。
+ELSE
+	PRINTL 現在調教を続けているところである。
+ENDIF
+FONTSTYLE 0
+
+;売却可能か？　助手化可能か？
+IF TALENT:ARG:蓬莱人 == 2 && CFLAG:ARG:3
+	PRINTFORML %CALLNAME:MASTER%と永遠の時を歩むために、蓬莱の罪をその身と心に背負って生きていくことになる。
+ELSEIF CFLAG:ARG:1 == 2
+	PRINTFORML \@(CFLAG:ARG:3) ? 助手にすることは可能であるが、売却は不可能 # 売却すること及び助手にすることがいずれも可能\@である。
+ELSEIF CFLAG:ARG:1 == 1
+	PRINTFORML \@(CFLAG:ARG:3) ? 売却条件は満たしているが、売却そのものは不可能 # 売却することが可能\@である。
+ELSE
+	PRINTL 売却することも助手にすることも不可能である。
+ENDIF
+
+;引き継いだかどうか？
+PRINTFORML \@(CFLAG:ARG:18 == 1) ? 前の周回から引き継いでいる # 引継ぎキャラではない\@。
+
+CALL NEW_DRAWLINE
+
+;=============================================================================
+;能力確認での情報個別関数(4ページ目)
+;=============================================================================
+
+
+;-------------------------------------------------
+;身長・体重・3サイズの表示処理
+;-------------------------------------------------
+;身長・体重・3サイズを表示します
+;BASE:10 … 身長
+;BASE:11 … 体重
+;BASE:12 … バスト
+;BASE:13 … ウェスト
+;BASE:14 … ヒップ
+;LOCAL   … 変数の一時保存用
+@SHOW_SIZE, ARG
+;身長・体重・3サイズの生成処理
+CALL MAKE_SIZE, 1, ARG
+
+PRINTFORM □ サイズ
+SIF TALENT:MASTER:998 && (NO:ARG == 2048 || NO:ARG == 2049)
+	PRINTFORM 	成長済みなら1:{MARK:ARG:81}
+PRINTL 
+PRINTFORM  身長:{BASE:ARG:10 / 10}.{BASE:ARG:10 % 10}cm
+;ボテ腹状態の場合表示数値補正
+;たぶん死に分岐、ボテ腹が非対応
+IF FLAG:1500 & 2 && (CFLAG:ARG:3502 % 1000000)
+	LOCAL:11 = BASE:ARG:11 + ((CFLAG:ARG:3502 % 1000000 ) * 10) / 34
+	PRINTFORM    体重:{LOCAL:11 / 10}.{LOCAL:11 % 10}kg
+	PRINTFORML  ボテ腹前({BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg)
+;妊娠持ちの場合表示数値補正
+ELSEIF TALENT:ARG:妊娠
+	LOCAL:11 = BASE:ARG:11 + (CFLAG:ARG:3500 * 10) / 34
+	PRINTFORM    体重:{LOCAL:11 / 10}.{LOCAL:11 % 10}kg
+	PRINTFORML  妊娠前({BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg)
+ELSE
+	PRINTFORML    体重:{BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg
+ENDIF
+;[オトコ]持ちは3サイズは表示しない
+IF !TALENT:ARG:オトコ
+	PRINTFORM  Ｂ:{BASE:ARG:12 / 10}.{BASE:ARG:12 % 10}cm 
+	CALL PRINT_CUPSIZE , ARG
+	;ボテ腹状態の場合表示数値補正
+	;たぶん死に分岐、ボテ腹が非対応
+	IF FLAG:1500 & 2 && ( CFLAG:ARG:3502 % 1000000 )
+		LOCAL:13 = BASE:ARG:13 + (CFLAG:ARG:3502 % 1000000)
+		PRINTFORM / Ｗ:{LOCAL:13 / 10}.{LOCAL:13 % 10}cm
+		PRINTFORM	ボテ腹前({BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm) /
+	;妊娠持ちの場合表示数値補正
+	ELSEIF TALENT:ARG:妊娠
+		LOCAL:13 = BASE:ARG:13 + CFLAG:ARG:3500
+		PRINTFORM / Ｗ:{LOCAL:13 / 10}.{LOCAL:13 % 10}cm
+		PRINTFORM  妊娠前({BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm) /
+	ELSE
+		PRINTFORM / Ｗ:{BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm /
+	ENDIF
+	PRINTFORML  Ｈ:{BASE:ARG:14 / 10}.{BASE:ARG:14 % 10}cm
+ENDIF
+;[オトコ][ふたなり][具現]
+IF TALENT:ARG:オトコ || TALENT:ARG:ふたなり || TALENT:ARG:具現
+	;ペニスの大きさ、サイズ表示
+	PRINTFORM  Ｐ
+	SIF TALENT:ARG:具現
+		PRINTFORM (具現)
+	PRINTFORM :{BASE:ARG:15 / 10}.{BASE:ARG:15 % 10}cm …
+	VARSET LOCALS,""
+	SPLIT "(-),(マイクロペニス),(ポークビッツ),(粗チン),(並),(マグナム),(巨根),(第３の足),(？)",",",LOCALS
+	LOCALS:0 = %LOCALS:(BASE:ARG:16)%
+	PRINTFORML %LOCALS%
+ENDIF
+
+;クリが大きい人用
+IF BASE:ARG:陰核 > 0
+	LOCAL = (BASE:ARG:陰核 * BASE:ARG:陰核) / 150
+	;クリの大きさ
+	PRINTFORML  ｸﾘ:{LOCAL / 10}.{LOCAL % 10}cm
+ENDIF
+
+CALL NEW_DRAWLINE
+
+;バストのカップサイズ生成及び表示処理
+@PRINT_CUPSIZE , ARG , ARG:1
+VARSET LOCALS,""
+SPLIT "(-) ,(AAA) ,(AA) ,(A) ,(B) ,(C) ,(D) ,(E) ,(F) ,(G) ,(H) ,(I) ,(J) ,(K) ,(L) ,(M) ,(N) ,(O) ,(P) ,(Q) ,(R) ,(S) ,(T) ,(U) ,(V) ,(W) ,(X) ,(Y) ,(Z) ,(Z+) ",",",LOCALS
+LOCAL = (BASE:ARG:12 - ((((BASE:ARG:10 * 100) / 22) - ((BASE:ARG:10 * 100) / BASE:ARG:13)) / 10)) / 25
+;文字列変数が若干不自由なので無理やり作成
+LOCAL = MAX(LOCAL , 1)
+LOCALS:0 = %LOCALS:(LOCAL-1)%
+PRINTFORM %LOCALS:0%
+
+;--------------------------------------------------
+;展示総数表示表示処理
+;--------------------------------------------------
+@MASTER_COLLECTION_STATUS
+PRINTFORML \@(FLAG:12 & 2) ? □ 今まで集めた蒐集品 # 今まで集めた蒐集品:\@
+VARSET LOCALS,""
+SPLIT "手に入れた尻子玉の数　:,手に入れた黄金水　　　:,手に入れた愛液　　　　:,手に入れた血液の数　　:,手に入れた純潔の数　　:,集めたパンティー　　　:,写真のアルバム　　　　:,撮影したビデオ　　　　:,手に入れた母乳の数　　:,手に入れた卵　　　　　:,産ませた触手　　　　　:,手に入れた陰毛　　　　:",",",LOCALS
+LOCAL = 0
+LOCAL:1 = 0
+LOCAL:2 = 0
+LOCAL:3 = 0
+LOCAL:5 = 0
+
+REPEAT 12
+	LOCAL:4 = 501 + COUNT
+	LOCAL:3 += FLAG:(LOCAL:4)
+
+	STR:0 = 人分
+	IF COUNT == 0 || COUNT == 8
+		STR:0 = 個
+	ELSEIF COUNT == 2 || COUNT == 10
+		STR:0 = 種
+	ELSEIF COUNT == 5
+		STR:0 = 枚
+	ELSEIF COUNT == 6
+		STR:0 = 冊
+	ELSEIF COUNT == 7
+		STR:0 = シリーズ
+	ENDIF
+	
+	IF FLAG:(501 + COUNT)
+		PRINTFORM %LOCALS:COUNT%{FLAG:(501 + COUNT),3}%STR:0,8,LEFT%
+		LOCAL += 1
+		SIF FLAG:(501 + COUNT) >= 30
+			LOCAL:1 += 1
+	ENDIF
+
+	IF FLAG:(LOCAL:4)
+		IF (LOCAL:5 % 2) == 1
+			PRINTL 
+		ELSE
+			PRINT 　
+		ENDIF
+		LOCAL:5 += 1
+	ENDIF
+REND
+
+IF LOCAL:5 == 0
+	PRINTL 　特になし
+ELSE
+	SIF LOCAL:5 % 2 == 1
+		PRINTL 
+	CUSTOMDRAWLINE =
+	LOCAL:2 = 12 - LOCAL:1
+	SIF LOCAL:2 == 0
+		FONTBOLD
+	;PRINTFORML 調合知識取得条件用蒐集品蒐集種類数:{LOCAL:1}種類蒐集済
+	;PRINTFORML 調合知識取得条件のための蒐集品蒐集条件を\@(LOCAL:2 == 0) ? クリアしています # 満たすのに後{LOCAL:2}種類必要です\@
+	PRINTFORML 全蒐集品　{LOCAL}種類　{LOCAL:3}品種　蒐集済
+	SIF LOCAL:2 == 0
+		FONTREGULAR
+ENDIF
+
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;奴隷からみた主人の相性の表示
+;-------------------------------------------------
+@PRINT_RERELATION, ARG
+IF FLAG:12 & 2
+	PRINTFORML □ \@(ARG == MASTER) ? 奴隷からの逆相性 # 主人および奴隷からの逆相性\@
+ELSE
+	PRINTFORML \@(ARG == MASTER) ? 奴隷からの逆相性 # 主人および奴隷からの逆相性\@:
+ENDIF
+
+;CALL SET_CALLNAME
+LOCAL = 0
+PC_VAR2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:93 = 0
+	SIF PC_VAR1 == ARG
+		CONTINUE
+	LOCAL:1 = RELATION:PC_VAR1:(NO:ARG)
+	SIF LOCAL:1 <= 0 || LOCAL:1 == 100
+		CONTINUE
+	CALLF SET_LIST, PC_VAR2, PC_VAR1
+	PC_VAR2++
+	MARK:PC_VAR1:93 = 1
+NEXT
+IF PC_VAR2 == 0
+	PRINTL 特になし
+	CALL NEW_DRAWLINE
+	RETURN 1
+ENDIF
+PL_VAR_L:5 = PC_VAR2 / 15
+PL_VAR_L:5 -= (PC_VAR2 % 15 == 0) ? 1 # 0
+
+CALL RERELATION_LIST, ARG
+
+IF PL_VAR_L:5 > 0
+	PRINTFORMC \@(PL_VAR_L:4 > 0) ? [444]前の相性リスト # 　 \@
+	PRINTFORMC \@(PL_VAR_L:4 < PL_VAR_L:5) ? [666]次の相性リスト # 　 \@
+	PRINTL 
+ENDIF
+
+CALL NEW_DRAWLINE
+;-------------------------------------------------
+;キャラ同士の逆相性表示処理
+;-------------------------------------------------
+@RERELATION_LIST, ARG
+PC_VAR3 = 0
+FOR PC_VAR1, 0, 15
+	PL_VAR_X:3 = GET_LIST(PC_VAR1 + PL_VAR_L:4 * 15)
+	IF PC_VAR2 <= PC_VAR1 + PL_VAR_L:4 * 15 && PL_VAR_L:5 > 0
+		SIF (PC_VAR1 + 1) % 3 == 0
+			PRINTL 
+		CONTINUE
+	ELSEIF PC_VAR2 <= PC_VAR1 + PL_VAR_L:4 * 15 && PL_VAR_L:5 == 0
+		CONTINUE
+	ENDIF
+	PC_VAR3++
+	LOCAL:1 = RELATION:(PL_VAR_X:3):(NO:ARG)
+	PRINTFORM %SHOW_CALLNAME2(PL_VAR_X:3, 18)%×{LOCAL:1, 3}％
+	
+	IF (PC_VAR1 + 1) % 3 == 0
+		PRINTL 
+	ELSE
+		PRINT 　
+	ENDIF
+NEXT
+SIF PC_VAR3 % 3
+	PRINTL 
+
+;--------------------------------------------------
+;奴隷ごとの収入金額の最高額一覧
+;--------------------------------------------------
+;CFLAG:最高金額_売春～CFLAG:稼ぎの総額を使用
+@INCOME_LIST_SLAVE, ARG
+IF FLAG:12 & 2
+	PRINTL □ 奴隷ごとの各収入の最高額一覧
+ELSE
+	PRINTL 奴隷ごとの各収入の最高額一覧:
+ENDIF
+SIF CFLAG:ARG:最高金額_売春 > 0
+	PRINTFORML 娼館で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_売春}圓
+SIF CFLAG:ARG:最高金額_ビデオ > 0
+	PRINTFORML ビデオで稼いだ最高金額　　　　　:{CFLAG:ARG:最高金額_ビデオ}圓
+SIF CFLAG:ARG:最高金額_写真 > 0
+	PRINTFORML 写真で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_写真}圓
+SIF CFLAG:ARG:最高金額_工作 > 0
+	PRINTFORML 野外ライブで稼いだ最高金額　　　:{CFLAG:ARG:最高金額_工作}圓
+SIF CFLAG:ARG:85 > 0
+	PRINTFORML 工作で稼いだ最高金額　　　　　　:{CFLAG:ARG:85}圓
+
+SIF CFLAG:ARG:最高金額_母乳 > 0
+	PRINTFORML 母乳で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_母乳}圓
+SIF CFLAG:ARG:最高金額_聖水 > 0
+	PRINTFORML 聖水で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_聖水}圓
+SIF CFLAG:ARG:最高金額_愛液 > 0
+	PRINTFORML 愛液で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_愛液}圓
+SIF CFLAG:ARG:最高金額_卵 > 0
+	PRINTFORML 産卵で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_卵}圓
+SIF CFLAG:ARG:最高金額_陰毛 > 0
+	PRINTFORML 陰毛お守りで稼いだ最高金額　　　:{CFLAG:ARG:最高金額_陰毛}圓
+
+SIF CFLAG:ARG:最高金額_焼芋 > 0
+	PRINTFORML スイートポテトで稼いだ最高金額　:{CFLAG:ARG:最高金額_焼芋}圓
+SIF CFLAG:ARG:最高金額_ワイン > 0
+	PRINTFORML ワインで稼いだ最高金額　　　　　:{CFLAG:ARG:最高金額_ワイン}圓
+SIF CFLAG:ARG:最高金額_アスパラ > 0
+	PRINTFORML アスパラで稼いだ最高金額　　　　:{CFLAG:ARG:最高金額_アスパラ}圓
+
+SIF CFLAG:ARG:最高金額_弁当 > 0
+	PRINTFORML 弁当(奴隷)で稼いだ最高金額　　　:{CFLAG:ARG:最高金額_弁当}圓
+
+CUSTOMDRAWLINE =
+PRINTFORML 全部の収入の中の最高金額　　　　:{CFLAG:ARG:最高金額_全収入}圓
+SIF CFLAG:ARG:最高金額_集団売春 > 0
+	PRINTFORML 奴隷が今まで売春で稼いだ圓の総額:{CFLAG:ARG:最高金額_集団売春}圓
+PRINTFORML 奴隷が今まで稼いだ圓の総額　　　:{CFLAG:ARG:稼ぎの総額}圓
+CALL NEW_DRAWLINE
+
+;=============================================================================
+;能力確認での情報個別関数(5ページ目)
+;=============================================================================
+;--------------------------------------------------
+;現在の全奴隷の種類別の収入総金額一覧
+;--------------------------------------------------
+;CFLAG:最高金額_売春～CFLAG:稼ぎの総額を使用
+@PRINT_INCOME_ALLSLAVE, ARG
+IF FLAG:12 & 2
+	PRINTL □ 現在の全奴隷の種類別の収入総金額一覧
+ELSE
+	PRINTL 現在の全奴隷の種類別の収入総金額一覧:
+ENDIF
+;SIF SUMCARRAY(CFLAG:ARG:最高金額_売春, 1, CHARANUM) > 0
+;	PRINTFORML 娼館で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_売春,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_ビデオ, 1, CHARANUM) > 0
+	PRINTFORML ビデオで稼いだ総金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_ビデオ,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_写真, 1, CHARANUM) > 0
+	PRINTFORML 写真で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_写真,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_工作, 1, CHARANUM) > 0
+	PRINTFORML 野外ライブで稼いだ最高金額　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_工作,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:85, 1, CHARANUM) > 0
+	PRINTFORML 工作で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:85,1,CHARANUM)}圓
+
+SIF SUMCARRAY(CFLAG:ARG:最高金額_母乳, 1, CHARANUM) > 0
+	PRINTFORML 母乳で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_母乳,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_聖水, 1, CHARANUM) > 0
+	PRINTFORML 聖水で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_聖水,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_愛液, 1, CHARANUM) > 0
+	PRINTFORML 愛液で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_愛液,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_卵, 1, CHARANUM) > 0
+	PRINTFORML 産卵で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_卵,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_陰毛, 1, CHARANUM) > 0
+	PRINTFORML 陰毛お守りで稼いだ最高金額　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_陰毛,1,CHARANUM)}圓
+
+SIF SUMCARRAY(CFLAG:ARG:最高金額_焼芋, 1, CHARANUM) > 0
+	PRINTFORML スイートポテトで稼いだ最高金額　　:{SUMCARRAY(CFLAG:ARG:最高金額_焼芋,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_ワイン, 1, CHARANUM) > 0
+	PRINTFORML ワインで稼いだ最高金額　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_ワイン,1,CHARANUM)}圓
+SIF SUMCARRAY(CFLAG:ARG:最高金額_アスパラ, 1, CHARANUM) > 0
+	PRINTFORML アスパラで稼いだ最高金額　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_アスパラ,1,CHARANUM)}圓
+
+SIF SUMCARRAY(CFLAG:ARG:最高金額_弁当, 1, CHARANUM) > 0
+	PRINTFORML 弁当(奴隷)で稼いだ総金額　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_弁当,1,CHARANUM)}圓
+
+CUSTOMDRAWLINE =
+SIF SUMCARRAY(CFLAG:ARG:最高金額_集団売春, 1, CHARANUM) > 0
+	PRINTFORML 現奴隷が今まで売春で稼いだ圓の総額:{SUMCARRAY(CFLAG:ARG:最高金額_集団売春,1,CHARANUM)}圓
+PRINTFORML 現奴隷が今まで稼いだ圓の総金額　　:{SUMCARRAY(CFLAG:ARG:稼ぎの総額,1,CHARANUM)}圓
+CALL NEW_DRAWLINE
+
+;--------------------------------------------------
+;主人の各種フラグ関連表示
+;--------------------------------------------------
+@PRINT_MASTER_FLAG, ARG
+PRINTFORML \@(FLAG:12 & 2) ? □ その他主人に関する情報 # その他主人に関する情報:\@
+;デバッグモード専用
+SIF TALENT:MASTER:998
+	PRINTFORML 　キャラクター固有番号:{CFLAG:ARG:3109}
+SIF MONEY:990
+	PRINTFORML 　奴隷売却による収入の累計　　:\@(MONEY:990 > 100000000) ? 1億圓以上 # {MONEY:990}圓\@
+SIF MONEY:991
+	PRINTFORML 　高級奴隷売却による収入の累計:\@(MONEY:991 > 100000000) ? 1億圓以上 # {MONEY:991}圓\@
+SIF MONEY:977 > 0
+	PRINTFORML 　売春による収入の累計　　　　:\@(MONEY:977 > 100000000) ? 1億圓以上 # {MONEY:977}圓\@
+SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:好感度, 1, CHARANUM) > 0
+	PRINTFORML 　現有全奴隷の好感度総合計　　:{SUMCARRAY(CFLAG:ARG:好感度,1,CHARANUM)}
+SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:ストレス, 1, CHARANUM) > 0
+	PRINTFORML 　現有全奴隷のストレス総合計　:{SUMCARRAY(CFLAG:ARG:ストレス,1,CHARANUM)}
+SIF FLAG:39
+	PRINTFORML 　今まで購入した奴隷の総数　　:{FLAG:39, 5}人
+SIF FLAG:35
+	PRINTFORML 　今まで相愛となった奴隷の総数:{FLAG:35, 5}人
+SIF FLAG:36
+	PRINTFORML 　今まで隷属させた奴隷の総数　:{FLAG:36, 5}人
+SIF FLAG:37
+	PRINTFORML 　今まで人格壊造した奴隷の総数:{FLAG:37, 5}人
+SIF FLAG:38
+	PRINTFORML 　今まで淫魔にした奴隷の総数　:{FLAG:38, 5}人
+SIF FLAG:3006
+	PRINTFORML 　娼館累計来客数　　　　　　　:{FLAG:3006, 5}人
+SIF FLAG:30 > 99
+	PRINTFORML 　今までに{FLAG:30, 5}人もの大量の奴隷を堕として得意満面である。
+SIF FLAG:32 > 99
+	PRINTFORML 　今までに{FLAG:32, 5}匹もの大量の妖精を堕として有頂天である。
+SIF CFLAG:ARG:コスプレ実行回数
+	PRINTFORML 　今までに{CFLAG:ARG:コスプレ実行回数, 5}回ほど、コスプレをしたことがある。
+SIF CFLAG:ARG:調教説教薀蓄受講数
+	PRINTFORML 　今までに{CFLAG:ARG:調教説教薀蓄受講数, 5}回ほど、調教中に説教か薀蓄を受講したことがある。
+SIF CFLAG:ARG:パイズリした回数
+	PRINTFORML 　今までに{CFLAG:ARG:パイズリした回数, 5}回ほど、パイズリをしてあげたことがある。
+SIF CFLAG:ARG:パイズリされた回数
+	PRINTFORML 　今までに{CFLAG:ARG:パイズリされた回数, 5}回ほど、パイズリを堪能したことがある。
+SIF CFLAG:ARG:153 & 4
+	PRINTL 　奴隷に処女を散らされたことがある
+SIF CFLAG:ARG:153 & 8
+	PRINTL 　奴隷に夜這いされ処女を捧げられたことがある
+SIF CFLAG:ARG:153 & 128
+	PRINTL 　奴隷に暴行されたことがある
+SIF CFLAG:ARG:153 & 512
+	PRINTL 　奴隷に触手により襲撃されたことがある
+SIF CFLAG:ARG:153 & 4096
+	PRINTL 　寝取られ現場を目撃したことがある
+SIF CFLAG:ARG:150 & 4096
+	PRINTL 　奴隷に弁当を食べさせたことがある
+SIF CFLAG:ARG:150 & 16
+	PRINTL 　奴隷に毒を盛られて、ダメージを受けたことがある
+SIF CFLAG:ARG:150 & 32
+	PRINTL 　奴隷が毒を盛ったのを見破ったことがある
+SIF CFLAG:ARG:150 & 512
+	PRINTL 　奴隷が愛を込めて作ったチョコを食べてあげたことがある
+SIF CFLAG:ARG:150 & 1024
+	PRINTL 　奴隷が愛を込めて作ったチョコを叩き売ったことがある
+SIF FLAG:410
+	PRINTL 　奴隷をゾンビフェアリーにしたことがある
+SIF FLAG:402
+	PRINTL 　奴隷を吸血鬼にしたことがある
+SIF FLAG:403
+	PRINTL 　奴隷を機械に改造したことがある
+SIF FLAG:404
+	PRINTL 　奴隷を亡霊にしたことがある
+SIF FLAG:401
+	PRINTL 　奴隷の精神を人形に封じたことがある
+SIF FLAG:411
+	PRINTL 　奴隷をキョンシーに変えたことがある
+SIF FLAG:420 & 1
+	PRINTL 　人形を製作したことがある
+SIF FLAG:420 & 2
+	PRINTL 　小悪魔を召喚したことがある
+SIF FLAG:421
+	PRINTL 　身体強化の魔法により強化されている
+SIF CFLAG:ARG:20 & 512
+	PRINTL 　性転換の経験がある
+SIF CFLAG:ARG:20 & 4096
+	PRINTL 　調教中にcaved!!!!されたことがある
+SIF CFLAG:ARG:155 & 1
+	PRINTL 　思いっきり酔っ払ったことがある
+SIF CFLAG:ARG:155 & 2
+	PRINTL 　ストレスを溜め込んだことがある
+SIF CFLAG:ARG:154 & 8 || CFLAG:ARG:154 & 16 || CFLAG:ARG:154 & 32 || CFLAG:ARG:154 & 512
+	PRINTL 　一日のはじまりをセックスからスタートさせたことがある
+SIF CFLAG:ARG:154 & 128
+	PRINTL 　一日のはじまりを足コキからスタートさせたことがある
+;触手関連
+SIF FLAG:75 || FLAG:98
+	PRINTL 　触手に特殊な能力をつけて楽しんでいる
+;デバッグモード専用
+SIF TALENT:MASTER:998
+	PRINTFORML 　現在eratohoYMに潜むバグと戦っている
+
+CALL NEW_DRAWLINE
+
+;--------------------------------------------------
+;奴隷の各種フラグ関連表示
+;--------------------------------------------------
+@PRINT_SLAVE_FLAG, ARG
+PRINTFORM \@(FLAG:12 & 2) ? □  # その他%CALLNAME:ARG%に関する情報:\@
+PRINTFORML \@(FLAG:12 & 2) ? その他%CALLNAME:ARG%に関する情報 # \@
+VARSET LOCALS,""
+SPLIT "博麗神社,紅魔館,冥界,竹林,彼岸,妖怪の山,旧地獄跡市外,妖精の森,有頂天,太陽の畑,月の都,魔界,地獄界,命蓮寺,315,316,317,318,人里",",",LOCALS
+;デバッグモード専用
+SIF TALENT:MASTER:998
+	PRINTFORM 　ARG:{ARG}
+;デバッグモード専用
+SIF TALENT:MASTER:998
+	PRINTFORML 　キャラクター固有番号:{CFLAG:ARG:3109}
+SIF CFLAG:ARG:コスプレ実行回数
+	PRINTFORML 　今までに{CFLAG:ARG:コスプレ実行回数, 5}回ほど、コスプレをしたことがある。
+SIF CFLAG:ARG:調教説教薀蓄受講数
+	PRINTFORML 　今までに{CFLAG:ARG:調教説教薀蓄受講数, 5}回ほど、調教中に説教か薀蓄を受講したことがある。
+SIF CFLAG:ARG:パイズリした回数
+	PRINTFORML 　今までに{CFLAG:ARG:パイズリした回数, 5}回ほど、パイズリをしてあげたことがある。
+SIF CFLAG:ARG:パイズリされた回数
+	PRINTFORML 　今までに{CFLAG:ARG:パイズリされた回数, 5}回ほど、パイズリを堪能したことがある。
+SIF CFLAG:ARG:161
+	PRINTFORML 　密かに{CFLAG:ARG:161, 7}本ほど、盗撮したえっちビデオを保管している。
+SIF CFLAG:ARG:主人と調教キス数
+	PRINTFORML 　今までに{CFLAG:ARG:主人と調教キス数, 5}回ほど、調教中に主人と口付けを交わした。
+SIF CFLAG:ARG:主人にＶ捧げ回数
+	PRINTFORML 　今までに{CFLAG:ARG:主人にＶ捧げ回数, 5}回ほど、調教中に主人の肉棒を膣で受け止めた。
+SIF CFLAG:ARG:主人にＡ捧げ回数
+	PRINTFORML 　今までに{CFLAG:ARG:主人にＡ捧げ回数, 5}回ほど、調教中に主人の肉棒をアナルで受け止めた。
+SIF CFLAG:ARG:主人のＶ犯し回数
+	PRINTFORML 　今までに{CFLAG:ARG:主人のＶ犯し回数, 5}回ほど、調教中に主人の膣を肉棒で味わった。
+SIF CFLAG:ARG:主人のＡ犯し回数
+	PRINTFORML 　今までに{CFLAG:ARG:主人のＡ犯し回数, 5}回ほど、調教中に主人のアナルを肉棒で味わった。
+SIF CFLAG:ARG:408
+	PRINTFORML 　今までに{CFLAG:ARG:408, 5}回ほど、売春で規定外のサービスを行った。
+SIF CFLAG:ARG:155 & 1
+	PRINTL 　思いっきり酔っ払ったことがある
+SIF CFLAG:ARG:155 & 2
+	PRINTL 　ストレスを溜め込んだことがある
+SIF CFLAG:ARG:153 & 1
+	PRINTL 　主人の処女を強姦して奪ったことがある
+SIF CFLAG:ARG:153 & 64
+	PRINTL 　主人を暴行したことがある
+SIF CFLAG:ARG:153 & 256
+	PRINTL 　主人を触手で襲撃したことがある
+SIF CFLAG:ARG:153 & 2
+	PRINTL 　主人に夜這いして処女を捧げた
+SIF CFLAG:ARG:153 & 16
+	PRINTL 　別の奴隷に寝取られたことがある
+SIF CFLAG:ARG:153 & 32
+	PRINTL 　別の奴隷を主人から寝取ったことがある
+SIF CFLAG:ARG:20 & 2
+	PRINTL 　浣腸された経験あり
+SIF CFLAG:ARG:20 & 16
+	PRINTL 　一旦解放されたことがある
+SIF CFLAG:ARG:155 & 4
+	PRINTL 　他の奴隷を連れてきたことがある
+SIF CFLAG:ARG:20 & 64
+	PRINTL 　産卵した経験あり
+SIF CFLAG:ARG:20 & 128
+	PRINTL 　割礼された経験あり
+SIF CFLAG:ARG:20 & 256
+	PRINTL 　強制成長させられた経験あり
+SIF CFLAG:ARG:20 & 512
+	PRINTL 　性転換させられたことがある
+SIF CFLAG:ARG:20 & 1024
+	PRINTL 　[卵生]を消去されたことがある
+SIF CFLAG:ARG:20 & 2048
+	PRINTL 　どこからともなく媚薬を調達したことがある
+SIF CFLAG:ARG:20 & 4096
+	PRINTL 　調教中にcaved!!!!されたことがある
+SIF CFLAG:ARG:20 & 8192
+	PRINTL 　調教中に爆発したことがある
+SIF CFLAG:ARG:21 & 1
+	PRINTL 　公開オナニーの経験がある
+SIF CFLAG:ARG:21 & 128
+	PRINTL 　排卵誘発剤を飲まされたことがある
+SIF CFLAG:ARG:21 & 256
+	PRINTL 　人形達に拘束され、処女を散らされる程∇れた
+SIF CFLAG:ARG:22
+	PRINTL 　なんらかのハードな暴力調教を受けたことがある
+SIF CFLAG:ARG:23
+	PRINTL 　なんらかの不思議な風呂に叩き込まれたことがある
+SIF CFLAG:ARG:24
+	PRINTL 　なんらかの紳士的かつ特殊な触手体験をしたことがある
+SIF CFLAG:ARG:25
+	PRINTL 　獣による性行為の経験がある
+SIF CFLAG:ARG:33
+	PRINTL 　鈴蘭の毒を使ったことがある
+SIF CFLAG:ARG:触手出産数
+	PRINTFORML 　触手を{CFLAG:ARG:触手出産数}体、出産したことがある
+SIF CFLAG:ARG:3002
+	PRINTFORML 　仕送りをしてくれる子どもが{CFLAG:ARG:3002}人いる
+SIF CFLAG:ARG:150 & 1
+	PRINTL 　得意料理を披露したことがある
+SIF CFLAG:ARG:150 & 2048
+	PRINTL 　主人の弁当を食べたことがある
+SIF CFLAG:ARG:150 & 4
+	PRINTL 　主人に毒を盛ったことがありダメージを与えた
+SIF CFLAG:ARG:150 & 8
+	PRINTL 　主人に毒を盛ったものの見破られたことがある
+SIF CFLAG:ARG:150 & 8192
+	PRINTL 　他人の毒弁当を食わされダメージを受けたことがある
+SIF CFLAG:ARG:150 & 128
+	PRINTL 　愛を込めて贈ったチョコを食べてもらえたことがある
+SIF CFLAG:ARG:150 & 256
+	PRINTL 　愛を込めて贈ったチョコを叩き売られてしまったことがある
+SIF CFLAG:ARG:151 & 1
+	PRINTL 　ライブで失敗したことがある
+SIF CFLAG:ARG:151 & 2
+	PRINTL 　ライブで持ち歌を披露したことがある
+SIF CFLAG:ARG:151 & 4
+	PRINTL 　ライブ後にファンからプレゼントをもらったことがある
+SIF CFLAG:ARG:151 & 8
+	PRINTL 　トリオでライブしたことがある
+SIF CFLAG:ARG:154 & 1 || CFLAG:ARG:154 & 2
+	PRINTL 　朝から騎乗位でハッスルしたことがある
+SIF CFLAG:ARG:154 & 256
+	PRINTL 　朝から３Ｐでハッスルしたことがある
+SIF CFLAG:ARG:154 & 4
+	PRINTL 　朝の新妻プレイをしたことがある
+SIF CFLAG:ARG:154 & 64
+	PRINTL 　朝、主人を足コキしながら起こしたことがある。
+SIF CFLAG:ARG:稼ぎの総額 > 100000000
+	PRINTL 　今までにいっぱい稼いできている。
+;野外プレイ関連
+FOR LOCAL, 301, 340
+	SIF CFLAG:ARG:LOCAL
+		PRINTFORML 　\@(LOCAL >= 321) ?  %LOCALS:(LOCAL - 321)%に助手として # %LOCALS:(LOCAL - 301)%に奴隷として\@野外調教に連れていかれたことが{CFLAG:ARG:LOCAL,5}回ほどある。
+NEXT
+;触手関連
+SIF CFLAG:ARG:24 & 4
+	PRINTL 　触手部屋に幽閉されたことがある
+SIF CFLAG:ARG:24 & 8
+	PRINTL 　触手に催眠術をかけられたことがある
+;口上側より(CSTR:95～99を使用)、口上側で入れられた文字列をそのまま表示する
+FOR PC_VAR1, 95, 100
+	SIF CSTR:ARG:PC_VAR1 != ""
+		PRINTFORML 　%CSTR:ARG:PC_VAR1%
+NEXT
+CALL NEW_DRAWLINE
+
+;--------------------------------------------------
+;助手調教経験表示
+;--------------------------------------------------
+@PRINT_ASSI_TRAIN, ARG
+PRINTFORM \@(FLAG:12 & 2) ? □ # \@助手としての
+PRINTFORML %CALLNAME:ARG%による他の奴隷への調教経験
+LOCAL = 0
+LOCAL:1 = 0
+
+PC_VAR2 = 0
+CALLF CLEAR_LIST
+FOR PC_VAR1, 0, CHARANUM
+	MARK:PC_VAR1:93 = 0
+	SIF PC_VAR1 == MASTER || PC_VAR1 == ARG
+		CONTINUE
+	LOCAL:1 = NO:PC_VAR1 + 10000
+	SIF CFLAG:ARG:(LOCAL:1) <= 0
+		CONTINUE
+	CALLF SET_LIST, PC_VAR2, PC_VAR1
+	PC_VAR2++
+	MARK:PC_VAR1:93 = 1
+NEXT
+
+PL_VAR_L:5 = PC_VAR2 / 10
+PL_VAR_L:5 -= (PC_VAR2 % 10 == 0) ? 1 # 0
+
+CALL ASSI_TRAIN_LIST, ARG
+
+IF PL_VAR_L:5 > 0
+	PRINTFORMC \@(PL_VAR_L:4 > 0) ? [444]前の奴隷リスト # 　 \@
+	PRINTFORMC \@(PL_VAR_L:4 < PL_VAR_L:5) ? [666]次の奴隷リスト # 　 \@
+	PRINTL 
+ENDIF
+CALL NEW_DRAWLINE
+
+;--------------------------------------------------
+;助手調教経験表示処理
+;--------------------------------------------------
+@ASSI_TRAIN_LIST, ARG
+PC_VAR3 = 0
+FOR PC_VAR1, 0, 10
+	PC_VAR4 = GET_LIST(PC_VAR1 + PL_VAR_L:4 * 10)
+	PL_VAR_X:3 = NO:PC_VAR4 + 10000
+	IF PC_VAR2 <= PC_VAR1 + PL_VAR_L:4 * 10 && PL_VAR_L:5 > 0
+		SIF (PC_VAR1 + 1) % 2 == 0
+			PRINTL 
+		CONTINUE
+	ELSEIF PC_VAR2 <= PC_VAR1 + PL_VAR_L:4 * 10 && PL_VAR_L:5 == 0
+		CONTINUE
+	ENDIF
+	SIF PC_VAR4 == 0
+		CONTINUE
+	PC_VAR3++
+	STRLENS CALLNAME:PC_VAR4
+	PL_VAR_X:0 = RESULT
+		IF CFLAG:ARG:(PL_VAR_X:3) >= 50000
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%のことを主人より気にしてるかもしれない。
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 10000
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%の性癖を知り尽くしている。
+			PL_VAR_X:0 = MAX(14 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 5000
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%のことを凄く気に入っている。
+			PL_VAR_X:0 = MAX(12 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 1000
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%と確かな絆を感じている。
+			PL_VAR_X:0 = MAX(16 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 500
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%と一緒にいるとえっちなことをしたくなる。
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 200
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%への調教のコツを掴みはじめている。
+			PL_VAR_X:0 = MAX(6 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 100
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%への調教を少し楽しみにしている。
+			PL_VAR_X:0 = MAX(8 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 50
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%のことが少々気になっている。
+			PL_VAR_X:0 = MAX(12 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSEIF CFLAG:ARG:(PL_VAR_X:3) >= 10
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%の喘ぎ声を聞いていたりする。
+			PL_VAR_X:0 = MAX(12 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ELSE
+			PRINTFORM 　
+			PRINTFORM %SHOW_CALLNAME(PC_VAR4)%の調教に立ち会ったことがある。
+			PL_VAR_X:0 = MAX(10 - PL_VAR_X:0, 0)
+			PL_STR_X:0 = % " " * PL_VAR_X:0 %
+			PRINTFORM %PL_STR_X:0%
+		ENDIF
+		IF (PC_VAR1 + 1) % 2 == 0
+			PRINTL 
+		ELSE
+			PRINT 　　
+		ENDIF
+NEXT
+SIF PC_VAR3 == 0
+	PRINTL 　特になし
+SIF PC_VAR3 % 2
+	PRINTL 
+;--------------------------------------------------
+;奴隷の肉体情報表示
+;--------------------------------------------------
+@PRINT_BODY_INFO, ARG
+PRINTL □ 肉体情報
+VARSET LOCALS
+VARSET LOCAL
+PRINTL 
+PRINT 【口
+SIF TALENT:ARG:猫舌
+	PRINT  猫舌
+PRINTL 】
+SIF !EXP:ARG:キス経験
+	PRINTL まだ誰にも唇を許していない
+IF EXP:ARG:フェラ経験 && EXP:ARG:キス経験
+	PRINTFORML 今まで{EXP:ARG:キス経験}回の口づけを経験、{EXP:ARG:フェラ経験}回のフェラを経験した
+ELSEIF EXP:ARG:キス経験
+	PRINTFORML 今まで{EXP:ARG:キス経験}回の口づけを経験した
+ELSEIF EXP:ARG:フェラ経験
+	PRINTFORML 今まで{EXP:ARG:フェラ経験}回のフェラを経験した
+ENDIF
+IF TALENT:ARG:精愛味覚
+	PRINTL 精液の味を認識する度に快楽を思い出してしまい
+ELSEIF ABL:ARG:奉仕精神 >= 3
+	PRINTL 精液を抵抗なく飲むことが出来る
+ENDIF
+PRINTL 
+PRINT 【胸
+IF TALENT:ARG:絶壁
+	PRINT  絶壁
+ELSEIF TALENT:ARG:貧乳
+	PRINT  貧乳
+ELSEIF TALENT:ARG:巨乳
+	PRINT  巨乳
+ELSEIF TALENT:ARG:爆乳
+	PRINT  爆乳
+ELSE
+	PRINT  並乳
+ENDIF
+SIF CFLAG:ARG:42 & 32
+	PRINT  ニプルピアス
+PRINTL 】
+LOCAL = 0
+IF TALENT:ARG:Ｂ敏感
+	LOCAL = 1
+ELSEIF TALENT:ARG:Ｂ鈍感
+	LOCAL = -1
+ENDIF
+SIF TALENT:ARG:淫乳
+	LOCAL += 1
+SELECTCASE (ABL:ARG:Ｂ感覚 + LOCAL)
+    CASE IS >= 5
+	    PRINT 極端に敏感　
+	CASE IS >= 4
+		PRINT 感度抜群　
+	CASE IS >= 2
+		PRINT 感度良好　
+ENDSELECT
+    IF TALENT:ARG:母乳体質
+		PRINTL 母乳体質
+	ELSE
+		PRINTL 
+	ENDIF
+    SIF TALENT:ARG:淫乳
+		PRINTL バストへの刺激にかなり敏感
+PRINTL 
+PRINT 【肌
+SIF TALENT:ARG:動物耳
+	PRINT  動物耳
+SIF CFLAG:ARG:42 & 1
+	PRINT  クリトリスリング
+SIF CFLAG:ARG:42 & 8
+	PRINT  ボンデージ装着中
+PRINTL 】
+LOCAL = 0
+IF TALENT:ARG:Ｃ敏感
+	LOCAL = 1
+ELSEIF TALENT:ARG:Ｃ鈍感
+	LOCAL = -1
+ENDIF
+SIF TALENT:ARG:淫核／淫茎
+	LOCAL += 1
+SELECTCASE (ABL:ARG:Ｃ感覚 + LOCAL)
+    CASE IS >= 5
+	    PRINTL 極端に敏感　
+	CASE IS >= 4
+		PRINTL 感度抜群　
+	CASE IS >= 2
+		PRINTL 感度良好　
+ENDSELECT
+IF TALENT:ARG:淫核／淫茎
+	IF TALENT:ARG:オトコ
+		PRINT ペニス
+	ELSE
+		SIF TALENT:ARG:肥大陰核
+			PRINT ぷっくりと膨れ上がった
+		PRINT クリトリス
+		SIF TALENT:ARG:ふたなり
+			PRINT とペニス
+	ENDIF
+	PRINTL が常に疼いている
+ENDIF
+PRINTL 
+PRINT 【アナル
+SIF CFLAG:ARG:42 & 2
+	PRINT  アナルバイブ装着中
+PRINTL 】
+LOCAL = 0
+IF TALENT:ARG:Ａ敏感
+	LOCAL = 1
+ELSEIF TALENT:ARG:Ａ鈍感
+	LOCAL = -1
+ENDIF
+SIF TALENT:ARG:淫尻
+	LOCAL += 1
+SELECTCASE (ABL:ARG:Ａ感覚 + LOCAL)
+	CASE IS >= 5
+		PRINT 感度最高　
+	CASE IS >= 4
+		PRINT 感度抜群　
+	CASE IS >= 2
+		PRINT 感度良好　
+ENDSELECT
+IF TALENT:ARG:淫尻 && EXP:ARG:Ａ経験 >= EXPLV:6 && CFLAG:ARG:主人にＡ捧げ回数 >= 180
+	PRINTL 極上名器
+	SIF TALENT:ARG:淫尻
+		PRINTL 菊門への刺激に対して幸福感を感じる
+	PRINTFORML 完全に%CALLNAME:MASTER%のカタチに作り替えられたアナルは肉ヒダを蠢かせて絡みついてくる
+ELSEIF EXP:ARG:Ａ経験 >= EXPLV:5 && CFLAG:ARG:主人にＡ捧げ回数 >= 120
+	PRINTL 名器
+	SIF TALENT:ARG:淫尻
+		PRINTL 菊門への刺激に対して幸福感を感じる
+	PRINTFORML 使い込んだ甲斐あって大変具合のいい穴になった
+ELSEIF EXP:ARG:Ａ経験 >= EXPLV:4 && CFLAG:ARG:主人にＡ捧げ回数 >= 70
+	SIF ABL:ARG:Ａ感覚 + LOCAL >= 2
+		PRINTL 
+	SIF TALENT:ARG:淫尻
+		PRINTL 菊門への刺激に対して幸福感を感じる
+	PRINTFORML %CALLNAME:MASTER%を受け入れることに慣れきっている
+ELSEIF EXP:ARG:Ａ経験 >= EXPLV:3 && CFLAG:ARG:主人にＡ捧げ回数 >= 30
+	SIF ABL:ARG:Ａ感覚 + LOCAL >= 2
+		PRINTL 
+	SIF TALENT:ARG:淫尻
+		PRINTL 菊門への刺激に対して幸福感を感じる
+	PRINTL ほぐれ始めて具合が良くなってきた
+ELSE
+	IF EXP:ARG:Ａ経験 >= 7
+		SIF ABL:ARG:Ａ感覚 + LOCAL >= 2
+			PRINTL 
+		SIF TALENT:ARG:淫尻
+			PRINTL 菊門への刺激に対して幸福感を感じる
+		PRINTL まだ異物を受け入れることに慣れていない
+	ELSE
+		SIF TALENT:ARG:淫尻
+			PRINTL 菊門への刺激に対して幸福感を感じる
+		PRINTL 未開通
+	ENDIF
+ENDIF
+IF ABL:ARG:精液中毒 >= 5 && EXP:ARG:Ａ経験 >= EXPLV:5
+	PRINTL アナル内射精されると多幸感を感じる
+ELSEIF ABL:ARG:精液中毒 >= 3 && EXP:ARG:Ａ経験 >= EXPLV:4
+	PRINTL アナル内射精されると腸内が疼いてしまう
+ENDIF
+PRINTL 
+IF !TALENT:ARG:オトコ
+	PRINT 【膣
+	SIF CFLAG:ARG:42 & 16
+		PRINT  ラビアピアス
+	SIF CFLAG:ARG:42 & 2
+		PRINT  バイブ装着中
+	PRINT 】
+	IF CFLAG:ARG:3666 > 0
+		PRINT 　
+		SETCOLOR 0x333333
+		SETCOLOR (CFLAG:ARG:3666 * 3 >= 21) ? 0xEEEEEE # 0xB09999
+		PRINT  残留精液
+		CALL IN_WOMB_SHOW, CFLAG:ARG:3666 * 3
+		RESETCOLOR
+	ENDIF
+	PRINTL 
+	LOCAL = 0
+	IF TALENT:ARG:Ｖ敏感
+		LOCAL = 1
+	ELSEIF TALENT:ARG:Ｖ鈍感
+		LOCAL = -1
+	ENDIF
+	SIF TALENT:ARG:淫壷
+		LOCAL += 1
+	SELECTCASE (ABL:ARG:Ｖ感覚 + LOCAL)
+		CASE IS >= 5
+			PRINT 感度最高　
+		CASE IS >= 4
+			PRINT 感度抜群　
+		CASE IS >= 2
+			PRINT 感度良好　
+	ENDSELECT
+	IF TALENT:ARG:処女 == 1
+		IF TALENT:ARG:濡れやすい
+			PRINT 未通女　
+			PRINTL 濡れやすい
+		ELSEIF TALENT:ARG:濡れにくい
+			PRINT 未通女　
+			PRINTL 濡れにくい
+		ELSE
+			PRINTL 未通女
+		ENDIF
+		SIF JUEL:ARG:快Ｖ == 0 && EXP:ARG:Ｖ経験 == 0 && ABL:ARG:Ｖ感覚 == 0
+			PRINTL 男を知らないまっさらの生娘だ
+	ELSE
+		IF TALENT:ARG:淫壷 && EXP:ARG:Ｖ経験 >= EXPLV:6 && CFLAG:ARG:主人にＶ捧げ回数 >= 180
+			PRINT 極上名器　
+			IF TALENT:ARG:濡れやすい
+				PRINTL 濡れやすい
+			ELSEIF TALENT:ARG:濡れにくい
+				PRINTL 濡れにくい
+			ELSE
+				PRINTL 
+			ENDIF
+			SIF TALENT:ARG:淫壷
+				PRINTL ヴァギナが主人のモノに順応し
+			PRINTFORML 完全に%CALLNAME:MASTER%のカタチに作り替えられた膣内は肉ヒダを蠢かせて絡みついてくる
+		ELSEIF EXP:ARG:Ｖ経験 >= EXPLV:5 && CFLAG:ARG:主人にＶ捧げ回数 >= 120
+			PRINT 名器　
+			IF TALENT:ARG:濡れやすい
+				PRINTL 濡れやすい
+			ELSEIF TALENT:ARG:濡れにくい
+				PRINTL 濡れにくい
+			ELSE
+				PRINTL 
+			ENDIF
+			SIF TALENT:ARG:淫壷
+				PRINTL ヴァギナが主人のモノに順応し
+			PRINTFORML 使い込んだ甲斐あって大変具合のいい穴になった
+		ELSEIF EXP:ARG:Ｖ経験 >= EXPLV:4 && CFLAG:ARG:主人にＶ捧げ回数 >= 70
+			IF TALENT:ARG:濡れやすい
+				PRINTL 濡れやすい
+			ELSEIF TALENT:ARG:濡れにくい
+				PRINTL 濡れにくい
+			ELSEIF ABL:ARG:Ｖ感覚 + LOCAL >= 2
+				PRINTL 
+			ENDIF
+			SIF TALENT:ARG:淫壷
+				PRINTL ヴァギナが主人のモノに順応し
+			PRINTFORML %CALLNAME:MASTER%を受け入れることに慣れきっている
+		ELSEIF EXP:ARG:Ｖ経験 >= EXPLV:3 && CFLAG:ARG:主人にＶ捧げ回数 >= 30
+			IF TALENT:ARG:濡れやすい
+				PRINTL 濡れやすい
+			ELSEIF TALENT:ARG:濡れにくい
+				PRINTL 濡れにくい
+			ELSEIF ABL:ARG:Ｖ感覚 + LOCAL >= 2
+				PRINTL 
+			ENDIF
+			SIF TALENT:ARG:淫壷
+				PRINTL ヴァギナが主人のモノに順応し
+			PRINTL ほぐれ始めて具合が良くなってきた
+		ELSE
+			IF TALENT:ARG:濡れやすい
+				PRINTL 濡れやすい
+			ELSEIF TALENT:ARG:濡れにくい
+				PRINTL 濡れにくい
+			ELSEIF ABL:ARG:Ｖ感覚 + LOCAL >= 2
+				PRINTL 
+			ENDIF
+			SIF TALENT:ARG:淫壷
+				PRINTL ヴァギナが主人のモノに順応し
+			IF EXP:ARG:Ｖ経験 < 10 && !CFLAG:ARG:主人にＶ捧げ回数 && (EXP:ARG:別人調教経験 <= 10 || EXP:ARG:Ｖ経験 < 5)
+				PRINTL 未使用に近い膣はまだ硬さを残している
+			ENDIF
+		ENDIF
+	ENDIF
+	IF ABL:ARG:精液中毒 >= 4 && EXP:ARG:Ｖ経験 >= EXPLV:5
+		PRINTL 膣内射精されると多幸感を感じる
+	ELSEIF ABL:ARG:精液中毒 >= 2 && EXP:ARG:Ｖ経験 >= EXPLV:4
+		PRINTL 膣内射精されると子宮が疼いてしまう
+	ENDIF
+	SIF TALENT:ARG:妊娠
+		PRINTFORML 子宮内では%CSTR:ARG:8%との子供がすくすくと育っている
+	PRINTL
+ENDIF
+IF TFLAG:213
+	DRAWLINE
+ELSE
+	CALL NEW_DRAWLINE
+ENDIF
+;=============================================================================
+;種族遺伝関連処理
+;=============================================================================
+;キャラ登録番号をARGに受け取り、そのキャラの種族を判定(=もっとも強く遺伝している種族遺伝子を探す)、STR:2に格納する
+;なお、遺伝強度35%以上の遺伝子が二つあった場合、「○○と××のハーフ」という表現になる
+;すべての遺伝子の遺伝強度が35未満なら「混血」と表現される
+;-------------------------------------------------
+;例外種族処理
+;-------------------------------------------------
+@GET_RACE , ARG
+IF NO:ARG == 1000 && TALENT:ARG:998 && TALENT:ARG:動物耳
+	STR:2 = チーター
+	RETURN 1
+ELSEIF NO:ARG == 5000
+	STR:2 = 半人半菜
+	RETURN 1
+ELSEIF TALENT:ARG:呪精
+	STR:2 = %STR:145%
+	RETURN 1
+ELSEIF TALENT:ARG:妖精 && CFLAG:ARG:5 == 1
+	STR:2 = %STR:103%
+	RETURN 1
+ELSEIF TALENT:ARG:吸血鬼 && CFLAG:ARG:5 == 2
+	STR:2 = %STR:106%
+	RETURN 1
+ELSEIF TALENT:ARG:機械 && CFLAG:ARG:5 == 3
+	STR:2 = %STR:146%
+	RETURN 1
+ELSEIF TALENT:ARG:霊体 && CFLAG:ARG:5 == 4
+	STR:2 = %STR:143%
+	RETURN 1
+ELSEIF TALENT:ARG:人形 && CFLAG:ARG:5 == 5
+	STR:2 = %STR:121%
+	RETURN 1
+ELSEIF TALENT:ARG:悪魔 && CFLAG:ARG:5 == 6
+	STR:2 = %STR:104%
+	RETURN 1
+ELSEIF TALENT:ARG:河童 && CFLAG:ARG:5 == 7
+	STR:2 = %STR:127%
+	RETURN 1
+ELSEIF TALENT:ARG:妖狐 && CFLAG:ARG:5 == 8
+	STR:2 = %STR:112%
+	RETURN 1
+ELSEIF TALENT:ARG:半白澤 && CFLAG:ARG:5 == 9
+	STR:2 = %STR:116%
+	RETURN 1
+ELSEIF TALENT:ARG:スペルカード
+	STR:2 = スペルカード
+	RETURN 1
+ENDIF
+
+CALL FIND_RACE , ARG
+
+;結果取り出し
+LOCAL:1 = RESULT:1
+LOCAL:2 = RESULT:2
+
+;特定の混血は特殊表現にする(例：ワーハクタク、機械人形)
+IF (LOCAL:1 == 3201 && LOCAL:2 == 3253) || (LOCAL:1 == 3253 && LOCAL:2 == 3201)
+	STR:2 = ワーハクタク
+ELSEIF (LOCAL:1 == 3221 && LOCAL:2 == 3246) || (LOCAL:1 == 3246 && LOCAL:2 == 3221)
+	STR:2 = 機械人形
+;以下標準処理
+ELSEIF LOCAL:1 && LOCAL:2
+	;片方の遺伝子が人形なら「○○人形」という表現
+	IF LOCAL:1 == 3221 || LOCAL:2 == 3221
+		STR:2 = \@(LOCAL:1 == 3221) ? %RACENAME(LOCAL:2)% # %RACENAME(LOCAL:1)%\@人形
+	;そうでないなら「○○と××のハーフ」という形式
+	ELSE
+		STR:2 = %RACENAME(LOCAL:1)%と%RACENAME(LOCAL:2)%のハーフ
+	ENDIF
+;発現した遺伝子(=遺伝強度35%以上)がなければ混血
+ELSEIF LOCAL:1 == 0 && LOCAL:2 == 0
+	STR:2 = 混血
+ELSE
+	STR:2 = %RACENAME(LOCAL:1)%
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;種族決定関数
+;-------------------------------------------------
+;キャラ登録番号を受け取り、種族を判定。変数重複が怖いので結果の取り出しはRESULT:X(Xは1か2)を直接参照
+@FIND_RACE , ARG
+;遺伝子を検索し、一番強く遺伝しているものと二番目に強く遺伝しているものをそれぞれLOCAL:1とLOCAL:2に格納する
+;遺伝強度35%未満の遺伝子は無視される。該当するものがなければ0が格納される
+;戻り値と種族の対応については@RACENAMEを参照
+LOCAL:1 = 0
+LOCAL:2 = 0
+VARSET RESULT
+FOR LOCAL , 3200 , 3400
+	IF CFLAG:ARG:LOCAL >= 35
+		IF CFLAG:ARG:LOCAL > CFLAG:ARG:(LOCAL:1) || LOCAL:1 == 0
+			LOCAL:2 = LOCAL:1
+			LOCAL:1 = LOCAL
+		ELSEIF CFLAG:ARG:LOCAL > CFLAG:ARG:(LOCAL:2) || LOCAL:2 == 0
+			LOCAL:2 = LOCAL
+		ENDIF
+	ENDIF
+NEXT
+RESULT:1 = LOCAL:1
+RESULT:2 = LOCAL:2
+RETURN 1
+
+;-------------------------------------------------
+;種族一覧
+;-------------------------------------------------
+@RACENAME(ARG)
+#FUNCTIONS
+RETURNF @"\@(ARG >= 3200 && ARG < 3400) ? %STR:(ARG - 3100)% # 混血\@"
+
+;=============================================================================
+;情報表示補助処理
+;=============================================================================
+;-------------------------------------------------
+;キャラ一覧表示時に[]内の数字を整列させる処理
+;-------------------------------------------------
+@ARRANGE_CHARALIST, ARG
+IF STRLENS(CALLNAME:ARG) <= 18
+	PRINTFORM [\@(FLAG:90 >= 3 && FLAG:4 < 50) ? {ARG, 3} # {ARG, 2}\@]
+	PRINTFORM %SHOW_CALLNAME3(ARG, 18, 0)%
+ELSE
+;	LOCALS = \@(STRLENS(SUBSTRING(CALLNAME:ARG,0,16)) == 16) ? %SHOW_CALLNAME4(ARG, 0, 16)%.. # %SHOW_CALLNAME4(ARG, 0, 15)%...\@
+	PRINTFORM [\@(FLAG:90 >= 3 && FLAG:4 < 50) ? {ARG, 3} # {ARG, 2}\@]
+	PRINTFORM \@(STRLENS(SUBSTRING(CALLNAME:ARG,0,16)) == 16) ? %SHOW_CALLNAME4(ARG, 0, 16)%.. # %SHOW_CALLNAME4(ARG, 0, 15)%...\@
+ENDIF
+
+;-------------------------------------------------
+;金額増加表示処理
+;-------------------------------------------------
+;増加する金額を扱う変数としてMONEY:1を使用
+@SHOW_MONEY_INCREACE
+LOCALS:1 = 
+LOCALS:2 = 
+SIF MONEY:1 >= 10000
+	LOCALS:1 = {(MONEY:1)/10000}萬
+SIF (MONEY:1)%10000 > 0
+	LOCALS:2 = {(MONEY:1)%10000}
+LOCALS = % LOCALS:1 + LOCALS:2 %
+PRINTFORML 所持金%LOCALS%圓増加
+MONEY += MONEY:1
+
+;-------------------------------------------------
+;キャラ一覧表示時に体力・気力を表示させる処理
+;-------------------------------------------------
+@ARRANGE_CHARALIFE, ARG
+PRINTFORM 体力({BASE:ARG:体力, 4}/{MAXBASE:ARG:0, 4}) 気力({BASE:ARG:気力, 4}/{MAXBASE:ARG:1, 4}) 理性:\@(TALENT:ARG:理性) ? {MIN(BASE:ARG:理性 / 100, 100), 3} # 無い\@
+SIF TALENT:ARG:理性
+	PRINT %
+PRINT  
+
+;-------------------------------------------------
+;キャラ一覧表示処理
+;-------------------------------------------------
+@CHARADATA_LIST, ARG, ARG:2
+LOCAL:3 = 0
+REPEAT 20
+	LOCAL = GET_LIST(COUNT + ARG * 20)
+	SIF LOCAL == 0
+		CONTINUE
+
+	;主人公と助手対象と調教中キャラは排除
+	SIF LOCAL == 0
+		CONTINUE
+	SIF CFLAG:LOCAL:4 == 1 || CFLAG:LOCAL:4 == 8192
+		CONTINUE
+	IF LOCAL == TARGET
+		PRINT ☆
+	ELSEIF LOCAL == ASSI
+		PRINT ★
+	ELSEIF CFLAG:LOCAL:4 == 4
+		PRINT ◆
+		LOCAL:3 |= 1
+	ELSEIF CFLAG:LOCAL:4 == 8
+		PRINT ▲
+		LOCAL:3 |= 2
+	ELSEIF CFLAG:LOCAL:4 == 16
+		PRINT ■
+		LOCAL:3 |= 4
+	ELSEIF CFLAG:LOCAL:4 == 1024
+		CALL PRINTCOLOR(RGBCOLOR(220, 20, 60), "▼", 0)
+		LOCAL:3 |= 16
+	ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+		PRINT ▽
+		LOCAL:3 |= 8
+	ELSEIF ISASSI:LOCAL == 1
+		PRINT ●
+	ELSEIF CFLAG:LOCAL:1 == 2
+		PRINT ○
+	ELSE
+		PRINT 　
+	ENDIF
+	CALL ARRANGE_CHARALIST, LOCAL
+	CALL ARRANGE_CHARALIFE, LOCAL
+	CALL ARRANGE_CHARATALENT, LOCAL
+	PRINTL 
+	;一言口上呼び出し
+	SIF FLAG:10 & 4
+		CALL DISPLAY_KOJO_MESSAGE_IMPRESSION_MAIN, LOCAL
+REND
+IF ARG:2 >= 1
+	PRINT 　　　☆:調教中 ★:助手 ○:助手可 ●:元助手
+	SIF FLAG:15 & 4096 && FLAG:75 & 32768 && LOCAL:3 & 1
+		PRINT  ◆:触手幽閉中
+	SIF FLAG:73 & 1 && LOCAL:3 & 4
+		PRINT  ■:牢収監中
+	SIF FLAG:15 & 4096 && LOCAL:3 & 2
+		PRINT  ▲:檻幽閉中
+	IF LOCAL:3 & 16
+		PRINT  
+		CALL PRINTCOLOR(RGBCOLOR(220, 20, 60), "▼", 0)
+		PRINT :売春中
+	ENDIF
+	SIF FLAG:79 & 1 && LOCAL:3 & 8
+		PRINT  ▽:ハーブ作業中
+	PRINTL 　を表しています
+ENDIF
+
+;-------------------------------------------------
+;キャラの素質簡易表示の補助処理
+;-------------------------------------------------
+@ARRANGE_CHARATALENT, ARG
+SIF TALENT:ARG:死亡
+	PRINT 死.
+
+IF TALENT:ARG:オトコ
+	PRINT 男.
+ELSE
+	IF TALENT:ARG:処女 == 1
+		PRINT 処.
+	ELSEIF TALENT:ARG:処女
+		PRINT 乙.
+	ENDIF
+	IF TALENT:ARG:ふたなり
+		PRINT 双.
+	ELSEIF TALENT:ARG:肥大陰核
+		PRINT 陰.
+	ENDIF
+ENDIF
+
+IF TALENT:ARG:相愛
+	PRINT 相.
+ELSEIF TALENT:ARG:親愛
+	PRINT 親.
+ELSEIF TALENT:ARG:恋慕
+	PRINT 恋.
+ENDIF
+
+IF TALENT:ARG:傷物
+	PRINT 傷.
+ELSEIF TALENT:ARG:隷属
+	PRINT 隷.
+ELSEIF TALENT:ARG:烙印
+	PRINT 烙.
+ELSEIF TALENT:ARG:服従
+	PRINT 服.
+ENDIF
+
+SIF TALENT:ARG:使い魔
+	PRINT 使.
+
+IF TALENT:ARG:壊造人格
+	PRINT 壊.
+ELSEIF TALENT:ARG:傀儡
+	PRINT 儡.
+ELSEIF TALENT:ARG:精神崩壊
+	PRINT 崩.
+ELSEIF TALENT:ARG:狂気
+	PRINT 狂.
+ELSEIF TALENT:ARG:幼児退行
+	PRINT 退.
+ENDIF
+
+SIF TALENT:ARG:淫乱
+	PRINT 淫.
+
+IF TALENT:ARG:淫魔
+	PRINT 魔.
+ELSEIF TALENT:ARG:淫核／淫茎 && TALENT:ARG:淫壷 && TALENT:ARG:淫尻 && TALENT:ARG:淫乳 && TALENT:ARG:尿道狂 && TALENT:ARG:キス魔 && TALENT:ARG:ドＳ && TALENT:ARG:ドＭ
+	PRINT 乱.
+ELSEIF TALENT:ARG:淫核／淫茎
+	PRINT 豆.
+ELSEIF TALENT:ARG:淫壷
+	PRINT 膣.
+ELSEIF TALENT:ARG:淫尻
+	PRINT 尻.
+ELSEIF TALENT:ARG:淫乳
+	PRINT 胸.
+ELSEIF TALENT:ARG:尿道狂
+	PRINT 尿.
+ELSEIF TALENT:ARG:キス魔
+	PRINT ｷｽ.
+ELSEIF TALENT:ARG:ドＳ
+	PRINT Ｓ.
+ELSEIF TALENT:ARG:ドＭ
+	PRINT Ｍ.
+ENDIF
+
+SIF TALENT:ARG:即落ち
+	PRINT 即.
+
+IF TALENT:ARG:オトコ
+	PRINT 
+ELSEIF TALENT:ARG:爆乳
+	PRINT 爆.
+ELSEIF TALENT:ARG:巨乳
+	PRINT 巨.
+ELSEIF TALENT:ARG:貧乳
+	PRINT 貧.
+ELSEIF TALENT:ARG:絶壁
+	PRINT 壁.
+ELSE
+	PRINT 並.
+ENDIF
+
+SIF TALENT:ARG:母乳体質
+	PRINT 乳.
+
+IF TALENT:ARG:妊娠
+	PRINT 妊.
+ELSEIF TALENT:ARG:抱卵中
+	PRINT 抱.
+ELSEIF TALENT:ARG:懐卵
+	PRINT 卵.
+ENDIF
+
+SIF TALENT:ARG:育児中
+	PRINT 育.
+
+SIF TALENT:ARG:母性
+	PRINT 母.
+
+SIF TALENT:ARG:寄生
+	PRINT 寄.
+
+SIF CFLAG:ARG:41 > 0
+	PRINT 種.
+
+SIF CFLAG:ARG:0 > 0
+	PRINT EX.
+
+SIF TALENT:ARG:思い人あり || TALENT:ARG:彼氏あり || TALENT:ARG:旦那あり
+	PRINT Ｎ.
+
+SIF TALENT:ARG:娼婦
+	PRINT 娼.
+
+SIF TALENT:ARG:求愛依存
+	PRINT 求.
+
+SIF TALENT:ARG:春の人
+	PRINT 春.
+
+SIF TALENT:ARG:看板娘
+	PRINT 看.
+
+SIF TALENT:ARG:常連客 > 0
+	PRINTFORM {TALENT:ARG:常連客, 2}.
+
+PL_VAR_I = GETCOLOR()
+SETCOLOR 0xDC143c
+SIF TALENT:ARG:売春中毒
+	PRINT 売
+SETCOLOR PL_VAR_I
+
+;-------------------------------------------------
+;キャラ名の表示補助処理
+;-------------------------------------------------
+@SET_CALLNAME
+FOR LOCAL:10, 1, 6
+	REPEAT 120
+		;子は除く
+		SIF (1000 * LOCAL:10 + COUNT) == 2048 || (1000 * LOCAL:10 + COUNT) == 2049
+			CONTINUE
+
+		SIF ITEMPRICE:(1000 * LOCAL:10 + COUNT) > 0
+			STR:(1000 * LOCAL:10 + COUNT + 10000) = %CSVNAME((1000 * LOCAL:10 + COUNT), 0)%
+	REND
+NEXT
+;-------------------------------------------------
+;区切り線表示補助処理
+;-------------------------------------------------
+@NEW_DRAWLINE
+IF FLAG:12 & 2
+	CUSTOMDRAWLINE ･
+ELSE
+	DRAWLINE
+ENDIF

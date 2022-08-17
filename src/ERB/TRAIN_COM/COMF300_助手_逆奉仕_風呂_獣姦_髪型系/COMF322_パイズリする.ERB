@@ -1,0 +1,243 @@
+﻿;=============================================================================
+;パイズリする
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE322
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:322 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;調教者がオトコだとダメ
+SIF TALENT:PLAYER:オトコ
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)3未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 3
+		RETURN 0
+ENDIF
+;主人が[禁断の知識]持ちじゃないとき、体格差が2段階以内か調教者が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+	RETURN 0
+;ペニスが汚れており、調教者が[汚れ無視]でない場合(愛液、ペニス、母乳の汚れは条件対象外)
+IF COM_ABLE_STAIN(TARGET, 2, 19) == 0 && TALENT:PLAYER:汚れ無視 == 0
+	;調教者が主人の場合はダメ
+	SIF PLAYER == MASTER
+		RETURN 0
+	;調教者が助手で[汚臭敏感]を持ち、《従順》4未満の場合はダメ
+	SIF ASSIPLAY && TALENT:PLAYER:汚臭敏感 && ABL:PLAYER:従順 < 4
+		RETURN 0
+ENDIF
+;[絶壁]だと不可
+IF TALENT:PLAYER:絶壁
+	RETURN 0
+;[貧乳]だと技巧4以上必要
+ELSEIF TALENT:PLAYER:貧乳 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;[巨乳]なら技巧2以上必要
+ELSEIF TALENT:PLAYER:巨乳 && ABL:PLAYER:技巧 < 2
+	RETURN 0
+;[爆乳]なら技巧LV1以上必要
+ELSEIF TALENT:PLAYER:爆乳 && ABL:PLAYER:技巧 < 1
+	RETURN 0
+;それ以外の場合は技巧3以上必要
+ELSEIF TALENT:PLAYER:貧乳 == 0 && TALENT:PLAYER:巨乳 == 0 && TALENT:PLAYER:爆乳 == 0 && ABL:PLAYER:技巧 < 3
+	RETURN 0
+ENDIF
+;オナホール・電極オナホール使用中はダメ
+SIF TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手がウェディングドレス・ゴスロリ着用中の場合助手の技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && (TEQUIP:ASSI:コスチュームプレイ == 19 || TEQUIP:ASSI:コスチュームプレイ == 20) && ABL:ASSI:技巧 < 4
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 322) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM322
+PRINTL パイズリする
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 322
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = パイズリする
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	LOCAL = 80
+ELSEIF ABL:PLAYER:技巧 == 1
+	LOCAL = 300
+ELSEIF ABL:PLAYER:技巧 == 2
+	LOCAL = 500
+ELSEIF ABL:PLAYER:技巧 == 3
+	LOCAL = 1000
+ELSEIF ABL:PLAYER:技巧 == 4
+	LOCAL = 2000
+ELSE
+	LOCAL = 3500
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+;精液中毒をみる
+LOCAL = EJACULATIONCHECK_ABL_31_2(PLAYER, LOCAL)
+
+;調教対象のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL)
+
+SIF EXIST_PENIS(TARGET)
+	BASE:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 50
+DOWNBASE:1 += 180
+
+SOURCE:情愛 = 1000
+SOURCE:露出 = 220
+SOURCE:主導権 = 1000
+SOURCE:達成感 = 1000
+SOURCE:逸脱 = 50
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 1000
+	SOURCE:中毒充足 += 800
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 1600
+	SOURCE:中毒充足 += 1000
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 2200
+	SOURCE:中毒充足 += 1300
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 2700
+	SOURCE:中毒充足 += 1700
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 3300
+	SOURCE:中毒充足 += 2200
+ELSE
+	SOURCE:快Ｃ = 3400
+	SOURCE:中毒充足 += 2800
+ENDIF
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(TARGET)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	TIMES SOURCE:性行動 , 3.00
+
+	;ABL:射精中毒をみる
+	IF ABL:射精中毒 == 0
+		SOURCE:中毒充足 += 0
+		TIMES SOURCE:快Ｃ , 2.00
+		TIMES SOURCE:屈従, 2.00
+	ELSEIF ABL:射精中毒 == 1
+		SOURCE:中毒充足 += 50
+		TIMES SOURCE:快Ｃ , 2.50
+		TIMES SOURCE:屈従, 1.60
+	ELSEIF ABL:射精中毒 == 2
+		SOURCE:中毒充足 += 150
+		TIMES SOURCE:快Ｃ , 3.00
+		TIMES SOURCE:屈従, 1.00
+	ELSEIF ABL:射精中毒 == 3
+		SOURCE:中毒充足 += 300
+		TIMES SOURCE:快Ｃ , 4.50
+		TIMES SOURCE:屈従, 0.70
+	ELSEIF ABL:射精中毒 == 4
+		SOURCE:中毒充足 += 600
+		TIMES SOURCE:快Ｃ , 6.00
+		TIMES SOURCE:屈従, 0.40
+	ELSE
+		SOURCE:中毒充足 += 1200
+		TIMES SOURCE:快Ｃ , 8.00
+		TIMES SOURCE:屈従, 0.10
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = TARGET
+	;射精された人物を設定
+	TFLAG:94 = PLAYER
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_322
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;奴隷のＰ⇔調教者の胸の汚れが移動
+STAIN:ペニス |= STAIN:PLAYER:胸
+STAIN:PLAYER:胸 |= STAIN:ペニス
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 7
+
+;調教者のパイズリ実行回数
+CFLAG:PLAYER:パイズリした回数 += 1
+;調教対象のパイズリ堪能回数
+CFLAG:パイズリされた回数 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_322
+PRINTFORM %CALLNAME:PLAYER%は
+IF TALENT:PLAYER:絶壁 || TALENT:PLAYER:貧乳
+	PRINTFORM 薄い胸で懸命に%CALLNAME:TARGET%のペニスを
+ELSEIF TALENT:PLAYER:巨乳 || TALENT:PLAYER:爆乳
+	PRINTFORM 豊満な胸で%CALLNAME:TARGET%のペニスを包み込んで
+ELSE
+	PRINTFORM 胸で%CALLNAME:TARGET%のペニスをはさんで
+ENDIF
+PRINTL 擦りあげている…
+;親愛／相愛で主人調教で反発2以下
+SIF MARK:反発刻印 < 3 && ASSIPLAY == 0 && (TALENT:親愛 || TALENT:相愛) && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORML %CALLNAME:TARGET%は想い人からの奉仕に愛らしい声で応えた……
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_322
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 6
+;射精箇所選択の可・不可
+TFLAG:704 = 0

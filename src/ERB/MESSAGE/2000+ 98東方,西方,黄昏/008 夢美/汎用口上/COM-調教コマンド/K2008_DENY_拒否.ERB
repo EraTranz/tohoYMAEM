@@ -1,0 +1,109 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;汎用的な拒否口上
+;_DIST		= 実行可能までの距離（拒否時は常に0より大きい）
+;_DENIED	= 今回の調教中で既に、この命令を拒否したなら1、してないなら0
+;_DONE		= 今回の調教中に、この命令が実行できた回数。一度もできていないなら0
+;========================================================
+
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_DENY_GENERAL(_DIST, _DENIED, _DONE)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORMW 「は？　誰がそんなことするのよ」
+	CASEELSE
+		PRINTFORMW 「一人で勝手にそうやってなさい。私は嫌よ」
+ENDSELECT
+
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_DENY_GENERAL(_DIST, _DENIED, _DONE)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+;実行できていたが、気力切れのため実行できなくなった
+IF _DONE > 0 && BASE:気力 == 0
+	PRINTFORMW 「ごめんなさい。そういう気分じゃなくなったわ……」
+;今回の調教中でこのコマンドをはじめて断った
+ELSEIF _DENIED == 0
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「なによ、それが人様にものを頼む態度なのかしら？」
+		CASEELSE
+			PRINTFORMW 「なんでそんなこと……　やらないといけないのよ」
+	ENDSELECT
+;もうちょっと
+ELSEIF _DIST <= 4
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「ふ、ふんっ、そう易々と従うとでも思ったの？　残念だったわね」
+		CASE 1
+			PRINTFORMW 「答えはお断りよ。　ハイ残念、また出直してきなさい」
+		CASEELSE
+			PRINTFORMW 「ふふふ、そうね、土下座して頼み込むなら考えてあげてもいいわ」
+	ENDSELECT
+;しつこい人は嫌いよ
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「ふざけないで、断固拒否よ！」
+		CASE 1
+			PRINTFORMW 「出直してきてよ。　もっとも、次も断るけど」
+		CASEELSE
+			PRINTFORMW 「イ、ヤ、って言ってるでしょ。聞こえなかったかしら？」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_DENY_GENERAL(_DIST, _DENIED, _DONE)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+;RANK1に丸投げする
+CALL K2008_RANK1_DENY_GENERAL(_DIST, _DENIED, _DONE)
+
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_DENY_GENERAL(_DIST, _DENIED, _DONE)
+#DIM _DIST
+#DIM _DENIED
+#DIM _DONE
+;実行できていたが、気力切れのため実行できなくなった
+IF _DONE > 0 && BASE:気力 == 0
+	PRINTFORMW 「お願いだから少し休ませて……　フラフラしちゃって」
+;今回の調教中でこのコマンドをはじめて断った
+ELSEIF _DENIED == 0
+	;もうちょっと
+	IF _DIST <= 4
+		PRINTFORMW 「ちょっとくらいなら……　けど、うーん……」
+		PRINTFORMW 「ごめんなさい……　まだ心の準備ができないわ」
+	ELSE
+		PRINTFORMW 「え、えーと、それをやるの？　あは、あはははは……」
+		PRINTFORML
+		PRINTFORMW 苦笑いをされつつ、やんわりと拒否された。
+	ENDIF
+;しつこい人は嫌いよ
+ELSE
+	SELECTCASE RAND:2
+		CASE 1
+			PRINTFORMW 「また今度にしてくれる？　なんだか疲れちゃった」
+		CASEELSE
+			PRINTFORMW 「やーよ、めんどくさいもん」
+	ENDSELECT
+ENDIF
+		
+
+
+

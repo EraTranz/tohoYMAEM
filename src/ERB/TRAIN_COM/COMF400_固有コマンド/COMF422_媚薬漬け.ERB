@@ -1,0 +1,246 @@
+﻿;=============================================================================
+;媚薬漬け
+;=============================================================================
+;媚薬風呂と処理的にはほぼ同等。違うのは風呂の改装がいらないことと、キスメ専用であること。
+;一時的に快感に素直と解放が付加。ただし消耗が激しく、反感もかなり溜まる
+;また、効果が発揮している間は絶頂時に欲望が上がることもなくなる(抑圧の処理が面倒になってくるため)
+;TFLAG:156は素質の保存に使用(1:抑圧消滅記憶, 2:解放消滅保護, 4:快感の否定消滅記憶, 8:快感に素直消滅保護)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE422
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:422 > 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 6
+	RETURN 1
+;特殊風呂コマンド有効でないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教対象がキスメじゃないとダメ
+IF NO:TARGET == 1057
+	;調教者が主人じゃないとダメ
+	SIF ASSIPLAY
+		RETURN 0
+	;調教者がサドもしくはキスメのマゾっ気がLv2以上になってないとダメ
+	SIF ABL:マゾっ気 < 2 && TALENT:PLAYER:サド == 0
+		RETURN 0
+;もしくは調教者がキスメじゃないとダメ
+ELSEIF NO:PLAYER == 1057
+	;キスメがサドを持っているもしくは技巧がLv2以上になってないとダメ
+	SIF ABL:技巧 < 2 && TALENT:PLAYER:サド == 0
+		RETURN 0
+ELSE
+	RETURN 0
+ENDIF
+;対象が小柄体型か小人体型でないとダメ
+SIF TALENT:小人体型 == 0 && TALENT:小柄体型 == 0
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;媚薬を5つ以上持っていないとダメ
+SIF ITEM:媚薬 < 5
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;緊縛中じゃないとダメ
+SIF TEQUIP:緊縛関連 == 0
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 6
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 422) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM422
+PRINTL 媚薬漬け
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 422
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 媚薬漬け
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 6
+	DOWNBASE:0 += 25
+	DOWNBASE:1 += 50
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+LOCAL:2 = (FLAG:3 >= 3) ? 300 # 175
+LOCAL:3 = (FLAG:3 >= 3) ? 800 # 400
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	TIMES LOCAL:2 , 0.75
+	TIMES LOCAL:3 , 0.75
+ENDIF
+;調教対象に媚薬中毒があれば消費を抑える
+IF TALENT:媚薬中毒
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 0.50
+ENDIF
+DOWNBASE:0 += LOCAL:2
+DOWNBASE:1 += LOCAL:3
+
+TFLAG:156 = 0
+;媚薬を5つ消費
+CALL USE_PLURAL_ITEM, 61, 5
+
+IF TEQUIP:媚薬 == 0
+	LOCAL:1 = (TALENT:媚薬中毒) ? 4 + RAND:7 # 4 + RAND:5
+	TEQUIP:媚薬 = LOCAL:1
+ENDIF
+
+SOURCE:欲情追加 = 20000
+SOURCE:痛み = 200
+SOURCE:薬物浸潤 = 2500
+SOURCE:逸脱 = 250000
+
+;媚薬中毒
+IF TALENT:媚薬中毒
+	SOURCE:中毒充足 = 500
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+	SOURCE:媚薬浸潤 = 300
+ELSE
+	SOURCE:媚薬浸潤 = 12 + RAND:12
+ENDIF
+
+IF TALENT:解放 && TALENT:快感に素直
+	SOURCE:欲情追加 += 20000
+ELSE
+	;つまりこの辺の処理も完全に媚薬風呂と同じ
+	CALL POTION_MESSAGE_COM364
+ENDIF
+
+;抑圧記憶、一時消滅
+IF TALENT:抑圧
+	TFLAG:156 |= 1
+	TALENT:抑圧 = 0
+ENDIF
+;解放所持保存、一時付加
+IF TALENT:解放
+	TFLAG:156 |= 2
+ELSE
+	TALENT:解放 = 1
+ENDIF
+;快感の否定記憶、一時消滅
+IF TALENT:快感の否定
+	TFLAG:156 |= 4
+	TALENT:快感の否定 = 0
+ENDIF
+;快感に素直所持保存、一時付加
+IF TALENT:快感に素直
+	TFLAG:156 |= 8
+ELSE
+	TALENT:快感に素直 = 1
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+
+TEQUIP:特殊風呂入浴中 = 6
+RETURN 1
+
+;--------------------------------------------------
+;媚薬漬け中
+;--------------------------------------------------
+@EQUIP_COM422
+PRINTL ＜媚薬漬け中＞
+
+;調合知識があれば消費を抑える
+LOCAL:1 = 75
+LOCAL:2 = 200
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+;調教対象に媚薬中毒があれば消費を抑える
+IF TALENT:媚薬中毒
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+SOURCE:欲情追加 += 10000
+SOURCE:痛み += 1500
+SOURCE:屈従 += 3000
+SOURCE:中毒充足 += 5000
+SOURCE:薬物浸潤 += 500
+SOURCE:不潔 += 21000
+SOURCE:逸脱 += 100000
+;媚薬中毒
+SOURCE:媚薬浸潤 += (TALENT:媚薬中毒) ? 30 # RAND:2
+
+;薬物経験
+TCVAR:薬物経験 += 1
+
+IF TEQUIP:媚薬 > 1
+	TEQUIP:媚薬 -= 1
+	SIF TEQUIP:媚薬 == 1
+		CALL POTION_BATH
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_422
+IF TEQUIP:特殊風呂入浴中 == 6
+	PRINTFORML %CALLNAME:TARGET%を媚薬に満たされた桶から引き揚げた
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を媚薬に満たされた桶に入れてやった
+	PRINTFORML 液体の中でもがくうちに、%CALLNAME:TARGET%の体表から媚薬が次々と吸収されていく…
+	PRINTFORML %CALLNAME:TARGET%は自分の意志とは無関係に%CALLNAME:PLAYER%の身体が欲しいと強く思うようになった
+	PRINTFORML %CALLNAME:TARGET%は\@(TALENT:解放 && TALENT:快感に素直) ? 強い欲望の余り、激しく体をくねらせながら黄色い # 液体がもたらす強い刺激の余り、激しく体を動かしながら\@悲鳴を上げている…
+ENDIF

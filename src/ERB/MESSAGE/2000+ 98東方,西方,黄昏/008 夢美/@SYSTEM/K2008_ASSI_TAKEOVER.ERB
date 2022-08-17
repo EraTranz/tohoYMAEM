@@ -1,0 +1,148 @@
+﻿;YM→YMAEコンバータによって作成されました
+;==============================================================
+;助手の引継ぎ処理
+;==============================================================
+;■助手引き継ぎではTARGETではなくASSIを使うので、フラグ等を見る場合はCFLAG:(TARGET、省略可):0ではなくCFLAG:ASSI:0と書く。
+@K2008_ASSI_TAKEOVER(ARG)
+#DIM _COUNT
+#DIM _TEMP
+
+;■誤動作防止用処理
+;■使用時には↓の「JUMP」が書かれた1行をコメントアウトするか、削除してください。
+;JUMP ASSI_STATE_TAKEOVER, ARG
+
+;==================================================
+;------ここから処理内容------
+
+;■普通にPRINTとかもできます。
+;その場合はキャラ名を何らかの形で書くことを推奨します。
+;==================================================
+
+;助手を経験したことを示す
+ISASSI:ASSI = 1
+;引き継いだキャラであることを判別するためのフラグ
+CFLAG:ASSI:18 = 1
+;称号リセット
+NICKNAME:ASSI = %CSVNICKNAME (NO:ASSI , 0)%
+;館にいた時の状況
+CSTR:ASSI:3 = 過去において%CALLNAME:MASTER%の調教を受けた
+
+;妊娠・抱卵中・乳母でなく育児中の場合は減っている体力を戻す
+IF TALENT:ASSI:妊娠 || TALENT:ASSI:抱卵中 || (TALENT:ASSI:育児中 && CFLAG:ASSI:79 == 0)
+	MAXBASE:ASSI:体力 += 500
+	CALL RESET_ASSI_PREGNANT, ASSI
+;懐卵時の体力の最大値低下を戻す処理
+ELSEIF TALENT:ASSI:懐卵
+	MAXBASE:ASSI:体力 += 500
+ENDIF
+;理性ゲージ設定
+IF CSVBASE(NO:ASSI, 9, 0) > 0
+	MAXBASE:ASSI:9 = CSVBASE(NO:ASSI, 9, 0)
+ELSE
+	MAXBASE:ASSI:9 = 9500 + 25 * RAND:101
+ENDIF
+BASE:ASSI:理性 = MAXBASE:ASSI:9
+TALENT:ASSI:理性 = 1
+;調教度ゲージ設定
+CALL CHECK_ACCEPTANCE,ASSI
+;初期月経周期を設定
+CALL EVENT_ADD_CHARA_MENSTRUATION, ASSI
+
+;特定のゲージをリセット
+FOR _COUNT, 0, 4+1
+	MAXBASE:ASSI:(_COUNT + 4) = 0
+	BASE:ASSI:(_COUNT + 4) = 0
+NEXT
+
+;居場所のフラグリセット
+CFLAG:ASSI:4 = 0
+;恐怖・反発刻印取得済み判定リセット
+MARK:ASSI:96 = 0
+MARK:ASSI:97 = 0
+;薬物刻印1Lv分減少
+MARK:ASSI:薬物刻印 = MAX(MARK:ASSI:薬物刻印 - 1, 0)
+
+;TALENTリセット。リセットするものだけ指定
+FOR _COUNT, 0, VARSIZE("TALENT")
+	SELECTCASE _COUNT
+		CASE 65 ;パイパン
+		CASE 140 TO 143 ;妊娠、育児中、母性、抱卵中
+		CASE 145 TO 146 ;懐卵、寄生
+		CASE 150 TO 156 ;恋慕系
+		CASE 159 TO 168 ;服従系
+		CASE 169 ;壊造人格
+			;引継ぎは例外
+			SIF ARG & 2
+				CONTINUE
+		CASE 170 TO 178 ;淫乱系
+		CASE 179 ;即落ち
+			;引継ぎは例外
+			SIF ARG & 1
+				CONTINUE
+		;YMAEM用
+		CASE 260, 261, 262, 264, 265, 501
+		CASE 998 ;デバッグ
+		CASEELSE
+			;引っかからなかった　＝　リセット不要
+			CONTINUE
+	ENDSELECT
+	TALENT:ASSI:_COUNT = 0
+NEXT
+
+;CFLAGをリセット（0～99は、リセットするものだけ指定）
+FOR _COUNT, 0, 99+1
+	SELECTCASE _COUNT
+		CASE 3 ;売却不可
+		CASE 11 ;ＶＡ異常経験変動フラグ
+		CASE 30 ;嫉妬ポイント
+		CASE 31 ;放尿レベル
+		CASE 32 ;媚薬中毒日数カウント, 媚薬中毒レベル
+		CASE 33 ;鈴蘭の毒を使った回数
+		CASE 36 ;毛が成長するかの判定
+		CASE 41 ;触手インプラント
+		CASE 42 ;烙印キャラ用特殊装備フラグ
+		CASE 43 ;汎用口上用人格
+		CASE 44 ;汎用逆口上用人格
+		CASE 46 ;最後に調教された日付け
+		CASE 47 ;最後に助手を解任された日付け
+		CASE 60 TO 64 ;開発度
+		CASE 66 ;娼婦人気
+		CASE 70 TO 79 ;妊娠出産系フラグ
+		CASEELSE
+			CONTINUE
+	ENDSELECT
+	CFLAG:ASSI:_COUNT = 0
+NEXT
+
+;CFLAGをリセット（1000～上限は、リセットしない＝保存するものを指定）
+FOR _COUNT, 1000, VARSIZE("CFLAG")
+	SELECTCASE _COUNT
+		CASE 3100 TO 3109 ;娘フラグは除外
+		CASE 3200 TO 3399 ;種族遺伝子
+		CASE 4995 TO 4999 ;性別転換薬
+		;5000～は口上枠なので必要なら記入
+		CASE __K2008N_CFLAG_NEWGAMECOUNT__ ;周回回数カウント
+		CASE __K2008N_CFLAG_REMOVE_PUBIC_HAIR__ ;陰毛処理の回数
+		CASEELSE
+			CFLAG:ASSI:_COUNT = 0
+	ENDSELECT
+NEXT
+
+;EQUIPをリセットする
+VARSET EQUIP:ASSI:桃の飴玉, 0, 0, 15
+
+;好感度は減少させた状態で引き継ぎ
+;最低は50(引き継ぐ時点で1000以上はあると見込んでいるため)
+;素質が変動する700、1000、2000、5000を境界に引き継ぎ率が激減するように
+_TEMP = CFLAG:ASSI:好感度 / 20
+_TEMP = TABLE_CALC2(_TEMP, 100, 90)
+_TEMP = TABLE_CALC2(_TEMP, 250, 80)
+_TEMP = TABLE_CALC2(_TEMP, 500, 75)
+_TEMP = TABLE_CALC2(_TEMP, 700, 66)
+_TEMP = TABLE_CALC2(_TEMP, 1000, 50)
+_TEMP = TABLE_CALC2(_TEMP, 2000, 33)
+_TEMP = TABLE_CALC2(_TEMP, 5000, 25)
+CFLAG:ASSI:好感度 = _TEMP
+
+;周回数を加算
+CFLAG:ASSI:__K2008N_CFLAG_NEWGAMECOUNT__ += 1

@@ -1,0 +1,518 @@
+﻿;=============================================================================
+;足扱き
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE47
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:47 > 0
+	RETURN 0
+;調教者にペニスがないとダメ
+SIF EXIST_BAR(PLAYER) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;助手が褌着用中の場合はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 47) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM47
+IF TALENT:人魚
+	PRINTL ひれ扱き
+ELSE
+	PRINTL 足扱き
+ENDIF
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 47
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+IF TALENT:人魚
+	TSTR:0 = ひれ扱き
+ELSE
+	TSTR:0 = 足扱き
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL = 350
+ELSEIF ABL:技巧 == 1
+	LOCAL = 700
+ELSEIF ABL:技巧 == 2
+	LOCAL = 1300
+ELSEIF ABL:技巧 == 3
+	LOCAL = 1800
+ELSEIF ABL:技巧 == 4
+	LOCAL = 2600
+ELSE
+	LOCAL = 3500
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+;奉仕精神をみる
+LOCAL = EJACULATIONCHECK_ABL_13_1(TARGET, LOCAL)
+
+;調教者のマゾっ気をみる
+LOCAL = EJACULATIONCHECK_ABL_21_1(PLAYER, LOCAL)
+;調教者のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+SIF EXIST_PENIS(PLAYER)
+	BASE:PLAYER:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 10
+DOWNBASE:1 += 150
+
+SOURCE:屈従 = 550
+SOURCE:逸脱 = 400
+
+;上のほうで計算した汚れデータ
+SOURCE:不潔 = TFLAG:242*10 + 50
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:主導権 = 50
+	SOURCE:性行動 = 300
+	SOURCE:達成感 = 100
+	TIMES SOURCE:不潔 , 4.00
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:主導権 = 100
+	SOURCE:性行動 = 350
+	SOURCE:達成感 = 150
+	TIMES SOURCE:不潔 , 2.50
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:主導権 = 250
+	SOURCE:性行動 = 400
+	SOURCE:達成感 = 350
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:主導権 = 500
+	SOURCE:性行動 = 450
+	SOURCE:達成感 = 750
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:主導権 = 900
+	SOURCE:性行動 = 500
+	SOURCE:達成感 = 1100
+	TIMES SOURCE:不潔 , 0.50
+ELSE
+	SOURCE:主導権 = 1400
+	SOURCE:性行動 = 580
+	SOURCE:達成感 = 1500
+	TIMES SOURCE:不潔 , 0.10
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.50
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:達成感 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:達成感 , 2.00
+ENDIF
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	TIMES SOURCE:性行動 , 3.00
+
+	;ABL:精液中毒をみる
+	IF ABL:精液中毒 == 0
+		SOURCE:中毒充足 = 0
+		TIMES SOURCE:達成感 , 2.00
+		TIMES SOURCE:屈従, 2.00
+	ELSEIF ABL:精液中毒 == 1
+		SOURCE:中毒充足 = 200
+		TIMES SOURCE:達成感 , 2.50
+		TIMES SOURCE:屈従, 1.60
+	ELSEIF ABL:精液中毒 == 2
+		SOURCE:中毒充足 = 600
+		TIMES SOURCE:達成感 , 3.00
+		TIMES SOURCE:屈従, 1.00
+	ELSEIF ABL:精液中毒 == 3
+		SOURCE:中毒充足 = 1500
+		TIMES SOURCE:達成感 , 4.00
+		TIMES SOURCE:屈従, 0.70
+	ELSEIF ABL:精液中毒 == 4
+		SOURCE:中毒充足 = 3000
+		TIMES SOURCE:達成感 , 5.00
+		TIMES SOURCE:屈従, 0.40
+	ELSE
+		SOURCE:中毒充足 = 6000
+		TIMES SOURCE:達成感 , 6.00
+		TIMES SOURCE:屈従, 0.10
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = PLAYER
+	;射精された人物を設定
+	TFLAG:94 = TARGET
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_47
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;調教者のＰの汚れ⇔対象の足の汚れが相互に移動する
+STAIN:足 |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:足
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 4
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 4
+ENDIF
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+
+;調教者がふたなり
+SIF TALENT:PLAYER:ふたなり
+	SOURCE:屈従 /= 2
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_47
+IF ASSIPLAY
+	PRINTFORM %CALLNAME:TARGET%に%CALLNAME:PLAYER%のペニスを
+	IF TALENT:人魚
+		PRINT 尾ひれで
+	ELSE
+		PRINT 足裏で
+	ENDIF
+	PRINTFORML 擦るように命令してみたが拒否された。
+ELSE
+	PRINTFORM %CALLNAME:TARGET%に自分のペニスを
+	IF TALENT:人魚
+		PRINT 尾ひれで
+	ELSE
+		PRINT 足裏で
+	ENDIF
+	PRINTFORML 擦るように命令してみたが拒否された。
+ENDIF
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_47
+;前のターンも足コキさせていた場合
+IF PREVCOM == 47
+	PRINTFORM %CALLNAME:TARGET%は、
+	;サドっ気高くて、技巧も高くて確率で
+	IF ABL:サドっ気 >= 3 && ABL:技巧 >= 3 && RAND:2 == 0
+		PRINT 巧みに
+	;サドっ気高いか、ドS
+	ELSEIF ABL:サドっ気 >= 3 || TALENT:ドＳ
+		PRINT 荒々しく
+	;技巧高い
+	ELSEIF ABL:技巧 >= 3
+		PRINT ゴシゴシと
+	;露出癖が低くて恥じらいがあると
+	ELSEIF ABL:露出癖 < 3 && TALENT:恥じらい
+		PRINT 恥ずかしげに
+	;技巧とサドっ気が低い
+	ELSEIF ABL:サドっ気 < 2 || ABL:技巧 < 2
+		PRINT ぎこちなく
+	ENDIF
+	PRINTFORML %CALLNAME:PLAYER%のペニスを扱き続けている…
+ELSE
+	PRINTFORM %CALLNAME:TARGET%は
+	;露出癖3以上orサドっ気3以上orドＳor淫乱
+	IF ABL:露出癖 >= 3 || ABL:サドっ気 >= 3 || TALENT:ドＳ || TALENT:淫乱
+		;褌をしている場合
+		IF TEQUIP:コスチュームプレイ == 17
+			PRINT 褌を
+		;Ｖに何か刺さっている場合
+		ELSEIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+			IF TEQUIP:Ｖ系装着器具 == 1
+				PRINT バイブ
+			ELSEIF TEQUIP:Ｖ系装着器具 == 2
+				PRINT 要石
+			ELSEIF TEQUIP:Ｖ系装着器具 == 3
+				PRINT ローター
+			ELSEIF TEQUIP:Ｖ系装着器具 == 4
+				PRINT 電極プラグ
+			ELSEIF TEQUIP:Ｖ系装着器具 == 5
+				PRINT バーベル
+			ELSEIF TEQUIP:Ｖ系装着器具 == 6
+				PRINT 風船
+			ELSEIF TEQUIP:Ｖ系装着器具 == 7
+				PRINT 愛液を貪欲に集めてる器具
+			ELSEIF TEQUIP:Ｖ系装着器具 == 9
+				PRINT 焼き芋
+			ELSEIF TEQUIP:クスコ
+				PRINT クスコ
+			ENDIF
+			PRINTFORM \@(TALENT:淫乱) ? を咥え込んだ # の刺さった\@股間を
+		;刺さっていない場合
+		ELSE
+			;中出しの後で、
+			SIF STAIN:ヴァギナ & 4
+				PRINT 精液の垂れる
+			PRINT ヴァギナを
+		ENDIF
+		PRINT 見せつけながら、
+	ENDIF
+	PRINTFORM %CALLNAME:PLAYER%のペニスを
+	SIF ABL:露出癖 < 3 && TALENT:恥じらい
+		PRINT 羞恥に顔を赤らめつつも
+	IF TALENT:人魚
+		PRINT 尾ひれで
+	ELSE
+		PRINT 足裏で
+	ENDIF
+	SIF TALENT:ドＳ
+		PRINT 徹底的に
+	SIF TALENT:サド || TALENT:ドＳ
+		PRINT いたぶりながら
+	SIF TALENT:恋慕
+		PRINT 丹念に
+	PRINTFORML 擦りあげている…
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_47, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:奉仕精神
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+;ABL:精液中毒
+IF ABL:精液中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:精液中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:31%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+ENDIF
+;男嫌い
+IF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 8
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
+;女嫌い
+ELSEIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 8
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
+ENDIF
+;汚臭鈍感
+IF TALENT:汚臭鈍感
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 1
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
+;汚臭敏感
+ELSEIF TALENT:汚臭敏感
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
+ENDIF
+;献身的
+IF TALENT:献身的
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 6
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
+ENDIF
+;快感の否定
+IF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 4
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:80%({LOCAL:99})
+ENDIF
+;サド
+IF TALENT:サド
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 4
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:81%({LOCAL:99})
+ENDIF
+;小悪魔
+IF TALENT:小悪魔
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 4
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:93%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;調教者がふたなり
+IF TALENT:PLAYER:ふたなり
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:PLAYER%が%TALENTNAME:121%({LOCAL:99})
+ENDIF
+
+;調教者のＰの汚れ
+TFLAG:242 = COMORDER_STAIN_CALC(2, 0)
+;足扱きでは汚れがそれほど影響しない
+TFLAG:242 /= 3
+
+;汚れあり
+IF TFLAG:242
+	RESULTS = %RESULTS% - 
+	TFLAG:240 -= TFLAG:242
+	RESULTS = %RESULTS% 汚れあり
+	;汚臭鈍感
+	IF TALENT:汚臭鈍感
+		RESULTS = %RESULTS%、%TALENTNAME:61%
+	ELSEIF TALENT:汚臭敏感
+		RESULTS = %RESULTS%、%TALENTNAME:62%
+	ENDIF
+	RESULTS = %RESULTS%({TFLAG:242})
+	LOCAL:99 = 1
+ENDIF
+
+TFLAG:241 = 22
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_47
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 14
+;射精箇所選択の可・不可
+TFLAG:704 = 0

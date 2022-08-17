@@ -1,0 +1,220 @@
+﻿;=============================================================================
+;排卵誘発剤
+;=============================================================================
+;卵生、産卵体質のものに飲ませたときはネガティブ反応一色になります。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE66
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:66 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;助手プレイ中は一応禁止（暫定）
+SIF ASSIPLAY
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:排卵誘発剤 == 0
+	RETURN 0
+;薬毒耐性の場合ダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;調教者がオトコかふたなりでないとダメ
+SIF EXIST_PENIS(PLAYER) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;妊娠中なら不可
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;産卵促進剤を使っていたら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;すでに使用中なら使えない
+SIF TEQUIP:排卵誘発剤
+	RETURN 0
+;緊急避妊薬を使っていたら使えない
+SIF TEQUIP:緊急避妊薬
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 66) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM66
+PRINTL 排卵誘発剤
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 66
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 排卵誘発剤
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	DOWNBASE:0 += 45
+	DOWNBASE:1 += 45
+ELSE
+	DOWNBASE:0 += 100
+	DOWNBASE:1 += 100
+ENDIF
+
+LOCAL:1 = 0
+;胎生のとき(=卵生、産卵体質でないとき)
+IF TALENT:卵生 == 0 && TALENT:産卵体質 == 0
+	;恋慕か親愛か相愛のとき
+	IF TALENT:恋慕 || TALENT:親愛 || TALENT:相愛
+		SOURCE:情愛 = 1500
+		LOCAL:1 = 1
+	ENDIF
+	;服従か妄信のとき
+	IF TALENT:服従 || TALENT:烙印
+		SOURCE:恭順追加 = 2000
+		LOCAL:1 = 1
+	ENDIF
+	;淫乱のとき
+	IF TALENT:淫乱
+		SOURCE:欲情追加 = 1800
+		LOCAL:1 = 1
+	ENDIF
+	;陥落してはいないが従順Lv5で屈服刻印3で反発刻印がないとき
+	IF LOCAL:1 == 0 && ABL:従順 == 5 && MARK:屈服刻印 == 3 && MARK:反発刻印 == 0
+		SOURCE:液体追加 += 100
+		SOURCE:屈従 = 1000
+		LOCAL:1 = 1
+	ENDIF
+
+	;上の各条件に当てはまらない場合は反発がある
+	IF LOCAL:1 == 0
+		SOURCE:反感追加 = 1000
+		LOCAL:2 = 400
+		;ABL:従順をみる
+		IF ABL:従順 == 0
+			TIMES LOCAL:2 , 6.00
+		ELSEIF ABL:従順 == 1
+			TIMES LOCAL:2 , 5.00
+		ELSEIF ABL:従順 == 2
+			TIMES LOCAL:2 , 4.00
+		ELSEIF ABL:従順 == 3
+			TIMES LOCAL:2 , 3.00
+		ELSEIF ABL:従順 == 4
+			TIMES LOCAL:2 , 2.00
+		ENDIF
+		SOURCE:反感追加 += LOCAL:2
+		LOCAL:3 = 500
+		;MARK:反発刻印をみる
+		IF MARK:反発刻印 == 0
+			TIMES LOCAL:3 , 2.00
+		ELSEIF MARK:反発刻印 == 1
+			TIMES LOCAL:3 , 3.00
+		ELSEIF MARK:反発刻印 == 2
+			TIMES LOCAL:3 , 4.00
+		ELSEIF MARK:反発刻印 >= 3
+			TIMES LOCAL:3 , 5.00
+		ENDIF
+		SOURCE:トラウマ += 1000
+		SOURCE:反感追加 += LOCAL:3
+	ELSE
+		SOURCE:液体追加 = 1500
+	ENDIF
+	;卵生・産卵体質の場合は効果がない。
+	TEQUIP:排卵誘発剤 = 1
+ELSE
+	;卵生もしくは産卵体質のときは反発しか招かない。
+	SOURCE:反感追加 = 500
+	LOCAL:2 = 200
+	;ABL:従順をみる
+	IF ABL:従順 == 0
+		TIMES LOCAL:2 , 6.00
+	ELSEIF ABL:従順 == 1
+		TIMES LOCAL:2 , 5.00
+	ELSEIF ABL:従順 == 2
+		TIMES LOCAL:2 , 4.00
+	ELSEIF ABL:従順 == 3
+		TIMES LOCAL:2 , 3.00
+	ELSEIF ABL:従順 == 4
+		TIMES LOCAL:2 , 2.00
+	ENDIF
+	SOURCE:逸脱 += LOCAL:2
+	SOURCE:反感追加 += LOCAL:2
+	LOCAL:3 = 400
+	;MARK:反発刻印をみる
+	IF MARK:反発刻印 == 0
+		TIMES LOCAL:3 , 2.00
+	ELSEIF MARK:反発刻印 == 1
+		TIMES LOCAL:3 , 3.00
+	ELSEIF MARK:反発刻印 == 2
+		TIMES LOCAL:3 , 4.00
+	ELSEIF MARK:反発刻印 >= 3
+		TIMES LOCAL:3 , 5.00
+	ENDIF
+	SOURCE:逸脱 += LOCAL:3
+	SOURCE:反感追加 += LOCAL:3
+ENDIF
+
+SOURCE:薬物浸潤 = 250
+;排卵誘発剤1つ消費
+CALL USE_PLURAL_ITEM, 64, 1
+
+CFLAG:21 |= 128
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;薬物経験
+TCVAR:薬物経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_66
+PRINTFORM %CALLNAME:TARGET%に
+SIF ABL:PLAYER:技巧 >= 3
+	PRINT 口移しで
+SIF ABL:従順 <= 2
+	PRINT 無理やり
+PRINTL 排卵誘発剤を飲ませた
+PRINTFORM \@(CFLAG:21 == 0) ? 飲ませた薬の中身を告げると、%CALLNAME:TARGET%は # 何を飲まされたかに気づいた%CALLNAME:TARGET%は、\@
+;[卵生]、[産卵体質]のどちらか
+IF TALENT:卵生 || TALENT:産卵体質
+	PRINTL 変な薬を飲まされたことに対する反感を隠そうとしなかった……
+;[恋慕]、[親愛]、[相愛]の最低でも1つを持つ
+ELSEIF TALENT:恋慕 || TALENT:親愛 || TALENT:相愛
+	PRINTFORML %CALLNAME:PLAYER%の子供を授かることへの期待からか、甘えるようにすり寄ってきている……
+;[服従]、[烙印]のどちらか
+ELSEIF TALENT:服従 || TALENT:烙印
+	PRINTL 中出しされるのを恍惚の表情で待っている……
+;[隷属]、[淫乱]のどちらか
+ELSEIF TALENT:隷属 || TALENT:淫乱
+	PRINTL 今すぐにでも中出ししてほしいかのようにあそこを指で開いてこちらに見せつけている……
+;従順Lv5かつ屈服刻印Lv3かつ反発刻印Lv0
+ELSEIF ABL:従順 >= 5 && MARK:屈服刻印 == 3 && MARK:反発刻印 == 0
+	PRINTL あきらめたかように股を開き、あなたの次の行為を待っている……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%を厳しい表情で睨みつけている……
+ENDIF

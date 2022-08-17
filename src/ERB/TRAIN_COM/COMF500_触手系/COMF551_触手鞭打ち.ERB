@@ -1,0 +1,86 @@
+﻿;=============================================================================
+;触手鞭打ち
+;=============================================================================
+;実際には苦痛があるためもっと体力気力をもっていかれる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE551
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:551 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;触手が[鞭触手]を得ていないとダメ
+SIF (FLAG:75 & 1) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 551) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM551
+PRINTL 触手鞭打ち
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 551
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手鞭打ち
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 100
+DOWNBASE:1 += 80
+
+SOURCE:逸脱 = 1000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 1000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 1500
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 2200
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 3000
+ELSE
+	SOURCE:痛み = 4000
+ENDIF
+
+SOURCE:逸脱 *= 2
+SOURCE:支配 = SOURCE:痛み / 2
+
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+;ＳＭ教育フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_551
+PRINTFORML 鞭のようにしなる触手が%CALLNAME:TARGET%に向かって振り下ろされる度に、その肌に真っ赤な筋が刻まれていった……

@@ -1,0 +1,211 @@
+﻿;=============================================================================
+;お風呂を楽しむ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE345
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:345 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;主人でないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;吸血鬼や動物耳には従順4がないと使用不可（プレイヤーがサドならＯＫ）
+IF TALENT:吸血鬼 || TALENT:動物耳
+	SIF ABL:従順 < 4 && TALENT:PLAYER:サド == 0
+		RETURN 0
+ENDIF
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURN 0
+ENDIF
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具
+	RETURN 0
+;Ｂ系装着具使用中は不可
+SIF TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;お風呂中じゃないとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手のコスプレ中はダメ
+SIF ASSIPLAY && TEQUIP:PLAYER:コスチュームプレイ > 2
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 345) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM345
+PRINTL お風呂を楽しむ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 345
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = お風呂を楽しむ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 20
+
+SOURCE:接触 = 50
+SOURCE:欲情追加 = 50
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:露出 = 30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:露出 = 50
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:露出 = 80
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:露出 = 120
+ELSE
+	SOURCE:露出 = 200
+ENDIF
+
+;奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:情愛 = 10
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:情愛 = 30
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:情愛 = 60
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:情愛 = 100
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:情愛 = 160
+ELSE
+	SOURCE:情愛 = 250
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:情愛 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:情愛 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:情愛 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:情愛 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:情愛 , 1.20
+ELSE
+	TIMES SOURCE:情愛 , 1.30
+ENDIF
+
+;動物耳の場合
+IF TALENT:動物耳
+	TIMES SOURCE:逸脱 , 1.60
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:反感追加 , 2.00
+ENDIF
+;吸血鬼の場合
+IF TALENT:吸血鬼
+	SOURCE:痛み = 100
+	TIMES SOURCE:痛み , 1.60
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:反感追加 , 1.40
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;シャワーで汚れがリセット
+RESET_STAIN TARGET
+RESET_STAIN PLAYER
+
+;（できれば）潤滑が半分に
+PALAM:潤滑 /= 2
+PALAM:不快 /= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_345
+PRINTFORM %CALLNAME:PLAYER%は
+IF RAND:4 == 0
+	PRINTFORML お湯を掬って%CALLNAME:TARGET%にかけた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%は楽しそうにお湯をかけ返してきた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%の\@(TEQUIP:口装着器具) ? 楽しそうな仕草 # 口元が楽しげに緩んでいるの\@を%CALLNAME:PLAYER%は見逃さなかった…
+	ELSEIF ABL:従順 >2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は呆れたように髪を撫でつけた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%はまったく相手にしてくれない…
+	ENDIF
+ELSEIF RAND:3 == 0
+	PRINTFORML %CALLNAME:TARGET%の体を洗ってあげた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML いつの間にか%CALLNAME:TARGET%との洗いっこになっていた…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は綺麗になるのが嬉しいようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%はくすぐったそうにしている…
+	ELSE
+		PRINTFORML しかし、%CALLNAME:TARGET%はすぐにシャワーを浴びてしまった…
+	ENDIF
+ELSEIF RAND:2 == 0
+	PRINTFORML %CALLNAME:TARGET%と一緒に湯船に入った…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:TARGET%はぴったりと体を密着させ、%CALLNAME:PLAYER%の顔を見つめている…
+		PRINTL …ちょっとのぼせてしまった…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%と%CALLNAME:PLAYER%の距離が日に日に近づいてきているようだ…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%はちらちらとこちらの体を見ている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は早々に湯船から出ていった…
+	ENDIF
+ELSE
+	PRINTFORML 体を石鹸まみれにして、%CALLNAME:TARGET%に抱きついた…
+	IF TALENT:恋慕 && RAND:3 >= 1
+		PRINTFORML %CALLNAME:PLAYER%の体の感触を%CALLNAME:TARGET%は大層気に入ったようだ…
+	ELSEIF ABL:従順 >= 4 && EXP:奉仕快楽経験 >= 250
+		PRINTFORML %CALLNAME:TARGET%は恥ずかしそうにしながらも、黙って%CALLNAME:PLAYER%に抱かれていた…
+	ELSEIF ABL:従順 >= 2 && EXP:奉仕快楽経験 <= 150
+		PRINTFORML %CALLNAME:TARGET%は複雑な表情を浮かべている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を押しのけようとしたが、滑ってしまい思い通りにいかない…
+	ENDIF
+ENDIF

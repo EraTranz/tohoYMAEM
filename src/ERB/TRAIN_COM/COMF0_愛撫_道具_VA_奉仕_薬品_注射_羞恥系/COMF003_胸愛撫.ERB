@@ -1,0 +1,173 @@
+﻿;=============================================================================
+;胸愛撫
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE3
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:3 > 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;触手調教中の場合
+SIF TEQUIP:触手調教 && EXCOM_ABLE683() == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 3) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM3
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;触手調教中だと、「触手胸愛撫」に派生
+SIF TEQUIP:触手調教
+	JUMP COM683
+;Ｖ系拡張コマンド有効時に前回と今回の調教者同じかつ、後背位もしくは後背位胸愛撫への場合、後背位胸愛撫へ
+IF FLAG:15 & 2
+	IF ((PREVCOM == 21 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 21)) || PREVCOM == 616) && JUDGE_TRAINER_CONSECUTIVE() == 1
+		SIF EXCOM_ABLE616() == 1
+			JUMP COM616
+	;Ｖ系拡張コマンド有効時に前回と今回の調教者同じかつ、対面座位もしくは対面胸愛撫への場合、対面胸愛撫へ
+	ELSEIF ((PREVCOM == 22 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 22)) || PREVCOM == 617) && JUDGE_TRAINER_CONSECUTIVE() == 1
+		SIF EXCOM_ABLE617() == 1
+			JUMP COM617
+	;Ｖ系拡張コマンド有効時に前回と今回の調教者同じかつ、背面座位もしくは背面座位胸愛撫への場合、背面座位胸愛撫へ
+	ELSEIF ((PREVCOM == 23 || (GROUPMATCH(PREVCOM, 614, 615) && PREVCOM:1 == 23)) || PREVCOM == 632) && JUDGE_TRAINER_CONSECUTIVE() == 1
+		SIF EXCOM_ABLE632() == 1
+			JUMP COM632
+	ENDIF
+ENDIF
+;Ａ系拡張コマンド有効時に前回と今回の調教者同じかつ、後背位アナルもしくは後背位アナル胸愛撫への場合、後背位アナル胸愛撫へ
+IF FLAG:15 & 4
+	IF (PREVCOM == 31 || PREVCOM == 618) && JUDGE_TRAINER_CONSECUTIVE() == 1
+		SIF EXCOM_ABLE618() == 1
+			JUMP COM618
+	;Ａ系拡張コマンド有効時に前回と今回の調教者同じかつ、対面座位アナルもしくは対面アナル胸愛撫への場合、対面アナル胸愛撫へ
+	ELSEIF (PREVCOM == 32 || PREVCOM == 619) && JUDGE_TRAINER_CONSECUTIVE() == 1
+		SIF EXCOM_ABLE619() == 1
+			JUMP COM619
+	;Ａ系拡張コマンド有効時に前回と今回の調教者同じかつ、背面座位アナルもしくは背面座位アナル胸愛撫への場合、背面座位アナル胸愛撫へ
+	ELSEIF (PREVCOM == 33 || PREVCOM == 633) && JUDGE_TRAINER_CONSECUTIVE() == 1
+		SIF EXCOM_ABLE633() == 1
+			JUMP COM633
+	ENDIF
+ENDIF
+
+PRINTL 胸愛撫
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 3
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 胸愛撫
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:露出 = 100
+SOURCE:性行動 = 60
+SOURCE:不潔 = 20
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 20
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 100
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 500
+	SOURCE:情愛 = 160
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 1200
+	SOURCE:情愛 = 200
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 2000
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:快Ｂ = 2800
+	SOURCE:情愛 = 250
+ENDIF
+
+;淫乳
+IF TALENT:淫乳
+	TIMES SOURCE:快Ｂ , 1.20
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:不潔 , 0.80
+ENDIF
+
+;調教者が［幼児］または［幼稚］
+IF TALENT:PLAYER:幼児 || TALENT:PLAYER:幼稚
+	TIMES SOURCE:快Ｂ , 1.20
+	TIMES SOURCE:情愛 , 1.20
+ENDIF
+;調教者が［幼児退行］
+SIF TALENT:PLAYER:幼児退行
+	TIMES SOURCE:情愛 , 1.20
+
+;調教者が猫舌ではなく、奴隷の胸の汚れがなければ口をつかう（愛液と母乳よごれはＯＫ、汚れ無視か助手調教時は問題なし）
+IF TALENT:PLAYER:猫舌 == 0 && (STAIN:胸 < 2 || STAIN:胸 == 16 || STAIN:胸 == 17 || ASSIPLAY == 1 || TALENT:MASTER:汚れ無視)
+	;調教者のTALENT:舌使いをみる
+	IF TALENT:PLAYER:舌使い
+		TIMES SOURCE:快Ｂ , 1.40
+		SOURCE:恭順追加 += SOURCE:快Ｂ / 20
+	ENDIF
+
+	;奴隷のＢ⇔調教者の口の汚れが移動
+	STAIN:胸 |= STAIN:PLAYER:口
+	STAIN:PLAYER:口 |= STAIN:胸
+ENDIF
+
+;奴隷のＢ⇔調教者の指の汚れが移動
+STAIN:胸 |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:胸
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+
+;触手調教やＢ感覚4未満、[母乳体質]、[オトコ]、[小人体型]、[小柄体型]、[貧乳]、[絶壁]持ちでは発生しない。
+SIF ABL:Ｂ感覚 > 3 && TEQUIP:触手調教 == 0 && TALENT:オトコ == 0  && TALENT:母乳体質 == 0 && TALENT:小人体型 == 0 && TALENT:小柄体型 == 0 && TALENT:絶壁 == 0  && TALENT:貧乳 == 0
+	CALL YOUJI
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_3
+PRINTFORM %CALLNAME:TARGET%の
+IF TALENT:絶壁
+	PRINT ほぼ無に等しい
+ELSEIF TALENT:小柄体型 && TALENT:貧乳
+	PRINT 僅かに膨らみが感じられる程度の
+ELSEIF TALENT:貧乳
+	PRINT 標準よりやや小さめの
+ELSEIF TALENT:巨乳
+	PRINT 手から溢れそうなほどの
+ELSEIF TALENT:爆乳
+	PRINT 手に余るほど大きな
+ENDIF
+IF TEQUIP:焦らしプレイ
+	PRINTL 胸を、乳首には触れずに優しく揉んだ…
+ELSEIF PALAM:欲情 > PALAMLV:3 && TEQUIP:Ｂ系装着器具 == 0
+	PRINTL 胸の先端の、すっかり硬くなった突起をつまみあげた…
+ELSEIF TALENT:絶壁
+	PRINTL 胸を優しく撫でるように触れた…
+ELSE
+	PRINTL 胸を揉みしだいた…
+ENDIF

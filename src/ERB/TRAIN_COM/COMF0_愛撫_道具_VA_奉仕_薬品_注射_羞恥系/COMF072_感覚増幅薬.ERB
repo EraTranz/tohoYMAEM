@@ -1,0 +1,119 @@
+﻿;=============================================================================
+;感覚増幅薬
+;=============================================================================
+;数コマンドの間、イキっぱなしとなりかねない危険な薬を飲ませる。
+;そのかわりトラウマ・薬物湿潤・不潔・逸脱・酒酔い・鬼殺しの効果を増強する
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE72
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:72 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:感覚増幅薬 == 0
+	RETURN 0
+;薬物経験が低すぎるとダメ
+SIF EXP:薬物経験 < EXPLV:3
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;産卵促進剤を使用していたら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;効果発揮中はダメ
+SIF TEQUIP:7
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 72) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM72
+PRINTL 感覚増幅薬
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 72
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 感覚増幅薬
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 100
+
+SOURCE:薬物浸潤 = 3300
+SOURCE:逸脱 = 3100
+
+;感覚増幅薬1つ消費
+CALL USE_PLURAL_ITEM, 70, 1
+TEQUIP:7 = 8
+
+;薬物経験
+TCVAR:薬物経験 += 4
+RETURN 1
+
+;--------------------------------------------------
+;感覚増幅薬効果発揮中
+;--------------------------------------------------
+@EQUIP_COM72
+PRINTL ＜感覚増幅薬効果発揮中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 10
+
+TEQUIP:7 -= 1
+
+TIMES SOURCE:トラウマ , 1.30
+TIMES SOURCE:薬物浸潤 , 1.30
+TIMES SOURCE:不潔 , 1.30
+TIMES SOURCE:逸脱 , 1.30
+TIMES SOURCE:酒酔い , 1.30
+TIMES SOURCE:鬼殺し , 1.30
+
+;薬物経験
+TCVAR:薬物経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_72
+PRINTFORM %CALLNAME:MASTER%は%CALLNAME:TARGET%に
+SIF ABL:PLAYER:技巧 >= 3
+	PRINT 口移しで
+SIF ABL:従順 == 0
+	PRINT 無理やり
+PRINTL 感覚増幅薬を飲ませた
+PRINTFORM %CALLNAME:TARGET%は
+IF ABL:従順 > 3 && MARK:反発刻印 < 3
+	PRINTFORML 困惑した表情を浮かべ、ニヤニヤと笑う%CALLNAME:MASTER%を見つめている……
+ELSEIF MARK:反発刻印 >= 3
+	PRINTFORML 警戒心を露わにしてニヤニヤと笑う%CALLNAME:MASTER%を睨んでいる……
+ELSE
+	PRINTFORML 一瞬驚いたような表情をしたがニヤニヤと笑う%CALLNAME:MASTER%を見て探るような眼で睨んでいる……
+ENDIF

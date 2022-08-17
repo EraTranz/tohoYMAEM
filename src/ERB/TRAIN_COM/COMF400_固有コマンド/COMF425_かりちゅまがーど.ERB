@@ -1,0 +1,96 @@
+﻿;=============================================================================
+;かりちゅまがーど
+;=============================================================================
+;完全趣味コマンドなので実用性微妙
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE425
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:425 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;調教者がレミリアお嬢様じゃないとダメだよ
+SIF NO:PLAYER != 1010
+	RETURN 0
+;調教者が[精神崩壊]、[傀儡]だとダメ
+SIF TALENT:PLAYER:精神崩壊 || TALENT:PLAYER:傀儡
+	RETURN 0
+;調教対象が[精神崩壊]、[傀儡]だとダメ
+SIF TALENT:精神崩壊 || TALENT:傀儡
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;目隠し、耳栓、暗闇展開をしていた場合効果は無し
+SIF TEQUIP:目装着器具 || TEQUIP:耳装着器具 || TEQUIP:暗闇
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 425) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM425
+PRINTL かりちゅまがーど
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 425
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = かりちゅまがーど
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 30
+
+SOURCE:達成感 = 50
+SOURCE:中毒充足 = 100
+
+;ABL:調教者の奉仕精神をみる
+IF ABL:PLAYER:奉仕精神 == 0
+	SOURCE:情愛 = 20
+ELSEIF ABL:PLAYER:奉仕精神 == 1
+	SOURCE:情愛 = 50
+ELSEIF ABL:PLAYER:奉仕精神 == 2
+	SOURCE:情愛 = 80
+ELSEIF ABL:PLAYER:奉仕精神 == 3
+	SOURCE:情愛 = 125
+ELSEIF ABL:PLAYER:奉仕精神 == 4
+	SOURCE:情愛 = 200
+ELSE
+	SOURCE:情愛 = 350
+ENDIF
+
+;奴隷が咲夜もしくはパチュリーなら効果増強
+SIF NO:TARGET == 1009 || NO:TARGET == 1008
+	SOURCE:情愛 += 500
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_425
+;対咲夜さん(ただし反発3以外)
+IF NO:TARGET == 1009 && MARK:反発刻印 < 3
+	PRINTFORML %CALLNAME:PLAYER%はかわいらしくしゃがみガードの体勢を取った
+	PRINTFORML %CALLNAME:TARGET%はそれを微笑ましく眺めているようだ…
+;対パチェさん(ただし反発ないこと)
+ELSEIF NO:TARGET == 1008 && MARK:反発刻印 == 0
+	PRINTFORML %CALLNAME:PLAYER%はかわいらしくしゃがみガードの体勢を取った
+	PRINTFORML %CALLNAME:TARGET%はそれに苦笑しつつも優しい目で眺めているようだ…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%はかわいらしくしゃがみガードの体勢を取った…
+ENDIF

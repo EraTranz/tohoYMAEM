@@ -1,0 +1,300 @@
+﻿;=============================================================================
+;毛を抜かせる
+;=============================================================================
+;実行は難しいが性能はそれほど見合ったものではない。
+;どちらかというと趣味向き。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE114
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:114 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;[パイパン]だと不可、生えそろっていないと無理
+SIF TALENT:パイパン || (CFLAG:36 && BASE:陰毛 < 250)
+	RETURN 0
+;テキストより[小柄体型]はデフォでツルツル。[小人体型]もそれに準じる
+SIF (TALENT:小柄体型 || TALENT:小人体型) && CFLAG:36 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;オナホール・電極オナホール使用中はダメ
+SIF TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;縛っているときは無理
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 114) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM114
+PRINTL 毛を抜かせる
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 114
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+TSTR:0 = 毛を抜かせる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+DOWNBASE:0 += 40
+DOWNBASE:1 += 150
+
+LOCAL:1 = 500
+SOURCE:達成感 = 750
+SOURCE:中毒充足 = 500
+SOURCE:接触 = 800
+SOURCE:露出 = 1000
+SOURCE:逸脱 = 3200
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	SOURCE:痛み = 500
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	SOURCE:痛み = 220
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	SOURCE:痛み = 80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	SOURCE:痛み = 25
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:露出癖 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:露出癖 == 2
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:露出癖 == 3
+	TIMES LOCAL:1 , 1.50
+ELSEIF ABL:露出癖 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 2.60
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 1.70
+ELSE
+	TIMES LOCAL:1 , 2.00
+ENDIF
+
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:露出 += LOCAL:1
+
+;小柄体型、小人体型
+SIF TALENT:小柄体型 || TALENT:小人体型
+	TIMES SOURCE:露出 , 2.50
+
+IF TALENT:パイパン == 0
+	PRINTL 
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:65%]になった
+	TALENT:パイパン = 1
+ENDIF
+;毛は後から生えてこないようになる
+SIF CFLAG:36 != 1
+	CFLAG:36 = 1
+;ツルツルになる
+BASE:陰毛 = 0
+
+;陰毛入手イベント
+SIF FLAG:12 & 8 && (TFLAG:996 & 64) == 0 
+	CALL SWEET_POTATO_PUBLIC_HAIR
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_114
+PRINTFORML %CALLNAME:TARGET%に自分の陰毛を手で抜くように命じたが拒否された。
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_114
+PRINTFORML %CALLNAME:PLAYER%に命令され、%CALLNAME:TARGET%はおずおずと自分の陰毛を一本一本手でつまんで引き抜き始めた
+PRINTFORM %CALLNAME:TARGET%は
+IF TALENT:痛みに弱い
+	PRINTL 陰毛を引き抜く度に大粒の涙を目からこぼしながら呻くような声をあげている…
+ELSEIF TALENT:痛みに強い
+	PRINTL ぶつぶつと文句を言いながら、なるべく痛みを受けないように片手で根元を押さえつつ、陰毛を次々と引き抜いている…
+ELSE
+	PRINTL 目を堅く閉じ、額に脂汗を浮かべながら陰毛を引き抜いている…
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_114, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+;ABL:自慰中毒
+IF ABL:自慰中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:自慰中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;快感の否定
+IF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;小人体型
+IF TALENT:小人体型
+	SIF LOCAL:99
+		RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:127%({LOCAL:99})
+ENDIF
+;小柄体型
+IF TALENT:小柄体型
+	SIF LOCAL:99
+		RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:128%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+TFLAG:241 = 50

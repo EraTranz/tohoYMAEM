@@ -1,0 +1,145 @@
+﻿;=============================================================================
+;乳の揉み合い
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE344
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:344 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;調教者の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(PLAYER) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;助手調教で[妄信][服従]もなく、調教対象と同性の場合、《従順》4未満または《レズっ気》(《ＢＬっ気》)4未満だと実行できない
+IF ASSIPLAY && !(TALENT:PLAYER:オトコ ^^ TALENT:オトコ) && TALENT:PLAYER:妄信 == 0 && TALENT:PLAYER:服従 == 0
+	SIF ABL:PLAYER:従順 < 4 || ABL:PLAYER:(22 + TALENT:オトコ) < 4
+		RETURN 0
+ENDIF
+;レズっ気3以上限定
+SIF ABL:レズっ気 < 3
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;助手がウェディングドレス・ゴスロリ着用中の場合助手に技巧4以上必須
+SIF ASSIPLAY && (TEQUIP:PLAYER:コスチュームプレイ == 19 || TEQUIP:PLAYER:コスチュームプレイ == 20) && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:技巧 < 4
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 344) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM344
+PRINTL 乳の揉み合い
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 344
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 乳の揉み合い
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 7
+DOWNBASE:1 += 70
+
+SOURCE:露出 = 90
+SOURCE:性行動 = 80
+SOURCE:不潔 = 30
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 20
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 100
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 500
+	SOURCE:情愛 = 160
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 1200
+	SOURCE:情愛 = 200
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 2000
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:快Ｂ = 2800
+	SOURCE:情愛 = 250
+ENDIF
+
+;調教者のＢ感覚をみる
+SOURCE:主導権 = 50 * (1 + ABL:PLAYER:Ｂ感覚)
+
+;淫乳
+IF TALENT:淫乳
+	TIMES SOURCE:快Ｂ , 1.40
+	TIMES SOURCE:情愛 , 1.40
+ENDIF
+
+;調教者が［幼児］、［幼稚］
+IF TALENT:PLAYER:幼児 || TALENT:PLAYER:幼稚
+	TIMES SOURCE:快Ｂ , 1.20
+	TIMES SOURCE:情愛 , 1.20
+ENDIF
+;調教者が［幼児退行］
+SIF TALENT:PLAYER:幼児退行
+	TIMES SOURCE:情愛 , 1.20
+
+;奴隷のＢ⇔調教者の指の汚れが移動
+STAIN:胸 |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:胸
+;奴隷の指⇔調教者のＢの汚れが移動
+STAIN:手 |= STAIN:PLAYER:胸
+STAIN:PLAYER:胸 |= STAIN:手
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 7
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 7
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_344
+IF (TALENT:PLAYER:幼児 || TALENT:PLAYER:幼稚 || TALENT:PLAYER:幼児退行) && (TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行)
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いに、まるで子供が親にじゃれつくような感じで胸を揉みあった…
+ELSEIF TALENT:PLAYER:淫乳 && TALENT:淫乳
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いの胸をいやらしい手つきで揉みあった…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いの胸を揉みあった…
+ENDIF

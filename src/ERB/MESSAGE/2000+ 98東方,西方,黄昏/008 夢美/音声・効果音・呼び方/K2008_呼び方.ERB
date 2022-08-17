@@ -1,0 +1,210 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;調教者のステータス等に応じて呼称を変化させる
+;========================================================
+
+
+;=================================================
+;■相手の名前
+;-------------------------------------------------
+;引数は通常省略
+;=================================================
+@K2008FS_CALL_YOUR_NAME(ARG = __INT_MIN__)
+#FUNCTIONS
+#DIMS _CALLNAME
+_CALLNAME = 
+
+SELECTCASE ARG
+	CASE __INT_MIN__
+		;未指定の場合、助手か主人（つまりPLAYER）
+		IF ASSIPLAY
+			_CALLNAME = %CALLNAME:ASSI%
+		ELSE
+			_CALLNAME = %CALLNAME:MASTER%
+		ENDIF
+	CASE MASTER
+		;主人の場合
+		_CALLNAME = %CALLNAME:MASTER%
+	CASE ASSI
+		;助手の場合
+		SIF ASSI <= 0
+			THROW 【K2008エラー】助手が居ないのにASSIを指定してはいけません
+		_CALLNAME = %CALLNAME:ASSI%
+	CASEELSE
+		THROW 【K2008エラー】未定義のキャラクタ変数 {ARG} が指定されました
+ENDSELECT
+
+RETURNF _CALLNAME
+
+
+;=================================================
+;■自分の陰核／陰茎（C）
+;=================================================
+@K2008FS_CALL_MY_C()
+#FUNCTIONS
+#DIMS _CALLNAME
+_CALLNAME = 
+
+;オトコ
+IF TALENT:オトコ
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = ペニス
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("おちんちん", "ペニス")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("おちんぽ", "おちんちん", "ちんちん", "ちんぽ")%
+	ENDSELECT
+;ふたなり
+ELSEIF TALENT:ふたなり
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = おちんちん
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("おちんちん", "ちんちん", "ペニス")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("おちんぽ", "おちんちん", "ちんちん", "メスちんぽ", "めすちんぽ")%
+	ENDSELECT
+;肥大陰核（または巨根判定）
+ELSEIF TALENT:肥大陰核 || BASE:陰核 >= 150
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = クリトリス
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("勃起クリ", "勃起クリトリス")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("クリちんぽ", "巨クリちゃん", "でかクリ")%
+	ENDSELECT
+;クリトリス
+ELSE
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = クリトリス
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("クリちゃん", "クリトリス", "お豆", "お豆ちゃん")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("クリちゃん", "クリトリス", "お豆", "お豆ちゃん")%
+	ENDSELECT
+ENDIF
+
+RETURNF _CALLNAME
+
+;=================================================
+;■相手の陰核／陰茎（C）
+;=================================================
+@K2008FS_CALL_YOUR_C()
+#FUNCTIONS
+#DIMS _CALLNAME
+_CALLNAME = 
+
+;オトコ
+IF TALENT:PLAYER:オトコ
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = %K2008FS_RANDS("こんなもの", "ペニス", "粗チン")%
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("おちんちん", "おちんぽ")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("おちんぽ", "おちんぽ様")%
+	ENDSELECT
+;ふたなり
+ELSEIF TALENT:PLAYER:ふたなり
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = %K2008FS_RANDS("おちんちん", "ペニス")%
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("おちんちん", "おちんぽ")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("メスちんぽ", "チンポちゃん", "おちんぽ")%
+	ENDSELECT
+;肥大陰核（または巨根判定）
+ELSEIF TALENT:PLAYER:肥大陰核 || BASE:PLAYER:陰核 >= 150
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = クリトリス
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("勃起クリ", "勃起クリトリス")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("クリちんぽ", "巨クリちゃん", "でかクリ")%
+	ENDSELECT
+;クリトリス
+ELSE
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = クリトリス
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("クリちゃん", "クリトリス", "お豆", "お豆ちゃん")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("クリちゃん", "クリトリス", "お豆", "お豆ちゃん")%
+	ENDSELECT
+ENDIF
+
+RETURNF _CALLNAME
+
+;=================================================
+;■自分の膣
+;=================================================
+@K2008FS_CALL_MY_V()
+#FUNCTIONS
+#DIMS _CALLNAME
+_CALLNAME = 
+
+IF K2008F_HOWMANY_SOURCE_PLEASURE("GETNOW") >= 4
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = %K2008FS_RANDS("あそこ", "アソコ")%
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("おまんこ", "まんこ")%
+		CASE 4, 5
+			IF TALENT:処女 == 1
+				_CALLNAME = 未開通な
+			ELSEIF TALENT:処女 == 2
+				_CALLNAME = 新古品の
+			ENDIF
+			SIF K2008F_DEVRANK("V") >= 4
+				_CALLNAME = %_CALLNAME%ガバガバ
+			_CALLNAME = %_CALLNAME%%K2008FS_RANDS("雌まんこ", "肉壺")%
+	ENDSELECT
+ELSE
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = %K2008FS_RANDS("あそこ", "アソコ")%
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("膣", "あそこ", "ヴァギナ")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("雌まんこ", "おまんこ", "雌まんこ", "雌マンコ", "肉壺")%
+	ENDSELECT
+ENDIF
+
+RETURNF _CALLNAME
+
+;=================================================
+;■自分の尻穴
+;=================================================
+@K2008FS_CALL_MY_A(ARG = 0)
+#FUNCTIONS
+#DIMS _CALLNAME
+_CALLNAME = 
+
+IF K2008F_HOWMANY_SOURCE_PLEASURE("GETNOW") >= 4
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = %K2008FS_RANDS("お尻", "アヌス")%
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("ケツ穴", "尻マンコ")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("尻マンコ", "ケツまんこ")%
+	ENDSELECT
+ELSE
+	SELECTCASE K2008F_RANK()
+		CASE 0, 1
+			_CALLNAME = %K2008FS_RANDS("お尻の穴", "アヌス")%
+		CASE 2, 3
+			_CALLNAME = %K2008FS_RANDS("アヌス", "お尻の穴", "後ろの穴", "尻穴")%
+		CASE 4, 5
+			_CALLNAME = %K2008FS_RANDS("アヌス", "尻まんこ", "ケツまんこ", "尻穴")%
+	ENDSELECT
+ENDIF
+
+RETURNF _CALLNAME
+

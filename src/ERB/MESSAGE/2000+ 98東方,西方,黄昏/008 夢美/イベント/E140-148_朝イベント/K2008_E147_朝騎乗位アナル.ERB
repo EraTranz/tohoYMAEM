@@ -1,0 +1,35 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝騎乗位アナル
+;TFLAG:99でＡ経験増加量を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE147
+SELECTCASE RAND:3
+	CASE 2
+		CALL K2008_COM("快楽")
+		CALL K2008_ORGASM("並")
+		PRINTFORML 
+		PRINTFORMW 「はあぁ、気持ちよかったぁ～」
+		PRINTFORML 「ん？　起こしちゃったみたいね」
+		PRINTFORMW 「おはよう、朝からアナルセックスって素敵ね」
+	CASE 1
+		PRINTFORML ――快感とベッドが軋む音で朝を迎えた
+		PRINTFORMW 夢美が澄ました顔でアナルセックスに励んでいる
+		PRINTFORML 
+		CALL K2008_COM("快楽")
+		SIF K2008F_CAN_EJAC(MASTER)
+			CALL K2008_EJAC_TO("腸内射精")
+		PRINTFORML 
+		PRINTFORML 「ふぅ～……　あら、おはよう」
+		PRINTFORMW 「目覚ましのアナルセックスはどんな感じだったかしら？」
+		PRINTFORMW 「またやってほしい？　いいわ、素敵」
+	CASEELSE
+		CALL K2008_COM("好感")
+		PRINTFORMW ――目を覚ますと、夢美が跨ってアナルセックスをしていた
+		PRINTFORML 
+		CALL K2008_COM("快楽")
+		PRINTFORML 
+		PRINTFORML 「あ、起こしちゃった？　もう朝なのだから起きないと駄目よ」
+		PRINTFORML 「……『こっち』はお尻の中で元気いっぱいなのにね～？」
+		PRINTFORMW 「じゃ、寝起きスッキリのためにもう一回してあげる♪」
+ENDSELECT

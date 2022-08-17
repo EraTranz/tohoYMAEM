@@ -1,0 +1,44 @@
+﻿;YM→YMAEコンバータによって作成されました
+;--------------------------------------------------
+;調教終了時の口上
+;--------------------------------------------------
+@K2008_MESSAGE_END
+#DIM _COUNT
+#DIM _DEBUG_COM ;デバッグモードで使う変数
+
+;デバッグ用
+SIF __LINE__
+	CALL K2008D_MESSAGE_END
+
+;■開始前の評価ランクからの上下で振り分ける
+SELECTCASE K2008F_RANK() - CFLAG:__K2008N_CFLAG_STARTRANK__
+	CASE IS < 0
+		;評価が下がった
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_END_RANKDOWN
+			RETURN 1
+		CATCH
+		ENDCATCH
+	CASE IS > 0
+		;評価が上がった
+		TRYCCALLFORM K2008_RANK{K2008F_RANK()}_END_RANKUP
+			RETURN 1
+		CATCH
+		ENDCATCH
+ENDSELECT
+
+;■特定条件のみ優先して専用口上に飛ばす
+
+;来てすぐ帰った（1回目のコマンド履歴がない）
+IF K2008F_COMCOUNT() == 0
+	TRYCCALLFORM K2008_RANK{K2008F_RANK()}_END0
+		RETURN 1
+	CATCH
+	ENDCATCH
+ENDIF
+
+
+;■あとは、STARTと同じ制御をする
+CALL K2008_SELECT_CALLABLE_FUNCTION("K2008_RANK{K2008F_RANK()}_END#")
+
+RETURN RESULT
+

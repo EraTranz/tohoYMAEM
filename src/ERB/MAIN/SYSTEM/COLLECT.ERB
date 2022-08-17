@@ -1,0 +1,873 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;蒐集品関連処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;蒐集品の入手、展示、閲覧処理は全てここで行う
+;=============================================================================
+;蒐集品入手処理
+;=============================================================================
+;展示室機能有効時、調教中に特定の動作を行うと蒐集品が手に入る様になる
+;ここでは蒐集品の入手フラグを立てる処理が入るだけで実際に展示室に展示するイベントは
+;SWEET_POTATO_2.ERB(上の@SWEET_POTATO_ATより呼び出される)で処理される
+;--------------------------------------------------
+;尻子玉入手処理
+;--------------------------------------------------
+;CFLAG:10 & 1でそのキャラが尻子玉を1度抜き取られたかを判定
+;値が0のときは展示イベントが発生。そこで値が1に変更され、以後尻子玉を抜き取ってもその場でいただく描写に変化する
+;入手→展示イベント処理はTFLAG:996 & 1で判断
+@SWEET_POTATO_SHIRIKODAMA
+#LOCALSIZE 1
+LOCAL = 0
+IF CFLAG:10 & 1
+	IF ASSIPLAY == 0
+		;奴隷のＡ⇒調教者の口に汚れが移動
+		STAIN:アナル |= STAIN:PLAYER:口
+		BASE:PLAYER:体力 = MIN(BASE:PLAYER:体力 + 1000, MAXBASE:PLAYER:0)
+		LOCAL = 1
+	ELSE
+		IF ABL:従順 >= 4 && RAND:2 == 0
+			;奴隷のＡ⇒主人の口に汚れが移動
+			STAIN:アナル |= STAIN:MASTER:口
+			BASE:MASTER:体力 = MIN(BASE:MASTER:体力 + 1000, MAXBASE:MASTER:0)
+			LOCAL = 1
+		ELSE
+			;奴隷のＡ⇒調教者の口に汚れが移動
+			STAIN:アナル |= STAIN:PLAYER:口
+			BASE:PLAYER:体力 = MIN(BASE:PLAYER:体力 + 1000, MAXBASE:PLAYER:0)
+		ENDIF
+	ENDIF
+ELSE
+	TFLAG:996 |= 1
+ENDIF
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 210
+
+;尻子玉食い回数カウント
+IF LOCAL == 1
+	FLAG:406 += 1
+	IF FLAG:406 >= 50 && CHECK_GAMEMODE_ENDING_EXIST() == 1 && (FLAG:70 & 64) == 0
+		PRINTFORML %CALLNAME:MASTER%は河童の生態系に関する理解を深めた…
+		PRINTFORMW ※強くてニューゲーム開始時に%CALLNAME:MASTER%の種族を[河童]に選択することができます
+		FLAG:70 |= 64
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;黄金水処理
+;--------------------------------------------------
+;CFLAG:11 & 2でそのキャラから黄金水を採取されたかを判定
+;値が0のときは展示イベントが発生。そこで値が1に変更され、以後採取は行われなくなる
+;入手→展示イベント処理はTFLAG:996 & 2で判断
+@SWEET_POTATO_GW
+IF (CFLAG:10 & 2) == 0 && ITEM:蓋付き瓶 > 0
+	CALL USE_PLURAL_ITEM, 81, 1
+	TFLAG:996 |= 2
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 211
+ENDIF
+
+;--------------------------------------------------
+;愛液処理
+;--------------------------------------------------
+;特定条件を満たすとCFLAG:10 & 4でそのキャラから愛液を採取されたかを判定
+;値が0のときは展示イベントが発生。そこで値が1に変更され、以後採取は行われなくなる
+;入手→展示イベント処理はTFLAG:996 & 4で判断
+@SWEET_POTATO_LW
+PRINTFORML 調教が終わってもなお%CALLNAME:TARGET%の秘所からは大量の愛液が今もなお溢れ出ている……
+PRINTFORML %CALLNAME:TARGET%の愛液を瓶で採取しますか？
+SIF CFLAG:10 & 4
+	PRINTFORML (%ITEMNAME:(NO:TARGET)%の愛液は既に採取済です)
+DRAWLINE
+PRINTL [0] - やめておく
+PRINTL [1] - 採取する
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL USE_PLURAL_ITEM, 81, 1
+	TFLAG:996 |= 4
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 212
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;血液入手処理
+;--------------------------------------------------
+;CFLAG:10 & 8でそのキャラから血を採取されたかを判定
+;値が0のときは展示イベントが発生。そこで値が1に変更され、以後採取は行われなくなる
+;入手→展示イベント処理はTFLAG:996 & 8で判断
+@SWEET_POTATO_RED_BLOOD
+IF (CFLAG:10 & 8) == 0 && ITEM:蓋付き瓶 > 0
+	CALL USE_PLURAL_ITEM, 81, 1
+	TFLAG:996 |= 8
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 213
+ENDIF
+
+;--------------------------------------------------
+;破瓜血入手処理
+;--------------------------------------------------
+;CFLAG:10 & 16でそのキャラから破瓜血を採取されたかを判定
+;値が0のときは展示イベントが発生。そこで値が1に変更され、以後採取は行われなくなる
+;入手→展示イベント処理はTFLAG:996 & 16で判断
+@SWEET_POTATO_VIRGIN_BLOOD
+IF (CFLAG:10 & 16) == 0 && ITEM:蓋付き瓶 > 0
+	CALL USE_PLURAL_ITEM, 81, 1
+	TFLAG:996 |= 16
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 214
+ENDIF
+
+;--------------------------------------------------
+;パンティー処理
+;--------------------------------------------------
+;CFLAG:10 & 32でそのキャラからパンティーを採取されたかを判定
+;値が0のときは展示イベントが発生。そこで値が1に変更され、以後採取は行われなくなる
+@SWEET_POTATO_PANTY
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 215
+;入手したパンティーを展示室に
+CALL GET_PANTY
+
+;--------------------------------------------------
+;母乳処理
+;--------------------------------------------------
+;CFLAG:10 & 256でそのキャラから母乳を採取されたかを判定
+;値が1のときは展示イベントが発生。そこで値が2に変更され、以後搾乳でしか採取は行われなくなる
+;入手→展示イベント処理はTFLAG:125で判断
+;………………………………………………
+;搾乳機非装備時に搾乳コマンドを使用したときの母乳採取イベント
+;………………………………………………
+@SWEET_POTATO_MILK
+IF TEQUIP:Ｂ系装着器具 != 2 && ITEM:蓋付き瓶 > 0 && SELECTCOM == 626
+	;搾乳を使った場合、母乳入りの瓶を追加で入手可能
+	CALL USE_PLURAL_ITEM, 81, 1
+	TFLAG:125 += 1
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 216
+ENDIF
+
+;………………………………………………
+;調教後搾乳で母乳入手
+;………………………………………………
+@SWEET_POTATO_MILK_2, ARG
+CALL USE_PLURAL_ITEM, 81, 1
+TFLAG:125 += 1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 217, ARG
+
+;--------------------------------------------------
+;陰毛処理
+;--------------------------------------------------
+;陰毛は何回採集してもいい。販売可能なので。
+@SWEET_POTATO_PUBLIC_HAIR
+IF ITEM:蓋付き瓶 > 0
+	CALL USE_PLURAL_ITEM, 81, 1
+	TFLAG:996 |= 64
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 218
+ENDIF
+
+;=============================================================================
+;蒐集品の展示イベント
+;=============================================================================
+;ここで蒐集品を展示室に飾り付けるイベント処理を行う。
+;使っているフラグは大きく分けて、手に入れた蒐集品の合計(というより何種手に入れたかの管理)、
+;そのキャラから蒐集品を手に入れたかどうかを判定にCFLAGとFLAGを使用。
+;CFLAG:10のほうは蒐集品を入手したかをbitで記憶、
+;FLAGのほうは誰の○○をいくつ持っているかを判断するために使用している。
+;また、TFLAG:202のON/OFFで主人が展示室にいるかを判定(地の文用)、
+;FLAG:500で展示室に移動可能かの判定に使用。また蒐集品の累計にも使用され、500以上になると展示室の名称が変化。
+;--------------------------------------------------
+;尻子玉の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):1となっている。
+;所持している尻子玉の数はFLAG:501で管理。
+@GET_SHIRIKODAMA
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の尻子玉を取り出すと
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORM そして懐から取りだした%CALLNAME:TARGET%の尻子玉を
+ENDIF
+SIF FLAG:501 == 0
+	PRINT 特別に調達した専用の
+PRINTW 棚に飾った……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):1 == 0
+	FLAG:500 += 1
+	FLAG:501 += 1
+ENDIF
+DA:(NO:TARGET):1 += 1
+CFLAG:10 |= 1
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;黄金水の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):2となっている。
+;所持している黄金水の数はFLAG:502で管理。
+@GET_GOLD_WATER
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の黄金水が入った瓶を取り出した
+	PRINT そして
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORM そして懐から取りだした%CALLNAME:TARGET%の黄金水が入った瓶を
+ENDIF
+PRINTFORM %NAME_GOLDWATER(NO:TARGET)%と書かれたラベルがよく見えるようにして
+SIF FLAG:502 == 0
+	PRINT 特別に調達した専用の
+PRINTW 棚に飾った……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):2 == 0
+	FLAG:500 += 1
+	FLAG:502 += 1
+ENDIF
+DA:(NO:TARGET):2 += 1
+CFLAG:10 |= 2
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;愛液の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):3となっている。
+;所持している愛液の数はFLAG:503で管理。
+@GET_LOVE_WATER
+IF CFLAG:10 & 4
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室のさらに奥まった場所にある秘密の倉庫へと向かった
+	PRINTFORML そして懐から%CALLNAME:TARGET%の愛液で満たされた瓶を慎重に取り出すと
+	PRINTFORMW 倉庫に据え付けられた特別製の棚に保管した……
+ELSE
+	IF TFLAG:202 == 1
+		PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の愛液で満たされた瓶を取り出した
+		PRINT そして
+	ELSE
+		PRINTL 
+		PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+		PRINTFORML そして懐から取りだした%CALLNAME:TARGET%の愛液で満たされた瓶を
+	ENDIF
+	PRINTFORM %NAME_LOVEWATER(NO:TARGET)%と書かれたラベルがよく見えるようにして
+	SIF FLAG:503 == 0
+		PRINT 特別に調達した専用の
+	PRINTW 棚に飾った……
+ENDIF
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):3 == 0
+	FLAG:500 += 1
+	FLAG:503 += 1
+ENDIF
+DA:(NO:TARGET):3 += 1
+CFLAG:10 |= 4
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;血の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):4となっている。
+;所持している血液の数はFLAG:504で管理。
+@GET_RED_BLOOD
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の血が入った瓶を取り出した
+	PRINTFORM そして「%CALLNAME:TARGET%の血」のラベルがよく見えるように
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORM そして懐から取りだした%CALLNAME:TARGET%の血が入った瓶をラベルがよく見えるようにして
+ENDIF
+SIF FLAG:504 == 0
+	PRINT 特別に調達した専用の
+PRINTW 棚に飾った……
+;展示室解禁
+SIF FLAG:10 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):4 == 0
+	FLAG:500 += 1
+	FLAG:504 += 1
+ENDIF
+DA:(NO:TARGET):4 += 1
+CFLAG:10 |= 8
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;破瓜血の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):5となっている。
+;所持している破瓜血の数はFLAG:505で管理。
+@GET_VIRGIN_BLOOD
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の破瓜の血が入った瓶を取り出した
+	PRINTFORM そして「%CALLNAME:TARGET%の破瓜血」のラベルがよく見えるように
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORM そして懐から取りだした%CALLNAME:TARGET%の破瓜の血が入った瓶をラベルがよく見えるようにして
+ENDIF
+SIF FLAG:505 == 0
+	PRINT 特別に調達した専用の
+PRINTW 棚に飾った……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):5 == 0
+	FLAG:500 += 1
+	FLAG:505 += 1
+ENDIF
+DA:(NO:TARGET):5 += 1
+CFLAG:10 |= 16
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;ギャルパンティーの展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):6となっている。
+;所持しているギャルパンティーの枚数はFLAG:506で管理。
+@GET_PANTY
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%のぬくもりが残っている下着を取り出すと、
+	PRINTFORM 「%NAME_PANTY(NO:TARGET)%」と書かれたプレートが付いた
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORML そして懐から取りだした%CALLNAME:TARGET%の下着を「%NAME_PANTY(NO:TARGET)%」と書かれた
+	PRINTFORM プレートが付いた
+ENDIF
+SIF FLAG:506 == 0
+	PRINT 専用の
+PRINTW ショーケースに入れて飾った……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):6 == 0
+	FLAG:500 += 1
+	FLAG:506 += 1
+ENDIF
+DA:(NO:TARGET):6 += 1
+CFLAG:10 |= 32
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;写真の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):7となっている。
+;所持している写真の枚数はFLAG:507で管理。
+@KEEP_PICTURE
+PRINTL 
+PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+PRINT そして
+IF CFLAG:10 & 64
+	PRINTFORML %CALLNAME:TARGET%の名前が書かれたアルバムに
+ELSE
+	PRINTFORML 予め購入しておいたアルバムに%CALLNAME:TARGET%の名前を書き込むと、
+	PRINT それに
+	CFLAG:10 |= 64
+ENDIF
+PRINTFORMW 懐から取りだした%CALLNAME:TARGET%の写真を収め、棚に入れた……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):7 == 0
+	FLAG:500 += 1
+	FLAG:507 += 1
+ENDIF
+DA:(NO:TARGET):7 += 1
+TFLAG:124 = 0
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;ビデオの展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):8となっている。
+;所持しているビデオの本数はFLAG:508で管理。
+@KEEP_VIDEO
+PRINTL 
+IF CFLAG:10 & 128
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室のさらに奥まった場所にある秘密の倉庫へと向かった
+	PRINTFORML そして懐から%CALLNAME:TARGET%の痴態が収められているビデオテープを取り出すと
+	PRINTFORML 倉庫に据え付けられた特別製の棚に保管した……
+ELSE
+	IF TFLAG:202 == 1
+		PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の痴態が収められているビデオテープを取り出すと、
+		PRINTFORML %CALLNAME:TARGET%の名前を刻印されたプレートが付いた
+	ELSE
+		PRINTL 
+		PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+		PRINTFORML そして%CALLNAME:TARGET%の痴態が収められているビデオテープを懐から取りだすと、
+		PRINTFORM %CALLNAME:TARGET%の名前を刻印されたプレートが付いた
+	ENDIF
+	SIF FLAG:508 == 0
+		PRINT 専用の
+	PRINTL 棚に入れて保管した……
+	CFLAG:10 |= 128
+ENDIF
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):8 == 0
+	FLAG:500 += 1
+	FLAG:508 += 1
+ENDIF
+DA:(NO:TARGET):8 += 1
+TFLAG:202 = 1
+
+;--------------------------------------------------
+;母乳の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):9となっている。
+;所持している母乳の数はFLAG:509で管理。
+@GET_MILK
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の母乳が入った瓶を取り出した
+	PRINTFORM そして「%NAME_MILK(NO:TARGET)%」のラベルがよく見えるように
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORM そして懐から取りだした%CALLNAME:TARGET%の母乳が入った瓶を「%NAME_MILK(NO:TARGET)%」のラベルがよく見えるようにして
+ENDIF
+SIF FLAG:509 == 0
+	PRINT 特別に調達した専用の
+PRINTW 棚に飾った……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):9 == 0
+	FLAG:500 += 1
+	FLAG:509 += 1
+ENDIF
+DA:(NO:TARGET):9 += TFLAG:125
+CFLAG:10 |= 256
+TFLAG:125 = 0
+SIF TFLAG:202 == 0
+	TFLAG:202 = 1
+
+;--------------------------------------------------
+;卵の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):10となっている。
+;所持している卵の個数はFLAG:510で管理。
+@GET_EGG, ARG
+LOCAL = NO:ARG
+IF CFLAG:ARG:10 & 512
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室のさらに奥まった場所にある秘密の倉庫へと向かった
+	PRINTFORML そして懐から%CALLNAME:ARG%の卵を慎重に取り出すと
+	PRINTFORMW 倉庫に据え付けられた特別製の棚に保管した……
+ELSE
+	IF TFLAG:202 == 1
+		PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:ARG%の卵を取り出すと、
+		PRINTFORML 「%CALLNAME:ARG%の卵」と書かれたプレートが付いた台座に乗せ、それを
+	ELSE
+		PRINTL 
+		PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+		PRINTFORML そして懐から取りだした%CALLNAME:ARG%の卵を「%CALLNAME:ARG%の卵」と書かれた
+		PRINTFORM プレートが付いた台座に乗せ、それを
+	ENDIF
+	SIF FLAG:510 == 0
+		PRINT 特別に調達した専用の
+	PRINTW 保管棚に飾った……
+	CFLAG:ARG:10 |= 512
+ENDIF
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:ARG):10 == 0
+	FLAG:500 += 1
+	FLAG:510 += 1
+ENDIF
+
+;もし産卵フラグが0なら1にしておく（誘発剤なくして産卵した対策)
+DA:(NO:ARG):10 += MAX(TFLAG:128, 1)
+TFLAG:128 = 0
+
+;--------------------------------------------------
+;触手の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):11となっている。
+;所持している触手の種類はFLAG:511で管理。入手フラグは触手出産フラグのCFLAG:触手出産数と共用。
+@GET_LARVA
+PRINTL 
+PRINTFORMW %CALLNAME:MASTER%は展示室へと向かった
+PRINTFORM そして%CALLNAME:TARGET%が産み落とした触手の幼生を
+SIF FLAG:511 == 0
+	PRINT 特別に調達した
+PRINTW 専用の保育器に入れた……
+
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):11 == 0
+	FLAG:500 += 1
+	FLAG:511 += 1
+ENDIF
+DA:(NO:TARGET):11 += 1
+
+;--------------------------------------------------
+;陰毛の展示イベント
+;--------------------------------------------------
+;管理フラグは通常キャラはDA:(キャラ番号):12となっている。
+;所持している陰毛の瓶数はFLAG:512で管理。
+@KEEP_PUBLIC_HAIR
+IF TFLAG:202 == 1
+	PRINTFORMW %CALLNAME:MASTER%は向きを変え、懐から%CALLNAME:TARGET%の陰毛が入った瓶を取り出した
+	PRINTFORM そして「%CALLNAME:TARGET%の陰毛」のラベルがよく見えるように
+ELSE
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は展示室に向かった
+	PRINTFORM そして懐から取りだした%CALLNAME:TARGET%の陰毛が入った瓶をラベルがよく見えるようにして
+ENDIF
+SIF FLAG:512 == 0
+	PRINT 特別に調達した専用の
+PRINTW 棚に飾った……
+;展示室解禁
+SIF FLAG:500 == 0
+	PRINTW 展示室に移動することが可能になりました。
+
+IF DA:(NO:TARGET):12 == 0
+	FLAG:500 += 1
+	FLAG:512 += 1
+ENDIF
+DA:(NO:TARGET):12 += 1
+CFLAG:10 |= 1024
+TFLAG:202 = 1
+
+;=============================================================================
+;各蒐集品の補助処理
+;=============================================================================
+;--------------------------------------------------
+;聖水表示補助処理
+;--------------------------------------------------
+@NAME_GOLDWATER(ARG)
+#FUNCTIONS
+IF ARG == 1001 || ARG == 1005 || ARG == 1011 || ARG == 1041 || ARG == 1046
+	RETURNF @"【%NAME_SELL_GOLDWATER(ARG)%】"
+ELSE
+	RETURNF @"【%ITEMNAME:ARG%の%NAME_SELL_GOLDWATER(ARG)%】"
+ENDIF
+
+;--------------------------------------------------
+;聖水表示補助処理
+;--------------------------------------------------
+@NAME_SELL_GOLDWATER(ARG)
+#FUNCTIONS
+IF ARG == 1001
+	RETURNF "霊夢の素敵な黄金水"
+ELSEIF ARG == 1005
+	RETURNF "チルノの天然水"
+ELSEIF ARG == 1011
+	RETURNF "フランちゃんの黄金水"
+ELSEIF ARG == 1041
+	RETURNF "椛の恥ずかしい黄金水"
+ELSEIF ARG == 1046
+	RETURNF "ルナ茶"
+ELSE
+	RETURNF "黄金水"
+ENDIF
+
+;--------------------------------------------------
+;愛液表示補助処理
+;--------------------------------------------------
+@NAME_LOVEWATER(ARG)
+#FUNCTIONS
+IF ARG == 1008
+	RETURNF "【ぱっちぇ汁】"
+ELSEIF ARG == 1010
+	RETURNF "【お嬢酎】"
+ELSEIF ARG == 1011
+	RETURNF "【フランちゃんの小水】"
+ELSEIF ARG == 1014
+	RETURNF "【アリスの液】"
+ELSEIF ARG == 1015
+	RETURNF "【リリーシャンプー】"
+ELSEIF ARG == 1037
+	RETURNF "【メイプルシロップ】"
+ELSEIF ARG == 1038
+	RETURNF "【芋焼酎】"
+ELSEIF ARG == 1039
+	RETURNF "【厄汁】"
+ELSEIF ARG == 1040
+	RETURNF "【河童の幻想大瀑布】"
+ELSEIF ARG == 1044
+	RETURNF "【ユンケロ黄帝液】"
+ELSEIF ARG == 1052
+	RETURNF "【てんこ汁】"
+ELSEIF ARG == 1056
+	RETURNF "【リリー黒酢】"
+ELSEIF ARG == 1059
+	RETURNF "【ぱる汁】"
+ELSEIF ARG == 2009
+	RETURNF "【オレンジジュース】"
+ELSEIF ARG == 2010
+	RETURNF "【くるみスープ】"
+ELSE
+	RETURNF @"【%ITEMNAME:ARG%汁】"
+ENDIF
+
+;--------------------------------------------------
+;母乳表示補助処理
+;--------------------------------------------------
+@NAME_MILK(ARG)
+#FUNCTIONS
+IF ARG == 1005 || ARG == 1039 || ARG == 1045 || ARG == 2008
+	RETURNF @"【%NAME_SELL_MILK(ARG)%】"
+ELSE
+	RETURNF @"【%ITEMNAME:ARG%の%NAME_SELL_MILK(ARG)%】"
+ENDIF
+
+;--------------------------------------------------
+;母乳売却時表示補助処理
+;--------------------------------------------------
+@NAME_SELL_MILK(ARG)
+#FUNCTIONS
+IF ARG == 1005
+	RETURNF "⑨アイスミルク"
+ELSEIF ARG == 1039
+	RETURNF "厄ルト"
+ELSEIF ARG == 1045
+	RETURNF "サニーミルク"
+ELSEIF ARG == 2008
+	RETURNF "苺みるく"
+ELSE
+	RETURNF "母乳"
+ENDIF
+
+;--------------------------------------------------
+;パンティー表示補助処理
+;--------------------------------------------------
+;下にあるようにARGにキャラ番号を代入すれば任意のキャラの任意の下着を展示することができます
+;誰に何を穿かせたいかは各人の自由ってことで
+@NAME_PANTY(ARG)
+#FUNCTIONS
+#LOCALSSIZE 1
+IF ARG == 1000 || (ARG >= 3000 && ARG < 4000)
+	LOCALS = 下着
+ELSEIF ARG == 1001 || ARG == 1002 || ARG == 1019 || ARG == 1023
+	LOCALS = ドロワーズ
+ELSEIF ARG == 1005
+	LOCALS = 冷やし縞パン
+ELSEIF ARG == 1022 || ARG == 1029
+	LOCALS = Ｔバック
+ELSEIF ARG == 1061
+	LOCALS = カボチャパンツ
+ELSEIF ARG == 1069 || ARG == 1070 || ARG == 1074 || ARG == 2035
+	LOCALS = 褌
+ELSEIF ARG == 2033 || ARG == 2042
+	LOCALS = ブリーフ
+ELSEIF ARG == 2040
+	LOCALS = トランクス
+ELSE
+	LOCALS = ショーツ
+ENDIF
+RETURNF @"%ITEMNAME:ARG%の%LOCALS%"
+
+;=============================================================================
+;展示室の処理
+;=============================================================================
+;これより展示室イベント
+;名無しキャラを除き、蒐集品展示の処理は蒐集品展示フラグがあった場合、そのキャラを一時的に加えるという処理が行われる。
+;これによりREPEATを使った構文の圧縮が可能に。
+;名無しキャラだけcsvの関係上、この方法が使えないため個別で処理することに。
+@COLLECTION_ROOM_MENU
+VARSET LOCALS,""
+SPLIT "尻子玉,黄金水,愛液,血液,破瓜血,パンティー,写真,ビデオ,母乳,卵,触手,陰毛",",",LOCALS
+
+PRINTL 何を見ますか？
+DRAWLINE
+FOR PC_VAR1, 501, 514, 1
+	SIF FLAG:PC_VAR1
+		PRINTFORML [{PC_VAR1 - 500, 3}] - 手に入れた%LOCALS:(PC_VAR1 - 501)%を見る
+NEXT
+PRINTL [100] - 戻る
+DRAWLINE
+$INPUT_LOOP_1
+INPUT
+LOCAL = RESULT
+IF LOCAL == 100
+	RETURN 0
+ELSEIF FLAG:(LOCAL + 500) == 0
+	GOTO INPUT_LOOP_1
+ELSEIF LOCAL >= 1 && LOCAL <= 13
+	TSTR:0 = %LOCALS:(LOCAL - 1)%の展示棚
+ELSE
+	GOTO INPUT_LOOP_1
+ENDIF
+PRINTFORMW %CALLNAME:MASTER%は%TSTR:0%へ向かった
+CALL COLLECTION_LIST, LOCAL
+RESTART
+
+;--------------------------------------------------
+;展示棚表示汎用処理
+;--------------------------------------------------
+@COLLECTION_LIST, ARG
+;変数のリセット
+VARSET LOCAL, 0
+
+;ページをめくったときなどはここから
+$PRINT_LIST_PAGE
+LOCAL:1 = 0
+CALL PAGE_COLLECTION_LIST, ARG
+LOCAL:5 = RESULT
+
+DRAWLINE
+PRINTFORML %TSTR:0% ＜page.{LOCAL:4 + 1}＞
+CALL COLLECTION_ROOM, ARG, LOCAL:4
+DRAWLINE
+PRINTFORMLC \@(LOCAL:4 <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL:4 >= LOCAL:5) ? %" " * 16% # [1009]次のページ\@
+
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL:4 > 0
+	LOCAL:4 -= 1
+	GOTO PRINT_LIST_PAGE
+ELSEIF RESULT == 1009 && LOCAL:4 < LOCAL:5
+	LOCAL:4 += 1
+	GOTO PRINT_LIST_PAGE
+ELSE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+;--------------------------------------------------
+;蒐集品一覧のページ数決定用
+;--------------------------------------------------
+@PAGE_COLLECTION_LIST, ARG
+LOCAL = 0
+LOCAL:1 = -1
+CALLF CLEAR_LIST
+
+;蒐集品が存在していたら表示可能フラグを立てる
+;(ここでは条件を満たしていないと弾く処理を行っている)
+FOR LOCAL:10, 1, 6
+	FOR PC_VAR1, 0, 120
+		;各蒐集品存在フラグ
+		SIF DA:(PC_VAR1 + 1000 * LOCAL:10):ARG == 0
+			CONTINUE
+		CALLF SET_LIST, PC_VAR1 + 1000 * LOCAL:10, 1
+		LOCAL += 1
+		SIF (LOCAL%20) == 1
+			LOCAL:1 += 1
+	NEXT
+NEXT
+
+LOCAL:1 = MAX(LOCAL:1 , 0)
+
+RETURN LOCAL:1
+
+;--------------------------------------------------
+;個別展示棚表示処理
+;--------------------------------------------------
+@COLLECTION_ROOM, ARG, ARG:1
+VARSET LOCALS, ""
+VARSET LOCAL, 0
+
+SELECTCASE ARG
+	CASE 1
+		SPLIT "手に入れた,尻子玉,個,の尻子玉,",",",LOCALS
+		LOCAL:1 = 28
+	CASE 2
+		SPLIT "手に入れた,黄金水,人分,の黄金水,",",",LOCALS
+		LOCAL:1 = 28
+	CASE 3
+		SPLIT ",愛液ローション,種,の愛液,",",",LOCALS
+		LOCAL:1 = 32
+	CASE 4
+		SPLIT "手に入れた,血液,人分,の血,",",",LOCALS
+		LOCAL:1 = 24
+	CASE 5
+		SPLIT "手に入れた,純潔,人分,の破瓜血,",",",LOCALS
+		LOCAL:1 = 28
+	CASE 6
+		SPLIT "集めた,パンティー,枚,のパンティー,",",",LOCALS
+		LOCAL:1 = 32
+	CASE 7
+		SPLIT ",写真のアルバム,冊,の写真集,枚",",",LOCALS
+		LOCAL:1 = 28
+	CASE 8
+		SPLIT ",ビデオ,シリーズ,のビデオ,巻",",",LOCALS
+		LOCAL:1 = 28
+	CASE 9
+		SPLIT "手に入れた,母乳,個,の母乳,",",",LOCALS
+		LOCAL:1 = 26
+	CASE 10
+		SPLIT "手に入れた,卵,人分,の卵,個",",",LOCALS
+		LOCAL:1 = 24
+	CASE 11
+		SPLIT "手に入れた,触手,種,の子供,匹",",",LOCALS
+		LOCAL:1 = 26
+	CASE 12
+		SPLIT ",陰毛,種,の陰毛,",",",LOCALS
+		LOCAL:1 = 24
+ENDSELECT
+
+PRINTFORML %LOCALS:0%%LOCALS:1%の数:{FLAG:(500+ARG)}%LOCALS:2%
+DRAWLINE
+LOCAL = 0
+FOR PC_VAR1, 1, 6
+	REPEAT 120
+		;表示否の場合は除外
+		SIF GET_LIST(COUNT + 1000 * PC_VAR1) == 0
+			CONTINUE
+		;どこからどこまでを陳列するか
+		LOCAL:3 += 1
+		SIF LOCAL:3 <= (ARG:1 * 20) || LOCAL:3 > ((ARG:1 + 1) * 20)
+			CONTINUE
+		SIF DA:(COUNT + 1000 * PC_VAR1):ARG == 0 || ITEMPRICE:(COUNT + 1000 * PC_VAR1) == 0
+			CONTINUE
+		IF ARG == 2
+			;黄金水
+			LOCALS:5 = %NAME_GOLDWATER(COUNT + 1000 * PC_VAR1)%
+		ELSEIF ARG == 3
+			;愛液
+			LOCALS:5 = %NAME_LOVEWATER(COUNT + 1000 * PC_VAR1)%
+		ELSEIF ARG == 6
+			;パンティー
+			LOCALS:5 = [%NAME_PANTY(COUNT + 1000 * PC_VAR1)%]
+		ELSEIF ARG == 9
+			;母乳
+			LOCALS:5 = %NAME_MILK(COUNT + 1000 * PC_VAR1)%
+		ELSE
+			LOCALS:5 = [%ITEMNAME:(COUNT + 1000 * PC_VAR1)%%LOCALS:3%]
+		ENDIF
+
+		IF LOCALS:4 != ""
+			LOCAL:2 = MIN(DA:(COUNT + 1000 * PC_VAR1):ARG, 999)
+			PRINTFORM %LOCALS:5, LOCAL:1, LEFT%:{LOCAL:2, 3}%LOCALS:4%
+		ELSE
+			PRINTFORM %LOCALS:5, LOCAL:1, LEFT%
+		ENDIF
+		;改行or表示位置あけ
+		LOCAL += 1
+		IF (LOCAL % 2) == 0
+			PRINTL 
+		ELSE
+			PRINT 　
+		ENDIF
+	REND
+NEXT
+SIF (LOCAL % 2) != 0
+	PRINTL 

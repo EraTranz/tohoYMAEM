@@ -1,0 +1,544 @@
+﻿;=============================================================================
+;触手腸内撮影
+;=============================================================================
+;触手生贄を通じて下半身が触手と一体化した文を召喚、
+;カメラタイプの触手を肛門に挿入し、手に持ったディスプレイで腸内の様子を見せつける……という解読不能なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE586
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:586 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ａ系装着器具 == 4
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[AYA触手]を得ていないとダメ
+SIF (FLAG:98 & 64) == 0
+	RETURN 0
+;文を触手生贄に捧げていない(=文が何らかの形で存在している)とダメ
+SIF (FLAG:97 & 64) == 0
+	RETURN 0
+;触手アナル挿入中はダメ
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 586) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM586
+PRINTL 触手腸内撮影
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 586
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手腸内撮影
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 75
+DOWNBASE:1 += 170
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL:1 = 80
+	LOCAL:4 = 300
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL:1 = 250
+	LOCAL:4 = 800
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL:1 = 600
+	LOCAL:4 = 1400
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL:1 = 1000
+	LOCAL:4 = 1800
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL:1 = 1600
+	LOCAL:4 = 2100
+ELSE
+	LOCAL:1 = 2700
+	LOCAL:4 = 2400
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	LOCAL:2 = 1500
+	LOCAL:4 += 300
+	LOCAL:5 = 1800
+ELSEIF ABL:露出癖 == 1
+	LOCAL:2 = 1000
+	LOCAL:4 += 250
+	LOCAL:5 = 1000
+ELSEIF ABL:露出癖 == 2
+	LOCAL:2 = 700
+	LOCAL:4 += 200
+	LOCAL:5 = 600
+ELSEIF ABL:露出癖 == 3
+	LOCAL:2 = 500
+	LOCAL:4 += 150
+	LOCAL:5 = 300
+ELSEIF ABL:露出癖 == 4
+	LOCAL:2 = 400
+	LOCAL:4 += 100
+	LOCAL:5 = 200
+ELSE
+	LOCAL:2 = 300
+	LOCAL:4 += 50
+	LOCAL:5 = 150
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:2 , 0.80
+	LOCAL:6 = 1500
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:2 , 1.10
+	LOCAL:6 = 800
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:2 , 1.30
+	LOCAL:6 = 200
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:2 , 1.50
+	LOCAL:6 = 0
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:2 , 1.70
+	LOCAL:6 = 0
+ELSE
+	TIMES LOCAL:2 , 2.10
+	LOCAL:6 = 0
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES LOCAL:1 , 0.50
+	LOCAL:3 = 2000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 = 300
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL:1 , 1.10
+	LOCAL:3 = 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.20
+	LOCAL:3 = 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 = 0
+ELSE
+	TIMES LOCAL:1 , 1.60
+	LOCAL:3 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL:1 , 0.40
+	LOCAL:3 += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL:1 , 0.80
+	LOCAL:3 += 700
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 += 400
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 += 150
+ELSE
+	TIMES LOCAL:1 , 1.80
+	LOCAL:3 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:5 , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:5 , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:5 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:5 , 0.90
+ELSE
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:5 , 0.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:5 , 1.30
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:5 , 1.20
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:5 , 1.10
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:5 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:5 , 0.90
+ELSE
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:5 , 0.80
+ENDIF
+
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;小柄体型
+IF TALENT:小柄体型
+	TIMES LOCAL:3 , 2.00
+	SIF TALENT:幼児 || TALENT:幼稚
+		TIMES LOCAL:1 , 2.00
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.50
+	TIMES LOCAL:6 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL:3 , 0.60
+	TIMES LOCAL:4 , 0.60
+	TIMES LOCAL:6 , 0.60
+ENDIF
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:4 /= 3
+
+;文との相性あるなしで補正が上下
+LOCAL:7 = 32
+IF RELATION:(LOCAL:7) > 0 && RELATION:(LOCAL:7) != 100
+	LOCAL:1 *= RELATION:(LOCAL:7)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:7)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:7)
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:(LOCAL:7)
+	LOCAL:4 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:(LOCAL:7) < 100
+		LOCAL:5 *= (200-RELATION:(LOCAL:7))
+	ELSE
+		LOCAL:5 *= RELATION:(LOCAL:7)
+	ENDIF
+	LOCAL:5 /= 100
+	LOCAL:6 *= RELATION:(LOCAL:7)
+	LOCAL:6 /= 100
+ENDIF
+
+SOURCE:快Ａ += LOCAL:1
+SOURCE:露出 += LOCAL:2
+SOURCE:痛み += LOCAL:3
+SOURCE:屈従 += LOCAL:4
+SOURCE:トラウマ += LOCAL:5
+SOURCE:逸脱 += LOCAL:6
+
+TCVAR:Ａ経験 += 5
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+;カメラ触手の着脱
+IF TEQUIP:Ａ系装着器具 == 4
+	TEQUIP:Ａ系装着器具 = 0
+ELSE
+	TEQUIP:Ａ系装着器具 = 4
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手腸内上映中
+;-------------------------------------------------
+@EQUIP_COM586
+PRINTL ＜触手腸内上映中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 40
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL:1 = 40
+	LOCAL:4 = 150
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL:1 = 150
+	LOCAL:4 = 250
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL:1 = 400
+	LOCAL:4 = 500
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL:1 = 700
+	LOCAL:4 = 800
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL:1 = 1300
+	LOCAL:4 = 1200
+ELSE
+	LOCAL:1 = 1800
+	LOCAL:4 = 1700
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	LOCAL:2 = 1300
+	LOCAL:4 += 300
+	LOCAL:5 = 800
+ELSEIF ABL:露出癖 == 1
+	LOCAL:2 = 1000
+	LOCAL:4 += 250
+	LOCAL:5 = 500
+ELSEIF ABL:露出癖 == 2
+	LOCAL:2 = 500
+	LOCAL:4 += 200
+	LOCAL:5 = 300
+ELSEIF ABL:露出癖 == 3
+	LOCAL:2 = 500
+	LOCAL:4 += 150
+	LOCAL:5 = 200
+ELSEIF ABL:露出癖 == 4
+	LOCAL:2 = 500
+	LOCAL:4 += 100
+	LOCAL:5 = 100
+ELSE
+	LOCAL:2 = 300
+	LOCAL:4 += 50
+	LOCAL:5 = 50
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:2 , 0.80
+	LOCAL:6 = 1500
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:2 , 1.10
+	LOCAL:6 = 800
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:2 , 1.30
+	LOCAL:6 = 200
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:2 , 1.50
+	LOCAL:6 = 0
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:2 , 1.70
+	LOCAL:6 = 0
+ELSE
+	TIMES LOCAL:2 , 2.10
+	LOCAL:6 = 0
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 = 300
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL:1 , 1.10
+	LOCAL:3 = 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.20
+	LOCAL:3 = 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 = 0
+ELSE
+	TIMES LOCAL:1 , 1.60
+	LOCAL:3 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL:1 , 0.40
+	LOCAL:3 += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL:1 , 0.80
+	LOCAL:3 += 600
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 += 100
+ELSE
+	TIMES LOCAL:1 , 1.80
+	LOCAL:3 += 50
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:5 , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:5 , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:5 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:5 , 0.90
+ELSE
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:5 , 0.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:5 , 1.30
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:5 , 1.20
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:5 , 1.10
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:5 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:5 , 0.90
+ELSE
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:5 , 0.80
+ENDIF
+
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:4 , 1.20
+	TIMES LOCAL:6 , 1.20
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:4 , 0.80
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:4 , 0.80
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES LOCAL:6 , 2.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:6 , 0.80
+ENDIF
+;小柄体型
+IF TALENT:小柄体型
+	TIMES LOCAL:3 , 2.00
+	SIF TALENT:幼児 || TALENT:幼稚
+		TIMES LOCAL:1 , 2.00
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.50
+	TIMES LOCAL:6 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL:3 , 0.60
+	TIMES LOCAL:4 , 0.60
+	TIMES LOCAL:6 , 0.60
+ENDIF
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:4 /= 3
+
+;文との相性あるなしで補正が上下
+LOCAL = 32
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:LOCAL
+	LOCAL:4 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:LOCAL < 100
+		LOCAL:5 *= (200-RELATION:LOCAL)
+	ELSE
+		LOCAL:5 *= RELATION:LOCAL
+	ENDIF
+	LOCAL:5 /= 100
+	LOCAL:6 *= RELATION:LOCAL
+	LOCAL:6 /= 100
+ENDIF
+
+SOURCE:快Ａ += LOCAL:1
+SOURCE:露出 += LOCAL:2
+SOURCE:痛み += LOCAL:3
+SOURCE:屈従 += LOCAL:4
+SOURCE:トラウマ += LOCAL:5
+SOURCE:逸脱 += LOCAL:6
+
+TCVAR:Ａ経験 += 3
+
+;文の性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_586
+IF TEQUIP:Ａ系装着器具 == 4
+	PRINTFORML %CALLNAME:PLAYER%の命令に従い、文はいったん%CALLNAME:TARGET%から離れると、%CALLNAME:TARGET%の肛門から触手を引き抜き、同時に腸内の様子を表示させていたカメラを仕舞った
+	PRINTFORML 文は引き抜いた触手を手繰り寄せると、チラッと%CALLNAME:TARGET%に視線を向け薄らと笑みを浮かべ、未だに残る%CALLNAME:TARGET%の臭いを見せつけるように嗅ぎ始めた
+	PRINTFORML その後文は呆気に取られている%CALLNAME:TARGET%に触手を近づけさせて肛門の臭いを嗅がせ、目を白黒させている%CALLNAME:TARGET%を残してさっさと何処かへと消えてしまった……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に反応し、肉壁の奥から人が入れる程の太さをもつ濡れ羽色の触手が一本現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと先端が翼を広げるように割れ、中から下半身が触手に飲み込まれている文が姿を見せた
+	PRINTFORML 文は%CALLNAME:MASTER%に向かって丁寧にお辞儀すると、%CALLNAME:TARGET%のほうに向きなおり、怪しげに眼を細めかと思うと、先端にレンズのようなものが付いた触手を%CALLNAME:TARGET%の菊門にねじ込ませた
+	PRINTFORML その後どこからともなく同じような触手を取りだすと、まるで映写機のように腸内の様子を壁に映し出し、%CALLNAME:TARGET%見せつけた…
+	PRINTFORML 下腹部を圧迫され、ヒク付いている腸壁は天狗の技術によるものか、怪しげなカメラによって鮮明に映し出されている
+	PRINTFORML 文は%CALLNAME:TARGET%の羞恥心をさらに煽りたてるように言葉による責めを楽しそうに始めた……
+ENDIF

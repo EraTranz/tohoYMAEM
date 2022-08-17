@@ -1,0 +1,386 @@
+﻿;=============================================================================
+;氷柱責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE432
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:432 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:氷柱
+	RETURN 1
+;調教者がチルノじゃないとダメ
+SIF NO:PLAYER != 1005
+	RETURN 0
+;技巧3以上じゃないと使えない
+SIF ABL:PLAYER:技巧 < 3
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;熱湯シャワー中はダメ
+SIF TEQUIP:シャワープレイ == 3
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 432) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM432
+PRINTL 氷柱責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 432
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 氷柱責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 100
+DOWNBASE:1 += 200
+
+SOURCE:液体追加 += 250
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 50
+	SOURCE:屈従 = 100
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 100
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 250
+	SOURCE:屈従 = 600
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 500
+	SOURCE:屈従 = 1200
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1000
+	SOURCE:屈従 = 2000
+ELSE
+	SOURCE:快Ａ = 2000
+	SOURCE:屈従 = 2700
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み = 3000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み = 1700
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.10
+	SOURCE:痛み = 600
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み = 100
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み = 50
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	SOURCE:痛み = 10
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 2000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	SOURCE:痛み += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 700
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 500
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み += 200
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.10
+ELSE
+	TIMES SOURCE:快Ａ , 1.20
+ENDIF
+
+;小柄体型
+IF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+	SIF TALENT:幼児 || TALENT:幼稚
+		TIMES SOURCE:快Ａ , 2.00
+	SIF NO:TARGET == 1044 || NO:TARGET == 1066 || NO:TARGET == 1067
+		TIMES SOURCE:快Ａ , 1.20
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;氷柱の着脱
+IF TEQUIP:氷柱
+	TIMES SOURCE:快Ａ , 2.80
+	LOCAL = MAX (TEQUIP:氷柱 - 1, 0)
+	TCVAR:Ａ経験 += 2
+	SIF LOCAL > 0
+		TCVAR:Ａ拡張経験 += LOCAL
+	TEQUIP:氷柱 = 0
+ELSE
+	TEQUIP:氷柱 = 1
+	LOCAL = 0
+	TIMES SOURCE:快Ａ , 0.80
+	IF TFLAG:171 == 0 && EXP:Ａ拡張経験 >= 10 && EXP:Ａ経験 >= 50
+		LOCAL += 1
+	ELSEIF TFLAG:171 > 0 && TFLAG:171 <= 5
+		LOCAL += 2
+		TEQUIP:氷柱 += 1
+	ELSEIF TFLAG:171 > 5 && TFLAG:171 <= 10
+		LOCAL += 3
+		TEQUIP:氷柱 += 2
+	ELSEIF TFLAG:171 > 10
+		LOCAL += 4
+		TEQUIP:氷柱 += 3
+	ENDIF
+	TCVAR:Ａ経験 += 1
+	SIF LOCAL > 0
+		TCVAR:Ａ拡張経験 += LOCAL
+	TFLAG:171 += 1
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;氷柱挿入中
+;-------------------------------------------------
+@EQUIP_COM432
+IF RAND:4 == 0
+	TEQUIP:氷柱 -= 1
+	PRINTFORML %CALLNAME:TARGET%の肛門に刺さっている氷柱が溶けてきている……
+	IF TEQUIP:氷柱 <= 0
+		TEQUIP:氷柱 = 0
+		PRINTFORML %CALLNAME:TARGET%の肛門に刺さっていた氷柱は完全に溶けてしまった……
+		RETURN 1
+	ENDIF
+ENDIF
+
+IF TEQUIP:氷柱 == 1 || TEQUIP:氷柱 == 2
+	PRINTL ＜氷柱挿入中＞
+ELSEIF TEQUIP:氷柱 == 3
+	PRINTL ＜極太氷柱挿入中＞
+ELSEIF TEQUIP:氷柱 >= 4
+	PRINTL ＜氷塊挿入中＞
+ENDIF
+
+LOCAL:3 = MAX(TEQUIP:氷柱 / 2, 1)
+
+DOWNBASE:0 += 25 * LOCAL:3
+DOWNBASE:1 += 50 * LOCAL:3
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL = 20
+	LOCAL:1 = 50
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 40
+	LOCAL:1 = 100
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL = 60
+	LOCAL:1 = 300
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL = 100
+	LOCAL:1 = 600
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL = 200
+	LOCAL:1 = 1200
+ELSE
+	LOCAL = 400
+	LOCAL:1 = 1500
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES LOCAL , 0.50
+	LOCAL:2 = 3000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL , 1.00
+	LOCAL:2 = 1700
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	LOCAL:2 = 600
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:2 = 100
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:2 = 50
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:2 = 10
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.40
+	LOCAL:2 += 800
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:2 += 500
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:2 += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.40
+	LOCAL:2 += 120
+ELSE
+	TIMES LOCAL , 1.80
+	LOCAL:2 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:2 , 1.50
+;上海人形、蓬莱人形、ケロちゃん補正
+SIF NO:TARGET == 1044 || NO:TARGET == 1066 || NO:TARGET == 1067
+	TIMES LOCAL , 1.20
+
+LOCAL *= LOCAL:3
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL:2 , 0.60
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:1 /= 3
+
+SOURCE:快Ａ += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+
+TCVAR:Ａ経験 += 1
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_432
+IF TEQUIP:氷柱
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアヌスから顔を覗かせている氷柱を掴むと、一気に引っ張りだした……
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は手のひらの上で
+	IF TFLAG:171 == 0 && EXP:Ａ経験 < 1
+		PRINTFORML まだ十分開発されていない%CALLNAME:TARGET%のアヌスにも
+		PRINT 入りきる程度の小さな氷の礫
+	ELSEIF TFLAG:171 == 0 && EXP:Ａ拡張経験 >= 10 && EXP:Ａ経験 >= 50
+		PRINTFORM 十分に開発された%CALLNAME:TARGET%のアヌスでも
+		PRINT 快感を与えることが出来るように形を整えた氷柱
+	ELSEIF TFLAG:171 > 0 && TFLAG:171 <= 5
+		PRINT 先程よりも大きくて太い氷柱
+	ELSEIF TFLAG:171 > 5 && TFLAG:171 <= 10
+		PRINT さらに一回り大きくて太い氷柱
+	ELSEIF TFLAG:171 > 10
+		PRINT もはや氷の塊としか呼べないようなモノ
+	ELSE
+		PRINT 手頃な大きさの氷柱
+	ENDIF
+	PRINTFORML を作ると、そのまま%CALLNAME:TARGET%の菊穴に捻じ込んだ……
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%はお尻の異物感、拡張感、冷感に苦悶の表情を浮かばせている……
+ENDIF

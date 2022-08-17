@@ -1,0 +1,4098 @@
+﻿;========================================================
+;夜イベント各本体イベント部
+;=========================================================
+;-----------------------------------------------
+;眠っている主人に色々とする
+;-----------------------------------------------
+@NIGHT_EVENT_1, ARG, ARG:1, ARG:2, ARG:3
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORMW 丑三つ時……%CALLNAME:TARGET%が既に眠ってしまった%CALLNAME:MASTER%の元に訪れた
+PRINTL 
+;確率1/3で夜這い失敗
+IF RAND:3 == 0
+	;幼稚キャラの添い寝失敗の場合
+	IF ARG:2 == 2
+		;地の文カット
+		IF CFLAG:99 == 0
+			PRINTFORML %CALLNAME:MASTER%と一緒の布団の中で目一杯甘えようと思っていた%CALLNAME:TARGET%の目に、涙が滲む
+			PRINTFORML 部屋に帰ると枕を掻き抱き、%CALLNAME:MASTER%がいないベッドの中で寂しさに小さく震え続けた
+		ENDIF
+		TRYCALL SELF_KOJO, TARGET, 403
+		;貞操帯装着中は排泄行為不可
+		IF CFLAG:42 & 2
+			PRINTW 　
+			;地の文カット
+			SIF CFLAG:99 == 0
+				PRINTFORML その夜、%CALLNAME:TARGET%は怖い夢を見てしまったようだ……
+			;17恐怖の珠
+			;ARG:3の使用がおかしい気がするが、なに、気にすることはない
+			CALL COMMON_UP_JUEL, TARGET, 17, 300+ARG:3*RAND:701, 1
+		ELSE
+			IF EXP:放尿経験 >= 1
+				;地の文カット
+				SIF CFLAG:99 == 0
+					PRINTFORML その夜、怖い夢を見てしまった%CALLNAME:TARGET%はベッドの中で粗相をしてしまったようだ……
+				LOCAL = 300+ARG:3*RAND:701
+				;06放尿経験
+				CALL COMMON_UP_EXP, TARGET, 6, 1, 0
+				;15恥情の珠
+				CALL COMMON_UP_JUEL, TARGET, 15, LOCAL, 0
+				;17恐怖の珠
+				CALL COMMON_UP_JUEL, TARGET, 17, LOCAL, 1
+			ENDIF
+		ENDIF
+	;夜襲撃失敗
+	ELSE
+		;地の文カット
+		SIF CFLAG:99 == 0
+			PRINTFORML 扉の向こうからはとぼとぼと立ち去る%CALLNAME:TARGET%の足跡が暫らく聞こえていた……
+		;貞操帯装着中は自慰にも失敗
+		IF CFLAG:42 & 2
+			;地の文カット
+			IF CFLAG:99 == 0
+				PRINTFORML 欲情押さえられぬ%CALLNAME:TARGET%は、自慰行為をしようと股間に手を伸ばすが
+				PRINTFORML 黒く光る貞操帯によりその行為は阻まれてしまった…
+			ENDIF
+			TRYCALL SELF_KOJO, TARGET, 160
+			;13欲情の珠
+			CALL COMMON_UP_JUEL, TARGET, 13, (ARG*150), 0
+			;14屈服の珠
+			CALL COMMON_UP_JUEL, TARGET, 14, (ARG*200), 1
+		ELSE
+			;地の文カット
+			SIF CFLAG:99 == 0
+				PRINTFORML しかし欲情押えられぬ%CALLNAME:TARGET%は、ついつい自慰行為を始めてしまったようだ
+			TRYCALL SELF_KOJO, TARGET, 151
+			PRINTL 
+			;02絶頂経験
+			CALL COMMON_UP_EXP, TARGET, 2, (ARG/2), 0
+			;10自慰経験
+			CALL COMMON_UP_EXP, TARGET, 10, (ARG/2), 0
+			;00快Ｃの珠
+			CALL COMMON_UP_JUEL, TARGET, 0, (ARG*(100*ABL:Ｃ感覚)), 0
+			;12恭順の珠
+			CALL COMMON_UP_JUEL, TARGET, 12, (ARG*100), 0
+			;13欲情の珠
+			CALL COMMON_UP_JUEL, TARGET, 13, (ARG*200), 1
+			PRINTL 
+			;地の文カット
+			SIF CFLAG:99 == 0
+				PRINTFORML {ARG/2}回の自慰の果てに満足した%CALLNAME:TARGET%は疲れきった様子でベッドへと倒れ込んだ……
+		ENDIF
+	ENDIF
+ELSE
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:TARGET%は\@(90 >= GET_AGG(TARGET)) ? 恐る恐る部屋へと侵入すると # 堂々と部屋に侵入すると\@%CALLNAME:MASTER%のベッドへと潜り込んだ
+	;愛情あり、三分の一で添い寝
+	IF TALENT:恋慕 && RAND:3 == 0
+		;地の文カット
+		SIF CFLAG:99 == 0
+			PRINTFORMW 愛しい%CALLNAME:MASTER%の寝顔にそっとキスをした%CALLNAME:TARGET%は\@(RAND:2 == 0) ? 胸に頬を寄せ嬉しそうに添い寝した # 腕を枕にして嬉しそうに添い寝した \@
+		;添い寝イベント口上呼び出し
+		TRYCALL SELF_KOJO, TARGET, 400
+		PRINTL 
+		;21愛情経験
+		CALL COMMON_UP_EXP, TARGET, 21, ((ARG:1/2)+2), 0
+		;12恭順の珠
+		CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*200), 1
+		PRINTL 
+		;地の文カット
+		SIF CFLAG:99 == 0
+			PRINTFORML その夜、%CALLNAME:TARGET%は幸せな夢を見た……
+	;勝手に欲望の発散をしてしまう
+	ELSE
+		LOCAL:1 = RAND:4
+		;貞操帯装着中は勝手に欲望の発散が出来ない
+		IF CFLAG:42 & 2
+			;地の文カット
+			SIF CFLAG:99 == 0
+				PRINTFORML %CALLNAME:MASTER%の躰に発情してしまった%CALLNAME:TARGET%だが、貞操帯がその欲望を阻む。
+			CALLF SET_NIGHT_KOJO(0, 5)
+			;夜這い騎乗位(貞操帯防御)イベント口上呼び出し
+			TRYCALL SELF_KOJO, TARGET, 401
+			PRINTL 
+			;13欲情の珠
+			CALL COMMON_UP_JUEL, TARGET, 13, (ARG*150), 0
+			;14屈服の珠
+			CALL COMMON_UP_JUEL, TARGET, 14, (ARG*200), 1
+			PRINTL 
+			SIF CFLAG:99 == 0
+				PRINTFORML %CALLNAME:MASTER%の隣で悶々とした気持ちを抱えた%CALLNAME:TARGET%は、中々眠ることができなかった
+		;奴隷に棒があり、主人に穴がある場合。夜這いされる。
+		;反発LV3と禁断と調合知識があったら、穴を作ってでも犯しに来る
+		;反発関係は移転。よって反発3でない奴隷棒有り、主人穴のみここになる
+		ELSEIF (TALENT:オトコ || TALENT:ふたなり) && TALENT:MASTER:オトコ == 0
+			;地の文カット
+			IF CFLAG:99 == 0
+				;主人が処女の場合素股に変更。処女素股は浪漫らしいので。
+				IF TALENT:MASTER:処女 >= 1
+					;ふたなりなら尻に突っ込む。例え経験が無くとも。
+					IF TALENT:MASTER:ふたなり
+						PRINTFORML %CALLNAME:TARGET%は、寝ている%CALLNAME:MASTER%の下着を脱がせ
+						PRINTFORML 秘処に挿入しようとしたが、%CALLNAME:MASTER%が処女である事に気付いて躊躇った
+						PRINTL しかし既に怒張は痛いほど張っており、このまま帰るなど考えられない
+						PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の秘裂を舐めあげ、愛液を滴らせると
+						PRINTFORML それを%CALLNAME:MASTER%の尻穴と己の怒張に塗りたくり
+						PRINTL 意を決して怒張を腸内に捻じ込んだ
+						PRINTL 　
+						IF EXP:MASTER:Ａ経験 == 0
+							PRINTFORML 突然の衝撃に目を覚ました%CALLNAME:MASTER%は、腸内に捻じ込まれる異物に恐怖するも
+							PRINTFORML 慌てた%CALLNAME:TARGET%の弁解を受け、
+							PRINTFORML その最中でも腸内を貪るのを止めようとはしない%CALLNAME:TARGET%の様子に
+							PRINTL ここで無理に抵抗すると、処女を散らされかねないと思い
+							PRINTL 出来るだけ楽な姿勢をとって、後ろの穴での初めての経験をやり過ごす事にした。
+						ELSE
+							PRINTFORML 突然の衝撃に目を覚ました%CALLNAME:MASTER%はしばし呆然とするも
+							PRINTFORML %CALLNAME:TARGET%との行為を受け入れ、自ら腰を振りだした･･･。
+						ENDIF
+					;処女素股
+					ELSE
+						PRINTFORML %CALLNAME:TARGET%は、寝ている%CALLNAME:MASTER%の下着を脱がせ
+						PRINTFORML 秘処に挿入しようとしたが、%CALLNAME:MASTER%が処女である事に気付いて躊躇い
+						PRINTL その股に怒張を擦り付けて欲望を晴らすことにした。
+						PRINTL 　
+						PRINTFORML 体への重みで目を覚ました%CALLNAME:MASTER%は、股に怒張を擦り付ける%CALLNAME:TARGET%に呆然とするも
+						PRINTFORML クスリと笑い、自らが上になって奉仕してやった。
+					ENDIF
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は、寝ている%CALLNAME:MASTER%の下着を脱がせ
+					PRINTL 顔を埋め秘処を嘗め回した。
+					PRINTL そして十分に濡れて来たのを確認すると、怒張を宛がい一息に貫いた。
+					PRINTL 　
+					PRINTFORML 下腹部への衝撃に目を覚ました%CALLNAME:MASTER%はしばし呆然とするも
+					PRINTFORML %CALLNAME:TARGET%との行為を受け入れ、自ら腰を振りだした……。
+				ENDIF
+			ENDIF
+			CALLF SET_NIGHT_KOJO(0, 6)
+			PRINTL 
+			;夜這い騎乗位(主人が犯される系)イベント口上呼び出し
+			TRYCALL SELF_KOJO, TARGET, 401
+			PRINTL 
+			;主人が処女
+			IF TALENT:MASTER:処女
+				IF TALENT:MASTER:ふたなり
+					;Ａ経験(主人)
+					CALL COMMON_UP_EXP, MASTER, 1, (ARG*2), 0
+				ENDIF
+				;03射精経験
+				CALL COMMON_UP_EXP, TARGET, 3, ARG, 0
+				;LUNATIC以上は射精するたびに体力が減少
+				CALL EXHAUST_EJAC, TARGET, ARG
+				;00快Ｃの珠
+				CALL COMMON_UP_JUEL, TARGET, 0, (ARG*(70*ABL:Ｃ感覚*ABL:Ｃ感覚)), 0
+				;12恭順の珠
+				CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*60*ABL:従順), 0
+				;13欲情の珠
+				CALL COMMON_UP_JUEL, TARGET, 13, (ARG*100*ABL:欲望), 1
+			ELSE
+				;00Ｖ経験(主人)
+				CALL COMMON_UP_EXP, MASTER, 0, (ARG*2), 0
+				;03射精経験
+				CALL COMMON_UP_EXP, TARGET, 3, ARG, 0
+				;LUNATIC以上は射精するたびに体力が減少
+				CALL EXHAUST_EJAC, TARGET, ARG
+				;00快Ｃの珠
+				CALL COMMON_UP_JUEL, TARGET, 0, (ARG*(70*ABL:Ｃ感覚*ABL:Ｃ感覚)), 0
+				;12恭順の珠
+				CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*60*ABL:従順), 0
+				;13欲情の珠
+				CALL COMMON_UP_JUEL, TARGET, 13, (ARG*100*ABL:欲望), 1
+			ENDIF
+			PRINTL 
+			;地の文カット
+			IF CFLAG:99 == 0
+				IF TALENT:MASTER:処女 > 0
+					PRINTFORML そして%CALLNAME:MASTER%に{ARG}回精液を吐き出すと、%CALLNAME:TARGET%は気恥ずかしげに帰って行った。
+				ELSE
+					PRINTFORML そして%CALLNAME:TARGET%は膣内に{ARG}回精液を吐き出すと、二人交わったまま眠りについた……。
+				ENDIF
+			ENDIF
+		;主人にモノがついていて、奴隷は非オトコで恋慕もしくは淫乱有り。4分の3でエッチ
+		ELSEIF (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) && TALENT:オトコ == 0 && (TALENT:恋慕 || TALENT:淫乱) && LOCAL:1 >= 1
+			;地の文カット
+			SIF CFLAG:99 == 0
+				PRINTFORML %CALLNAME:TARGET%は寝ている%CALLNAME:MASTER%のモノをフェラで準備を整えると
+			IF TALENT:処女 == 1 && TALENT:恋慕
+				;地の文カット
+				IF CFLAG:99 == 0
+					PRINTFORMW 自らの純潔を愛しい%CALLNAME:MASTER%へ捧げようと陰唇に亀頭を宛がう
+					PRINTFORML だが期待に濡れすぎた陰唇が竿を滑ると%CALLNAME:TARGET%は嘆息と共に%CALLNAME:MASTER%へと寄り添った
+				ENDIF
+				CALLF SET_NIGHT_KOJO(0, 1)
+				;夜這い騎乗位(失敗)イベント口上呼び出し
+				TRYCALL SELF_KOJO, TARGET, 401
+				PRINTL 
+				;21愛情経験
+				CALL COMMON_UP_EXP, TARGET, 21, ((ARG:1/2)+2), 0
+				;12恭順の珠
+				CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*200), 1
+				PRINTL 
+				;地の文カット
+				SIF CFLAG:99 == 0
+					PRINTFORML %CALLNAME:TARGET%はいつか%CALLNAME:MASTER%から奪って貰える時を夢見ながら眠りに落ちた……
+			ELSE
+				IF GET_AGG(TARGET) >= 90 && TALENT:処女 == 0 && TALENT:淫乱
+					;地の文カット
+					SIF CFLAG:99 == 0
+						PRINTFORML 陰唇へと擦り付けて膣内へと導き、淫猥な腰使いとあえぎ声で%CALLNAME:MASTER%を起こした
+					CALLF SET_NIGHT_KOJO(0, 2)
+					;夜這い騎乗位(成功)イベント口上呼び出し
+					TRYCALL SELF_KOJO, TARGET, 401
+					PRINTL 
+					;00Ｖ経験
+					CALL COMMON_UP_EXP, TARGET, 0, ARG, 0
+					;02絶頂経験
+					CALL COMMON_UP_EXP, TARGET, 2, (ARG/2), 0
+					;04精液経験
+					CALL COMMON_UP_EXP, TARGET, 4, (ARG/2), 0
+					IF COM_ABLE_CHECK_FEMALE(TARGET) && ARG/2 > 0
+						C_NUMBER = MAX(RAND:(ARG/2 + 1), 0)
+						CFLAG:3666 += C_NUMBER
+						CALL CALCULATE_LIMIT, TARGET
+					ENDIF
+					;42Ｖ調律経験
+					CALL COMMON_UP_EXP, TARGET, 42, ARG, 0
+					;01快Ｖの珠
+					CALL COMMON_UP_JUEL, TARGET, 1, (ARG*100), 0
+					;12恭順の珠
+					CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*150), 0
+					;13欲情の珠
+					CALL COMMON_UP_JUEL, TARGET, 13, (ARG*50), 1
+					PRINTL 
+					;地の文カット
+					SIF CFLAG:99 == 0
+						PRINTFORML そして{ARG}回行為を繰り返し絶頂すると、そのまま%CALLNAME:MASTER%の胸の上で眠ってしまった
+				ELSE
+					;地の文カット
+					SIF CFLAG:99 == 0
+						PRINTFORML 自らの秘部に挿入しようとしたが気恥ずかしさにそれを止めた
+					CALLF SET_NIGHT_KOJO(0, 3)
+					;夜這い騎乗位(思いとどまる)イベント口上呼び出し
+					TRYCALL SELF_KOJO, TARGET, 401
+					PRINTL 
+					;04精液経験
+					CALL COMMON_UP_EXP, TARGET, 4, 1, 0
+					;22フェラ経験
+					CALL COMMON_UP_EXP, TARGET, 22, ARG, 0
+					;11習得の珠
+					CALL COMMON_UP_JUEL, TARGET, 11, (ARG*150), 0
+					;12恭順の珠
+					CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*150), 1
+					PRINTL 
+					;地の文カット
+					SIF CFLAG:99 == 0
+						PRINTFORML そのままフェラチオを続け、%CALLNAME:MASTER%を射精させるとその隣で一緒に眠った……
+				ENDIF
+			ENDIF
+		;ついてない×ついてない場合、レズッ気3以上で貝あわせ。
+		ELSEIF (TALENT:オトコ == 0 && TALENT:ふたなり == 0) && (TALENT:MASTER:オトコ == 0 && TALENT:MASTER:ふたなり == 0) && ABL:レズっ気 > 2
+			;地の文カット
+			IF CFLAG:99 == 0
+				PRINTFORML %CALLNAME:TARGET%は、寝ている%CALLNAME:MASTER%の下着をそっと脱がせると
+				PRINTFORML すっかり濡れそぼった己の秘処を%CALLNAME:MASTER%の秘処と擦り合せ、快楽を貪りだした。
+				PRINTL 　
+				PRINTFORML 下腹部の違和感に目を覚ました%CALLNAME:MASTER%は
+				PRINTFORML 途端に襲ってきた快楽に戸惑いながらも、負けじと腰を振り%CALLNAME:TARGET%を攻め立てた。
+			ENDIF
+			CALLF SET_NIGHT_KOJO(0, 7)
+			;夜這い騎乗位(貝あわせ)イベント口上呼び出し
+			TRYCALL SELF_KOJO, TARGET, 401
+			PRINTL 
+			;02絶頂経験
+			CALL COMMON_UP_EXP, TARGET, 2, (ARG/2), 0
+			;12レズ経験
+			CALL COMMON_UP_EXP, TARGET, 12, ARG, 0
+			;00快Ｃの珠
+			CALL COMMON_UP_JUEL, TARGET, 0, (ARG*400), 0
+			;12恭順の珠
+			CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*300), 0
+			;13欲情の珠
+			CALL COMMON_UP_JUEL, TARGET, 13, (ARG*600), 1
+			PRINTL 
+			;地の文カット
+			SIF CFLAG:99 == 0
+				PRINTFORML そして{ARG}回行為を繰り返し%CALLNAME:TARGET%が絶頂すると、二人絡み合ったまま眠りに着いた。
+		;ついていないと、強制的にオナニー
+		ELSE
+			;地の文カット
+			IF CFLAG:99 == 0
+				PRINTFORM %CALLNAME:MASTER%の手を取った%CALLNAME:TARGET%は、
+				IF 90 >= GET_AGG(TARGET)
+					PRINTFORML 下着の上から控え目にも秘所を擦らせ始める
+				ELSE
+					PRINTFORML 大胆にも下着の中にまで手を差し入れさせた
+				ENDIF
+			ENDIF
+			CALLF SET_NIGHT_KOJO(0, 4)
+			;夜這い騎乗位(オナニー)イベント口上呼び出し
+			TRYCALL SELF_KOJO, TARGET, 401
+			PRINTL 
+			;02絶頂経験
+			CALL COMMON_UP_EXP, TARGET, 2, 1, 0
+			;10自慰経験
+			CALL COMMON_UP_EXP, TARGET, 10, 1, 0
+			;00快Ｃの珠
+			CALL COMMON_UP_JUEL, TARGET, 0, (ARG*(100*ABL:Ｃ感覚)), 0
+			;12恭順の珠
+			CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*100), 0
+			;13欲情の珠
+			CALL COMMON_UP_JUEL, TARGET, 13, (ARG*200), 1
+			PRINTL 
+			;地の文カット
+			IF CFLAG:99 == 0
+				IF 90 >= GET_AGG(TARGET)
+					PRINTFORML 声を押し殺して小さく絶頂すると、その余韻を残したまま眠りについた……
+				ELSE
+					PRINTFORML 遠慮のない甘い声と共にオナニーを続け%CALLNAME:MASTER%を見つめながら絶頂した……
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;添い寝成功
+;-----------------------------------------------
+;幼稚で反抗的、素直な場合
+@NIGHT_EVENT_2, ARG
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜、%CALLNAME:TARGET%が寝間着を身につけ枕を抱えて%CALLNAME:MASTER%の部屋へとやってきた
+	IF TALENT:反抗的 || TALENT:気丈 || TALENT:プライド高い
+		PRINTFORMW 今日は%CALLNAME:MASTER%へのご褒美と、%CALLNAME:TARGET%が一緒に眠ってくれるとのことらしい
+	ELSE
+		PRINTFORMW 一人で眠るのが怖かったらしく、寂しそうな表情で%CALLNAME:MASTER%を見つめている
+	ENDIF
+ENDIF
+;添い寝成功イベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 402
+PRINTL 
+LOCAL = (200*ABL:Ｃ感覚)+(ABL:Ｃ感覚*RAND:101)
+;21愛情経験
+CALL COMMON_UP_EXP, TARGET, 21, ((ARG/2)+2), 0
+;12恭順の珠
+CALL COMMON_UP_JUEL, TARGET, 12, LOCAL, 1
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	IF TALENT:反抗的 || TALENT:気丈 || TALENT:プライド高い
+		PRINTFORM 気丈に振る舞う%CALLNAME:TARGET%も、ベッドの中では
+		SIF TALENT:小人体型 || TALENT:小柄体型
+			PRINT 小さな身体で
+		PRINTFORMW ギュッと%CALLNAME:MASTER%に抱きついてきた
+	ELSE
+		PRINTFORMW 一緒に寝てあげると、ベッドの中で%CALLNAME:TARGET%は嬉しそうに%CALLNAME:MASTER%に抱きついてきた
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;嫁との一夜
+;-----------------------------------------------
+@NIGHT_EVENT_3, ARG, ARG:1
+LOCAL = 1 + RAND:3
+CALLF SET_NIGHT_KOJO(0, LOCAL)
+SELECTCASE LOCAL
+	CASE 1
+		;地の文カット
+		IF CFLAG:99 == 0
+			PRINTFORMW %CALLNAME:MASTER%の嫁である%CALLNAME:TARGET%が夜食の招待に来てくれた
+			PRINTFORML 真心のこもった愛妻料理を堪能すると、劣情を抱いた%CALLNAME:MASTER%は%CALLNAME:TARGET%を押し倒した
+		ENDIF
+		;嫁との一夜イベント口上呼び出し
+		TRYCALL SELF_KOJO, TARGET, 404
+		PRINTL 
+		;70調理経験
+		CALL COMMON_UP_EXP, TARGET, 70, ABL:料理技能, 0
+		CALL NIGHT_LOVE, ARG, ARG:1
+		PRINTL 
+		SIF CFLAG:99 == 0
+			PRINTFORML \@(ITEM:エプロン) ? エプロン姿の # 服を脱がすことなく、\@%CALLNAME:TARGET%を%CALLNAME:MASTER%の愛情のままに汚していった……
+	CASE 2
+		IF CFLAG:99 == 0
+			PRINTFORMW コンコン、というノックの音と%CALLNAME:MASTER%を呼ぶ、愛らしい嫁の声
+			PRINTFORML 扉を開けると、%CALLNAME:TARGET%は唇を重ねながら%CALLNAME:MASTER%を押し倒した
+		ENDIF
+		;嫁との一夜イベント口上呼び出し
+		TRYCALL SELF_KOJO, TARGET, 404
+		PRINTL 
+		CALL NIGHT_LOVE, ARG, ARG:1
+		PRINTL 
+		;地の文カット
+		SIF CFLAG:99 == 0
+			PRINTFORML 二人はまるで初夜のように情熱的に、明け方まで交じり合った
+	CASE 3
+		;地の文カット
+		SIF CFLAG:99 == 0
+			PRINTFORMW 思いを遂げ合った仲の%CALLNAME:TARGET%が、%CALLNAME:MASTER%と一緒にいたいとやってきた
+		;嫁との一夜イベント口上呼び出し
+		TRYCALL SELF_KOJO, TARGET, 404
+		PRINTL 
+		;21愛情経験
+		CALL COMMON_UP_EXP, TARGET, 21, (ARG+1), 0
+		;23キス経験
+		CALL COMMON_UP_EXP, TARGET, 23, (ARG+1), 0
+		LOCAL:1 = (600*ABL:Ｃ感覚)+(ABL:Ｃ感覚*RAND:101)
+		;12恭順の珠
+		CALL COMMON_UP_JUEL, TARGET, 12, LOCAL:1, 1
+		;23キス経験
+		CALL COMMON_UP_EXP, MASTER, 23, (ARG+1), 1
+		PRINTL 
+		;地の文カット
+		SIF CFLAG:99 == 0
+			PRINTFORML 二人とも眠ってしまうまで、抱きしめ合いながら幸せな時間を過ごした……
+ENDSELECT
+
+;-----------------------------------------------
+;覗き見オナニー
+;-----------------------------------------------
+@NIGHT_EVENT_10, ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5
+TARGET = ARG:1
+IF RAND:6 == 0 && ARG:5 >= 3 && ARG:1 != ARG:2 && ARG:2 != ARG && (CFLAG:(ARG:1):42 & 2) == 0 && (CFLAG:(ARG:2):42 & 2) == 0 && TALENT:(ARG:1):120 == 0 && TALENT:(ARG:2):120 == 0
+	PRINTL
+	WAIT
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:MASTER%の部屋で嬌声を上げる%CALLNAME:ARG%を覗き見していた%CALLNAME:(ARG:1)%と%CALLNAME:(ARG:2)%は
+		PRINTFORML 火照った身体を鎮めるためにお互いの身体を慰めあってしまった……
+	ENDIF
+
+	;二人で覗き見でレズ(レズするのがARG:1,ARG:2)
+	TRYCALL SELF_KOJO, TARGET, 485, ARG:2
+	TRYCALL SELF_KOJO, ARG:2, 485, TARGET
+
+	PRINTL 
+	;12レズ経験
+	CALL COMMON_UP_EXP, ARG:1, 12, ARG:3, 0
+	CALL COMMON_UP_EXP, ARG:2, 12, ARG:3, 0
+	;12恭順の珠
+	CALL COMMON_UP_JUEL, ARG:1, 12, (ARG:3*50), 0
+	CALL COMMON_UP_JUEL, ARG:2, 12, (ARG:3*50), 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG:1, 13, (ARG:4*150), 0
+	CALL COMMON_UP_JUEL, ARG:2, 13, (ARG:4*150), 1
+	PRINTL 
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:MASTER%が%CALLNAME:(ARG:1)%と%CALLNAME:(ARG:2)%に気付かずに寝てしまうと、
+		PRINTFORML %CALLNAME:(ARG:1)%と%CALLNAME:(ARG:2)%はそれぞれ自室へと戻っていった……
+	ENDIF
+;ELSEIF RAND:4 == 0
+;	PRINTFORM ふと、%CALLNAME:MASTER%は
+;	PRINTFORML %CALLNAME:(ARG:1)%がこちらの情事をおかずに自慰をしているのに気付いた
+;	PRINTFORMW 独り絶頂する%CALLNAME:(ARG:1)%がその余韻を残す間に捕まえ、%CALLNAME:ARG%と一緒にお仕置きを始めた……
+;	TRYCALL SELF_KOJO, ARG:1, 
+;	JUEL:(ARG:1):17 += ARG:3*200
+;	JUEL:(ARG:1):16 += ARG:3*100
+;	JUEL:(ARG:1):15 += ARG:3*250
+;	PRINTFORML %PALAMNAME:17%の珠＋{ARG:3*200}
+;	PRINTFORML %PALAMNAME:16%の珠＋{ARG:3*100}
+;	PRINTFORML %PALAMNAME:15%の珠＋{ARG:3*250}
+ELSE
+	PRINTL 
+	WAIT
+	;直前の行為が自慰系ならばフラグ立てる
+	TFLAG:229 = (GROUPMATCH(GET_NIGHT_KOJO(0), 19, 119, 219, 319)) ? 1 # 0
+
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML こっそりと\@(TFLAG:229 == 1) ? %CALLNAME:ARG%が%CALLNAME:MASTER%の前で自慰するのを # %CALLNAME:ARG%と%CALLNAME:MASTER%のまぐわいを\@覗き見していた%CALLNAME:(ARG:1)%は
+	;貞操帯装着中は自慰不可
+	IF CFLAG:42 & 2
+		;地の文カット
+		IF CFLAG:99 == 0
+			IF TALENT:(ARG:1):150
+				PRINTFORMW 愛しい人\@(TFLAG:229 == 1) ? にいやらしく見てもらえる # に抱いてもらえる\@%CALLNAME:ARG%を羨望の眼差しで見つめていた
+				PRINTFORML そして\@(TFLAG:229 == 1) ? %CALLNAME:ARG% # %CALLNAME:MASTER%\@を見て我慢できなくなった%CALLNAME:TARGET%は自慰をしようと股間に手を伸ばすが
+				PRINTW 黒く光る貞操帯によりその行為は阻まれてしまった…
+			ELSE
+				PRINTFORMW いそいそと部屋に帰ると\@(TFLAG:229 == 1) ? %CALLNAME:ARG%の自慰 # 二人の情事\@を思い返し、悶々としている……
+			ENDIF
+		ENDIF
+		CALLF SET_NIGHT_KOJO(0, 1)
+		;覗き見オナニ－イベント口上呼び出し
+		TRYCALL SELF_KOJO, TARGET, 409
+		;13欲情の珠
+		CALL COMMON_UP_JUEL, TARGET, 13, (ARG:3*90*ABL:欲望), 1
+		;14屈服の珠
+		CALL COMMON_UP_JUEL, TARGET, 14, (ARG:3*150*ABL:欲望), 1
+		PRINTL 
+		;地の文カット
+		IF CFLAG:99 == 0
+			IF TALENT:(ARG:1):150
+				PRINTFORML %CALLNAME:MASTER%が%CALLNAME:(ARG:1)%に気付かずに寝てしまうと、%CALLNAME:(ARG:1)%は泣く泣く自室へと戻った
+			ELSE
+				PRINTFORML %CALLNAME:MASTER%\@(TFLAG:229 == 1) ? の前で自慰する # に愛される\@%CALLNAME:ARG%に自分の姿を重ねてしまい、
+				PRINTFORML %CALLNAME:(ARG:1)%はなかなか寝付けなかったようだ……
+			ENDIF
+		ENDIF
+	ELSE
+		;地の文カット
+		IF CFLAG:99 == 0
+			IF TALENT:(ARG:1):150
+				PRINTFORMW 愛しい人\@(TFLAG:229 == 1) ? にいやらしく見てもらえる # に抱いてもらえる\@%CALLNAME:ARG%を羨望の眼差しで見つめていた
+				PRINTFORML そして\@(TFLAG:229 == 1) ? %CALLNAME:ARG% # %CALLNAME:MASTER%\@を見て我慢できなくなった%CALLNAME:TARGET%はその場でオナニーを始めてしまった
+			ELSE
+				PRINTFORMW いそいそと部屋に帰ると\@(TFLAG:229 == 1) ? %CALLNAME:ARG%の自慰 # 二人の情事\@をおかずにオナニーを始めた……
+			ENDIF
+		ENDIF
+		;覗き見オナニ－イベント口上呼び出し
+		CALLF SET_NIGHT_KOJO(0, 2)
+		TRYCALL SELF_KOJO, TARGET, 409
+		;02絶頂経験
+		CALL COMMON_UP_EXP, TARGET, 2, 1, 0
+		;10自慰経験
+		CALL COMMON_UP_EXP, TARGET, 10, 1, 0
+		;00快Ｃの珠
+		CALL COMMON_UP_JUEL, TARGET, 0, (ARG:3*(100*ABL:Ｃ感覚)), 0
+		;03快Ｂの珠
+		CALL COMMON_UP_JUEL, TARGET, 3, (ARG:3*(100*ABL:Ｂ感覚)), 0
+		;11習得の珠
+		CALL COMMON_UP_JUEL, TARGET, 11, (ARG:3*10), 0
+		;12恭順の珠
+		CALL COMMON_UP_JUEL, TARGET, 12, (ARG:4*60*ABL:従順), 0
+		;13欲情の珠
+		CALL COMMON_UP_JUEL, TARGET, 13, (ARG:3*120*ABL:欲望), 1
+		PRINTL 
+		;地の文カット
+		IF CFLAG:99 == 0
+			IF TALENT:(ARG:1):150
+				PRINTFORML %CALLNAME:MASTER%が%CALLNAME:(ARG:1)%に気付かずに寝てしまうと、%CALLNAME:(ARG:1)%は泣く泣く自室へと戻った
+			ELSE
+				PRINTFORML %CALLNAME:MASTER%\@(TFLAG:229 == 1) ? の前で自慰する # に愛される\@%CALLNAME:ARG%に自分の姿を重ねて、%CALLNAME:(ARG:1)%は小さく絶頂した
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+TARGET = ARG
+
+;-----------------------------------------------
+;盗撮される
+;-----------------------------------------------
+@NIGHT_TOUSATSU, ARG, ARG:1
+PRINTL 
+WAIT
+;地の文カット
+IF CFLAG:99 == 0
+	;主人が報道者を持たない、もしくは、盗撮者が報道者を持っており、欲望が5未満の場合は盗撮されたことに気づかない
+	IF TALENT:MASTER:報道者 == 0 || (TALENT:(ARG:1):196 && ABL:(ARG:1):11 < 5)
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ARG%の夜の営みをどこからともなく盗撮している者がいた。
+		PRINTFORML %CALLNAME:(ARG:1)%の隠蔽工作は成功し、気づかれぬままに盗撮は終了したようだ。
+		PRINTFORML 撮影されたビデオは、%CALLNAME:(ARG:1)%のコレクションの中に加わり、
+		PRINTL しかるべきときに利用されることになるだろう……。
+	ELSEIF ABL:MASTER:露出癖 < 3
+		PRINTDATAL
+			DATALIST
+				DATA ……
+				DATA …………
+				DATA ！！！
+				DATA 
+				DATAFORM %CALLNAME:MASTER%は突然%CALLNAME:ARG%を跳ね除けると、部屋の戸を勢い良く開いた
+				DATAFORM 目をぱちくりさせる%CALLNAME:ARG%を尻目に辺りを伺うが、既に人の気配はない。
+				DATA ……ただテープの抜かれたビデオカメラが廊下に残されるのみであった……。
+			ENDLIST
+			DATALIST
+				DATA ……
+				DATA …………
+				DATA ！！！
+				DATA 
+				DATAFORM %CALLNAME:MASTER%は部屋の戸の向こう側に誰かがいる気配を感じた、
+				DATAFORM %CALLNAME:ARG%もそれに気づいているようで、見られているという羞恥を感じつつも
+				DATA 互いにぎこちなく行為を続けるのであった……。
+			ENDLIST
+		ENDDATA
+	ELSE
+		PRINTDATAL
+			DATALIST
+				DATAFORM ……外側で撮影している%CALLNAME:(ARG:1)%のことはバレバレであった。
+				DATAFORM %CALLNAME:MASTER%は撮影されているということをそれとなく%CALLNAME:ARG%に告げると、
+				DATA 羞恥のあまり、顔を赤らめてしまったものの、より深く感じてきているようだ。
+				DATAFORM 外で興奮しつつ覗いている%CALLNAME:(ARG:1)%に見せ付けるかのように、
+				DATAFORM %CALLNAME:MASTER%は、%CALLNAME:ARG%との行為をさらに激しくしていくのであった……。
+			ENDLIST
+			DATALIST
+				DATA ……どうやら撮影は終ったようである。
+				DATAFORM %CALLNAME:(ARG:1)%は隠れていたつもりのようだが、%CALLNAME:MASTER%は撮影が始まった当初から分かっていた。
+				DATA 止めなかったのは単に見られた方が、欲情するからである。
+				DATAFORM そしてまた、そのビデオがどうなるのか。%CALLNAME:(ARG:1)%が血走った目で再生しているのか、はたまた売られていくのか。
+				DATAFORM その事を思うと、%CALLNAME:MASTER%の体は自然と熱を帯びていった……。
+			ENDLIST
+		ENDDATA
+	ENDIF
+ENDIF
+;盗撮のイベント口上呼び出し
+TRYCALL SELF_KOJO, ARG:1, 452
+PRINTL 
+;テープの数を消費させる
+IF NOITEM == 0
+	ITEM:ビデオテープ -= 1
+	SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:75
+		CALL FILL_PLURAL_ITEM, 75
+ENDIF
+
+;71撮影経験
+CALL COMMON_UP_EXP, ARG:1, 71, 1, 0
+CFLAG:(ARG:1):161 += 1
+;気づかない場合は珠の入手はスルー
+IF TALENT:MASTER:報道者 || TALENT:(ARG:1):196 == 0 || ABL:(ARG:1):11 > 4
+	;13欲情の珠もしくは100否定の珠(欲望と撮影技能により変化、入らないこともある)、ただし嫉妬の有無で区別。
+	IF (200*ABL:(ARG:1):11)-(50*(5-ABL:(ARG:1):71)) > 0
+		;嫉妬がなければビデオで欲情。ただし撮影技能悪いと欲情できるほどうまく映らない
+		IF TALENT:(ARG:1):157 == 0
+			CALL COMMON_UP_JUEL, ARG:1, 13, ((200*ABL:(ARG:1):11)-(50*(5-ABL:(ARG:1):71))), 0
+		;嫉妬あればビデオで嫉妬して反発。ただし撮影技能悪いとよく見えないので…
+		ELSE
+			CALL COMMON_UP_JUEL, ARG:1, 100, ((200*ABL:(ARG:1):11)-(50*(5-ABL:(ARG:1):71))), 0
+		ENDIF
+	ENDIF
+ENDIF
+;72被写経験
+CALL COMMON_UP_EXP, ARG, 72, 1, 0
+CALL COMMON_UP_EXP, MASTER, 72, 1, 1
+
+;=====================================================
+;
+;奴隷の夜這い行動
+;
+;=====================================================
+;-----------------------------------------------
+;夜襲撃成功
+;-----------------------------------------------
+@NIGHT_EVENT_4, ARG, ARG:1
+CALLF SET_CHARA_M(MASTER)
+
+;唯一の問題、処女喪失イベント約３％。少し引き上げ
+;滅多には無いだろうけど、相愛や服従、などを持っている場合は自分から捧げる事はしない。
+;マイナスイベントと思われるか、プラスイベントと思われるか・・・。もちろんゲーム的にはマイナスだよね、ごめんね・・・
+;現条件では意外と起こりやすすぎるきらいを指摘されてきたため、条件変更（詳細はネタバレあたりを）
+;イメージ的には散々焦らしてくるのに一向に処女を奪ってくれない主人に対して、奴隷の欲求不満が募って爆発した感じ
+IF (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) && (TALENT:処女 >= 1 && ABL:Ｖ感覚 >= 2) && RAND:100 < 3 && (TALENT:恋慕 && TALENT:淫乱) && TALENT:烙印 == 0 && TALENT:相愛 == 0 && TALENT:小人体型 == 0 && (CFLAG:(GET_CHARA_M()):42 & 2) == 0
+	CALL NIGHT_SEX_SHOJO, ARG, ARG:1
+
+;処女喪失を隔離したので次。
+ELSEIF (ABL:従順+ABL:欲望+ABL:奉仕精神 > 12) && (TALENT:恋慕 || TALENT:淫乱)
+	CALL NIGHT_SEX01, MASTER, 3, ARG, ARG:1
+ELSEIF GET_AGG(TARGET) >= 90
+	CALL NIGHT_SEX01, MASTER, 2, ARG, ARG:1
+ELSE
+	CALL NIGHT_SEX02, MASTER, ARG:1
+ENDIF
+
+;-----------------------------------------------
+;奴隷がやるき満々の時
+;-----------------------------------------------
+@NIGHT_SEX01, ARG, ARG:1, ARG:2, ARG:3
+
+LOCAL = MAX((ARG:2+ARG:3)/2, 3)
+SIF TALENT:淫乱
+	LOCAL += 3
+;地の文カット
+SIF CFLAG:99 == 0 && ARG:1== 3
+	PRINTFORML %CALLNAME:MASTER%が床に就こうとしたとき、突然%CALLNAME:TARGET%が部屋を訪ねてきた
+
+;まず奴隷の行動方針を決める
+LOCAL:1 = 0
+
+IF RAND:4 == 0 && TALENT:オトコ == 0 && TALENT:ふたなり == 0
+	LOCAL:1 = 3
+ELSEIF RAND:3 == 0 && (TALENT:オトコ || TALENT:ふたなり)
+	LOCAL:1 = 0
+ELSEIF RAND:2 == 0 && ABL:Ａ感覚 > 1 && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && (CFLAG:ARG:42 & 2) == 0
+	LOCAL:1 = 2
+ELSEIF TALENT:オトコ == 0 && TALENT:処女 == 0 && ABL:Ｖ感覚 > 1 && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && (CFLAG:ARG:42 & 2) == 0
+	LOCAL:1 = 1
+ELSEIF (TALENT:オトコ || TALENT:ふたなり)
+	LOCAL:1 = 0
+ELSEIF ABL:Ａ感覚 > 1 && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && (CFLAG:ARG:42 & 2) == 0
+	LOCAL:1 = 2
+ELSE
+	LOCAL:1 = 3
+ENDIF
+
+;地の文カット
+IF CFLAG:99 == 0 && ARG:1 == 2
+	IF TALENT:オトコ && TALENT:ARG:オトコ
+		PRINTFORML %CALLNAME:MASTER%が床に就こうとしたとき、突然%CALLNAME:TARGET%が部屋を訪ねてきた
+		PRINTFORML そのまま彼は%CALLNAME:MASTER%を押し倒し、激しく欲望をぶつけようとした
+		PRINTFORMW %CALLNAME:MASTER%もその想いに答えてやることにした…
+	ELSE
+		PRINTFORML 夜、突然%CALLNAME:TARGET%が部屋に入ってくると、%CALLNAME:ARG%をベッドに押し倒した
+		PRINTFORM %CALLNAME:TARGET%は
+		IF LOCAL:1 == 0
+			PRINTFORMW すっかり勃起したペニスを取り出し、欲望に濁った目で%CALLNAME:ARG%を嘗め回す……
+		ELSEIF LOCAL:1 == 2
+			PRINTFORMW %CALLNAME:ARG%の服を剥ぎ取ると、上気した顔で己の尻穴を解し始める……
+		ELSE
+			IF TALENT:処女 >= 1
+				PRINTFORM ウブな少女の花弁から
+			ELSE
+				PRINTFORM 発情しきった雌の性器から
+			ENDIF
+			PRINTFORMW 誘い汁を滲ませ、それを%CALLNAME:MASTER%へと擦り付ける……
+		ENDIF
+	ENDIF
+ENDIF
+
+CALLF SET_NIGHT_KOJO(0, ARG:1)
+TRYCALL SELF_KOJO, TARGET, 405
+LOCAL:2 = 0
+
+;竿の場合
+IF LOCAL:1 == 0
+	;イマラチオ
+	IF RAND:6 == 0 && (TALENT:ARG:猫舌 == 0 || FLAG:14 & 16)
+		LOCAL:2 = 4
+	;素股強制
+	ELSEIF RAND:5 == 0 && TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0 && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 0
+	;乳ファック
+	ELSEIF RAND:4 == 0 && TALENT:ARG:オトコ == 0
+		LOCAL:2 = 3
+	;アナルセックス
+	ELSEIF RAND:3 == 0 && ((ARG == MASTER && EXP:ARG:Ａ経験 > 2) || ABL:ARG:Ａ感覚 > 1) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 2
+	;セックス
+	ELSEIF TALENT:ARG:オトコ == 0 && TALENT:ARG:処女 == 0 && EXP:ARG:Ｖ経験 > 0 && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 1
+	;再度アナルセックス
+	ELSEIF RAND:2 == 0 && ((ARG == MASTER && EXP:ARG:Ａ経験 > 12) || ABL:ARG:Ａ感覚 > 1) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 2
+	;再度素股処理
+	ELSEIF RAND:3 == 0 && TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0 && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 0
+	;再度乳ファック
+	ELSEIF RAND:2 == 0 && TALENT:ARG:オトコ == 0
+		LOCAL:2 = 3
+	;再度イマラチオ
+	ELSEIF TALENT:ARG:猫舌 == 0 || FLAG:14 & 16
+		LOCAL:2 = 4
+	;自慰
+	ELSE
+		LOCAL:2 = (ARG:1 == 2) ? 19 # 302
+	ENDIF
+;逆レイプ
+ELSEIF LOCAL:1 == 1
+	LOCAL:2 = 100
+;逆アナルレイプ
+ELSEIF LOCAL:1 == 2
+	LOCAL:2 = 200
+ELSE
+	;強制素股する
+	IF RAND:2 == 0 && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 300
+	;強制貝あわせする
+	ELSEIF RAND:2 == 0 && (CFLAG:ARG:42 & 2) == 0 && (TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0)
+		LOCAL:2 = 301
+	;クンニ強制&自慰
+	ELSEIF TALENT:ARG:猫舌 == 0 || FLAG:14 & 16
+		LOCAL:2 = 302
+	;自慰
+	ELSE
+		LOCAL:2 = 19
+	ENDIF
+ENDIF
+;地の文カット
+IF CFLAG:99 == 0
+	SELECTCASE LOCAL:2
+		CASE 0
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は、%CALLNAME:ARG%を押し倒し下着を剥ぎ取ると
+				PRINTFORML %CALLNAME:ARG%の秘裂に漲る怒張を押し当て、己を慰め始めた
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%の股に怒張を擦り付け、激しく腰を振り出した
+			ENDIF
+		CASE 1
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、漲る怒張を膣口に押し当て一息に貫いた
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%の足をこじ開け、蜜壷に怒張を押し込んだ 
+			ENDIF
+		CASE 2
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒すと
+				PRINTFORML %CALLNAME:ARG%の尻穴を、漲る怒張で一息に貫いた
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%をうつ伏せにして、その尻穴に怒張を捻じ込んだ
+			ENDIF
+		CASE 3
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、服を剥いで乳房を乱暴に揉みしだいた
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%の上に圧し掛かり、その乳房で怒張を扱き始めた
+			ENDIF
+		CASE 4
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、
+				PRINTFORML 抗議しようとする%CALLNAME:ARG%の口に漲る怒張を押し込んだ
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%の口に怒張を押し込むと、頭を押さえ激しく腰を振り出した
+			ENDIF
+		CASE 19
+			IF ARG:1 == 3
+				PRINTFORML %CALLNAME:ARG%の前でいきなり%CALLNAME:TARGET%は自慰をはじめた
+			ELSE
+				PRINTFORML %CALLNAME:ARG%の前でいきなり%CALLNAME:TARGET%は自慰をはじめた
+			ENDIF
+		CASE 100
+			IF ARG:1 == 3
+				PRINTFORML そのまま彼女は%CALLNAME:ARG%を押し倒し、蜜壷でペニスを咥え込み激しく腰を打ち付け始めた
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%のペニスを蜜壷に咥え込むと、自ら腰を振り出した
+			ENDIF
+		CASE 200
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、己の尻穴に%CALLNAME:ARG%のペニスを咥え込んだ
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%のペニスを尻穴に咥え込むと、自ら腰を振り出した
+			ENDIF
+		CASE 300
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、愛液の滴る秘裂を押し当てると
+				PRINTFORML %CALLNAME:ARG%のペニスで己のクリトリスを慰め始めた
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%のペニスに秘裂を擦りつけ、クリトリスを刺激し始めた
+			ENDIF
+		CASE 301
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、愛液の滴る秘裂を押し当てると
+				PRINTFORML 激しく腰を振って快楽を貪りだした
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%の秘裂に己の秘裂を擦り付け、腰を揺すって快楽を貪りだした
+			ENDIF
+		CASE 302
+			IF ARG:1 == 3
+				PRINTFORML そのまま%CALLNAME:TARGET%は%CALLNAME:ARG%を押し倒し、顔の上に跨った
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ARG%の顔に秘裂を押し付け舐めさせると、自身は両の乳房を揉んで自慰に耽りだした
+			ENDIF
+	ENDSELECT
+ENDIF
+
+;実は覗き見オナニーで必要
+CALLF SET_NIGHT_KOJO(0, LOCAL:2)
+TRYCALL SELF_KOJO, TARGET, 480, LOCAL:2
+
+;地の文カット
+IF CFLAG:99 == 0 && ARG:1 == 3
+	SELECTCASE LOCAL:2
+		CASE 0
+			PRINTFORMW 衰えることを知らぬ怒張を秘裂に擦り付け、快楽を貪っている…
+		CASE 1
+			PRINTFORMW 衰えることを知らぬ怒張で子宮を突き上げ、膣内を貪っている…
+		CASE 2
+			PRINTFORMW 衰えることを知らぬ怒張で尻穴を犯し、腸内を貪っている…
+		CASE 3
+			PRINTFORMW 衰えることを知らぬ怒張を乳房で扱き、快楽を貪っている…
+		CASE 4
+			PRINTFORMW 衰えることを知らぬ怒張で口内を犯し、快楽を貪っている…
+		CASE 19
+			PRINTFORMW ひたすら自らの身体を弄りまわして、快楽を貪っている…
+		CASE 100
+			PRINTFORMW 飢えた獣の口は涎を滴らせて怒張を貪り、子宮の渇きを癒している…
+		CASE 200
+			PRINTFORMW 執拗に腰を振り続け、快楽を貪っている…
+		CASE 300
+			PRINTFORMW あふれる蜜を潤滑剤に快楽を貪り続けている…
+		CASE 301
+			PRINTFORMW 憑かれたように腰を振りながら、乱暴に自身の乳房を揉み上げている…
+		CASE 302
+			PRINTFORMW 愛液の滴る秘裂を%CALLNAME:(GET_CHARA_M())%の口に押し当て、嬌声を上げて自慰に耽っている…
+	ENDSELECT
+ENDIF
+
+;処理呼び出し
+CALLFORM NIGHT_SEX_{LOCAL:2}, ARG, LOCAL
+
+IF ARG:1 == 3
+	;体格による抱き合わせ(?)を行う。
+	LOCAL:3 = 6
+	LOCAL:4 = 6
+
+	;オトコは大きめ
+	SIF TALENT:ARG:オトコ
+		LOCAL:3 += 1
+	SIF TALENT:オトコ
+		LOCAL:4 += 1
+	;小柄体型の有無
+	SIF TALENT:ARG:小柄体型
+		LOCAL:3 -= 2
+	SIF TALENT:小柄体型
+		LOCAL:4 -= 2
+	;小人体型の有無
+	SIF TALENT:ARG:小人体型
+		LOCAL:3 -= 4
+	SIF TALENT:小人体型
+		LOCAL:4 -= 4
+	;巨躯の有無
+	SIF TALENT:ARG:巨躯
+		LOCAL:3 += 4
+	SIF TALENT:巨躯
+		LOCAL:4 -= 4
+
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORM {LOCAL}回の行為の後、
+		IF LOCAL:3 > LOCAL:4
+			PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%を抱きしめながら余韻に浸っていた…。
+		ELSEIF LOCAL:3 == LOCAL:4
+			PRINTFORML %CALLNAME:ARG%と%CALLNAME:TARGET%は抱き合いながら余韻に浸っていた…。
+		ELSE
+			PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%の腕に抱かれながら余韻に浸っていた…。
+		ENDIF
+	ENDIF
+ELSE
+	;地の文カット
+	SIF CFLAG:99 == 0
+	PRINTFORML {LOCAL}回の行為を二人は、夜遅くまでおこなった……
+ENDIF
+
+;-----------------------------------------------
+;奴隷がそこまでやる気じゃない時
+;-----------------------------------------------
+@NIGHT_SEX02, ARG, ARG:1
+
+LOCAL = MAX(ARG:1, 3)
+
+IF 50 > GET_AGG(TARGET) && (TALENT:恋慕 == 0 && TALENT:淫乱 == 0)
+	;地の文カット
+	IF CFLAG:99 == 0
+		IF TALENT:オトコ && TALENT:ARG:オトコ
+			PRINTFORML %CALLNAME:MASTER%が床に就こうとしたとき、突然%CALLNAME:TARGET%が部屋を訪ねてきた
+			PRINTFORML そのまま彼は%CALLNAME:MASTER%を押し倒し、激しく欲望をぶつけようとした
+			PRINTFORMW %CALLNAME:MASTER%もその想いに答えてやることにした…
+		ELSE
+			PRINTFORML ふと、迷ったままの様子を見せつつも%CALLNAME:TARGET%が%CALLNAME:ARG%の部屋へとやってきた
+			IF TALENT:オトコ
+				PRINTFORMW %CALLNAME:TARGET%は否定の声をあげるも、ペニスは快楽を期待し勃起してしまっている
+			ELSE
+				PRINTFORMW %CALLNAME:TARGET%は否定の声をあげるも%CALLNAME:MASTER%が局部を責めると甘い声をあげる
+			ENDIF
+		ENDIF
+	ENDIF
+	CALLF SET_NIGHT_KOJO(0, 1)
+	TRYCALL SELF_KOJO, TARGET, 405
+ELSE
+	;地の文カット
+	IF CFLAG:99 == 0
+		IF TALENT:オトコ && TALENT:ARG:オトコ
+			PRINTFORML %CALLNAME:MASTER%が床に就こうとしたとき、突然%CALLNAME:TARGET%が部屋を訪ねてきた
+			PRINTFORML そのまま彼は%CALLNAME:MASTER%を押し倒し、激しく欲望をぶつけようとした
+			PRINTFORMW %CALLNAME:MASTER%もその想いに答えてやることにした…
+		ELSE
+			PRINTFORML 夜が更けた頃、恥ずかしそうな様子の%CALLNAME:TARGET%が%CALLNAME:ARG%の元を訪ねてきた
+			PRINTFORM %CALLNAME:ARG%は何も言わず%CALLNAME:TARGET%を招き入れ、
+			IF TALENT:オトコ || TALENT:ふたなり
+				PRINTFORML すっかり勃起したペニスを楽しげに眺める
+			ELSE
+				IF TALENT:小柄体型
+					PRINTFORM ぽっと火照った、少女の柔らかい
+				ELSEIF TALENT:巨乳 || TALENT:爆乳
+					PRINTFORM 欲望の収まらぬ豊かな女の
+				ELSE
+					PRINTFORM 既に濡らし始めているその女の
+				ENDIF
+				PRINTFORMW 身体を慰め始める
+			ENDIF
+		ENDIF
+	ENDIF
+	CALLF SET_NIGHT_KOJO(0, 2)
+	TRYCALL SELF_KOJO, TARGET, 405
+ENDIF
+
+;まず奴隷の行動方針を決める
+LOCAL:1 = 0
+
+IF RAND:4 == 0 && TALENT:オトコ == 0 && TALENT:ふたなり == 0
+	LOCAL:1 = 3
+ELSEIF RAND:3 == 0 && (TALENT:オトコ || TALENT:ふたなり)
+	LOCAL:1 = 0
+ELSEIF RAND:2 == 0 && ABL:Ａ感覚 > 1
+	LOCAL:1 = 2
+ELSEIF TALENT:オトコ == 0 && TALENT:処女 == 0 && ABL:Ｖ感覚 > 1
+	LOCAL:1 = 1
+ELSEIF (TALENT:オトコ || TALENT:ふたなり)
+	LOCAL:1 = 0
+ELSEIF ABL:Ａ感覚 > 1
+	LOCAL:1 = 2
+ELSE
+	LOCAL:1 = 3
+ENDIF
+
+LOCAL:2 = 0
+
+;竿の場合
+IF LOCAL:1 == 0
+	;自慰させられる
+	IF RAND:8 == 0
+		LOCAL:2 = 19
+	;手淫してもらう
+	ELSEIF RAND:7 == 0
+		LOCAL:2 = 15
+	;フェラしてもらう
+	ELSEIF RAND:6 == 0 && EXP:ARG:フェラ経験 > 0 && (TALENT:ARG:猫舌 == 0 || FLAG:14 & 16)
+		LOCAL:2 = 14
+	;素股してもらう
+	ELSEIF RAND:5 == 0 && TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0 && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 10
+	;パイズリしてもらう
+	ELSEIF RAND:4 == 0 && TALENT:ARG:オトコ == 0 && EXP:ARG:フェラ経験 > 0
+		LOCAL:2 = 13
+	;アナルセックスさせてもらう
+	ELSEIF RAND:3 == 0 && ((ARG == MASTER && EXP:ARG:Ａ経験 > 12) || ABL:ARG:Ａ感覚 > 1) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 12
+	;セックスさせてもらう
+	ELSEIF TALENT:ARG:オトコ == 0 && TALENT:ARG:処女 == 0 && ((ARG == MASTER && EXP:ARG:Ｖ経験 > 12) || ABL:ARG:Ｖ感覚 > 1) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 11
+	;再度アナルセックスさせてもらう
+	ELSEIF RAND:3 == 0 && ((ARG == MASTER && EXP:ARG:Ａ経験 > 12) || ABL:ARG:Ａ感覚 > 1) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 12
+	;再度素股してもらう
+	ELSEIF RAND:5 == 0 && TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0 && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 10
+	;再度パイズリしてもらう
+	ELSEIF RAND:4 == 0 && TALENT:ARG:オトコ == 0
+		LOCAL:2 = 13
+	;何もなければフェラしてもらう
+	ELSEIF RAND:3 == 0 && EXP:ARG:フェラ経験 > 0 && (TALENT:ARG:猫舌 == 0 || FLAG:14 & 16)
+		LOCAL:2 = 14
+	;再度手淫
+	ELSEIF RAND:2 == 0
+		LOCAL:2 = 15
+	;自慰させられる
+	ELSE
+		LOCAL:2 = 19
+	ENDIF
+;膣の場合
+ELSEIF LOCAL:1 == 1
+	;入れて貰う
+	IF RAND:2 == 0 && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 110
+	;指とかバイブとか
+	ELSEIF RAND:2 == 0
+		LOCAL:2 = 115
+	;自慰させられる
+	ELSE
+		LOCAL:2 = 119
+	ENDIF
+;アナルの場合
+ELSEIF LOCAL:1 == 2
+	;入れて貰う
+	IF RAND:2 == 0 && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 210
+	;指とかバイブとか
+	ELSEIF RAND:2 == 0
+		LOCAL:2 = 215
+	;自慰させられる
+	ELSE
+		LOCAL:2 = 219
+	ENDIF
+ELSE
+	;相互愛撫
+	IF RAND:3 == 0 && (CFLAG:ARG:42 & 2) == 0
+		LOCAL:2 = 310
+	;愛撫
+	ELSEIF RAND:2 == 0
+		LOCAL:2 = 311
+	;自慰させられる
+	ELSE
+		LOCAL:2 = 319
+	ENDIF
+ENDIF
+;地の文カット
+IF CFLAG:99 == 0
+	SELECTCASE LOCAL:2
+		CASE 10
+			PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%のペニスを股で擦ってやる事にした…
+		CASE 11
+			PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%のペニスを自分の秘裂へ導いた…
+		CASE 12
+			PRINTFORML %CALLNAME:ARG%は四つん這いになると、%CALLNAME:TARGET%に尻穴へ挿入させた…
+		CASE 13
+			PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%のペニスを胸で挟み込んで扱いてやった…
+		CASE 14
+			PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%のペニスを咥え、存分に舌で愛撫してやった…
+		CASE 15
+			PRINTFORML %CALLNAME:ARG%がペニスを手で扱いてやると、%CALLNAME:TARGET%は熱に浮かされたように息を荒げだした…
+		CASE 19
+			PRINTFORML %CALLNAME:ARG%は意地の悪い笑みを浮かべると、%CALLNAME:TARGET%に自分で慰めるよう命令した…
+		CASE 110
+			PRINTFORML %CALLNAME:ARG%は、%CALLNAME:TARGET%をベットに寝かせ、漲った怒張でその蜜壷を貫いた…
+		CASE 115
+			PRINTFORML %CALLNAME:ARG%が%CALLNAME:TARGET%の蜜壷を指で掻き混ぜてやると、%CALLNAME:TARGET%は嬉しそうに嬌声を上げだした…
+		CASE 119
+			PRINTFORML %CALLNAME:ARG%は意地の悪い笑みを浮かべると、%CALLNAME:TARGET%に自分で慰めるよう命令した…
+		CASE 210
+			PRINTFORML %CALLNAME:ARG%は、%CALLNAME:TARGET%に四つん這いになるように言うと、尻穴への挿入に向け準備を始めた…
+		CASE 215
+			PRINTFORML %CALLNAME:ARG%が指で尻穴を穿ってやると、%CALLNAME:TARGET%はたまらず嬌声を上げだした…
+		CASE 219
+			PRINTFORML %CALLNAME:ARG%は意地の悪い笑みを浮かべると、%CALLNAME:TARGET%に自分で慰めるよう命令した…
+		CASE 310
+			PRINTFORML %CALLNAME:ARG%と%CALLNAME:TARGET%は互いの体を弄り、慰めあった…
+		CASE 311
+			PRINTFORML %CALLNAME:ARG%の指が敏感な部分に触れる度、%CALLNAME:TARGET%は身をよじって喘ぎ続けた…
+		CASE 319
+			PRINTFORML %CALLNAME:ARG%は意地の悪い笑みを浮かべると、%CALLNAME:TARGET%に自分で慰めるよう命令した…
+	ENDSELECT
+	PRINTW
+ENDIF
+
+;実は覗き見オナニーで必要
+CALLF SET_NIGHT_KOJO(0, LOCAL:2)
+TRYCALL SELF_KOJO, TARGET, 481, LOCAL:2
+
+;処理呼び出し
+CALLFORM NIGHT_SEX_{LOCAL:2}, ARG, LOCAL
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML 二人は、{LOCAL}回の行為を夜遅くまで続けるのであった……
+
+;-----------------------------------------------
+;奴隷が処女を捧げるイベント(旧NIGHT_EVENT_4)
+;-----------------------------------------------
+@NIGHT_SEX_SHOJO, ARG, ARG:1
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTL 
+	PRINTFORMW 突然、%CALLNAME:MASTER%の隙を突いたかのように、%CALLNAME:TARGET%は%CALLNAME:MASTER%に馬乗りになった
+	PRINTFORML %CALLNAME:MASTER%のモノを扱き上げ、自らの愛汁を剛直の先端にまぶす%CALLNAME:TARGET%にもう迷いはない……
+ENDIF
+CALLF SET_NIGHT_KOJO(0, 4)
+TRYCALL SELF_KOJO, TARGET, 405
+PRINTL 
+PRINTL 処女喪失
+;50異常経験
+SIF TALENT:処女 == 1
+	CALL COMMON_UP_EXP, TARGET, 50, 2, 0
+;夜這いで処女を捧げたフラグ
+CFLAG:153 |= 2
+CFLAG:MASTER:153 |= 8
+;処女食い回数カウント
+FLAG:400 += 1
+IF FLAG:400 >= 50
+	;実績
+	LOADGLOBAL
+	SIF !(GLOBAL:2300 & 8)
+		GLOBAL:2300 |= 8
+	SAVEGLOBAL
+ENDIF
+TALENT:処女 = 0
+;00Ｖ経験
+CALL COMMON_UP_EXP, TARGET, 0, 1, 0
+;04精液経験
+CALL COMMON_UP_EXP, TARGET, 4, 1, 0
+IF COM_ABLE_CHECK_FEMALE(TARGET) 
+	C_NUMBER = MAX(RAND:2, 0)
+	CFLAG:3666 += C_NUMBER
+	CALL CALCULATE_LIMIT, TARGET
+ENDIF
+;42Ｖ調律経験
+CALL COMMON_UP_EXP, TARGET, 42, 1, 0
+;01快Ｖの珠
+CALL COMMON_UP_JUEL, TARGET, 1, 10, 0
+;12恭順の珠
+CALL COMMON_UP_JUEL, TARGET, 12, (ARG:1*700), 0
+;16苦痛の珠
+CALL COMMON_UP_JUEL, TARGET, 16, (ARG*300), 1
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORMW 処女の子宮が%CALLNAME:MASTER%の子種で満たされると、%CALLNAME:TARGET%は重苦しくも甘い息を吐く
+	PRINTFORMW 心からの思い人に純潔を捧げられた%CALLNAME:TARGET%は満足そうに微笑んだ……
+ENDIF
+
+;=====================================================
+;
+;奴隷による善意の触手姦
+;
+;=====================================================
+;-----------------------------------------------
+;触手姦
+;----------------------------------------------
+@NIGHT_SHOKUSHU_SOFT, ARG
+
+;行為数F:9の決定。基本値は技巧LV＋触手使役LV(奴隷の触手使役LVは通常は0)
+LOCAL = ABL:技巧 + ABL:触手使役
+;触手操作術を持つ場合+3
+SIF TALENT:触手使役術
+	LOCAL += 3
+;最低数3回
+SIF LOCAL < 3
+	LOCAL = 3
+;暴走なら36+RAND:36
+SIF ARG == 0
+	LOCAL = 36+RAND:36
+
+SIF ARG == 1 && (CFLAG:42 & 2)
+	ARG = 2
+
+;地の文カット
+IF CFLAG:99 == 0
+	IF ARG == 0
+		PRINTL …嫌な予感が的中したようだ…。
+		PRINTFORMW %CALLNAME:TARGET%の召喚した触手は制御を失い%CALLNAME:MASTER%と%CALLNAME:TARGET%に襲い掛かってきた。
+		PRINTL 
+		IF TALENT:MASTER:オトコ == 0 && TALENT:MASTER:処女 > 0
+			PRINTFORML 触手は真っ先に%CALLNAME:MASTER%を捕らえると尻や口に触手を押し込み乳首を捏ね繰り上げる。
+			PRINTFORML 触手のもたらす暴力的なまでの快楽にしばし身を委ねていた%CALLNAME:MASTER%だったが
+			PRINTW 膣口にふれる触手の感触に、一転して青ざめ必死の抵抗を試みる。
+			PRINTW だが、手足を縛る触手はうねるだけで解ける事はなく。徐々に、徐々に触手が膣内に進入してくる…。
+			PRINTL  
+			PRINTL 破瓜の血を愛液、そして得体の知れぬ体液を交じらせ執拗に膣を犯し、子宮にとぐろを巻く触手。
+			PRINTFORML 泣きながら謝り続ける%CALLNAME:TARGET%の声をどこか遠くに聞きながら
+			PRINTFORMW %CALLNAME:MASTER%は、己を蹂躙し続けるそれを、ただ呆然と眺め続けた…。
+		ELSEIF (CFLAG:42 & 2)
+			PRINTFORML 触手は貞操帯の隙間から細い触手を入り込ませると%CALLNAME:TARGET%の陰部を執拗に犯し始めた…。
+			PRINTFORMW その快楽に%CALLNAME:TARGET%が喘ぎだすまでに、そう時間はかからなかった…。
+		ENDIF
+	ELSE
+		PRINTL 自分に危害を加える方向には力を使えないよう、限定的に封印を解いてやると
+		PRINTFORML %CALLNAME:TARGET%は何やら呪文を唱え、触手を召喚した。
+		PRINTFORML これで何をするつもりなのかと問う%CALLNAME:MASTER%に
+		PRINTFORMW %CALLNAME:TARGET%は婉然と微笑むと触手を%CALLNAME:MASTER%に差し向けた。
+		PRINTL  
+		PRINTFORML たしかに危害を加える方向ではないか。
+		SIF TALENT:MASTER:処女 == 0 && TALENT:MASTER:オトコ == 0 && EXP:MASTER:Ｖ経験 > 0
+			PRINTFORML 膣内から子宮まで這い回り、敏感な部分を巧に責める触手。
+		SIF EXP:MASTER:Ａ経験 > 0
+			PRINTL 腸内を嘗め回し、排泄物を貪り喰う触手
+		SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+			PRINTL ペニスに巻き付き、しきりに射精を促す触手
+		SIF TALENT:MASTER:オトコ == 0
+			PRINTL 乳房を捏ねくりあげ、乳首を甘く締め付ける触手
+		PRINTL 口内を占有し、舌や歯列を愛撫し続ける触手
+		PRINTL 背中や脇、内股や臍を這い性感帯を探し続ける触手
+		PRINTL 四肢を柔らかく束縛し、自由を奪いながら指の間を絶妙に擦りあげる触手
+		PRINTFORML それら触手たちのもたらす快楽に酔いながら、たまには溺れてみるのも悪くはないと言う%CALLNAME:MASTER%に
+		PRINTFORMW %CALLNAME:TARGET%は満面の笑みで頷いた…。
+	ENDIF
+	PRINTL 
+ENDIF
+;奴隷による善意の触手姦イベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 417, ARG
+
+REPEAT 2
+	LOCAL:5 = 2
+	IF COUNT == 0
+		LOCAL:1 = MASTER
+		LOCAL:2 = TARGET
+	ELSE
+		LOCAL:1 = TARGET
+		LOCAL:2 = MASTER
+		SIF ARG == 2
+			LOCAL:5 -= 1
+	ENDIF
+	
+	;経験取得処理
+	;00Ｖ、01Ａ、02絶頂、03射精、04精液、22フェラ、31緊縛、
+	;40薬物、43Ａ快楽、44Ｂ快楽、50異常経験、53触手経験
+	;00Ｖ経験
+	IF TALENT:(LOCAL:1):120 == 0 && ((TALENT:(LOCAL:1):0 == 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):0 > 0) || (LOCAL:1 != MASTER && EXP:(LOCAL:1):0 > 0 && ARG != 2))) || ARG == 0) 
+		LOCAL:5 += 1
+		IF TALENT:(LOCAL:1):0
+			TALENT:(LOCAL:1):0 = 0
+			PRINTFORML 処女喪失(%CALLNAME:(LOCAL:1)%)
+		ENDIF
+		CALL COMMON_UP_EXP, LOCAL:1, 0, LOCAL, 0
+	ENDIF
+	;01Ａ経験
+	IF (LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 0) || (LOCAL:1 != MASTER && ABL:(LOCAL:1):2 > 1 && ARG != 2) || ARG == 0
+		LOCAL:5 += 1
+		CALL COMMON_UP_EXP, LOCAL:1, 1, LOCAL, 0
+	ENDIF
+	;02絶頂経験
+	CALL COMMON_UP_EXP, LOCAL:1, 2, (LOCAL*LOCAL:5)/2, 0
+	;03射精経験
+	SIF (TALENT:(LOCAL:1):120 || TALENT:(LOCAL:1):121) && (CFLAG:(LOCAL:1):42 & 2) == 0
+		CALL COMMON_UP_EXP, LOCAL:1, 3, LOCAL/2, 0
+	;04精液経験
+	CALL COMMON_UP_EXP, LOCAL:1, 4, (LOCAL*(LOCAL:5+2))/2, 0
+	IF LOCAL:1 != MASTER && COM_ABLE_CHECK_FEMALE(LOCAL:1) && (LOCAL*(LOCAL:5+2))/2 > 0
+		C_NUMBER = MAX(RAND:((LOCAL*(LOCAL:5+2))/2 + 1), 0)
+		CFLAG:(LOCAL:1):3666 += C_NUMBER
+		CALL CALCULATE_LIMIT, LOCAL:1
+	ENDIF
+	;22フェラ経験
+	CALL COMMON_UP_EXP, LOCAL:1, 22, LOCAL, 0
+	;31緊縛経験
+	CALL COMMON_UP_EXP, LOCAL:1, 31, 2*LOCAL, 0
+	;40薬物経験
+	SIF TALENT:(LOCAL:1):44 == 0
+		CALL COMMON_UP_EXP, LOCAL:1, 40, LOCAL/6, 0
+	;43Ａ快楽経験
+	SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 0) || (LOCAL:1 != MASTER && ABL:(LOCAL:1):2 > 1 && ARG != 2) || ARG == 0
+		CALL COMMON_UP_EXP, LOCAL:1, 43, LOCAL*ABL:(LOCAL:1):2, 0
+	;44Ｂ快楽経験
+	CALL COMMON_UP_EXP, LOCAL:1, 44, LOCAL*ABL:(LOCAL:1):3, 0
+	;50異常経験
+	LOCAL:6 = MAX(LOCAL/6, 1)
+	CALL COMMON_UP_EXP, LOCAL:1, 50, LOCAL:6, 0
+	;53触手経験
+	CALL COMMON_UP_EXP, LOCAL:1, 53, LOCAL*(LOCAL:5+3), 0
+	
+	;主人能力上昇処理は廃止
+	IF LOCAL:1 == MASTER
+	;奴隷の能力と珠取得処理
+	ELSE
+		;制御成功なら触手操作取得。確率で触手使役Lvうｐ
+		IF ARG > 0 && TALENT:触手使役術 == 0
+			TALENT:触手使役術 = 1
+			PRINTFORML %CALLNAME:(LOCAL:1)%は触手制御に成功し、%TALENTNAME:149%を習得した。
+		ELSEIF ARG > 0 && RAND:10 < 1 && ABL:(LOCAL:1):12 > ABL:(LOCAL:1):98
+			ABL:(LOCAL:1):98 += 1
+			PRINTFORML %CALLNAME:(LOCAL:1)%は触手の扱いに慣れてきたため、%ABLNAME:98%が1上昇した。
+		ENDIF
+		;珠は00Ｃ、01Ｖ、02Ａ、03Ｂ、11習得、12恭順、13欲望、17恐怖、32先導
+		LOCAL:6 = (ABL:技巧+ABL:触手使役)/2
+		;00快Ｃ
+		SIF LOCAL:1 == MASTER || (CFLAG:(LOCAL:1):42 & 2) == 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 0, 40*LOCAL*(1+ABL:(LOCAL:1):0)*(1+LOCAL:6), 0
+		;01快Ｖ
+		SIF TALENT:(LOCAL:1):120 == 0 && ((TALENT:(LOCAL:1):0 == 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):0 > 0) || (LOCAL:1 != MASTER && EXP:(LOCAL:1):0 > 0 && ARG != 2))) || ARG == 0) 
+			CALL COMMON_UP_JUEL, LOCAL:1, 1, 40*LOCAL*(1+ABL:(LOCAL:1):1)*(1+LOCAL:6), 0
+		;02快Ａ
+		SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 0) || (LOCAL:1 != MASTER && ABL:(LOCAL:1):2 > 1 && ARG != 2) || ARG == 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 2, 40*LOCAL*(1+ABL:(LOCAL:1):2)*(1+LOCAL:6), 0
+		;03快Ｂ
+		IF TALENT:(LOCAL:1):120 == 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 3, 40*LOCAL*(1+ABL:(LOCAL:1):3)*(1+LOCAL:6), 0
+		ELSE
+			CALL COMMON_UP_JUEL, LOCAL:1, 3, 20*LOCAL*(1+ABL:(LOCAL:1):3)*(1+LOCAL:6), 0
+		ENDIF
+		;11習得
+		SIF ARG > 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 11, 80*LOCAL*(1+LOCAL:6), 0
+		;12恭順
+		SIF ARG > 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 12, 20*LOCAL*(1+ABL:(LOCAL:1):10)*(1+ABL:(LOCAL:1):13), 0
+		;13欲望
+		CALL COMMON_UP_JUEL, LOCAL:1, 13, 15*LOCAL*(1+ABL:(LOCAL:1):11)*(1+LOCAL:6), 0
+		;17恐怖
+		SIF ARG == 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 17, 100*LOCAL, 0
+		;31侵蝕
+		CALL COMMON_UP_JUEL, LOCAL:1, 31, 50*LOCAL*(1+ABL:(LOCAL:1):35), 0
+		;32先導
+		SIF ARG > 0
+			CALL COMMON_UP_JUEL, LOCAL:1, 32, 30*LOCAL*(1+LOCAL:6), 0
+	ENDIF
+	PRINTW 　
+REND
+
+;地の文カット
+IF CFLAG:99 == 0
+	IF ARG == 0
+		PRINTL 注入されていた魔力が尽きたのか。
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%を犯し、得体の知れぬ体液を吐き出し続けた触手も
+		PRINTL 夜が明けるころには消滅しており
+		PRINTFORML 後には呆然と体液の海に横たわる%CALLNAME:MASTER%と%CALLNAME:TARGET%を残すのみであった…。
+	ELSE
+		PRINTFORML やがて%CALLNAME:TARGET%の魔力が尽きたのか触手は送還された。
+		PRINTFORML 想像以上の快楽に心身共に疲労した%CALLNAME:MASTER%を膝枕しながら
+		PRINTFORML %CALLNAME:TARGET%は次はどのようにして悦しませてあげようかと思案した…。
+	ENDIF
+ENDIF
+
+;=====================================================
+;
+;調教主がはぶられた場合の夜行動
+;
+;=====================================================
+;-----------------------------------------------
+;襲撃レズプレイ
+;-----------------------------------------------
+@NIGHT_EVENT_8, ARG, ARG:1, ARG:2, ARG:3
+;レズプレイなのでどちらかがオトコの場合はここで弾く
+;条件で弾いた
+;どちらかが貞操帯装着中は不可
+;前提で弾いた
+
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜、相手の欲しくなってしまった%CALLNAME:TARGET%は%CALLNAME:ARG%の部屋へと押しかけた
+	IF ABL:ARG:レズっ気 >= 2
+		PRINTFORMW %CALLNAME:ARG%は%CALLNAME:TARGET%を迎え入れるとベッドへと誘い、お互いの熱い身体を重ねた……
+	ELSE
+		PRINTFORMW 戸惑う%CALLNAME:ARG%を組み伏せ、%CALLNAME:TARGET%は欲情した雌の躰を押し付けた……
+	ENDIF
+ENDIF
+LOCAL = 0
+
+IF (TALENT:(ARG:1):120 || TALENT:(ARG:1):121) && TALENT:ARG:処女 == 0 && EXP:ARG:Ｖ経験 >= 1 && RAND:3 == 0
+	LOCAL = 1
+ELSEIF (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && TALENT:(ARG:1):0 == 0 && EXP:(ARG:1):0 >= 1 && RAND:2 == 0
+	LOCAL = 2
+ENDIF
+;襲撃レズプレイのイベント口上、407が襲撃側、413が被襲撃側
+TRYCALL SELF_KOJO, TARGET, 407, 0
+;襲撃側の口上でTFLAG:99を立ててなければ、被襲撃側の口上を呼び出す
+SIF TFLAG:99 == 0
+	TRYCALL SELF_KOJO, ARG, 413
+PRINTL 
+;12:レズ経験
+CALL COMMON_UP_EXP, TARGET, 12, (ARG:2/2)+2, 0
+CALL COMMON_UP_EXP, ARG, 12, (ARG:2/2)+2, 0
+;12:恭順の珠
+CALL COMMON_UP_JUEL, TARGET, 12, ARG:3*150, 0
+;13:欲情の珠
+CALL COMMON_UP_JUEL, TARGET, 13, ARG:2*250, 0
+;11:習得の珠
+CALL COMMON_UP_JUEL, TARGET, 11, ARG:2*100, 0
+IF ABL:ARG:レズっ気 >= 2
+	;12:恭順の珠
+	CALL COMMON_UP_JUEL, ARG, 12, ARG:3*100, 0
+	;13:欲情の珠
+	CALL COMMON_UP_JUEL, ARG, 13, ARG:2*200, 0
+	;11:習得の珠
+	CALL COMMON_UP_JUEL, ARG, 11, ARG:2*70, 0
+ELSE
+	;12:恭順の珠
+	CALL COMMON_UP_JUEL, ARG, 12, ARG:3*40, 0
+	;13:欲情の珠
+	CALL COMMON_UP_JUEL, ARG, 13, ARG:2*160, 0
+ENDIF
+;モノが付いていて、入れられる側が処女ではなくＶ経験1以上なら射精経験、及びＶ経験＋
+IF LOCAL == 1
+	;03:射精経験
+	CALL COMMON_UP_EXP, TARGET, 3, (ARG:2/2), 0
+	;LUNATIC以上は射精するたびに体力が減少
+	CALL EXHAUST_EJAC, TARGET, ARG:2 / 2
+	;00:快Ｃの珠
+	CALL COMMON_UP_JUEL, TARGET, 0, ARG:2*(70*ABL:Ｃ感覚*ABL:Ｃ感覚), 0
+	PRINTL 
+	;00:Ｖ経験
+	CALL COMMON_UP_EXP, ARG, 0, ARG:2, 0
+	;04:精液経験
+	CALL COMMON_UP_EXP, ARG, 4, (ARG:2/2), 0
+	IF ARG != MASTER && COM_ABLE_CHECK_FEMALE(ARG) && ARG:2/2 > 0
+		C_NUMBER = MAX(RAND:(ARG:2/2 + 1), 0)
+		CFLAG:ARG:3666 += C_NUMBER
+		CALL CALCULATE_LIMIT, ARG
+	ENDIF
+	;01:快Ｖの珠
+	CALL COMMON_UP_JUEL, ARG, 1, ARG:2*(80*ABL:ARG:Ｖ感覚*ABL:ARG:Ｖ感覚), 0
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:ARG%の膣内を{ARG:2}回犯した%CALLNAME:TARGET%は満足すると部屋を後にした
+ELSEIF LOCAL == 2
+	;00:Ｖ経験
+	CALL COMMON_UP_EXP, ARG:1, 0, ARG:2, 0
+	;04:精液経験
+	CALL COMMON_UP_EXP, ARG:1, 4, (ARG:2/2), 0
+	IF ARG:1 != MASTER && COM_ABLE_CHECK_FEMALE(ARG:1) && ARG:2/2 > 0
+		C_NUMBER = MAX(RAND:(ARG:2/2 + 1), 0)
+		CFLAG:(ARG:1):3666 += C_NUMBER
+		CALL CALCULATE_LIMIT, ARG:1
+	ENDIF
+	;01:快Ｖの珠
+	CALL COMMON_UP_JUEL, ARG:1, 1, ARG:2*(80*ABL:(ARG:1):1*ABL:(ARG:1):1), 0
+	PRINTL 
+	;03:射精経験
+	CALL COMMON_UP_EXP, ARG, 3, (ARG:2/2), 0
+	;LUNATIC以上は射精するたびに体力が減少
+	CALL EXHAUST_EJAC, ARG, ARG:2/2
+	;00:快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG, 0, ARG:2*(70*ABL:ARG:Ｃ感覚*ABL:ARG:Ｃ感覚), 0
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:ARG%を逆レイプし{ARG:2/2}回膣内を満たさせると、%CALLNAME:TARGET%は満足げに部屋を後にした
+ELSE
+	;00:快Ｃの珠
+	CALL COMMON_UP_JUEL, TARGET, 0, ARG:2*100, 0
+	;03:快Ｂの珠
+	CALL COMMON_UP_JUEL, TARGET, 3, ARG:2*100, 0
+	;00:快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG, 0, ARG:2*80, 0
+	;03:快Ｂの珠
+	CALL COMMON_UP_JUEL, ARG, 3, ARG:2*80, 0
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML その夜、%CALLNAME:ARG%と{(ARG:2/2)+2}回レズプレイをした、%CALLNAME:TARGET%はぐっすりと眠った
+ENDIF
+
+;-----------------------------------------------
+;襲撃ＢＬプレイ
+;-----------------------------------------------
+@NIGHT_EVENT_12, ARG, ARG:1, ARG:2
+;ＢＬプレイなのでどちらかがオトコでない場合はここで弾く
+;どちらかが貞操帯装着中は不可
+;条件で弾いた
+
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜、相手の欲しくなってしまった%CALLNAME:TARGET%は%CALLNAME:ARG%の部屋へと押しかけた
+	IF ABL:ARG:ＢＬっ気 >= 2
+		PRINTFORMW %CALLNAME:ARG%は%CALLNAME:TARGET%を迎え入れるとベッドへと誘い、お互いの熱い身体を重ねた……
+	ELSE
+		PRINTFORMW 戸惑う%CALLNAME:ARG%を組み伏せ、%CALLNAME:TARGET%は欲情した雄の躰を押し付けた……
+	ENDIF
+ENDIF
+;襲撃ＢＬプレイのイベント口上、414が襲撃側、415が被襲撃側
+TRYCALL SELF_KOJO, TARGET, 414, 0
+;襲撃側の口上でTFLAG:99を立ててなければ、被襲撃側の口上を呼び出す
+SIF TFLAG:99 == 0
+	TRYCALL SELF_KOJO, ARG, 415
+;13:ＢＬ経験
+CALL COMMON_UP_EXP, TARGET, 13, (ARG:1/2)+2, 0
+CALL COMMON_UP_EXP, ARG, 13, (ARG:1/2)+2, 0
+;12:恭順の珠
+CALL COMMON_UP_JUEL, TARGET, 12, ARG:2*150, 0
+;13:欲情の珠
+CALL COMMON_UP_JUEL, TARGET, 13, ARG:1*250, 0
+;11:習得の珠
+CALL COMMON_UP_JUEL, TARGET, 11, ARG:1*100, 0
+IF ABL:ARG:ＢＬっ気 >= 2
+	;12:恭順の珠
+	CALL COMMON_UP_JUEL, ARG, 12, ARG:2*100, 0
+	;13:欲情の珠
+	CALL COMMON_UP_JUEL, ARG, 13, ARG:1*200, 0
+	;11:習得の珠
+	CALL COMMON_UP_JUEL, ARG, 11, ARG:1*70, 0
+ELSE
+	;12:恭順の珠
+	CALL COMMON_UP_JUEL, ARG, 12, ARG:2*40, 0
+	;13:欲情の珠
+	CALL COMMON_UP_JUEL, ARG, 13, ARG:1*160, 0
+ENDIF
+;00:快Ｃの珠
+CALL COMMON_UP_JUEL, TARGET, 0, ARG:1*100, 0
+CALL COMMON_UP_JUEL, ARG, 0, ARG:1*80, 0
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML その夜、%CALLNAME:ARG%と{(ARG:1/2)+2}回ＢＬプレイをした、%CALLNAME:TARGET%はぐっすりと眠った
+
+;-----------------------------------------------
+;異性間
+;-----------------------------------------------
+@NIGHT_SEX_9, ARG, ARG:1
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜、体の火照りの静まらない%CALLNAME:(ARG:1)%は%CALLNAME:ARG%の部屋へと押しかけた
+	IF ABL:ARG:欲望 > 2
+		PRINTFORMW %CALLNAME:ARG%は%CALLNAME:(ARG:1)%を迎え入れるとベッドへと誘い、お互いの熱い身体を重ねた……
+	ELSE
+		PRINTFORMW 戸惑う%CALLNAME:ARG%を組み伏せ、%CALLNAME:TARGET%は欲情した\@(TALENT:(ARG:1):120) ? 雄 # 雌 \@の躰を押し付けた……
+	ENDIF
+	PRINTL 
+ENDIF
+;襲撃異性間プレイのイベント口上、418が襲撃側、419が被襲撃側
+TRYCALL SELF_KOJO, TARGET, 418, 0
+;襲撃側の口上でTFLAG:99を立ててなければ、被襲撃側の口上を呼び出す
+SIF TFLAG:99 == 0
+	TRYCALL SELF_KOJO, ARG, 419
+;オトコをLOCAL:1に女をLOCAL:2にする
+IF TALENT:(ARG:1):120
+	LOCAL:1 = ARG:1
+	LOCAL:2 = ARG
+ELSE
+	LOCAL:1 = ARG
+	LOCAL:2 = ARG:1
+ENDIF
+
+;行為数指定
+LOCAL = MAX(ABL:(LOCAL:1):12+ABL:(LOCAL:2):12, 4)
+
+;LOCAL:2が処女で、LOCAL:1 LOCAL:2共に反発刻印がある場合。確率1/3で処女喪失
+IF RAND:3 == 0 && TALENT:(LOCAL:2):0 > 0 && MARK:(LOCAL:2):9 > 0 && MARK:(LOCAL:1):9 > 0
+	LOCAL:5 = 0
+;LOCAL:2に棒があり、LOCAL:1の尻が使える場合
+ELSEIF RAND:4 == 0 && TALENT:(LOCAL:2):121 && ABL:(LOCAL:1):2 > 1
+	LOCAL:5 = 1
+;LOCAL:2の尻が使える場合
+ELSEIF RAND:3 == 0 && ABL:(LOCAL:2):2 > 1
+	LOCAL:5 = 2
+;LOCAL:2の膣が使える場合
+ELSEIF TALENT:(LOCAL:2):0 == 0 && EXP:(LOCAL:2):0 > 0
+	LOCAL:5 = 3
+;再度LOCAL:2の尻判定
+ELSEIF ABL:(LOCAL:2):2 > 1
+	LOCAL:5 = 2
+;再度LOCAL:1の尻判定
+ELSEIF TALENT:(LOCAL:2):121 && ABL:(LOCAL:1):2 > 1
+	LOCAL:5 = 1
+;互いの穴が使えない場合
+ELSE
+	LOCAL:5 = 4
+ENDIF
+
+;地の文カット
+IF CFLAG:99 == 0
+	SELECTCASE LOCAL:5
+		CASE 0
+			PRINTFORML %CALLNAME:(LOCAL:2)%は%CALLNAME:(LOCAL:1)%をベットに寝かせると、自ら腰を落とし%CALLNAME:(LOCAL:1)%のペニスを自身の秘裂へ導いた
+			PRINTFORMW %CALLNAME:(LOCAL:1)%は滴り落ちる破瓜の血に動揺するが、それを意に介す事もなく%CALLNAME:(LOCAL:2)%は苦痛に耐えて只管腰を振り続けた…。
+		CASE 1
+			PRINTFORML %CALLNAME:(LOCAL:2)%は%CALLNAME:(LOCAL:1)%を四つん這いにさせると、その尻穴に己の愛液を塗り、一息に貫いた
+			PRINTFORMW そして尻穴を出入りする怒張のもたらす快楽によがる男を、只管に攻め続ける…。
+		CASE 2
+			PRINTFORML %CALLNAME:(LOCAL:1)%は%CALLNAME:(LOCAL:2)%を四つん這いにさせると、その尻穴に%CALLNAME:(LOCAL:2)%の愛液を塗り、一息に貫いた
+			PRINTFORMW そして尻穴を出入りする怒張のもたらす快楽によがる女を、只管に攻め続ける…。
+		CASE 3
+			PRINTFORML %CALLNAME:(LOCAL:1)%は滾る怒張でもって%CALLNAME:(LOCAL:2)%の蜜壷を蹂躙し続けた
+			PRINTFORMW そして子宮を押し上げる怒張のもたらす快楽によがる女を、只管に攻め続ける…。
+		CASE 4
+			IF TALENT:(LOCAL:2):121
+				PRINTFORMW %CALLNAME:(LOCAL:2)%と%CALLNAME:(LOCAL:1)%は互いのペニスを一晩中舐め合った…。
+			ELSE
+				PRINTFORMW %CALLNAME:(LOCAL:2)%と%CALLNAME:(LOCAL:1)%は一晩中抱き合った…。
+			ENDIF
+		CASE 5
+			PRINTFORML %CALLNAME:(LOCAL:2)%は%CALLNAME:(LOCAL:1)%をベットに寝かせると、蜜を湛えた秘処を擦りつけた
+			PRINTFORMW そして%CALLNAME:(LOCAL:1)%が射精すると、その精液も潤滑剤として、一層激しく奉仕を続ける…。
+	ENDSELECT
+	PRINTL 
+ENDIF
+
+REPEAT 2
+	LOCAL:11 = (COUNT == 0) ? LOCAL:1 # LOCAL:2
+	LOCAL:12 = (COUNT == 0) ? LOCAL:2 # LOCAL:1
+
+	;経験の取得
+	;00Ｖ経験
+	IF LOCAL:11 == LOCAL:2 && (LOCAL:5 == 0 || LOCAL:5 == 3)
+		IF TALENT:(LOCAL:11):0 > 0
+			PRINTFORML 処女喪失(%CALLNAME:(LOCAL:11)%)
+			TALENT:(LOCAL:11):0 = 0
+		ENDIF
+		CALL COMMON_UP_EXP, LOCAL:11, 0, (LOCAL/2), 0
+	ENDIF
+	;01Ａ経験
+	SIF (LOCAL:11 == LOCAL:2 && LOCAL:5 == 2) ||(LOCAL:11 == LOCAL:1 && LOCAL:5 == 1)
+		CALL COMMON_UP_EXP, LOCAL:11, 1, (LOCAL/2), 0
+	;02絶頂経験
+	CALL COMMON_UP_EXP, LOCAL:11, 2, (LOCAL/4), 0
+	;03射精経験
+	SIF TALENT:(LOCAL:11):120 || TALENT:(LOCAL:11):121
+		CALL COMMON_UP_EXP, LOCAL:11, 3, (LOCAL/2), 0
+	;04精液経験
+	IF TALENT:(LOCAL:12):120 || TALENT:(LOCAL:12):121
+		CALL COMMON_UP_EXP, LOCAL:11, 4, (LOCAL/2), 0
+		IF LOCAL:11 != MASTER && COM_ABLE_CHECK_FEMALE(LOCAL:11) && LOCAL/2 > 0
+			C_NUMBER = MAX(RAND:(LOCAL/2 + 1), 0)
+			CFLAG:(LOCAL:11):3666 += C_NUMBER
+			CALL CALCULATE_LIMIT, LOCAL:11
+		ENDIF
+	ENDIF
+	;20奉仕快楽経験
+	SIF TALENT:(LOCAL:12):120 || TALENT:(LOCAL:12):121
+		CALL COMMON_UP_EXP, LOCAL:11, 20, (LOCAL*ABL:(LOCAL:11):13)/4, 0
+	;22フェラ経験
+	IF TALENT:(LOCAL:12):120 || TALENT:(LOCAL:12):121
+		IF LOCAL:5 == 4 && TALENT:(LOCAL:12):121
+			CALL COMMON_UP_EXP, LOCAL:11, 22, (2*LOCAL)/3, 0
+		ELSE
+			CALL COMMON_UP_EXP, LOCAL:11, 22, (LOCAL/4), 0
+		ENDIF
+	ENDIF
+	;23キス経験
+	CALL COMMON_UP_EXP, LOCAL:11, 23, (LOCAL/3), 0
+	;43Ａ快楽経験
+	SIF (LOCAL:11 == LOCAL:2 && LOCAL:5 == 2) ||(LOCAL:11 == LOCAL:1 && LOCAL:5 == 1)
+		CALL COMMON_UP_EXP, LOCAL:11, 43, (LOCAL*ABL:(LOCAL:11):2)/2, 0
+	;44Ｂ快楽経験
+	IF LOCAL:11 == LOCAL:2
+		CALL COMMON_UP_EXP, LOCAL:11, 44, (LOCAL*ABL:(LOCAL:11):3)/2, 0
+	ELSE
+		CALL COMMON_UP_EXP, LOCAL:11, 44, (LOCAL*ABL:(LOCAL:11):3)/4, 0
+	ENDIF
+	
+	;珠取得
+	;00快Ｃ
+	CALL COMMON_UP_JUEL, LOCAL:11, 0, 20*LOCAL*(1+ABL:(LOCAL:11):0)*(1+ABL:(LOCAL:12):12), 0
+	;01快Ｖ
+	SIF LOCAL:11 == LOCAL:2 && (LOCAL:5 == 0 || LOCAL:5 == 3)
+		CALL COMMON_UP_JUEL, LOCAL:11, 1, 20*LOCAL*(1+ABL:(LOCAL:11):1)*(1+ABL:(LOCAL:12):12), 0
+	;02快Ａ
+	SIF (LOCAL:11 == LOCAL:2 && LOCAL:5 == 2) ||(LOCAL:11 == LOCAL:1 && LOCAL:5 == 1)
+		CALL COMMON_UP_JUEL, LOCAL:11, 2, 20*LOCAL*(1+ABL:(LOCAL:11):2)*(1+ABL:(LOCAL:12):12), 0
+	;03快Ｂ
+	IF LOCAL:11 == LOCAL:2
+		CALL COMMON_UP_JUEL, LOCAL:11, 3, 20*LOCAL*(1+ABL:(LOCAL:11):3)*(1+ABL:(LOCAL:12):12), 0
+	ELSE
+		CALL COMMON_UP_JUEL, LOCAL:11, 3, 10*LOCAL*(1+ABL:(LOCAL:11):3)*(1+ABL:(LOCAL:12):12), 0
+	ENDIF
+	;11習得
+	CALL COMMON_UP_JUEL, LOCAL:11, 11, 80*LOCAL*(1+ABL:(LOCAL:11):12), 0
+	;13欲情
+	CALL COMMON_UP_JUEL, LOCAL:11, 13, 15*LOCAL*(1+ABL:(LOCAL:11):11)*(1+ABL:(LOCAL:12):12), 0
+	;32先導
+	SIF (LOCAL:11 == LOCAL:2 && (LOCAL:5 == 0 || LOCAL:5 == 1)) || (LOCAL:11 == LOCAL:1 && (LOCAL:5 == 2 || LOCAL:5 == 3))
+		CALL COMMON_UP_JUEL, LOCAL:11, 32, 30*LOCAL*(1+ABL:(LOCAL:11):12), 0
+	PRINTW 　
+REND
+
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML 明け方、%CALLNAME:(ARG:1)%は名残を惜しみながらも、%CALLNAME:ARG%の部屋を後にした…。
+
+;=====================================================
+;
+;SM行為による夜行動
+;
+;=====================================================
+;-----------------------------------------------
+;マゾ奴隷の夜這い(旧@NIGHT_EVENT_11)
+;-----------------------------------------------
+@NIGHT_EVENT_SM_M, ARG
+;ARGに叩く方が入れられて送られてくる。(主人か仲の良い奴隷である)
+;マゾ奴隷はGでもあるので口上転がしはこの辺りも用いる
+
+;鞭持参の場合
+IF ITEM:鞭 || NOITEM
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML 夜、%CALLNAME:TARGET%は%CALLNAME:ARG%の部屋に訪れると、鞭で打ち据えて欲しいとおねだりした
+		IF ABL:ARG:サドっ気 < 3
+			PRINTFORML %CALLNAME:ARG%が戸惑いながらも数回ほど鞭で打ち据えてやると、%CALLNAME:TARGET%は満足したようだ…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%が数回ほど鞭で打ち据えてやると、%CALLNAME:TARGET%は心底から満足したようだ…
+		ENDIF
+	ENDIF
+	CALLF SET_NIGHT_KOJO(0, 1)
+	TRYCALL SELF_KOJO, TARGET, 411
+ELSE
+;鞭がなければスパンキング
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML 夜、%CALLNAME:TARGET%は%CALLNAME:ARG%の部屋に訪れると、お尻を叩いて欲しいとおねだりした
+		IF ABL:ARG:サドっ気 < 3
+			PRINTFORML %CALLNAME:ARG%が戸惑いながらも数回ほどお尻を平手で叩いてやると、%CALLNAME:TARGET%は満足したようだ…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%を数回ほどお尻を平手で叩いてやると、%CALLNAME:TARGET%は心底から満足したようだ…
+		ENDIF
+	ENDIF
+	CALLF SET_NIGHT_KOJO(0, 2)
+	TRYCALL SELF_KOJO, TARGET, 411
+ENDIF
+
+CALL NIGHT_EVENT_SM_M_2, ARG
+
+;-----------------------------------------------
+;襲撃ＳＭプレイ(旧@NIGHT_EVENT_9)
+;-----------------------------------------------
+@NIGHT_EVENT_SM_S, ARG
+;ARGにやられる側が入って送られてくる
+
+;相手がマゾだとより効果が上がる
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜、相手の欲しくなってしまった%CALLNAME:TARGET%は%CALLNAME:ARG%の部屋へと押しかけた
+	IF ARG == MASTER
+		PRINTFORML %CALLNAME:ARG%は鞭を持った%CALLNAME:TARGET%に戸惑ったが、次第に体の芯が熱を帯びてくるのを感じ
+		PRINTFORML %CALLNAME:TARGET%を迎え入れると、いそいそと服を脱ぎお仕置きをねだり始めた
+		PRINTFORMW その様子に劣情を催した%CALLNAME:TARGET%は満面の笑みを浮かべつつ鞭を振るい続けた……
+	ELSEIF ABL:ARG:マゾっ気 >= 2 || TALENT:ARG:マゾ || TALENT:ARG:ドＭ
+		PRINTFORML %CALLNAME:ARG%は%CALLNAME:TARGET%を迎え入れると嬉しそうに服を脱ぎ科を作った
+		PRINTFORMW その様子に劣情を催した%CALLNAME:TARGET%は満面の笑みを浮かべつつ鞭を振るい続けた……
+	ELSE
+		PRINTFORMW 戸惑う%CALLNAME:ARG%を組み伏せ脱がせ、%CALLNAME:TARGET%は欲情した想いのまま鞭を振るい続けた……
+	ENDIF
+ENDIF
+;襲撃SMプレイのイベント口上呼び出し 襲撃側(410) 被襲撃側(412)
+TRYCALL SELF_KOJO, TARGET, 410, 0
+;襲撃側の口上でTFLAG:99を立ててなければ、被襲撃側の口上を呼び出す
+SIF TFLAG:99 == 0 && ARG != MASTER
+	TRYCALL SELF_KOJO, ARG, 412
+PRINTL 
+
+CALL NIGHT_EVENT_SM_S_2, ARG
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:ARG%を鞭で{RESULT}回ほど打ち据えたあと、%CALLNAME:TARGET%は満足すると部屋を後にした
+
+;=====================================================
+;
+;多人数で行われる性行為について(乱交、宴会)
+;
+;=====================================================
+;-----------------------------------------------
+;３Ｐ（旧NIGHT_EVENT_6）
+;-----------------------------------------------
+@NIGHT_3P, ARG, ARG:1, ARG:2, ARG:3
+;回数きめようARG 2-7 ARG:1 2-7で4-12回でどうでしょう。14でもいい気もするが。
+LOCAL = MIN(ARG + ARG:1, 12)
+;ARG:3が主犯
+;1:親子,2:子親,3:姉妹,4:妹姉
+LOCAL:2 = CHECK_IS_MY_CHILD(ARG:3, ARG:2) + CHECK_IS_MY_SISTER(ARG:3, ARG:2)
+
+IF TALENT:(ARG:2):150 || TALENT:(ARG:2):170
+	;地の文カット
+	IF CFLAG:99 == 0
+		LOCALS:0 = 二人
+		LOCALS:1 = 親子
+		LOCALS:2 = 親子
+		LOCALS:3 = \@(TALENT:オトコ) ? 兄 # 姉\@\@(TALENT:(ARG:2):120) ? 弟 # 妹\@
+		LOCALS:4 = \@(TALENT:(ARG:2):120) ? 兄 # 姉\@\@(TALENT:オトコ) ? 弟 # 妹\@
+		
+		IF TALENT:淫乱 && TALENT:(ARG:2):170 && RAND:4
+			IF TALENT:オトコ == 0 && TALENT:ふたなり == 0 && TALENT:(ARG:2):120 == 0 && TALENT:(ARG:2):121 == 0
+				PRINTFORML 上気した顔で既に愛液を垂らし始めている%LOCALS:(LOCAL:2)%を、%CALLNAME:MASTER%は急いでベッドまで連れて行った……
+			ELSEIF (TALENT:オトコ || TALENT:ふたなり) && (TALENT:(ARG:2):120 || TALENT:(ARG:2):121)
+				PRINTFORML 股間を膨らませ、血走った目をしている%LOCALS:(LOCAL:2)%を、%CALLNAME:MASTER%は急いでベッドまで連れて行った……
+			ELSE
+				PRINTFORML 互いの性器を慰めあい、今にも交わり始めそうな%LOCALS:(LOCAL:2)%を、%CALLNAME:MASTER%は急いでベッドまで連れて行った……
+			ENDIF
+		ELSE
+			LOCALS:5 = 三人
+			IF LOCAL:2 == 1
+				SIF CFLAG:(ARG:2):3107 == CFLAG:MASTER:3109 || (CFLAG:(ARG:2):3105 == CFLAG:MASTER:3109 || CFLAG:(ARG:2):3106 == CFLAG:MASTER:3109)
+					LOCALS:5 = 家族
+			ELSEIF LOCAL:2 == 2
+				SIF CFLAG:(ARG:3):3107 == CFLAG:MASTER:3109 || (CFLAG:(ARG:3):3105 == CFLAG:MASTER:3109 || CFLAG:(ARG:3):3106 == CFLAG:MASTER:3109)
+					LOCALS:5 = 家族
+			ENDIF
+			SIF LOCALS:5 == "家族"
+				LOCALS:(LOCAL:2) = 二人
+			
+			PRINTFORML 頬を染めながらも今夜は%LOCALS:5%で楽しみたいという%LOCALS:(LOCAL:2)%を、%CALLNAME:MASTER%はベッドまで連れて行った……
+		ENDIF
+	ENDIF
+	LOCAL:1 = 1
+	CALLF SET_NIGHT_KOJO(0, 1)
+	;３Ｐのイベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 406
+	PRINTL 
+ELSE
+	;地の文カット
+	IF CFLAG:99 == 0
+		LOCALS:0 = 
+		LOCALS:1 = \@(TALENT:(ARG:2):120) ? 息子 # 娘\@である
+		LOCALS:2 = \@(TALENT:(ARG:2):120) ? 父 # 母\@である
+		LOCALS:3 = \@(TALENT:(ARG:2):120) ? 弟 # 妹\@である
+		LOCALS:4 = \@(TALENT:(ARG:2):120) ? 兄 # 姉\@である
+		PRINTFORML どうも%CALLNAME:TARGET%が%LOCALS:(LOCAL:2)%%CALLNAME:(ARG:2)%にも性の悦びを教えてやって欲しいと連れてきたらしい
+		PRINTFORML %CALLNAME:(ARG:2)%は強引に連れて来られたので不満そうだが、%CALLNAME:MASTER%は二人を迎え入れた
+	ENDIF
+	LOCAL:1 = 2
+ENDIF
+;３Ｐだった場合
+IF LOCAL:1 == 1
+	CALL NIGHT_STATUS_UP_3P, ARG:2, LOCAL
+	;地の文カット
+	IF CFLAG:99 == 0
+		LOCALS:0 = ３Ｐ
+		LOCALS:1 = 親子丼
+		LOCALS:2 = 親子丼
+		LOCALS:3 = \@(TALENT:オトコ) ? 兄 # 姉\@\@(TALENT:(ARG:2):120) ? 弟 # 妹\@丼
+		LOCALS:4 = \@(TALENT:(ARG:2):120) ? 兄 # 姉\@\@(TALENT:オトコ) ? 弟 # 妹\@丼
+		PRINTFORMW その夜は%CALLNAME:TARGET%と%CALLNAME:(ARG:2)%と心行くまで%LOCALS:(LOCAL:2)%を楽しんだ
+	ENDIF
+;見ているだけだった場合
+ELSEIF LOCAL:1 == 2
+	PRINTL 
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%は%CALLNAME:(ARG:2)%の事などを忘れたかのように一心不乱に交ぐ合い続ける……
+	TARGET = ARG:2
+	;地の文カット
+	IF CFLAG:99 == 0
+		IF GET_AGG(TARGET) >= 50
+			PRINTFORMW %CALLNAME:(ARG:3)%が痴態に乱れる様を%CALLNAME:(ARG:2)%は喉を鳴らし、食い入るように見つめている
+		ELSE
+			PRINTFORMW 普段とは違う%CALLNAME:(ARG:3)%の甘い喘ぎ声に、%CALLNAME:(ARG:2)%は赤い顔でこちらを見つめている
+		ENDIF
+	ENDIF
+	;３Ｐのイベント口上呼び出し
+	TARGET = ARG:3
+	CALLF SET_NIGHT_KOJO(0, 2)
+	TRYCALL SELF_KOJO, TARGET, 406
+	PRINTL 
+	IF ABL:(ARG:2):11 >= 3
+		;地の文カット
+		IF CFLAG:99 == 0
+			PRINTFORML ………
+			PRINTFORML やがてどうしても我慢できなくなった%CALLNAME:(ARG:2)%は
+			PRINTFORMW 火照った身体を鎮めて欲しいと、涙交じりに%CALLNAME:MASTER%に懇願してきた……
+		ENDIF
+	ENDIF
+	PRINTL 
+	
+	CALL NIGHT_STATUS_UP_2P, LOCAL
+	
+	PRINTFORML %CALLNAME:(ARG:2)%
+	TARGET = ARG:2
+	IF ABL:欲望 >= 3
+		;00快Ｃの珠
+		CALL COMMON_UP_JUEL, TARGET, 0, ABL:Ｃ感覚*100, 0
+		;03快Ｂの珠
+		CALL COMMON_UP_JUEL, TARGET, 3, ABL:Ｂ感覚*100, 0
+	ENDIF
+	;12恭順の珠
+	CALL COMMON_UP_JUEL, TARGET, 12, ARG:1*20, 0
+	;13欲情の珠
+	IF ABL:欲望 >= 3
+		CALL COMMON_UP_JUEL, TARGET, 13, ARG*150, 0
+	ELSE
+		CALL COMMON_UP_JUEL, TARGET, 13, ARG*50, 0
+	ENDIF
+	;15恥情の珠
+	CALL COMMON_UP_JUEL, TARGET, 15, ARG*200, 0
+	TARGET = ARG:3
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:TARGET%が%CALLNAME:MASTER%の腕の中で眠ると、%CALLNAME:(ARG:2)%は憔悴しきった顔で部屋を後にした
+ENDIF
+
+;-----------------------------------------------
+;紳士達の欲望、多人数PT 乱交(旧NIGHT_EVENT_7)
+;-----------------------------------------------
+@NIGHT_RANKOU, ARG
+;誰かが貞操帯装着中は不可→条件で弾いたので、おｋ
+;LOCAL＝12。これは割り算の都合。
+LOCAL = 12
+
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTL 
+	PRINTFORML %CALLNAME:MASTER%が皆に服を脱ぐように言うと、四人は先を争うように服を脱ぎ捨て
+	PRINTFORMW 誰も彼もが快楽と愛情を求め、%CALLNAME:MASTER%へと詰め寄りその躰を押し付け行為に誘う。
+ENDIF
+PRINTL 
+;;多人数PT乱交のイベント口上呼び出し
+;REPEAT 4
+;	TRYCALL SELF_KOJO, GET_CHARA_G(COUNT), 408, ARG
+;	PRINTL 
+;REND
+
+;地の文カット
+IF CFLAG:99 == 0
+	IF RAND:2 == 0
+		PRINTFORML %CALLNAME:MASTER%は四人の身体の違いを楽しみながら、様々な性行為を楽しんだ……
+	ELSE
+		PRINTFORML %CALLNAME:MASTER%は四人を跪かせると、全員に自分に奉仕するように命じた……
+		PRINTFORML 競い合うように奉仕が始まり、生暖かい吐息と艶めかしい舌遣いが%CALLNAME:MASTER%を高めてゆく
+		IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+			PRINTFORML %CALLNAME:MASTER%が勢いよく射精すると、四人の顔はぼうっとした表情のまま白く汚れていった
+		ELSE
+			PRINTFORML %CALLNAME:MASTER%が潮を吹くと、四人はお互いの顔についた愛液を舐め取り合っていった
+		ENDIF
+	ENDIF
+	PRINTL 
+	;男根の数をカウントする
+	LOCAL:1 = 0
+	SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		LOCAL:1 += 1
+	SIF TALENT:(GET_CHARA_G(0)):120 || TALENT:(GET_CHARA_G(0)):121
+		LOCAL:1 += 1
+	SIF TALENT:(GET_CHARA_G(1)):120 || TALENT:(GET_CHARA_G(1)):121
+		LOCAL:1 += 1
+	SIF TALENT:(GET_CHARA_G(2)):120 || TALENT:(GET_CHARA_G(2)):121
+		LOCAL:1 += 1
+	SIF TALENT:(GET_CHARA_G(3)):120 || TALENT:(GET_CHARA_G(3)):121
+		LOCAL:1 += 1
+		
+	;用済みのRを用い、男の数を数える
+	LOCAL:2 = 0
+	SIF TALENT:MASTER:オトコ
+		LOCAL:2 += 1
+	SIF TALENT:(GET_CHARA_G(0)):120
+		LOCAL:2 += 1
+	SIF TALENT:(GET_CHARA_G(1)):120
+		LOCAL:2 += 1
+	SIF TALENT:(GET_CHARA_G(2)):120
+		LOCAL:2 += 1
+	SIF TALENT:(GET_CHARA_G(3)):120
+		LOCAL:2 += 1
+	
+	;全員男の場合
+	IF LOCAL:2 == 5
+		PRINTFORML そして男達は自身の欲望のままに激しく体を求め合った……
+	;棒4本
+	ELSEIF LOCAL:1 == 4
+		;主人が棒無し。なんか頑張りすぎた気がする
+		IF TALENT:MASTER:オトコ == 0 && TALENT:MASTER:ふたなり == 0
+			;両穴使用可
+			IF RAND:2 == 0 && TALENT:MASTER:処女 == 0 && EXP:MASTER:Ｖ経験 > 12 && EXP:MASTER:Ａ経験 > 12
+				IF RAND:2 == 0
+					PRINTFORML %CALLNAME:MASTER%は二本の肉棒を口に咥えて奉仕してやりながら
+					PRINTFORMW 前後の穴でも貪欲に肉棒を貪り続けた……
+				ELSE
+					PRINTFORML %CALLNAME:MASTER%は、我先にと主の膣や尻、口に肉棒を押し込む奴隷達に苦笑しながらも
+					PRINTFORML 存分にその肉棒を貪り、同時に乳首やクリトリスも弄らせると
+					PRINTFORMW 全身で快楽を受け入れ欲望のままに腰を振り続けた……
+				ENDIF
+			;Ｖ使用可
+			ELSEIF TALENT:MASTER:処女 == 0 && EXP:MASTER:Ｖ経験 > 12
+				IF RAND:2 == 0
+					PRINTFORML %CALLNAME:MASTER%は、様々な体位で性交を楽しみながら次々に奴隷達の精を貪った
+					PRINTFORML 既に膣内も子宮も4人の奴隷達の精液で満たされていたが、
+					PRINTFORML %CALLNAME:MASTER%の欲望を満たすにはまだ足りない。
+					PRINTFORML %CALLNAME:MASTER%は、自分の上に跨っていた奴隷が精を吐き出し終えると、さっさと押しのけ
+					PRINTFORMW 次の奴隷の肉棒を蜜壷にくわえ込んだ。
+				ELSE
+					PRINTFORML %CALLNAME:MASTER%の提案に、奴隷達は困惑した表情で顔を見合わせたが、
+					PRINTFORML 次の瞬間には血走った目で、次々と%CALLNAME:MASTER%に襲い掛かってきた。
+					PRINTFORML ただ己の欲望のままに女の体を貪り、精を吐き出す奴隷達。
+					PRINTFORMW 荒々しい行為の中にも気遣いを忘れない奴隷達に囲まれて、%CALLNAME:MASTER%は至福のひと時を過した
+				ENDIF
+			;Ａは使用可Ｖはダメ
+			ELSEIF EXP:MASTER:Ａ経験 > 12
+				PRINTFORML %CALLNAME:MASTER%の蜜壷に入れられない事を最初は落胆していた奴隷達だったが
+				PRINTFORML 一人、また一人と尻穴で精を貪ってやると、いつの間にか我先にと慈悲を請うようになった
+				PRINTFORML %CALLNAME:MASTER%はアナルセックスに魅了された奴隷達を苦笑交じりに見回しながら
+				PRINTFORMW 次は誰の精を貪ってやろうかと思案した。
+			;穴はダメ
+			ELSE
+				PRINTFORML %CALLNAME:MASTER%の蜜壷に入れられない事を最初は落胆していた奴隷達だったが
+				PRINTFORML %CALLNAME:MASTER%の性技の前に、次々と精を吐き出して行く
+				PRINTFORML 改めて格の違いを感じたのか、慈悲を請いだした奴隷達を苦笑交じりに見回しながら、
+				PRINTFORMW %CALLNAME:MASTER%は次は誰の精を貪ってやろうかと思案した。
+			ENDIF
+		;主人棒あり
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORML %CALLNAME:MASTER%は、一人の牝と、その牝に肉棒を擦りつけ欲望を晴らそうとする三人の奴隷を眺め
+				PRINTFORMW 満足げに頷くと、自身の欲望を晴らすべく、その輪に加わった
+			ELSE
+				PRINTFORML %CALLNAME:MASTER%が、牝に自慰させながら怒張を口で扱かせていると
+				PRINTFORML 三人の奴隷が血走った目で、ある者は牝の体に怒張を擦りつけ、ある者はその乳首を捻り上げだした。
+				PRINTFORML 快楽に悶えながらも必死で%CALLNAME:MASTER%に奉仕する牝の為の姿に欲情した%CALLNAME:MASTER%は
+				PRINTFORMW 牝の頭をしっかり固定すると、その口を喉奥まで激しく犯し始めた
+			ENDIF
+		ENDIF
+	ELSEIF ARG == 1
+		;主人棒あり
+		IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+			IF RAND:2 == 0
+				PRINTFORML %CALLNAME:MASTER%は、自分の肉棒を奪うように取り合う奴隷達を満足げ見回し
+				PRINTFORMW だれに慈悲をかけてやろうかと思案した
+			ELSE
+				PRINTFORML ４人の奴隷達は%CALLNAME:MASTER%の肉棒を中心に体を寄せ合い、互いを慰めあっている
+				PRINTFORML %CALLNAME:MASTER%は時折精を吐いては彼女らを満足させながら
+				PRINTFORMW 彼女らの嬌声を子守唄に心地よい眠りに誘われていった
+			ENDIF
+		;主人棒無し
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORML %CALLNAME:MASTER%は、自分も他の牝達と同じように一本の肉棒に群がりながら
+				PRINTFORML 他の女の体を楽しんだ
+			ELSE
+				PRINTFORML 一本の肉棒を奪い合うように貪る三匹の牝達。
+				PRINTFORML 輪に入り損ねた%CALLNAME:MASTER%は、寂しく部屋の片隅で自慰に耽っていたが
+				PRINTFORML その様子に気付いたのか、牝達を押しのけて肉棒を差し出してきた。
+				PRINTFORML %CALLNAME:MASTER%は無垢な少女のように微笑むと、
+				IF ABL:MASTER:技巧 > 1
+					PRINTFORMW その肉棒に舌を這わせ、洗練された技術で奉仕し始めた
+				;普通でない。暴行されて技術下がったのを放置しないと出ない
+				ELSE
+					PRINTFORMW その肉棒に舌を這わせ、拙いながらも懸命に奉仕し始めた
+				ENDIF
+			ENDIF
+		ENDIF
+	ELSEIF ARG == 0
+		PRINTFORMW 女達は自身の欲望のままに艶かしく体を求め合った……
+	ELSE
+		PRINTFORMW 主と奴隷達は、欲望の赴くまま次々と相手を変えて交わりあった……
+	ENDIF
+	PRINTL 
+ENDIF
+
+CALL NIGHT_STATUS_UP_5P, LOCAL, GET_CHARA_G(0), GET_CHARA_G(1), GET_CHARA_G(2), GET_CHARA_G(3)
+
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML 奴隷達との激しい行為は、夜が白み始めるまで続けられ、五人は折り重なるようにして眠りに付いた……
+
+;-----------------------------------------------
+;フランちゃん乱交(旧NIGHT_EVENT_7)
+;-----------------------------------------------
+@NIGHT_RANKOU_FLAN, ARG, ARG:1
+;分身できる人の場合 つまりフォーオブアカインド。贔屓じゃありませんよ、ええ
+IF CFLAG:99 == 0
+	PRINTFORML その夜、四人に分身した%CALLNAME:TARGET%が%CALLNAME:MASTER%の部屋へとやってきた
+	PRINTFORML %CALLNAME:TARGET%達は無邪気に微笑みながらベッドの上の%CALLNAME:MASTER%へと殺到した
+ENDIF
+;多人数PT乱交のイベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 408, ARG:1
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	IF RAND:4 == 0
+		PRINTFORMW 四人の%CALLNAME:TARGET%は一列に並ぶと、Ｍ字に足を広げて%CALLNAME:MASTER%を誘った
+	ELSEIF RAND:3 == 0
+		PRINTFORMW %CALLNAME:MASTER%が四人を同時に気持ち良くさせてあげると、%CALLNAME:TARGET%の甘い声が何重にも響いた
+	ELSEIF RAND:2 == 0
+		PRINTFORML %CALLNAME:TARGET%たちは%CALLNAME:MASTER%を押し倒すと、思い思いに舐めたり擦り付けてくる
+		PRINTFORMW %CALLNAME:MASTER%は四人の%CALLNAME:TARGET%に気持ち良くしてもらった
+	ELSE
+		PRINTFORML %CALLNAME:MASTER%が一人の%CALLNAME:TARGET%だけを相手にすると、残りの三人は退屈なのか、
+		PRINTFORMW 背中に乗って局部を押し付けたり、見せつけるように目の前で自慰を始めた
+	ENDIF
+ENDIF
+;02絶頂経験
+CALL COMMON_UP_EXP, TARGET, 2, 4, 0
+;11習得の珠
+CALL COMMON_UP_JUEL, TARGET, 11, 495, 0
+;12恭順の珠
+CALL COMMON_UP_JUEL, TARGET, 12, 495, 0
+;13欲情の珠
+CALL COMMON_UP_JUEL, TARGET, 13, 495, 0
+;15恥情の珠
+CALL COMMON_UP_JUEL, TARGET, 15, 495, 0
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML {ARG}回の行為の後、四人の%CALLNAME:TARGET%は%CALLNAME:MASTER%に寄り添って眠ってしまった……
+
+;-----------------------------------------------
+;宴会
+;----------------------------------------------
+@NIGHT_ENKAI, ARG
+PRINTL 
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORMW %CALLNAME:MASTER%は、屋敷中から酒をかき集め、宴会をすることにした。
+
+;酒類消費(合計10本消費、高い奴から順番に）
+REPEAT 10
+	;スピリタス
+	IF ITEM:スピリタス > 0
+		ITEM:スピリタス -= 1
+		CONTINUE
+	;大吟醸酒
+	ELSEIF ITEM:大吟醸酒 > 0
+		ITEM:大吟醸酒 -= 1
+		CONTINUE
+	;ワイン
+	ELSEIF ITEM:ワイン > 0
+		ITEM:ワイン -= 1
+		CONTINUE
+	;ビール
+	ELSEIF ITEM:ビール > 0
+		ITEM:ビール -= 1
+		CONTINUE
+	;カルーア
+	ELSE
+		ITEM:カルーア -= 1
+	ENDIF
+REND
+
+
+IF ARG == 1
+	;多人数酒盛りのイベント口上呼び出し
+	REPEAT 4
+		TRYCALL SELF_KOJO, GET_CHARA_G(COUNT), 450
+	REND
+	REPEAT 4
+		LOCAL = GET_CHARA_G(COUNT)
+
+		;12恭順の珠
+		CALL COMMON_UP_JUEL, LOCAL, 12, 280*ABL:LOCAL:従順*ABL:LOCAL:奉仕精神, 0
+		;酔いの処理
+		;鬼か黄昏の怪物
+		IF TALENT:COUNT:鬼 || TALENT:COUNT:黄昏の怪物
+			BASE:COUNT:酔い += 500
+		;河童か人形
+		ELSEIF TALENT:COUNT:人形 || TALENT:COUNT:河童
+			BASE:COUNT:酔い += 1500
+		;その他
+		ELSE
+			BASE:COUNT:酔い += 2000
+		ENDIF
+	REND
+ELSE
+	;３人で酒盛りのイベント口上呼び出し
+	TRYCALL SELF_KOJO, GET_CHARA_G(0), 451
+	TRYCALL SELF_KOJO, GET_CHARA_M(), 451
+	REPEAT 2
+		LOCAL = (COUNT == 0) ? TARGET # GET_CHARA_M()
+		;12恭順の珠
+		CALL COMMON_UP_JUEL, LOCAL, 12, 280*ABL:LOCAL:従順*ABL:LOCAL:奉仕精神, 0
+		;酔いの処理
+		;鬼か黄昏の怪物
+		IF TALENT:COUNT:鬼 || TALENT:COUNT:黄昏の怪物
+			BASE:COUNT:酔い += 500
+		;河童か人形
+		ELSEIF TALENT:COUNT:人形 || TALENT:COUNT:河童
+			BASE:COUNT:酔い += 1500
+		;その他
+		ELSE
+			BASE:COUNT:酔い += 2000
+		ENDIF
+	REND
+ENDIF
+PRINTL 
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTW 宴は夜遅くまで続き、皆心行くまで楽しんだ……
+
+;=====================================================
+;
+;助手との夜イベント
+;
+;=====================================================
+;-----------------------------------------------
+;助手とセックス
+;----------------------------------------------
+;ARG：旧G
+@NIGHT_ASSI_SEX, ARG
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%を抱くことにした…
+;助手とセックスのイベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 461
+;地の文カット
+IF CFLAG:99 == 0
+	PRINT その日は夜遅くまで
+	;如何でも良い拘り。
+	IF ABL:MASTER:欲望 > ABL:欲望 || (RAND:2 == 0 && ABL:MASTER:欲望 == ABL:欲望)
+		PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%との行為を楽しんだ
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%との行為を楽しんだ
+	ENDIF
+ENDIF
+
+LOCAL = MAX((ABL:TARGET:欲望+ABL:MASTER:欲望)/2, 3)
+
+CALL NIGHT_STATUS_UP_2P, LOCAL
+
+;反発奴隷による事後襲撃判定。
+LOCAL = 0
+
+SIF ARG != ASSI && MARK:ARG:反発刻印 > 2
+	LOCAL += 4
+SIF TALENT:MASTER:オトコ == 0
+	LOCAL += 1
+SIF TALENT:ASSI:オトコ == 0
+	LOCAL += 2
+SIF LOCAL < 5
+	LOCAL = 0
+
+IF LOCAL > 4
+	IF LOCAL == 6 || (RAND:2 == 0 && LOCAL == 7)
+		LOCAL:1 = ASSI
+		LOCAL:2 = MASTER
+	ELSE
+		LOCAL:1 = MASTER
+		LOCAL:2 = ASSI
+	ENDIF
+	CALL NIGHT_ASSI_SEX_EX, ARG, LOCAL:1, LOCAL:2
+	RETURN 1
+ENDIF
+RETURN 0
+
+;-----------------------------------------------
+;助手と二人で酒を飲む
+;----------------------------------------------
+@NIGHT_ASSI_SAKE
+
+SIF CFLAG:99 == 0
+	PRINTFORML その夜は%CALLNAME:ASSI%と二人で酒を飲みながら語り合う事にした…
+
+;酒類消費(合計1本消費、高い奴から順番に）
+;スピリタス
+IF ITEM:スピリタス > 0
+	ITEM:スピリタス -= 1
+;大吟醸酒
+ELSEIF ITEM:大吟醸酒 > 0
+	ITEM:大吟醸酒 -= 1
+;ワイン
+ELSEIF ITEM:ワイン > 0
+	ITEM:ワイン -= 1
+;ビール
+ELSEIF ITEM:ビール > 0
+	ITEM:ビール -= 1
+;カルーア
+ELSE
+	ITEM:カルーア -= 1
+ENDIF
+;助手と酒を飲むのイベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 462
+
+;LOCALしなくても大丈夫だが、多人数での宴会と書式を合せる。
+LOCAL = TARGET
+;12恭順の珠
+CALL COMMON_UP_JUEL, LOCAL, 12, 280*ABL:LOCAL:従順*ABL:LOCAL:奉仕精神, 0
+
+RETURN 0
+
+;-----------------------------------------------
+;助手とのSM行為 助手がS
+;----------------------------------------------
+@NIGHT_ASSI_SM_S
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:ASSI%に鞭を手渡すと、一瞬キョトンとした顔をしたが
+	PRINTFORML 次の瞬間には%CALLNAME:MASTER%を押し倒し服を剥ぎ取ると、その背中に鞭を振り下ろした…
+ENDIF
+;助手とSMプレイする(助手がS)のイベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 463
+
+CALL NIGHT_EVENT_SM_S_2, MASTER
+
+RETURN 0
+
+;-----------------------------------------------
+;助手とのSM行為 助手がM
+;----------------------------------------------
+@NIGHT_ASSI_SM_M
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:ASSI%にお仕置きしてやろうと言うと、一瞬キョトンとした顔をしたが
+	IF ABL:マゾっ気 < 3
+		PRINTFORML 痛くしないのなら、と言うと服を脱いで背中を向けた
+	ELSE
+		PRINTFORML 直ぐに服を脱ぎ去ると、背中を向けてお仕置きをねだってきた
+	ENDIF
+ENDIF
+;助手とSMプレイする(助手がM)のイベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 464
+
+CALL NIGHT_EVENT_SM_M_2, MASTER
+
+RETURN 0
+
+;-----------------------------------------------
+;助手と夜の里でウフフ
+;----------------------------------------------
+@NIGHT_ASSI_SEX_PH
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜道は危険だが、%CALLNAME:ASSI%が居れば安心だろう。
+	PRINTFORMW %CALLNAME:MASTER%と%CALLNAME:ASSI%は夜道を里へ向かい歩き出した
+ENDIF
+
+;何しようか。主助の順で
+;男男で、女の子襲ってレイプ(お持ち帰りはしない。面倒なので)+公園のベンチである人を見つけて…
+;女女は逆レイプか大乱交プレイ
+;それ以外は女の子レイプのみ
+
+LOCAL = 0
+
+IF TALENT:オトコ && TALENT:MASTER:オトコ
+	LOCAL = (RAND:2) ? 9 # 1
+ELSEIF !TALENT:オトコ && !TALENT:ふたなり && !TALENT:MASTER:オトコ && !TALENT:MASTER:ふたなり
+	LOCAL = (RAND:2) ? 3 # 2
+ELSE
+	LOCAL = 1
+ENDIF
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTL 
+	IF LOCAL == 1
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%が物陰に隠れて辺りをうかがっていると、
+		PRINT 無用心にも一人の
+		PRINTDATA
+			DATA 女
+			DATA 娘
+			DATA 少女
+		ENDDATA
+		PRINTL が歩いてきた。
+		PRINTL 月明かりに照らされたその顔は、なかなかに整っていて美しい
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%は頷き合うと、頬かむりをして獲物に襲い掛かった
+	ELSEIF LOCAL == 2
+		PRINTFORM %CALLNAME:MASTER%と%CALLNAME:TARGET%が通りを歩いていると、向こうから一人の
+		PRINTDATA
+			DATA いいオトコ
+			DATA 若者
+			DATA 少年
+		ENDDATA
+		PRINTL が歩いてきた。
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%は頷き合うと、妖艶な仕草で獲物を裏路地へ誘った
+	ELSEIF LOCAL == 3
+		PRINTFORM %CALLNAME:MASTER%と%CALLNAME:TARGET%が少し外れた路地を歩いていると
+		PRINT 数人の
+		PRINTDATA
+			DATA 男たちに
+			DATA 若者グループに
+		ENDDATA
+		PRINTL 呼び止められた。
+		PRINTL 月明かりに照らされたその顔は下卑た笑みを浮かべ、欲望を灯した目が二人の体を嘗め回す。
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%は頷き合うと、獲物達を人気のない場所へ誘った。
+	ELSEIF LOCAL == 9
+		PRINTFORML ふと里の一角に何やらいいオトコが。
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%は何かに吸い寄せられるようにオトコの方へ歩み寄った…
+	ENDIF
+ENDIF
+;助手と里で誰かとえっちをするイベント口上呼び出し
+TRYCALL SELF_KOJO, TARGET, 465, LOCAL
+
+CALLFORM NIGHT_ASSI_SEX_PH_{LOCAL}, MASTER, LIMIT(RAND:4+ABL:MASTER:欲望+ABL:欲望, 2, 5)
+
+RETURN 0
+
+;-----------------------------------------------
+;反発奴隷による、事後襲撃
+;----------------------------------------------
+@NIGHT_ASSI_SEX_EX, ARG, ARG:1, ARG:2
+;襲撃者ARG,被害者ARG:1,発見者ARG:2
+IF CFLAG:99 == 0
+	PRINTL …
+	PRINTL ……
+	PRINTFORML 用を足しに行った%CALLNAME:(ARG:1)%の帰りが遅い。
+	PRINTFORML 不意に不安になった%CALLNAME:(ARG:2)%は様子を見に行く事にした
+	WAIT
+ENDIF
+
+IF (TALENT:ARG:オトコ || TALENT:ARG:ふたなり) && !(CFLAG:ARG:42 & 2)
+	IF CFLAG:99 == 0
+		IF RAND:4 == 0
+			PRINTL 厠まで行ってみると、女のすすり泣く声が聞こえる…。
+			PRINTFORML %CALLNAME:(ARG:2)%が慌てて中を確認すると、そこには白濁に塗れた%CALLNAME:(ARG:1)%の姿があった…。
+		ELSEIF RAND:3 == 0
+			PRINTL 厠まで行ってみると、半開きの戸から灯りが漏れている。
+			PRINTFORML %CALLNAME:(ARG:2)%が中を確認すると、そこには白濁に塗れ呆然とする%CALLNAME:(ARG:1)%の姿があった…。
+		ELSEIF RAND:2 == 0
+			PRINTL 厠へ向かう途中、僅かに戸の開いた部屋から女のすすり泣く声が聞こえる。
+			PRINTFORML 使われていないはずのその部屋から聞こえる声を不審に重い%CALLNAME:(ARG:2)%が中を確認すると
+			PRINTFORML そこには白濁に塗れた%CALLNAME:(ARG:1)%の姿があった…。
+		ELSE
+			PRINTL 厠へ向かう途中、僅かに戸の開いた部屋からがあった。
+			PRINTFORML 使われていないはずの部屋…。%CALLNAME:(ARG:2)%が中を確認すると
+			PRINTFORML そこには白濁に塗れ呆然とする%CALLNAME:(ARG:1)%の姿があった…。
+		ENDIF
+	ENDIF
+	
+	;行為数決定
+	LOCAL = 2 + ABL:ARG:欲望
+	
+	;被害者側処理。
+	IF TALENT:(ARG:1):0
+		TALENT:(ARG:1):0 = 0
+		PRINTFORML 処女喪失(%CALLNAME:(ARG:1)%)
+		;主人の処女を奪ったフラグ
+		IF ARG:1 == MASTER
+			CFLAG:ARG:153 |= 1
+			CFLAG:(ARG:1):153 |= 4
+		ENDIF
+	ENDIF
+	;00V経験
+	CALL COMMON_UP_EXP, ARG:1, 0, LOCAL, 0
+	;02絶頂経験
+	CALL COMMON_UP_EXP, ARG:1, 2, (LOCAL*(1+ABL:(ARG:1):1)/4), 0
+	;04精液経験
+	CALL COMMON_UP_EXP, ARG:1, 4, (LOCAL*(1+ABL:ARG:Ｃ感覚)/4), 0
+	IF ARG:1 != MASTER && COM_ABLE_CHECK_FEMALE(ARG:1) && LOCAL*(1+ABL:ARG:Ｃ感覚)/4 > 0
+		C_NUMBER = MAX(RAND:(LOCAL*(1+ABL:ARG:Ｃ感覚)/4 + 1), 0)
+		CFLAG:(ARG:1):3666 += C_NUMBER
+		CALL CALCULATE_LIMIT, ARG:1
+	ENDIF
+	;81被強姦経験
+	CALL COMMON_UP_EXP, ARG:1, 81, 1, 0
+	;83被姦快楽経験
+	SIF LOCAL*(1+ABL:(ARG:1):1)/4 >= 1
+		CALL COMMON_UP_EXP, ARG:1, 83, LOCAL, 0
+
+	IF (ARG:1) == MASTER
+		;堕落度上昇
+		CFLAG:MASTER:4066 += LOCAL * 5
+	ELSE
+		;01快Ｖの珠
+		CALL COMMON_UP_JUEL, ARG:1, 1, 10*LOCAL*ABL:(ARG:1):1*ABL:(ARG:1):1, 0
+		;13欲望の珠
+		SIF LOCAL*(1+ABL:(ARG:1):1)/4 >= 1
+			CALL COMMON_UP_JUEL, ARG:1, 13, 10*LOCAL*ABL:(ARG:1):1*ABL:(ARG:1):11, 0
+		;16苦痛の珠
+		SIF ABL:(ARG:1):1 < 3
+			CALL COMMON_UP_JUEL, ARG:1, 16, 100*LOCAL*(3-ABL:(ARG:1):1), 0
+		;17恐怖の珠
+		CALL COMMON_UP_JUEL, ARG:1, 17, 10*LOCAL*(5-ABL:(ARG:1):1)*(5-ABL:(ARG:1):11), 0
+		PRINTL 
+	ENDIF
+	
+	;加害者側
+	;02絶頂経験
+	CALL COMMON_UP_EXP, ARG, 2, (LOCAL*(1+ABL:ARG:Ｃ感覚)/4), 0
+	;03射精経験
+	CALL COMMON_UP_EXP, ARG, 3, (LOCAL*(1+ABL:ARG:Ｃ感覚)/4), 0
+	;80強姦経験
+	CALL COMMON_UP_EXP, ARG, 80, 1, 0
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG, 0, 10*LOCAL*(1+ABL:ARG:Ｃ感覚)*(1+ABL:ARG:Ｃ感覚), 0
+	;13欲望の珠
+	CALL COMMON_UP_JUEL, ARG, 13, 10*LOCAL*(1+ABL:ARG:Ｃ感覚)*(1+ABL:ARG:欲望), 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, ARG, 100, 500*(2+MARK:ARG:反発刻印), 0
+	PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(%CALLNAME:ARG%)
+ELSE
+	PRINTFORML %CALLNAME:(ARG:2)%は、傷つき倒れている%CALLNAME:(ARG:1)%を発見した。
+	IF ABL:(ARG:1):12 > 0
+		ABL:(ARG:1):12 -= 1
+		PRINTFORML %CALLNAME:(ARG:1)%は怪我を負った(%ABLNAME:12%－1レベル)
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;反発奴隷達による、輪姦
+;----------------------------------------------
+@NIGHT_ASSI_SEX_LUNA, ARG, ARG:1, ARG:2, ARG:3
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:MASTER%が%CALLNAME:ASSI%と、どう過そうか考えていると不意に来客があった。
+	PRINTFORML 楽しみを邪魔され、不機嫌になった%CALLNAME:MASTER%が確認せずに戸を開けると
+	PRINTFORML そこには%CALLNAME:ARG%と%CALLNAME:(ARG:1)%と%CALLNAME:(ARG:2)%と%CALLNAME:(ARG:3)%がいた。
+	PRINTFORML %CALLNAME:MASTER%の静止の命も聞かず、四人は部屋に押し入ると、%CALLNAME:ARG%が%CALLNAME:ASSI%を組み敷いた
+	PRINTL  
+ENDIF
+
+REPEAT 4
+	TRYCALL SELF_KOJO, ARG:COUNT, 468
+REND
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 四人は%CALLNAME:MASTER%と%CALLNAME:ASSI%の衣服を剥ぎ取り、
+	PRINTFORML 思い思いに二人の体に肉棒を捻じ込んだ…。
+ENDIF
+
+PRINTL  
+
+LOCAL = 4 + ABL:ARG:欲望 + ABL:(ARG:1):11 + ABL:(ARG:2):11 + ABL:(ARG:3):11
+
+;被害者側処理
+REPEAT 2
+	TARGET = (COUNT == 0) ? MASTER # ASSI
+	IF TALENT:処女
+		TALENT:処女 = 0
+		PRINTFORML 処女喪失(%CALLNAME:TARGET%)
+		;主人の処女を奪ったフラグ
+		IF TARGET == MASTER
+			CFLAG:153 |= 4
+			CFLAG:ARG:153 |= 1
+			CFLAG:(ARG:1):153 |= 1
+			CFLAG:(ARG:2):153 |= 1
+			CFLAG:(ARG:3):153 |= 1
+		ENDIF
+	ENDIF
+	;00Ｖ経験
+	SIF !TALENT:オトコ
+		CALL COMMON_UP_EXP, TARGET, 0, LOCAL, 0
+	;01Ａ経験
+	CALL COMMON_UP_EXP, TARGET, 1, LOCAL*2/3, 0
+	;02絶頂経験
+	LOCAL:1 = 0
+	LOCAL:1 += LOCAL*(1+ABL:Ｃ感覚)/8
+	SIF !TALENT:オトコ
+		LOCAL:1 += LOCAL*(1+ABL:Ｖ感覚)/4
+	LOCAL:1 += LOCAL*(1+ABL:Ａ感覚)*2/3
+	LOCAL:1 += LOCAL*(1+ABL:Ｂ感覚)/8
+	CALL COMMON_UP_EXP, TARGET, 2, LOCAL:1, 0
+	;03射精経験
+	SIF TALENT:オトコ || TALENT:ふたなり
+		CALL COMMON_UP_EXP, TARGET, 3, (LOCAL*(1 + ABL:Ｃ感覚)/8), 0
+	;04精液経験
+	CALL COMMON_UP_EXP, TARGET, 4, (LOCAL*(4 + ABL:ARG:Ｃ感覚 + ABL:(ARG:1):0 + ABL:(ARG:2):0 + ABL:(ARG:3):0)/16), 0
+	IF COM_ABLE_CHECK_FEMALE(TARGET) && LOCAL*(4 + ABL:ARG:Ｃ感覚 + ABL:(ARG:1):0 + ABL:(ARG:2):0 + ABL:(ARG:3):0)/16 > 0
+		C_NUMBER = MAX(RAND:(LOCAL*(4 + ABL:ARG:Ｃ感覚 + ABL:(ARG:1):0 + ABL:(ARG:2):0 + ABL:(ARG:3):0)/16 + 1), 0)
+		CFLAG:3666 += C_NUMBER
+		CALL CALCULATE_LIMIT, TARGET
+	ENDIF
+	;23キス経験
+	LOCAL:1 = RAND:(LOCAL)
+	CALL COMMON_UP_EXP, TARGET, 23, LOCAL:1, 0
+	;43Ａ快楽経験
+	CALL COMMON_UP_EXP, TARGET, 43, LOCAL*ABL:Ａ感覚*2/3, 0
+	;44Ｂ快楽経験
+	CALL COMMON_UP_EXP, TARGET, 43, LOCAL*ABL:Ａ感覚/2, 0
+	;82被輪姦経験
+	CALL COMMON_UP_EXP, TARGET, 82, 1, 0
+	;83被姦快楽経験
+	LOCAL:1 = 0
+	SIF LOCAL*(1+ABL:Ｃ感覚)/8 >=1
+		LOCAL:1 += LOCAL/2
+	SIF LOCAL*(1+ABL:Ｖ感覚)/4 >=1 && !TALENT:オトコ
+		LOCAL:1 += LOCAL
+	SIF LOCAL*(1+ABL:Ａ感覚)*2/3 >= 1
+		LOCAL:1 += LOCAL*2/3
+	SIF LOCAL*(1+ABL:Ｂ感覚)/8 >= 1
+		LOCAL:1 += LOCAL/2
+	CALL COMMON_UP_EXP, TARGET, 83, LOCAL:1, 0
+
+	IF GET_CHARA_M() == MASTER
+		;堕落度上昇
+		CFLAG:MASTER:4066 += LOCAL * 8
+	ELSE
+		;00快Ｃの珠
+		CALL COMMON_UP_JUEL, TARGET, 0, 10*LOCAL*ABL:Ｃ感覚*ABL:Ｃ感覚/2, 0
+		;01快Ｖの珠
+		SIF !TALENT:オトコ
+			CALL COMMON_UP_JUEL, TARGET, 1, 10*LOCAL*ABL:Ｖ感覚*ABL:Ｖ感覚, 0
+		;02快Ａの珠
+		CALL COMMON_UP_JUEL, TARGET, 2, 10*LOCAL*ABL:Ａ感覚*ABL:Ａ感覚*2/3, 0
+		;03快Ｂの珠
+		CALL COMMON_UP_JUEL, TARGET, 3, 10*LOCAL*ABL:Ｂ感覚*ABL:Ｂ感覚/2, 0
+		;13欲望の珠
+		SIF LOCAL:1 >= 1
+			CALL COMMON_UP_JUEL, TARGET, 13, 10*LOCAL*ABL:欲望*ABL:欲望, 0
+		;16苦痛の珠
+		SIF ABL:Ｖ感覚 < 3 && ABL:Ａ感覚 < 3
+			CALL COMMON_UP_JUEL, TARGET, 16, 10*LOCAL*(3-ABL:Ｖ感覚)*(3-ABL:Ａ感覚), 0
+		;17恐怖の珠
+		CALL COMMON_UP_JUEL, TARGET, 17, 10*LOCAL*(5-ABL:Ｖ感覚)*(5-ABL:Ａ感覚), 0
+		PRINTW  
+	ENDIF
+REND
+
+;加害者側
+REPEAT 4
+	TARGET = ARG:COUNT
+	;加害者側
+	;02絶頂経験
+	CALL COMMON_UP_EXP, TARGET, 2, (LOCAL*(1+ABL:Ｃ感覚)/16), 0
+	;03射精経験
+	CALL COMMON_UP_EXP, TARGET, 3, (LOCAL*(1+ABL:Ｃ感覚)/16), 0
+	;23キス経験
+	LOCAL:1 = RAND:(LOCAL/3)
+	CALL COMMON_UP_EXP, TARGET, 23, LOCAL:1, 0
+	;80強姦経験
+	CALL COMMON_UP_EXP, TARGET, 80, 1, 0
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, TARGET, 0, 10*LOCAL*(1+ABL:Ｃ感覚)*(1+ABL:Ｃ感覚)/4, 0
+	;13欲望の珠
+	CALL COMMON_UP_JUEL, TARGET, 13, 10*LOCAL*(1+ABL:Ｃ感覚)*(1+ABL:欲望)/4, 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, TARGET, 100, 500*(2+MARK:反発刻印), 0
+	PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(%CALLNAME:TARGET%)
+REND
+
+PRINTW  
+
+REPEAT 4
+	TRYCALL SELF_KOJO, ARG:COUNT, 469
+REND
+
+IF CFLAG:99 == 0
+	PRINTL 四人が帰ると、部屋にはあらゆる穴から白濁を溢れさせ、
+	PRINTFORML 虚ろな目をした%CALLNAME:MASTER%と%CALLNAME:ASSI%が残されるのみであった…。
+ENDIF
+
+;=====================================================
+;
+;ここから反発奴隷のターン
+;
+;=====================================================
+;-----------------------------------------------
+;反発奴隷による、レイプ
+;----------------------------------------------
+@NIGHT_GOUKAN_N, ARG, ARG:1
+;ARG:1が強姦する人
+;ARGが強姦される人
+;行為数指定。主人相手なら8.奴隷の場合、淫乱でないなら4
+LOCAL = 8
+SIF ARG != MASTER && TALENT:(ARG:1):170 == 0
+	LOCAL = 4
+
+LOCAL:1 = 0
+
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:ARG%が床に就こうとしたとき、突然%CALLNAME:(ARG:1)%が部屋を訪ねてきた
+;対象が男である。ここまでの条件で当然調合禁断は持っている
+IF TALENT:ARG:オトコ
+	CALL SHIFT_TO_F, ARG
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML 無理矢理%CALLNAME:ARG%に口に〔虹の飴玉〕を押し込んだ
+	PRINTFORML [なんと%CALLNAME:ARG%は女性の体になってしまった]
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORM そして%CALLNAME:(ARG:1)%は、戸惑う%CALLNAME:ARG%を押さえつけ、
+	;貞操帯付き
+	IF (CFLAG:(ARG:1):42 & 2)
+		LOCAL:1 = 1
+		;地の文カット
+		IF CFLAG:99 == 0
+			SIF TALENT:(ARG:1):150
+				PRINTFORML \@(ARG == MASTER) ? 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて # 嫉妬も露わに%CALLNAME:ARG%を睨みつけながら\@
+			PRINTFORML \@(EXP:ARG:Ｖ経験 == 0) ? 男を知らない # 湿り気のない\@秘処に拳を押し込んだ
+		ENDIF
+	;棒が無い場合生やす
+	ELSE
+		IF TALENT:オトコ == 0 && TALENT:ふたなり == 0
+			TALENT:ふたなり = 1
+			CALL CHANGE_FUTA_COMMON, TARGET
+			;地の文カット
+			IF CFLAG:99 == 0
+				PRINTL 彼女にはあるはずの無いものをとりだすと
+				SIF TALENT:(ARG:1):150
+					PRINTFORML \@(ARG == MASTER) ? 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて # 嫉妬も露わに%CALLNAME:ARG%を睨みつけながら\@
+				PRINTFORML \@(EXP:ARG:Ｖ経験 == 0) ? 男を知らない # 湿り気のない\@秘処にその怒張を捻じ込んだ
+			ENDIF
+		;地の文カット
+		ELSEIF CFLAG:99 == 0
+			SIF TALENT:(ARG:1):150
+				PRINTFORML \@(ARG == MASTER) ? 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて # 嫉妬も露わに%CALLNAME:ARG%を睨みつけながら\@
+			PRINTFORML \@(EXP:ARG:Ｖ経験 == 0) ? 男を知らない # 湿り気のない\@秘処に怒張を捻じ込んだ
+		ENDIF
+	ENDIF
+;対象が女である
+ELSE
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML 不審に思った%CALLNAME:ARG%が追い返そうとするも
+		PRINTFORML %CALLNAME:(ARG:1)%は強引に部屋に入り、%CALLNAME:ARG%を押し倒すと
+		PRINTFORML 抵抗する%CALLNAME:ARG%の服を引き裂き、
+	ENDIF
+	;貞操帯付き、棒は無いが相手が女奴隷、棒が無く禁断も調合も無く女主人
+	IF (CFLAG:(ARG:1):42 & 2) || ((TALENT:オトコ == 0 && TALENT:ふたなり == 0) && (ARG != MASTER || (ARG == MASTER &&(TALENT:調合知識 == 0 && TALENT:禁断の知識 == 0))))
+		LOCAL:1 = 1
+		;地の文カット
+		IF CFLAG:99 == 0
+			SIF TALENT:(ARG:1):150
+				PRINTFORML \@(ARG == MASTER) ? 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて # 嫉妬も露わに%CALLNAME:ARG%を睨みつけながら\@
+			PRINTFORML \@(EXP:ARG:Ｖ経験 == 0) ? 男を知らない # 湿り気のない\@秘処に拳を押し込んだ
+		ENDIF
+	;主人相手で棒が無い場合生やす
+	ELSE
+		IF ARG == MASTER && (TALENT:オトコ == 0 && TALENT:ふたなり == 0)
+			TALENT:ふたなり = 1
+			CALL CHANGE_FUTA_COMMON, TARGET
+			;地の文カット
+			IF CFLAG:99 == 0
+				PRINTL 彼女にはあるはずの無いものをとりだすと
+				SIF TALENT:(ARG:1):150
+					PRINTFORML 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて
+				PRINTFORML \@(EXP:ARG:Ｖ経験 == 0) ? 男を知らない # 湿り気のない\@秘処にその怒張を捻じ込んだ
+			ENDIF
+		;それ以外普通に棒はあるはず。
+		;地の文カット
+		ELSEIF CFLAG:99 == 0
+			SIF TALENT:(ARG:1):150
+				PRINTFORML 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて
+			PRINTFORML \@(EXP:ARG:Ｖ経験 == 0) ? 男を知らない # 湿り気のない\@秘処に怒張を捻じ込んだ
+		ENDIF
+	ENDIF
+ENDIF
+IF ARG == MASTER
+	;主人が寝ているところに押し掛けてきた奴隷のイベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 422
+ELSE
+	;他の奴隷を犯すイベント口上呼び出し
+	TRYCALL SELF_KOJO, (ARG:1), 434
+	;他の奴隷に犯されるイベント口上呼び出し
+	TRYCALL SELF_KOJO, ARG, 431
+ENDIF
+;80強姦経験
+CALL COMMON_UP_EXP, (ARG:1), 80, 1, 0
+;81被強姦経験
+CALL COMMON_UP_EXP, ARG, 81, 1, 0
+;83被姦快楽経験
+IF LOCAL:1 == 0
+	SIF ABL:ARG:Ｖ感覚 > 2
+		CALL COMMON_UP_EXP, ARG, 83, LOCAL, 0
+ELSE
+	SIF ABL:ARG:Ｖ感覚 > 4
+		CALL COMMON_UP_EXP, ARG, 83, LOCAL, 0
+ENDIF
+IF TALENT:ARG:処女 >= 1
+	;地の文カット
+	IF CFLAG:99 == 0
+		IF LOCAL:1 == 0
+			PRINTFORML %CALLNAME:(ARG:1)%は一頻り%CALLNAME:ARG%の膣内を楽しむと
+			PRINTFORMW 精液と愛液、そして破瓜の血に汚れた怒張を%CALLNAME:ARG%の口に押し込み、喉奥まで執拗に犯し続けた
+		ELSE
+			PRINTFORML %CALLNAME:(ARG:1)%は拳を入れられ苦痛に喘ぐ%CALLNAME:MASTER%の様を存分に楽しむと
+			PRINTFORMW 愛液と破瓜の血に汚れた手を%CALLNAME:MASTER%の口に押し込み、その舌を弄んだ
+		ENDIF
+	ENDIF
+	TALENT:ARG:処女 = 0
+	PRINTFORML 処女喪失(%CALLNAME:ARG%)
+	IF LOCAL:1 == 0
+		;00Ｖ経験
+		CALL COMMON_UP_EXP, ARG, 0, LOCAL/2, 0
+		IF ARG != MASTER
+			;04精液経験
+			CALL COMMON_UP_EXP, ARG, 4, LOCAL/2, 0
+			IF COM_ABLE_CHECK_FEMALE(ARG) && LOCAL/2 > 0
+				C_NUMBER = MAX(RAND:(LOCAL/2 + 1), 0)
+				CFLAG:ARG:3666 += C_NUMBER
+				CALL CALCULATE_LIMIT, ARG
+			ENDIF
+		ENDIF
+	ELSE
+		;00Ｖ経験
+		CALL COMMON_UP_EXP, ARG, 0, LOCAL*5/2, 0
+		;32Ｖ拡張経験
+		CALL COMMON_UP_EXP, ARG, 32, LOCAL, 0
+	ENDIF
+	IF ARG == MASTER
+		;主人の処女を奪ったフラグ
+		CFLAG:153 |= 1
+		CFLAG:ARG:153 |= 4
+		;貞操観念持ちであるなら堕落度増加。ドＭとマゾがあれば消滅、狂気取得
+		IF TALENT:ARG:貞操観念
+			CFLAG:ARG:4066 += 2
+			TALENT:ARG:マゾ = 0
+			TALENT:ARG:ドＭ = 0
+			TALENT:ARG:狂気 = 1
+		;主人が貞操無頓着も貞操観念もないなら狂気取得
+		ELSEIF TALENT:ARG:貞操無頓着 == 0 && TALENT:ARG:狂気 == 0
+			TALENT:ARG:狂気 = 1
+		ENDIF
+	ENDIF
+ELSE
+	IF LOCAL:1 == 0
+		;地の文カット
+		IF CFLAG:99 == 0
+			PRINTFORML 無理矢理犯され何度も射精されている内に何時しか自分から腰を振っていた\@(TALENT:(ARG:1):150 && ARG == MASTER) ? %CALLNAME:ARG%に嬉しそうな笑みを浮かべて # %CALLNAME:ARG%を罵りながら\@
+			PRINTFORMW %CALLNAME:(ARG:1)%は執拗に膣内を犯し続けた
+		ENDIF
+		;00Ｖ経験
+		CALL COMMON_UP_EXP, ARG, 0, LOCAL, 0
+		IF ARG != MASTER
+			;02絶頂経験
+			CALL COMMON_UP_EXP, ARG, 2, LOCAL/4, 0
+			;04精液経験
+			CALL COMMON_UP_EXP, ARG, 4, LOCAL/2, 0
+			IF ARG != MASTER && COM_ABLE_CHECK_FEMALE(ARG) && LOCAL/2 > 0
+				C_NUMBER = MAX(RAND:(LOCAL/2 + 1), 0)
+				CFLAG:ARG:3666 += C_NUMBER
+				CALL CALCULATE_LIMIT, ARG
+			ENDIF
+		ENDIF
+	ELSE
+		;地の文カット
+		IF CFLAG:99 == 0
+			PRINTFORML 苦悶する%CALLNAME:ARG%を眺め、\@(TALENT:(ARG:1):150 && ARG == MASTER) ? 陶酔した笑みを浮かべて # 残忍な笑みを浮かべながら\@
+			PRINTFORMW %CALLNAME:(ARG:1)%は執拗に膣内を蹂躙し続けた
+		ENDIF
+		;00Ｖ経験
+		CALL COMMON_UP_EXP, ARG, 0, LOCAL*5, 0
+		;32Ｖ拡張経験
+		CALL COMMON_UP_EXP, ARG, 32, LOCAL*2, 0
+	ENDIF
+ENDIF
+IF LOCAL:1 == 0
+	IF ARG == MASTER
+		;堕落度上昇
+		CFLAG:MASTER:4066 += LOCAL * 10
+	ELSE
+		;01快Ｖの珠
+		CALL COMMON_UP_JUEL, ARG, 1, LOCAL*80*ABL:ARG:Ｖ感覚, 0
+		;13欲情の珠
+		CALL COMMON_UP_JUEL, ARG, 13, LOCAL*50*ABL:ARG:Ｖ感覚, 0
+		;100否定の珠
+		CALL COMMON_UP_JUEL, ARG, 100, LOCAL*500, 0
+	ENDIF
+	;03射精経験
+	CALL COMMON_UP_EXP, (ARG:1), 3, LOCAL/2, 0
+	;LUNATIC以上は射精するたびに体力が減少
+	CALL EXHAUST_EJAC, ARG:1, LOCAL/2
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG:1, 0, LOCAL*400, 0
+ELSE
+	IF ARG != MASTER
+		;16苦痛の珠
+		CALL COMMON_UP_JUEL, ARG, 16, LOCAL*800, 0
+		;17恐怖の珠
+		CALL COMMON_UP_JUEL, ARG, 17, LOCAL*500, 0
+		;100否定の珠
+		CALL COMMON_UP_JUEL, ARG, 100, LOCAL*1000, 0
+	ENDIF
+ENDIF
+;13欲情の珠
+CALL COMMON_UP_JUEL, ARG:1, 13, LOCAL*250, 0
+;100否定の珠
+CALL COMMON_DOWN_JUEL, ARG:1, 100, 500*(2+MARK:(ARG:1):9), 0
+PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(%CALLNAME:(ARG:1)%)
+PRINTL 
+;襲撃後の捨て台詞のイベント口上呼び出し
+LOCAL = (ARG == MASTER) ? 420 # 430
+TRYCALL SELF_KOJO, ARG:1, LOCAL
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORM %CALLNAME:(ARG:1)%が満足し部屋を去ると、
+	IF LOCAL:1 == 0
+		PRINTFORMW そこには全身を精液塗れにした虚ろな瞳の%CALLNAME:ARG%が残されるのみであった……
+	ELSE
+		PRINTFORMW そこにはすすり泣く%CALLNAME:ARG%が残されるのみであった……
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;反発奴隷による、男奴隷籠絡
+;----------------------------------------------
+@NIGHT_NTR_M, ARG, ARG:1
+;他とは違い、ここは一通りなんで楽なものである
+;と思ったら文章長くなった
+;行為数指定。実に適当。
+;どうせ後で4で割るなら最初から1で良かった
+;基本値12
+LOCAL = 12
+
+;襲撃者が淫乱なら+4
+SIF TALENT:(ARG:1):170
+	LOCAL += 4
+;襲撃者が小悪魔なら+4
+SIF TALENT:(ARG:1):93
+	LOCAL += 4
+;襲撃者が淫壷なら+4
+SIF TALENT:(ARG:1):172
+	LOCAL += 4
+;被害者が淫乱なら+4
+SIF TALENT:ARG:淫乱
+	LOCAL += 4
+;被害者が淫茎なら+4
+SIF TALENT:ARG:淫核／淫茎
+	LOCAL += 4
+;被害者が親愛なら-4
+SIF TALENT:ARG:親愛
+	LOCAL -= 4
+;被害者が貞操観念持ちなら-4
+SIF TALENT:ARG:貞操観念
+	LOCAL -= 4
+
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 丑三つ時。%CALLNAME:MASTER%は尿意を催し、厠で用を足した帰り道
+	PRINTFORML ふと%CALLNAME:ARG%の部屋から明かりが漏れているのを見つけた。
+	PRINTFORML %CALLNAME:ARG%はまだ起きているのだろうか?
+	PRINTFORML もしかして%CALLNAME:MASTER%の事を思って自慰していたりするんだろうか？
+	PRINTL 
+	PRINTFORML %CALLNAME:MASTER%はニヤニヤ笑いながら部屋に近づいていくと
+	PRINTFORML なんと部屋からは女の嬌声と淫靡な水音が聞こえてくるではないか
+	PRINTFORML ドクンと心臓が一際高く波立つのを感じながら足音を殺し、戸の隙間から覗き込む
+	IF LOCAL > 12
+		PRINTFORML そこには猛然と女の体組み敷いて腰を振る%CALLNAME:ARG%と
+		PRINTFORML 怒張を貪り、妖艶に腰をくねらせる%CALLNAME:(ARG:1)%の姿があった
+	ELSEIF LOCAL > 4
+		PRINTFORML そこには男の上に跨り、精を絞り取る%CALLNAME:(ARG:1)%と
+		PRINTFORML 蕩けた顔で下から女を突き上げる%CALLNAME:ARG%の姿があった
+	ELSE
+		PRINTFORML そこには男の上に跨り、精を絞り取る%CALLNAME:(ARG:1)%と
+		PRINTFORML ただ快楽を受け入れる%CALLNAME:ARG%の姿があった
+	ENDIF
+	PRINTFORMW 余りの光景に%CALLNAME:MASTER%は、交わり続ける二人を覗き見る事しか出来なかった
+ENDIF
+
+;Mの経験及び珠増減及び従順及び奉仕精神低下処理。恋慕、妄信、嫉妬、親愛、相愛、服従、隷属消去
+;要するに他の女に寝取られる
+;(修正)NORMAL/EASYにおいては相愛と隷属があればそれは消えずいろいろと緩和される(一応ふたつとも凄く条件厳しいからな)
+;02絶頂、03射精経験増加
+CALL COMMON_UP_EXP, ARG, 2, LOCAL/4, 0
+CALL COMMON_UP_EXP, ARG, 3, LOCAL/4, 0
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, TARGET, LOCAL/4
+;珠処理。00快Ｃ・13欲望・100否定の珠増加、12恭順0
+CALL COMMON_UP_JUEL, ARG, 0, LOCAL*250, 0
+JUEL:ARG:恭順 = 0
+PRINTFORML %PALAMNAME:12%の珠(%CALLNAME:ARG%)は失われた
+CALL COMMON_UP_JUEL, ARG, 13, LOCAL*150, 0
+CALL COMMON_UP_JUEL, ARG, 100, LOCAL*200, 0
+;寝取られたフラグ
+CFLAG:ARG:153 |= 16
+;LOCAL>12なら反発3取得(NORMAL/EASYにおいては緩和)
+IF LOCAL > 12
+	IF FLAG:3 > 2
+		CALL COMMON_MARK_UP, ARG, 9, 3, 0
+	ELSEIF MARK:ARG:反発刻印 < 2
+		CALL COMMON_MARK_UP, ARG, 9, 2, 0
+	ENDIF
+ENDIF
+;LOCAL > 12なら各素質と従順を0にする。それ以外なら従順-1
+IF LOCAL > 12
+	IF ABL:ARG:従順 > 0
+		ABL:ARG:従順 = 0
+		PRINTFORML %ABLNAME:10%(%CALLNAME:ARG%)は0レベルになった
+	ENDIF
+	IF TALENT:ARG:恋慕
+		TALENT:ARG:恋慕 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:150%を失った
+		CFLAG:ARG:14 -= 1
+		CFLAG:ARG:陥落した日 = 0
+		CFLAG:MASTER:98 -= 1
+		SIF TALENT:ARG:妖精 && TALENT:ARG:服従 == 0 && TALENT:ARG:淫乱 == 0
+			FLAG:32 -= 1
+	ENDIF
+	IF TALENT:ARG:妄信
+		TALENT:ARG:妄信 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:151%を失った
+		CFLAG:ARG:14 -= 2
+	ENDIF
+	IF TALENT:ARG:親愛
+		TALENT:ARG:親愛 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:152%を失った
+		CFLAG:ARG:14 -= 4
+	ENDIF
+	IF TALENT:ARG:相愛 && FLAG:3 > 2
+		TALENT:ARG:相愛 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:153%を失った
+		CFLAG:ARG:14 -= 8
+		CFLAG:ARG:結婚記念日 = 0
+	ENDIF
+	IF TALENT:ARG:嫉妬
+		TALENT:ARG:嫉妬 = 0
+		CFLAG:ARG:12 -= 4096
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:157%を失った
+	ENDIF
+	IF TALENT:ARG:服従
+		TALENT:ARG:服従 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:160%を失った
+		CFLAG:ARG:15 -= 1
+		CFLAG:ARG:陥落した日 = 0
+		CFLAG:MASTER:98 -= 1
+		SIF TALENT:ARG:妖精 && TALENT:ARG:恋慕 == 0 && TALENT:ARG:淫乱 == 0
+			FLAG:32 -= 1
+	ENDIF
+	IF TALENT:ARG:隷属 && FLAG:3 > 2
+		TALENT:ARG:隷属 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:162%を失った
+		CFLAG:ARG:15 -= 4
+		CFLAG:ARG:契約記念日 = 0
+	ENDIF
+ELSEIF LOCAL > 4
+	IF ABL:ARG:従順 > 0
+		ABL:ARG:従順 -= 1
+		PRINTFORML %ABLNAME:10%(%CALLNAME:ARG%)－1レベル
+	ENDIF
+	IF ABL:ARG:従順 < 4 && TALENT:ARG:親愛
+		TALENT:ARG:親愛 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:152%を失った
+	ENDIF
+;貞操、親密のみなら堕ちない
+ENDIF
+;汎用口上用フラグ
+CFLAG:ARG:43 = 0
+;襲撃者側の経験処理と珠処理
+;00Ｖ経験、02絶頂経験、04精液経験増加
+CALL COMMON_UP_EXP, ARG:1, 0, LOCAL/2, 0
+CALL COMMON_UP_EXP, ARG:1, 2, LOCAL/4, 0
+CALL COMMON_UP_EXP, ARG:1, 4, LOCAL/4, 0
+IF ARG:1 != MASTER && COM_ABLE_CHECK_FEMALE(ARG:1) && LOCAL/4 > 0
+	C_NUMBER = MAX(RAND:(LOCAL/4 + 1), 0)
+	CFLAG:(ARG:1):3666 += C_NUMBER
+	CALL CALCULATE_LIMIT, ARG:1
+ENDIF
+;珠取得。01快Ｖ・13欲望増加、100否定減少
+CALL COMMON_UP_JUEL, ARG:1, 1, LOCAL*250, 0
+CALL COMMON_UP_JUEL, ARG:1, 13, LOCAL*150, 0
+CALL COMMON_DOWN_JUEL, ARG:1, 100, 500*(2+MARK:(ARG:1):9), 0
+PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(%CALLNAME:(ARG:1)%)
+;寝取ったフラグ
+CFLAG:(ARG:1):153 |= 32
+CFLAG:MASTER:153 |= 4096
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:MASTER%がその扇情的な光景から目を逸らせずにいると
+	PRINTFORML 不意に%CALLNAME:(ARG:1)%と目が合った。
+	PRINTFORMW ニヤリと笑う%CALLNAME:(ARG:1)%に、%CALLNAME:MASTER%は声にならない悲鳴を上げ、その場から逃げ出した
+;	PRINTL 
+ENDIF
+
+;LOCAL:1 = 0
+;;Ａ経験もありでアナルバイブ所持
+;SIF EXP:MASTER:Ａ経験 > 12 && (ITEM:アナルバイブ || NOITEM)
+;	LOCAL:1 += 1
+;;非処女且つバイブ所持
+;SIF TALENT:MASTER:処女 == 0 && (ITEM:バイブ || NOITEM)
+;	LOCAL:1 += 2
+;;胸がある
+;SIF TALENT:MASTER:オトコ == 0
+;	LOCAL:1 += 4
+;;棒がある
+;SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+;	LOCAL:1 += 8
+;
+;IF CFLAG:99 == 0
+;	PRINTFORML 部屋に逃げ帰った%CALLNAME:MASTER%は寝台に飛び込み、さっさと寝ようとした
+;	PRINTFORML しかし、二人の情事を見たせいで、一向に体の昂りは収まらない。
+;;	;全部あり
+;	IF LOCAL:1 == 15
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二つのバイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それらを二つの穴の奥まで押し込み、、最大にした振動の齎す快楽に悶えながら
+;		PRINTFORML 竿を扱き、乳首を捻り上げた
+;	;Ａ未熟ふたなり
+;	ELSEIF LOCAL:1 == 14
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それを蜜壷の最奥まで押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 竿を扱き、乳首を捻り上げた
+;	;Ｖ未熟ふたなり
+;	ELSEIF LOCAL:1 == 13
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それをヒクつく尻穴へ押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 竿を扱き、乳首を捻り上げた
+;	;穴未熟ふたなり
+;	ELSEIF LOCAL:1 == 12
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、己の愛液を潤滑剤にして竿を扱きながら乳首を捻り上げた
+;	;Ｖは男には無いので11と10は欠番
+;	;Ａ熟練男
+;	ELSEIF LOCAL:1 == 9
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブにローションを塗りたくると
+;		PRINTFORML それをヒクつく尻穴へ押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 竿を扱きつつも、アナルバイブで激しく己を攻め立てた
+;	;Ａ未熟男
+;	ELSEIF LOCAL:1 == 8
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二人の情事をオカズに竿を扱きだした
+;	;二穴熟練女
+;	ELSEIF LOCAL:1 == 7
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二つのバイブで秘裂を擦り、愛液を馴染ませると
+;		PRINTFORML それらを二つの穴の奥まで押し込み、、最大にした振動の齎す快楽に悶えながら
+;		PRINTFORML 乳房を揉み上げ、クリトリスを擦り続けた
+;	;Ａ未熟女
+;	ELSEIF LOCAL:1 == 6
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それを蜜壷の最奥まで押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 乳房を揉み上げ、クリトリスを擦り続けた
+;	;Ｖ未熟女
+;	ELSEIF LOCAL:1 == 5
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それをヒクつく尻穴へ押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 乳房を揉み上げ、クリトリスを擦り続けた
+;	;穴未熟女
+;	ELSEIF LOCAL:1 == 4
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二人の情事をオカズに乳房を揉み、クリトリスを擦りだした
+;	;胸も棒も無い奴はしらん
+;	ELSE
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二人の情事をオカズに身体中を擦った
+;	ENDIF
+;	PRINTW  
+;	PRINTL 
+;	PRINTFORML しかし、何度絶頂を迎えようとも%CALLNAME:MASTER%の心が満たされる事は無かった……。
+;ENDIF
+
+;-----------------------------------------------
+;反発奴隷による、女奴隷籠絡
+;----------------------------------------------
+@NIGHT_NTR_F, ARG, ARG:1
+;他とは違い、ここは一通りなんで楽なものである
+;と思ったら文章長くなった
+;行為数指定。実に適当。
+;どうせ後で4で割るなら最初から1で良かった
+;基本値12
+LOCAL = 12
+
+;襲撃者が淫乱なら+4
+SIF TALENT:(ARG:1):170
+	LOCAL += 4
+;襲撃者が小悪魔なら+4
+SIF TALENT:(ARG:1):93
+	LOCAL += 4
+;襲撃者が淫茎なら+4
+SIF TALENT:(ARG:1):171
+	LOCAL += 4
+;被害者が淫乱なら+4
+SIF TALENT:ARG:淫乱
+	LOCAL += 4
+;被害者が淫壷なら+4
+SIF TALENT:ARG:淫壷
+	LOCAL += 4
+;被害者が親愛なら-4
+SIF TALENT:ARG:親愛
+	LOCAL -= 4
+;被害者が貞操観念持ちなら-4
+SIF TALENT:ARG:貞操観念
+	LOCAL -= 4
+
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 丑三つ時。%CALLNAME:MASTER%は尿意を催し、厠で用を足した帰り道
+	PRINTFORML ふと%CALLNAME:ARG%の部屋から明かりが漏れているのを見つけた。
+	PRINTFORML %CALLNAME:ARG%はまだ起きているのだろうか?
+	PRINTFORML もしかして%CALLNAME:MASTER%の事を思って自慰していたりするんだろうか？
+	PRINTL 
+	PRINTFORML %CALLNAME:MASTER%はニヤニヤ笑いながら部屋に近づいていくと
+	PRINTFORML なんと部屋からは自慰のものとは思えない女の嬌声と淫靡な水音、が聞こえてくるではないか
+	PRINTFORML ドクンと心臓が一際高く波立つのを感じながら足音を殺し、戸の隙間から覗き込む
+	IF LOCAL > 12
+		PRINTFORML そこには自ら激しく腰を振り、牝そのものの表情で快楽を貪る%CALLNAME:ARG%と
+		PRINTFORML %CALLNAME:ARG%の体が撥ね上がるほどに猛然と突き上げる%CALLNAME:(ARG:1)%の姿があった
+	ELSEIF LOCAL > 4
+		PRINTFORML そこには猛然と蜜壷を貪り腰を叩きつける%CALLNAME:(ARG:1)%と
+		PRINTFORML %CALLNAME:(ARG:1)%の首に抱きながら、自らも腰をくねらせる%CALLNAME:ARG%の姿があった
+	ELSE
+		PRINTFORML そこには女の体を後ろから激しく犯す%CALLNAME:(ARG:1)%と
+		PRINTFORML その快楽を受け入れ嬌声をあげる%CALLNAME:ARG%の姿があった
+	ENDIF
+	PRINTFORMW 余りの光景に%CALLNAME:MASTER%は、交わり続ける二人を覗き見る事しか出来なかった
+ENDIF
+
+;Mの経験及び珠増減及び従順及び奉仕精神低下処理。恋慕、妄信、嫉妬、親愛、相愛、服従、隷属消去
+;要するに他の棒付きに寝取られる
+;(修正)NORMAL/EASYにおいては相愛と隷属があればそれは消えずいろいろと緩和される(一応ふたつとも凄く条件厳しいからな)
+;00Ｖ経験、02絶頂経験、04精液経験増加
+CALL COMMON_UP_EXP, ARG, 0, LOCAL/2, 0
+CALL COMMON_UP_EXP, ARG, 2, LOCAL/4, 0
+CALL COMMON_UP_EXP, ARG, 4, LOCAL/4, 0
+IF ARG != MASTER && COM_ABLE_CHECK_FEMALE(ARG) && LOCAL/4 > 0
+	C_NUMBER = MAX(RAND:(LOCAL/4 + 1), 0)
+	CFLAG:ARG:3666 += C_NUMBER
+	CALL CALCULATE_LIMIT, ARG
+ENDIF
+;珠処理。01快Ｖ・13欲望・100否定の珠増加、12恭順0
+CALL COMMON_UP_JUEL, ARG, 1, LOCAL*250, 0
+JUEL:ARG:恭順 = 0
+PRINTFORML %PALAMNAME:12%の珠(%CALLNAME:ARG%)は失われた
+CALL COMMON_UP_JUEL, ARG, 13, LOCAL*150, 0
+CALL COMMON_UP_JUEL, ARG, 100, LOCAL*200, 0
+;寝取られたフラグ
+CFLAG:ARG:153 |= 16
+;LOCAL>12なら反発3取得(NORMAL/EASYにおいては緩和)
+IF LOCAL > 12
+	IF FLAG:3 > 2
+		CALL COMMON_MARK_UP, ARG, 9, 3, 0
+	ELSEIF MARK:ARG:反発刻印 < 2
+		CALL COMMON_MARK_UP, ARG, 9, 2, 0
+	ENDIF
+ENDIF
+;LOCAL > 12なら各素質と従順を0にする。それ以外なら従順-1
+IF LOCAL > 12
+	IF ABL:ARG:従順 > 0
+		ABL:ARG:従順 = 0
+		PRINTFORML %ABLNAME:10%(%CALLNAME:ARG%)は0レベルになった
+	ENDIF
+	IF TALENT:ARG:恋慕
+		TALENT:ARG:恋慕 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:150%を失った
+		CFLAG:ARG:14 -= 1
+		CFLAG:ARG:陥落した日 = 0
+		CFLAG:MASTER:98 -= 1
+		SIF TALENT:ARG:妖精 && TALENT:ARG:服従 == 0 && TALENT:ARG:淫乱 == 0
+			FLAG:32 -= 1
+	ENDIF
+	IF TALENT:ARG:妄信
+		TALENT:ARG:妄信 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:151%を失った
+		CFLAG:ARG:14 -= 2
+	ENDIF
+	IF TALENT:ARG:親愛
+		TALENT:ARG:親愛 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:152%を失った
+		CFLAG:ARG:14 -= 4
+	ENDIF
+	IF TALENT:ARG:相愛 && FLAG:3 > 2
+		TALENT:ARG:相愛 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:153%を失った
+		CFLAG:ARG:14 -= 8
+		CFLAG:ARG:結婚記念日 = 0
+	ENDIF
+	IF TALENT:ARG:嫉妬
+		TALENT:ARG:嫉妬 = 0
+		CFLAG:ARG:12 -= 4096
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:157%を失った
+	ENDIF
+	IF TALENT:ARG:服従
+		TALENT:ARG:服従 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:160%を失った
+		CFLAG:ARG:15 -= 1
+		CFLAG:ARG:陥落した日 = 0
+		CFLAG:MASTER:98 -= 1
+		SIF TALENT:ARG:妖精 && TALENT:ARG:恋慕 == 0 && TALENT:ARG:淫乱 == 0
+			FLAG:32 -= 1
+	ENDIF
+	IF TALENT:ARG:隷属 && FLAG:3 > 2
+		TALENT:ARG:隷属 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:162%を失った
+		CFLAG:ARG:15 -= 4
+		CFLAG:ARG:契約記念日 = 0
+	ENDIF
+ELSEIF LOCAL > 4
+	IF ABL:ARG:従順 > 0
+		ABL:ARG:従順 -= 1
+		PRINTFORML %ABLNAME:10%(%CALLNAME:ARG%)－1レベル
+	ENDIF
+	IF ABL:ARG:従順 < 4 && TALENT:ARG:親愛
+		TALENT:ARG:親愛 = 0
+		PRINTFORML %CALLNAME:ARG%は%TALENTNAME:152%を失った
+		CFLAG:ARG:14 -= 4
+	ENDIF
+ENDIF
+;汎用口上用フラグ
+CFLAG:ARG:43 = 0
+;襲撃者側の経験処理と珠処理
+;02絶頂、03射精経験増加
+CALL COMMON_UP_EXP, ARG:1, 2, LOCAL/4, 0
+CALL COMMON_UP_EXP, ARG:1, 3, LOCAL/4, 0
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, ARG:1, LOCAL/4
+;珠取得00快Ｃ・13欲望増加、100否定減少
+CALL COMMON_UP_JUEL, ARG:1, 0, LOCAL*250, 0
+CALL COMMON_UP_JUEL, ARG:1, 13, LOCAL*150, 0
+CALL COMMON_DOWN_JUEL, ARG:1, 100, 500*(2+MARK:(ARG:1):9), 0
+PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(%CALLNAME:(ARG:1)%)
+PRINTL 
+;寝取ったフラグ
+CFLAG:ARG:153 |= 32
+CFLAG:MASTER:153 |= 4096
+
+;地の文カット
+IF CFLAG:99 == 0
+	IF TALENT:オトコ == 0 && TALENT:ふたなり == 0
+		PRINTFORML そんな…%CALLNAME:(ARG:1)%には男根など生えてはいないはず
+		PRINTFORML そう思いながらも%CALLNAME:MASTER%がその扇情的な光景から目を逸らせずにいると
+	ELSE
+		PRINTFORML %CALLNAME:MASTER%がその扇情的な光景から目を逸らせずにいると
+	ENDIF
+	PRINTFORML 不意に%CALLNAME:(ARG:1)%と目が合った。
+	PRINTFORMW ニヤリと笑う%CALLNAME:(ARG:1)%に、%CALLNAME:MASTER%は声にならない悲鳴を上げ、その場から逃げ出した
+;	PRINTL 
+ENDIF
+
+;付いてないなら生やす
+IF TALENT:オトコ == 0 && TALENT:ふたなり == 0
+	TALENT:ふたなり = 1
+	CALL CHANGE_FUTA_COMMON, TARGET
+ENDIF
+
+;LOCAL:1 = 0
+;;Ａ経験もありでアナルバイブ所持
+;SIF EXP:MASTER:Ａ経験 > 12 && (ITEM:アナルバイブ || NOITEM)
+;	LOCAL:1 += 1
+;;非処女且つバイブ所持
+;SIF TALENT:MASTER:処女 == 0 && (ITEM:バイブ || NOITEM)
+;	LOCAL:1 += 2
+;;胸がある
+;SIF TALENT:MASTER:オトコ == 0
+;	LOCAL:1 += 4
+;;棒がある
+;SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+;	LOCAL:1 += 8
+;
+;IF CFLAG:99 == 0
+;	PRINTFORML 部屋に逃げ帰った%CALLNAME:MASTER%は寝台に飛び込み、さっさと寝ようとした
+;	PRINTFORML しかし、二人の情事を見たせいで、一向に体の昂りは収まらない。
+;	;全部あり
+;	IF LOCAL:1 == 15
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二つのバイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それらを二つの穴の奥まで押し込み、、最大にした振動の齎す快楽に悶えながら
+;		PRINTFORML 竿を扱き、乳首を捻り上げた
+;	;Ａ未熟ふたなり
+;	ELSEIF LOCAL:1 == 14
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それを蜜壷の最奥まで押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 竿を扱き、乳首を捻り上げた
+;	;Ｖ未熟ふたなり
+;	ELSEIF LOCAL:1 == 13
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それをヒクつく尻穴へ押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 竿を扱き、乳首を捻り上げた
+;	;穴未熟ふたなり
+;	ELSEIF LOCAL:1 == 12
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、己の愛液を潤滑剤にして竿を扱きながら乳首を捻り上げた
+;	;Ｖは男には無いので11と10は欠番
+;	;Ａ熟練男
+;	ELSEIF LOCAL:1 == 9
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブにローションを塗りたくると
+;		PRINTFORML それをヒクつく尻穴へ押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 竿を扱きつつも、アナルバイブで激しく己を攻め立てた
+;	;Ａ未熟男
+;	ELSEIF LOCAL:1 == 8
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二人の情事をオカズに竿を扱きだした
+;	;二穴熟練女
+;	ELSEIF LOCAL:1 == 7
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二つのバイブで秘裂を擦り、愛液を馴染ませると
+;		PRINTFORML それらを二つの穴の奥まで押し込み、、最大にした振動の齎す快楽に悶えながら
+;		PRINTFORML 乳房を揉み上げ、クリトリスを擦り続けた
+;	;Ａ未熟女
+;	ELSEIF LOCAL:1 == 6
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それを蜜壷の最奥まで押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 乳房を揉み上げ、クリトリスを擦り続けた
+;	;Ｖ未熟女
+;	ELSEIF LOCAL:1 == 5
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、バイブで秘裂を擦り愛液を馴染ませると
+;		PRINTFORML それをヒクつく尻穴へ押し込み、最大にした振動のもたらす快楽に悶えながら
+;		PRINTFORML 乳房を揉み上げ、クリトリスを擦り続けた
+;	;穴未熟女
+;	ELSEIF LOCAL:1 == 4
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二人の情事をオカズに乳房を揉み、クリトリスを擦りだした
+;	;胸も棒も無い奴はしらん
+;	ELSE
+;		PRINTFORML 仕方なく%CALLNAME:MASTER%は、二人の情事をオカズに身体中を擦った
+;	ENDIF
+;	PRINTW  
+;	PRINTL 
+;	PRINTFORML しかし、何度絶頂を迎えようとも%CALLNAME:MASTER%の心が満たされる事は無かった……。
+;ENDIF
+
+;-----------------------------------------------
+;反発奴隷による、本来の夜這い
+;----------------------------------------------
+@NIGHT_GOUKAN_S, ARG, ARG:1, ARG:2
+;ARG:1が強姦する人
+;ARGが強姦される人
+;行為数指定。主人相手なら8.奴隷の場合、淫乱でないなら4
+LOCAL = 8
+SIF ARG != MASTER && TALENT:(ARG:1):170 == 0
+	LOCAL = 4
+
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORMW 丑三つ時……%CALLNAME:(ARG:1)%が既に眠ってしまった%CALLNAME:ARG%の元に訪れた
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORM %CALLNAME:(ARG:1)%は
+	IF 90 >= GET_AGG(ARG:1)
+		PRINT 恐る恐る部屋へと侵入すると
+	ELSE
+		PRINT 堂々と部屋に侵入すると
+	ENDIF
+	PRINTFORML %CALLNAME:ARG%のベッドへと潜り込んだ
+ENDIF
+PRINTL 
+;無いなら生やす
+IF TALENT:オトコ == 0 && TALENT:ふたなり == 0
+	TALENT:ふたなり = 1
+	CALL CHANGE_FUTA_COMMON, TARGET
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTL この日の為に薬で生やしたモノを扱きながら
+ENDIF
+;条件的に主人である
+IF TALENT:ARG:オトコ
+	CALL SHIFT_TO_F, MASTER
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:(ARG:1)%は、寝ている%CALLNAME:ARG%の口に〔虹の飴玉〕を含ませた
+	PRINTFORML [なんと%CALLNAME:ARG%は女性の体になってしまった]
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:(ARG:1)%は、飴玉が効果を発揮したのを確認すると、下着をずらし
+ELSE
+	;地の文カット
+	SIF CFLAG:99 == 0
+		PRINTFORML %CALLNAME:(ARG:1)%は、寝ている%CALLNAME:ARG%の下着をずらし
+ENDIF
+;地の文カット
+IF CFLAG:99 == 0
+	;主人が処女
+	IF TALENT:ARG:処女 >= 1
+		PRINTFORML その秘処を観察するとほくそえみ、
+		IF TALENT:恋慕
+			;再生処女の場合
+			IF TALENT:ARG:処女 > 1
+				PRINTL 自分のためにもう一度綺麗な体に戻ってくれたのだろうとうっそりと微笑み
+				PRINTL 秘処に怒張を宛がうと、一息に貫いた。
+				PRINTL 
+				PRINTFORML 下腹部への激しい痛みに目を覚ました
+			ELSE
+				PRINTFORML 愛しい人の純潔を今日こそ貰えるのだと陶酔した目で%CALLNAME:ARG%を見つめ
+				PRINTL 汚れを知らない秘処に怒張を宛がうと、一息に貫いた。
+				PRINTL 
+				PRINTFORML 感じた事のない激痛に目を覚ました%CALLNAME:ARG%は
+			ENDIF
+		ELSE
+			;再生処女の場合
+			IF TALENT:ARG:処女 > 1
+				PRINTL 薬に頼ってでも忘れたかったのであろう過去を思い出させようと
+				PRINTL 秘処に怒張を宛がうと、一息に貫いた。
+				PRINTL 
+				PRINTFORML 下腹部への激しい痛みに目を覚ました%CALLNAME:ARG%は
+			ELSE
+				PRINTL 汚れを知らない秘処に怒張を宛がうと、一息に貫いた。
+				PRINTL 
+				PRINTFORML 感じた事のない激痛に目を覚ました%CALLNAME:ARG%は
+			ENDIF
+		ENDIF
+		PRINTFORML 猛った%CALLNAME:TARGET%に恐怖し、必死に懇願するも
+		PRINTFORML それは返って%CALLNAME:TARGET%の嗜虐心を煽り、行為は激しさを増すばかりであった……。
+	ELSE
+		SIF TALENT:(ARG:1):150
+			PRINTFORML 熱に浮かされた目で愛しげに%CALLNAME:ARG%を見つめて
+		PRINTL 湿り気のない秘処に怒張を宛がうと、一息に貫いた。
+		PRINTL 　
+		PRINTFORML 下腹部への激痛に目を覚ました%CALLNAME:ARG%は必死に抵抗するも
+		IF TALENT:オトコ
+			PRINTFORML 男の強い力で押さえつけられ、その抵抗は%CALLNAME:TARGET%の欲情を誘うばかりだ。
+		ELSE
+			PRINTFORML 巧みに押さえつけられ、その抵抗は%CALLNAME:TARGET%の欲情を誘うばかりだ。
+		ENDIF
+		PRINTFORML やがて抵抗を諦めた%CALLNAME:ARG%は、しばし%CALLNAME:TARGET%に身を委ねる事にした……。
+	ENDIF
+ENDIF
+PRINTL 
+IF ARG == MASTER
+	;寝ているところを襲撃するイベント口上呼び出し
+	TRYCALL SELF_KOJO, ARG:1, 421
+ELSE
+	;他の奴隷を犯すイベント口上呼び出し
+	TRYCALL SELF_KOJO, ARG:1, 434
+	;他の奴隷に犯されるイベント口上呼び出し
+	TRYCALL SELF_KOJO, ARG, 431
+ENDIF
+PRINTL 
+;80強姦経験
+CALL COMMON_UP_EXP, ARG:1, 80, 1, 0
+;81被強姦経験
+CALL COMMON_UP_EXP, ARG, 81, 1, 0
+;83被姦快楽経験
+SIF ABL:ARG:Ｖ感覚 > 2
+	CALL COMMON_UP_EXP, ARG, 83, LOCAL, 0
+;処女
+IF TALENT:ARG:処女
+	TALENT:ARG:処女 = 0
+	PRINTFORML 処女喪失(%CALLNAME:ARG%)
+	IF ARG == MASTER
+		;主人の処女を奪ったフラグ
+		CFLAG:153 |= 1
+		CFLAG:ARG:153 |= 4
+		;貞操観念持ちであるならマゾっ気減少サドっ気増加。ドＭとマゾがあれば消滅、狂気取得
+		IF TALENT:ARG:貞操観念
+			ABL:ARG:マゾっ気 = MAX(ABL:ARG:マゾっ気 - 1, 0)
+			ABL:ARG:サドっ気 = MIN(ABL:ARG:サドっ気 + 1, 5)
+			TALENT:ARG:マゾ = 0
+			TALENT:ARG:ドＭ = 0
+			TALENT:ARG:狂気 = 1
+		;主人が貞操無頓着も貞操観念もないなら狂気取得
+		ELSEIF TALENT:ARG:貞操無頓着 == 0 && TALENT:ARG:狂気 == 0
+			TALENT:ARG:狂気 = 1
+		ENDIF
+	ENDIF
+ENDIF
+;00Ｖ経験
+CALL COMMON_UP_EXP, ARG, 0, LOCAL, 0
+
+IF ARG != MASTER
+	;02絶頂経験
+	CALL COMMON_UP_EXP, ARG, 2, LOCAL/4, 0
+	CALL COMMON_UP_EXP, ARG, 4, LOCAL/2, 0
+ENDIF
+IF ARG == MASTER
+	;堕落度上昇
+	CFLAG:MASTER:4066 += LOCAL * 10
+ELSE
+	;01快Ｖの珠
+	CALL COMMON_UP_JUEL, ARG, 1, LOCAL*80*ABL:ARG:Ｖ感覚, 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG, 13, LOCAL*50*ABL:ARG:Ｖ感覚, 0
+	;100否定の珠
+	CALL COMMON_UP_JUEL, ARG, 100, LOCAL*500, 0
+ENDIF
+;03射精経験
+CALL COMMON_UP_EXP, ARG:1, 3, LOCAL/2, 0
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, TARGET, LOCAL/2
+;00快Ｃの珠
+CALL COMMON_UP_JUEL, ARG:1, 0, LOCAL*400, 0
+;13欲情の珠
+CALL COMMON_UP_JUEL, ARG:1, 13, LOCAL*250, 0
+;100否定の珠
+CALL COMMON_DOWN_JUEL, ARG:1, 100, 500*(2+MARK:(ARG:1):9), 0
+PRINTL 
+;襲撃者の捨て台詞のイベント口上呼び出し
+LOCAL = (ARG == MASTER) ? 420 # 430
+TRYCALL SELF_KOJO, ARG:1, LOCAL
+;地の文カット
+SIF CFLAG:99 == 0
+	PRINTFORML そして%CALLNAME:ARG%の膣内に{ARG:2}回精液を吐き出すと、満足した様子で帰って行った……。
+
+;-----------------------------------------------
+;反発奴隷による、輪姦
+;----------------------------------------------
+@NIGHT_RINKAN, ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6
+;引き続き被害者はARG
+;襲撃者はARG:1 ARG:3 ARG:4 + (ARG:2)
+;ARG:6 = {0:単独,1:乱交,2:フラン}
+;乱交判定と言う名のレイプ判定
+IF ARG:6 == 1
+	;さっそくはっちゃける。赤くなくても行為数3倍
+	;だったのだが、一晩中掛けてこれだとイマイチ(?)なので10倍。
+	;やりすぎかもしれないが、まあものは試しということで。
+	ARG:5 = ARG:5*10
+	;地の文カット
+	IF CFLAG:99 == 0
+		IF ARG == MASTER
+			PRINTFORML その夜、突然%CALLNAME:(ARG:1)%と%CALLNAME:(ARG:2)%と%CALLNAME:(ARG:3)%と%CALLNAME:(ARG:4)%が部屋へとやってきた
+		ELSE
+			PRINTFORML その夜、突然%CALLNAME:(ARG:1)%と%CALLNAME:(ARG:3)%と%CALLNAME:(ARG:4)%が%CALLNAME:ARG%の部屋へとやってきた
+		ENDIF
+		PRINTFORML %CALLNAME:ARG%は訪問者達の友好的とは思えない態度に追い返そうとしたが
+		PRINTFORMW %CALLNAME:(ARG:1)%が部屋に無理矢理押し入ったのを皮切りに、一気になだれ込まれてしまった。
+	ENDIF
+	IF ARG == MASTER
+		;複数奴隷による輪姦イベント口上呼び出し
+		REPEAT 4
+			TRYCALL SELF_KOJO, ARG:(COUNT + 1), 423
+		REND
+	ELSE
+		;他の奴隷を輪姦する(435)/他の奴隷に輪姦される(432)イベント口上呼び出し
+		TRYCALL SELF_KOJO, ARG:1, 435
+		TRYCALL SELF_KOJO, ARG:3, 435
+		TRYCALL SELF_KOJO, ARG:4, 435
+		TRYCALL SELF_KOJO, ARG, 432
+	ENDIF
+	PRINTL 
+	;地の文カット
+	IF CFLAG:99 == 0
+		IF TALENT:ARG:処女 > 0
+			;実際にプレイしてみたら思ったほどエロくなかったので修正。
+			PRINTFORML \@(ARG == MASTER) ? 四 # 三\@人は、恐怖に震え抵抗する%CALLNAME:ARG%を取り押さえて衣服を剥し
+			PRINTL 処女の証を確認すると一様に残忍な表情を浮かべ
+			PRINTFORML 手にした特大のバイブで容赦なく%CALLNAME:ARG%を貫く。
+			PRINTFORML そして%CALLNAME:ARG%が痛みに気を失いそうになる度、叩いて起こし
+			PRINTFORML %CALLNAME:ARG%の膣内を代わる代わる蹂躙し続けた。
+		ELSE
+			PRINTFORML \@(ARG == MASTER) ? 四 # 三\@人は、恐怖に震え抵抗する%CALLNAME:ARG%を取り押さえて衣服を剥すと
+			PRINTFORML ヴァギナやアナルや口を思うままに犯し、乳房や\@(TALENT:ARG:ふたなり) ? ペニス # クリトリス\@を弄って無理矢理に絶頂へ導く。
+			PRINTFORML そして、否定の言葉を述べつつも快楽によがり狂う%CALLNAME:ARG%を嘲笑いながら
+			PRINTL 精が枯れ果てるまで何度も何度も欲望を放ち続けた。
+		ENDIF
+		PRINTL 
+	ENDIF
+	;80強姦経験
+	CALL COMMON_UP_EXP, ARG:1, 80, 1, 0
+	CALL COMMON_UP_EXP, ARG:3, 80, 1, 0
+	CALL COMMON_UP_EXP, ARG:4, 80, 1, 0
+	SIF ARG == MASTER
+		CALL COMMON_UP_EXP, ARG:2, 80, 1, 0
+	;82被輪姦経験
+	CALL COMMON_UP_EXP, ARG, 82, 10, 0
+	;83被姦快楽経験
+	IF TALENT:ARG:処女 > 0
+		SIF ABL:ARG:Ｖ感覚 > 2
+			CALL COMMON_UP_EXP, ARG, 83, ARG:5*4, 0
+	ELSE
+		SIF ABL:ARG:Ｃ感覚 > 2 || ABL:ARG:Ｖ感覚 > 2 || ABL:ARG:Ａ感覚 > 2 || ABL:ARG:Ｂ感覚 > 2
+			CALL COMMON_UP_EXP, ARG, 83, ARG:5*4, 0
+	ENDIF
+	IF TALENT:ARG:処女 > 0
+		TALENT:ARG:処女 = 0
+		PRINTFORML 処女喪失(%CALLNAME:ARG%)
+		;00Ｖ経験
+		CALL COMMON_UP_EXP, ARG, 0, ARG:5*4, 0
+		IF ARG == MASTER
+			;堕落度上昇
+			CFLAG:MASTER:4066 += ARG:5 * 20
+			;主人の処女を奪ったフラグ
+			CFLAG:ARG:253 |= 1
+			CFLAG:(ARG:3):153 |= 1
+			CFLAG:(ARG:2):153 |= 1
+			CFLAG:(ARG:4):153 |= 1
+			CFLAG:ARG:153 |= 4
+			;prot8になるという事なので、ここの部分は壊れた感じにしようかと。
+			;まあ定番の狂気と臆病、精神崩壊あたりで。持っているなら気丈、反抗的、生意気は消滅。
+			;……わざわざCSV弄って素質つけた上で、リロードを繰り返してこのイベントを見る人なんているのだろうか。
+			IF TALENT:ARG:貞操観念
+				TALENT:ARG:臆病 = 1
+				TALENT:ARG:狂気 = 1
+				TALENT:ARG:精神崩壊 = 1
+				TALENT:ARG:反抗的 = 0
+				TALENT:ARG:気丈 = 0
+				TALENT:ARG:生意気 = 0
+			;主人が貞操無頓着も貞操観念もないなら狂気取得
+			ELSEIF TALENT:ARG:貞操無頓着 == 0 && TALENT:ARG:狂気 == 0
+				TALENT:ARG:狂気 = 1
+			ENDIF
+		ELSE
+			;02絶頂経験
+			CALL COMMON_UP_EXP, ARG, 2, ARG:5, 0
+			;04精液経験
+			CALL COMMON_UP_EXP, ARG, 4, ARG:5*3, 0
+			IF ARG != MASTER && COM_ABLE_CHECK_FEMALE(ARG) && ARG:5*3 > 0
+				C_NUMBER = MAX(RAND:(ARG:5*3 + 1), 0)
+				CFLAG:ARG:3666 += C_NUMBER
+				CALL CALCULATE_LIMIT, ARG
+			ENDIF
+			;100否定の珠
+			CALL COMMON_UP_JUEL, ARG, 100, 10000, 0
+		ENDIF
+
+	ELSE
+		IF ARG == MASTER
+			;堕落度上昇
+			CFLAG:MASTER:4066 += ARG:5 * 10
+			;面倒なんでメイン夜這い対象とのみ技巧判定する。
+			;00Ｖ経験
+			CALL COMMON_UP_EXP, ARG, 0, ARG:5*2, 0
+			;01Ａ経験
+			CALL COMMON_UP_EXP, ARG, 1, ARG:5*2, 0
+			IF TALENT:ARG:精愛味覚
+				;08精飲絶頂経験
+				CALL COMMON_UP_EXP, ARG, 8, ARG:5, 0
+			ENDIF
+		ELSE
+			;00Ｖ経験
+			CALL COMMON_UP_EXP, ARG, 0, ARG:5*2, 0
+			;01Ａ経験
+			CALL COMMON_UP_EXP, ARG, 1, ARG:5*2, 0
+			;02絶頂経験
+			CALL COMMON_UP_EXP, ARG, 2, ARG:5, 0
+			;04精液経験
+			CALL COMMON_UP_EXP, ARG, 4, ARG:5*3, 0
+			IF ARG != MASTER && COM_ABLE_CHECK_FEMALE(ARG) && ARG:5*3 > 0
+				C_NUMBER = MAX(RAND:(ARG:5*3 + 1), 0)
+				CFLAG:ARG:3666 += C_NUMBER
+				CALL CALCULATE_LIMIT, ARG
+			ENDIF
+			IF TALENT:ARG:精愛味覚
+				;08精飲絶頂経験
+				CALL COMMON_UP_EXP, ARG, 8, ARG:5, 0
+			ENDIF
+			;43Ａ快楽経験
+			CALL COMMON_UP_EXP, ARG, 43, ARG:5*5, 0
+			;44Ｂ快楽経験
+			CALL COMMON_UP_EXP, ARG, 44, ARG:5*5, 0
+			;00快Ｃの珠
+			CALL COMMON_UP_JUEL, ARG, 0, ARG:5*300, 0
+			;01快Ｖの珠
+			CALL COMMON_UP_JUEL, ARG, 1, ARG:5*300, 0
+			;02快Ａの珠
+			CALL COMMON_UP_JUEL, ARG, 2, ARG:5*300, 0
+			;03快Ｂの珠
+			CALL COMMON_UP_JUEL, ARG, 3, ARG:5*300, 0
+			;13欲情の珠
+			CALL COMMON_UP_JUEL, ARG, 13, ARG:5*800, 0
+			;17恐怖の珠
+			CALL COMMON_UP_JUEL, ARG, 17, ARG:5*400, 0
+			;100否定の珠
+			CALL COMMON_UP_JUEL, ARG, 100, ARG:5*700, 0
+		ENDIF
+	ENDIF
+	;03射精経験
+	CALL COMMON_UP_EXP, ARG:1, 3, ARG:5/2, 0
+	SIF ARG == MASTER
+		CALL COMMON_UP_EXP, ARG:2, 3, ARG:5/2, 0
+	CALL COMMON_UP_EXP, ARG:3, 3, ARG:5/2, 0
+	CALL COMMON_UP_EXP, ARG:4, 3, ARG:5/2, 0
+	SIF ARG == MASTER
+		CALL COMMON_UP_EXP, ARG:2, 3, ARG:5/2, 0
+	;LUNATIC以上は射精するたびに体力が減少
+	CALL EXHAUST_EJAC, TARGET, ARG:5/2
+	CALL EXHAUST_EJAC, ARG:3, ARG:5/2
+	SIF ARG == MASTER
+		CALL EXHAUST_EJAC, ARG:2, ARG:5/2
+	CALL EXHAUST_EJAC, ARG:4, ARG:5/2
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG:1, 0, ARG:5*300, 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG:1, 13, ARG:5*700, 0
+	CALL COMMON_DOWN_JUEL, ARG:1, 100, 500*(2+MARK:(ARG:1):9), 0
+	IF ARG == MASTER
+		;00快Ｃの珠
+		CALL COMMON_UP_JUEL, ARG:2, 0, ARG:5*300, 0
+		;13欲情の珠
+		CALL COMMON_UP_JUEL, ARG:2, 13, ARG:5*700, 0
+		;100否定の珠
+		CALL COMMON_DOWN_JUEL, ARG:2, 100, 500*(2+MARK:(ARG:2):9), 0
+	ENDIF
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG:3, 0, ARG:5*300, 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG:3, 13, ARG:5*700, 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, ARG:3, 100, 500*(2+MARK:(ARG:3):9), 0
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG:4, 0, ARG:5*300, 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG:4, 13, ARG:5*700, 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, ARG:4, 100, 500*(2+MARK:(ARG:4):9), 0
+	PRINTL 
+	IF ARG == MASTER
+		;捨て台詞のイベント口上呼び出し
+		REPEAT 4
+			TRYCALL SELF_KOJO, ARG:(COUNT + 1), 420
+		REND
+	ELSE
+		;襲撃者の捨て台詞のイベント口上呼び出し
+		TRYCALL SELF_KOJO, ARG:1, 430
+		TRYCALL SELF_KOJO, ARG:3, 430
+		TRYCALL SELF_KOJO, ARG:4, 430
+	ENDIF
+	PRINTL 
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML 永遠に続くかと思われた陵辱劇も、日の昇る頃になると終わりを向かえ
+		PRINTFORML 部屋には全身を白く染め、糸の切れた人形のようになった%CALLNAME:ARG%を残すのみとなった……。
+	ENDIF
+;それ以外。つまりフランちゃんの「一人で輪姦できるもん」。といいつつ玩具にするだけ。
+;決して贔屓ではない。Revフランには随分抜かせて貰ったけれど、決して贔屓ではない
+;やぁふぁ入れてると、フランの反発3=死亡フラグ、だったような気がしないでもないが。まあ気にしないで良いよね？
+ELSE
+	;フランちゃん頑張って十倍。
+	ARG:5 = ARG:5*10
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML その夜、突然%CALLNAME:TARGET%が部屋へとやってきた
+		PRINTFORML %CALLNAME:MASTER%は、夜も遅いし、何やら嫌な予感もしたので追い返そうとしたが
+		PRINTFORMW %CALLNAME:TARGET%と目が合うと、途端に体が石のように動かなくなってしまった
+	ENDIF
+	;フランちゃん専用の輪姦イベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 424
+	PRINTL 
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML 動けない%CALLNAME:MASTER%を尻目に、四人に分身した%CALLNAME:TARGET%は一通り部屋を物色すると
+		PRINTFORML 残忍な笑みを浮かべ%CALLNAME:MASTER%の衣服を、ゆっくりと一枚一枚脱がせ始めた。
+		PRINTFORML そして一糸纏わぬ姿になった%CALLNAME:MASTER%をベットに寝かせると……
+		PRINTL 
+		PRINTFORML なんと手近にあった椅子の足で%CALLNAME:MASTER%のヴァギナを貫いた
+		PRINTFORML 声すら発せられない%CALLNAME:MASTER%は\@(TALENT:MASTER:処女 > 0) ? 破瓜の痛み # 前戯無しの異物の挿入\@に泣き叫ぶ事もできず
+		PRINTFORML ただただ%CALLNAME:TARGET%の暴虐な行為を受け入れるしかなかった……。
+		PRINTL 
+	ENDIF
+	;80強姦経験
+	CALL COMMON_UP_EXP, TARGET, 80, 1, 0
+	;81被強姦経験
+	CALL COMMON_UP_EXP, MASTER, 81, 1, 0
+	;83被姦快楽経験
+	SIF EXP:MASTER:Ｖ拡張経験 > 100
+		CALL COMMON_UP_EXP, MASTER, 83, ARG:5, 0
+	IF TALENT:MASTER:処女 > 0
+		TALENT:MASTER:処女 = 0
+		PRINTFORML 処女喪失(%CALLNAME:MASTER%)
+		;主人の処女を奪ったフラグ
+		CFLAG:153 |= 1
+		CFLAG:MASTER:153 |= 4
+		;prot8になるという事なので、ここの部分は壊れた感じにしようかと。
+		;まあ定番の狂気と臆病、精神崩壊あたりで。持っているなら気丈、反抗的、生意気は消滅。
+		;……わざわざCSV弄って素質つけた上で、リロードを繰り返してこのイベントを見る人なんているのだろうか。
+		IF TALENT:MASTER:貞操観念
+			TALENT:MASTER:臆病 = 1
+			TALENT:MASTER:狂気 = 1
+			TALENT:MASTER:精神崩壊 = 1
+			TALENT:MASTER:反抗的 = 0
+			TALENT:MASTER:気丈 = 0
+			TALENT:MASTER:生意気 = 0
+		;主人が貞操無頓着も貞操観念もないなら狂気取得
+		ELSEIF TALENT:MASTER:貞操無頓着 == 0 && TALENT:MASTER:狂気 == 0
+			TALENT:MASTER:狂気 = 1
+		ENDIF
+	ENDIF
+	;00Ｖ経験
+	CALL COMMON_UP_EXP, MASTER, 0, (ARG:5*20), 0
+	;32Ｖ拡張経験(椅子の他に何を入れられたかはご想像にお任せします)
+	CALL COMMON_UP_EXP, MASTER, 32, (ARG:5*4), 0
+	;50異常経験
+	CALL COMMON_UP_EXP, MASTER, 50, (ARG:5*4), 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, TARGET, 13, (ARG:5*700), 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, TARGET, 100, 500*(2+MARK:反発刻印), 0
+	PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました
+	;捨て台詞のイベント口上呼び出し
+	TRYCALL SELF_KOJO, TARGET, 420
+	;地の文カット
+	IF CFLAG:99 == 0
+		PRINTFORML 三人が次に入れるものを探し、一人が%CALLNAME:MASTER%の膣を異物で蹂躙し続ける。
+		PRINTFORML その人のものとは思えぬ凶悪な遊びは、吸血鬼の日暮れたる夜明けまで延々と続けられた……。
+	ENDIF
+	IF ARG == MASTER
+		;堕落度上昇
+		CFLAG:MASTER:4066 += ARG:5 * 20
+	ENDIF
+ENDIF
+
+;-----------------------------------------------
+;反発奴隷による、暴行
+;----------------------------------------------
+@NIGHT_BOUKOU, ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5
+;短くてすまん。流石に疲れてきた
+;ARG:1+ARG:4 ARG:3+ARG:2が暴行する人
+;ARGが暴行される人
+;ARG:5が7or8なら集団暴行になる
+;行為数指定。主人相手なら8.奴隷の場合、サドでないなら4
+LOCAL = 8
+SIF ARG != MASTER && TALENT:(ARG:1):81 == 0
+	LOCAL = 4
+
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML その夜、%CALLNAME:ARG%が廊下を歩いていると、不意に後ろから殴打された
+	PRINTFORML かろうじて、手をつき顔から倒れるのは避けたものの、
+	PRINTFORML 襲撃者\@(ARG:5 > 6) ? 達 #\@の行為は更にエスカレートし崩れ落ちる%CALLNAME:ARG%に殴る蹴るの暴行を加え続けた
+	PRINTL 
+	PRINTFORML 全身を激痛が苛む中%CALLNAME:ARG%の意識は急速に薄れていった……。
+ENDIF
+IF ARG:5 > 6
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG:1, 13, (LOCAL*250), 0
+	CALL COMMON_UP_JUEL, ARG:3, 13, (LOCAL*250), 0
+	CALL COMMON_UP_JUEL, ARG:4, 13, (LOCAL*250), 0
+	SIF ARG == MASTER
+		CALL COMMON_UP_JUEL, ARG:2, 13, (LOCAL*250), 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, ARG:1, 100, 500*(2+MARK:(ARG:1):9), 0
+	CALL COMMON_DOWN_JUEL, ARG:3, 100, 500*(2+MARK:(ARG:3):9), 0
+	CALL COMMON_DOWN_JUEL, ARG:4, 100, 500*(2+MARK:(ARG:4):9), 0
+	SIF ARG == MASTER
+		CALL COMMON_DOWN_JUEL, ARG:2, 100, 500*(2+MARK:(ARG:2):9), 0
+	PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(襲撃者達)
+	IF ARG == MASTER
+		;主人を暴行したフラグ
+		CFLAG:(ARG:1):153 |= 64
+		CFLAG:(ARG:3):153 |= 64
+		CFLAG:(ARG:4):153 |= 64
+		CFLAG:(ARG:2):153 |= 64
+		CFLAG:ARG:153 |= 128
+	ENDIF
+ELSE
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*250), 0
+	;100否定の珠
+	CALL COMMON_DOWN_JUEL, TARGET, 100, 500*(2+MARK:反発刻印), 0
+	PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(襲撃者)
+ENDIF
+IF ABL:ARG:技巧 > 0
+	IF ARG:5 > 6
+		ABL:ARG:技巧 = 0
+		PRINTFORML %CALLNAME:ARG%は重傷を負った(%ABLNAME:12%が0レベルになった)
+	ELSE
+		ABL:ARG:技巧 -= 1
+		PRINTFORML %CALLNAME:ARG%は怪我を負った(%ABLNAME:12%－1レベル)
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:ARG%は\@(ARG:5 > 6) ? 重傷 # 怪我\@を負った
+ENDIF
+
+;-----------------------------------------------
+;反発奴隷による、触手陵辱
+;----------------------------------------------
+@NIGHT_SHOKUSHU, ARG, ARG:1
+;襲撃者はARG:1
+;襲われるのはARG
+;行為回数=一晩中。5分おき、六時間として72回。どう考えてもやりすぎ。
+LOCAL = 72
+;奴隷が小悪魔所持なら回数ボーナス
+SIF TALENT:小悪魔
+	LOCAL += 24
+;奴隷がサドを習得
+TALENT:サド = 1
+;禁断の知識持ちの場合、触手操作術を習得。実用的な意味は無い
+SIF TALENT:禁断の知識
+	TALENT:触手使役術 = 1
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML 夜も深けてきたので、%CALLNAME:ARG%がもう休もうとすると
+	PRINTFORMW 突然戸が破られ、%CALLNAME:(ARG:1)%と異形の触手が室内に飛び込んできた
+ENDIF
+PRINTL 
+IF ARG:1 != MASTER
+	;他の奴隷を触手で陵辱する(436)/他の奴隷に触手で陵辱される(433)イベント口上呼び出し
+	TRYCALL SELF_KOJO, ARG:1, 436
+	TRYCALL SELF_KOJO, ARG, 433
+ELSE
+	;調教主を触手でレイプするイベント口上呼び出し
+	TRYCALL SELF_KOJO, ARG:1, 425
+ENDIF
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML %CALLNAME:ARG%は成す術も無く捕われ、衣服を剥かれてしまう
+	IF TALENT:ARG:処女 == 1
+		PRINTFORML %CALLNAME:(ARG:1)%は%CALLNAME:ARG%の穢れを知らぬ秘処をニヤニヤと眺め
+		PRINTL あろうことか一際太い触手を挿入させた
+		PRINTFORML 余りの痛みに悲鳴を上げようとした%CALLNAME:ARG%であったが、その口も極太の触手でふさがれ息も出来ない。
+		PRINTL さらには、細い触手達が次々に尻穴から進入し、腸内を嘗め回すようにかき混ぜる
+		PRINTL 膣内を激しく貪る触手の勢いのままに体を跳ねさせながら
+		PRINTFORML %CALLNAME:ARG%はただ祈る事しか出来なかった……
+	ELSEIF TALENT:ARG:処女 == 2
+		PRINTFORML %CALLNAME:(ARG:1)%は、偽りの処女にすがる%CALLNAME:ARG%を嘲笑うと
+		PRINTFORML 細い触手達を少しづつ、少しづつ進入させて行った
+		PRINTFORML 処女膜が徐々に押し広げられる恐怖と、膣内でざわめく触手たちのもたらす快楽に耐えかね
+		PRINTFORML %CALLNAME:ARG%が早く処女を散らしてくれるよう懇願するまで
+		PRINTFORML %CALLNAME:(ARG:1)%はその光景を楽しみ続けた
+		PRINTL 
+		PRINTFORML 懇願を聞き入れて貰い、安堵する%CALLNAME:ARG%であったが
+		PRINTFORML %CALLNAME:(ARG:1)%の選んだ一際大きな触手に青ざめ必死に抵抗するも、四肢は触手に捕われ動かす事もままならず
+		PRINTL ゆっくりとヴァギナに近づいてくるそれを、ただ眺める事しか出来なかった……
+	ELSE
+		PRINTFORML %CALLNAME:(ARG:1)%は触手たちに%CALLNAME:ARG%の全身を執拗に愛撫させた
+		PRINTFORML そして、あまりの快楽に%CALLNAME:ARG%が達しそうになる度に行為を止めさせてしまう
+		PRINTFORML 繰り返される快楽と、イきたくてもイけないもどかしさに
+		PRINTFORML 遂に%CALLNAME:ARG%が入れて欲しいと言い出すと、%CALLNAME:(ARG:1)%は意地の悪い笑みを浮かべ
+		PRINTL 極細の触手を一本だけ膣内に挿入させる。
+		PRINTFORML そんなものではとても満足できない%CALLNAME:ARG%は
+		PRINTFORML 何時しか今まで発した事のない媚びた声で%CALLNAME:(ARG:1)%に懇願し続けた……
+		PRINTL そして願いが叶うと、一際大きな嬌声を上げ自ら腰を振って快楽を貪った
+	ENDIF
+	PRINTL 
+	PRINTFORMW %CALLNAME:(ARG:1)%は、無数の触手に全身を弄ばれ快楽に悶える続ける%CALLNAME:ARG%を、飽く事無く眺め続けた
+	PRINTL 
+ENDIF
+;80強姦経験
+CALL COMMON_UP_EXP, ARG:1, 80, 1, 0
+;81被強姦経験
+CALL COMMON_UP_EXP, ARG, 81, 1, 0
+;83被姦快楽経験
+SIF ABL:ARG:Ｃ感覚 > 2 || ABL:ARG:Ｖ感覚 > 2 || ABL:ARG:Ａ感覚 > 2 || ABL:ARG:Ｂ感覚 > 2
+	CALL COMMON_UP_EXP, ARG, 83, LOCAL, 0
+;処女判定
+IF TALENT:ARG:処女 > 0
+	TALENT:ARG:処女 = 0
+	PRINTFORML 処女喪失(%CALLNAME:ARG%)
+	;もう貞操とか関係なく狂気
+	TALENT:ARG:狂気 = 1
+	;主人の場合
+	IF ARG == MASTER
+		CFLAG:153 |= 1
+		CFLAG:MASTER:153 |= 4
+	ELSE
+		CFLAG:ARG:12 |= 1
+		CFLAG:ARG:17 |= 1
+	ENDIF
+ENDIF
+;00Ｖ経験
+CALL COMMON_UP_EXP, ARG, 0, (LOCAL*2), 0
+;01Ａ経験
+CALL COMMON_UP_EXP, ARG, 1, (LOCAL*2), 0
+;50異常経験
+CALL COMMON_UP_EXP, ARG, 50, 6, 0
+;53触手経験
+CALL COMMON_UP_EXP, ARG, 53, (LOCAL*6), 0
+;薬毒耐性持ちでないなら、40薬物経験も取得
+SIF TALENT:ARG:薬毒耐性 == 0
+	CALL COMMON_UP_EXP, ARG, 40, LOCAL, 0
+;奴隷の場合以下を取得
+IF ARG != MASTER
+	;02絶頂経験
+	CALL COMMON_UP_EXP, ARG, 2, LOCAL, 0
+	;04精液経験
+	CALL COMMON_UP_EXP, ARG, 4, LOCAL, 0
+	IF ARG != MASTER && COM_ABLE_CHECK_FEMALE(ARG) && LOCAL > 0
+		C_NUMBER = MAX(RAND:(LOCAL + 1), 0)
+		CFLAG:ARG:3666 += C_NUMBER
+		CALL CALCULATE_LIMIT, ARG
+	ENDIF
+	;31緊縛経験
+	CALL COMMON_UP_EXP, ARG, 31, (LOCAL*5), 0
+	;00快Ｃの珠
+	CALL COMMON_UP_JUEL, ARG, 0, (LOCAL*30), 0
+	;01快Ｖの珠
+	CALL COMMON_UP_JUEL, ARG, 1, (LOCAL*30), 0
+	;02快Ａの珠
+	CALL COMMON_UP_JUEL, ARG, 2, (LOCAL*30), 0
+	;03快Ｂの珠
+	CALL COMMON_UP_JUEL, ARG, 3, (LOCAL*30), 0
+	;13欲情の珠
+	CALL COMMON_UP_JUEL, ARG, 13, (LOCAL*100), 0
+	;17恐怖の珠
+	CALL COMMON_UP_JUEL, ARG, 17, (LOCAL*40), 0
+	;100否定の珠
+	CALL COMMON_UP_JUEL, ARG, 100, (LOCAL*200), 1
+	;触手中毒強制上昇。Lv5で(触手に[体内適応力強化]がなければ失敗するかも)寄生
+	IF ABL:ARG:触手中毒 == 5 && TALENT:ARG:寄生 == 0 && ((FLAG:75 & 8192) || (TALENT:ARG:蓬莱人 == 0 && NO:ARG != 1033 && NO:ARG != 1039))
+		TALENT:ARG:寄生 = 1
+		PRINTFORML %CALLNAME:ARG%は触手に寄生されてしまった
+		;初体験のとき異常経験+1
+		IF (CFLAG:ARG:24 & 1) == 0
+			;50異常経験
+			CALL COMMON_UP_EXP, ARG, 50, 1, 0
+			CFLAG:ARG:24 |= 1
+		ENDIF
+		LOCAL:1 = TARGET
+		TARGET = ARG
+		CALL CALC_TENTACLE_GAUGE
+		TARGET = LOCAL:1
+	ELSEIF ABL:ARG:触手中毒 < 5
+		ABL:ARG:触手中毒 += 1
+		PRINTFORML %ABLNAME:35%(%CALLNAME:ARG%)＋1レベル
+	ENDIF
+;主人の場合
+ELSE
+	;主人が触手に襲われたフラグ
+	CFLAG:ARG:153 |= 512
+	CFLAG:(ARG:1):153 |= 256
+
+	;堕落度上昇
+	CFLAG:MASTER:4066 += LOCAL * 30
+ENDIF
+
+;奴隷の欲望の珠、習得の珠増加。否定の珠の消去
+;11習得の珠
+CALL COMMON_UP_JUEL, TARGET, 11, (LOCAL*100), 0
+;13欲情の珠
+CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*100), 0
+;100否定の珠
+CALL COMMON_DOWN_JUEL, TARGET, 100, 500*(2+MARK:反発刻印), 0
+PRINTFORML 日頃の鬱憤を晴らした為、%PALAMNAME:100%の珠は減りました(%CALLNAME:TARGET%)
+;強姦時の捨て台詞イベント口上呼び出し
+PRINTL 
+LOCAL = (ARG == MASTER) ? 420 # 430
+TRYCALL SELF_KOJO, TARGET, LOCAL
+PRINTL 
+;地の文カット
+IF CFLAG:99 == 0
+	PRINTFORML いつのまにか%CALLNAME:(ARG:1)%と触手は消えており
+	PRINTFORML 部屋に残るのは、得体の知れぬ体液に塗れ呆然と座り込む%CALLNAME:ARG%だけであった……。
+ENDIF

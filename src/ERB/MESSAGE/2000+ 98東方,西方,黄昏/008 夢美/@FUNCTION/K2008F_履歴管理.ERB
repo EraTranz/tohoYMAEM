@@ -1,0 +1,411 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;今回調教中のコマンド履歴を登録する
+;------------------------------------------------
+;■戻り値
+;	GETの場合は、ARG回のコマンドの解析結果を返す
+;	SET/RESETの場合は-1が戻る（普通はCALLFで呼ぶので意味なし）
+;------------------------------------------------
+;■引数
+;ARGS
+;	"GET"		ARG回目のTRAIN番号を取得
+;	"GETNOW"	今回のTRAIN番号を取得
+;	"GETPREV"	1個前のTRAIN番号を取得
+;	"RESET"		履歴の初期化（システムから呼び出し）
+;	"SET"		履歴の登録（システムから呼び出し）
+;	"GETSIZE"	最大要素数を返す（システムで使うかも）
+;ARG
+;	"SET"時　TRAIN番号を入れる
+;	"GET"時　ARG番目のコマンドを呼び出すのに使用する。0以下を指定すると強制エラー処理
+;================================================
+@K2008F_COMHISTORY(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+#DIM _HISTORY, 1000
+
+SELECTCASE ARGS
+	;指定回数のコマンドを返す
+	CASE "GET"
+		IF ARG <= 0
+			THROW 【K2008エラー】@履歴取得時に0以下の回数は取得できません。
+		ELSEIF ARG >= VARSIZE("_HISTORY")
+			THROW 【K2008エラー】登録可能な履歴の上限を超えます。【加筆者へ】必要なら_HISTORYの配列上限を拡張してください。
+		ELSE
+			RETURNF _HISTORY:ARG
+		ENDIF
+
+	;使用頻度が多い「今回のコマンド」は独立引数化。
+	CASE "GETNOW"
+		IF K2008F_COMCOUNT() <= 0
+			RETURNF -1
+		ELSE
+			RETURNF _HISTORY:K2008F_COMCOUNT()
+		ENDIF
+
+	;使用頻度が多い「1個前のコマンド」は独立引数化。ただしふつうはPREVCOMに等しい
+	CASE "GETPREV"
+		IF K2008F_COMCOUNT() <= 1
+			RETURNF -1
+		ELSE
+			RETURNF _HISTORY:(K2008F_COMCOUNT() - 1)
+		ENDIF
+
+	;既存のリストを破棄して戻る
+	CASE "RESET"
+		VARSET _HISTORY, -1
+		RETURNF -1
+	
+	;履歴に追加する
+	CASE "SET"
+		IF K2008F_COMCOUNT() >=  VARSIZE("_HISTORY")
+			THROW 【K2008エラー】登録可能な履歴の上限を超えます。【加筆者へ】必要なら_HISTORYの配列上限を拡張してください。
+		ELSE
+			_HISTORY:K2008F_COMCOUNT() = SELECTCOM
+			RETURNF _HISTORY
+		ENDIF
+
+	;最大要素数を返す
+	CASE "GETSIZE"
+		RETURNF VARSIZE("_HISTORY")
+
+	CASEELSE
+		THROW 【K2008エラー】@未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+
+;================================================
+;今回調教中のコマンドについて、汎用口上の選択先（無快好拒痛）履歴を登録する
+;------------------------------------------------
+;■戻り値
+;	GETの場合は、ARG回のコマンドの選択先を返す
+;	ただし、コマンド選択画面だと-1を返す（コマンドが選択されてから分析されるため、不定状態）
+;	SETの場合、登録に使用した値をそのまま返す
+;	RESETの場合は-1が戻る（普通はCALLFで呼ぶので意味なし）
+;------------------------------------------------
+;■引数
+;ARGS
+;	"GET"		ARG回目の選択先を取得
+;	"GETNOW"	今回の選択先を取得
+;	"GETPREV"	1個前の選択先を取得
+;	"RESET"		履歴の初期化（システムから呼び出し）
+;	"SET"		履歴の登録（システムから呼び出し）
+;	"GETSIZE"	最大要素数を返す（システムで使うかも）
+;ARG
+;	"SET"時　TRAIN番号を入れる
+;	"GET"時　ARG回のコマンドを呼び出すのに使用する。0以下を指定すると強制エラー処理
+;================================================
+@K2008F_COMHISTORY_GENERAL(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+#DIM _HISTORY, 1000
+#DIM _HISTORYSIZE
+#DIM _COMCOUNT
+_HISTORYSIZE = VARSIZE("_HISTORY")
+_COMCOUNT = K2008F_COMCOUNT()
+
+SELECTCASE ARGS
+	;指定回数の判定結果を返す
+	CASE "GET"
+		IF ARG <= 0
+			THROW 【K2008エラー】@履歴取得時に0以下の回数は取得できません。
+		ELSEIF ARG >= _HISTORYSIZE
+			THROW 【K2008エラー】登録可能な履歴の上限を超えます。【加筆者へ】必要なら_HISTORYの配列上限を拡張してください。
+		ELSE
+			RETURNF _HISTORY:ARG
+		ENDIF
+
+	;使用頻度が多い「今回のコマンド」は独立引数化。
+	CASE "GETNOW"
+		IF _COMCOUNT <= 0
+			RETURNF -1
+		ELSE
+			RETURNF _HISTORY:_COMCOUNT
+		ENDIF
+
+	;使用頻度が多い「1個前のコマンド」は独立引数化。
+	CASE "GETPREV"
+		IF _COMCOUNT <= 1
+			RETURNF -1
+		ELSE
+			RETURNF _HISTORY:(_COMCOUNT - 1)
+		ENDIF
+
+	;既存のリストを破棄して戻る
+	CASE "RESET"
+		VARSET _HISTORY, -1
+		RETURNF -1
+	
+	;履歴に追加する
+	CASE "SET"
+		IF _COMCOUNT >= _HISTORYSIZE
+			THROW 【K2008エラー】登録可能な履歴の上限を超えます。【加筆者へ】必要なら_HISTORYの配列上限を拡張してください。
+		ELSEIF INRANGE(ARG, 0, _HISTORYSIZE)
+			_HISTORY:_COMCOUNT = ARG
+			RETURNF _HISTORY
+		ENDIF
+
+	;最大要素数を返す
+	CASE "GETSIZE"
+		RETURNF _HISTORYSIZE
+
+	CASEELSE
+		THROW 【K2008エラー】@未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+
+;================================================
+;今回調教中の、指定したコマンドの実施回数を調べる
+;------------------------------------------------
+;■戻り値
+;	指定したコマンドの実施回数を返す
+;------------------------------------------------
+;■引数
+;ARG
+;	調べたいTRAIN番号を入れる。
+;	省略時はSELECTCOMが勝手に入る
+;================================================
+@K2008F_HOWTIMES_COM(ARG = __INT_MIN__)
+#FUNCTION
+#DIM _COUNTCOM
+#DIM _COUNT
+
+;初回コマンド時は無条件で0を返す
+SIF TFLAG:108 == 1
+	RETURNF 0
+	
+SELECTCASE ARG
+	CASE __INT_MIN__
+		;ARGにはTRAIN番号を入れる
+		ARG = SELECTCOM
+	CASE IS < 0
+		THROW 【K2008エラー】@未登録の引数 {ARG} が使用されました
+	CASEELSE
+		;何もしない = ARGをそのまま使う
+ENDSELECT
+
+_COUNTCOM = 0
+;手前から順番に調べる
+FOR _COUNT, 1, K2008F_COMHISTORY("GETSIZE")
+	SELECTCASE K2008F_COMHISTORY("GET", _COUNT)
+		CASE -1
+			;未登録領域なので終わり
+			BREAK
+		CASE ARG
+			_COUNTCOM += 1
+	ENDSELECT
+NEXT
+
+RETURNF _COUNTCOM
+
+
+;================================================
+;今回の調教中に当該コマンドの拒否をしたかどうかを調べる
+;------------------------------------------------
+;■戻り値
+;	拒否していれば1、していなければ0
+;	SET/RESETの場合は-1が戻る（普通はCALLFで呼ぶので意味なし）
+;------------------------------------------------
+;■引数
+;ARG
+;	調べたいTRAIN番号を入れる。
+;	省略可能。省略時はSELECTCOM
+;ARGS:1
+;	"SET"
+;	"RESET"
+;		通常は使用せず口上システム側でのみ使用。
+;		それぞれ登録と全初期化。
+;================================================
+@K2008F_WAS_DENIED(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+;そのうち最適化？
+#DIM _HISTORY, 1000
+#DIM _COUNT
+
+SELECTCASE ARGS
+	CASE "RESET"
+		;既存のリストを破棄して戻る
+		VARSET _HISTORY, -1
+		RETURNF -1
+	CASE "SET", "GET", ""
+		;下で処理
+	CASEELSE
+		THROW 【K2008エラー】@未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+SELECTCASE ARG
+	CASE __INT_MIN__
+		;ARGにはTRAIN番号を入れる
+		ARG = SELECTCOM
+	CASE IS < 0
+		THROW 【K2008エラー】@未登録の引数 {ARG} が使用されました
+	CASEELSE
+		;何もしない = ARGをそのまま使う
+ENDSELECT
+
+;拒否したコマンドを探す
+;なければ登録する
+FOR _COUNT, 0, VARSIZE("_HISTORY")
+	SELECTCASE _HISTORY:_COUNT
+		CASE -1
+			;未登録領域に入った
+			;番号を登録できるならば、してから抜ける
+			SIF ARGS == "SET"
+				_HISTORY:_COUNT = ARG
+			RETURNF 0
+		CASE ARG
+			;既に登録されていたので抜ける
+			RETURNF 1
+	ENDSELECT
+NEXT
+;ここに来ることは原則ないが
+RETURNF -1
+
+
+;================================================
+;射精された量をカウントする
+;------------------------------------------------
+;■戻り値
+;	GETの場合は、指定した部位に溜まった量を返す
+;	SET/RESETの場合は-1が戻る（普通はCALLFで呼ぶので意味なし）
+;------------------------------------------------
+;■引数
+;ARGS
+;	"GET"
+;	"SET"
+;	"RESET"
+;		通常は使用せず口上システム側でのみ使用。
+;		順番に「回数取得」「履歴に追加」「全初期化」
+;ARG
+;	"SET"時　使用しない（自動で加減算する）
+;	"GET"時　部位を指定する。数値はとりあえず独自規格
+;		1：膣／子宮（Ｖ)
+;		2：腸（Ａ）
+;		3：尿道／膀胱（Ｕ）　※尿道挿入での射精のみ
+;		4：口（Ｍ）　※Mouth
+;		5：髪（Ｈ）　※Hair
+;		6：顔（Ｆ）　※Face
+;		7：体（Ｂ）　※Body：胸、手、足、腋、尻（×腸　〇臀部）、などなど全般
+;================================================
+@K2008F_SAMENCOUNT(ARGS = "", ARG = __INT_MIN__)
+#FUNCTION
+;そのうち最適化？
+#DIM _V
+#DIM _A
+#DIM _U
+#DIM _M
+#DIM _H
+#DIM _F
+#DIM _B
+
+SELECTCASE ARGS
+	;既存のリストを破棄して戻る
+	CASE "RESET"
+		_V = 0
+		_A = 0
+		_U = 0
+		_M = 0
+		_H = 0
+		_F = 0
+		_B = 0
+		RETURNF -1
+	
+	;設定処理
+	CASE "SET"
+		;後述
+
+	;指定回数前のコマンドを返す
+	CASE "GET"
+		SELECTCASE ARG
+			CASE 1
+				RETURNF _V
+			CASE 2
+				RETURNF _A
+			CASE 3
+				RETURNF _U
+			CASE 4
+				RETURNF _M
+			CASE 5
+				RETURNF _H
+			CASE 6
+				RETURNF _F
+			CASE 7
+				RETURNF _B
+			CASEELSE
+				THROW 【K2008エラー】未定義の場所 {ARG} が指定されました
+		ENDSELECT
+
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+;■SET処理
+
+;膣内に射精
+SIF TFLAG:11 > 0
+	_V += MAX(TFLAG:91, TFLAG:11)
+;アナルに射精
+SIF TFLAG:12 > 0
+	_A += MAX(TFLAG:91, TFLAG:12)
+;髪に射精
+SIF TFLAG:13 > 0
+	_H += MAX(TFLAG:91, TFLAG:13)
+;顔に射精
+SIF TFLAG:14 > 0
+	_F += MAX(TFLAG:91, TFLAG:14)
+;口に射精
+SIF TFLAG:15 > 0
+	_M += MAX(TFLAG:91, TFLAG:15)
+;胸に射精
+SIF TFLAG:16 > 0
+	_B += MAX(TFLAG:91, TFLAG:16)
+;腹に射精
+SIF TFLAG:17 > 0
+	_B += MAX(TFLAG:91, TFLAG:17)
+;腋に射精
+SIF TFLAG:18 > 0
+	_B += MAX(TFLAG:91, TFLAG:18)
+;手に射精
+SIF TFLAG:19 > 0
+	_B += MAX(TFLAG:91, TFLAG:19)
+;秘裂に射精
+SIF TFLAG:20 > 0
+	_B += MAX(TFLAG:91, TFLAG:20)
+;竿に射精
+SIF TFLAG:21 > 0
+	_B += MAX(TFLAG:91, TFLAG:21)
+;尻に射精
+SIF TFLAG:22 > 0
+	_B += MAX(TFLAG:91, TFLAG:22)
+;太腿に射精
+SIF TFLAG:23 > 0
+	_B += MAX(TFLAG:91, TFLAG:23)
+;足で射精
+SIF TFLAG:24 > 0
+	_B += MAX(TFLAG:91, TFLAG:24)
+;尿道挿入で中出し
+SIF SELECTCOM == K2008F_GETNUM_TRAIN("尿道挿入") && TFLAG:91
+	_U += TFLAG:91
+
+;■状態によって減算処置
+
+;シャワー中
+IF TEQUIP:シャワープレイ
+	;顔と体の精液は全部流す
+	_F = 0
+	_U = 0
+	;髪の精液は半分流す
+	_H /= 2
+ENDIF
+
+;尿道挿入以外の放尿は、尿道にあった分を全部出す
+SIF NOWEX:放尿 > 0 && SELECTCOM != K2008F_GETNUM_TRAIN("尿道挿入")
+	_U = 0
+
+;浣腸（取り外し）　アナルにあった分は全部出す
+SIF TEQUIP:Ａ系装着器具 != K2008F_TEQUIPTYPE("浣腸") && SELECTCOM == K2008F_GETNUM_TRAIN("浣腸プレイ")
+	_A = 0
+
+;空気浣腸（取り外し）　アナルにあった分は半分出す
+SIF TEQUIP:Ａ系装着器具 != K2008F_TEQUIPTYPE("空気浣腸") && SELECTCOM == K2008F_GETNUM_TRAIN("空気浣腸")
+	_A /= 2
+
+RETURNF -1
+

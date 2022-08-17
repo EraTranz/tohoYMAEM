@@ -1,0 +1,30 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝キス
+;TFLAG:99で増加する愛情経験の2倍の値を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE143
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORML ――目を覚ますと、間近に夢美の顔が迫っていた
+		PRINTFORMW どこか扇情的な、それでいて落ち着く匂いが迫ってくる
+		PRINTFORML 
+		CALL K2008_VOICE("キス")
+		CALL K2008_VOICE("キス")
+		PRINTFORML 「んちゅぅ……　んふっ、%CALLNAME:MASTER%も目が覚めたようね」
+		PRINTFORMW 「あら、キスじゃ物足りなかった？」
+		PRINTFORMW 「そうねぇ……　朝ごはん、口移しで食べさせてあげようかしら？」
+	CASE 1
+		PRINTFORML ――
+		CALL K2008_VOICE("キス")
+		PRINTFORMW 目を覚ますと、夢美が夢中でキスをしていた
+		PRINTFORML 
+		PRINTFORML 「ぷぁ……　もう起きちゃったの？」
+		PRINTFORMW 「残念、もうちょっと楽しみたかったのにぃ」
+	CASEELSE
+		PRINTFORMW ――夢美のキス奉仕で目を覚ました
+		PRINTFORML 
+		CALL K2008_VOICE("キス")
+		PRINTFORML 「んふ、やっと起きたの？　おはよう、%CALLNAME:MASTER%」
+		PRINTFORMW 「ささ、続きは朝ごはんの後、よろしくお願いね♪」
+ENDSELECT

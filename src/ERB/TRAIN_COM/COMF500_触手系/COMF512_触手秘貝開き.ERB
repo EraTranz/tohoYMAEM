@@ -1,0 +1,415 @@
+﻿;=============================================================================
+;触手秘貝開き
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE512
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:512 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;Ｖ系触手責め中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 512) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM512
+PRINTL 触手秘貝開き
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 512
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手秘貝開き
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+LOCAL:1 = 60
+LOCAL:2 = 100
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:2 , 1.20
+	SOURCE:欲情追加 = 10
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+	SOURCE:欲情追加 = 50
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.90
+	SOURCE:欲情追加 = 250
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+	SOURCE:欲情追加 = 800
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 0.70
+	SOURCE:欲情追加 = 1500
+ELSE
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+	SOURCE:欲情追加 = 2200
+ENDIF
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:2
+
+SOURCE:液体追加 = 10
+SOURCE:露出 = 250
+SOURCE:屈従 = 100
+SOURCE:逸脱 = 2500
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 100
+	SOURCE:屈従 += 100
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 200
+	SOURCE:屈従 += 150
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 350
+	SOURCE:屈従 += 300
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 700
+	SOURCE:屈従 += 600
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1400
+	SOURCE:屈従 += 1000
+ELSE
+	SOURCE:快Ｃ = 2100
+	SOURCE:屈従 += 1500
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:不潔 = 4000
+	SOURCE:露出 += 1500
+ELSEIF ABL:露出癖 == 1
+	SOURCE:不潔 = 2500
+	SOURCE:露出 += 1250
+	SOURCE:液体追加 *= 5
+ELSEIF ABL:露出癖 == 2
+	SOURCE:不潔 = 1000
+	SOURCE:露出 += 750
+	SOURCE:液体追加 *= 10
+ELSEIF ABL:露出癖 == 3
+	SOURCE:不潔 = 500
+	SOURCE:露出 += 500
+	SOURCE:液体追加 *= 50
+ELSEIF ABL:露出癖 == 4
+	SOURCE:不潔 = 250
+	SOURCE:露出 += 250
+	SOURCE:液体追加 *= 100
+ELSE
+	SOURCE:不潔 = 100
+	SOURCE:液体追加 *= 200
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:不潔 , 1.80
+	TIMES SOURCE:液体追加 , 0.50
+	TIMES SOURCE:欲情追加 , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:不潔 , 1.50
+	TIMES SOURCE:液体追加 , 0.80
+	TIMES SOURCE:欲情追加 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:不潔 , 1.20
+	TIMES SOURCE:液体追加 , 1.20
+	TIMES SOURCE:欲情追加 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:不潔 , 0.80
+	TIMES SOURCE:液体追加 , 1.50
+	TIMES SOURCE:欲情追加 , 1.20
+ELSE
+	TIMES SOURCE:不潔 , 0.50
+	TIMES SOURCE:液体追加 , 1.80
+	TIMES SOURCE:欲情追加 , 1.50
+ENDIF
+
+;恥じらい・恥薄い
+IF TALENT:恥じらい
+	TIMES SOURCE:不潔 , 1.20
+ELSEIF TALENT:恥薄い
+	TIMES SOURCE:不潔 , 0.50
+ENDIF
+;Ｃ敏感、鈍感をみる
+;快Ｃ自体のチェックは後でまとめてやる
+IF TALENT:Ｃ敏感
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｃ鈍感
+	TIMES SOURCE:快Ｃ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 1.50
+ENDIF
+
+;処女、貞操観念
+IF TALENT:処女
+	TIMES SOURCE:不潔 , 1.20
+	IF TALENT:処女 == 1
+		TIMES SOURCE:不潔 , 2.00
+		TIMES SOURCE:屈従 , 2.00
+		SOURCE:露出 += 2000
+		SIF TALENT:貞操観念
+			TIMES SOURCE:露出 , 2.00
+	ENDIF
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_512
+IF !TEQUIP:触手服
+	PRINTFORML 触手は%CALLNAME:TARGET%を高々と吊り上げると、脚を強制的にＭの字型に開かせた
+	PRINTFORM 吊るされている%CALLNAME:TARGET%の股に細長い形をした触手が複数近づくと、
+	SIF TALENT:処女 && TALENT:処女 == 1 && TALENT:淫乱 == 0
+		PRINT オトコを拒んでいるかの様にぴったりと閉ざされた
+	IF TALENT:小柄体型
+		PRINT 幼いワレメに
+	ELSE
+		PRINT 縦筋に
+	ENDIF
+	PRINTL 先端を突き入れた
+	PRINTFORML そして貝殻をこじ開けるかのように秘唇をめくり、中身を%CALLNAME:PLAYER%がよく見えるように曝け出した
+
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		IF TEQUIP:Ｖ系装着器具
+			PRINTFORML ここからは深々と触手を咥えこんでいる%CALLNAME:TARGET%の膣口がよく見える…
+		ELSE
+			IF TALENT:処女
+				PRINTFORML 完全に曝け出された%CALLNAME:TARGET%の膣口は、その奥で立ちはだかっている処女膜がよく見えるくらい大きく広げられている…
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%の膣口は完全に曝け出され、ヒクついているのがよく見える…
+			ENDIF
+		ENDIF
+		IF STAIN:ヴァギナ & 64 || (STAIN:ヴァギナ & 4 && TFLAG:103 > 0) || STAIN:ヴァギナ & 32
+			PRINTFORM 無理やり開かされた%CALLNAME:TARGET%の
+			IF STAIN:ヴァギナ & 64 && STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 破瓜の血と
+				SIF STAIN:ヴァギナ & 128
+					PRINT 経血と
+				PRINTL 精液と触手の体液が混ざり合ってできた濁りきってピチピチと嫌な音を立てて泡立っている液体が、どろりと溶けた飴のように漏れ出てきた……
+			ELSEIF STAIN:ヴァギナ & 64
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 処女血と
+				SIF STAIN:ヴァギナ & 128
+					PRINT 経血と
+				SIF STAIN:ヴァギナ & 32 || STAIN:ヴァギナ & 128
+					PRINT 共に
+				PRINTL 強烈な臭気を放っている触手の体液が滴り落ちた……
+			ELSEIF STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32 || STAIN:ヴァギナ & 128
+					PRINT 微かに血の色が混じった
+				PRINTL 白濁液がよだれのように零れ出ている……
+			ELSEIF STAIN:ヴァギナ & 32
+				PRINTFORML 膣口から先ほど処女膜を貫かれた証が股の上を、そして%CALLNAME:TARGET%を拘束している触手の上に一筋の鮮やかな赤い線を残して床へと滴り落ちた……
+			ENDIF
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口から愛液が泉のように次々と湧き出ている……
+		ELSE
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口は綺麗な形と色をしている……
+		ENDIF
+	ELSE
+		IF ABL:露出癖 == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしながらも涙を浮かべ、見るなと喚きつつ無駄な抵抗を繰り広げている…
+		ELSEIF ABL:露出癖 <= 1
+			PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしながらも抵抗の意志を示しているのか、%CALLNAME:PLAYER%から視線を外している…
+		ELSEIF ABL:露出癖 <= 3
+			PRINTFORML 調教の成果か、%CALLNAME:TARGET%は小さく「変態…」とつぶやいただけで抵抗するようなそぶりを見せなくなった
+		ELSEIF ABL:露出癖 >= 5 && ABL:触手中毒 >= 3 && TALENT:淫乱
+			PRINTFORML %CALLNAME:TARGET%は触手達にもっと拡げて欲しい、もっと曝け出して欲しいと艶やかな声で懇願しながら腰を振っている…
+			IF TEQUIP:Ｖ系装着器具
+				PRINTFORML ここからは深々と触手を咥えこんでいる%CALLNAME:TARGET%の膣口が、さらなる快楽を引き出そうと一段と強く触手を締め付けているのがよく見える…
+			ELSE
+				IF TALENT:処女
+					PRINTFORML 完全に曝け出された%CALLNAME:TARGET%の膣口は、その奥で立ちはだかっている処女膜がよく見えるくらい大きく広げられている…
+				ELSE
+					PRINTFORML 完全に曝け出された%CALLNAME:TARGET%の膣口が、まるで触手の侵入を待っているかの様にヒクついているのがよく見える…
+				ENDIF
+			ENDIF
+		ELSEIF ABL:露出癖 >= 5 && TALENT:淫乱
+			PRINTFORML %CALLNAME:TARGET%は自分の性器が見られていることにすっかり快感を覚えたのか、熱い息を吐きながら触手で広げられた秘貝を%CALLNAME:PLAYER%に見せつけようと腰を振っている…
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%は抵抗するどころか積極的に
+			SIF PALAM:潤滑 > PALAMLV:3
+				PRINT 愛液で艶めかしく輝く
+			SIF PALAM:欲情 > PALAMLV:2 || TALENT:淫乱
+				PRINT ぷっくりと膨れ上がった
+			PRINTL ピンク色の真珠を見せつけるようなしぐさをしている…
+		ENDIF
+		IF STAIN:ヴァギナ & 64 || (STAIN:ヴァギナ & 4 && TFLAG:103 > 0) || STAIN:ヴァギナ & 32
+			PRINTFORM 無理やり開かされた%CALLNAME:TARGET%の
+			IF STAIN:ヴァギナ & 64 && STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 破瓜の血と
+				PRINTL 精液と触手の体液が混ざり合ってできた濁りきってピチピチと嫌な音を立てて泡立っている液体が、どろりと溶けた飴のように漏れ出てきた……
+			ELSEIF STAIN:ヴァギナ & 64
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 処女血と共に
+				PRINTL 強烈な臭気を放っている触手の体液が滴り落ちた……
+			ELSEIF STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 微かに血の色が混じった
+				PRINTL 白濁液がよだれのように零れ出ている……
+			ELSEIF STAIN:ヴァギナ & 32
+				PRINTFORML 膣口から先ほど処女膜を貫かれた証が股の上を、そして%CALLNAME:TARGET%を拘束している触手の上に一筋の鮮やかな赤い線を残して床へと滴り落ちた……
+			ENDIF
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口から愛液が泉のように次々と湧き出ている……
+		ELSE
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口は綺麗な形と色をしている……
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 触手服はおもむろに%CALLNAME:TARGET%の脚を肩幅以上に開かせ腰を強制的に落とさせた
+	PRINTFORM 動けないでいる%CALLNAME:TARGET%の
+	SIF TALENT:処女 && TALENT:処女 == 1 && TALENT:淫乱 == 0
+		PRINT オトコを拒んでいるかの様にぴったりと閉ざされた
+	IF TALENT:小柄体型
+		PRINT 幼いワレメ
+	ELSE
+		PRINT 縦筋
+	ENDIF
+	PRINTL が徐々にさらされていく
+	PRINT そして貝殻がこじ開けられるかのように秘唇が左右に引っ張られると、中身がよく見えるように
+	PRINTFORML %CALLNAME:TARGET%の腰を強制的に%CALLNAME:PLAYER%の方に突き出させた
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		IF GROUPMATCH(TEQUIP:Ｖ系装着器具, 1, 2, 3, 7, 21, 22, 23, 27)
+			PRINTFORML ここからは深々と触手を咥えこんでいる%CALLNAME:TARGET%の膣口がよく見える…
+		ELSE
+			IF TALENT:処女
+				PRINTFORML 完全に曝け出された%CALLNAME:TARGET%の膣口は、その奥で立ちはだかっている処女膜がよく見えるくらい大きく広げられている…
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%の膣口は完全に曝け出され、ヒクついているのがよく見える…
+			ENDIF
+		ENDIF
+		IF STAIN:ヴァギナ & 64 || (STAIN:ヴァギナ & 4 && TFLAG:103 > 0) || STAIN:ヴァギナ & 32
+			PRINTFORM 無理やり開かされた%CALLNAME:TARGET%の
+			IF STAIN:ヴァギナ & 64 && STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 破瓜の血と
+				SIF STAIN:ヴァギナ & 128
+					PRINT 経血と
+				PRINTL 精液と触手の体液が混ざり合ってできた濁りきってピチピチと嫌な音を立てて泡立っている液体が、どろりと溶けた飴のように漏れ出てきた……
+			ELSEIF STAIN:ヴァギナ & 64
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 処女血と
+				SIF STAIN:ヴァギナ & 128
+					PRINT 経血と
+				SIF STAIN:ヴァギナ & 32 || STAIN:ヴァギナ & 128
+					PRINT 共に
+				PRINTL 強烈な臭気を放っている触手の体液が滴り落ちた……
+			ELSEIF STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32 || STAIN:ヴァギナ & 128
+					PRINT 微かに血の色が混じった
+				PRINTL 白濁液がよだれのように零れ出ている……
+			ELSEIF STAIN:ヴァギナ & 32
+				PRINTFORML 膣口から先ほど処女膜を貫かれた証が股に一筋の鮮やかな赤い線を残して床へと滴り落ちた……
+			ENDIF
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口から愛液が泉のように次々と湧き出ている……
+		ELSE
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口は綺麗な形と色をしている……
+		ENDIF
+	ELSE
+		IF ABL:露出癖 == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+			PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしながらも涙を浮かべ、見るなと喚きつつ無駄な抵抗を繰り広げている…
+		ELSEIF ABL:露出癖 <= 1
+			PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にしながらも抵抗の意志を示しているのか、%CALLNAME:PLAYER%から視線を外している…
+		ELSEIF ABL:露出癖 <= 3
+			PRINTFORML 調教の成果か、%CALLNAME:TARGET%は小さく「変態…」とつぶやいただけで抵抗するようなそぶりを見せなくなった
+		ELSEIF ABL:露出癖 >= 5 && ABL:触手中毒 >= 3 && TALENT:淫乱
+			PRINTFORML %CALLNAME:TARGET%は触手達にもっと拡げて欲しい、もっと曝け出して欲しいと艶やかな声で懇願しながら腰を振っている…
+			IF GROUPMATCH(TEQUIP:Ｖ系装着器具, 1, 2, 3, 7, 21, 22, 23, 27)
+				PRINTFORML ここからは深々と触手を咥えこんでいる%CALLNAME:TARGET%の膣口が、さらなる快楽を引き出そうと一段と強く触手を締め付けているのがよく見える…
+			ELSE
+				IF TALENT:処女
+					PRINTFORML 完全に曝け出された%CALLNAME:TARGET%の膣口は、その奥で立ちはだかっている処女膜がよく見えるくらい大きく広げられている…
+				ELSE
+					PRINTFORML 完全に曝け出された%CALLNAME:TARGET%の膣口が、まるで触手の侵入を待っているかの様にヒクついているのがよく見える…
+				ENDIF
+			ENDIF
+		ELSEIF ABL:露出癖 >= 5 && TALENT:淫乱
+			PRINTFORML %CALLNAME:TARGET%は自分の性器が見られていることにすっかり快感を覚えたのか、熱い息を吐きながら触手で広げられた秘貝を%CALLNAME:PLAYER%に見せつけようと腰を振っている…
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%は抵抗するどころか積極的に
+			SIF PALAM:潤滑 > PALAMLV:3
+				PRINT 愛液で艶めかしく輝く
+			SIF PALAM:欲情 > PALAMLV:2 || TALENT:淫乱
+				PRINT ぷっくりと膨れ上がった
+			PRINTL ピンク色の真珠を見せつけるようなしぐさをしている…
+		ENDIF
+		IF STAIN:ヴァギナ & 64 || (STAIN:ヴァギナ & 4 && TFLAG:103 > 0) || STAIN:ヴァギナ & 32
+			PRINTFORM 無理やり開かされた%CALLNAME:TARGET%の
+			IF STAIN:ヴァギナ & 64 && STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 破瓜の血と
+				PRINTL 精液と触手の体液が混ざり合ってできた濁りきってピチピチと嫌な音を立てて泡立っている液体が、どろりと溶けた飴のように漏れ出てきた……
+			ELSEIF STAIN:ヴァギナ & 64
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 処女血と共に
+				PRINTL 強烈な臭気を放っている触手の体液が滴り落ちた……
+			ELSEIF STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+				PRINT 下の口から
+				SIF STAIN:ヴァギナ & 32
+					PRINT 微かに血の色が混じった
+				PRINTL 白濁液がよだれのように零れ出ている……
+			ELSEIF STAIN:ヴァギナ & 32
+				PRINTFORML 膣口から先ほど処女膜を貫かれた証が股に一筋の鮮やかな赤い線を残して床へと滴り落ちた……
+			ENDIF
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口から愛液が泉のように次々と湧き出ている……
+		ELSE
+			PRINTFORML 曝け出された%CALLNAME:TARGET%の膣口は綺麗な形と色をしている……
+		ENDIF
+	ENDIF
+ENDIF

@@ -1,0 +1,114 @@
+﻿;=============================================================================
+;工作技能
+;=============================================================================
+@ABLUP73
+;SIF (FLAG:12 & 16) == 0
+;	RETURN 0
+DRAWLINE
+SIF ABL:工作技能 >= 5
+	JUMP ABLUP_MAX
+
+PRINTFORM [0] - %PALAMNAME:11%の珠×{COST73(0)}、%EXPNAME:74%{COST73(1)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN73(0)
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && CAN73(0) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:習得 -= COST73(0)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:工作技能 += 1
+PRINTFORMW %ABLNAME:73%のレベルが{ABL:工作技能}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP73
+SIF ABL:工作技能 >= 5
+	RETURN 0
+
+CALLF CALC_COST73, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP73("CHECK")
+
+@COST73(ARG)
+#FUNCTION
+RETURNF CALC_COST73("GET", ARG)
+
+@CALC_COST73(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:工作技能 == 0
+	LOCAL:0 = 50
+	LOCAL:1 = 10
+ELSEIF ABL:工作技能 == 1
+	LOCAL:0 = (EXP:工作経験 >= EXPLV:3) ? 35 # 100
+	LOCAL:1 = 25
+ELSEIF ABL:工作技能 == 2
+	LOCAL:0 = (EXP:工作経験 >= EXPLV:4) ? 200 # 250
+	LOCAL:1 = 40
+ELSEIF ABL:工作技能 == 3
+	LOCAL:0 = (EXP:工作経験 >= EXPLV:5) ? 1700 # 2000
+	LOCAL:1 = 80
+ELSEIF ABL:工作技能 == 4
+	LOCAL:0 = (EXP:工作経験 >= EXPLV:5) ? 15000 # 30000
+	LOCAL:1 = 100
+ENDIF
+
+;習得早い
+IF TALENT:習得早い
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.75
+;習得遅い
+ELSEIF TALENT:習得遅い
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.10
+ENDIF
+;工作名人（例：にとり）
+IF TALENT:工作名人
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+ENDIF
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 2
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+RETURNF 0
+
+@CAN73(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP73("GET", ARG)
+
+@CAN_ABLUP73(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;習得の珠で上げる
+SIF JUEL:習得 < COST73(0)
+	LOCAL:0 |= 1
+;工作経験が必要
+SIF EXP:工作経験 < COST73(1)
+	LOCAL:0 |= 2
+
+RETURNF (LOCAL:0 == 0)

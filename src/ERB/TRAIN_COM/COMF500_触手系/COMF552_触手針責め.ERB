@@ -1,0 +1,94 @@
+﻿;=============================================================================
+;触手針責め
+;=============================================================================
+;実際には苦痛があるためもっと体力気力をもっていかれる
+;真価を発揮するのは痛みが30000を超えたとき(ただしそこまで上げられるかは不明。体力上昇必須かも)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE552
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:552 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;触手が[針状触手]を得ていないとダメ
+SIF (FLAG:75 & 2) == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 552) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM552
+PRINTL 触手針責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 552
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手針責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 20
+
+SOURCE:逸脱 = 1000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 3300
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 3600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 4000
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	SOURCE:痛み = 4500
+ELSE
+	SOURCE:痛み = 5500
+ENDIF
+
+SOURCE:逸脱 *= 2
+SOURCE:支配 = SOURCE:痛み / 2
+
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 3
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_552
+IF TEQUIP:触手調教
+	PRINTFORML 先端が針のように鋭く、硬質な触手が%CALLNAME:TARGET%の乳首や\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@に容赦なく突きたてられた……
+ELSE
+	PRINT 触手服の内部では先端が針のように鋭く、硬質な触手が突如として
+	PRINTFORML %CALLNAME:TARGET%の乳首や\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@に容赦なく突きたてられた……
+ENDIF

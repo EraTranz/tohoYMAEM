@@ -1,0 +1,323 @@
+﻿;=============================================================================
+;野外売春の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド実行可能判定処理
+;-------------------------------------------------
+@PROSTITUTE_ABLE_COM70, ARG
+;キャラが売春可能であるかの共通判定処理を満たしている
+SIF BROTHEL_COM_ABLE_COMMON(ARG) == 0
+	RETURN 0
+;野外なので淫具が無いとダメ
+SIF (FLAG:3000 & 2) == 0
+	RETURN 0
+RETURN 1
+
+;=============================================================================
+;選択可能処理
+;=============================================================================
+@JUDGE_PROSTITUTE_COM71, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM72, ARG
+;露出癖LV3以上必要
+SIF ABL:ARG:露出癖 < 3
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM73, ARG
+;[処女]・[乙女]持ちはオミット
+SIF TALENT:ARG:処女 || ABL:ARG:露出癖 < 3
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM74, ARG
+;露出癖LV3以上必要人魚はダメ
+SIF ABL:ARG:露出癖 < 3 || TALENT:ARG:人魚
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM75, ARG
+CALL PROSTITUTE_ABLE_COM40, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM76, ARG
+CALL PROSTITUTE_ABLE_COM50, ARG
+RETURN RESULT
+;-------------------------------------------------
+;売春コマンドの分岐処理
+;-------------------------------------------------
+@PROSTITUTE_COM70, ARG
+#LOCALSIZE 1
+CALL CHOOSE_PROSTITUTE_COM, ARG, 7
+SELECTCOM = RESULT
+
+SIF TALENT:MASTER:998
+	PRINTFORML SELECTCOM = {SELECTCOM}
+
+;顧客の設定
+IF SELECTCOM <= 74
+	CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE1, ARG
+ELSE
+	CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE2, ARG
+ENDIF
+;欲望をチェックする。欲望が相手の欲望を上回るかどうか。成功なら欲望レベルの２倍、失敗なら１倍入ります。
+;CBVA売春では、相手の欲望の最大値が4です。
+LOCAL = RAND:5
+IF LOCAL <= ABL:ARG:欲望
+	TFLAG:408 = LOCAL + ABL:ARG:欲望 * 2
+ELSE
+	TFLAG:408 = LOCAL + ABL:ARG:欲望
+ENDIF
+
+;相手からの行動が発生します。相手の技巧がこちらの欲望以下の場合、不満そうな表情が出る可能性があります。
+;相手の技巧＋こちらの従順の２倍＞こちらの欲望＋３なら、問題なく行為を露出癖と奉仕精神を加える事が出来ます。
+;足りない場合は加えられません。
+LOCAL = MAX(RAND:3 + (ABL:ARG:従順 * 2) - 3, 0)
+SIF LOCAL >= ABL:ARG:技巧
+	TFLAG:408 += (ABL:ARG:奉仕精神 + ABL:ARG:露出癖)
+
+;従順がLV3以上ないと、著しく微妙になります
+SIF ABL:ARG:従順 < 3
+	TFLAG:408 /= 10
+
+;………………………………………………
+;選択された売春コマンドを実行
+;………………………………………………
+;ここからは、プレイ内容の領分に入ってきますので、分岐後に任せます。
+;ここまでの満足度は合計最大60点。
+;プレイ内容の方で20点。
+;結果、最大80ポイント、平均40程度の満足度になります。ランダムが40を占めるので、割と安定しません。
+;ただし、素質的な要因がある場合は80ポイントを突破をしても構いません。割とアバウト。
+TRYCCALLFORM PROSTITUTE_COM{SELECTCOM}, ARG
+	SIF RESULT == 1
+		RETURN 1
+CATCH
+ENDCATCH
+RETURN 0
+
+;=============================================================================
+;野外売春(デート)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM71, ARG
+DOWNBASE:ARG:0 += 10
+DOWNBASE:ARG:1 += 15
+
+PRINTL 野外 -デート-
+
+;欲望、技巧、奉仕精神、露出癖をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖
+
+;献身的
+SIF TALENT:ARG:献身的
+	TIMES TFLAG:408, 1.5
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 0
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM71
+
+;=============================================================================
+;野外売春(ストリップ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM72, ARG
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 20
+
+PRINTL 野外 -野外ストリップ-
+
+;欲望、技巧、奉仕精神、露出癖をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖
+
+;献身的
+SIF TALENT:ARG:献身的
+	TIMES TFLAG:408, 1.5
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:露出快楽経験 = TFLAG:401 * 2
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 10
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM72
+
+;=============================================================================
+;野外売春(バイブストリップ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM73, ARG
+DOWNBASE:ARG:0 += 25
+DOWNBASE:ARG:1 += 35
+
+LOCALS:0 = 野外 -野外ストリップ with バイブ-
+LOCALS:1 = 野外 -野外ストリップ with アナルバイブ-
+
+SELECTCASE (ABL:ARG:Ｖ感覚 - ABL:ARG:Ａ感覚)
+	CASE IS < 0
+		TFLAG:99 = 0
+	CASE 0
+		TFLAG:99 = RAND:2
+	CASE IS > 0
+		TFLAG:99 = 1
+ENDSELECT
+
+PRINTFORML %LOCALS:(TFLAG:99)%
+
+;欲望、技巧、奉仕精神、露出癖をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖
+
+;献身的
+SIF TALENT:ARG:献身的
+	TIMES TFLAG:408, 1.5
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:(TFLAG:99) = TFLAG:401
+TCVAR:ARG:絶頂経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401 * 3
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 10
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM73
+
+;=============================================================================
+;野外売春(オナニーショー)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM74, ARG
+DOWNBASE:ARG:0 += 25
+DOWNBASE:ARG:1 += 35
+
+PRINTL 野外 -公開オナニーショー-
+
+;欲望、技巧、奉仕精神、露出癖をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖
+
+;献身的
+SIF TALENT:ARG:献身的
+	TIMES TFLAG:408, 1.5
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:絶頂経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401 * 4
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 10
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM74
+
+;=============================================================================
+;野外売春(性行為)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM75, ARG
+DOWNBASE:ARG:0 += 35
+DOWNBASE:ARG:1 += 50
+
+PRINTL 野外 -青姦-
+
+;常に顧客の子を妊娠する可能性があります
+TFLAG:416 = 1
+
+;欲望、技巧、奉仕精神、露出癖をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖
+
+;献身的
+SIF TALENT:ARG:献身的
+	TIMES TFLAG:408, 1.5
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:Ｖ経験 = TFLAG:401
+TCVAR:ARG:絶頂経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401 * 2
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM75
+
+;=============================================================================
+;野外売春(Ａ性行為)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM76, ARG
+DOWNBASE:ARG:0 += 35
+DOWNBASE:ARG:1 += 50
+
+PRINTL 野外 -Ａ青姦-
+
+;欲望、技巧、奉仕精神、露出癖をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖
+
+;献身的
+SIF TALENT:ARG:献身的
+	TIMES TFLAG:408, 1.5
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:Ａ経験 = TFLAG:401
+TCVAR:ARG:絶頂経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401 * 2
+TCVAR:ARG:Ａ快楽経験 = TFLAG:401
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM76
+

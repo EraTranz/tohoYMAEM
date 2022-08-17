@@ -1,0 +1,131 @@
+﻿;=============================================================================
+;触手ペニス責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE505
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:505 > 0
+	RETURN 0
+;解除はいつでも可能
+SIF (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 22) && TEQUIP:触手服 & 2
+	RETURN 1
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;他のＣ系触手責め中はダメ
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 2 && TEQUIP:Ｃ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !TEQUIP:触手調教 && !(TEQUIP:触手服 & 2) && (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 22)
+	RETURN 0
+;調教対象がオトコのとき触手尿道責め中やコンドーム装着中はダメ
+SIF TALENT:オトコ && (TEQUIP:コンドーム || TEQUIP:Ｕ系装着器具)
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 505) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM505
+PRINTL 触手ペニス責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 505
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手ペニス責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 120
+SOURCE:逸脱 = 70
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 200
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 900
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1600
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2400
+ELSE
+	SOURCE:快Ｃ = 3000
+ENDIF
+
+;ペニス責め触手の着脱
+IF TEQUIP:Ｃ系装着器具
+	TEQUIP:Ｃ系装着器具 = 0
+	
+	SIF TEQUIP:触手服 & 2
+		TEQUIP:触手服 &= 0b1111101
+ELSE
+	STAIN:ヴァギナ |= 2
+	STAIN:ヴァギナ |= 4
+
+	TEQUIP:Ｃ系装着器具 = 2
+	
+	;触手服への命令として飛んできた場合
+	IF !TEQUIP:触手調教 && (TEQUIP:触手服 && !(TEQUIP:触手服 & 2))
+		TEQUIP:Ｃ系装着器具 = 22
+		TEQUIP:触手服 |= 2
+	ENDIF
+ENDIF
+
+SIF PLAYER == MASTER && (TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 22)
+	TCVAR:Ｃ調律経験 += (TALENT:オトコ) ? 1 # 2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_505
+IF TEQUIP:Ｃ系装着器具
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML 触手は%CALLNAME:TARGET%のペニスを解放した…
+	ELSE
+		IF ABL:触手中毒 > 2
+			PRINTFORML 触手は%CALLNAME:TARGET%のペニスを解放した
+			PRINTFORML %CALLNAME:TARGET%は、少々物足りなさそうな表情を見せた…
+		ELSEIF MARK:反発刻印 > 1
+			PRINTFORML 触手は%CALLNAME:TARGET%のペニスを解放した
+			PRINTFORML %CALLNAME:TARGET%は、触手により汚されたペニスを厳しい表情で見つめている…
+		ELSE
+			PRINTFORML 触手は%CALLNAME:TARGET%のペニスを解放した…
+		ENDIF
+	ENDIF
+ELSE
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML いやらしく肉ヒダをうねらせた触手が%CALLNAME:TARGET%のペニスに巻き付きしごき始めた…
+	ELSE
+		IF ABL:触手中毒 > 2
+		PRINTFORML いやらしく肉ヒダをうねらせた触手が%CALLNAME:TARGET%のペニスに巻き付きしごき始めた
+			PRINTFORML %CALLNAME:TARGET%は、その刺激に\@(TEQUIP:口装着器具) ? # 歓喜の声を上げつつ\@全身を震わせている…
+		ELSEIF MARK:反発刻印 > 1
+			PRINTFORML いやらしく肉ヒダをうねらせた触手が%CALLNAME:TARGET%のペニスに巻き付きしごき始めた
+			PRINTFORML %CALLNAME:TARGET%は、ペニスが刺激に反応するたびに悔しそうな表情をしながらも必死に堪えようとしていた…
+		ELSE
+			PRINTFORML いやらしく肉ヒダをうねらせた触手が%CALLNAME:TARGET%のペニスに巻き付きしごき始めた…
+		ENDIF
+	ENDIF
+ENDIF

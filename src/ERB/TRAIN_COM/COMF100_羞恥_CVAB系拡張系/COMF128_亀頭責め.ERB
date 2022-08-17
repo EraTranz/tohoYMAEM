@@ -1,0 +1,199 @@
+﻿;=============================================================================
+;亀頭責め
+;=============================================================================
+;この回限定の射精止め効果＋強烈なＣ刺激がある
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE128
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:128 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;調教対象にペニスがないとダメ
+SIF EXIST_PENIS(TARGET) == 0
+	RETURN 0
+;潤滑が高くないとダメ
+SIF PALAM:潤滑 < 2000
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;焦らしプレイ中はダメ
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;射精止め中はダメ
+SIF TEQUIP:射精止め
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 128) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM128
+PRINTL 亀頭責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 128
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 亀頭責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 10
+DOWNBASE:1 += 120
+
+SOURCE:露出 = 600
+SOURCE:主導権 = 600
+SOURCE:痛み = 150
+SOURCE:屈従 = 250
+SOURCE:逸脱 = 500
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 60
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 180
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 800
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1700
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2700
+ELSE
+	SOURCE:快Ｃ = 3800
+ENDIF
+
+;PALAM:Ｃ感覚をみる
+IF PALAM:快Ｃ < PALAMLV:1
+	SOURCE:痛み += 100
+ELSEIF PALAM:快Ｃ < PALAMLV:2
+	SOURCE:痛み += 110
+ELSEIF PALAM:快Ｃ < PALAMLV:3
+	SOURCE:痛み += 120
+ELSEIF PALAM:快Ｃ < PALAMLV:4
+	SOURCE:痛み += 130
+ELSE
+	SOURCE:痛み += 140
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:欲情追加 = 100
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:欲情追加 = 110
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:欲情追加 = 120
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:欲情追加 = 130
+ELSE
+	SOURCE:欲情追加 = 140
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:欲情追加 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:欲情追加 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:欲情追加 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:欲情追加 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:欲情追加 , 2.00
+ELSE
+	TIMES SOURCE:欲情追加 , 3.00
+ENDIF
+
+;プレイヤーのABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	TIMES SOURCE:快Ｃ , 0.50
+	TIMES SOURCE:性行動 , 0.50
+ELSEIF ABL:PLAYER:技巧 == 1
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF ABL:PLAYER:技巧 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF ABL:PLAYER:技巧 == 3
+	TIMES SOURCE:快Ｃ , 1.20
+	TIMES SOURCE:性行動 , 1.50
+ELSEIF ABL:PLAYER:技巧 == 4
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:性行動 , 2.50
+ELSE
+	TIMES SOURCE:快Ｃ , 2.00
+	TIMES SOURCE:性行動 , 4.00
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES SOURCE:欲情追加 , 2.00
+;調教者がサド、ドＳ、サドっ気3以上
+SIF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ || ABL:PLAYER:サドっ気 > 2
+	TIMES SOURCE:欲情追加 , 1.20
+
+;調教者の指⇔奴隷のＰの汚れが移動
+STAIN:PLAYER:ペニス |= STAIN:手
+STAIN:ペニス |= STAIN:PLAYER:手
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 4
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 4
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_128
+;同じ調教者でなおかつ、前のターンから継続している場合
+IF PREVCOM == 128 && JUDGE_TRAINER_CONSECUTIVE() == 1
+	PRINTFORML %CALLNAME:PLAYER%は引き続き、%CALLNAME:TARGET%の亀頭を執拗に責め続けている……
+;調教者の技巧が2レベル以下
+ELSEIF ABL:PLAYER:技巧 < 3
+	PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のペニスの竿の部分を片手で握った。
+	PRINTFORML そして、もう一方の手のひらを使って、%CALLNAME:TARGET%のペニスの先端をクルクルと、縦に横に刺激を与えてやった。
+;調教者の技巧が3レベル以上
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のペニスの亀頭を逆手で握って回転させつつ、
+	PRINTL その小指や中指を巧みに使って、尿道口や裏筋やペニスの側面などに刺激を加え続けてやった。
+ENDIF
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	PRINTFORML %CALLNAME:TARGET%の腰は強烈な快感にガクガクと震えている……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は、亀頭に与えられる強烈な刺激を深く味わっている……
+ENDIF
+

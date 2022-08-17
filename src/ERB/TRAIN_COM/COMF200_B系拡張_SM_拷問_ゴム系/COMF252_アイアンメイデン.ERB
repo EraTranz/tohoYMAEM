@@ -1,0 +1,104 @@
+﻿;=============================================================================
+;アイアンメイデン
+;=============================================================================
+;ほぼ処刑。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE252
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:252 > 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;助手じゃダメ
+SIF ASSIPLAY
+	RETURN 0
+;アイアンメイデンを購入(開発?)していないとダメ
+SIF (FLAG:73 & 32) == 0
+	RETURN 0
+;調教者がサドと狂気を持っていないとダメ
+SIF TALENT:PLAYER:サド == 0 || TALENT:PLAYER:狂気 == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 252) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM252
+PRINTL アイアンメイデン
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 252
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アイアンメイデン
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 400
+DOWNBASE:1 += 550
+
+SOURCE:逸脱 = 120000
+SOURCE:トラウマ = 5000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 13000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 15500
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 18500
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 21000
+ELSE
+	SOURCE:痛み = 23500
+ENDIF
+
+;サラシ装着している場合苦痛ソース軽減もサラシ破損
+IF TEQUIP:サラシ
+	SOURCE:痛み -= 200
+	TEQUIP:サラシ = 0
+	ITEM:サラシ = 0
+ENDIF
+;衣装を装着している場合苦痛ソース軽減もエプロンとスク水破損
+IF TEQUIP:コスチュームプレイ
+	SOURCE:痛み -= 100
+	SIF TEQUIP:コスチュームプレイ == 1
+		ITEM:エプロン = 0
+	SIF TEQUIP:コスチュームプレイ == 2
+		ITEM:スクール水着 = 0
+	TEQUIP:コスチュームプレイ = 0
+ENDIF
+
+;アイアンメイデンに入れられるのは異常経験なので点を入れる
+TCVAR:異常経験 += 1
+
+;強制脱衣
+SIF EQUIP:戦闘中
+	EQUIP:脱衣 = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_252
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を恐るべき「鉄の乙女」の中に放り込んだ…

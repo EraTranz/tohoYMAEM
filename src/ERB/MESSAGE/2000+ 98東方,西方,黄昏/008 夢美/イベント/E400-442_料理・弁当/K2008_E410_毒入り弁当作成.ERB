@@ -1,0 +1,109 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;毒入り弁当作成
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE410
+;料理レベルが低いほどメシマズによる毒
+;高いほど意図的に毒を混入する
+SELECTCASE RAND:( MAX(1, ABL:料理技能) )
+	CASE IS <= 1
+		TRYCALLFORM K2008_RANK{K2008F_RANK()}_POISON_BENTO
+	CASEELSE
+		TRYCALLFORM K2008_RANK{K2008F_RANK()}_FAILURE_BENTO
+ENDSELECT
+PRINTFORM ・・・
+PRINTFORM ・・
+PRINTFORM ・
+
+;-------------------------------------------------
+;毒入り弁当 RANK 0
+;-------------------------------------------------
+@K2008_RANK0_POISON_BENTO
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORML 「私を怒らせると怖いってことを思い知らせてやるわ」
+		PRINTFORMW 「科学の力……　思い知るがいいわ」
+	CASEELSE
+		PRINTFORML 「うふふ、あんなことする%CALLNAME:MASTER%がいけないのよ」
+		PRINTFORMW 「死なない程度にアレコレ混ぜてやる……」
+ENDSELECT
+
+;-------------------------------------------------
+;毒入り弁当 RANK 1
+;-------------------------------------------------
+@K2008_RANK1_POISON_BENTO
+CALL K2008_RANK0_POISON_BENTO
+
+;-------------------------------------------------
+;毒入り弁当 RANK 2
+;-------------------------------------------------
+@K2008_RANK2_POISON_BENTO
+CALL K2008_RANK0_POISON_BENTO
+
+;-------------------------------------------------
+;毒入り弁当 RANK 3
+;-------------------------------------------------
+@K2008_RANK3_POISON_BENTO
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORMW 「私を怒らせると怖いってことを思い知らせてやるわ」
+	CASEELSE
+		PRINTFORML 「うふふ、あんなことする%CALLNAME:MASTER%がいけないのよ」
+		PRINTFORMW 「ちょーっとだけ、痛い目見てもらおうかしら」
+ENDSELECT
+
+
+;-------------------------------------------------
+;メシマズ弁当 RANK 0
+;-------------------------------------------------
+@K2008_RANK0_FAILURE_BENTO
+PRINTFORMW …
+PRINTFORMW ……
+PRINTFORMW ………
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORML 「えーと、ここでこれを混ぜて……」
+		PRINTFORMW 「あ、あれ？　入れる材料間違えたかしら」
+		PRINTFORMW 「まあいいか。どうせ食べるの私じゃないし」
+	CASEELSE
+		PRINTFORML 「よく考えると、私が料理を作る義理なんてないわよね」
+		PRINTFORMW 「面倒だし、適当に突っ込んで終わりにしましょ」
+ENDSELECT
+
+;-------------------------------------------------
+;メシマズ弁当 RANK 1
+;-------------------------------------------------
+@K2008_RANK1_FAILURE_BENTO
+CALL K2008_RANK0_FAILURE_BENTO
+
+;-------------------------------------------------
+;メシマズ弁当 RANK 2
+;-------------------------------------------------
+@K2008_RANK2_FAILURE_BENTO
+CALL K2008_RANK0_FAILURE_BENTO
+
+;-------------------------------------------------
+;メシマズ弁当 RANK 3
+;-------------------------------------------------
+@K2008_RANK3_FAILURE_BENTO
+PRINTFORMW …
+PRINTFORMW ……
+PRINTFORMW ………
+SELECTCASE RAND:2
+	CASE 1
+		PRINTFORML 「えーと、ここでこれを混ぜて……」
+		PRINTFORMW 「あ、あれ？　材料が足りないわね」
+		PRINTFORMW 「んーー、まあこれで代用すればいいか、っと！」
+	CASEELSE
+		PRINTFORML 「どうしよう、調子に乗って変なの作っちゃった」
+		PRINTFORMW 「食べても兵器……　もとい平気かしら、これ」
+		PRINTFORMW 「ま、まあ死にはしないだろうし、別にいいわね！　完成！」
+ENDSELECT
+
+;-------------------------------------------------
+@K2008_RANK4_FAILURE_BENTO
+CALL K2008_RANK3_FAILURE_BENTO
+
+;-------------------------------------------------
+@K2008_RANK5_FAILURE_BENTO
+CALL K2008_RANK3_FAILURE_BENTO

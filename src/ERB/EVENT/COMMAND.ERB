@@ -1,0 +1,130 @@
+﻿;=============================================================================
+;触手産卵系の地の文、処理
+;=============================================================================
+;--------------------------------------------------
+;卵放出の処理
+;--------------------------------------------------
+@EGGPLAY_OUT
+;触手産卵でヴァギナから卵を放出するイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 39
+IF TFLAG:999 != 1
+	PRINTL 
+	LOCAL = TEQUIP:触手膣内産卵
+	EXP:産卵経験 += LOCAL
+	PRINTFORML 産卵経験＋{LOCAL}
+	LOCAL = MAX(LOCAL/2, 1)
+	EXP:Ｖ拡張経験 += LOCAL
+	PRINTFORML Ｖ拡張経験＋{LOCAL/2}
+	IF (CFLAG:20 & 4) == 0
+		CFLAG:11 |= 4
+		CFLAG:20 |= 4
+		EXP:異常経験 += 1
+		PRINTL 異常経験＋1
+	ENDIF
+ELSE
+	LOCAL = TEQUIP:触手膣内産卵
+	TCVAR:産卵経験 += LOCAL
+	LOCAL = MAX(LOCAL/2, 1)
+	TCVAR:Ｖ拡張経験 += LOCAL
+	IF (CFLAG:20 & 4) == 0
+		CFLAG:20 |= 4
+		TCVAR:異常経験 += 1
+	ENDIF
+ENDIF
+TEQUIP:触手膣内産卵 = 0
+WAIT
+
+;--------------------------------------------------
+;卵アナル放出の処理
+;--------------------------------------------------
+@KANTYO_EGGPLAY_OUT
+;触手産卵でアナルから卵を放出するイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 40
+IF TFLAG:999 != 1
+	PRINTL 
+	LOCAL = TEQUIP:触手腸内産卵
+	SIF LOCAL > 1
+		LOCAL /= 2
+	EXP:Ａ拡張経験 += LOCAL
+	PRINTFORML Ａ拡張経験＋{LOCAL}
+	IF (CFLAG:20 & 8) == 0
+		CFLAG:11 |= 4
+		CFLAG:20 |= 8
+		EXP:異常経験 += 1
+		PRINTL 異常経験＋1
+	ENDIF
+ELSE
+	LOCAL = TEQUIP:触手腸内産卵
+	SIF LOCAL > 1
+		LOCAL /= 2
+	TCVAR:Ａ拡張経験 += LOCAL
+	IF (CFLAG:20 & 8) == 0
+		CFLAG:20 |= 8
+		TCVAR:異常経験 += 1
+	ENDIF
+ENDIF
+TEQUIP:触手腸内産卵 = 0
+WAIT
+
+;--------------------------------------------------
+;卵両穴放出の処理
+;--------------------------------------------------
+@DOUBLE_EGGPLAY_OUT
+;触手産卵でＶとＡの両方から卵を放出するイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 41
+IF TFLAG:999 != 1
+	PRINTL 
+	LOCAL = TEQUIP:触手膣内産卵
+	LOCAL:1 = TEQUIP:触手腸内産卵
+	EXP:産卵経験 += LOCAL
+	PRINTFORML 産卵経験＋{LOCAL}
+	SIF LOCAL > 1
+		LOCAL /= 2
+	SIF LOCAL:1 > 1
+		LOCAL:1 /= 2
+	EXP:Ｖ拡張経験 += LOCAL
+	EXP:Ａ拡張経験 += LOCAL:1
+	PRINTFORML Ｖ拡張経験＋{LOCAL}
+	PRINTFORML Ａ拡張経験＋{LOCAL:1}
+
+	IF (CFLAG:20 & 4) == 0 && (CFLAG:20 & 8) == 0
+		CFLAG:11 |= 4
+		CFLAG:20 |= 4
+		CFLAG:20 |= 8
+		EXP:異常経験 += 2
+		PRINTL 異常経験＋2
+	ELSEIF (CFLAG:20 & 4) == 0
+		CFLAG:11 |= 4
+		CFLAG:20 |= 4
+		EXP:異常経験 += 1
+		PRINTL 異常経験＋1
+	ELSEIF (CFLAG:20 & 8) == 0
+		CFLAG:11 |= 4
+		CFLAG:20 |= 8
+		EXP:異常経験 += 1
+		PRINTL 異常経験＋1
+	ENDIF
+ELSE
+	LOCAL = TEQUIP:触手膣内産卵
+	LOCAL:1 = TEQUIP:触手腸内産卵
+	TCVAR:産卵経験 += LOCAL
+	SIF LOCAL > 1
+		LOCAL /= 2
+	SIF LOCAL:1 > 1
+		LOCAL:1 /= 2
+	TCVAR:Ｖ拡張経験 += LOCAL
+	TCVAR:Ａ拡張経験 += LOCAL:1
+
+	IF (CFLAG:20 & 4) == 0 && (CFLAG:20 & 8) == 0
+		TCVAR:異常経験 += 2
+		CFLAG:20 |= 4
+		CFLAG:20 |= 8
+	ELSEIF (CFLAG:20 & 4) == 0
+		TCVAR:異常経験 += 1
+		CFLAG:20 |= 4
+	ELSEIF (CFLAG:20 & 8) == 0
+		TCVAR:異常経験 += 1
+		CFLAG:20 |= 8
+	ENDIF
+ENDIF
+WAIT

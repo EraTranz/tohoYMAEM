@@ -1,0 +1,183 @@
+﻿;=============================================================================
+;剃毛プレイ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE112
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:112 > 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;[ふたなり]かつ調教者の技巧が3未満だとダメ
+SIF TALENT:ふたなり && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;[パイパン]だと不可、生えそろっていないと無理
+SIF TALENT:パイパン || (CFLAG:36 && BASE:陰毛 < 250)
+	RETURN 0
+;テキストより[小柄体型]はデフォでツルツル。[小人体型]もそれに準じる
+SIF (TALENT:小柄体型 || TALENT:小人体型) && CFLAG:36 == 0
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;オナホール・電極オナホール使用中はダメ
+SIF TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;亀甲縛りのときは無理
+SIF TEQUIP:緊縛関連 == 5
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 112) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM112
+PRINTL 剃毛プレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 112
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 剃毛プレイ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 60
+
+LOCAL:1 = 500
+SOURCE:達成感 = 750
+SOURCE:中毒充足 = 500
+SOURCE:接触 = 800
+SOURCE:露出 = 1000
+SOURCE:逸脱 = 1200
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	SOURCE:痛み = 600
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	SOURCE:痛み = 250
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	SOURCE:痛み = 100
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	SOURCE:痛み = 30
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:露出癖 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:露出癖 == 2
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:露出癖 == 3
+	TIMES LOCAL:1 , 1.50
+ELSEIF ABL:露出癖 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 2.60
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 1.70
+ELSE
+	TIMES LOCAL:1 , 2.00
+ENDIF
+
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:露出 += LOCAL:1
+
+;小柄体型、小人体型以外
+SIF TALENT:小柄体型 == 0 && TALENT:小人体型 == 0
+	TIMES SOURCE:露出 , 2.50
+
+IF TALENT:パイパン == 0
+	PRINTL 
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:65%]になった
+	TALENT:パイパン = 1
+ENDIF
+;脱毛状態以外の場合は後から生えてくるようになる
+SIF CFLAG:36 != 1
+	CFLAG:36 = 2
+;毛が生えている場合はツルツルになる
+BASE:陰毛 = 0
+
+;陰毛入手イベント
+SIF FLAG:12 & 8 && (TFLAG:996 & 64) == 0 
+	CALL SWEET_POTATO_PUBLIC_HAIR
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_112
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の陰毛を綺麗さっぱりに剃り落とした
+;睡眠中と失神中は反応できない。
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 <= 0
+	PRINTFORM %CALLNAME:TARGET%は
+	IF ABL:露出癖 < 2
+		PRINT 顔を真っ赤にして
+		IF TEQUIP:緊縛関連
+			PRINTFORML %CALLNAME:PLAYER%と視線を合わせないように背けている…
+		ELSE
+			PRINTL 手でツルツルになった性器を隠そうとしている…
+		ENDIF
+	ELSEIF ABL:露出癖 == 2
+		PRINTL 恥ずかしそうに露わになった自分の性器を見つめている…
+	ELSEIF ABL:露出癖 == 3
+		PRINTL 少し顔を俯かせている…
+	ELSEIF ABL:露出癖 == 4
+		PRINTL 性器が丸見えの状態に恥ずかしさを感じつつも、どことなく楽しんでいるようだ…
+	ELSE
+		PRINTL 空気が性器を撫でつける感触を大いに楽しんでいるようだ…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は意識がないまま、ツルツルになった性器で%CALLNAME:MASTER%たちの目を楽しませている…
+ENDIF

@@ -1,0 +1,852 @@
+﻿;--------------------------------------------------
+;日付が変わったときのイベント
+;--------------------------------------------------
+@EVENT_NEXTDAY
+;売春関係イベント
+SIF ITEM:娼館 && FLAG:17 & 1
+	CALL EVENT_NEXTDAY_PROSTITUTE
+
+;売春関係にて、売春していないキャラの勤務状況のリセット
+IF FLAG:17 & 1
+	FOR PC_VAR1, 0, CHARANUM
+		IF (CFLAG:PC_VAR1:4 & 1024) == 0
+			CFLAG:PC_VAR1:403 = 0
+			CFLAG:PC_VAR1:404++
+			SIF (CFLAG:PC_VAR1:66 > 100 && RAND:(CFLAG:PC_VAR1:404 + 1) == 0)
+				CFLAG:PC_VAR1:66 -= MAX(CFLAG:PC_VAR1:404, 10)
+			IF CFLAG:PC_VAR1:404 % 30 == 0 && TALENT:PC_VAR1:265 > 0
+				TALENT:PC_VAR1:265--
+				PRINTFORML %CALLNAME:PC_VAR1%は、常連客を一人失った。
+			ENDIF
+		ENDIF
+	NEXT
+ENDIF
+
+;東方用イベント
+CALL EVENT_NEXTDAY_TOHO
+
+IF TARGET >= 0
+IF !TALENT:死亡
+	;ふたなりイベント抑制がオフの状態で、[オトコ]でも[ふたなり]でなく、クリトリスリングを付けていないキャラが前提
+	IF TALENT:オトコ == 0 && TALENT:ふたなり == 0 && (CFLAG:42 & 1) == 0 && (FLAG:14 & 128) == 0
+		;不思議の根持ちで精液経験が300以上で生える
+		SIF TALENT:不思議な根 == 1 && EXP:精液経験 >= 300
+			CALL EVENT_FUTA_NEXTDAY
+		;具現持ちでレズ経験1500以上で生える
+		SIF TALENT:具現 && EXP:レズ経験 >= 1500 
+			CALL EVENT_FUTA_NEXTDAY
+	ENDIF
+
+	;貞操帯なしの状態で放尿レベル50(幼稚または幼児、幼児退行持ちの場合は25)以上でおもらし癖がつく
+	IF TALENT:おもらし癖 == 0 && (CFLAG:42 & 2) == 0
+		SIF ((TALENT:幼児 || TALENT:幼稚 || TALENT:幼児退行) && CFLAG:放尿レベル >= 25) || CFLAG:放尿レベル >= 50
+			CALL EVENT_MORASI_NEXTDAY
+	ENDIF
+
+	;[壊造人格]を取得していない状態で反発刻印Lv2かつストレスが500以上または反発刻印Lv3かつストレスが1000以上またはストレスが10000以上、
+	;この周回中に異常経験を変動させており、異常経験が5以上のとき崩壊系素質取得イベント判定へ
+	SIF ((MARK:反発刻印 == 2 && CFLAG:ストレス >= 500) || (MARK:反発刻印 >= 3 && CFLAG:ストレス >= 1000) ||  CFLAG:ストレス >= 10000) && TALENT:壊造人格 == 0 && EXP:異常経験 >= 5 && CFLAG:11 & 4
+		CALL EVENT_BROKEN_CHECK
+ENDIF
+ENDIF
+
+;野外ライブ実行済み判定をリセット
+TFLAG:153 = 0
+TFLAG:154 = 0
+
+;借金済み判定をリセット
+FLAG:577 = 0
+
+;3日ごとにビデオの流行が変化
+SIF (DAY%3) == 0
+	CALL VIDEO_CHANGE_POPULAR_TITLE
+
+;-------------------------------------------------
+;朝に起こるイベント
+;-------------------------------------------------
+@EVENT_NEWDAY
+;行方不明キャラがいるかどうかチェック
+LOCAL = FINDCHARA(CFLAG:4, 1, 0)
+;行方不明キャラの帰還
+IF LOCAL > 0
+	DRAWLINE
+	DRAWLINE
+	PRINTFORMW 朝、目を覚ますと、売却したはずの%CALLNAME:LOCAL%がそこにいた
+	PRINTFORMW %CALLNAME:LOCAL%は血と泥にまみれたボロボロの姿で微笑みかけてきた
+	PRINTW 「おはようございます」
+	PRINTW ……
+	PRINTFORMW %CALLNAME:LOCAL%が復帰しました…
+	CFLAG:LOCAL:4 = 0
+	CFLAG:LOCAL:嫉妬ポイント += 30
+ELSE
+	;口上表示の場合のみ朝を迎える奴隷たちのイベント口上を呼び出すが、その場にいないものや助手は呼び出さない。
+	IF (FLAG:10 & 1)
+		PC_VAR2 = 0
+		PC_VAR3 = 0
+		CALLF CLEAR_LIST
+		FOR TFLAG:900, 0, CHARANUM
+			;その場にいないとスルー
+			SIF CFLAG:(TFLAG:900):4
+				CONTINUE
+			;主人は除外
+			SIF TFLAG:900 == MASTER || TFLAG:900 == ASSI || TFLAG:900 == TFLAG:212 || TALENT:(TFLAG:900):800
+				CONTINUE
+			CALLF SET_LIST, PC_VAR2, TFLAG:900
+			PC_VAR2++
+		NEXT
+		
+		PC_VAR1 = PC_VAR2 / 20
+		FOR TFLAG:900, 0, PC_VAR2
+			TFLAG:900 += RAND:(1 + PC_VAR1)
+			TFLAG:900 = MIN(TFLAG:900, PC_VAR2 - 1)
+			CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, GET_LIST(TFLAG:900), 49
+			PC_VAR3++
+			SIF PC_VAR3 > 20
+				BREAK
+		NEXT
+	ENDIF
+	;夜にランダムで来た奴隷の呼び出し
+	SIF TFLAG:212 > 0
+		TARGET = (TFLAG:212 >= CHARANUM) ? -1 # TFLAG:212
+	;調教対象が存在し、CONFIGの「朝イベント」が有効な場合、朝のイベントが発生する。ただし[抱卵中]の場合はイベントなし。
+	IF TARGET >= 0 && FLAG:12 & 256 && TALENT:抱卵中 == 0
+		IF !TALENT:死亡
+		CALL MORNING_EVENT_JUDGMENT
+		;朝の搾りたてミルク。Ｂ系拡張コマンドを有効にした場合、ランダムで発生
+		SIF FLAG:15 & 8 && TALENT:母乳体質 && ABL:欲望 >= 4 && ABL:奉仕精神 >= 4 && ABL:噴乳中毒 > 0 && RAND:3 == 0
+			CALL MORNING_EVENT_MILK
+		ENDIF
+	ENDIF
+	;夜イベントとの同期処理
+	IF FLAG:12 & 32768
+		TARGET = (TFLAG:210 >= CHARANUM) ? -1 # TFLAG:210
+		ASSI = (TFLAG:211 >= CHARANUM) ? -1 # TFLAG:211
+		TFLAG:212 = 0
+	ENDIF
+ENDIF
+;口上によるCOUNT:0破壊対策としてメインカウンターをTFLAG化
+FOR TFLAG:900, 0, CHARANUM
+	IF !TALENT:(TFLAG:900):800
+	;出産・抱卵関連
+	IF TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):141 || TALENT:(TFLAG:900):143
+		SIF FLAG:16 & 16
+			CALL MAKE_BABY_SIZE, TFLAG:900
+		;出産3日前からは臨月突入で調教不可に
+		IF (CFLAG:(TFLAG:900):77 - 3) <= DAY && CFLAG:(TFLAG:900):4 == 0
+			DRAWLINE
+			CALL REACH_FULL_TERM, TFLAG:900
+		ELSEIF CFLAG:(TFLAG:900):77 <= DAY && (TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):143)
+			;出産予定日なら出産or孵化＆子育て部屋に移動
+			IF CFLAG:(TFLAG:900):4 == 2
+				DRAWLINE
+				IF TALENT:(TFLAG:900):140
+					CALL CHILD_BIRTH, TFLAG:900
+				ELSE
+					CALL EGG_BIRTH, TFLAG:900
+				ENDIF
+			ELSE
+				TALENT:(TFLAG:900):140 = 0
+				TALENT:(TFLAG:900):141 = 1
+				TALENT:(TFLAG:900):143 = 0
+			ENDIF
+		;出産後FLAG:601日後（標準は20日後）で親離れで調教可能に
+		ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:601 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):141
+			EQUIP:(TFLAG:900):1 = 0
+			IF CFLAG:(TFLAG:900):4 == 2
+				DRAWLINE
+				CALL DEPEARENT, TFLAG:900
+			ELSE
+				TALENT:(TFLAG:900):141 = 0
+			ENDIF
+		ENDIF
+	;懐卵処理
+	ELSEIF TALENT:(TFLAG:900):145 && CFLAG:(TFLAG:900):4 == 0
+		;懐卵(出産時期は妊娠よりは少し早く来る)
+		CFLAG:(TFLAG:900):35 += 1
+		IF CFLAG:(TFLAG:900):35 == 20
+			PRINTFORML %CALLNAME:(TFLAG:900)%は臨月を迎えました
+			PRINTFORMW %CALLNAME:(TFLAG:900)%を触手専用の出産室へと連れて行きます
+			TFLAG:901 = TARGET
+			TFLAG:902 = ASSI
+			TARGET = TFLAG:900
+			CALL SPAWN_TENTACLE_LARVA
+		ELSEIF CFLAG:(TFLAG:900):35 == 16
+			PRINTFORML %CALLNAME:(TFLAG:900)%の下腹部は大分膨らんできている…
+			PRINTFORMW もう少しで%CALLNAME:(TFLAG:900)%は臨月を迎えそうだ……
+		ELSEIF CFLAG:(TFLAG:900):35 == 13
+			PRINTFORML %CALLNAME:(TFLAG:900)%の下腹部は膨らんできた…
+			PRINTFORMW ただ出産を迎えるにはまだ少し早いかもしれない……
+		ENDIF
+	ENDIF
+	
+	;子供成長イベント
+	SIF FLAG:11 & 32 && (NO:(TFLAG:900) == 2048 || NO:(TFLAG:900) == 2049) && TALENT:(TFLAG:900):130 && DAY >= (CFLAG:(TFLAG:900):3110 + 50)
+		CALL CHILD_GROWTH, TFLAG:900
+
+	;子供徐々に成長
+	SIF FLAG:11 & 64 && MARK:(TFLAG:900):81 == 0
+		CALL MAKE_SIZE, 1, TFLAG:900
+
+	;[鵺]の素質変動イベント
+	SIF TALENT:(TFLAG:900):217
+		CALL EVENT_NUETALENT_RANDOM, TFLAG:900
+	;[媚薬中毒]の禁断症状イベント
+	SIF TALENT:(TFLAG:900):46 && CFLAG:(TFLAG:900):32 == 7
+		CALL EVENT_PHILTER_AFTEREFFECT, TFLAG:900
+	;精飲開発度の減少処理
+	;精液中毒が、0,1,...,5の時、5/10,6/10,...,10/10倍される
+	SIF CFLAG:(TFLAG:900):64 > 0
+		CFLAG:(TFLAG:900):64 = MAX(CFLAG:(TFLAG:900):64 * (50 + ABL:(TFLAG:900):31 * 10) / 100, 0)
+	;放尿レベルの減少処理
+	;10減るのが基本、異常経験数が多いと徐々に減らなくなる。
+	SIF CFLAG:(TFLAG:900):31 > 0
+		CFLAG:(TFLAG:900):31 = MAX(CFLAG:(TFLAG:900):31 - 10 + MIN(EXP:(TFLAG:900):50 / 10 , 10), 0)
+	ENDIF
+	;潤滑、欲情蓄積の減少処理
+	;異常経験数が多いと徐々に減らなくなる。
+	REPEAT 2
+		CFLAG:(TFLAG:900):(58+COUNT) = MAX(CFLAG:(TFLAG:900):(58+COUNT) - 25 * (1 + RAND:2) + MIN(EXP:(TFLAG:900):50 / 10 , 10), 0)
+	REND
+NEXT
+
+;月経進行
+CALL EVENT_DANGERDAY
+
+;主人以外にキャラがいる場合は記念日チェックを行う
+SIF CHARANUM > 1
+	CALL ANNIVERSARY_CHECK
+
+;必要経費
+SIF FLAG:3 >= 4
+	CALL EVENT_EVERYDAY_COST
+	
+;利子処理
+CALL EVENT_DEBT
+
+;--------------------------------------------------
+;素質[ふたなり]追加汎用処理
+;--------------------------------------------------
+@EVENT_FUTA_PLUS_COMMON, ARG
+;[ふたなり]＆射精ゲージ追加
+TALENT:ARG:ふたなり = 1
+MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+;陰核肥大消去される前に
+CALL MAKE_SIZE, 1, ARG
+
+;陰核肥大消去処理
+MAXBASE:ARG:7 = BASE:ARG:陰核
+BASE:ARG:陰核 = 0
+TALENT:ARG:肥大陰核 = 0
+SIF CFLAG:ARG:37 & 16
+	CFLAG:ARG:37 -= 16
+
+;具現消滅
+IF TALENT:ARG:具現
+	TALENT:ARG:具現 = 0
+	TALENT:ARG:顕在化 |= 2
+;不思議な根消滅
+ELSEIF TALENT:ARG:不思議な根
+	TALENT:ARG:不思議な根 = 0
+	TALENT:ARG:顕在化 |= 1
+ENDIF
+
+;--------------------------------------------------
+;素質[ふたなり]追加処理(不思議な根or具現)
+;--------------------------------------------------
+;中身が一緒だったので不思議な根・具現の両関数を統合
+@EVENT_FUTA_NEXTDAY
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 101
+PRINTFORMW %CALLNAME:TARGET%は[ふたなり]となっていた。
+CALL EVENT_FUTA_PLUS_COMMON, TARGET
+
+;--------------------------------------------------
+;素質[おもらし癖]追加処理
+;--------------------------------------------------
+@EVENT_MORASI_NEXTDAY
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 102
+PRINTFORMW %CALLNAME:TARGET%は[おもらし癖]がついた。
+TALENT:おもらし癖 = 1
+CALL CALC_GAUGE4_SLAVE, TARGET, 1
+
+;--------------------------------------------------
+;崩壊系素質取得判定処理
+;--------------------------------------------------
+;反発2以下は最初の条件で弾くことに
+@EVENT_BROKEN_CHECK
+LOCAL = 0
+;[幼児]を持っていない従順・欲望・マゾっ気が全て4以上で[幼稚]を持っているか異常経験が7以上だと[幼児退行]
+;ただし[幼稚]を持っていないかつ、[蓬莱人]を持っている場合は異常経験が15以上必要
+IF ABL:従順 >= 4 && ABL:欲望 >= 4 && ABL:マゾっ気 >= 4 && TALENT:幼児 == 0 && (TALENT:幼稚 || (TALENT:蓬莱人 == 0 && EXP:異常経験 >= 7) || EXP:異常経験 >= 15) && TALENT:幼児退行 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0
+	LOCAL |= 1
+	;貞操帯なしの状態で露出が5のときはさらにおもらし癖がつく
+	SIF ABL:露出癖 == 5 && TALENT:おもらし癖 == 0 && (CFLAG:42 & 2) == 0
+		LOCAL |= 2
+ENDIF
+;従順・マゾっ気が共に3以上、異常経験が20以上、薬物刻印と恥辱刻印が共に2以上、恐怖刻印が3、かつストレスが5000以上で[精神崩壊]
+SIF ABL:従順 >= 3 && ABL:マゾっ気 >= 3 && EXP:異常経験 >= 20 && MARK:薬物刻印 >= 2 && MARK:恥辱刻印 >= 2 && MARK:恐怖刻印 == 3 && CFLAG:ストレス >= 5000 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0
+	LOCAL |= 4
+;異常経験が25以上、苦痛刻印・快楽刻印・屈服刻印・薬物刻印・恥辱刻印・恐怖刻印が全て3の時
+IF EXP:異常経験 >= 25 && (MARK:苦痛刻印+MARK:快楽刻印+MARK:屈服刻印+MARK:薬物刻印+MARK:恥辱刻印+MARK:恐怖刻印 == 18) && TALENT:傀儡 == 0
+	;[精神崩壊]を持っているかつ従順がLv5、または(以前の周回も含め)[精神崩壊]か[傀儡]を取得したことがあり、[服従]と[淫乱]を取得している状態で従順と奉仕精神が共にLv5
+	;または[狂気]か[幼児退行]を取得しており、かつ従順がLv3以上でストレスが10000以上の時[傀儡]
+	SIF (TALENT:精神崩壊 && ABL:従順 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:従順 >= 5 && ABL:奉仕精神 >= 5 && TALENT:服従 && TALENT:淫乱) || (ABL:従順 >= 3 && (TALENT:狂気 || TALENT:幼児退行) && CFLAG:ストレス >= 10000)
+		LOCAL |= 8
+ENDIF
+IF LOCAL & 8
+	CALL EVENT_MARIONETTE_NEXTDAY
+ELSEIF LOCAL & 4
+	CALL EVENT_DISTRACTION_NEXTDAY
+ELSEIF LOCAL & 1
+	SIF LOCAL & 2
+		CALL EVENT_MORASI_NEXTDAY
+	CALL EVENT_YOUJI_NEXTDAY
+ENDIF
+;--------------------------------------------------
+;素質[幼児退行]追加処理
+;--------------------------------------------------
+@EVENT_YOUJI_NEXTDAY
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 103
+;反発刻印消滅
+IF MARK:反発刻印
+	PRINTFORML %CALLNAME:TARGET%は反発刻印を失った
+	MARK:反発刻印 = 0
+	MARK:97 = 0
+ENDIF
+;一線越えない消滅
+IF TALENT:一線越えない
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:27%]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+ENDIF
+;貞操観念消滅
+IF TALENT:貞操観念
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:30%]を失った
+	TALENT:貞操観念 = 0
+	CFLAG:13 |= 256
+ENDIF
+;抑圧消滅
+IF TALENT:抑圧
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:32%]を失った
+	TALENT:抑圧 = 0
+	CFLAG:13 |= 1
+ENDIF
+;抵抗消滅
+IF TALENT:抵抗
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:34%]を失った
+	TALENT:抵抗 = 0
+	CFLAG:13 |= 2
+ENDIF
+;幼稚消滅
+IF TALENT:幼稚
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:131%]を失った
+	TALENT:幼稚 = 0
+	CFLAG:13 |= 128
+ENDIF
+PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:159%]を得た
+TALENT:幼児退行 = 1
+CFLAG:12 |= 2
+CFLAG:17 |= 1
+CALL ACCEPTANCE_UP, TARGET, 1000
+
+;--------------------------------------------------
+;素質[精神崩壊]追加処理
+;--------------------------------------------------
+@EVENT_DISTRACTION_NEXTDAY
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 107
+;反発刻印消滅
+IF MARK:反発刻印
+	PRINTFORML %CALLNAME:TARGET%は反発刻印を失った
+	MARK:反発刻印 = 0
+ENDIF
+;否定の珠半減
+IF JUEL:否定
+	PRINTL 否定の珠が半分になった
+	JUEL:否定 /= 2
+ENDIF
+;幼児退行消滅
+IF TALENT:幼児退行
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:159%]を失った
+	TALENT:幼児退行 = 0
+	SIF CFLAG:12 & 2
+		CFLAG:12 -= 2
+ENDIF
+PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:167%]を得た
+TALENT:精神崩壊 = 1
+CFLAG:17 |= 4
+
+;[理性]を失うイベント判定へ
+SIF TALENT:理性
+	CALL EVENT_REASON_FREE
+	
+CALL ACCEPTANCE_UP, TARGET, 2000
+
+;--------------------------------------------------
+;素質[傀儡]追加処理
+;--------------------------------------------------
+@EVENT_MARIONETTE_NEXTDAY
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 108
+;反発刻印消滅
+IF MARK:反発刻印
+	PRINTFORML %CALLNAME:TARGET%は反発刻印を失った
+	MARK:反発刻印 = 0
+ENDIF
+;否定の珠1/10
+IF JUEL:否定
+	PRINTL 否定の珠が1/10になった
+	JUEL:否定 /= 10
+ENDIF
+;ストレス消滅
+IF CFLAG:ストレス
+	PRINTL ストレスが0になった
+	CFLAG:ストレス = 0
+ENDIF
+;狂気消滅
+IF TALENT:狂気
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:158%]を失った
+	TALENT:狂気 = 0
+ENDIF
+;幼児退行消滅
+IF TALENT:幼児退行
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:159%]を失った
+	TALENT:幼児退行 = 0
+ENDIF
+;精神崩壊消滅
+IF TALENT:精神崩壊
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:167%]を失った
+	TALENT:精神崩壊 = 0
+ENDIF
+PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:168%]を得た
+TALENT:傀儡 = 1
+CFLAG:17 |= 8
+FLAG:405 += 1
+
+;[理性]を失うイベント判定へ
+SIF TALENT:理性
+	CALL EVENT_REASON_FREE
+	
+CALL ACCEPTANCE_UP, TARGET, 2000
+
+IF FLAG:405 >= 50 && CHECK_GAMEMODE_ENDING_EXIST() == 1 && (FLAG:70 & 32) == 0
+	PRINTFORML %CALLNAME:MASTER%の心は悪魔そのものであると言えよう…
+	PRINTFORMW ※強くてニューゲーム開始時に%CALLNAME:MASTER%の種族を[悪魔]に選択することができます
+	FLAG:70 |= 32
+ENDIF
+
+;-----------------------------------------------
+;[鵺]の素質変動イベント
+;-----------------------------------------------
+;各素質が変動する確率は10％ずつ
+@EVENT_NUETALENT_RANDOM, ARG
+#LOCALSIZE 1
+FOR LOCAL, 0, 6
+	SIF RAND:10 > 0
+		CONTINUE
+	;[Ｃ敏感][Ｃ鈍感]付与判定
+	IF LOCAL == 0
+		CALL TALENT_RAND_CHANGE_3, ARG, 100, 101
+	;[Ｖ敏感][Ｖ鈍感]付与判定
+	ELSEIF LOCAL == 1
+		CALL TALENT_RAND_CHANGE_3, ARG, 102, 103
+	;[Ａ敏感][Ａ鈍感]付与判定
+	ELSEIF LOCAL == 2
+		CALL TALENT_RAND_CHANGE_3, ARG, 104, 105
+	;[Ｂ敏感][Ｂ鈍感]付与判定
+	ELSEIF LOCAL == 3
+		CALL TALENT_RAND_CHANGE_3, ARG, 106, 107
+	;[痛みに弱い][痛みに強い]付与判定
+	ELSEIF LOCAL == 4
+		CALL TALENT_RAND_CHANGE_3, ARG, 40, 41
+	;[濡れやすい][濡れにくい]付与判定
+	ELSEIF LOCAL == 5
+		CALL TALENT_RAND_CHANGE_3, ARG, 42, 43
+	ENDIF
+NEXT
+
+;-----------------------------------------------
+;[媚薬中毒]の禁断症状イベント
+;-----------------------------------------------
+;[狂気]を持っていない場合は[狂気]を得る
+;体力または気力が600より多いなら発症する度に各ゲージの最大値が50下がる
+;またストレスも増加する
+@EVENT_PHILTER_AFTEREFFECT, ARG
+#LOCALSIZE 1
+LOCAL = 1000
+PRINTFORML %CALLNAME:ARG%に禁断症状が出てしまった
+;主人の場合は独自の処理を行う
+IF ARG == MASTER
+	PRINTFORM %CALLNAME:ARG%は
+	IF ITEM:媚薬 > 0
+		PRINTL 手元にあった媚薬を使った
+		TIMES LOCAL , 0.25
+		;媚薬1つ消費
+		CALL USE_PLURAL_ITEM, 61, 1
+	ELSEIF MONEY:0 >= ITEMPRICE:61
+		PRINTL 薬屋で媚薬を購入し、自分のために使った
+		TIMES LOCAL , 0.75
+		MONEY -= ITEMPRICE:61
+	ELSE
+		PRINTL 渇きが鎮まるまで悶々と過ごす羽目になった
+		BASE:ARG:体力 -= 1000
+		BASE:ARG:気力 = 0
+		TIMES LOCAL , 1.50
+	ENDIF
+ELSEIF TALENT:ARG:狂気 == 0
+	PRINTFORML %CALLNAME:ARG%は発狂した
+	CFLAG:ARG:12 |= 1
+	CFLAG:ARG:17 |= 2
+	TALENT:ARG:狂気 = 1
+	TIMES LOCAL , 1.75
+ELSE
+	IF MAXBASE:ARG:0 > 600
+		PRINTFORML %CALLNAME:ARG%の体力が低下した
+		MAXBASE:ARG:0 -= 50
+		TIMES LOCAL , 1.25
+	ENDIF
+	IF MAXBASE:ARG:1 > 600
+		PRINTFORML %CALLNAME:ARG%の気力が減衰した
+		MAXBASE:ARG:1 -= 50
+		TIMES LOCAL , 1.25
+	ENDIF
+ENDIF
+CFLAG:ARG:32 = 0
+CFLAG:ARG:ストレス += LOCAL
+BASE:ARG:気力 /= 2
+;禁断症状で体力が0以下になることは無い
+BASE:ARG:体力 = MAX(BASE:ARG:体力, 1)
+
+;-----------------------------------------------
+;経験調整処理(イベント用)
+;-----------------------------------------------
+;イベントで経験入手したときにオーバーフロー起こさないよう経験は1億未満となるように調整
+@EVENT_EXP_MAXIMUM, ARG
+FOR LOCAL, 0, 100
+	EXP:ARG:LOCAL = LIMIT(EXP:ARG:LOCAL, 0, 99999999)
+NEXT
+
+;-----------------------------------------------
+;珠調整処理(イベント用)
+;-----------------------------------------------
+;イベントで珠入手したときにオーバーフロー起こさないよう数を1000万個未満となるように調整
+@EVENT_JUEL_MAXIMUM, ARG
+#LOCALSIZE 2
+FOR LOCAL:1, 0, 100
+	SELECTCASE LOCAL:1
+		CASE 0 TO 19
+			LOCAL = LOCAL:1
+		CASE 20 TO 22
+			LOCAL = LOCAL:1 + 10
+		CASE 23
+			LOCAL = 100
+		CASE 24
+			LOCAL = 198
+	ENDSELECT
+
+	JUEL:ARG:LOCAL = LIMIT(JUEL:ARG:LOCAL, 0, 9999999)
+NEXT
+
+;-----------------------------------------------
+;体力・気力・理性調整処理(イベント用)
+;-----------------------------------------------
+;イベントなどで体力・気力の現在値が負の数や最大値を超えている時、それを0にする処理
+;好感度とストレスのキャップ処理もここで行う
+@EVENT_LIFE_MINIMUM, ARG
+FOR LOCAL, 0, 9
+	BASE:ARG:LOCAL = MAX(BASE:ARG:LOCAL, 0)
+NEXT
+IF TALENT:ARG:死亡
+	BASE:ARG:体力 = 0
+	BASE:ARG:気力 = 0
+ELSE
+	BASE:ARG:体力 = MIN(BASE:ARG:体力, MAXBASE:ARG:0)
+	BASE:ARG:気力 = MIN(BASE:ARG:気力, MAXBASE:ARG:1)
+ENDIF
+
+IF TALENT:ARG:理性 && MAXBASE:ARG:9 < 12000 && BASE:ARG:理性 > MAXBASE:ARG:9 && MAXBASE:ARG:9 > 0
+	MAXBASE:ARG:9 += (BASE:ARG:理性 - MAXBASE:ARG:9) / 6
+	MAXBASE:ARG:9 = MIN(MAXBASE:ARG:9, 12000)
+ENDIF
+
+MAXBASE:ARG:9 = MAX(MAXBASE:ARG:9, 0)
+BASE:ARG:理性 = MIN(BASE:ARG:理性, MAXBASE:ARG:9)
+
+IF CFLAG:ARG:好感度 < 0
+	CFLAG:ARG:好感度 = MAX(CFLAG:ARG:好感度, -999999)
+ELSE
+	CFLAG:ARG:好感度 = LIMIT(CFLAG:ARG:好感度, 0, 999999)
+ENDIF
+
+CFLAG:ARG:ストレス = LIMIT(CFLAG:ARG:ストレス, 0, 999999)
+
+;--------------------------------------------------
+;必要経費削減処理
+;--------------------------------------------------
+@EVENT_EVERYDAY_COST
+#LOCALSIZE 2
+;施設の維持費計算
+IF FLAG:90 == 0
+	LOCAL = 500
+ELSEIF FLAG:90 == 1
+	LOCAL = 1000
+ELSEIF FLAG:90 == 2
+	LOCAL = 2000
+ELSEIF FLAG:90 == 3
+	LOCAL = 3000
+ELSE
+	LOCAL = 5000
+ENDIF
+
+;キャラの管理費計算
+REPEAT CHARANUM
+	SIF CFLAG:COUNT:4 == 1 || CFLAG:COUNT:4 == 8192
+		CONTINUE
+	IF COUNT == MASTER
+		LOCAL:1 = 100
+	ELSE
+		LOCAL:1 = 300
+		;[恋慕][服従][壊造人格]持ちは自分から進んで手伝いを行っているという設定
+		IF TALENT:COUNT:恋慕 || TALENT:COUNT:服従 || TALENT:COUNT:壊造人格
+			TIMES LOCAL:1 , 0.50
+		;助手可能もしかり。ただし上ほど積極的ではない
+		ELSEIF CFLAG:COUNT:1 == 2
+			TIMES LOCAL:1 , 0.75
+		ENDIF
+		;名無しキャラの管理費は低い
+		SIF NO:COUNT >= 3000 && NO:COUNT < 4000
+			TIMES LOCAL:1 , 0.75
+	ENDIF
+	LOCAL += LOCAL:1
+REND
+
+IF FLAG:3 == 6
+	TIMES LOCAL , 0.80
+ELSEIF FLAG:3 == 5
+	TIMES LOCAL , 0.60
+ELSEIF FLAG:3 == 4
+	TIMES LOCAL , 0.40
+ENDIF
+
+SIF FLAG:4 >= 50
+	TIMES LOCAL , 0.10
+
+;金が尽きたかどうか(既にエンディングを迎えていた場合はゲームオーバーにならない)
+IF LOCAL > MONEY && FLAG:5
+	CALL NO_MORE_MONEY
+	MONEY = 0
+	LOCAL = 0
+ELSEIF LOCAL > MONEY
+	CALL BADEND_2
+ELSEIF LOCAL < 1
+	RETURN 0
+ENDIF
+
+PRINTFORMW 施設の維持費、奴隷の管理費に{LOCAL}圓かかりました
+MONEY -= LOCAL
+
+;--------------------------------------------------
+;必要経費不足処理
+;--------------------------------------------------
+@NO_MORE_MONEY
+PRINTL 施設の維持費、奴隷の管理費を支払うことができませんでした。
+
+REPEAT CHARANUM
+	;失踪中なら影響なし
+	SIF CFLAG:COUNT:4 == 1 || CFLAG:COUNT:4 == 8192
+		CONTINUE
+	;体力減少
+	IF MONEY <= 0
+		TIMES BASE:COUNT:体力 , 0.60
+	ELSE
+		TIMES BASE:COUNT:体力 , 0.80
+	ENDIF
+	;気力減少
+	IF MONEY <= 0
+		TIMES BASE:COUNT:気力 , 0.50
+	ELSE
+		TIMES BASE:COUNT:気力 , 0.75
+	ENDIF
+	;理性減少
+	IF MONEY <= 0
+		TIMES BASE:COUNT:理性 , 0.50
+	ELSE
+		TIMES BASE:COUNT:理性 , 0.75
+	ENDIF
+	;ストレス増加(傀儡・壊造人格なら免除)
+	IF !TALENT:COUNT:死亡
+	IF TALENT:COUNT:傀儡 == 0 && TALENT:COUNT:壊造人格 == 0 && !TALENT:COUNT:死亡 && MONEY <= 0
+		CFLAG:COUNT:ストレス += RAND:80 + RAND:80
+	ELSEIF TALENT:COUNT:傀儡 == 0 && TALENT:COUNT:壊造人格 == 0
+		CFLAG:COUNT:ストレス += RAND:50 + RAND:50
+	ENDIF
+	;好感度減少(壊造人格なら免除)
+	IF COUNT != MASTER && TALENT:COUNT:壊造人格 == 0 && !TALENT:COUNT:死亡 && MONEY <= 0
+		CFLAG:COUNT:好感度 -= RAND:30
+	ELSEIF COUNT != MASTER && TALENT:COUNT:壊造人格 == 0 && !TALENT:COUNT:死亡
+		CFLAG:COUNT:好感度 -= RAND:10
+	ENDIF
+	ENDIF
+	;キャップ処理
+	CALL EVENT_LIFE_MINIMUM, COUNT
+REND
+
+PRINTW 主人および奴隷たちの体力と気力が減退し、ストレスが増加し、不満が出ているようです…
+
+;=============================================================================
+;回復薬の自動実行処理関連
+;=============================================================================
+;『禁断の知識』、『調合知識』を持っているか判定
+;主人と助手全体から禁断の知識と調合知識を検索
+@USE_AUTOHEAL
+VARSET LOCAL, 0
+LOCAL = SEARCH_CHARA_WISDOM()
+;調合知識or禁断の知識がない場合は実行しない
+SIF LOCAL <= 0
+	RETURN 0
+
+;調教対象を保存
+LOCAL:1 = TARGET
+
+FOR TARGET, 0, CHARANUM
+	;その場にいない場合は除外
+	SIF CFLAG:4
+		CONTINUE
+	;その場にいない場合は除外
+	SIF TALENT:死亡
+		CONTINUE
+	;機械には通じない
+	SIF TALENT:機械
+		CONTINUE
+	;使用フラグがＯＮでストレスがあり、お金も足りている場合は鎮静茶使用チェック
+	IF FLAG:13 & 32 && MONEY >= 100 && CFLAG:ストレス
+		CALL USE_AUTOHEAL_MENTAL, LOCAL:1
+		LOCAL:2 += RESULT
+	ENDIF
+	;使用フラグがＯＮで体力気力が全開していない、お金も足りている場合は回復薬使用チェック
+	IF FLAG:13 & 64 && MONEY >= 1000 && (BASE:体力 < MAXBASE:0 || BASE:気力 < MAXBASE:1)
+		CALL USE_AUTOHEAL_LIFE, LOCAL:1
+		LOCAL:2 += RESULT
+	ENDIF
+NEXT
+
+SIF LOCAL:2
+	PRINTFORMW 資金 －{LOCAL:2}圓(残り資金は{MONEY}圓です)
+
+TARGET = LOCAL:1
+
+;-----------------------------------------------
+;鎮静茶自動で使用処理
+;-----------------------------------------------
+@USE_AUTOHEAL_MENTAL, ARG
+VARSET LOCAL, 0
+$AUTOHEAL_MENTAL_LOOP_1
+
+;お金が足りないので終了
+IF MONEY < 100
+	PRINTW 資金不足でストレスを完全に解消出来ませんでした。
+	GOTO AUTOHEAL_MENTAL_LOOP_2
+ENDIF
+;鎮静茶の処理
+CALL DRUG_HEAL_MENTAL , TARGET
+;鎮静茶使用回数
+LOCAL:1 += 1
+;支出の合計の加算と資金減額
+LOCAL += 100
+MONEY -= 100
+
+;ストレスが0なら終了
+SIF CFLAG:ストレス > 0
+	GOTO AUTOHEAL_MENTAL_LOOP_1
+$AUTOHEAL_MENTAL_LOOP_2
+
+IF LOCAL:1
+	SIF TARGET == ASSI || TARGET == ARG
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 309, 0
+	PRINTFORML 鎮静茶を{LOCAL:1}回使用し%CALLNAME:TARGET%のストレスを解消しました。
+ENDIF
+
+RETURN LOCAL
+
+;-----------------------------------------------
+;栄養剤自動で使用処理
+;-----------------------------------------------
+@USE_AUTOHEAL_LIFE, ARG
+VARSET LOCAL, 0
+$AUTOHEAL_LIFE_LOOP_1
+
+;お金が足りないので終了
+IF MONEY < 1000
+	PRINTW 資金不足で体調を完全に回復出来ませんでした。
+	GOTO AUTOHEAL_LIFE_LOOP_2
+ENDIF
+;栄養剤の処理
+CALL DRUG_HEAL_LIFE , TARGET
+;栄養剤使用回数
+LOCAL:1 += 1
+;支出の合計の加算と資金減額
+LOCAL += 1000
+MONEY -= 1000
+
+;体力気力がMAXなら終了
+SIF BASE:体力 < MAXBASE:0 || BASE:気力 < MAXBASE:1
+	GOTO AUTOHEAL_LIFE_LOOP_1
+$AUTOHEAL_LIFE_LOOP_2
+
+IF LOCAL:1
+	SIF TARGET == ASSI || TARGET == ARG
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 310, 0
+	PRINTFORML 栄養剤を{LOCAL:1}回使用し%CALLNAME:TARGET%の体力を回復しました。
+ENDIF
+
+RETURN LOCAL
+
+;-----------------------------------------------
+;ビデオの流行ジャンル変化処理
+;-----------------------------------------------
+;FLAG:77・FLAG:78の値によって流行、不人気のジャンルが決まる(ビデオのタイトルボーナスと同じ判定)
+;0:Ｃ系, 1:Ｖ系, 2:Ａ系, 3:Ｂ系, 4:Ｐ系, 5:Ｕ系, 6～9:特になし
+;10:恥辱系, 11:ウフフ系, 12:触手系, 13:獣姦系, 14:ＳＭ系, 15:薬品系
+@VIDEO_CHANGE_POPULAR_TITLE
+FLAG:77 = RAND:16
+FLAG:78 = RAND:16
+;人気不人気のジャンルが同じ場合は再度判定
+SIF FLAG:77 == FLAG:78 && (FLAG:77 < 6 || FLAG:77 > 9)
+	RESTART
+
+;ビデオカメラが無い場合はここで処理を切り上げる
+SIF ITEM:ビデオカメラ == 0
+	RETURN 0
+
+;主人か助手可能キャラに[超常目算]がいると流行ジャンルが分かるようになる
+LOCAL = -1
+REPEAT CHARANUM
+	SIF CFLAG:COUNT:4 || (CFLAG:COUNT:1 < 2 && COUNT != MASTER) || TALENT:COUNT:超常目算 == 0
+		CONTINUE
+	LOCAL = COUNT
+	BREAK
+REND
+;該当キャラがいない場合はここで処理を切り上げる
+SIF LOCAL < 0
+	RETURN 0
+
+VARSET LOCALS,""
+LOCALS:0 = クリトリス責め
+LOCALS:1 = 下のお口を躾ける系統
+LOCALS:2 = お尻の穴を躾ける系統
+LOCALS:3 = 胸弄り
+LOCALS:4 = ペニス弄り
+LOCALS:5 = 尿道責め
+
+LOCALS:10 = 恥辱系
+LOCALS:11 = ウフフ
+LOCALS:12 = 触手物
+LOCALS:13 = 獣姦物
+LOCALS:14 = ＳＭプレイ
+LOCALS:15 = 薬品系
+
+PRINTL 
+PRINTFORML %CALLNAME:LOCAL%は\@(LOCALS:(FLAG:77) == "") ? 特に流行っているジャンルは無い # %LOCALS:(FLAG:77)%のジャンルが流行りそうだ……\@と思った
+PRINTFORMW また、\@(LOCALS:(FLAG:78) == "") ? 敬遠されているジャンルは今のところ無い # 現在%LOCALS:(FLAG:78)%のジャンルは敬遠されているかも……\@と感じた

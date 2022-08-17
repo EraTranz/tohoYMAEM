@@ -1,0 +1,454 @@
+﻿;=============================================================================
+;傘に舐めさせる
+;=============================================================================
+;からかさお化け専用。自身を舐めさせることもできるし、主人・助手の傘に調教対象を舐めさせることもできる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE453
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:453 > 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｃ系装着器具 == 9
+	RETURN 1
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;からかさお化け（混血可）がいて、かつ起きてないとダメ（拘束はＯＫ）
+SIF !COM_453_RACE(MASTER) && (!COM_453_RACE(TARGET) || EQUIP:睡眠薬 || TFLAG:899) && !COM_453_RACE(ASSI)
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中もダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;他のＣ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 9
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 453) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM453
+VARSET LOCAL
+;からかさお化けの人数を取得して誰の傘を使うかを決定
+LOCAL = COM_453_RACE(MASTER) + COM_453_RACE(TARGET) + COM_453_RACE(ASSI)
+
+;小傘限定のとき
+IF COM_453_KOGASA_LOOK()
+	LOCAL:10 = 1
+	CALLF COM_453_UMBRELLA(1, GETCHARA(72))
+;からかさお化けが複数いるとき
+ELSEIF LOCAL > 1
+	LOCAL = 0
+	PRINTL 誰の傘を使いますか？
+	IF COM_453_RACE(MASTER)
+		PRINTFORML [{LOCAL}] %CALLNAME:MASTER%
+		LOCAL:1 = LOCAL
+		LOCAL ++
+	ENDIF
+	IF COM_453_RACE(TARGET)
+		PRINTFORML [{LOCAL}] %CALLNAME%
+		LOCAL:2 = LOCAL
+		LOCAL ++
+	ENDIF
+	IF COM_453_RACE(ASSI)
+		PRINTFORML [{LOCAL}] %CALLNAME:ASSI%
+		LOCAL:3 = LOCAL
+		LOCAL ++
+	ENDIF
+	$COM453_LOOP
+	INPUT
+	IF RESULT == LOCAL:1 && COM_453_RACE(MASTER)
+		PRINTFORML %CALLNAME:COM_453_UMBRELLA(1, MASTER)%の傘に%CALLNAME%を舐めさせます
+	ELSEIF RESULT == LOCAL:2 && COM_453_RACE(TARGET)
+		PRINTFORML %CALLNAME:COM_453_UMBRELLA(1, TARGET)%自身の傘に%CALLNAME%を舐めさせます
+	ELSEIF RESULT == LOCAL:3 && COM_453_RACE(ASSI)
+		PRINTFORML %CALLNAME:COM_453_UMBRELLA(1, ASSI)%の傘に%CALLNAME%を舐めさせます
+	ELSE
+		GOTO COM453_LOOP
+	ENDIF
+ELSE
+	IF COM_453_RACE(MASTER)
+		CALLF COM_453_UMBRELLA(1, MASTER)
+	ELSEIF COM_453_RACE(TARGET)
+		CALLF COM_453_UMBRELLA(1, TARGET)
+	ELSEIF COM_453_RACE(ASSI)
+		CALLF COM_453_UMBRELLA(1, ASSI)
+	ENDIF
+ENDIF
+
+LOCAL = COM_453_UMBRELLA()
+
+PRINTFORML ＜\@ TEQUIP:ビデオ撮影 && TARGET == LOCAL ? 公開 # \@\@ TEQUIP:野外プレイ && TARGET == LOCAL ? 野外 # \@\@ TEQUIP:読心 && TARGET == LOCAL ? 読心 # \@傘\@ EXIST_BAR(TARGET) ? フェラ # クンニ \@\@ TARGET == LOCAL ? オナニー # \@＞
+
+;-------------------------------------------------
+;自慰なら、実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 453
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TARGET == LOCAL && !LOCAL:10
+	IF TFLAG:699 == 0
+		CALL COM_ORDER
+		;実行できない
+		SIF RESULT == 0
+			RETURN 0
+	ENDIF
+ENDIF
+TSTR:0 = \@ TEQUIP:ビデオ撮影 && TARGET == LOCAL ? 公開 # \@\@ TEQUIP:野外プレイ && TARGET == LOCAL ? 野外 # \@\@ TEQUIP:読心 && TARGET == LOCAL ? 読心 # \@傘\@ EXIST_BAR(TARGET) ? フェラ # クンニ \@\@ TARGET == LOCAL ? オナニー # \@
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 120
+SOURCE:逸脱 = 70
+
+;ABL:Ｃ感覚をみる
+;ここはクリキャップと同じだが舌使いのせいで効果が高くなる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 200
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 900
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1600
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2400
+ELSE
+	SOURCE:快Ｃ = 3000
+ENDIF
+
+;小傘の技巧をみる
+IF ABL:LOCAL:技巧 == 0
+	SIF LOCAL == TARGET
+		SOURCE:性行動 = 100
+	TIMES SOURCE:快Ｃ , 0.30
+ELSEIF ABL:LOCAL:技巧 == 1
+	SIF LOCAL == TARGET
+		SOURCE:性行動 = 160
+	TIMES SOURCE:快Ｃ , 0.70
+ELSEIF ABL:LOCAL:技巧 == 2
+	SIF LOCAL == TARGET
+		SOURCE:性行動 = 220
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF ABL:LOCAL:技巧 == 3
+	SIF LOCAL == TARGET
+		SOURCE:性行動 = 280
+	TIMES SOURCE:快Ｃ , 1.20
+ELSEIF ABL:LOCAL:技巧 == 4
+	SIF LOCAL == TARGET
+		SOURCE:性行動 = 340
+	TIMES SOURCE:快Ｃ , 1.40
+ELSE
+	SIF LOCAL == TARGET
+		SOURCE:性行動 = 400
+	TIMES SOURCE:快Ｃ , 1.60
+ENDIF
+
+;自慰なら、自慰中毒をみる
+IF LOCAL == TARGET
+	IF ABL:自慰中毒 == 0
+		SOURCE:中毒充足 = 0
+		TIMES SOURCE:快Ｃ , 1.00
+	ELSEIF ABL:自慰中毒 == 1
+		SOURCE:中毒充足 = 100
+		TIMES SOURCE:快Ｃ , 1.10
+	ELSEIF ABL:自慰中毒 == 2
+		SOURCE:中毒充足 = 300
+		TIMES SOURCE:快Ｃ , 1.20
+	ELSEIF ABL:自慰中毒 == 3
+		SOURCE:中毒充足 = 800
+		TIMES SOURCE:快Ｃ , 1.30
+	ELSEIF ABL:自慰中毒 == 4
+		SOURCE:中毒充足 = 1500
+		TIMES SOURCE:快Ｃ , 1.50
+	ELSE
+		SOURCE:中毒充足 = 2500
+		TIMES SOURCE:快Ｃ , 1.70
+	ENDIF
+ENDIF
+
+;傘の主のTALENT:舌使いをみる
+IF TALENT:LOCAL:舌使い
+	TIMES SOURCE:快Ｃ , 2.00
+	SOURCE:恭順追加 += SOURCE:快Ｃ / 20
+ENDIF
+
+;猫舌は本体のみで傘は無関係と見て考慮しない
+
+;液体追加
+SOURCE:液体追加 = 200
+
+;傘の着脱
+IF TEQUIP:Ｃ系装着器具
+	TEQUIP:Ｃ系装着器具 = 0
+	TFLAG:178 = 0
+ELSE
+	TEQUIP:Ｃ系装着器具 = 9
+	TFLAG:178 = LOCAL
+ENDIF
+
+SIF EXIST_BAR(TARGET)
+	TCVAR:LOCAL:フェラ経験 += 1
+
+IF LOCAL == TARGET
+	TCVAR:LOCAL:自慰経験 += 1
+	TCVAR:LOCAL:調教自慰経験 += 1
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+SIF LOCAL == MASTER && TEQUIP:Ｃ系装着器具 == 9
+	TCVAR:Ｃ調律経験 += 1
+RETURN 1
+
+;-------------------------------------------------
+;傘舐め中
+;-------------------------------------------------
+@EQUIP_COM453
+LOCAL = TFLAG:178
+PRINTFORML ＜傘\@ EXIST_BAR(TARGET) ? フェラ # クンニ \@中＞
+
+SIF EXIST_BAR(TARGET)
+	TCVAR:LOCAL:フェラ経験 += 1
+
+IF LOCAL == TARGET
+	TCVAR:LOCAL:自慰経験 += 1
+	TCVAR:LOCAL:調教自慰経験 += 1
+ENDIF
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 20
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 80
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 240
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 500
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 900
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 1200
+ELSE
+	LOCAL:1 = 1500
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+ELSE
+	TIMES LOCAL:1 , 1.30
+ENDIF
+
+SOURCE:快Ｃ += LOCAL:1
+SOURCE:露出 += 50
+SOURCE:欲情追加 += 50
+SOURCE:液体追加 += 100
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_453
+LOCAL = COM_453_UMBRELLA()
+IF TEQUIP:Ｃ系装着器具
+	PRINTFORML %CALLNAME:LOCAL%の傘はぬめる舌で%CALLNAME%の\@ EXIST_PENIS(TARGET) ? ペニス # クリトリス \@を一際激しくねぶると満足したのか、一本足で跳ねて%CALLNAME%から離れた
+ELSE
+	IF EXIST_PENIS(TARGET)
+		PRINTFORML %CALLNAME:LOCAL%の傘の唾液塗れの巨大な舌が、%CALLNAME%のペニスに絡みつき巻き付き絞るように卑猥に擦り上げた…
+	ELSE
+		PRINTFORML %CALLNAME:LOCAL%の傘の唾液塗れの巨大な舌が、%CALLNAME%の秘部をべっとりと覆い大きな動きでゆっくりと舐め上げ始めた…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_453, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+;ABL:自慰中毒
+IF ABL:自慰中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:自慰中毒
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 3
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;自慰しやすい
+IF TALENT:自慰しやすい
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+;難易度上昇
+;公開・読心で+10
+TFLAG:241 = 38
+SIF TEQUIP:ビデオ撮影
+	TFLAG:241 += 10
+SIF TEQUIP:野外プレイ
+	TFLAG:241 += 10
+SIF TEQUIP:読心
+	TFLAG:241 += 10
+
+;--------------------------------------------------
+;血統の確認
+;--------------------------------------------------
+;からかさお化けの血が35％以上入っているかをみる
+@COM_453_RACE(ARG)
+#FUNCTION
+RETURNF ARG >= 0 && CFLAG:ARG:3249 >= 35
+
+;--------------------------------------------------
+;誰の傘か記録する
+;--------------------------------------------------
+@COM_453_UMBRELLA(ARG, ARG:1)
+#FUNCTION
+SIF ARG
+	LOCAL = ARG:1
+RETURNF LOCAL
+
+;--------------------------------------------------
+;小傘ロック（口上用）
+;--------------------------------------------------
+@COM_453_KOGASA_LOOK(ARG)
+#FUNCTION
+IF ARG
+	LOCAL = 1
+ELSE
+	LOCAL:1 = LOCAL
+	LOCAL = 0
+ENDIF
+RETURNF LOCAL:1

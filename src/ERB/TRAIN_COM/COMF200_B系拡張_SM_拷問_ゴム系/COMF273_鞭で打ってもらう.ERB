@@ -1,0 +1,241 @@
+﻿;=============================================================================
+;鞭で打ってもらう
+;=============================================================================
+;効果は凄く微妙。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE273
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:273 > 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:鞭 == 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;奴隷がサド持ちまたはドＳ持ちまたはサドっ気Lv1以上じゃないとダメ
+SIF TALENT:サド == 0 && TALENT:ドＳ == 0 && ABL:サドっ気 < 1
+	RETURN 0
+;調教者がハードなコマンドを受けることができるかどうか
+SIF COM_ABLE_GAIN_HARDTRAINING(PLAYER, 1) == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 273) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM273
+PRINTL 鞭で打ってもらう
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 273
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 鞭で打ってもらう
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 25
+DOWNBASE:1 += 40
+
+DOWNBASE:PLAYER:0 += 200
+DOWNBASE:PLAYER:1 += 160
+
+SOURCE:主導権 = 660
+SOURCE:達成感 = 180
+SOURCE:恭順追加 = 100
+SOURCE:中毒充足 = 0
+SOURCE:逸脱 = 40
+
+;ABL:サドっ気をみる
+IF ABL:サドっ気 <= 1
+	TIMES SOURCE:主導権 , 0.8
+	TIMES SOURCE:達成感 , 0.8
+	TIMES SOURCE:恭順追加 , 0.7
+ELSEIF ABL:サドっ気 == 2
+	TIMES SOURCE:主導権 , 1.0
+	TIMES SOURCE:達成感 , 1.0
+	TIMES SOURCE:恭順追加 , 0.9
+	SOURCE:中毒充足 += 50
+ELSEIF ABL:サドっ気 == 3
+	TIMES SOURCE:主導権 , 1.4
+	TIMES SOURCE:達成感 , 1.2
+	TIMES SOURCE:恭順追加 , 1.0
+	SOURCE:中毒充足 += 150
+ELSEIF ABL:サドっ気 == 4
+	TIMES SOURCE:主導権 , 1.8
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.2
+	SOURCE:中毒充足 += 450
+ELSE
+	TIMES SOURCE:主導権 , 2.2
+	TIMES SOURCE:達成感 , 2.0
+	TIMES SOURCE:恭順追加 , 1.6
+	SOURCE:中毒充足 += 950
+ENDIF
+
+;ABL:調教者のマゾっ気をみる
+IF ABL:PLAYER:マゾっ気 == 0
+	TIMES SOURCE:主導権 , 0.9
+	TIMES SOURCE:達成感 , 0.9
+	TIMES SOURCE:恭順追加 , 0.9
+ELSEIF ABL:PLAYER:マゾっ気 == 1
+	TIMES SOURCE:主導権 , 1.0
+	TIMES SOURCE:達成感 , 1.0
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:PLAYER:マゾっ気 == 2
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.1
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:PLAYER:マゾっ気 == 3
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.3
+	TIMES SOURCE:恭順追加 , 1.1
+ELSEIF ABL:PLAYER:マゾっ気 == 4
+	TIMES SOURCE:主導権 , 1.8
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.2
+ELSE
+	TIMES SOURCE:主導権 , 2.0
+	TIMES SOURCE:達成感 , 1.8
+	TIMES SOURCE:恭順追加 , 1.5
+ENDIF
+
+;調教者がドＭ
+IF TALENT:PLAYER:ドＭ
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.5
+	SOURCE:欲情追加 = 360
+;調教者がマゾ
+ELSEIF TALENT:PLAYER:マゾ
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.2
+	TIMES SOURCE:恭順追加 , 1.2
+	SOURCE:欲情追加 = 180
+ENDIF
+;ドＳ
+IF TALENT:ドＳ
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.5
+	TIMES SOURCE:中毒充足 , 1.5
+	TIMES DOWNBASE:PLAYER:0 , 1.5
+	TIMES DOWNBASE:PLAYER:1 , 1.5
+;サド
+ELSEIF TALENT:サド
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.2
+	TIMES SOURCE:恭順追加 , 1.2
+	TIMES SOURCE:中毒充足 , 1.2
+	TIMES DOWNBASE:PLAYER:0 , 1.2
+	TIMES DOWNBASE:PLAYER:1 , 1.2
+ENDIF
+
+;反発刻印2以上
+SIF MARK:反発刻印 >= 2
+	SOURCE:反感追加 = 550
+
+;調教者に苦痛快楽経験、対象にＳＭ教育経験が入る可能性がある
+LOCAL = SOURCE:主導権
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.10
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.25
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 0.75
+ELSE
+	TIMES LOCAL , 1.00
+ENDIF
+IF LOCAL >= 4000
+	LOCAL:1 = 8
+	LOCAL:2 = 3
+ELSEIF LOCAL >= 3000
+	LOCAL:1 = 6
+	LOCAL:2 = 2
+ELSEIF LOCAL >= 2000
+	LOCAL:1 = 4
+	LOCAL:2 = 2
+ELSEIF LOCAL >= 1000
+	LOCAL:1 = 2
+	LOCAL:2 = 1
+ELSEIF LOCAL >= 600
+	LOCAL:1 = 1
+	LOCAL:2 = 1
+ELSE
+	LOCAL:1 = 0
+	LOCAL:2 = 0
+ENDIF
+IF LOCAL:1
+	TCVAR:PLAYER:苦痛快楽経験 += LOCAL:1
+	TCVAR:ＳＭ教育経験 += LOCAL:2
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_273
+PRINTFORM %CALLNAME:TARGET%は、
+;ドＳ持ち
+IF TALENT:ドＳ 
+	PRINTFORML 鞭を持つとまるで女王様のごとき迫力を見せ、思う存分%CALLNAME:PLAYER%を打ちつづけた。
+;サド持ち
+ELSEIF TALENT:サド
+	PRINTFORML 鞭を持つと嬉しそうな表情を見せ、%CALLNAME:PLAYER%をリズミカルに打ちつづけた。
+;その他
+ELSE
+	PRINTFORML 鞭を持つと少し困惑しつつも興奮で顔を赤らめながら、%CALLNAME:PLAYER%を打ち据えはじめた。
+ENDIF
+;調教者がドＭ持ち
+IF TALENT:PLAYER:ドＭ
+	PRINTFORML %CALLNAME:PLAYER%は打ち据えられるたびに、快感に酔いしれるがごとく歓喜の声を挙げつづけていった……
+;調教者がマゾ持ち
+ELSEIF TALENT:PLAYER:マゾ
+	PRINTFORML %CALLNAME:PLAYER%は打ち据えられるたびに、その痛みから来る快感を味わっていた……
+;その他
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は打ち据えられるたびに、その肌に真っ赤な筋が幾本も刻まれていった……
+ENDIF

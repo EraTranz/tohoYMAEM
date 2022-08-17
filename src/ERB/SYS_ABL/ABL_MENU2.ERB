@@ -1,0 +1,225 @@
+﻿;============================================================================
+;表示用の汎用関数
+;条件に合致している場合とそうでない場合で色を変える
+;そもそも表示するかどうかのチェックも含めて統合
+;ARGS:0 表示文字列, ARG:0 達成条件, ARG:1 0=通常 1=経験等一度超えると取り返しが付かない物
+;
+;返り値 達成条件を満たしていれば1, それ以外の場合は0
+;表示の時に
+;============================================================================
+@SPOILER_PRINT_FLAG( ARGS:0, ARG:0, ARG:1=0)
+#FUNCTION
+#LOCALSIZE 10
+
+LOCAL:0 = GETCOLOR()
+LOCAL:1 = 0xFFFFFF
+LOCAL:2 = 0x444444
+LOCAL:3 = 0xFFFF00
+LOCAL:4 = 0x440000
+	
+;達成条件によって色を変える
+IF ARG:0
+	;達成
+	SETCOLOR LOCAL:(ARG:1 * 2 + 1)
+	LOCAL:9 = 1
+ELSE
+	;未達成
+	SETCOLOR LOCAL:(ARG:1 * 2 + 2)
+	LOCAL:9 = 0
+ENDIF
+PRINTFORM %ARGS:0% 
+SETCOLOR LOCAL:0
+RETURNF LOCAL:9
+
+;=============================================================================
+;売却条件の達成状況表示
+;=============================================================================
+@SHOW_SPOILER_SELL
+
+IF CFLAG:1 == 0
+	PRINT 売却条件： 
+	CALLF SPOILER_PRINT_FLAG("従順+欲望6 ", (ABL:従順 + ABL:欲望) >= 6)
+	SIF (TALENT:反抗的 || TALENT:気丈)
+		CALLF SPOILER_PRINT_FLAG("従順4 ", ABL:従順 >= 4)
+	SIF (TALENT:自制心 || TALENT:抑圧 || TALENT:抵抗)
+		CALLF SPOILER_PRINT_FLAG("欲望4 ", ABL:欲望 >= 4)
+	CALLF SPOILER_PRINT_FLAG("調教度0.1％以上 ", CFLAG:3668 > 0)
+	PRINTL
+	PRINT 　　　　　 
+	CALLF SPOILER_PRINT_FLAG("(Ｃ感覚3、Ｖ感覚3、Ａ感覚3、Ｂ感覚3　のどれか) ", ABL:Ｃ感覚 >= 3 || ABL:Ｖ感覚 >= 3 || ABL:Ａ感覚 >= 3 || ABL:Ｂ感覚 >= 3)
+	PRINTL
+	
+	PRINT 追加条件： 
+	CALLF SPOILER_PRINT_FLAG("従順5 ", ABL:従順 >= 5)
+	CALLF SPOILER_PRINT_FLAG("欲望5 ", ABL:欲望 >= 5)
+	CALLF SPOILER_PRINT_FLAG("感覚合計13 ", ABL:Ｃ感覚 + ABL:Ｖ感覚 + ABL:Ａ感覚 + ABL:Ｂ感覚 >= 13)
+	CALLF SPOILER_PRINT_FLAG("技巧3+奉仕精神3 ", ABL:技巧 >= 3 && ABL:奉仕精神 >= 3)
+	CALLF SPOILER_PRINT_FLAG("露出癖3+自慰中毒2 ", ABL:露出癖 >= 3 && ABL:自慰中毒 >= 2)
+	CALLF SPOILER_PRINT_FLAG("マゾっ気3 ", ABL:マゾっ気 >= 3)
+	IF ABL:従順 >= 5 || ABL:欲望 >= 5 || ABL:Ｃ感覚 + ABL:Ｖ感覚 + ABL:Ａ感覚 + ABL:Ｂ感覚 >= 13 || (ABL:技巧 >= 3 && ABL:奉仕精神 >= 3) || (ABL:露出癖 >= 3 && ABL:自慰中毒 >= 2) || ABL:マゾっ気 >= 3
+		PRINT (1/1)
+	ELSE
+		PRINT (0/1)
+	ENDIF
+	PRINTL
+ENDIF
+
+IF CFLAG:1 < 2
+	PRINT 助手条件： 
+	CALLF SPOILER_PRINT_FLAG("売却可能 ", CFLAG:1 == 1)
+	PRINTL
+	PRINT 追加条件： 
+	CALLF SPOILER_PRINT_FLAG("従順5+欲望4 ", ABL:従順 >= 5 && ABL:欲望 >= 4)
+	IF TALENT:オトコ
+		CALLF SPOILER_PRINT_FLAG("従順3+欲望3+技巧3+ＢＬっ気3+Ｃ感覚3", (ABL:Ｃ感覚 >= 3 && ABL:従順 >= 3 && ABL:欲望 >= 3 && ABL:技巧 >= 3 && ABL:ＢＬっ気 >= 3) )
+	ELSE
+		CALLF SPOILER_PRINT_FLAG("従順3+欲望3+技巧3+レズっ気3+Ｃ感覚3", (ABL:Ｃ感覚 >= 3 && ABL:従順 >= 3 && ABL:欲望 >= 3 && ABL:技巧 >= 3 && ABL:レズっ気 >= 3) )
+	ENDIF
+	IF (ABL:従順 >= 5 && ABL:欲望 >= 4) || (TALENT:オトコ && ABL:Ｃ感覚 >= 3 && ABL:従順 >= 3 && ABL:欲望 >= 3 && ABL:技巧 >= 3 && ABL:ＢＬっ気 >= 3) || (!TALENT:オトコ && ABL:Ｃ感覚 >= 3 && ABL:従順 >= 3 && ABL:欲望 >= 3 && ABL:技巧 >= 3 && ABL:レズっ気 >= 3)
+		PRINT (1/1)
+	ELSE
+		PRINT (0/1)
+	ENDIF
+	PRINTL
+
+	CALL NEW_DRAWLINE
+ENDIF
+
+
+;=============================================================================
+;陥落条件の達成状況表示
+;=============================================================================
+@SHOW_SPOILER_FALLTALENT
+;異性判定
+LOCAL:0 = (TALENT:オトコ != TALENT:MASTER:オトコ)
+
+IF !(TALENT:親愛 && TALENT:恋慕 && TALENT:服従 && TALENT:淫乱 && TALENT:妄信)
+	PRINT 前提条件： 
+	IF LOCAL:0
+		CALLF SPOILER_PRINT_FLAG("好感度1000以上 ", CFLAG:好感度 >= 1000)
+	ELSE
+		CALLF SPOILER_PRINT_FLAG("好感度1500以上 ", CFLAG:好感度 >= 1500)
+	ENDIF
+	CALLF SPOILER_PRINT_FLAG("調教度50％以上 ", CFLAG:3668 >= 500)
+	CALL SHOW_SPOILER_FALLTALENT_SAMESEX
+	PRINT 　　　　　 
+	CALLF SPOILER_PRINT_FLAG("反発刻印0 ", MARK:反発刻印 == 0)
+	CALLF SPOILER_PRINT_FLAG("[精神崩壊]なし ", TALENT:精神崩壊 == 0, 1)
+	CALLF SPOILER_PRINT_FLAG("[傀儡]なし ", TALENT:傀儡 == 0, 1)
+	PRINTL
+
+	IF !TALENT:親愛 && TALENT:恋慕
+		PRINT 親愛条件： 
+		CALLF SPOILER_PRINT_FLAG("従順5 ", ABL:従順 >= 5)
+		CALLF SPOILER_PRINT_FLAG("愛情経験200 ", EXP:愛情経験 >= 200)
+		IF LOCAL:0
+			CALLF SPOILER_PRINT_FLAG("好感度5000以上 ", CFLAG:好感度 >= 5000)
+		ELSE
+			CALLF SPOILER_PRINT_FLAG("好感度7500以上 ", CFLAG:好感度 >= 7500)
+		ENDIF
+		PRINTL
+		PRINT 　　　　　 
+		CALLF SPOILER_PRINT_FLAG("薬物刻印0 ", MARK:薬物刻印 == 0)
+		CALLF SPOILER_PRINT_FLAG("恐怖刻印0 ", MARK:恐怖刻印 == 0)
+		CALLF SPOILER_PRINT_FLAG("反発刻印0 ", MARK:反発刻印 == 0)
+		PRINTL
+		PRINT 　　　　　 
+		CALLF SPOILER_PRINT_FLAG("[烙印]なし ", TALENT:烙印 == 0, 1)
+		CALLF SPOILER_PRINT_FLAG("[隷属]なし ", TALENT:隷属 == 0, 1)
+		CALLF SPOILER_PRINT_FLAG("[壊造人格]なし ", TALENT:壊造人格 == 0, 1)
+		PRINTL
+	ENDIF
+
+	IF !TALENT:恋慕
+		PRINT 恋慕条件： 
+		CALLF SPOILER_PRINT_FLAG("従順3 ", ABL:従順 >= 3)
+		CALLF SPOILER_PRINT_FLAG("奉仕快楽経験200 ", EXP:奉仕快楽経験 >= 200)
+		PRINTL
+		PRINT 　　　　　 
+		CALLF SPOILER_PRINT_FLAG("薬物刻印0 ", MARK:薬物刻印 == 0)
+		CALLF SPOILER_PRINT_FLAG("恐怖刻印0 ", MARK:恐怖刻印 == 0)
+		CALLF SPOILER_PRINT_FLAG("[壊造人格]なし ", TALENT:壊造人格 == 0, 1)
+		PRINTL
+	ENDIF
+
+	IF !TALENT:服従
+		PRINT 服従条件： 
+		CALLF SPOILER_PRINT_FLAG("従順4 ", ABL:従順 >= 4)
+		CALLF SPOILER_PRINT_FLAG("奉仕精神4 ", ABL:奉仕精神 >= 4)
+		CALLF SPOILER_PRINT_FLAG("欲望3 ", ABL:欲望 >= 3)
+		CALLF SPOILER_PRINT_FLAG("主人調教経験250 ", EXP:主人調教経験 >= 250 + MIN(EXP:別人調教経験 / 4, 500))
+		CALLF SPOILER_PRINT_FLAG("異常経験1以上 ", EXP:異常経験 >= 1)
+		PRINTL
+		PRINT 　　　　　 
+		CALLF SPOILER_PRINT_FLAG("快楽刻印3 ", MARK:快楽刻印 >= 3)
+		CALLF SPOILER_PRINT_FLAG("屈服刻印3 ", MARK:屈服刻印 >= 3)
+		CALLF SPOILER_PRINT_FLAG("恥辱刻印2 ", MARK:恥辱刻印 >= 2)
+		CALLF SPOILER_PRINT_FLAG("恐怖刻印1 ", MARK:恐怖刻印 >= 1)
+		PRINTL
+	ENDIF
+
+	IF !TALENT:淫乱
+		PRINT 淫乱条件： 
+		CALLF SPOILER_PRINT_FLAG("欲望4 ", ABL:欲望 >= 4)
+		CALLF SPOILER_PRINT_FLAG("異常経験3以上 ", EXP:異常経験 >= 3)
+		PRINTL
+	ENDIF
+
+	IF !TALENT:妄信 && (TALENT:恋慕 || TALENT:服従 || TALENT:淫乱)
+		PRINT 妄信条件： 
+		CALLF SPOILER_PRINT_FLAG("従順5 ", ABL:従順 >= 5)
+		CALLF SPOILER_PRINT_FLAG("奉仕精神5 ", ABL:奉仕精神 >= 5)
+		IF LOCAL:0
+			CALLF SPOILER_PRINT_FLAG("好感度2000以上 ", CFLAG:好感度 >= 2000)
+		ELSE
+			CALLF SPOILER_PRINT_FLAG("好感度3000以上 ", CFLAG:好感度 >= 3000)
+		ENDIF
+		PRINTL
+		PRINT 　　　　　 
+		CALLF SPOILER_PRINT_FLAG("屈服刻印3 ", MARK:屈服刻印 >= 3)
+		CALLF SPOILER_PRINT_FLAG("薬物刻印0 ", MARK:薬物刻印 == 0)
+		CALLF SPOILER_PRINT_FLAG("恐怖刻印0 ", MARK:恐怖刻印 == 0)
+		PRINTL
+		PRINT 　　　　　 
+		CALLF SPOILER_PRINT_FLAG("[恋慕] ", TALENT:恋慕)
+		CALLF SPOILER_PRINT_FLAG("[服従] ", TALENT:服従)
+		CALLF SPOILER_PRINT_FLAG("[淫乱] ", TALENT:淫乱)
+		CALLF SPOILER_PRINT_FLAG("助手可能 ", CFLAG:1 == 2)
+		PRINTL
+	ENDIF
+
+	CALL NEW_DRAWLINE
+ENDIF
+
+;=============================================================================
+;異性・同性での条件判定
+;=============================================================================
+@SHOW_SPOILER_FALLTALENT_SAMESEX
+IF (TALENT:オトコ != TALENT:MASTER:オトコ)
+	; 対象が引き継ぎの場合は、レズ経験とＢＬ経験の制限は付かない
+	IF CFLAG:18 == 0
+		IF TALENT:MASTER:オトコ
+			CALLF SPOILER_PRINT_FLAG("レズ経験1000未満 ", 1000 > EXP:レズ経験, 1)
+		ELSE
+			CALLF SPOILER_PRINT_FLAG("ＢＬ経験1000未満 ", 1000 > EXP:ＢＬ経験, 1)
+		ENDIF
+	ENDIF
+ELSE
+	PRINTL
+	PRINT 　　　　　 
+	; 対象が引き継ぎの場合は、レズ経験とＢＬ経験の制限は付かない
+	IF TALENT:MASTER:オトコ
+		CALLF SPOILER_PRINT_FLAG("(ＢＬっ気+ＢＬ中毒5 or [両刀]) ", (ABL:ＢＬっ気 + ABL:ＢＬ中毒) >= 5 || TALENT:両刀)
+	ELSE
+		CALLF SPOILER_PRINT_FLAG("(レズっ気+レズ中毒5 or [両刀]) ", (ABL:レズっ気 + ABL:レズ中毒) >= 5 || TALENT:両刀)
+	ENDIF
+	; 少ない経験で取得可能な場合もあるが、主人調教経験の計算が複雑なので省く
+	IF CFLAG:18 == 0
+		IF TALENT:MASTER:オトコ
+			CALLF SPOILER_PRINT_FLAG("(ＢＬ経験1500以上 or ＢＬっ気5) ", EXP:ＢＬ経験 >= 1500 || ABL:ＢＬっ気 == 5)
+		ELSE
+			CALLF SPOILER_PRINT_FLAG("(レズ経験1500以上 or レズっ気5) ", EXP:レズ経験 >= 1500 || ABL:レズっ気 == 5)
+		ENDIF
+	ENDIF
+ENDIF
+PRINTL

@@ -1,0 +1,132 @@
+﻿;=============================================================================
+;針
+;=============================================================================
+;実際には苦痛があるためもっと体力気力をもっていかれる
+;口上用(針さばきパッチのシチュ用)にTFLAG:201を使用。(0=普通の針/機能無効, 1=普通の強さで, 2=弱めに, 3=強めに)
+;真価を発揮するのは痛みが30000を超えたとき(ただしそこまで上げられるかは不明。体力上昇必須かも)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE222
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:222 > 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:針 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか([針さばき]を習得していた場合は例外)
+SIF COM_ABLE_HARDTRAINING(PLAYER, 1) == 0 && TALENT:PLAYER:針さばき == 0
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 222) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM222
+PRINTL 針
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 222
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 針
+TFLAG:201 = 0
+;拷問系、精神操作系コマンドが有効かつ調教者が[針さばき]を持っており、触手調教中でない場合、選択肢が出現。
+;痛覚のソースを±50%で調整可能
+SIF FLAG:15 & 16 && TALENT:PLAYER:針さばき && TEQUIP:触手調教 == 0
+	CALL SELECT_NEEDLE
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 20
+
+SOURCE:逸脱 = 1000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 3300
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 3600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 4000
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	SOURCE:痛み = 4500
+ELSE
+	SOURCE:痛み = 5500
+ENDIF
+;針加減を選択した時
+IF TFLAG:201 == 2
+	TIMES SOURCE:痛み , 0.50
+ELSEIF TFLAG:201 == 3
+	TIMES SOURCE:痛み , 1.50
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 3
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;針加減選択
+;--------------------------------------------------
+;拷問系、精神操作系コマンド有効時に呼び出される
+@SELECT_NEEDLE
+PRINTL 針加減は？
+PRINTL [0]普通
+PRINTL [1]弱く
+PRINTL [2]強く
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	TFLAG:201 = 1
+ELSEIF RESULT == 1
+	TFLAG:201 = 2
+ELSEIF RESULT == 2
+	TFLAG:201 = 3
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_222
+PRINTFORM %CALLNAME:TARGET%の乳首や\@(EXIST_PENIS(TARGET)) ? ペニス # クリトリス\@
+IF TALENT:PLAYER:針さばき || TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	PRINTL に容赦なく針を突き刺した……
+ELSE
+	PRINTL に針を突きたてた……
+ENDIF

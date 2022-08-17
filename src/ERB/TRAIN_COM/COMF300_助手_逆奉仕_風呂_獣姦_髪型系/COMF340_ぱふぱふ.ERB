@@ -1,0 +1,135 @@
+﻿;=============================================================================
+;ぱふぱふ
+;=============================================================================
+;完全趣味コマンドなので実用性０
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE340
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:340 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;調教者は主人でないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;絶壁、貧乳は不可
+SIF TALENT:絶壁 || TALENT:貧乳
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;従順4以上必要
+SIF ABL:従順 < 4
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:技巧 < 4
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 340) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM340
+IF NO:TARGET == 1059 || (NO:TARGET == 1014 && CFLAG:0 == 0 && TALENT:狂気)
+	PRINTL ぱるぱる
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 340
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = ぱるぱる
+ELSE
+	PRINTL ぱふぱふ
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 340
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = ぱふぱふ
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+SOURCE:主導権 = 250
+SOURCE:恭順追加 = 50
+
+IF NO:TARGET == 1059 || (NO:TARGET == 1014 && CFLAG:0 == 0 && TALENT:狂気)
+	;無駄に嫉妬補正＋αが付きます
+	SOURCE:中毒充足 = 50
+	SOURCE:反感追加 = 75
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_340
+PRINTFORM %CALLNAME:TARGET%は
+IF NO:TARGET == 1059
+	PRINTFORM しきりに他の女の胸\@(TEQUIP:口装着器具) ? を妬ましそうに睨み # が妬ましいと呟き\@つつも
+ELSEIF NO:TARGET == 1014 && CFLAG:0 == 0 && TALENT:狂気
+	PRINTFORM なにやら自分の胸について\@(TEQUIP:口装着器具) ? 納得できなそうな表情を # 小言をこぼ\@しながらも
+ENDIF
+IF TALENT:巨乳
+	PRINTFORM その大きな胸で%CALLNAME:PLAYER%の顔を
+	SIF TALENT:恋慕
+		PRINT 優しく
+	PRINTL 包み込んだ…
+	IF TALENT:恋慕
+		PRINTFORML %CALLNAME:PLAYER%はその柔らかさについ眠ってしまいそうになったが、%CALLNAME:TARGET%に優しく起こされた…
+	ELSE
+		PRINTFORML 女性特有の甘い香りが%CALLNAME:PLAYER%の顔を包んでいる…
+	ENDIF
+ELSEIF TALENT:爆乳
+	PRINTFORM その豊満な胸で%CALLNAME:PLAYER%の顔を頭ごと
+	SIF TALENT:恋慕
+		PRINT 優しく
+	PRINTL 包み込んだ…
+	IF TALENT:恋慕
+		PRINTFORML 母胎の中を思い出させるような暖かさに、%CALLNAME:PLAYER%の心が少し安らいだ…
+	ELSE
+		PRINTFORML 女性特有の甘い香りが%CALLNAME:PLAYER%の顔を包んでいる…
+	ENDIF
+ELSE
+	PRINTFORM 胸で%CALLNAME:PLAYER%の顔を
+	SIF TALENT:恋慕
+		PRINT 優しく
+	PRINTL 包み込んだ…
+	PRINTFORML 女性特有の甘い香りが%CALLNAME:PLAYER%の顔を包んでいる…
+ENDIF

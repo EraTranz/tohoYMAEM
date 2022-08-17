@@ -1,0 +1,278 @@
+﻿;=============================================================================
+;触手カテーテル
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE527
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:527 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF (TEQUIP:Ｕ系装着器具 == 1 || TEQUIP:Ｕ系装着器具 == 21) && TEQUIP:触手服 & 32
+	RETURN 1
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;触手が[抗菌触手]を得ていないとダメ
+SIF (FLAG:75 & 64) == 0
+	RETURN 0
+;他の触手尿道責め中はダメ
+SIF TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 1 && TEQUIP:Ｕ系装着器具 != 21
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !TEQUIP:触手調教 && !(TEQUIP:触手服 & 32) && (TEQUIP:Ｕ系装着器具 == 1 || TEQUIP:Ｕ系装着器具 == 21)
+	RETURN 0
+;[オトコ]の場合、触手Ｃ責め中や道具装着もダメ
+SIF TALENT:オトコ && (TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム)
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 527) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM527
+PRINTL 触手尿道挿入
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 527
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手尿道挿入
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+LOCAL:1 = 40
+
+;EXP:Ｕ拡張経験をみる
+IF EXP:Ｕ拡張経験 < EXPLV:1
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:2
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:3
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.00
+ELSEIF EXP:Ｕ拡張経験 < EXPLV:5
+	TIMES LOCAL:1 , 0.80
+ELSE
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.60
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 2.00
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1 * 2
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 80
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 250
+	SOURCE:屈従 = 800
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 600
+	SOURCE:屈従 = 1400
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1000
+	SOURCE:屈従 = 1800
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1300
+	SOURCE:屈従 = 2100
+ELSE
+	SOURCE:快Ｃ = 1700
+	SOURCE:屈従 = 2400
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 < 1
+	SOURCE:痛み = 2000
+	SOURCE:屈従 += 200
+	SOURCE:不潔 = 1000
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 2000
+ELSEIF ABL:マゾっ気 < 2
+	SOURCE:痛み = 1600
+	SOURCE:屈従 += 500
+	SOURCE:不潔 = 2000
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 1000
+ELSEIF ABL:マゾっ気 < 3
+	SOURCE:痛み = 1200
+	SOURCE:屈従 += 800
+	SOURCE:不潔 = 1000
+	SOURCE:逸脱 = 1000
+	SOURCE:反感追加 = 500
+ELSEIF ABL:マゾっ気 < 4
+	SOURCE:痛み = 800
+	SOURCE:屈従 += 1200
+	SOURCE:不潔 = 500
+	SOURCE:逸脱 = 500
+	SOURCE:反感追加 = 100
+ELSEIF ABL:マゾっ気 < 5
+	SOURCE:痛み = 600
+	SOURCE:屈従 += 1500
+	SOURCE:不潔 = 250
+	SOURCE:逸脱 = 100
+	SOURCE:反感追加 = 0
+ELSE
+	SOURCE:痛み = 400
+	SOURCE:屈従 += 2000
+	SOURCE:不潔 = 100
+	SOURCE:逸脱 = 50
+	SOURCE:反感追加 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.40
+	SOURCE:痛み += 1600
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.80
+	SOURCE:痛み += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	SOURCE:痛み += 600
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.40
+	SOURCE:痛み += 250
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+	SOURCE:痛み += 120
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.10
+ELSE
+	TIMES SOURCE:快Ｃ , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｃ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｃ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｃ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｃ , 1.20
+ELSE
+	TIMES SOURCE:快Ｃ , 1.30
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES SOURCE:快Ｃ , 1.20
+
+;Ｃ敏感、鈍感をみる
+;快Ｃ自体のチェックは後でまとめてやる
+IF TALENT:Ｃ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ｃ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;カテーテル触手の着脱
+IF (TEQUIP:Ｕ系装着器具 == 1 || TEQUIP:Ｕ系装着器具 == 21)
+	TEQUIP:Ｕ系装着器具 = 0
+	LOCAL:2 = 2
+	IF TEQUIP:利尿剤
+		LOCAL:2 *= 2
+		TEQUIP:利尿剤 = 0
+	ENDIF
+	SIF TEQUIP:触手服 & 32
+		TEQUIP:触手服 &= 0b1011111
+ELSE
+	TEQUIP:Ｕ系装着器具 = 1
+	LOCAL:2 = 1
+	
+	;触手服への命令として飛んできた場合
+	IF !TEQUIP:触手調教 && (TEQUIP:触手服 && !(TEQUIP:触手服 & 32))
+		TEQUIP:Ｕ系装着器具 = 21
+		TEQUIP:触手服 |= 32
+	ENDIF
+ENDIF
+
+;放尿レベル増加
+CFLAG:放尿レベル += LOCAL:2
+SIF BASE:尿意
+	BASE:尿意 = 0
+TCVAR:尿道開発経験 += LOCAL:2
+SIF (EXP:尿道開発経験 + TCVAR:尿道開発経験) <= 5
+	TCVAR:異常経験 += 1
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_527
+IF (TEQUIP:Ｕ系装着器具 == 1 || TEQUIP:Ｕ系装着器具 == 21)
+	PRINTFORML %CALLNAME:TARGET%の尿道から触手が引き抜かれた途端、熱い飛沫が放物線を描いて噴き出てきた。
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		IF ABL:露出癖 >= 5 && TALENT:おもらし癖
+			PRINTFORML %CALLNAME:TARGET%は心ゆくまでお漏らしの快感に浸っている。
+			PRINTFORML %CALLNAME:TARGET%の表情は開放感で緩み切っており、潮を吹きながら陰唇から愛液をボタボタと滴らせている。
+		ELSEIF ABL:露出癖 >= 4
+			PRINTFORML %CALLNAME:TARGET%は堪えたものを解放された悦びにうっとりした表情を浮かべ、未だに潮を吹いている自分の尿道口を見つめている。
+		ELSEIF ABL:露出癖 == 3
+			PRINTFORML %CALLNAME:TARGET%は恥ずかしさよりも開放感のほうが勝るのか、ほっとした表情を浮かべている。
+		ELSEIF ABL:露出癖 >= 1
+			PRINTFORML %CALLNAME:TARGET%は体をくの字に曲げ、いまだ下腹に残る残尿感に悶えている。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は恥辱のあまり真っ赤になった顔を自分の性器から懸命に背けようとしている。
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 極細の触手が%CALLNAME:TARGET%の尿道の中へ潜り込んだ
+ENDIF

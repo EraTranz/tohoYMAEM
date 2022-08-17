@@ -1,0 +1,362 @@
+﻿;=============================================================================
+;アナルおねだり
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE45
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:45 > 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者にペニスがない、かつ(アイテムあり設定なら)ペニスバンドもないとダメ
+SIF EXIST_BAR(PLAYER) == 0 && ITEM:ペニスバンド == 0
+	RETURN 0
+;Ａセックスのおねだりなので、小人体型持ちは調教者も小人体型でないと不可
+;それ以外の場合は主人が禁断の知識持ちでなければ不可
+;主人が[禁断の知識]持ちじゃないとき、体格差が2段階以内か調教者が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+	RETURN 0
+;従順、欲望、露出癖の合計が6以上ないと不可
+SIF ABL:従順 + ABL:欲望 + ABL:露出癖 < 6
+	RETURN 0
+;一定のＡ経験が必要
+SIF EXP:Ａ経験 < EXPLV:3
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;○○風呂入浴中は不可
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;助手が褌着用中の場合技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17 && ABL:技巧 < 4
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 45) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM45
+PRINTL アナルおねだり
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 45
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = アナルおねだり
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 5
+DOWNBASE:1 += 150
+
+SOURCE:露出 = 1000
+SOURCE:屈従 = 100
+SOURCE:逸脱 = 1000
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	LOCAL:1 = 100
+ELSEIF PALAM:欲情 < PALAMLV:2
+	LOCAL:1 = 120
+ELSEIF PALAM:欲情 < PALAMLV:3
+	LOCAL:1 = 160
+ELSEIF PALAM:欲情 < PALAMLV:4
+	LOCAL:1 = 220
+ELSEIF PALAM:欲情 < PALAMLV:9
+	LOCAL:1 = 300
+ELSE
+	LOCAL:1 = 400
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL:1 += 8
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL:1 += 16
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL:1 += 26
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL:1 += 34
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL:1 += 44
+ELSE
+	LOCAL:1 += 56
+ENDIF
+
+SOURCE:欲情追加 += PALAM:欲情 / 5
+SOURCE:屈従 += ABL:欲望 * ABL:露出癖 * LOCAL:1
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 += 1500
+	SOURCE:逸脱 += 3000
+ELSEIF ABL:露出癖 == 1
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 10
+	SOURCE:露出 += 1250
+	SOURCE:逸脱 += 1500
+ELSEIF ABL:露出癖 == 2
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 20
+	SOURCE:露出 += 1000
+	SOURCE:逸脱 += 800
+ELSEIF ABL:露出癖 == 3
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 40
+	SOURCE:露出 += 750
+	SOURCE:逸脱 += 400
+ELSEIF ABL:露出癖 == 4
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 80
+	SOURCE:露出 += 500
+	SOURCE:逸脱 += 200
+ELSE
+	SOURCE:液体追加 += (ABL:欲望 + ABL:露出癖) * 140
+	SOURCE:露出 += 250
+	SOURCE:逸脱 += 100
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_45
+PRINTFORML %CALLNAME:TARGET%にイヤらしくアナル責めを要求するように命令したが拒否された。
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_45
+IF TALENT:淫乱
+	PRINTFORM 命令されずとも、%CALLNAME:TARGET%は
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%に命令され、%CALLNAME:TARGET%は
+ENDIF
+IF ABL:露出癖 == 0 && TALENT:淫乱 == 0
+	PRINTL 羞恥に顔を赤らめて抵抗したが
+	PRINT 再度命令されると目に涙を浮かべながら
+	IF TEQUIP:触手調教
+		PRINTFORML 自分のお尻を%CALLNAME:PLAYER%に向け、誘うように振り始めた…
+	ELSE
+		PRINTL 自分のアナルを広げて見せた…
+	ENDIF
+ELSEIF ABL:露出癖 <= 1
+	PRINT 恥じらいながらもおずおずと尻房を
+	IF TEQUIP:触手調教
+		PRINTFORML 振り、%CALLNAME:PLAYER%を誘った…
+	ELSE
+		PRINTFORML 拡げて%CALLNAME:PLAYER%を誘った…
+	ENDIF
+ELSEIF ABL:露出癖 <= 3
+	PRINTFORML 脚をＭ字に拡げ
+	IF TEQUIP:触手調教
+		PRINTFORML %CALLNAME:PLAYER%の興奮を煽るように菊門を見せつけている…
+	ELSE
+		PRINTFORML その奥のアナルを指で広げて%CALLNAME:PLAYER%の興奮を煽った…
+	ENDIF
+ELSEIF ABL:露出癖 <= 4
+	IF TEQUIP:触手調教
+		PRINTFORML 触手に尻房を拡げてもらうと、%CALLNAME:PLAYER%にヒクついたアヌスを見せつけた…
+	ELSE
+		PRINTL 四つん這いになって尻房の中心にある肉穴を見せつけた…
+	ENDIF
+ELSEIF TEQUIP:触手調教
+	PRINTL 触手に尻肉を広げながら期待にひくつくアナルを突き出した
+	PRINTL その様子はまるで何かを挿入られるのを待っているようにも見える…
+ELSEIF ABL:露出癖 >= 5 && TALENT:淫尻 == 0
+	PRINTL 両手で尻肉を広げながら
+	PRINTFORML 期待にひくつくアナルを突き出すようにして%CALLNAME:PLAYER%を誘っている…
+ELSE
+	PRINTL 熱に浮かされたような笑みを浮かべながら両手で尻肉を広げ
+	PRINTFORML 肛虐の期待にひくつくアナルを突き出すようにして%CALLNAME:PLAYER%を誘っている…
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_45, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+;ABL:Ａ感覚
+IF ABL:Ａ感覚
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:Ａ感覚
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:2%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+;ABL:ＢＬっ気＆TALENT:オトコ
+IF TALENT:PLAYER:オトコ && TALENT:オトコ
+	SIF LOCAL:99
+		RESULTS = %RESULTS% - 
+	;↓のLOCAL:99の目安(手淫5, フェラ/A愛撫強制10)
+	LOCAL:99 = 15
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:120%同士({LOCAL:99})
+	IF ABL:ＢＬっ気
+		LOCAL:99 = ABL:ＢＬっ気
+		TFLAG:240 += LOCAL:99 * 4
+		RESULTS = %RESULTS% + %ABLNAME:23%LV{LOCAL:99}({LOCAL:99 * 4})
+	ENDIF
+ENDIF
+;ABL:精液中毒
+IF ABL:精液中毒
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:精液中毒
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:31%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;男嫌い
+IF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
+;女嫌い
+ELSEIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 7
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ITEMNAME:61%({LOCAL:99})
+ENDIF
+
+TFLAG:241 = 36

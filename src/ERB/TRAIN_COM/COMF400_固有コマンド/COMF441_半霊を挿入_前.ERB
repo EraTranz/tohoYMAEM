@@ -1,0 +1,299 @@
+﻿;=============================================================================
+;半霊を挿入(前)
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE441
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:441 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;一度も半霊を挿入(前)をしたことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:21 & 32) == 0
+	RETURN 0
+;調教者が妖夢か妖忌でないとダメ
+SIF NO:PLAYER != 1019 && NO:PLAYER != 1070
+	RETURN 0
+;調教者が妖夢の場合は半霊が調教可能キャラとして存在し、主人や助手、調教対象以外でないとダメ
+IF NO:PLAYER == 1019
+	;半霊が現在調教可能
+	LOCAL:1 = 0
+	FOR LOCAL, 0, CHARANUM
+		;主人や助手、調教対象は除外
+		SIF LOCAL == MASTER || LOCAL == ASSI || LOCAL == TARGET
+			CONTINUE
+		;妊娠していたら除外
+		SIF TALENT:LOCAL:妊娠 == 1
+			CONTINUE
+		;失踪中などこの場にいないなら除外
+		SIF CFLAG:LOCAL:4
+			CONTINUE
+		;反発刻印もしくは恐怖刻印３がある場合は除外（拒絶する）
+		SIF MARK:LOCAL:恐怖刻印 > 2 || MARK:LOCAL:反発刻印
+			CONTINUE
+		;半霊だったらLOCAL:1に+1
+		SIF NO:LOCAL == 1065
+			LOCAL:1 += 1
+	NEXT
+	SIF LOCAL:1 == 0
+		RETURN 0
+;調教者が妖忌の場合は半霊(忌)が調教可能キャラとして存在し、主人や助手、調教対象以外でないとダメ
+ELSEIF NO:PLAYER == 1070
+	;半霊(忌)が現在調教可能
+	LOCAL:1 = 0
+	FOR LOCAL, 0, CHARANUM
+		;主人や助手、調教対象は除外
+		SIF LOCAL == MASTER || LOCAL == ASSI || LOCAL == TARGET
+			CONTINUE
+		;妊娠していたら除外
+		SIF TALENT:LOCAL:妊娠 == 1
+			CONTINUE
+		;失踪中などこの場にいないなら除外
+		SIF CFLAG:LOCAL:4
+			CONTINUE
+		;反発刻印もしくは恐怖刻印３がある場合は除外（拒絶する）
+		SIF MARK:LOCAL:恐怖刻印 > 2 || MARK:LOCAL:反発刻印
+			CONTINUE
+		;半霊(忌)だったらLOCAL:1に+1
+		SIF NO:LOCAL == 1091
+			LOCAL:1 += 1
+	NEXT
+	SIF LOCAL:1 == 0
+		RETURN 0
+ENDIF
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;対象が[処女]
+IF TALENT:処女 == 1
+	;対象の処女の判定
+	SIF COM_ABLE_VIRGIN(TARGET, PLAYER) == 0
+		RETURN 0
+ELSE
+	;対象の《潤滑》は大丈夫かチェック
+	SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+		RETURN 0
+ENDIF
+;調教対象が小人体型のとき主人か調教者が禁断の知識持ちじゃないとダメ
+IF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	SIF TALENT:PLAYER:禁断の知識 == 0
+		RETURN 0
+ENDIF
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手が褌着用中の場合は両方に技巧4以上必須
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17 && (ABL:PLAYER:技巧 < 4 || ABL:技巧 < 4)
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 441) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM441
+PRINTL 半霊を挿入(前)
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 441
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 半霊を挿入(前)
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 120
+DOWNBASE:1 += 350
+
+SOURCE:逸脱 = 400
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 20
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 50
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 100
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 1700
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 2200
+ELSE
+	SOURCE:快Ｖ = 3500
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.05
+	SOURCE:痛み = 7500
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.30
+	SOURCE:痛み = 4900
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 0.70
+	SOURCE:痛み = 1200
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 30
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 2.30
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 4.20
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 2900
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.40
+	SOURCE:痛み += 750
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSEIF PALAM:潤滑 >= PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;貞操観念
+IF TALENT:貞操観念
+	IF TALENT:処女 == 1
+		TIMES SOURCE:情愛 , 0.60
+		SOURCE:反感追加 = 10000
+	ELSE
+		TIMES SOURCE:情愛 , 0.60
+		SOURCE:反感追加 = 1000
+	ENDIF
+;貞操無頓着
+ELSEIF TALENT:貞操無頓着
+	IF TALENT:処女 == 1
+		TIMES SOURCE:情愛 , 0.60
+		SOURCE:反感追加 = 300
+	ENDIF
+ELSE
+	SIF TALENT:処女 == 1
+		SOURCE:反感追加 = 3000
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:情愛 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:情愛 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:情愛 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:情愛 , 1.50
+ELSEIF PALAM:欲情 >= PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.50
+	TIMES SOURCE:情愛 , 1.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:情愛 , 0.60
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:反感追加 , 1.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:反感追加 , 0.80
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:反感追加 , 0.60
+ELSE
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:反感追加 , 0.30
+ENDIF
+
+TCVAR:Ｖ経験 += 2
+IF (CFLAG:21 & 32) == 0
+	TCVAR:異常経験 += 1
+	CFLAG:21 |= 32
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_441
+IF PREVCOM != 440 && PREVCOM != 441 && PREVCOM != 442 && PREVCOM != 443 && PREVCOM != 444
+	IF NO:PLAYER == 1070 
+		PRINTFORML %CALLNAME:MASTER%は半霊(忌)を調教の場所まで呼び出した。
+	ELSE
+		PRINTFORML %CALLNAME:MASTER%は半霊を調教の場所まで呼び出した。
+	ENDIF
+ENDIF
+IF TALENT:淫壷 || TALENT:淫魔
+	PRINTFORML %CALLNAME:PLAYER%はその半霊を%CALLNAME:TARGET%の膣に挿入し緩急をつけて出し入れした。
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%はその異様な膣への快感にすぐに順応し、激しく喘ぎだした
+		PRINTFORML その一方で、%CALLNAME:PLAYER%も生み出す快感に酔いしれている…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%はその半霊を%CALLNAME:TARGET%の膣に挿入し緩急をつけて出し入れした。
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%だけでなく%CALLNAME:PLAYER%も生み出す快感に酔いしれている…
+ENDIF

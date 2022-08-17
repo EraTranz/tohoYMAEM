@@ -1,0 +1,188 @@
+﻿;=============================================================================
+;クンニ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE1
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:1 > 0
+	RETURN 0
+SIF DB:0:1 > 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;ヴァギナが汚れており、調教者が[汚れ無視]でない場合(愛液、母乳の汚れは条件対象外)
+IF COM_ABLE_STAIN(TARGET, 3, 17) == 0 && TALENT:PLAYER:汚れ無視 == 0
+	;調教者が助手で[汚臭敏感]を持ち、《従順》4未満の場合はダメ
+	SIF ASSIPLAY && TALENT:PLAYER:汚臭敏感 && ABL:PLAYER:従順 < 4
+		RETURN 0
+ENDIF
+;調教者が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:PLAYER:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;調教者が[猫舌]だと調教者に技巧4必要
+SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 1) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM1
+;………………………………………………
+;コマンドの派生判定
+;………………………………………………
+;前回と今回の調教者が同じ
+IF (ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0)
+	;縄使用中でなく、前回の調教がフェラチオかクンニ強制かシックスナインだとシックスナインに
+	IF (PREVCOM == 41 || PREVCOM == 300 || PREVCOM == 602) && TEQUIP:緊縛関連 == 0
+		SIF EXCOM_ABLE602() == 1
+			JUMP COM602
+	;縄使用中でなく、前回の調教がパイズリか縦パイズリかパイズリフェラか６９パイズリだと６９パイズリに
+	ELSEIF (PREVCOM == 42 || PREVCOM == 208 || PREVCOM == 209 || PREVCOM == 603) && TEQUIP:緊縛関連 == 0
+		SIF EXCOM_ABLE603() == 1
+			JUMP COM603
+	ENDIF
+ENDIF
+;羞恥プレイ中で対象が睡眠中および気絶中でなければ、岩清水にランクアップ(ただし、吸血鬼持ちは通常の鏡の場合ランクアップしない)
+IF (TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0)) && EQUIP:睡眠薬 == 0 && TFLAG:899 <= 0
+	SIF EXCOM_ABLE611() == 1
+		JUMP COM611
+ENDIF
+
+PRINTL クンニ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 1
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = クンニ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:露出 = 220
+SOURCE:液体追加 = 100
+SOURCE:逸脱 = 50
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 40
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 160
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 700
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1500
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2400
+ELSE
+	SOURCE:快Ｃ = 3300
+ENDIF
+
+;クスコ装着中は効果変動
+IF TEQUIP:クスコ
+	TIMES SOURCE:快Ｃ , 0.30
+	SOURCE:露出 += 500
+ENDIF
+
+;調教者のTALENT:舌使いをみる
+IF TALENT:PLAYER:舌使い
+	TIMES SOURCE:快Ｃ , 2.00
+	SOURCE:恭順追加 += SOURCE:快Ｃ / 20
+ENDIF
+
+;調教者の猫舌をみる
+SIF TALENT:PLAYER:猫舌
+	TIMES SOURCE:快Ｃ , 0.70
+
+;奴隷のＶ⇔調教者の口の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:口
+STAIN:PLAYER:口 |= STAIN:ヴァギナ
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+
+SIF PLAYER == MASTER
+	TCVAR:Ｃ調律経験 += 2
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_1
+;猫舌
+IF TALENT:PLAYER:猫舌
+	PRINTFORM %CALLNAME:TARGET%の秘唇を唇で挟み、
+	IF TEQUIP:焦らしプレイ
+		PRINT イかせないように舌先で優しく愛撫し
+	ELSEIF TALENT:ふたなり && PALAM:欲情 >= PALAMLV:3
+		PRINT そそり勃ったペニスを舌先でくすぐっ
+	ELSEIF TALENT:ふたなり
+		PRINT ペニスの付け根を口で吸ってやっ
+	ELSEIF PALAM:欲情 >= PALAMLV:3
+		PRINT 尖りきったクリトリスを舌先で転がしてやっ
+	ELSE
+		PRINT 舌先で
+		IF RAND:2
+			PRINT 優しく
+		ELSE
+			PRINT 丁寧に
+		ENDIF
+		PRINT 愛撫し
+	ENDIF
+	PRINTL た…
+;ノーマル
+ELSE
+	IF TEQUIP:焦らしプレイ
+		SIF EX:20
+			PRINT ツヤツヤに膨れて絶頂を待ち望む
+		PRINTL クリトリスにそっと舌先で触れてやった…
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%の秘唇を
+		IF RAND:2
+			PRINT 優しく
+		ELSE
+			PRINT 丁寧に
+		ENDIF
+		PRINTFORM 舐めほぐし
+		IF TALENT:ふたなり && PALAM:欲情 >= PALAMLV:3
+			PRINT 、そそり勃ったペニスに舌を這わせて舐め上げ
+		ELSEIF TALENT:ふたなり
+			PRINT 、ペニスの付け根を舌で舐め上げ
+		ELSEIF PALAM:欲情 >= PALAMLV:3
+			PRINT 、尖りきったクリトリスを舌で吸い上げ
+		ENDIF
+		PRINTL た…
+	ENDIF
+ENDIF

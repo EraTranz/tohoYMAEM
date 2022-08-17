@@ -1,0 +1,124 @@
+﻿;=============================================================================
+;触手耳穴洗浄
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE545
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:545 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;触手が[特殊ホルモン分泌]を得ていないとダメ
+SIF (FLAG:75 & 1024) == 0
+	RETURN 0
+;調教者は触手使役LV2以上必要
+SIF ABL:PLAYER:触手使役 < 2
+	RETURN 0
+;耳栓中だとダメ
+SIF TEQUIP:耳装着器具 == 1
+	RETURN 0
+;触手耳穴責め中じゃないとダメ
+SIF TEQUIP:耳装着器具 != 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 545) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM545
+PRINTL 触手耳穴洗浄
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 545
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手耳穴洗浄
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+LOCAL:1 = 20
+;EXP:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 1.00
+	LOCAL:2 = 30
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 0.90
+	LOCAL:2 = 60
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 110
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 0.70
+	LOCAL:2 = 150
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 190
+ELSE
+	TIMES LOCAL:1 , 0.50
+	LOCAL:2 = 250
+ENDIF
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1 *3
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+
+SOURCE:性行動 = 80
+SOURCE:達成感 = LOCAL:2
+SOURCE:不潔 = 200
+SOURCE:液体追加 = 600
+SOURCE:逸脱 = 2000
+SOURCE:支配 = 1000
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:性行動 , 0.50
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:達成感 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:達成感 , 2.00
+ENDIF
+
+SOURCE:屈従 = LOCAL:2
+SOURCE:恭順追加 = LOCAL:2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_545
+PRINTFORML 触手の先端から液体が%CALLNAME:TARGET%の耳の中に流し込まれ、強制的に耳の中を濯がされた
+SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORML 耳の中を綺麗に掃除された%CALLNAME:TARGET%はどこか腑に落ちないといった表情を浮かべている…

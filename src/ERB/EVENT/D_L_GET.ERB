@@ -1,0 +1,406 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;日常イベントの各種判定/取得関数
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;-------------------------------------------------
+;日常イベントに登場出来るかを判定
+;-------------------------------------------------
+@ABLE_DAILY_LIFE(ARG, ARG:1)
+#FUNCTION
+;MASTERはダメ
+SIF ARG == MASTER
+	RETURNF 0
+;失踪中はダメ
+SIF CFLAG:ARG:4
+	RETURNF 0
+
+;抱卵中は抱卵に専念して下さい ※ あくまで暫定的な措置とします
+;非才な私が簡単に構想した物ですが、抱卵中の娘を、母性・鼓舞・献身的持ちの子、仲の良い子あたりが、
+;或いはMASTERが父親ならMASTER自身が励ましたり、手助けしたりするといった内容の専用イベントを、
+;将来的に別途設けることも可能なのではないでしょうか
+SIF TALENT:ARG:抱卵中
+	RETURNF 0
+;日常強化OFFなら好感度0　だとダメ
+SIF (FLAG:12 & 16384) == 0 && CFLAG:ARG:好感度 <= 0
+	RETURNF 0
+;日常強化あろうが調教したことないのはダメ（エラー落ち対策なので必須）
+SIF CFLAG:ARG:1610 == 0
+	RETURNF 0
+;睡眠薬で眠っていたらダメ(排除可能)
+SIF EQUIP:ARG:睡眠薬 && !GETBIT(ARG:1, 0)
+	RETURNF 0
+;日常イベントを阻害する烙印用装備をつけている場合はダメ
+SIF (CFLAG:ARG:42 & 2) || (CFLAG:ARG:42 & 8)
+	RETURNF 0
+;全部すり抜けたらok
+RETURNF 1
+
+;-------------------------------------------------
+;妖精かどうか
+;-------------------------------------------------
+@GET_DAILY_LIFE_FAIRY(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1004 || NO:ARG == 1005 || NO:ARG == 1015 || NO:ARG == 1045 || NO:ARG == 1046 || NO:ARG == 1047 || NO:ARG == 1056 || TALENT:ARG:妖精
+
+;-------------------------------------------------
+;魔法使いかどうか
+;-------------------------------------------------
+@GET_DAILY_LIFE_MAGICIAN(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1002 || NO:ARG == 1008 || NO:ARG == 1014 || NO:ARG == 1051 || NO:ARG == 1059 || NO:ARG == 1060 || NO:ARG == 1066 || NO:ARG == 1077 || NO:ARG == 2003 || NO:ARG == 2016 || NO:ARG == 2017 || NO:ARG == 4013 || TALENT:ARG:魔術技能
+
+;-------------------------------------------------
+;本を読みそうな人
+;-------------------------------------------------
+@GET_DAILY_LIFE_READER(ARG)
+#FUNCTION
+RETURNF TALENT:ARG:大人しい || TALENT:ARG:調合知識 || NO:ARG == 1007 || NO:ARG == 1008 || NO:ARG == 1014 || NO:ARG == 1026 || NO:ARG == 1029 || NO:ARG == 1068 || NO:ARG == 2008 || NO:ARG == 3020
+
+;-------------------------------------------------
+;カメラが扱えるかどうか
+;-------------------------------------------------
+@GET_DAILY_LIFE_CAMERA(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1032 || NO:ARG == 1040 || NO:ARG == 1042 || NO:ARG == 1049 || NO:ARG == 1050 || NO:ARG == 1079 || TALENT:ARG:工作名人 || TALENT:ARG:報道者 || TALENT:ARG:家電使役知識
+
+;-------------------------------------------------
+;本職のメイドかどうか
+;-------------------------------------------------
+@GET_DAILY_LIFE_MAID(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1009 || NO:ARG == 2018 || NO:ARG == 2028 || NO:ARG == 3001 || NO:ARG == 3008
+
+;-------------------------------------------------
+;教職経験者というよりそう見える人
+;-------------------------------------------------
+@GET_DAILY_LIFE_TUTOR(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1026 || NO:ARG == 2008
+
+;-------------------------------------------------
+;普段和装な人
+;-------------------------------------------------
+@GET_DAILY_LIFE_KIMONO(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1020 || NO:ARG == 1035 || NO:ARG == 1048 || NO:ARG == 3015
+
+;-------------------------------------------------
+;チャイナドレスが似合いそうな人
+;-------------------------------------------------
+@GET_DAILY_LIFE_CHINESEDRESS(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1006 || NO:ARG == 4004
+
+;-------------------------------------------------
+;普段セーラー服な人
+;-------------------------------------------------
+@GET_DAILY_LIFE_SAILOR(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1075 || NO:ARG == 2007
+
+;-------------------------------------------------
+;バニースーツが似合いそうな人
+;-------------------------------------------------
+@GET_DAILY_LIFE_BUNNY(ARG)
+#FUNCTION
+RETURNF NO:ARG == 1027 || NO:ARG == 1028 || NO:ARG == 1055 || NO:ARG == 1104 || NO:ARG == 1105 || NO:ARG == 3014 || NO:ARG == 3028 || NO:ARG == 4003 || (CFLAG:ARG:3217 + CFLAG:ARG:3218 > 49)
+
+;-------------------------------------------------
+;巫女(1)及び巫女の家系(2)
+;-------------------------------------------------
+@GET_DAILY_LIFE_MIKO(ARG)
+#FUNCTION
+IF NO:ARG == 1001 || NO:ARG == 1042
+	RETURNF 1
+ELSEIF NO:ARG == 2049 && (CFLAG:ARG:3100 == 1 || CFLAG:ARG:3103 == 1 || CFLAG:ARG:3100 == 42 || CFLAG:ARG:3103 == 42 || TALENT:ARG:博麗の巫女 || TALENT:ARG:風祝)
+	RETURNF 2
+ELSE
+	RETURNF 0
+ENDIF
+
+;-------------------------------------------------
+;姉妹判定
+;-------------------------------------------------
+@GET_DAILY_LIFE_SISTER(ARG, ARG:1)
+#FUNCTION
+LOCAL = ARG:1
+;スカーレット姉妹
+SIF (NO:ARG == 1010 || NO:ARG == 1011) && (NO:LOCAL == 1010 || NO:LOCAL == 1011)
+	RETURNF 1
+
+;虹川姉妹
+SIF (NO:ARG == 1016 || NO:ARG == 1017 || NO:ARG == 1018 || NO:ARG == 1090) && (NO:LOCAL == 1016 || NO:LOCAL == 1017 || NO:LOCAL == 1018 || NO:LOCAL == 1090)
+	RETURNF 1
+
+;秋姉妹
+SIF (NO:ARG == 1037 || NO:ARG == 1038) && (NO:LOCAL == 1037 || NO:LOCAL == 1038)
+	RETURNF 1
+
+;綿月姉妹
+SIF (NO:ARG == 1053 || NO:ARG == 1054) && (NO:LOCAL == 1053 || NO:LOCAL == 1054)
+	RETURNF 1
+
+;古明地姉妹
+SIF (NO:ARG == 1061 || NO:ARG == 1064) && (NO:LOCAL == 1061 || NO:LOCAL == 1064)
+	RETURNF 1
+
+;夢月/幻月
+SIF (NO:ARG == 2012 || NO:ARG == 2013) && (NO:LOCAL == 2012 || NO:LOCAL == 2013)
+	RETURNF 1
+
+;誰かの娘で親を共有していれば姉妹とする
+IF NO:ARG == 2049 && NO:LOCAL == 2049
+	SIF CFLAG:ARG:3107 == CFLAG:LOCAL:3107 || CFLAG:ARG:3106 == CFLAG:LOCAL:3106 || CFLAG:ARG:3107 == CFLAG:LOCAL:3106 || CFLAG:ARG:3106 == CFLAG:LOCAL:3107
+		RETURNF 1
+ENDIF
+
+RETURNF 0
+
+;-------------------------------------------------
+;酩酊補正
+;-------------------------------------------------
+@GET_DAILY_LIFE_DRINK_RATE(ARG, ARG:1)
+#FUNCTION
+;鬼か黄昏の怪物
+IF TALENT:ARG:鬼 || TALENT:ARG:黄昏の怪物
+	RETURNF ARG:1 / 4
+;人形か河童
+ELSEIF TALENT:ARG:人形 || TALENT:ARG:河童
+	RETURNF ARG:1 * 3 / 4
+ELSE
+	RETURNF ARG:1
+ENDIF
+
+;-------------------------------------------------
+;体力が少ないかどうか
+;-------------------------------------------------
+@GET_DAILY_LIFE_VIT(ARG)
+#FUNCTION
+;体力が低め(最大体力が5000以上の場合は20%
+;1200以下の場合は60%
+;そうでなければ1000が目安)の時は体力が少ないとする
+;※体力上昇イベントや"*.sav"、"Chara*.csv"で最大体力をいじった際を想定
+SELECTCASE MAXBASE:ARG:0
+	CASE IS >= 5000
+		LOCAL:1 = MAXBASE:ARG:0 / 5
+	CASE IS <= 1200
+		LOCAL:1 = MAXBASE:ARG:0 / 5 * 3
+	CASEELSE
+		LOCAL:1 = 1000
+ENDSELECT
+RETURNF BASE:ARG:体力 <= LOCAL:1
+
+;-------------------------------------------------
+;境界弄れるかをチェック
+;-------------------------------------------------
+@ABLE_DAILY_LIFE_JUEL(ARG, ARG:1)
+#FUNCTION
+;ぶぶ漬け
+SIF ARG < 0 || ARG >= CHARANUM || ARG:1 < 0 || ARG:1 >= 8
+	RETURNF 0
+	
+;ARG:1==7の否定以外は閾値を下回ればok
+RETURNF ARG:1 != 7 ? GET_THRESHOLD_DAILY_LIFE_JUEL(EXP:ARG:主人調教経験) > JUEL:ARG:(ARG:1+11) # JUEL:ARG:否定 >= 1000
+
+;-------------------------------------------------
+;境界弄りの閾値
+;-------------------------------------------------
+@GET_THRESHOLD_DAILY_LIFE_JUEL(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE IS < 100
+		RETURNF 2000
+	CASE 100 TO 199
+		RETURNF 5000
+	CASE 200 TO 299
+		RETURNF 10000
+	CASEELSE
+		RETURNF 30000
+ENDSELECT
+
+;-------------------------------------------------
+;日常イベントに登場出来るキャラの数を返す
+;-------------------------------------------------
+@GET_ABLE_DAILY_LIFE
+#FUNCTION
+;人数をリセット
+LOCAL:1 = 0
+FOR LOCAL, 0, CHARANUM
+	;日常イベントに登場出来る
+	IF ABLE_DAILY_LIFE(LOCAL)
+		;人数を加算
+		++LOCAL:1
+	ENDIF
+NEXT
+RETURNF LOCAL:1
+
+;-------------------------------------------------
+;40種類以上集めた蒐集品の品目数を取得
+;-------------------------------------------------
+@DAILY_LIFE_GET_COLLECTED_GOODS
+#FUNCTION
+;品目数をリセット
+LOCAL:1 = 0
+FOR LOCAL, 501, 513
+	;40以上なら加算
+	SIF FLAG:LOCAL >= 40
+		LOCAL:1 += 1
+NEXT
+RETURNF LOCAL:1
+
+;-------------------------------------------------
+;何年目の記念日かを取得
+;-------------------------------------------------
+@GET_DAILY_LIFE_ANNIVERSARY_YEAR, ARG, ARG:1
+;ぶぶ漬け
+SIF ARG < 0 || ARG >= CHARANUM
+	RETURN -1
+
+;ARG:1で振り分け
+SELECTCASE ARG:1
+	;購入
+	CASE 1
+		LOCAL = 3111
+	;連行
+	CASE 2
+		LOCAL = 3112
+	;誕生
+	CASE 3
+		LOCAL = 3110
+	;契約
+	CASE 4
+		LOCAL = 3114
+	;結婚
+	CASE 5
+		LOCAL = 3113
+	;陥落
+	CASE 6
+		LOCAL = 3115
+	;妊娠
+	CASE 7
+		LOCAL = 3116
+	;助手
+	CASE 8
+		LOCAL = 3117
+	;ぶぶ漬け
+	CASEELSE
+		RETURN -1
+ENDSELECT
+
+;記念日取得
+CALL CALENDAR_CALC, CFLAG:ARG:LOCAL
+;退避
+LOCAL:1 = DAY:4
+;元に戻す
+CALL CALENDAR_CALC, DAY
+;差を返す
+RETURN DAY:4 - LOCAL:1
+
+;-------------------------------------------------
+;親を取得
+;-------------------------------------------------
+@GET_DAILY_LIFE_PARENTS(ARG)
+LOCAL:2 = 1
+FOR LOCAL:1, 3105, 3108
+	LOCAL = FINDCHARA(CFLAG:3109, CFLAG:ARG:(LOCAL:1))
+	IF ABLE_DAILY_LIFE(LOCAL,1)
+		RETURN LOCAL:2
+	ENDIF
+	++LOCAL:2
+NEXT
+RETURN 0
+
+;-------------------------------------------------
+;みんなでバカンスに参加できるかどうかを判定
+;-------------------------------------------------
+@ABLE_DAILY_LIFE_ENJOY_VACATION(ARG)
+#FUNCTION
+;日常イベントに登場できないとダメ
+SIF !ABLE_DAILY_LIFE(ARG)
+	RETURNF 0
+;体力気力が低いのはダメ
+SIF GET_DAILY_LIFE_VIT(ARG)
+	RETURNF 0
+;昼間の場合は吸血鬼持ちは特注日傘がないとダメ
+SIF TIME == 0 && TALENT:ARG:吸血鬼 && ITEM:特注日傘 == 0 && NOITEM == 0
+	RETURNF 0
+;反発刻印か恐怖刻印持ちもダメ
+SIF MARK:ARG:恐怖刻印 || MARK:ARG:反発刻印
+	RETURNF 0
+;相愛、親愛はOK
+SIF TALENT:ARG:相愛 || TALENT:ARG:親愛
+	RETURNF 1
+;恋慕は条件付きでOK(従順が５以上で好感度が7500以上か、主人が謎の魅力持ちで好感度が3000以上である)
+SIF TALENT:ARG:恋慕 && ABL:ARG:従順 >= 5 && ((TALENT:MASTER:謎の魅力 && CFLAG:ARG:好感度 >= 3000) || CFLAG:ARG:好感度 >= 7500)
+	RETURNF 1
+;ここまで来てしまったらダメ
+RETURNF 0
+
+;-------------------------------------------------
+;相談に乗ってくれそうな面々 、
+;-------------------------------------------------
+@GET_DAILY_LIFE_ADVISER(ARG)
+
+;命蓮寺メンバー・教育者・母性持ち ※ 他候補・保留:雲山(会話できる?),幽々子,藍,紫,永琳,映姫様,雛,早苗,神奈子,諏訪子,勇儀,さとり,霖之助,妖忌,神綺
+#FUNCTION
+RETURNF NO:ARG == 1071 || NO:ARG == 1073 || NO:ARG == 1075 || NO:ARG == 1076 || NO:ARG == 1077 || TALENT:ARG:教育者 || TALENT:ARG:母性
+
+;-------------------------------------------------
+;蓬莱人になる為の条件チェック
+;-------------------------------------------------
+@CONDITION_BECAUSE_OF_BECOMING_HOURAIJIN, ARG, ARG:1
+
+;当たり前ですが、物凄く条件を厳しくしました
+;過去に蓬莱の薬を製造した事を、自責し後悔しているであろう永琳に……彼女に再び禁忌を犯す事を決意させる為、
+;生半可な条件では彼女に対し申し訳ないと感じたので
+;また"蓬莱の薬"とは、"輝夜の永遠の能力を使って作られた"とされているので、
+;彼女の協力も不可欠です(永琳よりは若干条件は緩いですが)
+;尚、種族に関しては今回試作と言う事もあり、明らかに駄目だろうと感じたものだけ弾きました(既に不死状態、死者、生物じゃない等……一応、機械も様子見です)
+
+;条件1:MASTERが禁断の知識と調合知識を所持、技巧Lv5以上、機械・霊体・人形・蓬莱人・呪精・神霊・死神・同化刻印の全てが無い、10回以上クリア
+SIF !(TALENT:MASTER:禁断の知識 && TALENT:MASTER:調合知識 && ABL:MASTER:技巧 >= 5 && !(MARK:MASTER:同化刻印 > 0 || TALENT:MASTER:呪精 || TALENT:MASTER:蓬莱人 || TALENT:MASTER:機械 || TALENT:MASTER:霊体 || TALENT:MASTER:人形 || TALENT:MASTER:神霊 || TALENT:MASTER:死神) && FLAG:6 >= 10)
+	RETURN 0
+
+;条件2:永琳が相愛である、好感度1万以上、愛情経験1500以上、恐怖・反発刻印無し(前段階で弾き済み)、種族改造されていない、引き継ぎキャラである事、前述の要件全てを満たしている
+SIF !(TALENT:ARG:相愛 && CFLAG:ARG:好感度 >= 10000 && EXP:ARG:愛情経験 >= 1500 && !CFLAG:ARG:29 && CFLAG:ARG:18)
+	RETURN 0
+
+;条件3:輝夜が親愛又は相愛である、好感度5千以上、愛情経験1000以上、恐怖・反発刻印無し、種族改造されていない、前述の要件全てを満たしている
+SIF !((TALENT:(ARG:1):親愛 || TALENT:(ARG:1):相愛) && CFLAG:(ARG:1):2 >= 5000 && EXP:(ARG:1):愛情経験 >= 1000 && MARK:(ARG:1):恐怖刻印 < 1 && MARK:(ARG:1):反発刻印 < 1 && !CFLAG:(ARG:1):29)
+	RETURN 0
+
+;蓬莱人になる為のイベントを発生可能とする
+RETURN 1
+
+;-------------------------------------------------
+;嫁が蓬莱人になる事を志願する条件チェック
+;-------------------------------------------------
+@CONDITION_BECAUSE_OF_BECOMING_OF_BRIDE_HOURAIJIN, ARG, ARG:1, ARG:2
+
+;こちらも同様に物凄く条件を厳しくしました
+
+;条件1:MASTERが禁断の知識と調合知識を所持、技巧Lv5以上、蓬莱人である事、10回以上クリア
+SIF !(TALENT:MASTER:禁断の知識 && TALENT:MASTER:調合知識 && ABL:MASTER:技巧 >= 5 && TALENT:MASTER:蓬莱人 && FLAG:6 >= 10)
+	RETURN 0
+
+;条件2:永琳が親愛又は相愛である、好感度10万以上、愛情経験15000以上、恐怖・反発刻印無し、MASTERとの相性が500以上、対象との相性が110以上、種族改造されていない、前述の要件全てを満たしている
+SIF !((TALENT:(ARG:1):親愛 || TALENT:(ARG:1):相愛) && CFLAG:(ARG:1):2 >= 100000 && EXP:(ARG:1):愛情経験 >= 15000 && MARK:(ARG:1):恐怖刻印 < 1 && MARK:(ARG:1):反発刻印 < 1 && RELATION:(ARG:1):(NO:MASTER) >= 500 && RELATION:(ARG:1):(NO:ARG) >= 110 && !CFLAG:(ARG:1):29)
+	RETURN 0
+
+;条件3:輝夜が親愛又は相愛である、好感度10万以上、愛情経験15000以上、恐怖・反発刻印無し、MASTERとの相性が500以上、対象との相性が110以上、種族改造されていない、前述の要件全てを満たしている
+SIF !((TALENT:(ARG:2):親愛 || TALENT:(ARG:2):相愛) && CFLAG:(ARG:2):2 >= 100000 && EXP:(ARG:2):愛情経験 >= 15000 && MARK:(ARG:2):恐怖刻印 < 1 && MARK:(ARG:2):反発刻印 < 1 && RELATION:(ARG:2):(NO:MASTER) >= 500 && RELATION:(ARG:2):(NO:ARG) >= 110 && !CFLAG:(ARG:2):29)
+	RETURN 0
+
+;条件4:対象が相愛である、好感度10万以上、愛情経験20000以上、恐怖・反発刻印無し、MASTERとの相性が500以上、引き継ぎキャラである事、種族改造されていない、前述の要件全てを満たしている
+SIF !(TALENT:ARG:相愛 && CFLAG:ARG:好感度 >= 100000 && EXP:ARG:愛情経験 >= 20000 && MARK:ARG:恐怖刻印 < 1 && MARK:ARG:反発刻印 < 1 && RELATION:ARG:(NO:MASTER) >= 500 && !CFLAG:ARG:29 && CFLAG:ARG:18)
+	RETURN 0
+
+;購入可能な奴隷の人数の算出 ※前述の売却不能フラグに関連して、
+;※ 詰み状態回避の為、キャラ購入が可能でないとイベント発生できないようにしておきます
+LOCAL:5 = CALC_SLAVE_CAPACITY()
+
+;条件5:ARGが蓬莱人・呪精・同化刻印・機械・霊体・人形・神霊・死神を持っていない事、永琳・輝夜との相性が110以上、キャラ購入が可能である事
+SIF TALENT:ARG:蓬莱人 || TALENT:ARG:呪精 || MARK:ARG:同化刻印 > 0 || TALENT:ARG:機械 || TALENT:ARG:霊体 || TALENT:ARG:人形 || TALENT:ARG:神霊 || TALENT:ARG:死神 || RELATION:ARG:(NO:(ARG:1)) < 110 || RELATION:ARG:(NO:(ARG:2)) < 110 || CHARANUM >= LOCAL:5
+	RETURN 0
+
+;嫁を蓬莱人にするイベントを発生可能とする
+RETURN 1

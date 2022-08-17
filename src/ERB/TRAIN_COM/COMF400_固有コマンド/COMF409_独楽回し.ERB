@@ -1,0 +1,115 @@
+﻿;=============================================================================
+;独楽回し
+;=============================================================================
+;糸の端を掴んで思いっきり引っ張り、奴隷の目を回すコマンド。実用性ほぼゼロ。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE409
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:409 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者がヤマメでないとダメ
+SIF NO:PLAYER != 1058
+	RETURN 0
+;グルグル巻きにしないとダメ
+SIF TEQUIP:緊縛関連 != 6
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 409) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM409
+PRINTL 独楽回し
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 409
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 独楽回し
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 10
+
+SOURCE:逸脱 = 200
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	SOURCE:中毒充足 = 30
+	TIMES SOURCE:逸脱, 1.00
+	LOCAL:1 = 200
+ELSEIF ABL:マゾっ気 == 1
+	SOURCE:中毒充足 = 60
+	TIMES SOURCE:逸脱, 0.90
+	LOCAL:1 = 100
+ELSEIF ABL:マゾっ気 == 2
+	SOURCE:中毒充足 = 120
+	TIMES SOURCE:逸脱, 0.70
+	LOCAL:1 = 75
+ELSEIF ABL:マゾっ気 == 3
+	SOURCE:中毒充足 = 180
+	TIMES SOURCE:逸脱, 0.50
+	LOCAL:1 = 50
+ELSEIF ABL:マゾっ気 == 4
+	SOURCE:中毒充足 = 240
+	TIMES SOURCE:逸脱, 0.30
+	LOCAL:1 = 25
+ELSE
+	SOURCE:中毒充足 = 300
+	TIMES SOURCE:逸脱, 0.10
+	LOCAL:1 = 10
+ENDIF
+
+SOURCE:痛み = LOCAL:1
+
+
+TFLAG:142 = 0
+TEQUIP:緊縛関連 = 0
+TEQUIP:目装着器具 = 0
+FOR LOCAL, 0, 8
+	STAIN:LOCAL |= 1
+	STAIN:LOCAL |= 64
+NEXT
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_409
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の体に絡みついている糸を掴み、独楽を回すかのように思いっきり引っ張った
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM %CALLNAME:TARGET%は
+	SIF ABL:マゾっ気 < 3
+		PRINT 完全に
+	PRINTL 目を回してしまったようだ…
+	PRINTL 
+ENDIF
+PRINTFORML %CALLNAME:TARGET%に絡みついていた糸は引きはがされてしまった…

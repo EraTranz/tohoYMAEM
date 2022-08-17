@@ -1,0 +1,516 @@
+﻿;=============================================================================
+;鰻風呂
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE361
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:361 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 2) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;一度も鰻風呂に入ったことが無い場合、もしくはＶ経験レベルが0の場合
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && ( EXP:Ｖ経験 < EXPLV:1 || (CFLAG:23 & 2) == 0 )
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 2
+	RETURN 1
+;調教者がミスティアまたは衣玖さんまたは禁断の知識をもっていないとダメ
+SIF TALENT:PLAYER:禁断の知識 == 0 && NO:PLAYER != 1025 && NO:PLAYER != 1051
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 2
+	RETURN 0
+;緊縛中じゃないとダメ
+SIF TEQUIP:緊縛関連 == 0
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 361) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM361
+IF TEQUIP:特殊風呂入浴中 == 0
+	IF NO:PLAYER == 1025 || (ASSI >= 0 && NO:ASSI == 1025)
+		TFLAG:155 = 1
+	ELSEIF NO:PLAYER == 1051 || (ASSI >= 0 && NO:ASSI == 1051)
+		TFLAG:155 = 2
+	ELSE
+		TFLAG:155 = 0
+	ENDIF
+ENDIF
+LOCALS:0 = 鰻風呂
+LOCALS:1 = 八目鰻風呂
+LOCALS:2 = 電気鰻風呂
+PRINTFORML %LOCALS:(TFLAG:155)%
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 361
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = %LOCALS:(TFLAG:155)%
+
+TFLAG:147 = 0
+;オトコ
+SIF TALENT:オトコ
+	TFLAG:147 |= 1
+;バイブ等の器具を挿入している
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	TFLAG:147 |= 1
+;アナルバイブ等の器具を挿入している
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	TFLAG:147 |= 2
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 2
+	TEQUIP:特殊風呂入浴中 = 0
+	TFLAG:155 = 0
+	RETURN 1
+ENDIF
+
+;鰻風呂入浴
+TEQUIP:特殊風呂入浴中 = 2
+IF (TFLAG:147 & 1) == 0
+	;ABL:Ｖ感覚をみる
+	IF ABL:Ｖ感覚 == 0
+		SOURCE:快Ｖ = 50
+	ELSEIF ABL:Ｖ感覚 == 1
+		SOURCE:快Ｖ = 200
+	ELSEIF ABL:Ｖ感覚 == 2
+		SOURCE:快Ｖ = 400
+	ELSEIF ABL:Ｖ感覚 == 3
+		SOURCE:快Ｖ = 800
+	ELSEIF ABL:Ｖ感覚 == 4
+		SOURCE:快Ｖ = 1200
+	ELSE
+		SOURCE:快Ｖ = 1600
+	ENDIF
+	;EXP:Ｖ経験をみる
+	IF EXP:Ｖ経験 < EXPLV:1
+		TIMES SOURCE:快Ｖ , 0.20
+		SOURCE:痛み += 5000
+		TCVAR:異常経験 += 1
+	ELSEIF EXP:Ｖ経験 < EXPLV:2
+		TIMES SOURCE:快Ｖ , 0.60
+		SOURCE:痛み += 200
+	ELSEIF EXP:Ｖ経験 < EXPLV:3
+		TIMES SOURCE:快Ｖ , 1.00
+		SOURCE:痛み += 50
+	ELSEIF EXP:Ｖ経験 < EXPLV:4
+		TIMES SOURCE:快Ｖ , 1.20
+		SOURCE:痛み += 10
+	ELSEIF EXP:Ｖ経験 < EXPLV:5
+		TIMES SOURCE:快Ｖ , 1.40
+		SOURCE:痛み += 0
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.60
+		SOURCE:痛み += 0
+	ENDIF
+ENDIF
+IF (TFLAG:147 & 2) == 0
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		SOURCE:快Ａ = 50
+		SOURCE:屈従 = 200
+	ELSEIF ABL:Ａ感覚 == 1
+		SOURCE:快Ａ = 200
+		SOURCE:屈従 = 600
+	ELSEIF ABL:Ａ感覚 == 2
+		SOURCE:快Ａ = 400
+		SOURCE:屈従 = 1000
+	ELSEIF ABL:Ａ感覚 == 3
+		SOURCE:快Ａ = 800
+		SOURCE:屈従 = 1400
+	ELSEIF ABL:Ａ感覚 == 4
+		SOURCE:快Ａ = 1200
+		SOURCE:屈従 = 1800
+	ELSE
+		SOURCE:快Ａ = 1600
+		SOURCE:屈従 = 2100
+	ENDIF
+	;EXP:Ａ経験をみる
+	IF EXP:Ａ経験 < EXPLV:1
+		TIMES SOURCE:快Ａ , 0.50
+		SOURCE:痛み += 1500
+	ELSEIF EXP:Ａ経験 < EXPLV:2
+		TIMES SOURCE:快Ａ , 1.00
+		SOURCE:痛み += 200
+	ELSEIF EXP:Ａ経験 < EXPLV:3
+		TIMES SOURCE:快Ａ , 1.10
+		SOURCE:痛み += 50
+	ELSEIF EXP:Ａ経験 < EXPLV:4
+		TIMES SOURCE:快Ａ , 1.20
+		SOURCE:痛み += 10
+	ELSEIF EXP:Ａ経験 < EXPLV:5
+		TIMES SOURCE:快Ａ , 1.40
+		SOURCE:痛み += 0
+	ELSE
+		TIMES SOURCE:快Ａ , 1.60
+		SOURCE:痛み += 0
+	ENDIF
+ENDIF
+IF (TFLAG:147 & 1) == 0 || (TFLAG:147 & 2) == 0
+	;PALAM:潤滑をみる
+	IF PALAM:潤滑 < PALAMLV:1
+		TIMES SOURCE:快Ｖ , 0.10
+		TIMES SOURCE:快Ａ , 0.40
+		SOURCE:痛み += 700
+	ELSEIF PALAM:潤滑 < PALAMLV:2
+		TIMES SOURCE:快Ｖ , 0.40
+		TIMES SOURCE:快Ａ , 0.80
+		SOURCE:痛み += 400
+	ELSEIF PALAM:潤滑 < PALAMLV:3
+		TIMES SOURCE:快Ｖ , 1.00
+		TIMES SOURCE:快Ａ , 1.00
+		SOURCE:痛み += 200
+	ELSEIF PALAM:潤滑 < PALAMLV:4
+		TIMES SOURCE:快Ｖ , 1.40
+		TIMES SOURCE:快Ａ , 1.40
+		SOURCE:痛み += 100
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.80
+		TIMES SOURCE:快Ａ , 1.80
+		SOURCE:痛み += 50
+	ENDIF
+ENDIF
+
+LOCAL:1 = 100
+;EXP:異常経験をみる
+IF EXP:異常経験 < EXPLV:1
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:異常経験 < EXPLV:2
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:異常経験 < EXPLV:3
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:異常経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.00
+ELSEIF EXP:異常経験 < EXPLV:5
+	TIMES LOCAL:1 , 0.80
+ELSE
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 30
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 150
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 600
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1800
+ELSE
+	SOURCE:快Ｃ = 2500
+ENDIF
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 20
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 100
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 500
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 1000
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 1500
+ELSE
+	SOURCE:快Ｂ = 2000
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.60
+;小人体型
+SIF TALENT:小人体型
+	TIMES SOURCE:痛み , 1.80
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 1.20
+
+DOWNBASE:0 += LOCAL:1 / 4
+DOWNBASE:1 += LOCAL:1 / 2
+
+SOURCE:トラウマ += LOCAL:1 * (1 + TFLAG:155)
+SOURCE:逸脱 += LOCAL:1 * 3
+IF TFLAG:155 == 1
+	SOURCE:痛み += LOCAL:1
+	SOURCE:液体追加 += LOCAL:1 * 2
+	SOURCE:露出 = LOCAL:1
+ELSEIF TFLAG:155 == 2
+	SOURCE:中毒充足 = LOCAL:1
+	SOURCE:液体追加 += LOCAL:1 * 2
+	SOURCE:欲情追加 += LOCAL:1
+ENDIF
+
+IF (TFLAG:147 & 2) == 0
+	TFLAG:167 = 1
+	STAIN:アナル = 72
+ENDIF
+IF (TFLAG:147 & 1) == 0
+	TFLAG:166 = 1
+	STAIN:ヴァギナ = 65
+ENDIF
+IF (CFLAG:23 & 2) == 0
+	TCVAR:異常経験 += 1
+	CFLAG:23 |= 2
+ENDIF
+
+STAIN:手 = 64
+STAIN:ペニス = 66
+STAIN:胸 = 64
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;鰻風呂入浴中
+;--------------------------------------------------
+@EQUIP_COM361
+PRINTL ＜鰻風呂入浴中＞
+
+LOCAL:4 = (TALENT:オトコ || TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ) ? 0 # 1
+LOCAL:5 = (TEQUIP:Ａ系装着器具 || TEQUIP:氷柱) ? 0 # 1
+TFLAG:147 = 0
+;オトコ
+SIF TALENT:オトコ
+	TFLAG:147 |= 1
+;バイブ等の器具を挿入している
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	TFLAG:147 |= 1
+;アナルバイブ等の器具を挿入している
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	TFLAG:147 |= 2
+IF (TFLAG:147 & 1) == 0 || TFLAG:166 == 1
+	;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+	TFLAG:1 = 1
+	;ABL:Ｖ感覚をみる
+	IF ABL:Ｖ感覚 == 0
+		LOCAL:1 = 20
+	ELSEIF ABL:Ｖ感覚 == 1
+		LOCAL:1 = 40
+	ELSEIF ABL:Ｖ感覚 == 2
+		LOCAL:1 = 80
+	ELSEIF ABL:Ｖ感覚 == 3
+		LOCAL:1 = 160
+	ELSEIF ABL:Ｖ感覚 == 4
+		LOCAL:1 = 320
+	ELSE
+		LOCAL:1 = 640
+	ENDIF
+	
+	SIF TFLAG:166 == 1 && LOCAL:4 == 0
+		TIMES LOCAL:1 , 0.80
+	
+	SOURCE:快Ｖ += LOCAL:1
+ENDIF
+IF (TFLAG:147 & 2) == 0 || TFLAG:167 == 1
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		LOCAL:2 = 15
+	ELSEIF ABL:Ａ感覚 == 1
+		LOCAL:2 = 30
+	ELSEIF ABL:Ａ感覚 == 2
+		LOCAL:2 = 60
+	ELSEIF ABL:Ａ感覚 == 3
+		LOCAL:2 = 120
+	ELSEIF ABL:Ａ感覚 == 4
+		LOCAL:2 = 240
+	ELSE
+		LOCAL:2 = 600
+	ENDIF
+	
+	SIF TFLAG:167 == 1 && LOCAL:5 == 0
+		TIMES LOCAL:2 , 0.80
+	
+	SOURCE:快Ａ += LOCAL:2
+	SOURCE:屈従 += LOCAL:2
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ += 30
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ += 50
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ += 100
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ += 200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ += 400
+ELSE
+	SOURCE:快Ｃ += 800
+ENDIF
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ += 20
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ += 40
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ += 80
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ += 160
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ += 320
+ELSE
+	SOURCE:快Ｂ += 640
+ENDIF
+
+LOCAL = 100
+;EXP:異常経験をみる
+IF EXP:異常経験 < EXPLV:1
+	TIMES LOCAL , 3.00
+ELSEIF EXP:異常経験 < EXPLV:2
+	TIMES LOCAL , 2.50
+ELSEIF EXP:異常経験 < EXPLV:3
+	TIMES LOCAL , 2.00
+ELSEIF EXP:異常経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+ELSEIF EXP:異常経験 < EXPLV:5
+	TIMES LOCAL , 0.80
+ELSE
+	TIMES LOCAL , 0.60
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL , 2.00
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL , 0.60
+;小人体型
+SIF TALENT:小人体型
+	TIMES LOCAL , 1.80
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL , 1.20
+
+DOWNBASE:0 += LOCAL / 2
+DOWNBASE:1 += LOCAL / 3
+
+SOURCE:トラウマ += LOCAL * 5
+SOURCE:不潔 += LOCAL * 5
+SOURCE:液体追加 += 1000
+SOURCE:逸脱 += LOCAL * (1 + TFLAG:155) / 2
+IF TFLAG:155 == 1
+	SOURCE:痛み += LOCAL
+	SOURCE:露出 += LOCAL
+	SOURCE:液体追加 += LOCAL * 2
+ELSEIF TFLAG:155 == 2
+	SOURCE:中毒充足 += LOCAL
+	SOURCE:液体追加 += LOCAL * 2
+	SOURCE:欲情追加 += LOCAL
+ENDIF
+
+STAIN:手 = 64
+STAIN:ペニス = 66
+STAIN:胸 = 64
+STAIN:足 = 64
+STAIN:髪 = 64
+TIMES SOURCE:痛み , 1.20
+IF (TFLAG:147 & 1) == 0
+	TCVAR:Ｖ経験 += 2
+	STAIN:ヴァギナ = 65
+ENDIF
+IF (TFLAG:147 & 2) == 0
+	TCVAR:Ａ経験 += 2
+	STAIN:アナル = 72
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_361
+IF TEQUIP:特殊風呂入浴中 == 2
+	PRINTFORML %CALLNAME:TARGET%を鰻達の中から引っ張り上げると、ほっとしたような顔をしていた
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%を無数の
+	SIF TFLAG:155 == 1
+		PRINT 八目
+	SIF TFLAG:155 == 2
+		PRINT 電気
+	PRINTL 鰻達がひしめき合っている風呂桶の中へ突き落とした
+	PRINTFORML %CALLNAME:TARGET%は体の上を滑っていく異様な感覚が我慢できず絶叫した……
+	IF (TFLAG:147 & 2) == 0
+		PRINTFORML 数匹の鰻は%CALLNAME:TARGET%のアナルが空いていると察すると、中へ潜り込んでいった
+		PRINTFORML %CALLNAME:TARGET%は反射的にお尻に力を入れ、異物の侵入に抗おうとするも
+		PRINTL 結局は無駄に終わってしまう……
+	ENDIF
+	IF (TFLAG:147 & 1) == 0
+		PRINTFORML 数匹の鰻は%CALLNAME:TARGET%の膣口が無防備であると気づくと、中へ潜り込んでいった
+		IF TALENT:処女
+			PRINTFORML %CALLNAME:TARGET%は目に涙を浮かべ、半狂乱になりながら懸命に鰻を掴んでは膣内から引きずり出そうとするが、
+			PRINTL 鰻たちが分泌する粘液によって大した抵抗もできぬまま処女の証を食い破られてしまった……
+			;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+			TFLAG:1 = 1
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は鰻が膣壁や子宮口を小突いていく感触に目を白黒させている……
+		ENDIF
+	ENDIF
+ENDIF

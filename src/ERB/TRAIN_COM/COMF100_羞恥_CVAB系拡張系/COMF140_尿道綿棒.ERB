@@ -1,0 +1,208 @@
+﻿;=============================================================================
+;尿道綿棒
+;=============================================================================
+;eraElona同梱の自作コマンドを流用
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE140
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:140 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;尿道開発経験が1以下の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:尿道開発経験 <= 1
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:抗菌綿棒 == 0
+	RETURN 0
+;[オトコ]の場合、技巧2以上じゃないと使えない
+SIF TALENT:オトコ && ABL:PLAYER:技巧 < 2
+	RETURN 0
+;助手調教の場合、技巧3以上じゃないと使えない。
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;他のＵ系装着具使用中は不可
+SIF (TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 1)
+	RETURN 0
+;オトコの場合、Ｃ系装着具使用中は不可
+SIF (TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム) && TALENT:オトコ
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;新妻プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 140) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM140
+PRINTL 尿道綿棒
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 140
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 尿道綿棒
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 90
+
+SOURCE:露出 = 300
+SOURCE:逸脱 = 200
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 10
+	SOURCE:屈従 = 150
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 50
+	SOURCE:屈従 = 250
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 250
+	SOURCE:屈従 = 400
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 600
+	SOURCE:屈従 = 700
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1200
+	SOURCE:屈従 = 1300
+ELSE
+	SOURCE:快Ｃ = 1800
+	SOURCE:屈従 = 2000
+ENDIF
+
+;EXP:尿道開発経験をみる
+IF EXP:尿道開発経験 < EXPLV:1
+	TIMES SOURCE:快Ｃ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	SOURCE:痛み = 300
+ELSEIF EXP:尿道開発経験 < EXPLV:2
+	TIMES SOURCE:快Ｃ , 0.50
+	TIMES SOURCE:屈従 , 0.50
+	SOURCE:痛み = 180
+ELSEIF EXP:尿道開発経験 < EXPLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:屈従 , 0.80
+	SOURCE:痛み = 80
+ELSEIF EXP:尿道開発経験 < EXPLV:4
+	TIMES SOURCE:快Ｃ , 1.20
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:痛み = 30
+ELSEIF EXP:尿道開発経験 < EXPLV:5
+	TIMES SOURCE:快Ｃ , 1.60
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+	TIMES SOURCE:屈従 , 1.50
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.10
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.20
+	SOURCE:痛み += 500
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 0.60
+	SOURCE:痛み += 100
+	TIMES SOURCE:痛み , 0.80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ｃ , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.50
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+ENDIF
+
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES SOURCE:快Ｃ , 1.20
+
+;Ｃ敏感、鈍感をみる
+;快Ｃ自体のチェックは後でまとめてやる
+IF TALENT:Ｃ敏感
+	TIMES SOURCE:露出 , 1.50
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+ELSEIF TALENT:Ｃ鈍感
+	TIMES SOURCE:露出 , 0.60
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	TIMES SOURCE:屈従 , 2.00
+
+;綿棒1本消費
+CALL USE_PLURAL_ITEM, 79, 1
+
+TCVAR:尿道開発経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_140
+PRINTFORM %CALLNAME:PLAYER%は綿棒を%CALLNAME:TARGET%の
+SIF TALENT:小人体型 || TALENT:小柄体型
+	PRINT 小さくて未熟な
+PRINTL 尿道口にあてがった
+PRINTFORML 綿球が%CALLNAME:TARGET%の尿道の中へ捩じ込まれていく…

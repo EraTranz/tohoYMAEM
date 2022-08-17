@@ -1,0 +1,222 @@
+﻿;=============================================================================
+;借金関連
+;=============================================================================
+;--------------------------------------------------
+;借金追加＆返済
+;--------------------------------------------------
+;0 = 追加
+;1 = 返済
+@SHOW_DEBT, ARG = 0
+PRINTFORML 現在の借金は{FLAG:575}圓で、所持金は{MONEY}圓です
+IF ARG == 0
+	LOCAL = 100000 + MIN(FLAG:66 * 5000, 400000) - FLAG:576
+	PRINTFORML 追加で借金をしますか？(一日一回だけ)
+	PRINTFORML [0]はい
+	PRINTFORML [1]いいえ
+	$INPUT_LOOP
+	INPUT
+	SIF RESULT != 0 && RESULT != 1
+		GOTO INPUT_LOOP
+	IF RESULT == 0
+		PRINTFORML 幾ら借金をしますか？(0-{LOCAL})
+		CALL INPUT_MANY(0,LOCAL)
+		IF RESULT
+			MONEY:0 += RESULT
+			FLAG:575 += RESULT
+			FLAG:576 += RESULT
+			FLAG:577 = 1
+			PRINTW 追加で借金をしました。
+		ENDIF
+	ENDIF
+ELSE
+	LOCAL = MONEY:0
+	SIF LOCAL > FLAG:575
+		LOCAL = FLAG:575
+	PRINTFORML 借金を返済しますか？(一日一回だけ)
+	PRINTFORML [0]はい
+	PRINTFORML [1]いいえ
+	IF !FLAG:579
+		PRINTFORML [2]毎日設定(現状:行なわない)
+	ELSE
+		PRINTFORML [2]毎日設定(現状:一日{FLAG:579}圓)
+	ENDIF
+	$INPUT_LOOP_2
+	INPUT
+	SIF RESULT != 0 && RESULT != 1 && RESULT != 2
+		GOTO INPUT_LOOP_2
+	IF RESULT == 0
+		IF FLAG:578
+			PRINTW 今日はもう債務を返済しました。
+		ELSEIF MONEY:0 <= 0	
+			PRINTW 金が足りません。
+		ELSE
+			PRINTFORML 幾ら借金を返済しますか？(0-{LOCAL})
+			CALL INPUT_MANY(0,LOCAL)
+			IF RESULT
+				MONEY:0 -= RESULT
+				FLAG:575 -= RESULT
+				FLAG:576 = MAX(FLAG:576 - RESULT, 0)
+				FLAG:578 = 1
+				PRINTW 返済で借金をしました。
+			ENDIF
+		ENDIF
+	ELSEIF RESULT == 2
+		LOCAL = FLAG:575
+		PRINTFORML 毎日借金をいくら返済しますか？(自動で行う)
+		CALL INPUT_MANY(0,LOCAL)
+		FLAG:579 = RESULT
+		PRINTW 設定が完了しました。
+	ENDIF
+ENDIF
+;--------------------------------------------------
+;利子処理
+;--------------------------------------------------
+@EVENT_DEBT
+LOCAL = FLAG:578
+FLAG:578 = 0
+SIF FLAG:5 || CHECK_GAMEMODE_ENDING_EXIST() != 1 || FLAG:575 <= 0
+	RETURN 0
+DRAWLINE
+PRINT 一日に一度の精算です。
+PRINTFORML 現在の借金は{FLAG:575}圓
+IF !LOCAL && FLAG:579 > 0
+	LOCAL = MIN(FLAG:579, MONEY:0)
+	LOCAL = MIN(FLAG:575, LOCAL)
+	MONEY:0 -= LOCAL
+	FLAG:575 -= LOCAL
+	PRINTFORM 返済金が{LOCAL}圓付いて、
+ENDIF
+IF FLAG:575
+	IF FLAG:3 == 1
+		LOCAL = FLAG:575 / 120
+	ELSE
+		LOCAL = FLAG:575 / 100
+	ENDIF
+	SIF LOCAL < 1
+		LOCAL = 1
+	FLAG:575 += LOCAL
+	PRINTFORMW 利子が{LOCAL}圓付いて、新たな借金は{FLAG:575}圓になります。
+ELSE
+	PRINTFORMW 借金を全部返済しました。
+ENDIF
+
+	
+;-------------------------------------------------
+;@RANGE 範囲内真偽判定関数
+;ARGがARG:1とARG:2の範囲内かを返す
+;ARG:1とARG:2は逆転可能で、同数の場合は範囲内とみなすので注意
+;-------------------------------------------------
+@RANGE, ARG, ARG:1, ARG:2
+#FUNCTION
+RETURNF ARG == LIMIT(ARG, MIN(ARG:1, ARG:2), MAX(ARG:1, ARG:2))
+
+;-------------------------------------------------
+;数量入力用関数　@INPUT_MANY
+;ARGで最小値、ARG:1で最大値を指定
+;電卓風のコンソールから数値を入力させる
+;
+;ARG・ARG:1　最低値あるいは最大値　順序は逆でもよい
+;ARGS　オプション。とりあえずいまはログを残すのみ
+;ARGS:1　例外の数値設定。範囲外でも通る数値を設定する
+;		 記述方法は0/20/30/-1といったように、文字列で"/"を区切り文字とする
+;-------------------------------------------------
+@INPUT_MANY(ARG, ARG:1, ARGS = "ログを残す", ARGS:1)
+#LOCALSIZE 3
+#LOCALSSIZE 20
+#DIM LINE, 1
+;最初は0
+LOCAL = 0
+LOCAL:1 = 1
+VARSET LOCALS
+SPLIT ARGS:1, "/", LOCALS
+LINE = LINECOUNT
+$START
+REDRAW 0
+CLEARLINE LINECOUNT - LINE
+PRINTFORML 【{LOCAL}】　《【{ARG}】 - 【{ARG:1}】》
+PRINTBUTTON "[7]", "７"
+PRINT 　
+PRINTBUTTON "[8]", "８"
+PRINT 　
+PRINTBUTTON "[9]", "９"
+PRINT 　
+PRINTBUTTON "[ AC]", "AC"
+PRINTL 
+
+PRINTBUTTON "[4]", "４"
+PRINT 　
+PRINTBUTTON "[5]", "５"
+PRINT 　
+PRINTBUTTON "[6]", "６"
+PRINT 　
+PRINTBUTTON "[Max]", "MAX"
+PRINTL 
+
+PRINTBUTTON "[1]", "１"
+PRINT 　
+PRINTBUTTON "[2]", "２"
+PRINT 　
+PRINTBUTTON "[3]", "３"
+PRINT 　
+PRINTBUTTON "[Min]", "MIN"
+PRINTL 
+
+PRINTBUTTON "[0]", "０"
+PRINT 　
+IF LOCAL:1 == -1
+	PRINTBUTTON "[+]", "+"
+ELSE
+	PRINTBUTTON "[-]", "-"
+ENDIF
+PRINT 　
+PRINTBUTTON "[ENTER]", "ENTER"
+PRINTL 
+PRINTFORML ※キーボードから、直接数値を入力することもできます
+INPUTS
+SELECTCASE RESULTS
+	CASE "AC"
+		RESTART
+	CASE "+"
+		LOCAL *= -1
+		LOCAL:1 = 1
+	CASE "-"
+		LOCAL *= -1
+		LOCAL:1 = -1
+	CASE "MIN"
+		LOCAL = ARG
+	CASE "MAX"
+		LOCAL = ARG:1
+	CASE "０", "１", "２", "３", "４", "５", "６", "７", "８", "９"
+		IF LOCAL == 0
+			LOCAL = ABS(LOCAL) + TOINT(TOHALF(RESULTS)) * LOCAL:1
+		ELSE
+			;桁数を取る
+			LOCAL:2 = 1
+			WHILE LOCAL >= POWER(10, LOCAL:2)
+				LOCAL:2++
+				IF LOCAL:2 > 18
+					PRINTFORMW 桁数が多すぎます！
+					GOTO START
+				ENDIF
+			WEND
+			LOCAL = LOCAL * 10 + TOINT(TOHALF(RESULTS))
+		ENDIF
+	CASEELSE
+		IF RESULTS != "ENTER"
+ 			FOR LOCAL:2, 0, STRLENS(RESULTS)
+ 				SIF GROUPMATCH(SUBSTRING(RESULTS, LOCAL:2, 1), "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+ 					CONTINUE
+				PRINTFORMW 入力が異常です。入力しなおしてください
+				RESTART
+ 			NEXT
+			LOCAL = TOINT(RESULTS)
+		ENDIF
+		IF RANGE(LOCAL, ARG, ARG:1) || MATCH(LOCALS, TOSTR(LOCAL))
+			REDRAW 1
+			RETURN LOCAL
+		ELSE
+			PRINTFORMW 数値が範囲外です。入力しなおしてください
+			RESTART
+		ENDIF
+ENDSELECT
+GOTO START

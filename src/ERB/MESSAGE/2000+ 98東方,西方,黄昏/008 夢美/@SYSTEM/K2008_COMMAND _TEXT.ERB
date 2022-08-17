@@ -1,0 +1,17 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;コマンド実行時の地の文
+;========================================================
+@K2008_COMMAND_TEXT
+#DIM _RANK
+
+_RANK = K2008F_RANK()
+
+;ランク指定の口上
+TRYCCALLFORM K2008_RANK{_RANK}_COMTEXT_{SELECTCOM}
+	;呼び出せた場合は終わり
+CATCH
+	;ない場合は未指定に飛ばす
+	TRYCALLFORM K2008_COMTEXT_{SELECTCOM}
+ENDCATCH
+

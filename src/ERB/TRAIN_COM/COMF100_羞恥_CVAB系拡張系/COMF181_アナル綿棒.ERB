@@ -1,0 +1,212 @@
+﻿;=============================================================================
+;アナル綿棒
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE181
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:181 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:抗菌綿棒 == 0
+	RETURN 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;新妻プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 181) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM181
+PRINTL アナル綿棒
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 181
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アナル綿棒
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 60
+
+SOURCE:露出 = 300
+SOURCE:逸脱 = 200
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 10
+	SOURCE:屈従 = 150
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 50
+	SOURCE:屈従 = 250
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 250
+	SOURCE:屈従 = 400
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 600
+	SOURCE:屈従 = 700
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1200
+	SOURCE:屈従 = 1300
+ELSE
+	SOURCE:快Ａ = 1800
+	SOURCE:屈従 = 2000
+ENDIF
+
+;EXP:Ａ快楽経験をみる
+IF EXP:Ａ快楽経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	SOURCE:痛み = 100
+ELSEIF EXP:Ａ快楽経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:屈従 , 0.50
+	SOURCE:痛み = 50
+ELSEIF EXP:Ａ快楽経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 0.80
+	SOURCE:痛み = 0
+ELSEIF EXP:Ａ快楽経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:痛み = 0
+ELSEIF EXP:Ａ快楽経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:屈従 , 1.50
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	TIMES SOURCE:痛み , 1.50
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.20
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:痛み , 0.80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.50
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.50
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+ENDIF
+
+;淫尻
+SIF TALENT:淫尻
+	TIMES SOURCE:快Ａ , 1.20
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ敏感
+	TIMES SOURCE:露出 , 1.50
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+ELSEIF TALENT:Ａ鈍感
+	TIMES SOURCE:露出 , 0.60
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	TIMES SOURCE:屈従 , 2.00
+
+;綿棒1本消費
+CALL USE_PLURAL_ITEM, 79, 1
+
+TCVAR:Ａ経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_181
+PRINTFORM %CALLNAME:PLAYER%は綿棒を%CALLNAME:TARGET%の
+SIF EXP:Ａ経験 <= 10
+	PRINT 硬く閉ざされた
+PRINTL アヌスにあてがい、ぐぐっと押し込んでみた。
+PRINT 綿球が
+;既に欲情をしている場合
+IF PALAM:欲情 > PALAMLV:4
+	IF TALENT:淫乱 || TALENT:淫魔
+		PRINT 淫らな刺激を待ち望んでいた
+	ELSEIF TALENT:恥じらい && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINT 欲情と恥情の相乗効果に戸惑っている
+	ENDIF
+;まださほど欲情していない場合
+ELSE
+	IF TALENT:淫乱 || TALENT:淫魔
+		PRINT 快楽に飢えた
+	ELSEIF TALENT:恥じらい && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINT 恥ずかしさに身を捩っている
+	ENDIF
+ENDIF
+PRINTFORML %CALLNAME:TARGET%の肛門の中へ捩じ込まれていく…

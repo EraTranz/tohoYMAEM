@@ -1,0 +1,1383 @@
+﻿;=============================================================================
+;追加処理及びサブイベント
+;=============================================================================
+;-------------------------------------------------
+;調教終了後のサブイベント
+;-------------------------------------------------
+@EVENTCHECK_M
+
+;純愛モード用イベント
+;主人と奴隷が異性同士でＶ経験Ａ経験異常経験をその周回中に変動させず、屈服刻印が1以上、薬物刻印・恐怖刻印・反発刻印が全て0かつ傷物・精神崩壊・傀儡・壊造人格を持っていない状態で
+;オトコ主人の場合はレズ経験が1000以下で、女主人の場合はＢＬ経験が1000以下かつ好感度500以上で素質変化
+;※対象が引き継いだキャラの場合、レズ経験とＢＬ経験の制限は付かない
+;※両刀なら性別制限無視。同性間は経験制限が反転
+SIF ((TALENT:MASTER:オトコ == 0 && ((TALENT:オトコ && EXP:ＢＬ経験 <= 1000) || (TALENT:オトコ == 0 && EXP:レズ経験 >= 1000 && TALENT:両刀))) || (TALENT:MASTER:オトコ && ((TALENT:オトコ == 0 && EXP:レズ経験 <= 1000) || (TALENT:オトコ && EXP:ＢＬ経験 >= 1000 && TALENT:両刀))) || CFLAG:18) && CFLAG:11 == 0 && CFLAG:好感度 >= 500 && MARK:屈服刻印 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0 && MARK:反発刻印 == 0 && TALENT:傷物 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0 && TALENT:壊造人格 == 0 && FLAG:12 & 32
+	CALL EVENT_PURE_LOVE
+
+LOCAL = 0
+;対象と主人が異性かつ好感度が1000以上、対象が女ならレズ経験が、対象がオトコならＢＬ経験が1000未満で反発刻印・精神崩壊・傀儡がない場合
+;※対象が引き継いだキャラの場合、レズ経験とＢＬ経験の制限は付かない
+
+;//異性同士、つまり通常運行
+;//対象が{引き継ぎorレズ経験999以下}かつ主人(♂)と異性、
+;//または、{引き継ぎorＢＬ経験999以下}かつ主人(♀)と異性、の元で、反発刻印・精神崩壊・傀儡がない場合
+IF (((EXP:レズ経験 < 1000 || CFLAG:18) && TALENT:オトコ == 0 && TALENT:MASTER:オトコ) || ((EXP:ＢＬ経験 < 1000 || CFLAG:18) && TALENT:オトコ && TALENT:MASTER:オトコ == 0)) && MARK:反発刻印 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0
+	;薬物刻印・恐怖刻印0で烙印、隷属、壊造人格がない、従順が5以上かつ恋慕、好感度が5000以上で愛情経験200以上で親愛
+	IF ABL:従順 >= 5 && EXP:愛情経験 >= 200 && TALENT:恋慕 && TALENT:親愛 == 0 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:壊造人格 == 0 && CFLAG:好感度 >= 5000 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0
+		LOCAL = 4
+	;主人への好感度が2000以上で恋慕、淫乱、服従を全て持っている、助手可能かつ従順と奉仕精神が共にLv5、屈服刻印3で薬物、恐怖、反発刻印なしで妄信
+	ELSEIF CFLAG:好感度 >= 2000 && CFLAG:1 == 2 && ABL:従順 >= 5 && ABL:奉仕精神 >= 5 && TALENT:恋慕 && TALENT:服従 && TALENT:淫乱 && TALENT:妄信 == 0 && MARK:屈服刻印 >= 3 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0
+		LOCAL = 3
+	;主人への好感度が2000以上で主人調教経験が666以上、従順が4、快楽・屈服・恥辱刻印が3の場合、調教中の条件を満たすことで依存イベントが発生
+	ELSEIF CFLAG:好感度 >= 2000 && EXP:主人調教経験 >= 666 + MIN(EXP:別人調教経験 / 4, 500) && ABL:従順 == 4 && MARK:快楽刻印 >= 3 && MARK:屈服刻印 >= 3 && MARK:恥辱刻印 >= 3 && TFLAG:104 & 1024
+		LOCAL = 2
+	ELSEIF CFLAG:好感度 >= 1000
+		LOCAL = 1
+	ENDIF
+;同性同士の場合、レズ経験1500以上かつ、レズっ気4以上かつ、レズ中毒3以上(オトコ同士ならＢＬ経験1500以上かつ、ＢＬっ気4以上かつ、ＢＬ中毒3以上)で反発刻印・精神崩壊・傀儡がない場合
+;※対象が引き継いだキャラの場合、レズ経験とＢＬ経験の制限は付かない
+;※両刀なら中毒などの能力制限無視
+;//(((EXP:レズ経験 >= 1500 || CFLAG:18) && ((ABL:レズっ気 > 3 && ABL:レズ中毒 > 2) || TALENT:両刀) && TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0) || ((EXP:ＢＬ経験 >= 1500 || CFLAG:18) && ((ABL:ＢＬっ気 > 3 && ABL:ＢＬ中毒 > 2) || TALENT:両刀) && TALENT:オトコ && TALENT:MASTER:オトコ)) && MARK:反発刻印 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0
+
+;//レズorＢＬ中毒Lv3があまりにも極悪(単純計算でレズorＢＬ経験が少なくとも3000は要る)なので
+;//少し条件をゆるくするが、恋慕に必要な好感度は1500から2000に引き上げる、親愛以上は少し厳しくする
+;//{レズorＢＬっ気4以上かつ、レズorＢＬ中毒3以上}、から、{(レズorＢＬっ気 + レズorＢＬ中毒)の合計が5以上}に変更
+;////8月改造版	まず最初の条件「EXP:レズ経験 >= 1500 || CFLAG:18」に、 || ABL:レズっ気 == 5 || (EXP:レズ経験 >= 1000 && EXP:主人調教経験>= 250) を追加
+ELSEIF (((EXP:レズ経験 >= 1500 || ABL:レズっ気 == 5 || (EXP:レズ経験 >= 1000 && EXP:主人調教経験>= 250 + MIN(EXP:別人調教経験 / 4, 500)) || CFLAG:18) && ( (ABL:レズっ気 + ABL:レズ中毒) > 4 || TALENT:両刀) && TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0) || ((EXP:ＢＬ経験 >= 1500 || ABL:ＢＬっ気 == 5 || (EXP:ＢＬ経験 >= 1000 && EXP:主人調教経験>= 250 + MIN(EXP:別人調教経験 / 4, 500)) || CFLAG:18) && ( (ABL:ＢＬっ気 + ABL:ＢＬ中毒) > 4 || TALENT:両刀) && TALENT:オトコ && TALENT:MASTER:オトコ)) && MARK:反発刻印 == 0 && TALENT:精神崩壊 == 0 && TALENT:傀儡 == 0
+	;必要な好感度は異性の時の1.5倍
+	;//必要な好感度は異性の時の1.5～2.0倍
+	;薬物刻印・恐怖刻印0で烙印、隷属、壊造人格がない、従順が5以上かつ恋慕、好感度が7500以上で愛情経験200以上で親愛
+	;//ABL:従順 >= 5 && EXP:愛情経験 >= 200 && TALENT:恋慕 && TALENT:親愛 == 0 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:壊造人格 == 0 && CFLAG:好感度 >= 7500 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0
+	;
+	;//薬物刻印0・恐怖刻印0、烙印なし、隷属なし、壊造人格なし、従順5以上、恋慕、レズorＢＬ中毒Lv3以上、好感度7500以上、愛情経験200以上
+	;//上記の条件を全てクリアすれば親愛
+	;IF ABL:従順 >= 5 && EXP:愛情経験 >= 200 && TALENT:恋慕 && TALENT:親愛 == 0 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:壊造人格 == 0 && CFLAG:好感度 >= 7500 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0 && (ABL:レズ中毒 > 2 || ABL:ＢＬ中毒 > 2)
+	IF MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0 && TALENT:烙印 == 0 && TALENT:隷属 == 0 && TALENT:壊造人格 == 0 && ABL:従順 >= 5 && TALENT:恋慕 && TALENT:親愛 == 0 && (ABL:レズ中毒 > 2 || ABL:ＢＬ中毒 > 2) && CFLAG:好感度 >= 7500 && EXP:愛情経験 >= 200
+		LOCAL = 4
+	;主人への好感度が3000以上で恋慕、淫乱、服従を全て持っている、助手可能かつ従順と奉仕精神が共にLv5、屈服刻印3で薬物、恐怖、反発刻印なしで妄信
+	ELSEIF CFLAG:好感度 >= 3000 && CFLAG:1 == 2 && ABL:従順 >= 5 && ABL:奉仕精神 >= 5 && TALENT:恋慕 && TALENT:服従 && TALENT:淫乱 && TALENT:妄信 == 0 && MARK:屈服刻印 >= 3 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0
+		LOCAL = 3
+	;主人への好感度が3000以上で主人調教経験が777以上、従順が4、快楽・屈服・恥辱刻印が3の場合、調教中の条件を満たすことで依存イベントが発生
+	ELSEIF CFLAG:好感度 >= 3000 && EXP:主人調教経験 >= 777 + MIN(EXP:別人調教経験 / 4, 500) && ABL:従順 == 4 && MARK:快楽刻印 >= 3 && MARK:屈服刻印 >= 3 && MARK:恥辱刻印 >= 3 && TFLAG:104 & 1024
+		LOCAL = 2
+	;//主人への好感度が2000以上で恋慕
+	ELSEIF CFLAG:好感度 >= 1500
+		LOCAL = 1
+	ENDIF
+ENDIF
+;陥落系素質(淫乱系素質は淫乱のみ)取得処理
+IF CFLAG:3668 >= 500
+	IF LOCAL == 4
+		CALL EVENT_FALLEN_SLAVE_AFFECTION
+	ELSEIF LOCAL == 3
+		CALL EVENT_FALLEN_SLAVE_FANATIC
+	ELSEIF LOCAL == 2
+		CALL EVENT_FALLEN_SLAVE_DEPENDENCE
+	ELSEIF LOCAL == 1
+		CALL EVENT_FALLEN_SLAVE_ROOT
+	ENDIF
+ENDIF
+
+;永久発情
+IF !TALENT:精神崩壊 && TALENT:淫乱 && EX:0 >= 40 && EX:1 >= 40 && EX:2 >= 40 && EX:3 >= 40 && EX:0 + EX:1 + EX:2 + EX:3 >= 200 && EXP:極楽絶頂経験 > 2 && !TALENT:常時発情 && MARK:快楽刻印 == 3 && MARK:反発刻印 == 0 && CFLAG:3668 >= 500
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 92
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:501%]を得た
+	TALENT:常時発情 = 1
+	;CFLAG:16 |= 2048
+	CALL ACCEPTANCE_UP, TARGET, 200
+ENDIF
+
+;淫乱系素質取得処理
+SIF TALENT:精神崩壊 == 0 && TALENT:淫核／淫茎 && (TALENT:淫壷 || TALENT:オトコ) && TALENT:淫尻 && TALENT:淫乳 && TALENT:尿道狂 && TALENT:キス魔 && TALENT:ドＳ && TALENT:ドＭ && TALENT:淫魔 == 0 && CFLAG:3668 >= 500
+	CALL EVENT_INDECENT_SLAVE
+SIF TALENT:精神崩壊 == 0 && ((TALENT:淫核／淫茎 == 0 && TALENT:淫壷 == 0 && TALENT:淫尻 == 0 && TALENT:淫乳 == 0 && TALENT:尿道狂 == 0 && TALENT:キス魔 == 0 && TALENT:ドＳ == 0 && TALENT:ドＭ == 0) || TALENT:淫魔) && CFLAG:3668 >= 500
+	CALL EVENT_PLURIENT_SLAVE
+;フラグリセット
+TFLAG:104 = 0
+
+;;奴隷の異名取得処理
+;SIF TFLAG:109
+;	CALL NICK_SLAVE
+;フラグリセット
+TFLAG:96 = 0
+TFLAG:109 = 0
+
+;被写経験が40以上で低確率で人気が付く(ハクタク化していない場合のみ)
+IF EXP:被写経験 >= 40 && TALENT:人気 == 0 && TALENT:半白澤 != 2 && RAND:(512 - MIN(RAND:(EXP:被写経験 - 39), 412)) == 0
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 104
+	PRINTFORMW %CALLNAME:TARGET%は[人気]を得た
+	TALENT:人気 = 1
+ENDIF
+
+;薬物刻印3以上かつ快楽刻印3以上だと[薬毒耐性]を失うイベント判定へ
+SIF TALENT:薬毒耐性 && MARK:薬物刻印 >= 3 && MARK:快楽刻印 >= 3
+	CALL EVENT_DRUG_FREE
+
+;理性上限が0以下だと[理性]を失うイベント判定へ
+SIF TALENT:理性 && MAXBASE:9 <= 0
+	CALL EVENT_REASON_FREE
+	
+;触手鈴蘭媚薬による体質の鋭敏化、絶頂と同時に精液を飲ませることによる学習
+SIF TFLAG:106
+	CALL EVENT_SENSITIVE_BODY
+;フラグリセット
+TFLAG:106 = 0
+
+;条件を満たすと媚薬中毒を追加
+IF TALENT:媚薬中毒 == 0 && CFLAG:32 > 100 && (FLAG:15 & 32 || FLAG:3 >= 3)
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 105
+	PRINTFORMW %CALLNAME:TARGET%は[媚薬中毒]を得た
+	TALENT:媚薬中毒 = 1
+	CFLAG:12 |= 16384
+	CFLAG:32 = 0
+ENDIF
+
+LOCAL = 0
+;[両刀]未所持で主人調教経験が1000以上、主人と対象が同性の場合
+;男主人なら対象が[男嫌い]を持っていないか、ＢＬっ気LV3以上かつ好感度200以上必要
+IF TALENT:両刀 == 0 && TALENT:オトコ && TALENT:MASTER:オトコ && EXP:主人調教経験 >= 1000 + MIN(EXP:別人調教経験 / 4, 500) && (TALENT:男嫌い == 0 && (ABL:ＢＬっ気 >= 3 && CFLAG:好感度 >= 200))
+	;ＢＬっ気LV5かつＢＬ中毒LV5、またはＢＬ中毒LV3以上かつＢＬ経験10000以上、またはＢＬ経験30000以上で[両刀]が付く
+	SIF (ABL:ＢＬっ気 >= 5 && ABL:ＢＬ中毒 >= 5) || (ABL:ＢＬ中毒 >= 3 && EXP:ＢＬ経験 >= 10000) || EXP:ＢＬ経験 >= 30000
+		LOCAL = 1
+;女主人なら対象が[女嫌い]を持っていないか、レズっ気LV3以上かつ好感度200以上必要
+ELSEIF TALENT:両刀 == 0 && TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0 && EXP:主人調教経験 >= 1000 + MIN(EXP:別人調教経験 / 4, 500) && (TALENT:女嫌い == 0 && (ABL:レズっ気 >= 3 && CFLAG:好感度 >= 200))
+	;レズっ気LV5かつレズ中毒LV5、またはレズ中毒LV3以上かつレズ経験10000以上、またはレズ経験30000以上で[両刀]が付く
+	SIF (ABL:レズっ気 >= 5 && ABL:レズ中毒 >= 5) || (ABL:レズ中毒 >= 3 && EXP:レズ経験 >= 10000) || EXP:レズ経験 >= 30000
+		LOCAL = 1
+ENDIF
+;条件満たすと[両刀]追加(ただしゲームモードはABNORMALかEXTRA限定)
+IF LOCAL == 1 && (FLAG:4 == 1 || FLAG:4 == 2)
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 109
+	PRINTFORMW %CALLNAME:TARGET%は[両刀]になった
+	TALENT:両刀 = 1
+ENDIF
+
+;堕とした人数が5人以上で、謎の魅力が付く
+IF CFLAG:MASTER:98 >= 5 && TALENT:MASTER:謎の魅力 == 0
+	PRINTFORMW %CALLNAME:MASTER%は[謎の魅力]を身につけた
+	TALENT:MASTER:謎の魅力 = 1
+;その周回で堕とした人数が25人以上または累計で100人以上で、大甲斐性が付く
+ELSEIF (CFLAG:MASTER:98 >= 25 || FLAG:30 >= 100) && TALENT:MASTER:大甲斐性 == 0
+	PRINTFORMW %CALLNAME:MASTER%は[大甲斐性]を身につけた
+	TALENT:MASTER:大甲斐性 = 1
+	;実績
+	SIF !(GLOBAL:2300 & 32768)
+		GLOBAL:2300 |= 32768
+	SAVEGLOBAL
+ENDIF
+
+;パンツハンター“あなた”
+SIF TALENT:オトコ == 0 && TALENT:淫乱 && (CFLAG:10 & 32) == 0 && FLAG:12 & 8
+	CALL SWEET_POTATO_PANTY
+
+TFLAG:651 = 0
+
+;全体の妊娠判定
+CALL IN_VAGINA_ALL
+
+;全体の妊娠時の処理
+CALL GET_CHILD_ALL
+
+;-------------------------------------------------
+;純愛モード素質変動処理
+;-------------------------------------------------
+;[ツンデレ]を持っている場合、[反抗的][素直]が変動しないように変更
+@EVENT_PURE_LOVE
+;[抵抗][抑圧][無関心][反抗的][生意気][男嫌い][女嫌い][快感の否定][一線越えない][嫉妬][狂気]のどれかでない限り発生しない
+SIF TALENT:抵抗 == 0 && TALENT:抑圧 == 0 && TALENT:無関心 == 0 && TALENT:反抗的 == 0 && TALENT:生意気 == 0 && TALENT:男嫌い == 0 && TALENT:女嫌い == 0 && TALENT:快感の否定 == 0 && TALENT:一線越えない == 0 && TALENT:嫉妬 == 0 && TALENT:狂気 == 0
+	RETURN 0
+
+LOCAL = 0
+LOCAL:1 = 0
+;奉仕快楽経験が200以上
+SIF EXP:奉仕快楽経験 >= 200 && TALENT:抵抗
+	LOCAL |= 1
+;奉仕快楽経験が300以上
+SIF EXP:奉仕快楽経験 >= 300 && TALENT:抑圧
+	LOCAL |= 2
+;好感度700以上で快楽刻印が3
+SIF CFLAG:好感度 >= 700 && MARK:快楽刻印 >= 3 && TALENT:無関心
+	LOCAL |= 4
+;好感度700以上で愛情経験が300以上、屈服刻印が2以上
+IF CFLAG:好感度 >= 700 && EXP:愛情経験 >= 300 && MARK:屈服刻印 >= 2
+	SIF TALENT:反抗的 && TALENT:ツンデレ == 0
+		LOCAL |= 8
+	SIF TALENT:生意気
+		LOCAL |= 16
+ENDIF
+;好感度1000以上で愛情経験が500以上、快楽刻印が3
+IF CFLAG:好感度 >= 1000 && EXP:愛情経験 >= 500 && MARK:快楽刻印 >= 3
+	IF TALENT:男嫌い && TALENT:MASTER:オトコ
+		LOCAL |= 32
+	ELSEIF TALENT:女嫌い && TALENT:MASTER:オトコ == 0
+		LOCAL |= 64
+	ENDIF
+ENDIF
+;好感度1500以上で愛情経験が700以上、快楽刻印が3、屈服刻印が2以上
+IF CFLAG:好感度 >= 1500 && EXP:愛情経験 >= 700 && MARK:快楽刻印 >= 3 && MARK:屈服刻印 >= 2
+	SIF TALENT:快感の否定
+		LOCAL |= 128
+	SIF TALENT:一線越えない
+		LOCAL |= 256
+ENDIF
+
+IF LOCAL & 1
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 52
+	PRINTFORMW %CALLNAME:TARGET%は[抵抗]を失った
+	TALENT:抵抗 = 0
+	CFLAG:13 |= 2
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 2
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 53
+	PRINTFORMW %CALLNAME:TARGET%は[抑圧]を失った
+	TALENT:抑圧 = 0
+	CFLAG:13 |= 1
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 4
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 54
+	PRINTFORMW %CALLNAME:TARGET%は[無関心]を失った
+	TALENT:無関心 = 0
+	CFLAG:13 |= 4
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 8
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 55
+	PRINTFORMW %CALLNAME:TARGET%は[反抗的]を失った
+	TALENT:反抗的 = 0
+	CFLAG:13 |= 8
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 16
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 56
+	PRINTFORMW %CALLNAME:TARGET%は[生意気]を失った
+	TALENT:生意気 = 0
+	CFLAG:13 |= 16
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 32
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 57
+	PRINTFORMW %CALLNAME:TARGET%は[男嫌い]を失った
+	TALENT:男嫌い = 0
+	CFLAG:13 |= 512
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 64
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 58
+	PRINTFORMW %CALLNAME:TARGET%は[女嫌い]を失った
+	TALENT:女嫌い = 0
+	CFLAG:13 |= 1024
+	CALL ACCEPTANCE_UP, TARGET, 100
+ELSEIF LOCAL & 128
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 59
+	PRINTFORMW %CALLNAME:TARGET%は[快感の否定]を失った
+	TALENT:快感の否定 = 0
+	CFLAG:13 |= 32
+	CALL ACCEPTANCE_UP, TARGET, 100
+	LOCAL:1 = 1
+ELSEIF LOCAL & 256
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 60
+	PRINTFORMW %CALLNAME:TARGET%は[一線越えない]を失った
+	TALENT:一線越えない = 0
+	CFLAG:13 |= 64
+	CALL ACCEPTANCE_UP, TARGET, 100
+	LOCAL:1 = 1
+ENDIF
+;[快感の否定]または[一線越えない]を失うイベントを発生させた場合、[素直]を取得
+IF TALENT:素直 == 0 && TALENT:ツンデレ == 0 && LOCAL:1 == 1
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 61
+	PRINTFORMW %CALLNAME:TARGET%は[素直]を得た
+	TALENT:素直 = 1
+	CFLAG:12 |= 2048
+	CALL ACCEPTANCE_UP, TARGET, 100
+ENDIF
+
+;周回おまけイベント
+;(2周目以降で)難易度Lunatic以上を1回はクリアかつ好感度5000以上で発生
+IF CFLAG:好感度 >= 5000 && (FLAG:9 & 8 || FLAG:9 & 16 || FLAG:9 & 64 || FLAG:9 & 128) && (TALENT:嫉妬 || TALENT:狂気)
+	;変数使い回し
+	LOCAL = 0
+
+	;以下2つの条件のうちどちらかを満たしていた場合、[狂気]消滅
+	;[妄信]と[親愛]同時所持かつ愛情経験が3000以上かつ好感度が20000以上
+	;[相愛]所持かつ愛情経験が3000以上、親愛時4000以上かつ好感度が15000以上
+	SIF TALENT:狂気 && ((TALENT:妄信 && TALENT:親愛 && EXP:愛情経験 >= 3000 && CFLAG:好感度 >= 20000) || (TALENT:相愛 && EXP:愛情経験 >= 3000 && CFLAG:好感度 >= 15000) || (TALENT:親愛 && EXP:愛情経験 >=4000 && CFLAG:好感度 >= 15000))
+		LOCAL |= 1
+	;[妄信]か[親愛]所持かつ愛情経験2000以上で[嫉妬]消滅
+	SIF TALENT:嫉妬 && (TALENT:妄信 || TALENT:親愛) && EXP:愛情経験 >= 2000
+		LOCAL |= 2
+
+	IF LOCAL & 1
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 68
+		PRINTFORMW %CALLNAME:TARGET%は[狂気]を失った
+		TALENT:狂気 = 0
+		SIF CFLAG:12 & 1
+			CFLAG:12 -= 1
+		CALL ACCEPTANCE_UP, TARGET, 100
+	ELSEIF LOCAL & 2
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 67
+		PRINTFORMW %CALLNAME:TARGET%は[嫉妬]を失った
+		TALENT:嫉妬 = 0
+		SIF CFLAG:12 & 4096
+			CFLAG:12 -= 4096
+		CALL ACCEPTANCE_UP, TARGET, 100
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;[親愛]取得処理
+;-------------------------------------------------
+@EVENT_FALLEN_SLAVE_AFFECTION
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 72
+PRINTFORMW %CALLNAME:TARGET%は[親愛]を得た
+TALENT:親愛 = 1
+CFLAG:14 |= 4
+CALL MASTER_NAME_CHANGE, TARGET, 2
+IF FLAG:12 & 32
+	IF TALENT:快感の否定 && EXP:奉仕快楽経験 >= 500 && MARK:快楽刻印 >= 3
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%に与えられる快楽を受け入れたようだ…
+		PRINTFORMW %CALLNAME:TARGET%は[快感の否定]を失った
+		TALENT:快感の否定 = 0
+		CFLAG:13 |= 32
+	ENDIF
+	IF TALENT:一線越えない && EXP:愛情経験 >= 500
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の気持ちを受け入れたようだ…
+		PRINTFORMW %CALLNAME:TARGET%は[一線越えない]を失った
+		TALENT:一線越えない = 0
+		CFLAG:13 |= 64
+	ENDIF
+ENDIF
+IF TALENT:彼氏あり
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 824
+	PRINTFORMW %CALLNAME:TARGET%は[彼氏あり]を失った
+	TALENT:彼氏あり = 0
+ENDIF
+;[相愛]持ちの売却不可フラグを消去
+SIF ITEM:エンゲージリング
+	CALL EVENT_ERASE_NO_SALE_FLAG
+CALL ACCEPTANCE_UP, TARGET, 2000
+
+;-------------------------------------------------
+;[相愛]持ちの売却不可フラグ消去処理
+;-------------------------------------------------
+@EVENT_ERASE_NO_SALE_FLAG
+REPEAT CHARANUM
+	IF TALENT:COUNT:相愛 && CFLAG:COUNT:3 & 1
+		PRINTFORMW %CALLNAME:COUNT%が売却可能になりました
+		CFLAG:COUNT:3 -= 1
+		IF TALENT:MASTER:998 == 0
+			NICKNAME:MASTER = 『浮気者』
+			CFLAG:MASTER:157 |= 4
+		ENDIF
+	ENDIF
+REND
+
+;-------------------------------------------------
+;[妄信]取得処理
+;-------------------------------------------------
+@EVENT_FALLEN_SLAVE_FANATIC
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 71
+PRINTFORMW %CALLNAME:TARGET%は[妄信]を得た
+TALENT:妄信 = 1
+CFLAG:14 |= 2
+CALL ACCEPTANCE_UP, TARGET, 2000
+
+;-------------------------------------------------
+;依存イベント
+;-------------------------------------------------
+@EVENT_FALLEN_SLAVE_DEPENDENCE
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 73
+IF ABL:従順 < 5
+	ABL:従順 = 5
+	PRINTL 従順がLV5になった
+ENDIF
+IF CFLAG:1 < 2
+	PRINTFORMW %CALLNAME:TARGET%\@(CFLAG:1 < 1) ? は売却及び # を\@助手にすることが可能になりました
+	CFLAG:1 = 2
+ENDIF
+CALL ACCEPTANCE_UP, TARGET, 2000
+
+;-------------------------------------------------
+;基本的な陥落素質取得処理
+;-------------------------------------------------
+@EVENT_FALLEN_SLAVE_ROOT
+LOCAL = 0
+LOCAL:1 = 0
+
+;薬物、恐怖刻印0で壊造人格がなく、従順が3以上かつ奉仕快楽経験200以上で恋慕
+SIF ABL:従順 >= 3 && EXP:奉仕快楽経験 >= EXPLV:5 && TALENT:恋慕 == 0 && TALENT:壊造人格 == 0 && MARK:薬物刻印 == 0 && MARK:恐怖刻印 == 0
+	LOCAL |= 1
+;快楽・屈服刻印が3、恥辱刻印が2以上、恐怖刻印が1以上、欲望が3以上、従順と奉仕精神が4以上、異常経験1以上、主人調教経験が250以上で服従
+SIF ABL:従順 >= 4 && ABL:欲望 >= 3 && ABL:奉仕精神 >= 4 && EXP:異常経験 >= 1 && EXP:主人調教経験 >= 250 + MIN(EXP:別人調教経験 / 4, 500) && MARK:快楽刻印 >= 3 && MARK:屈服刻印 >= 3 && MARK:恥辱刻印 >= 2 && MARK:恐怖刻印 >= 1 && TALENT:服従 == 0
+	LOCAL |= 2
+;欲望が4以上かつ異常経験3以上で淫乱
+SIF ABL:欲望 >= 4 && EXP:異常経験 >= 3 && TALENT:淫乱 == 0
+	LOCAL |= 4
+IF LOCAL
+	;堕とした人数カウント。既に[恋慕]・[服従]・[淫乱]のどれかだとカウントは増加しない
+	SIF TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+		LOCAL |= 8
+	;霊夢様およびロリスおよび早苗様陥落特別処理
+	SIF ((NO:TARGET == 1001 && CFLAG:0 == 2) || (NO:TARGET == 1014 && CFLAG:0 == 1) || (NO:TARGET == 1042 && CFLAG:0 == 2 )) && CFLAG:陥落した日 == 0
+		CFLAG:陥落した日 = DAY
+ENDIF
+IF LOCAL & 1
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 70
+	PRINTFORMW %CALLNAME:TARGET%は[恋慕]を得た
+	TALENT:恋慕 = 1
+	CFLAG:14 |= 1
+	CALL ACCEPTANCE_UP, TARGET, 2000
+	CALL MASTER_CHANGE, TARGET
+	CALL MASTER_NAME_CHANGE, TARGET, 1
+	IF TALENT:思い人あり
+		;口上・地の文の表示
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 823
+		PRINTFORMW %CALLNAME:TARGET%は[思い人あり]を失った
+		TALENT:思い人あり = 0
+		
+	ENDIF
+	LOCAL:1 += 1
+ENDIF
+IF LOCAL & 2
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 74
+	PRINTFORMW %CALLNAME:TARGET%は[服従]を得た
+	TALENT:服従 = 1
+	CFLAG:15 |= 1
+	CALL ACCEPTANCE_UP, TARGET, 2000
+	LOCAL:1 += 1
+ENDIF
+IF LOCAL & 4
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 75
+	PRINTFORMW %CALLNAME:TARGET%は[淫乱]を得た
+	TALENT:淫乱 = 1
+	CFLAG:16 |= 1
+	CALL ACCEPTANCE_UP, TARGET, 2000
+	LOCAL:1 += 1
+ENDIF
+SIF LOCAL & 8
+	CALL FALLEN_SLAVE_COUNTER
+
+IF CFLAG:1 < 2 && LOCAL:1 > 1
+	PRINTFORMW %CALLNAME:TARGET%は\@(CFLAG:1 < 1) ? 売却及び # \@助手可能になりました
+	CFLAG:1 = 2
+ENDIF
+
+;-------------------------------------------------
+;淫乱系素質取得処理
+;-------------------------------------------------
+;淫乱系素質(淫乱、即落ち除く)取得。絶頂やパタメーターが一定数以上に達するとでトリガーを引いてしまい、もう元には戻れない……みたいなイメージで
+@EVENT_PLURIENT_SLAVE
+LOCAL = 0
+;Ｃ系拡張コマンド有効時にＣ感覚5以上、露出癖4以上、自慰中毒3以上、Ｃ調律経験200以上、今回調教中にＣ絶頂30回以上で淫核／淫茎
+IF FLAG:15 & 1 && TFLAG:104 & 1
+	SIF ABL:Ｃ感覚 >= 5 && ABL:露出癖 >= 4 && ABL:自慰中毒 >= 3 && EXP:Ｃ調律経験 >= 200 && TALENT:淫核／淫茎 == 0
+		LOCAL |= 1
+ENDIF
+;Ｖ系拡張コマンド有効時にＶ感覚4以上、Ｖ経験400以上、Ｖ調律経験250以上、主人がオトコかふたなりかつ調教対象がオトコではない、今回調教中にＶ絶頂30回以上で淫壷
+IF FLAG:15 & 2 && TFLAG:104 & 2
+	SIF ABL:Ｖ感覚 >= 4 && EXP:Ｖ経験 >= 400 && EXP:Ｖ調律経験 >= 250 && (TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり) && TALENT:オトコ == 0 && TALENT:淫壷 == 0
+		LOCAL |= 2
+ENDIF
+;Ａ系拡張コマンド有効時にＡ感覚4以上、Ａ経験450以上、Ａ快楽経験300以上、今回調教中にＡ絶頂30回以上で淫尻
+IF FLAG:15 & 4 && TFLAG:104 & 4
+	SIF ABL:Ａ感覚 >= 4 && EXP:Ａ経験 >= 450 && EXP:Ａ快楽経験 >= 300 && TALENT:淫尻 == 0
+		LOCAL |= 4
+ENDIF
+;Ｂ系拡張コマンド有効時にＢ感覚5以上、Ｂ快楽経験300以上、Ｂ敏感を持っているか噴乳経験と乳腺開発経験の合計が100を超えている、今回調教中にＢ絶頂30回以上で淫乳
+IF FLAG:15 & 8 && TFLAG:104 & 8
+	SIF ABL:Ｂ感覚 >= 5 && EXP:Ｂ快楽経験 >= 300 && (TALENT:Ｂ敏感 || EXP:噴乳経験 + EXP:乳腺開発経験 >= 100) && TALENT:淫乳 == 0
+		LOCAL |= 8
+ENDIF
+;Ｃ系拡張コマンド有効時にＣ感覚4以上、放尿経験250以上、Ｕ拡張経験10以上、尿道開発経験300以上、おもらし癖あり、今回調教中に放尿10回以上かつ恥情が30000以上で尿道狂
+IF FLAG:15 & 1 && TFLAG:104 & 16
+	SIF ABL:Ｃ感覚 >= 4 && EXP:放尿経験 >= 250 && EXP:Ｕ拡張経験 >= 10 && EXP:尿道開発経験 >= 300 && TALENT:おもらし癖 && TALENT:尿道狂 == 0
+		LOCAL |= 16
+ENDIF
+;純愛モード有効時に従順5以上、露出癖3以上、奉仕快楽経験250以上、愛情経験100以上150以下(2週目以降は100以上300以下、5週目以降は100以上に緩和)、キス経験300以上、ＶＡ異常経験の変動なし、
+;媚薬を使うことなくその調教中に助手がいない状態で恭順と欲情が100000、習得が30000を超えるとキス魔
+IF FLAG:12 & 32 && TFLAG:104 & 32
+	SIF ASSI < 0 && ABL:従順 >= 5 && ABL:露出癖 >= 3 && EXP:奉仕快楽経験 >= 250 && EXP:愛情経験 >= 100 && (EXP:愛情経験 <= 150 || (EXP:愛情経験 <= 300 && FLAG:6 > 1) || FLAG:6 > 4) && EXP:キス経験 >= 300 && TALENT:キス魔 == 0 && CFLAG:11 == 0
+		LOCAL |= 32
+ENDIF
+;拷問系、精神操作系コマンド有効時に欲情3以上、サドっ気5以上(サド持ちなら3以上)、苦痛刻印3、緊縛経験とＳＭ教育経験が両方とも150以上、異常経験が10以上、媚薬を使うことなく今回調教中に苦痛と欲情が30000以上でドＳ
+;拷問系、精神操作系コマンド有効時に露出癖3以上、マゾっ気5以上(マゾ持ちなら3以上)、苦痛刻印3、緊縛経験と苦痛快楽経験が両方とも150以上、異常経験が10以上、媚薬を使うことなく今回調教中に苦痛と屈服が30000以上でドＭ
+IF FLAG:15 & 16
+	SIF ABL:欲望 >= 3 && (ABL:サドっ気 >= 5 || (TALENT:サド && ABL:サドっ気 >= 3)) && EXP:緊縛経験 >= 150 && EXP:ＳＭ教育経験 >= 150 && EXP:異常経験 >= 10 && MARK:苦痛刻印 >= 3 && TALENT:ドＳ == 0 && TFLAG:104 & 64
+		LOCAL |= 128
+	SIF ABL:露出癖 >= 3 && (ABL:マゾっ気 >= 5 || (TALENT:マゾ && ABL:マゾっ気 >= 3)) && EXP:苦痛快楽経験 >= 150 && EXP:緊縛経験 >= 150 && EXP:異常経験 >= 10 && MARK:苦痛刻印 >= 3 && TALENT:ドＭ == 0 && TFLAG:104 & 128
+		LOCAL |= 64
+ENDIF
+;淫乱系素質同時全取得イベント(様々な形の愛(?)を受け続けた結果、身体が完全に主人に適応しきってしまった……と解釈していただければ)
+;周回プレイ前提で条件はかなり厳しめに設定しています。(条件の都合上、相当綿密に計画を立てないと達成不可)
+;(過去の周回プレイを含め)今までに恋慕、親愛、相愛、服従、烙印、隷属、使い魔、淫乱、淫核／淫茎、淫壷(オトコの場合は免除)、淫尻、淫乳、尿道狂、キス魔、ドＳ、ドＭ、即落ちを取得したことがある
+;この状態で今回の調教で助手がいない、淫核／淫茎～ドＭの取得条件を1つ以上満たした上、今回調教中に恭順と欲情が100000以上、苦痛と習得がそれぞれ30000以上、
+;ＡＢＣＶ絶頂が全て30回以上(オトコの場合Ｖ絶頂は不要)、恋慕か妄信か服従を持っている、かつ媚薬中毒と傷物と反発刻印を持っていない状態で発生
+IF LOCAL && (((TFLAG:104 & 15) == 15 && CFLAG:16 == 1023) || (TALENT:オトコ && (TFLAG:104 & 13) == 13 && CFLAG:16 == 1019)) && (CFLAG:14 & 15) == 15 && (CFLAG:15 & 15) == 15
+	SIF ASSI < 0 && TFLAG:104 & 256 && (TALENT:恋慕 || TALENT:妄信 || TALENT:服従) && TALENT:媚薬中毒 == 0 && TALENT:傷物 == 0 && MARK:反発刻印 == 0
+		LOCAL = 256
+ENDIF
+SIF LOCAL == 0
+	RETURN 0
+
+IF LOCAL == 256
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 80
+	PRINTFORM %CALLNAME:TARGET%は
+	PRINTFORM \@(TALENT:オトコ || TALENT:ふたなり) ? [淫茎] # [淫核]\@、
+	IF TALENT:オトコ == 0
+		PRINT [淫壷]、
+		TALENT:淫壷 = 1
+	ENDIF
+	PRINTFORMW [淫尻]、[淫乳]、[尿道狂]、[キス魔]、[ドＳ]、[ドＭ]を得た
+	TALENT:淫核／淫茎 = 1
+	TALENT:淫尻 = 1
+	TALENT:淫乳 = 1
+	TALENT:尿道狂 = 1
+	TALENT:キス魔 = 1
+	TALENT:ドＳ = 1
+	TALENT:ドＭ = 1
+	CALL ACCEPTANCE_UP, TARGET, 2000
+	CALL CALC_GAUGE3_SLAVE, TARGET, 1
+	CALL CALC_GAUGE4_SLAVE, TARGET, 1
+	;実績
+	SIF !(GLOBAL:2300 & 8192)
+		GLOBAL:2300 |= 8192
+	SAVEGLOBAL
+ELSEIF LOCAL & 1
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 81
+	PRINTFORMW %CALLNAME:TARGET%は[淫\@ (TALENT:オトコ || TALENT:ふたなり) ? 茎 # 核\@]を得た
+	TALENT:淫核／淫茎 = 1
+	CFLAG:16 |= 2
+	CALL ACCEPTANCE_UP, TARGET, 250
+ELSEIF LOCAL & 2
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 82
+	PRINTFORMW %CALLNAME:TARGET%は[淫壷]を得た
+	TALENT:淫壷 = 1
+	CFLAG:16 |= 4
+	CALL ACCEPTANCE_UP, TARGET, 250
+ELSEIF LOCAL & 4
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 83
+	PRINTFORMW %CALLNAME:TARGET%は[淫尻]を得た
+	TALENT:淫尻 = 1
+	CFLAG:16 |= 8
+	CALL ACCEPTANCE_UP, TARGET, 250
+ELSEIF LOCAL & 8
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 84
+	PRINTFORMW %CALLNAME:TARGET%は[淫乳]を得た
+	TALENT:淫乳 = 1
+	CFLAG:16 |= 16
+	CALL ACCEPTANCE_UP, TARGET, 250
+	CALL CALC_GAUGE3_SLAVE, TARGET, 1
+ELSEIF LOCAL & 16
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 85
+	PRINTFORMW %CALLNAME:TARGET%は[尿道狂]を得た
+	TALENT:尿道狂 = 1
+	CALL ACCEPTANCE_UP, TARGET, 250
+	CALL CALC_GAUGE4_SLAVE, TARGET, 1
+	CFLAG:16 |= 32
+ELSEIF LOCAL & 32
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 86
+	PRINTFORMW %CALLNAME:TARGET%は[キス魔]を得た
+	PRINTFORML %EXPNAME:23%＋1
+	EXP:キス経験 += 1
+	CFLAG:主人と調教キス数 += 1
+	TALENT:キス魔 = 1
+	CFLAG:16 |= 64
+	CALL ACCEPTANCE_UP, TARGET, 250
+ELSEIF LOCAL & 64
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 88
+	PRINTFORMW %CALLNAME:TARGET%は[ドＭ]を得た
+	TALENT:ドＭ = 1
+	CFLAG:16 |= 256
+	CALL ACCEPTANCE_UP, TARGET, 250
+ELSEIF LOCAL & 128
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 87
+	PRINTFORMW %CALLNAME:TARGET%は[ドＳ]を得た
+	TALENT:ドＳ = 1
+	CFLAG:16 |= 128
+	CALL ACCEPTANCE_UP, TARGET, 250
+ENDIF
+
+;-------------------------------------------------
+;素質[淫魔]取得処理
+;-------------------------------------------------
+@EVENT_INDECENT_SLAVE
+;欲望・自慰中毒・精液中毒全てLv5必要
+SIF ABL:欲望 < 5 || ABL:自慰中毒 < 5 || ABL:精液中毒 < 5
+	RETURN 0
+;調教排泄経験100以上、調教自慰経験が1000以上かつ、主人調教経験が5000以上
+SIF EXP:調教排泄経験 < 100 || EXP:調教自慰経験 < 1000 || EXP:主人調教経験 < 5000 + MIN(EXP:別人調教経験 / 4, 500)
+	RETURN 0
+;媚薬を使っていない＋その調教中に助手がいない状態で欲情が250000以上、ＡＢＣＶ絶頂が全て50回以上
+SIF (TFLAG:104 & 512) == 0
+	RETURN 0
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 89
+PRINTFORMW %CALLNAME:TARGET%は[淫魔]を得た
+TALENT:淫魔 = 1
+TALENT:発情可 = 1
+CFLAG:16 |= 1024
+CALL ACCEPTANCE_UP, TARGET, 2000
+FLAG:38 += 1
+
+;-------------------------------------------------
+;薬物と快楽により素質[薬毒耐性]を破壊する処理
+;-------------------------------------------------
+@EVENT_DRUG_FREE
+;妊娠中、懐卵、寄生中はダメ
+SIF TALENT:妊娠 || TALENT:懐卵 || TALENT:寄生
+	RETURN 0
+;欲情の珠が2500000以上必要
+SIF JUEL:欲情 < 2500000
+	RETURN 0
+
+;欲情の珠を減らす
+JUEL:欲情 -= 2500000
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 90
+PRINTFORMW %CALLNAME:TARGET%は[薬毒耐性]を失った
+;副作用として回復能力が低下するか疲労する。
+IF TALENT:回復早い
+	PRINTFORMW %CALLNAME:TARGET%の回復能力が低下した
+	TALENT:回復早い = 0
+ELSEIF TALENT:回復遅い == 0
+	PRINTFORMW %CALLNAME:TARGET%の回復能力がかなり低下した
+	TALENT:回復遅い = 1
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%は一気に疲労した
+	BASE:体力 /= 10
+ENDIF
+
+TALENT:薬毒耐性 = 0
+CFLAG:13 |= 4096
+
+;-------------------------------------------------
+;素質[理性]を破壊する処理
+;-------------------------------------------------
+@EVENT_REASON_FREE
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 91
+
+PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:500%]を失った
+	
+BASE:理性 = 0
+MAXBASE:9 = 0
+TALENT:理性 = 0
+CALL ACCEPTANCE_UP, TARGET, 100
+
+;-------------------------------------------------
+;素質[理性]を破壊する処理2
+;-------------------------------------------------
+@EVENT_REASON_FREE2 , ARG
+
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 91
+
+PRINTFORMW %CALLNAME:ARG%は[%TALENTNAME:500%]を失った
+	
+BASE:ARG:理性 = 0
+MAXBASE:ARG:9 = 0
+TALENT:ARG:理性 = 0
+CALL ACCEPTANCE_UP, ARG, 100
+
+;-------------------------------------------------
+;体質変化イベント
+;-------------------------------------------------
+;触手鈴蘭媚薬による体質の鋭敏化
+;強制精飲絶頂による精飲絶頂体質化
+@EVENT_SENSITIVE_BODY
+IF TFLAG:106 & 1
+	;Ｃ感覚鋭敏化イベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 13
+	IF TALENT:Ｃ鈍感
+		PRINTFORMW %CALLNAME:TARGET%は[Ｃ鈍感]を失った。
+		TALENT:Ｃ鈍感 = 0
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は[Ｃ敏感]を得た。
+		TALENT:Ｃ敏感 = 1
+	ENDIF
+	CFLAG:Ｃ開発度 = 0
+ELSEIF TFLAG:106 & 2
+	;Ｖ感覚鋭敏化イベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 14
+	IF TALENT:Ｖ鈍感
+		PRINTFORMW %CALLNAME:TARGET%は[Ｖ鈍感]を失った。
+		TALENT:Ｖ鈍感 = 0
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は[Ｖ敏感]を得た。
+		TALENT:Ｖ敏感 = 1
+	ENDIF
+	CFLAG:Ｖ開発度 = 0
+ELSEIF TFLAG:106 & 4
+	;Ａ感覚鋭敏化イベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 15
+	IF TALENT:Ａ鈍感
+		PRINTFORMW %CALLNAME:TARGET%は[Ａ鈍感]を失った。
+		TALENT:Ａ鈍感 = 0
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は[Ａ敏感]を得た。
+		TALENT:Ａ敏感 = 1
+	ENDIF
+	CFLAG:Ａ開発度 = 0
+ELSEIF TFLAG:106 & 8
+	;Ｂ感覚鋭敏化イベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 16
+	IF TALENT:Ｂ鈍感
+		PRINTFORMW %CALLNAME:TARGET%は[Ｂ鈍感]を失った。
+		TALENT:Ｂ鈍感 = 0
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は[Ｂ敏感]を得た。
+		TALENT:Ｂ敏感 = 1
+	ENDIF
+	CFLAG:Ｂ開発度 = 0
+ELSEIF TFLAG:106 & 16
+	;精愛味覚取得イベント口上呼び出し
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 17
+	TALENT:精愛味覚 = 1
+	PRINTFORMW %EXPNAME:50%＋1
+	EXP:異常経験 += 1
+	CFLAG:11 |= 4
+	CFLAG:12 |= 32768
+	;精液中毒がLV3に上がる
+	IF ABL:精液中毒 < 3
+		PRINTFORMW %CALLNAME:TARGET%の%ABLNAME:31%が3に上がりました
+		ABL:精液中毒 = 3
+	ENDIF
+	;素質の変化
+	;汚臭敏感がなくなり、弱味を握る
+	IF TALENT:汚臭敏感
+		PRINTFORMW %CALLNAME:TARGET%は%TALENTNAME:62%でなくなった
+		TALENT:汚臭敏感 = 0
+	ENDIF
+	IF TALENT:弱味 == 0
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:TARGET%の%TALENTNAME:39%を握った
+		;精飲絶頂取得で弱みを握られたときのイベント口上呼び出し
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 18
+		TALENT:弱味 = 1
+		CFLAG:12 |= 1024
+	ENDIF
+	CFLAG:精飲開発度 = 0
+ENDIF
+
+;-------------------------------------------------
+;嫉妬判定
+;-------------------------------------------------
+;嫉妬ポイント加算(減算処理)
+;ヤンデレもーど有効時に呼び出される
+@EVENTCHECK_Y, ARG
+;主人は除外
+SIF ARG == MASTER
+	RETURN 0
+;[恋慕]を持っていない、あるいは[服従][使い魔][精神崩壊][傀儡][壊造人格][死亡]のどれかの時は除外
+SIF TALENT:ARG:恋慕 == 0 || TALENT:ARG:服従 || TALENT:ARG:使い魔 || TALENT:ARG:精神崩壊 || TALENT:ARG:傀儡 || TALENT:ARG:壊造人格 || TALENT:ARG:死亡
+	RETURN 0
+;育児室に籠っているときは除外
+IF CFLAG:ARG:4 == 2
+	RETURN 0
+;触手部屋の中にいる、かつ触手中毒がLv4以上のときは除外
+ELSEIF CFLAG:ARG:4 == 4 && ABL:ARG:触手中毒 >= 4
+	RETURN 0
+;娼館に居るかつ、[淫乱][娼婦][売春中毒][春の人]のどれかのときは除外
+ELSEIF CFLAG:ARG:4 == 1024 && (TALENT:ARG:淫乱 || TALENT:ARG:娼婦 || TALENT:ARG:売春中毒 || TALENT:ARG:春の人)
+	RETURN 0
+;ハーブ園作業中は除外(ヤンデレイベント起されるとお手上げ)
+ELSEIF CFLAG:ARG:4 == 2048 || CFLAG:ARG:4 == 4096
+	RETURN 0
+ENDIF
+IF ARG == TARGET
+	LOCAL = EX:0 + EX:1 + EX:2 + EX:3
+	CFLAG:ARG:嫉妬ポイント = MAX(CFLAG:ARG:嫉妬ポイント - LOCAL/2, 0)
+ELSE
+	LOCAL = ABL:ARG:欲望 + ABL:ARG:従順 / 2
+	;[嫉妬しやすい]
+	SIF TALENT:ARG:嫉妬しやすい
+		TIMES LOCAL , 2.50
+	;[烙印]
+	SIF TALENT:ARG:傷物
+		TIMES LOCAL , 1.50
+	;主人が[大甲斐性]
+	SIF TALENT:MASTER:大甲斐性
+		TIMES LOCAL , 0.50
+	;主人が調教師Lv5以上
+	IF ABL:MASTER:調教師Lv >= 5
+		TIMES LOCAL , 0.60
+	;主人が調教師Lv3以上
+	ELSEIF ABL:MASTER:調教師Lv >= 3
+		TIMES LOCAL , 0.75
+	ENDIF
+	;触手部屋の中にいる、かつ触手中毒がLv0
+	SIF CFLAG:ARG:4 == 4 && ABL:ARG:触手中毒 == 0
+		TIMES LOCAL , 1.75
+	CFLAG:ARG:嫉妬ポイント += LOCAL
+ENDIF
+IF CFLAG:ARG:嫉妬ポイント >= 50 && TALENT:ARG:嫉妬 == 0
+	TALENT:ARG:嫉妬 = 1
+	CFLAG:ARG:12 |= 4096
+	PRINTFORMW ……%CALLNAME:ARG%の心に嫉妬心が芽生え始めた
+ELSEIF CFLAG:ARG:嫉妬ポイント >= 100 && TALENT:ARG:狂気 == 0
+	TALENT:ARG:狂気 = 1
+	CFLAG:ARG:17 |= 2
+	CFLAG:ARG:12 |= 1
+	PRINTFORMW ……%CALLNAME:ARG%の嫉妬心は狂気の域に達している
+ELSEIF CFLAG:ARG:嫉妬ポイント >= 130
+	PRINTFORMW %CALLNAME:ARG%のこちらを見る目がおかしい…
+	PRINTFORMW 嫌な予感がする…
+ENDIF
+
+;-------------------------------------------------
+;陥落した奴隷カウント
+;-------------------------------------------------
+@FALLEN_SLAVE_COUNTER
+;既に一度堕としていると累計のカウントは進まない
+IF (CFLAG:20 & 32) == 0
+	FLAG:30 += 1
+	CFLAG:20 |= 32
+ENDIF
+CFLAG:陥落した日 = DAY
+CFLAG:MASTER:98 += 1
+;初期段階では変動しない
+IF FLAG:90 == 0
+	LOCAL = 0
+;豪邸では＋10人まで
+ELSEIF FLAG:90 == 1
+	LOCAL = MIN ((FLAG:30 / 2), 10)
+;小城では＋30人まで
+ELSEIF FLAG:90 == 2
+	LOCAL = MIN ((FLAG:30 / 2), 30)
+;隠れ里以上では制限なし
+ELSE
+	LOCAL = FLAG:30 / 2
+ENDIF
+FLAG:91 = 1 + LOCAL
+
+;妖精陥落
+SIF TALENT:妖精
+	CALL SLAVE_FAIRY_COUNTER
+;へる子撃破記念
+IF NO:TARGET == 5097
+	SIF (FLAG:76 & 16) == 0
+		CALL INFERNO_GATE
+	;実績
+	LOADGLOBAL
+	SIF !(GLOBAL:2300 & 128)
+		GLOBAL:2300 |= 128
+	SAVEGLOBAL
+ENDIF
+
+;-------------------------------------------------
+;堕ちたのが妖精なのかをチェック
+;-------------------------------------------------
+@SLAVE_FAIRY_COUNTER
+FLAG:32 += 1
+
+IF FLAG:32 == 1000
+	NICKNAME:MASTER = \@(TALENT:MASTER:オトコ) ? 『オベロン』 # 『ティターニア』\@
+	PRINTFORML どうやら%CALLNAME:MASTER%は妖精の身も心も支配下に置く程度の能力を持っているようだ…
+	PRINTFORML %CALLNAME:MASTER%には妖精達から尊敬と畏怖を込め、
+	PRINTFORMW 妖精を統べる者《%NICKNAME:MASTER%》の称号が与えられた！
+	FLAG:76 |= 8
+ELSEIF FLAG:32 == 500
+	NICKNAME:MASTER = 『フェアリーズロード』
+	PRINTFORML %CALLNAME:MASTER%は妖精の心を掌握する術を知り尽くしている…
+	PRINTFORMW %CALLNAME:MASTER%は%NICKNAME:MASTER%の称号を得た
+	FLAG:76 |= 4
+ELSEIF FLAG:32 == 100
+	NICKNAME:MASTER = 『フェアリーマスター』
+	PRINTFORML %CALLNAME:MASTER%は妖精の身体を知り尽くしている…
+	PRINTFORMW %CALLNAME:MASTER%は%NICKNAME:MASTER%の称号を得た
+	FLAG:76 |= 2
+ELSEIF FLAG:32 >= 50 && CHECK_GAMEMODE_ENDING_EXIST() == 1 && (FLAG:70 & 1) == 0
+	PRINTFORML %CALLNAME:MASTER%は妖精の心に同調する術を知った…
+	PRINTFORMW ※強くてニューゲーム開始時に%CALLNAME:MASTER%の種族を[妖精]に選択することができます
+	FLAG:70 |= 1
+	;実績
+	LOADGLOBAL
+	SIF !(GLOBAL:2300 & 64)
+		GLOBAL:2300 |= 64
+	SAVEGLOBAL
+ELSEIF FLAG:32 == 10
+	NICKNAME:MASTER = 『フェアリーテイマー』
+	PRINTFORML %CALLNAME:MASTER%は妖精の扱いに慣れたようだ…
+	PRINTFORMW %CALLNAME:MASTER%は%NICKNAME:MASTER%の称号を得た
+	FLAG:76 |= 1
+ENDIF
+IF TALENT:MASTER:妖精知識 == 0 && FLAG:32 >= 10
+	PRINTFORMW %CALLNAME:MASTER%は[妖精知識]を身につけた
+	TALENT:MASTER:妖精知識 = 1
+ENDIF
+
+;-------------------------------------------------
+;へる子の陥落チェック
+;-------------------------------------------------
+@INFERNO_GATE
+DRAWLINE
+IF TALENT:MASTER:地獄の勲章 == 0
+	PRINTFORMW %CALLNAME:MASTER%は、ついに%CALLNAME:TARGET%を陥落させた！！
+	PRINTFORMW その偉業をたたえて『%TALENTNAME:834%』を授与いたします。
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は、%CALLNAME:TARGET%の勲章を手に入れた！
+	PRINTFORMW 『あなたの知恵と力と勇気が 無理ゲーに打ち勝ちました』と刻まれている。
+	TALENT:MASTER:地獄の勲章 = 1
+ENDIF
+NICKNAME:MASTER = 『地獄子の旦那』
+PRINTFORMW %CALLNAME:MASTER%は%NICKNAME:MASTER%の称号を得た
+DRAWLINE
+FLAG:76 |= 16
+
+;=============================================================================
+;巨大化・縮小処理関連
+;=============================================================================
+;--------------------------------------------------
+;巨大化・縮小処理の実行判定
+;--------------------------------------------------
+;………………………………………………
+;奴隷の実行判定
+;………………………………………………
+@CHANGE_SIZE_ABLE_SLAVE
+#FUNCTION
+;[変幻自在]を持っていない
+SIF TALENT:変幻自在 == 0
+	RETURNF 0
+;従順が3以上ないとダメ
+SIF ABL:従順 < 3
+	RETURNF 0
+;意識が無いとダメ
+SIF TFLAG:899 > 0 || EQUIP:睡眠薬
+	RETURNF 0
+;何らかの淫具を付けているとダメ
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ || TEQUIP:Ａ系装着器具 || TEQUIP:氷柱 || TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム || TEQUIP:Ｕ系装着器具 || TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	RETURNF 0
+;緊縛中や入浴中等身動きが取れないとダメ
+SIF TEQUIP:緊縛関連 || TEQUIP:目装着器具 || TEQUIP:口装着器具 || TEQUIP:三角木馬乗馬中 || TEQUIP:鼻装着器具 || TEQUIP:耳装着器具 || TEQUIP:特殊風呂入浴中 || TEQUIP:オムツプレイ || TEQUIP:コスチュームプレイ || TEQUIP:射精止め
+	RETURNF 0
+RETURNF 1
+
+;………………………………………………
+;主人の実行判定
+;………………………………………………
+@CHANGE_SIZE_ABLE_MASTER
+#FUNCTION
+;[変幻自在]を持っていない
+SIF TALENT:MASTER:変幻自在 == 0
+	RETURNF 0
+;コンドーム装着中はダメ
+SIF TEQUIP:MASTER:コンドーム
+	RETURNF 0
+RETURNF 1
+
+;………………………………………………
+;助手の実行判定
+;………………………………………………
+@CHANGE_SIZE_ABLE_ASSI
+#FUNCTION
+;助手が居ない場合は排除
+SIF ASSI < 0
+	RETURNF 0
+;[変幻自在]を持っていない
+SIF TALENT:ASSI:変幻自在 == 0
+	RETURNF 0
+;コンドーム装着中はダメ
+SIF TEQUIP:ASSI:コンドーム
+	RETURNF 0
+;コスプレ中はダメ
+SIF TEQUIP:ASSI:コスチュームプレイ
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;巨大化・縮小処理(奴隷)
+;--------------------------------------------------
+;@USERCOMより呼び出される
+@CHANGE_SIZE_SLAVE
+PRINTFORML %CALLNAME:TARGET%をどうさせますか？
+SIF TEQUIP:縮小化 & 1 || TEQUIP:巨大化 & 1
+	PRINTL [0]元の大きさに戻って貰う
+SIF TALENT:小人体型 == 0 && (TEQUIP:縮小化 & 1) == 0
+	PRINTFORML [1]一時的に%TALENTNAME:127%になって貰う
+SIF TALENT:巨躯 == 0 && (TEQUIP:巨大化 & 1) == 0
+	PRINTFORML [2]一時的に%TALENTNAME:129%になって貰う
+PRINTL [100]やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && (TEQUIP:縮小化 & 1 || TEQUIP:巨大化 & 1)
+	PRINTFORMW %CALLNAME:TARGET%は元の大きさに戻った
+	IF TEQUIP:縮小化 & 1
+		TALENT:小人体型 = 0
+		TEQUIP:縮小化 ^= 1
+	ENDIF
+	IF TEQUIP:巨大化 & 1
+		TALENT:巨躯 = 0
+		TEQUIP:巨大化 ^= 1
+	ENDIF
+ELSEIF RESULT == 1 && TALENT:小人体型 == 0 && (TEQUIP:縮小化 & 1) == 0
+	PRINTFORMW %CALLNAME:TARGET%の姿は小さくなった
+	TALENT:小人体型 = 1
+	TEQUIP:縮小化 |= 1
+	IF TEQUIP:巨大化 & 1
+		TALENT:巨躯 = 0
+		TEQUIP:巨大化 ^= 1
+	ENDIF
+ELSEIF RESULT == 2 && TALENT:巨躯 == 0 && (TEQUIP:巨大化 & 1) == 0
+	PRINTFORMW %CALLNAME:TARGET%の姿は大きくなった
+	TALENT:巨躯 = 1
+	TEQUIP:巨大化 |= 1
+	IF TEQUIP:縮小化 & 1
+		TALENT:小人体型 = 0
+		TEQUIP:縮小化 ^= 1
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;巨大化・縮小処理(主人)
+;--------------------------------------------------
+;@USERCOMより呼び出される
+@CHANGE_SIZE_MASTER
+PRINTFORML %CALLNAME:MASTER%をどうさせますか？
+SIF TEQUIP:縮小化 & 2 || TEQUIP:巨大化 & 2
+	PRINTL [0]元の大きさに戻る
+SIF TALENT:MASTER:小人体型 == 0 && (TEQUIP:縮小化 & 2) == 0
+	PRINTFORML [1]一時的に%TALENTNAME:127%になる
+SIF TALENT:MASTER:巨躯 == 0 && (TEQUIP:巨大化 & 2) == 0
+	PRINTFORML [2]一時的に%TALENTNAME:129%になる
+PRINTL [100]やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && (TEQUIP:縮小化 & 2 || TEQUIP:巨大化 & 2)
+	PRINTFORMW %CALLNAME:MASTER%は元の大きさに戻った
+	IF TEQUIP:巨大化 & 2
+		TALENT:MASTER:巨躯 = 0
+		TEQUIP:巨大化 ^= 2
+	ENDIF
+	IF TEQUIP:縮小化 & 2
+		TALENT:MASTER:小人体型 = 0
+		TEQUIP:縮小化 ^= 2
+	ENDIF
+ELSEIF RESULT == 1 && TALENT:MASTER:小人体型 == 0 && (TEQUIP:縮小化 & 2) == 0
+	PRINTFORMW %CALLNAME:MASTER%の姿は小さくなった
+	TALENT:MASTER:小人体型 = 1
+	TEQUIP:縮小化 |= 2
+	IF TEQUIP:巨大化 & 2
+		TALENT:MASTER:巨躯 = 0
+		TEQUIP:巨大化 ^= 2
+	ENDIF
+ELSEIF RESULT == 2 && TALENT:巨躯 == 0 && (TEQUIP:巨大化 & 2) == 0
+	PRINTFORMW %CALLNAME:MASTER%の姿は大きくなった
+	TALENT:MASTER:巨躯 = 1
+	TEQUIP:巨大化 |= 2
+	IF TEQUIP:縮小化 & 2
+		TALENT:MASTER:小人体型 = 0
+		TEQUIP:縮小化 ^= 2
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;巨大化・縮小処理(助手)
+;--------------------------------------------------
+;@USERCOMより呼び出される
+@CHANGE_SIZE_ASSI
+PRINTFORML %CALLNAME:ASSI%をどうさせますか？
+SIF TEQUIP:縮小化 & 1 || TEQUIP:巨大化 & 1
+	PRINTL [0]元の大きさに戻って貰う
+SIF TALENT:ASSI:小人体型 == 0 && (TEQUIP:縮小化 & 4) == 0
+	PRINTFORML [1]一時的に%TALENTNAME:127%になって貰う
+SIF TALENT:ASSI:巨躯 == 0 && (TEQUIP:巨大化 & 4) == 0
+	PRINTFORML [2]一時的に%TALENTNAME:129%になって貰う
+PRINTL [100]やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && (TEQUIP:縮小化 & 4 || TEQUIP:巨大化 & 4)
+	PRINTFORMW %CALLNAME:ASSI%は元の大きさに戻った
+	IF TEQUIP:縮小化 & 4
+		TALENT:ASSI:小人体型 = 0
+		TEQUIP:縮小化 ^= 4
+	ENDIF
+	IF TEQUIP:巨大化 & 4
+		TALENT:ASSI:巨躯 = 0
+		TEQUIP:巨大化 ^= 4
+	ENDIF
+ELSEIF RESULT == 1 && TALENT:ASSI:小人体型 == 0 && (TEQUIP:縮小化 & 1) == 0
+	PRINTFORMW %CALLNAME:ASSI%の姿は小さくなった
+	TALENT:ASSI:小人体型 = 1
+	TEQUIP:縮小化 |= 4
+	IF TEQUIP:巨大化 & 4
+		TALENT:ASSI:巨躯 = 0
+		TEQUIP:巨大化 ^= 4
+	ENDIF
+ELSEIF RESULT == 2 && TALENT:ASSI:巨躯 == 0 && (TEQUIP:巨大化 & 1) == 0
+	PRINTFORMW %CALLNAME:ASSI%の姿は大きくなった
+	TALENT:ASSI:巨躯 = 1
+	TEQUIP:巨大化 |= 4
+	IF TEQUIP:縮小化 & 4
+		TALENT:ASSI:小人体型 = 0
+		TEQUIP:縮小化 ^= 4
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;復元処理
+;--------------------------------------------------
+;@EVENTENDより呼び出される
+;この関数では素質[小人体型]、[巨躯]を消去する処理のみ行われる
+@RESIZE
+LOCAL = 0
+IF TEQUIP:縮小化 & 1
+	TALENT:小人体型 = 0
+	LOCAL |= 1
+ENDIF
+IF TEQUIP:縮小化 & 2
+	TALENT:MASTER:小人体型 = 0
+	LOCAL |= 2
+ENDIF
+IF TEQUIP:縮小化 & 4 && ASSI >= 0
+	TALENT:ASSI:小人体型 = 0
+	LOCAL |= 4
+ENDIF
+TEQUIP:縮小化 = 0
+
+IF TEQUIP:巨大化 & 1
+	TALENT:巨躯 = 0
+	LOCAL |= 1
+ENDIF
+IF TEQUIP:巨大化 & 2
+	TALENT:MASTER:巨躯 = 0
+	LOCAL |= 2
+ENDIF
+IF TEQUIP:巨大化 & 4 && ASSI >= 0
+	TALENT:ASSI:巨躯 = 0
+	LOCAL |= 4
+ENDIF
+TEQUIP:巨大化 = 0
+
+SIF LOCAL & 1
+	PRINTFORML %CALLNAME:TARGET%は元の大きさに戻った
+SIF LOCAL & 2
+	PRINTFORML %CALLNAME:MASTER%は元の大きさに戻った
+SIF LOCAL & 4
+	PRINTFORML %CALLNAME:ASSI%は元の大きさに戻った
+PRINTL 
+RETURN 1
+
+;=============================================================================
+;雌雄可変処理関連
+;=============================================================================
+;--------------------------------------------------
+;性別変更処理
+;--------------------------------------------------
+;@USERCOMより呼び出される
+@CHANGE_SEX, ARG
+;フラグを立てておいて
+TFLAG:228 = 1
+SIF ARG == MASTER
+	TFLAG:228 += 1
+;性転換薬の処理を借用します。
+CALL USE_DRUG_39, ARG
+;フラグをクリア
+TFLAG:228 = 0
+RETURN 1
+
+;=============================================================================
+;ふたなり変更処理共通関連
+;=============================================================================
+;--------------------------------------------------
+;薬等でのふたなり関係の変更に関する[具現]等についての共通処理
+;--------------------------------------------------
+;ふたなり化薬等から呼び出される
+@CHANGE_FUTA_COMMON, ARG
+IF TALENT:ARG:ふたなり
+	;[具現]、[不思議な根]持ちが[陰核肥大]の時の再計算のための処理
+	SIF (TALENT:ARG:不思議な根 || TALENT:ARG:具現) && BASE:ARG:陰核 > 0
+		CFLAG:ARG:509 = 0
+	;陰核情報消去される前に
+	CALL MAKE_SIZE, 1, ARG
+	;陰核肥大消去処理
+	MAXBASE:ARG:7 = BASE:ARG:陰核
+	BASE:ARG:陰核 = 0
+	TALENT:ARG:肥大陰核 = 0
+	SIF CFLAG:ARG:37 & 16
+		CFLAG:ARG:37 -= 16
+
+	;ふたなり化した場合[具現]、[不思議な根]は消えて[顕在化]に
+	IF TALENT:ARG:不思議な根
+		TALENT:ARG:不思議な根 = 0
+		TALENT:ARG:顕在化 |= 1
+	ENDIF
+	IF TALENT:ARG:具現
+		TALENT:ARG:具現 = 0
+		TALENT:ARG:顕在化 |= 2
+	ENDIF
+	;[早漏]、[遅漏]の有無を確認設定
+	CALL CHANGE_SORO_COMMON, ARG
+ELSE
+	CFLAG:ARG:509 = 0
+	;ふたなり解除した時は[顕在化]が消えて[具現]、[不思議な根]に戻る
+	IF TALENT:ARG:顕在化 & 1
+		TALENT:ARG:不思議な根 = 2
+		TALENT:ARG:顕在化 -= 1
+	ENDIF
+	IF TALENT:ARG:顕在化 & 2
+		TALENT:ARG:具現 = 1
+		TALENT:ARG:顕在化 -= 2
+	ENDIF
+	;[早漏]、[遅漏]は解除
+	CALL CHANGE_SORO_COMMON, ARG
+ENDIF
+
+;--------------------------------------------------
+;薬等での竿の有無の変更に関する[早漏]等についての共通処理
+;--------------------------------------------------
+@CHANGE_SORO_COMMON, ARG
+IF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+	IF CFLAG:ARG:158 & 1
+		TALENT:ARG:早漏 = 1
+	ELSEIF CFLAG:ARG:158 & 2
+		TALENT:ARG:遅漏 = 1
+	ENDIF
+	CFLAG:ARG:158 = 0
+ELSE
+	IF TALENT:ARG:早漏
+		CFLAG:ARG:158 |= 1
+		TALENT:ARG:早漏 = 0
+	ELSEIF TALENT:ARG:遅漏
+		CFLAG:ARG:158 |= 2
+		TALENT:ARG:遅漏 = 0
+	ENDIF
+ENDIF
+
+;=============================================================================
+;具現の脱着処理関連
+;=============================================================================
+;--------------------------------------------------
+;[具現]発動処理
+;--------------------------------------------------
+;主人、助手共用
+@COMMAND_TRAIN_F, ARG
+DRAWLINE
+;口上・地の文の表示
+;CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 101
+IF TALENT:ARG:ふたなり == 0 && TALENT:ARG:具現
+	PRINTFORML %CALLNAME:ARG%は[具現]の力でペニスを顕在化させた
+	PRINTFORML %CALLNAME:ARG%は[ふたなり]となった
+	CALL EVENT_FUTA_PLUS_COMMON, ARG
+ELSEIF TALENT:ARG:ふたなり && TALENT:ARG:顕在化 & 2
+	PRINTFORML %CALLNAME:ARG%は[具現]の力を解除した
+	PRINTFORML %CALLNAME:ARG%は[ふたなり]を失った
+	TALENT:ARG:ふたなり = 0
+	TALENT:ARG:具現 = 1
+	TALENT:ARG:顕在化 -= 2
+	MAXBASE:ARG:2 = 0
+ENDIF
+DRAWLINE
+PRINTW  
+
+;=============================================================================
+;能力上昇に伴う素質変動処理
+;=============================================================================
+;-------------------------------------------------
+;従順の上昇による[反抗的][素直]の反転をチェック
+;-------------------------------------------------
+@JUJUN_UP_CHECK
+IF ABL:従順 >= 4 && TALENT:反抗的 && TALENT:ツンデレ
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 50
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:11%]を失い、[%TALENTNAME:13%]を得た
+	TALENT:反抗的 = 0
+	TALENT:素直 = 1
+ELSEIF ABL:従順 < 4 && TALENT:素直 && TALENT:ツンデレ
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 51
+	PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:13%]を失い、[%TALENTNAME:11%]を得た
+	TALENT:素直 = 0
+	TALENT:反抗的 = 1
+ENDIF
+
+;-------------------------------------------------
+;欲望の上昇による[抑圧][抵抗]の消滅をチェック
+;-------------------------------------------------
+@YOKUBO_UP_CHECK, ARG = 0
+;欲望が5未満のときはＣ感覚・Ｖ感覚・Ａ感覚・Ｂ感覚の合計が10以上ないとダメ
+SIF ABL:欲望 < 5 && (ABL:Ｃ感覚 + ABL:Ｖ感覚 + ABL:Ａ感覚 + ABL:Ｂ感覚) < 10
+	RETURN 0
+LOCAL = 50
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 69
+PRINTFORM %CALLNAME:TARGET%は
+IF TALENT:抑圧
+	PRINTFORM [%TALENTNAME:32%]
+	TALENT:抑圧 = 0
+	LOCAL += 50
+	CFLAG:13 |= 1
+	SIF TALENT:抵抗
+		PRINT と
+ENDIF
+IF TALENT:抵抗
+	PRINTFORM [%TALENTNAME:34%]
+	TALENT:抵抗 = 0
+	LOCAL += 50
+	CFLAG:13 |= 2
+ENDIF
+PRINTL を失った
+;恥辱刻印Lv3以上か[抑圧]が消失した状態で、[解放]未所持かつ消失イベントを経験していない場合、[解放]を得る
+IF (MARK:恥辱刻印 >= 3 || (CFLAG:13 & 1)) && TALENT:解放 == 0 && (CFLAG:12 & 65536) == 0
+	PRINTFORML %CALLNAME:TARGET%は[%TALENTNAME:33%]を得た
+	TALENT:解放 = 1
+	LOCAL += 50
+	CFLAG:12 |= 65536
+ENDIF
+CALL ACCEPTANCE_UP, TARGET, LOCAL, 1
+IF JUEL:否定
+	PRINTL 否定の珠が半分になった
+	JUEL:否定 /= 2
+ENDIF
+;WAITを掛ける
+SIF !ARG
+	WAIT
+TFLAG:52 = 1

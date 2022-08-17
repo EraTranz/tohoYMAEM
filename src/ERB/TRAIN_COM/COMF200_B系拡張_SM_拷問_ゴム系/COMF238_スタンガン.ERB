@@ -1,0 +1,98 @@
+﻿;=============================================================================
+;スタンガン
+;=============================================================================
+;気絶させるだけ。なお気絶中とかは使えない（というか効果が分からん）
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE238
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:238 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;失神モード無効時もダメ
+SIF (FLAG:16 & 2) == 0
+	RETURN 0
+;スタンガンを持っていないとダメ
+SIF ITEM:スタンガン == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 238) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM238
+PRINTL スタンガン
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 238
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = スタンガン
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 10
+
+SOURCE:痛み = 800
+SOURCE:逸脱 = 1000
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 1
+
+;今回スタンガン使ったフラグ
+;TFLAG:159 = 1
+
+;コマンド属性：道具(調教者)
+SIF TEQUIP:触手調教 == 0
+	TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_238
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%をスタンガンで撃った…

@@ -1,0 +1,126 @@
+﻿;=============================================================================
+;荊の鞭
+;=============================================================================
+;鞭を参考に作成。ベースは鞭より弱いが調教者のサドっ気やサド、ドＳの有無で性能は激変
+;ただし消耗はかなり大きい。サド、ドＳは重複あり
+;鞭同様、実際には苦痛があるためもっと体力気力をもっていかれる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE407
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:407 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が幽香でないとダメ
+SIF NO:PLAYER != 1034
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 407) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM407
+PRINTL 荊の鞭
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 407
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 荊の鞭
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 200
+DOWNBASE:1 += 150
+
+SOURCE:逸脱 = 1000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 1000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 1200
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 1500
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 1900
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	SOURCE:痛み = 2400
+ELSE
+	SOURCE:痛み = 3000
+ENDIF
+
+;プレイヤーのABL:サドっ気をみる
+IF ABL:PLAYER:サドっ気 == 0
+	TIMES SOURCE:痛み , 1.00
+ELSEIF ABL:PLAYER:サドっ気 == 1
+	TIMES SOURCE:痛み , 1.20
+ELSEIF ABL:PLAYER:サドっ気 == 2
+	SOURCE:支配 = 80
+	TIMES SOURCE:痛み , 1.40
+ELSEIF ABL:PLAYER:サドっ気 == 3
+	SOURCE:支配 = 200
+	TIMES SOURCE:痛み , 1.60
+ELSEIF ABL:PLAYER:サドっ気 == 4
+	SOURCE:支配 = 600
+	TIMES SOURCE:痛み , 1.80
+ELSE
+	SOURCE:支配 = 1000
+	TIMES SOURCE:痛み , 2.00
+ENDIF
+
+;プレイヤーがサド
+SIF TALENT:PLAYER:サド
+	TIMES SOURCE:痛み , 1.20
+;プレイヤーがドＳ
+SIF TALENT:PLAYER:ドＳ
+	TIMES SOURCE:痛み , 1.20
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+;ＳＭ教育フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_407
+;調教者がサドがドＳ
+IF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	PRINTFORML %CALLNAME:PLAYER%は荊で作り上げた鞭を大きく振り上げ、残虐な笑みを浮かべながら思いっきり振り下ろした
+	PRINTFORML 荊の棘が%CALLNAME:TARGET%の肌を無残に引っ掻き、真っ赤な筋が無数に刻まれていった
+	PRINTFORML その筋が増えるたびに、%CALLNAME:PLAYER%の残虐な笑みはより輝きを増していった…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は荊で作り上げた鞭を大きく振り上げ、思いっきり振り下ろした
+	PRINTFORML 荊の棘が%CALLNAME:TARGET%の肌を無残に引っ掻き、真っ赤な筋が無数に刻まれていく…
+ENDIF

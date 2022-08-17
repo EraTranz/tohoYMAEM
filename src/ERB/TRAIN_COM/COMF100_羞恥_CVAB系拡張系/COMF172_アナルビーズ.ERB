@@ -1,0 +1,356 @@
+﻿;=============================================================================
+;アナルビーズ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE172
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:172 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ａ系装着器具 == 5
+	RETURN 1
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:アナルビーズ == 0
+	RETURN 0
+;小人体型持ちは、双方が調教者と調教対象ならOK
+;それ以外の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && (TALENT:MASTER:禁断の知識 == 0 && TALENT:PLAYER:小人体型 == 0)
+	RETURN 0
+;他のＡ系装着具使用中は不可
+SIF (TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 5) || TEQUIP:氷柱
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 172) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM172
+PRINTL アナルビーズ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 172
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アナルビーズ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 100
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 80
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 250
+	SOURCE:屈従 = 800
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 600
+	SOURCE:屈従 = 1400
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 1000
+	SOURCE:屈従 = 1800
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1300
+	SOURCE:屈従 = 2100
+ELSE
+	SOURCE:快Ａ = 1700
+	SOURCE:屈従 = 2400
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み = 2000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み = 300
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.10
+	SOURCE:痛み = 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み = 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	SOURCE:痛み += 700
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 400
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 150
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.10
+ELSE
+	TIMES SOURCE:快Ａ , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ａ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ａ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ａ , 1.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.30
+ENDIF
+
+;小柄体型
+IF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+	SIF TALENT:幼児 || TALENT:幼稚
+		TIMES SOURCE:快Ａ , 2.00
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+
+;アナルビーズの着脱
+IF TEQUIP:Ａ系装着器具
+	TEQUIP:Ａ系装着器具 = 0
+	LOCAL = 2
+	TIMES SOURCE:快Ａ , 3.00
+ELSE
+	TEQUIP:Ａ系装着器具 = 5
+	LOCAL = 3
+	TIMES SOURCE:快Ａ , 0.80
+ENDIF
+
+TCVAR:Ａ経験 += LOCAL
+RETURN 1
+
+;--------------------------------------------------
+;アナルビーズ挿入中
+;--------------------------------------------------
+@EQUIP_COM172
+PRINTL ＜アナルビーズ挿入中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 30
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL = 40
+	LOCAL:2 = 100
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 80
+	LOCAL:2 = 300
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL = 100
+	LOCAL:2 = 500
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL = 150
+	LOCAL:2 = 700
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL = 200
+	LOCAL:2 = 900
+ELSE
+	LOCAL = 300
+	LOCAL:2 = 1200
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES LOCAL , 0.50
+	LOCAL:1 = 2000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL , 1.00
+	LOCAL:1 = 300
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	LOCAL:1 = 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:1 = 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:1 = 0
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:1 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.40
+	LOCAL:1 += 800
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:1 += 500
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:1 += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.40
+	LOCAL:1 += 120
+ELSE
+	TIMES LOCAL , 1.80
+	LOCAL:1 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 1.50
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL , 0.60
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:2 /= 3
+
+SOURCE:快Ａ += LOCAL
+SOURCE:痛み += LOCAL:1
+SOURCE:屈従 += LOCAL:2
+
+TCVAR:Ａ経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_172
+IF TEQUIP:Ａ系装着器具
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%は、屈辱と刺激に耐えている%CALLNAME:TARGET%のアヌスからアナルビーズを勢い良く引き抜いた…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のアヌスからアナルビーズを勢い良く引き抜いた…
+	ENDIF
+ELSE
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%は、嫌がる%CALLNAME:TARGET%を無理やり押さえつけると、
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の
+	ENDIF
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 粘液にまみれた
+	PRINTL 菊穴にアナルビーズをひとつづつ飲み込ませていった…
+ENDIF

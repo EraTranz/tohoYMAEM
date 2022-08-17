@@ -1,0 +1,270 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;館経営のための維持費の処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;十分な維持費を払わないと、館評価も下がる上に、収入も減るので
+;怠らないように
+;また、維持費破産しても洒落にならないのでご注意を
+;=============================================================================
+;FLAG:3100 = 娼館の最低維持費、初期値は\1,000の予定
+;FLAG:3101 = 支払う維持費
+;FLAG:3102 = 娼館人気の下がる度合
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;=============================================================================
+;処理関数群
+;=============================================================================
+;維持費の処理
+;@BROTHEL_RUNNING_COST
+;お金がなくなったの処理
+;@BROTHEL_NO_MORE_MONEY
+;どれだけ払う？の処理
+;@BROTHEL_RUNNING_COST_INPUT
+;必要最低限の維持費計算の処理
+;@BROTHEL_MINIMUM_RUNNING_COST
+;娼館人気の下がる処理
+;@BROTHEL_WELKNOWN
+;
+;
+;
+;
+;
+;
+;
+;
+;=============================================================================
+;維持費のメイン処理
+;=============================================================================
+@BROTHEL_RUNNING_COST
+;PROSTITUTEモードで最初の一週間のみ維持費免除
+SIF FLAG:4 == 4 && FLAG:6 == 1 && DAY:0 < 8
+	RETURN 0
+
+;金が尽きたかどうか(既にエンディングを迎えていた場合はゲームオーバーにならない)
+IF FLAG:3101 > MONEY && FLAG:5
+	CALL BROTHEL_NO_MORE_MONEY
+	RETURN 1
+ELSEIF FLAG:3101 > MONEY
+	PRINTFORMW 娼館の維持費で{FLAG:3101-MONEY}圓足りませんでした・・・
+	CALL BADEND_13
+ELSEIF FLAG:3101 < 1
+	RETURN 0
+ENDIF
+
+PRINTFORMW 娼館の維持費に{FLAG:3101}圓かかりました
+MONEY -= FLAG:3101
+
+SIF TALENT:MASTER:998
+	PRINTFORML 最低必要維持費:{FLAG:3100}圓
+PL_VAR_X:0 = TFLAG:415 - FLAG:3101
+PRINTFORM 本日の売り上げは\@(TALENT:MASTER:超常目算) ? {ABS(PL_VAR_X:0)}圓の# \@「
+PL_VAR_X:1 = GETCOLOR()
+IF PL_VAR_X:0 >= 0
+	SETCOLOR RGBCOLOR(0, 255, 255)
+	PRINT 黒字
+ELSE
+	SETCOLOR RGBCOLOR(255, 0, 0)
+	PRINT 赤字
+ENDIF
+SETCOLOR PL_VAR_X:1
+PRINTW 」です。
+
+;=============================================================================
+;お金がなくなったの処理
+;=============================================================================
+@BROTHEL_NO_MORE_MONEY
+PRINTFORMW 娼館の維持費：{FLAG:3101-MONEY}圓が払えませんでした・・・
+PRINTFORMW 娼館の維持費を、0圓にしました。
+IF FLAG:3005 >= 100
+	PRINTFORMW 娼館の人気が大きく下がりました・・・
+	SIF TALENT:MASTER:998
+		PRINTFORML Before：{FLAG:3005}
+	SELECTCASE FLAG:3005
+		CASE 100 TO 299
+			SIF TALENT:MASTER:998
+				PRINTFORML 娼館人気減少量：{FLAG:3005/2}
+			FLAG:3005 /= 2
+;		CASE 252 TO 299
+;			SIF TALENT:MASTER:998
+;				PRINTFORML 娼館人気減少量：{FLAG:3005/2 - FLAG:3005/12}
+;			FLAG:3005 = FLAG:3005/2 - FLAG:3005/12
+		CASE 300 TO 499
+			SIF TALENT:MASTER:998
+				PRINTFORML 娼館人気減少量：{FLAG:3005/3}
+			FLAG:3005 /= 4
+		CASE 500 TO 999
+			SIF TALENT:MASTER:998
+				PRINTFORML 娼館人気減少量：{FLAG:3005/5}
+			FLAG:3005 /= 5
+		CASEELSE
+			SIF TALENT:MASTER:998
+				PRINTFORML 娼館人気減少量：{FLAG:3005/10}
+			FLAG:3005 /= 10
+	ENDSELECT
+SIF TALENT:MASTER:998
+	PRINTFORML After ：{FLAG:3005}
+ENDIF
+MONEY = 0
+FLAG:3101 = 0
+
+;=============================================================================
+;どれだけ払うの処理
+;=============================================================================
+@BROTHEL_RUNNING_COST_INPUT
+DRAWLINE
+PRINTFORML 現在の維持費:{FLAG:3101}圓
+PRINTL 娼館の維持費をいくらにしますか？(0より小さいなら変更しない)
+;主人が[超常目算]持ち
+SIF TALENT:MASTER:超常目算
+	PRINTFORML 最低でも、{FLAG:3100}圓を払えばよさそうだ・・・
+INPUT
+IF RESULT < 0 || RESULT == FLAG:3101
+	PRINTFORMW {FLAG:3101}圓から変えませんでした。
+ELSE
+	FLAG:3101 = RESULT
+	PRINTFORMW 娼館の維持費を、{FLAG:3101}圓にしました。
+ENDIF
+DRAWLINE
+;=============================================================================
+;必要最低限の維持費計算の処理
+;=============================================================================
+@BROTHEL_MINIMUM_RUNNING_COST
+;ゲーム当初の必要最低限の維持費
+PL_VAR_X:0 = 1000
+PL_VAR_X:1 = 0
+PL_VAR_X:2 = 0
+PL_VAR_X:3 = 0
+;部屋数チェック
+SELECTCASE ITEM:娼館
+	;部屋数分だけ\100上昇
+	CASE 1 TO 9
+		PL_VAR_X:0 += 100 * (ITEM:娼館 - 1)
+	;\250上昇
+	CASE 10 TO 25
+		PL_VAR_X:0 += 250 * (ITEM:娼館 - 1)
+	;\500上昇
+	CASE 26 TO 49
+		PL_VAR_X:0 += 500 * (ITEM:娼館 - 1)
+	;\800上昇
+	CASE 50 TO 99
+		PL_VAR_X:0 += 800 * (ITEM:娼館 - 1)
+	;\1250上昇
+	CASEELSE
+		PL_VAR_X:0 += 1250 * (ITEM:娼館 - 1)
+ENDSELECT
+
+;淫具の維持費
+SIF FLAG:3000 & 2
+	PL_VAR_X:1 = 500 * ITEM:娼館
+;カメラの維持費
+SIF FLAG:3000 & 4
+	PL_VAR_X:2 = 1000 * ITEM:娼館
+;触手の維持費(むしろ、清掃費)
+SIF FLAG:3000 & 8
+	PL_VAR_X:3 = 2000 * ITEM:娼館
+;必要最低限費用設定
+FLAG:3100 = PL_VAR_X:0 + PL_VAR_X:1 + PL_VAR_X:2 + PL_VAR_X:3
+;娼館モード以外はもっと負担させましょう
+SIF FLAG:4 != 4
+	FLAG:3100 *= 3
+
+;=============================================================================
+;娼館人気の下がる処理
+;=============================================================================
+@BROTHEL_WELKNOWN
+#DIM FIRST_EYEWITNESS, 2
+LOCAL = 0
+FLAG:3102++
+SELECTCASE FLAG:3101
+	CASE 0
+		LOCAL = 6 + FLAG:3102
+		FLAG:3102 = FLAG:3102 * 2 + 4
+	CASE 1 TO FLAG:3100/2
+		LOCAL = 3 + FLAG:3102
+		FLAG:3102 += 2
+	CASE FLAG:3100/2 + 1 TO FLAG:3100 - 1
+		LOCAL = 2 + FLAG:3102
+		FLAG:3102 += 1
+	CASE FLAG:3100 TO FLAG:3100 * 2 - 1
+		;3日に1回に低下
+		SIF DAY % 3 == 0
+			LOCAL = 2
+		FLAG:3102 /= 2
+	CASE FLAG:3100 * 2 TO FLAG:3100 * 5 - 1
+		;1週間に1回に低下
+		SIF DAY % 7 == 0
+			LOCAL = 3
+		FLAG:3102 /= 4
+	CASE FLAG:3100 * 5 TO FLAG:3100 * 20 - 1
+		;毎15日に1回に低下
+		SIF DAY:6 == 15
+			LOCAL = 8
+		FLAG:3102 /= 8
+	CASEELSE
+		;毎15日に1回に低下
+		SIF DAY:6 == 15
+			LOCAL = 4
+		FLAG:3102 /= 16
+ENDSELECT
+
+;PROSUTITUTE以外は厳しいペナルティを
+SIF FLAG:4 != 4
+	TIMES LOCAL, 1.5
+
+FLAG:3005 -= LOCAL
+;娼館の人気減少
+SIF LOCAL > 0
+	PRINTFORMW 【娼館人気】減少 －{LOCAL}(現在{FLAG:3005})
+
+IF FLAG:3005 <= -100
+	FOR LOCAL, 1, CHARANUM
+		IF FIRST_EYEWITNESS:0 < CFLAG:LOCAL:好感度
+			FIRST_EYEWITNESS:0 = CFLAG:LOCAL:好感度
+			FIRST_EYEWITNESS:1 = LOCAL
+		ENDIF
+	NEXT
+	TFLAG:99 = FIRST_EYEWITNESS:1
+	CALL BADEND_14
+ENDIF
+
+IF FLAG:3005 < -50 || FLAG:3005 - 6 - FLAG:3102 <= -100
+	PRINTL 	※※※警告※※※
+	PRINTL これ以上【娼館人気】が下がってしまうと
+	PRINTL 	ゲームオーバーになります！
+	PRINTL 	早く維持費を高めに設定しないと、
+	PRINTW 	ゲームオーバーが早まります！
+	PRINTL 	ゲームオーバーが見たいという人は知りません。
+ENDIF
+;=============================================================================
+;処理
+;=============================================================================
+
+
+
+
+;=============================================================================
+;処理
+;=============================================================================
+
+
+
+
+;=============================================================================
+;処理
+;=============================================================================
+
+
+
+
+;=============================================================================
+;処理
+;=============================================================================
+
+
+

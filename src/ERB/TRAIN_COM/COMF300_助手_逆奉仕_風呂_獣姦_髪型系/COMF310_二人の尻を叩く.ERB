@@ -1,0 +1,105 @@
+﻿;=============================================================================
+;二人の尻を叩く(ダブルスパンキング)
+;=============================================================================
+;奴隷と助手の両方のお尻をペンペンします
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE310
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:310 > 0
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 310) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM310
+PRINTL 二人の尻を叩く
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 310
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 二人の尻を叩く
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 70
+DOWNBASE:1 += 30
+
+SOURCE:露出 = 300
+SOURCE:逸脱 = 700
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 240
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 400
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 640
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 960
+ELSE
+	SOURCE:痛み = 1440
+ENDIF
+
+;助手の体力・気力減少
+DOWNBASE:ASSI:0 += 70
+DOWNBASE:ASSI:1 += 30
+
+;助手の苦痛の珠
+JUEL:ASSI:苦痛 += 100
+PRINTFORML 苦痛の珠(%CALLNAME:ASSI%)＋100
+
+;マスターと奴隷のレズorBL
+IF TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:レズ経験 += 7
+ELSEIF TALENT:オトコ == 1 && TALENT:MASTER:オトコ == 1
+	TCVAR:ＢＬ経験 += 7
+ENDIF
+
+;マスターと助手のレズorBL
+IF TALENT:ASSI:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:ASSI:レズ経験 += 2
+ELSEIF TALENT:ASSI:オトコ == 1 && TALENT:MASTER:オトコ == 1
+	TCVAR:ASSI:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ABL:マゾっ気 >= 1
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_310
+PRINTFORML %CALLNAME:MASTER%は、%CALLNAME:TARGET%と%CALLNAME:ASSI%にお尻を向けさせ、二人のお尻を平手で交互に叩きはじめた。
+PRINTFORM 何度も何度も叩かれている内に、%CALLNAME:ASSI%の
+IF ABL:ASSI:マゾっ気 >= 2 && TALENT:ASSI:オトコ == 0
+	PRINTL 股間は自身の愛液で濡れはじめていた。
+ELSE
+	PRINTL 尻は真っ赤に腫れていった。
+ENDIF
+PRINTFORM そして%CALLNAME:TARGET%もまた、
+IF ABL:マゾっ気 >= 2 && TALENT:オトコ == 0
+	PRINTL 股間を自身の愛液で濡らしはじめていた…
+ELSE
+	PRINTL 尻を真っ赤に腫らしていった…
+ENDIF

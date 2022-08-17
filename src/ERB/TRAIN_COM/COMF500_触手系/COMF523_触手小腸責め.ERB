@@ -1,0 +1,484 @@
+﻿;=============================================================================
+;触手小腸責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE523
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:523 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF (TEQUIP:Ａ系装着器具 == 2 || TEQUIP:Ａ系装着器具 == 22) && TEQUIP:触手服 & 16
+	RETURN 1
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[遠隔精密制御]を得ていないとダメ
+SIF (FLAG:75 & 512) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 2 && TEQUIP:Ａ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !TEQUIP:触手調教 && !(TEQUIP:触手服 & 16) && (TEQUIP:Ａ系装着器具 == 2 || TEQUIP:Ａ系装着器具 == 22)
+	RETURN 0
+;卵が邪魔で小腸まで到達できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 523) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM523
+PRINTL 触手小腸責め
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 523
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手小腸責め
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 220
+DOWNBASE:1 += 220
+
+LOCAL:2 = 1000
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	LOCAL:5 += 0
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:5 += 50
+	TIMES LOCAL:2 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:5 += 120
+	TIMES LOCAL:2 , 1.40
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:5 += 350
+	TIMES LOCAL:2 , 1.60
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:5 += 900
+	TIMES LOCAL:2 , 1.80
+ELSE
+	LOCAL:5 += 2000
+	TIMES LOCAL:2 , 2.00
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL:1 = 80
+	LOCAL:4 = 300
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL:1 = 250
+	LOCAL:4 = 800
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL:1 = 600
+	LOCAL:4 = 1400
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL:1 = 1000
+	LOCAL:4 = 1800
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL:1 = 1600
+	LOCAL:4 = 2100
+ELSE
+	LOCAL:1 = 2700
+	LOCAL:4 = 2400
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:6 = 1500
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:6 = 800
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:6 = 200
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:6 = 0
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:6 = 0
+ELSE
+	LOCAL:6 = 0
+ENDIF
+
+LOCAL:3 = 1800
+
+;EXP:触手経験をみる
+IF EXP:触手経験 < EXPLV:1
+	TIMES LOCAL:3 , 3.00
+ELSEIF EXP:触手経験 < EXPLV:2
+	TIMES LOCAL:3 , 2.50
+ELSEIF EXP:触手経験 < EXPLV:3
+	TIMES LOCAL:3 , 2.00
+ELSEIF EXP:触手経験 < EXPLV:4
+	TIMES LOCAL:3 , 1.50
+ELSEIF EXP:触手経験 < EXPLV:5
+	TIMES LOCAL:3 , 1.00
+ELSE
+	TIMES LOCAL:3 , 0.80
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES LOCAL:1 , 0.50
+	LOCAL:3 += 2000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 += 300
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL:1 , 1.10
+	LOCAL:3 += 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.20
+	LOCAL:3 += 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 += 0
+ELSE
+	TIMES LOCAL:1 , 1.60
+	LOCAL:3 += 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL:1 , 0.40
+	LOCAL:3 += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL:1 , 0.80
+	LOCAL:3 += 700
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 += 400
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 += 150
+ELSE
+	TIMES LOCAL:1 , 1.80
+	LOCAL:3 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+ELSE
+	TIMES LOCAL:1 , 1.30
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:6 , 0.80
+
+;小柄体型
+IF TALENT:小柄体型
+	TIMES LOCAL:3 , 2.00
+	SIF TALENT:幼児 || TALENT:幼稚
+		TIMES LOCAL:1 , 2.00
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.50
+	TIMES LOCAL:6 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL:3 , 0.60
+	TIMES LOCAL:4 , 0.60
+	TIMES LOCAL:6 , 0.60
+ENDIF
+
+SOURCE:トラウマ += LOCAL:3
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:4 /= 3
+
+SOURCE:快Ａ += LOCAL:1
+SOURCE:支配 += LOCAL:2
+SOURCE:痛み += LOCAL:3
+SOURCE:屈従 += LOCAL:4
+SOURCE:中毒充足 += LOCAL:5
+SOURCE:逸脱 += LOCAL:6
+
+TCVAR:Ａ経験 += 4
+;触手経験フラグ
+TFLAG:90 = 0
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手の着脱
+IF (TEQUIP:Ａ系装着器具 == 2 || TEQUIP:Ａ系装着器具 == 22)
+	TEQUIP:Ａ系装着器具 = 0
+	
+	SIF TEQUIP:触手服 & 16
+		TEQUIP:触手服 &= 0b1101111
+ELSE
+	TEQUIP:Ａ系装着器具 = 2
+	
+	;触手服への命令として飛んできた場合
+	IF !TEQUIP:触手調教 && (TEQUIP:触手服 && !(TEQUIP:触手服 & 16))
+		TEQUIP:Ａ系装着器具 = 22
+		TEQUIP:触手服 |= 16
+	ENDIF
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;触手小腸堪能中
+;-------------------------------------------------
+@EQUIP_COM523
+PRINTL ＜触手小腸堪能中＞
+
+DOWNBASE:0 += 25
+DOWNBASE:1 += 95
+
+LOCAL:1 = 100
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	LOCAL:4 += 0
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:4 += 50
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:4 += 120
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:4 += 350
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:4 += 900
+	TIMES LOCAL:1 , 1.80
+ELSE
+	LOCAL:4 += 2000
+	TIMES LOCAL:1 , 2.00
+ENDIF
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL = 40
+	LOCAL:3 = 150
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 150
+	LOCAL:3 = 250
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL = 400
+	LOCAL:3 = 500
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL = 700
+	LOCAL:3 = 800
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL = 1300
+	LOCAL:3 = 1200
+ELSE
+	LOCAL = 1800
+	LOCAL:3 = 1700
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:5 = 1500
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:5 = 800
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:5 = 200
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:5 = 0
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:5 = 0
+ELSE
+	LOCAL:5 = 0
+ENDIF
+
+LOCAL:2 = 380
+
+;EXP:触手経験をみる
+IF EXP:触手経験 < EXPLV:1
+	TIMES LOCAL:2 , 3.00
+ELSEIF EXP:触手経験 < EXPLV:2
+	TIMES LOCAL:2 , 2.50
+ELSEIF EXP:触手経験 < EXPLV:3
+	TIMES LOCAL:2 , 2.00
+ELSEIF EXP:触手経験 < EXPLV:4
+	TIMES LOCAL:2 , 1.50
+ELSEIF EXP:触手経験 < EXPLV:5
+	TIMES LOCAL:2 , 1.00
+ELSE
+	TIMES LOCAL:2 , 0.80
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:2
+	TIMES LOCAL , 1.00
+	LOCAL:2 += 300
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	LOCAL:2 += 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:2 += 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:2 += 0
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:2 += 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.40
+	LOCAL:2 += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:2 += 600
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:2 += 300
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.40
+	LOCAL:2 += 100
+ELSE
+	TIMES LOCAL , 1.80
+	LOCAL:2 += 50
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:3 , 1.20
+	TIMES LOCAL:5 , 1.20
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:5 , 0.80
+ENDIF
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:5 , 0.80
+ENDIF
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES LOCAL:5 , 2.00
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:5 , 0.80
+
+;小柄体型
+IF TALENT:小柄体型
+	TIMES LOCAL:2 , 2.00
+	SIF TALENT:幼児 || TALENT:幼稚
+		TIMES LOCAL , 2.00
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:5 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES LOCAL:2 , 0.60
+	TIMES LOCAL:3 , 0.60
+	TIMES LOCAL:5 , 0.60
+ENDIF
+
+SOURCE:トラウマ += LOCAL:2
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:3 /= 3
+
+SOURCE:快Ａ += LOCAL
+SOURCE:支配 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+SOURCE:屈従 += LOCAL:3
+SOURCE:中毒充足 += LOCAL:4
+SOURCE:逸脱 += LOCAL:5
+
+TCVAR:Ａ経験 += 2
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_523
+IF (TEQUIP:Ａ系装着器具 == 2 || TEQUIP:Ａ系装着器具 == 22)
+	PRINTFORML %CALLNAME:TARGET%の小腸の中で暴れまわっていた触手は%CALLNAME:PLAYER%が命じると、ゆっくりと小腸から離れ、大腸を通過し、やがてアナルから引き抜かれた……
+ELSE
+	PRINTFORML 細くて長い触手が%CALLNAME:TARGET%のアナルに潜り込んだ触手はゆっくりと大腸から小腸に辿り上がった。
+	PRINTL そして小腸の中で妖しく蠢きはじめた……
+ENDIF

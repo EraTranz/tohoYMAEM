@@ -1,0 +1,178 @@
+﻿;=============================================================================
+;採血注射
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE88
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:88 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;注射系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 64) == 0
+	RETURN 0
+;機械、人形だとダメ
+SIF TALENT:機械 || TALENT:人形
+	RETURN 0
+;助手調教の場合、技巧4以上か[針さばき]じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 4 && TALENT:PLAYER:針さばき == 0
+	RETURN 0
+;注射セットを持っていないとダメ
+SIF ITEM:注射セット == 0
+	RETURN 0
+;媚薬効果発揮中はダメ
+SIF TEQUIP:媚薬
+	RETURN 0
+;利尿剤効果発揮中はダメ
+SIF TEQUIP:利尿剤
+	RETURN 0
+;賢者の血効果発揮中はダメ
+SIF TEQUIP:賢者の血
+	RETURN 0
+;睡眠薬効果発揮中はダメ
+SIF EQUIP:睡眠薬
+	RETURN 0
+;排卵誘発剤効果発揮中はダメ
+SIF TEQUIP:排卵誘発剤
+	RETURN 0
+;緊急避妊薬効果発揮中はダメ
+SIF TEQUIP:緊急避妊薬
+	RETURN 0
+;鈴蘭の毒効果発揮中はダメ
+SIF TEQUIP:鈴蘭の毒
+	RETURN 0
+;昆虫採集セットの薬効果発揮中はダメ
+SIF TEQUIP:昆虫採集セットの薬
+	RETURN 0
+;触手強制回復効果発揮中はダメ
+SIF TEQUIP:触手強制回復
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 88) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM88
+PRINTL 採血注射
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 88
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 採血注射
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 80
+DOWNBASE:1 += 100
+
+SOURCE:逸脱 = 2000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 2000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 2300
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 2600
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 2850
+ELSE
+	SOURCE:痛み = 3000
+ENDIF
+
+;EXP:吸血経験をみる
+IF EXP:吸血経験 < EXPLV:1
+	TIMES SOURCE:逸脱 , 2.00
+ELSEIF EXP:吸血経験 < EXPLV:2
+	TIMES SOURCE:逸脱 , 1.00
+ELSEIF EXP:吸血経験 < EXPLV:3
+	TIMES SOURCE:逸脱 , 0.35
+ELSE
+	TIMES SOURCE:逸脱 , 0.00
+ENDIF
+
+;ABL:調教者の技巧をみる
+IF ABL:PLAYER:技巧 < 1
+	TIMES SOURCE:痛み , 2.00
+ELSEIF ABL:PLAYER:技巧 < 2
+	TIMES SOURCE:痛み , 1.75
+ELSEIF ABL:PLAYER:技巧 < 3
+	TIMES SOURCE:痛み , 1.50
+ELSEIF ABL:PLAYER:技巧 < 4
+	TIMES SOURCE:痛み , 1.25
+ELSEIF ABL:PLAYER:技巧 < 5
+	TIMES SOURCE:痛み , 1.00
+ELSE
+	TIMES SOURCE:痛み , 0.75
+ENDIF
+
+;調教者に針さばき
+SIF TALENT:PLAYER:針さばき
+	TIMES SOURCE:痛み , 0.90
+;調教者に幼稚
+SIF TALENT:PLAYER:幼稚
+	TIMES SOURCE:痛み , 1.20
+
+;気丈
+SIF TALENT:気丈
+	TIMES SOURCE:痛み , 0.90
+;痛みに弱い
+IF TALENT:痛みに弱い
+	TIMES SOURCE:痛み , 1.20
+;痛みに強い
+ELSEIF TALENT:痛みに強い
+	TIMES SOURCE:痛み , 0.90
+ENDIF
+;幼児、幼稚
+IF TALENT:幼児 || TALENT:幼稚
+	TIMES SOURCE:痛み , 1.20
+	;恋慕なければさらに…
+	SIF TALENT:恋慕 == 0
+		SOURCE:反感追加 = 200
+ENDIF
+
+;鈴仙か永琳による使用
+SIF NO:PLAYER == 1028
+	TIMES SOURCE:痛み , 0.70
+SIF NO:PLAYER == 1029
+	TIMES SOURCE:痛み , 0.50
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+TCVAR:吸血経験 += 1
+
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+
+;血液採取処理
+SIF FLAG:12 & 8
+	CALL SWEET_POTATO_RED_BLOOD
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_88
+PRINTFORML %CALLNAME:TARGET%の腕に注射を打ち、血を吸い上げた……

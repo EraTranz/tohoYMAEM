@@ -1,0 +1,1725 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;7をキャラ番号に置換して使用してください(霊夢なら1、蓮子なら49、魅魔なら100)。
+;
+;このファイルでは調教開始時・終了時・調教中イベント・エンディング口上用関数などが置いてあります。
+;このファイル内で他の関数を呼び出す処理のある関数は、削除せず残すことを推奨します。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;以下、元口上の原文
+;小悪魔(司書＋長髪巨乳)の口上ファイルです
+;公式準拠の悪戯好き小悪魔とは違い、二次設定で見かける小悪魔です
+;多少色々経験済み＋無理矢理は好まないけどえっちは好き、という感じで書いてます
+;また、キャラの素質も変更した前提で書いています
+;変更していない場合はあわないかもしれませんので、その点はご注意をお願いします
+;
+;俺は自重をやめるぞ小悪魔ァー！
+;==============================================================
+;========================================================
+;口上ファイルの存在判定
+;========================================================
+;口上の存在判定（YM版）
+@TRY_1007
+RETURN 1
+
+;========================================================
+;専用口上表示の固定化判定
+;========================================================
+;口上表示の専用口上使用設定において、選択肢を専用口上のみに固定化させたい場合は2を、専用口上＋地の文のみに固定化させたい場合は3を返すようにしてください
+;なお、1を返した(またはこの関数をコメントアウト等で使用できないようにした)場合は両方の選択肢が出るように、1・2・3以外の数値を返した時はエラー回避のため専用口上を使用できないようになっています
+;@KOJO_1007_DISPLAY_SETTINGS
+;RETURN 1
+
+;========================================================
+;エキストラモード構文
+;自らの理想の嫁を表現するのに使う
+;========================================================
+@KOJO_1007_EXTRA_INITIALIZATION
+;PRINTFORML エキストラモードの選択
+;PRINTL [0]はい
+;PRINTL [1]いいえ
+;$INPUT_LOOP_1
+;INPUT
+;IF RESULT == 0
+	;PRINTFORMW エキストラモード実行
+;ELSEIF RESULT == 1
+	;PRINTFORMW エキストラモード無視
+;ELSE
+	;GOTO INPUT_LOOP_1
+;ENDIF
+
+;========================================================
+;調教開始口上
+;========================================================
+@KOJO_1007_SLAVE_MESSAGE_TRAIN_START
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中も戻る
+SIF TFLAG:899 >= 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+DRAWLINE
+
+;調教開始口上分岐
+IF CFLAG:5201 == 0
+	TRYCALL K1007_MESSAGE_START_1
+ELSE
+	TRYCALL K1007_MESSAGE_START_2
+ENDIF
+
+;-------------------------------------------------
+;初調教時
+;-------------------------------------------------
+@K1007_MESSAGE_START_1
+PRINTFORMW 「こんなところに閉じ込めて、何をする気ですか？」
+PRINTFORMW 「図書館の管理とパチュリー様のお世話をしないといけないんですが…」
+CFLAG:5201 = 1
+
+;-------------------------------------------------
+;調教開始時一回のみ
+;-------------------------------------------------
+@K1007_MESSAGE_START_2
+;屈服刻印Lv1
+IF CFLAG:7001 < 2 && MARK:屈服刻印 == 1
+	PRINTFORMW 「まだ、するんですか？」
+	PRINTFORMW 小悪魔は%CALLNAME:MASTER%を見ているが気にせず押し倒し、服を脱がした
+	CFLAG:7001 = 2
+	RETURN 1
+;屈服刻印Lv2
+ELSEIF CFLAG:7001 < 3 && MARK:屈服刻印 == 2
+	PRINTFORMW 「……なんですか？」
+	PRINTFORMW 自ら服を脱ぎだした小悪魔を見ていると、%CALLNAME:MASTER%に話しかけてきた
+	PRINTFORMW 「あなたに脱がされると服がしわだらけになるからです、他意はないですよ」
+	PRINTFORMW 「……するならさっさとしてください」
+	CFLAG:7001 = 3
+	RETURN 1
+;屈服刻印Lv3
+ELSEIF CFLAG:7001 < 4 && MARK:屈服刻印 == 3 && TALENT:恋慕 == 0
+	PRINTFORMW 「えと、その、するんですよね？　少し待ってくださいね」
+	PRINTFORMW そう言うと小悪魔は自分から服を脱ぐ
+	PRINTFORMW ブラをはずすと、豊満な胸が揺れながら現れた
+	PRINTFORMW 「あんまりじーっと見ないでください、これでも恥ずかしいんですから…」
+	CFLAG:7001 = 4
+	RETURN 1
+;屈服刻印Lv3+恋慕
+ELSEIF CFLAG:7001 < 5 && MARK:屈服刻印 == 3 && TALENT:恋慕
+	PRINTFORMW 調教に部屋を訪れると、小悪魔はベッドに腰掛けていた
+	PRINTFORMW 立ち上がると何もいわずに服を脱ぎ、裸になった
+	PRINTFORMW 「……あなたが私のことをどう思っているかわかりません、でも」
+	PRINTFORMW 「あなたのこと、好きです。好きに、なってしまいました…」
+	PRINTFORMW 少しずつ言葉が震え、ぽろぽろと涙をこぼし始める
+	PRINTFORMW 「これからどんなことがあろうと、私の心はあなたの元に……」
+	PRINTFORMW そう言うと声を上げて泣き出してしまう
+	PRINTFORMW %CALLNAME:MASTER%は小悪魔を優しく抱きしめながらキスをした
+	PRINTFORMW 「ご主人、様……大好きです……」
+	CFLAG:7001 = 5
+	RETURN 1
+
+;助手の有無をチェック（いない場合は二回目以降へ飛ぶ）
+ELSEIF ASSI < 0
+	CALL K1007_MESSAGE_START_3
+
+;助手パチュリー
+ELSEIF ASSI >= 0 && NO:ASSI == 1008
+	;初めて
+	IF CFLAG:7002 == 0
+		;恋慕＋恋慕時初口上（陥落イベント）が発生済み
+		IF TALENT:恋慕 && CFLAG:7001 >= 5
+			PRINTFORMW 『久しぶりね』
+			PRINTFORMW 「パチュリー様…！」
+			PRINTFORMW 『様、なんてつけなくてもいいのよ？私達にはご主人様がいるのだから』
+			PRINTFORMW 「それでも、パチュリー様は私にとって……」
+			PRINTFORMW 『まぁいいわ、それよりご主人様がお待ちよ？』
+			PRINTFORMW 「はい……！」
+		;それ以外
+		ELSE
+			PRINTFORMW 『ふふ、元気にしてたかしら？』
+			PRINTFORMW 「パチュリー様！？」
+			PRINTFORMW 『さぁ、あなたも楽しみましょう…』
+			PRINTFORMW 「あなた…パチュリー様に何を…」
+			PRINTFORMW 小悪魔は鋭い目つきで睨んでいる
+		ENDIF
+		CFLAG:7002 = 1
+		RETURN 1
+	;二回目以降
+	ELSEIF CFLAG:7002 == 1
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 『さぁ、一緒に楽しみましょう……』
+			PRINTFORMW 「はい、パチュリー様、ご主人様」
+			PRINTFORMW 「三人で、気持ちよくなりましょう♪」
+		;それ以外
+		ELSE
+			PRINTFORMW 「パチュリー様……なんで…」
+			PRINTFORMW 『すぐにわかるわ……素直になりなさい…』
+			PRINTFORMW 「いけませんパチュリー様…あ、あぁ…」
+			PRINTFORMW 『ふふ……かわいい子…』
+		ENDIF
+		RETURN 1
+	ENDIF
+;口上のある助手が居ない場合は、通常の二回目以降の口上へ飛ぶ
+ELSE
+	CALL K1007_MESSAGE_START_3
+ENDIF
+
+;-------------------------------------------------
+;調教開始時（２回目以降）
+;-------------------------------------------------
+@K1007_MESSAGE_START_3
+;反発刻印Lv3
+IF MARK:反発刻印 == 3
+	DRAWLINE
+	PRINTFORMW 暗い部屋の中で鈍く輝き、%CALLNAME:MASTER%を見つめる二つの瞳
+	PRINTFORMW その瞳から送られる視線に寒気を感じたが、%CALLNAME:MASTER%は近づいていった…
+;屈服刻印Lv0
+ELSEIF MARK:屈服刻印 == 0
+	DRAWLINE
+	PRINTFORMW 「また、するんですか」
+	PRINTFORMW 小悪魔は%CALLNAME:MASTER%を睨み付けているが気にせず押し倒し、
+	PRINTFORMW その手を押さえつけながら着ている服を無理やり脱がした
+;屈服刻印Lv1
+ELSEIF MARK:屈服刻印 == 1
+	DRAWLINE
+	PRINTFORMW 「まだ、するんですか？」
+	PRINTFORMW 小悪魔は%CALLNAME:MASTER%を見ているが気にせず押し倒し、服を脱がした
+;屈服刻印Lv2
+ELSEIF MARK:屈服刻印 == 2
+	DRAWLINE
+	PRINTFORMW 「したくて脱いでるんじゃありません、あなたが乱暴だからです」
+	PRINTFORMW 「勘違いもいいところです、したければどうぞ」
+	PRINTFORMW そう言う小悪魔に手を伸ばし、調教を開始した
+;屈服刻印Lv3＋恋慕無し
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕 == 0
+	PRINTFORMW 「あ……」　%CALLNAME:MASTER%を視界に捕らえると嬉しそうな顔を見せた
+	PRINTFORMW しかしそれも一瞬の事で、すぐにそのような表情は見られなくなった
+	PRINTFORMW (何を嬉しそうにしてるの、私……。そんなこと、そんな、こと……うぅ…)
+;屈服刻印Lv3+恋慕
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕
+	;口上講座の確立変動使ってみる、出るかなぁ
+	LOCAL = RAND:16
+	IF LOCAL == 0
+		PRINTFORML 部屋に入ると、小悪魔は裸に黒のガーターベルトのみを着けてベッドに寝転がっていた
+		PRINTFORML 豊かな胸は形が崩れておらず、乳首は天に向けてツンとしている
+		PRINTFORMW 小悪魔が少し動くとそれにあわせてふるんと揺れ、%CALLNAME:MASTER%を誘っているようだ
+		PRINTFORML 「ふふふ……また来たの？　あなたはもう私の虜ね…」
+		PRINTFORMW 「何度でも絶頂させて、極上の快楽をその体に教えてあげま…あげるわっ」
+		PRINTFORML 「……えーっと、それっぽい悪魔みたいにしてみたんですけど」
+		PRINTFORMW 「ど、どうでした？　興奮とか、しました？
+		PRINTFORMW 「な、なんとか言って……きゃあっ！？」
+		PRINTFORMW ヒャア！もう我慢できねえ！調教だ！！
+	ELSEIF LOCAL <= 2
+		PRINTFORMW 「あっ、また…調教してくれるんですね」
+		PRINTFORMW 「よかった……。あ、いえ、こっちの話です」
+		PRINTFORMW 「いっぱい気持ちよくしてあげますからね」
+	ELSEIF LOCAL <= 5
+		PRINTFORMW 「何をしてくれるんですか？　それとも、私がご奉仕してあげましょうか？　ご主人様♪」
+		PRINTFORMW 小悪魔は指を自分の唇にあて、もう片方の手で下着を少しずつずらしていく
+		PRINTFORMW 「いっぱいいっぱい、気持ちいいことしましょうね」
+	ELSEIF LOCAL <= 8
+		PRINTFORMW 「ご主人様、たまには紅茶でもどうですか？　美味しいですよ？」
+		PRINTFORMW そう言うと小悪魔は%CALLNAME:MASTER%に紅茶の入ったティーカップを渡した
+		PRINTFORMW 「飲んで一息ついたら、また私のこと愛してくださいね？」
+	ELSEIF LOCAL <= 10
+		PRINTFORML %CALLNAME:MASTER%は小悪魔の服に手をかけたが、珍しくそっと押し留められた
+		PRINTFORMW 「ご主人様……今日は、私が脱ぐ所を見て、興奮して下さい……♪」
+		PRINTFORML そういうと小悪魔はその豊満な肢体を淫らにくねらせながら、一枚、また一枚と
+		PRINTFORMW %CALLNAME:MASTER%に見せ付けるように服を脱ぎ捨てていく
+		PRINTFORML 小悪魔が豪奢なレースをあしらった、黒いシルク生地の淫靡な下着姿になった
+		PRINTFORMW その瞬間、%CALLNAME:MASTER%は獣欲を抑えきれなくなり小悪魔を押し倒して深いキスを交わし始める
+		PRINTFORMW 「やんっ……♪　ご主人様、いっぱいいっぱい、私を犯してくださいね…♪」
+	ELSEIF LOCAL <= 12
+		PRINTFORMW 「きゃっ……ご、ご主人様っ？！」
+		PRINTFORML %CALLNAME:MASTER%が部屋に入るなり、小悪魔はベッドの中に潜ってしまう
+		PRINTFORMW 不審に思った%CALLNAME:MASTER%は、小悪魔を優しく宥めながら布団をめくる
+		PRINTFORML 見ると、小悪魔の身体は既に汗にまみれ上気し、股間は愛液でぐちょぐちょに濡れそぼっていた
+		PRINTFORMW ……自慰をしていたのは明らかだった
+		PRINTFORMW 「ううー……だって、ご主人様が来るの、待ちきれなかったんですもん……」
+		PRINTFORML 顔を羞恥で真っ赤に染めた小悪魔の可愛らしさに、%CALLNAME:MASTER%は愛おしさと抑えきれない程の欲望を覚えた
+		PRINTFORMW %CALLNAME:MASTER%はそっと小悪魔を押し倒し、調教を開始した…
+	ELSE
+		PRINTFORML 「あ、やっと来てくれましたねご主人様っ」
+		PRINTFORMW 「こっちから行こうかと思ってたんですよ、もう……」
+		PRINTFORMW 「さ、早くしましょご主人様♪」
+		PRINTFORMW 小悪魔は自分から服を全て脱ぎ捨て、%CALLNAME:MASTER%にそのいやらしい身体を押し付けながら抱きついてきた
+	ENDIF
+ENDIF
+
+;========================================================
+;調教終了時の口上
+;========================================================
+@KOJO_1007_SLAVE_MESSAGE_TRAIN_END
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中も戻る
+SIF TFLAG:899 >= 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+DRAWLINE
+TRYCALL K1007_MESSAGE_END
+
+;--------------------------------------------------
+;調教終了時の口上
+;--------------------------------------------------
+@K1007_MESSAGE_END
+;反発刻印Lv3
+IF MARK:反発刻印 == 3
+	PRINTFORMW 小悪魔は冷たい視線を%CALLNAME:MASTER%に送っている
+	PRINTFORMW その目には怒りの感情が色濃く映っている
+;屈服刻印Lv1以下
+ELSEIF MARK:屈服刻印 <= 1
+	PRINTFORMW (ようやく終わった、いつまで続くのかしら……)
+	PRINTFORMW (パチュリー様……)
+;屈服刻印Lv2
+ELSEIF MARK:屈服刻印 == 2
+	PRINTFORMW (パチュリー様……、私……)
+	PRINTFORMW (ううん、まだ諦めない……)
+;屈服刻印Lv3
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕 == 0
+	PRINTFORMW 「はぁ、はぁ、んっ……」
+	PRINTFORMW 「え？もう、終わりなんですか…？」
+	PRINTFORMW 「い、いえ！もっとしてほしいという、わけでは、なくて…その…なんでもないです…」
+;屈服刻印Lv3＋恋慕＋体力500未満
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕 && BASE:体力 < 500
+	LOCAL = RAND:4
+	IF LOCAL == 0
+		PRINTFORMW 「こんなにしてもらえるなんて……幸せです」
+		PRINTFORMW %CALLNAME:MASTER%も激しい調教に疲れ、小悪魔の隣に寝転がる
+		PRINTFORMW 「ご主人様……、ずっと、ずっと…いっしょ…に……」
+		PRINTFORMW %CALLNAME:MASTER%の隣で小悪魔は静かに眠りへと落ちていった
+		PRINTFORMW だが、小悪魔の頬には一粒の涙が通った後があった
+		PRINTFORMW %CALLNAME:MASTER%はその筋を不思議に思いながらも、深い眠りへと落ちていった…
+	ELSE
+		PRINTFORMW 「はぁ、はぁ……さすがに、疲れました…」
+		PRINTFORMW 「でも、とても気持ちよかったです、ご主人様…」
+	ENDIF
+;屈服刻印Lv3＋恋慕
+ELSEIF MARK:屈服刻印 == 3 && TALENT:恋慕
+	LOCAL = RAND:4
+	IF LOCAL == 0
+		PRINTFORMW 「あ……、終わり、ですか…？」
+		PRINTFORMW 一瞬寂しそうな表情をしたように見えたが、うつむいていたためよくわからなかった
+		PRINTFORMW 「もう少しご主人様を感じたいと思ったんですけど、仕方ないですね…」
+	ELSE
+		PRINTFORMW 「はぁ、あんっ……、えっ？もう終わりですか？」
+		PRINTFORMW 「あと１回だけでいいですから、お口か私の中に出していただけませんか？
+		PRINTFORMW 「ね？ね？ご主人様ぁ、お願いします……」
+	ENDIF
+ENDIF
+
+;========================================================
+;@KOJO_X_MESSAGE_PALAMCNG
+;パラメータ変動をトリガーにした口上
+;パラメータ変動後に口上を発動します
+;========================================================
+@KOJO_1007_MESSAGE_PALAMCNG
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+
+;処女喪失時のメッセージ呼び出し
+SIF TFLAG:0
+	TRYCALL K1007_MESSAGE_LOST_VIRGIN
+;初めてPALAMがLV2超えた時の口上呼び出し
+FOR LOCAL, 0, 35
+	SIF PALAM:LOCAL + UP:LOCAL > PALAMLV:2 && CFLAG:(5320 + LOCAL) == 0
+		TRYCALLFORM K1007_MESSAGE_OVERLV2_{LOCAL}
+NEXT
+;絶頂時の口上呼び出し
+FOR LOCAL, 0, 50
+	SIF NOWEX:LOCAL
+		TRYCALLFORM K1007_MESSAGE_ORGASM_{LOCAL}
+NEXT
+;射精させた
+FOR LOCAL, 11, 29
+	SIF TFLAG:LOCAL
+		TRYCALLFORM K1007_MESSAGE_EJAC_PLAYER_{LOCAL}
+NEXT
+
+;-------------------------------------------------
+;処女喪失
+;-------------------------------------------------
+@K1007_MESSAGE_LOST_VIRGIN
+;恋慕時かつ主人のペニス
+IF TFLAG:2
+	;恋慕＋従順Lv5
+	IF TALENT:恋慕 && ABL:従順 >= 5
+		PRINTFORMW 「ご主人様……私本当に、ご主人様のものに……」
+		PRINTFORMW 「……えへへ、幸せです」
+		PRINTFORMW 小悪魔は涙を目の端に浮かべながらも、嬉しそうに微笑んでいる……
+	ENDIF
+;指挿入れで処女喪失（反感がかなり少ない）
+ELSEIF SELECTCOM == 4
+	;恋慕＋従順Lv5
+	IF TALENT:恋慕 && ABL:従順 >= 5
+		PRINTFORMW 「ご主人様……意地悪です」
+		PRINTFORMW 「……すみません、ちょっとだけ……」
+		PRINTFORMW 小悪魔は%CALLNAME:MASTER%に抱きついて嗚咽を漏らしている
+	;それ以外
+	ELSE
+		PRINTFORMW 「痛……っ！！やめて、やめてください……！！」
+		PRINTFORMW 「酷い……こんな……」
+	ENDIF
+;それ以外
+ELSE
+	;恋慕＋従順Lv5
+	IF TALENT:恋慕 && ABL:従順 >= 5
+		PRINTFORMW 「ご主人様……意地悪です」
+		PRINTFORMW 「……すみません、ちょっとだけ……」
+		PRINTFORMW 小悪魔は%CALLNAME:MASTER%に抱きついて嗚咽を漏らしている
+	;それ以外
+	ELSE
+		PRINTFORMW 「痛……っ！！やめて、やめてください……！！」
+		PRINTFORMW 「酷い……こんな……」
+	ENDIF
+ENDIF
+
+;----------------------------------------------------------
+;初めてPALAMがLV2超えた時の口上 CFLAG 5320～5355を使用
+;@KOJO_1007_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;初めて潤滑がLV2超えた CFLAG:5330
+;-------------------------------------------------
+@K1007_MESSAGE_OVERLV2_10
+;ローションを使った場合
+IF SELECTCOM == 60
+	PRINTFORMW 「冷たっ、なんですか……？」
+;それ以外
+ELSE
+	PRINTFORMW (私、濡れちゃってる…！？)
+	CFLAG:5330 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて欲情がLV2超えた CFLAG:5333
+;-------------------------------------------------
+@K1007_MESSAGE_OVERLV2_13
+;媚薬を使った場合
+IF SELECTCOM == 61
+	PRINTFORMW (我慢できない…気持ちいいこと、したいぃ……)
+;それ以外
+ELSE
+	PRINTFORMW (我慢できない…気持ちいいこと、もっと、もっとぉ…)
+	CFLAG:5333 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恥情がLV2超えた CFLAG:5335
+;-------------------------------------------------
+@K1007_MESSAGE_OVERLV2_15
+PRINTFORMW （嫌なのに……恥ずかしいのに……）
+PRINTFORMW （なんで、こんなに……気持ちいいの……？）
+CFLAG:5335 = 1
+
+;-------------------------------------------------
+;初めて恐怖がLV2超えた CFLAG:5337
+;-------------------------------------------------
+@K1007_MESSAGE_OVERLV2_17
+;PRINTFORMW 
+CFLAG:5337 = 1
+
+;----------------------------------------------------------
+;絶頂時の口上 CFLAG 5300～を使用
+;@KOJO_1007_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;Ｃ絶頂 CFLAG:5300
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_0
+;初めて
+IF CFLAG:5300 == 0
+	PRINTFORMW 「そんなにクリいじっちゃ……ダメ！やぁっ！」
+	CFLAG:5300 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＣ絶頂が50以上
+	IF EX:0 >= 50
+		;初めて
+		IF CFLAG:7014 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「ご主人様クリでイキます！やぁん！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「ダメ！クリもうダメやあぁっ！」
+			ENDIF
+			CFLAG:7014 = 1
+		;二回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「クリでまたいっちゃいます！ご主人様ぁ！ふあぁ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「そんなにいじっちゃ、あっあっイクっ！」
+			ENDIF
+		ENDIF 
+	ELSE
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｖ絶頂 CFLAG:5301
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_1
+;初めて
+IF CFLAG:5301 == 0
+	PRINTFORMW 「あそこが気持ちよくって、ふあっイッちゃう！！」
+	CFLAG:5301 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＶ絶頂が50以上
+	IF EX:1 >= 50
+		;初めて
+		IF CFLAG:7015 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「ご主人様ぁ！私、あそこで、おまんこでイキますっ！！」
+				PRINTFORMW 小悪魔は強い絶頂感に全身を震わせ、潮を吹き散らしながら達した
+			;それ以外
+			ELSE
+				PRINTFORMW 「あぁイッちゃう！あそこでイクぅっ！」
+			ENDIF
+			CFLAG:7015 = 1
+		;二回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「おまんこが気持ちよくって、気持ちよくってぇー！　イッちゃいますー！」
+				PRINTFORMW 小悪魔は全身をビクビクと激しく痙攣させながら、潮と愛液を同時に吹き散らして絶頂し続ける
+			;それ以外
+			ELSE
+				PRINTFORMW 「奥そんなに突かれるとっ！イク、あっあっあぁん！」
+			ENDIF
+		ENDIF 
+	ELSE
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ａ絶頂 CFLAG:5302
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_2
+;初めて
+IF CFLAG:5302 == 0
+	PRINTFORMW 「お尻でイッちゃいますっ！あぁっ！」
+	CFLAG:5302 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＡ絶頂が50以上
+	IF EX:2 >= 50
+		;初めて
+		IF CFLAG:7016 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「ああっおしりが！ご主人様、おしりが気持ちよくって……はぁんっ！」
+				PRINTFORMW 小悪魔はアナルの快楽をしっかり覚えこんだのか、とろん、と蕩けた顔で尻を振りまくった
+			;それ以外
+			ELSE
+				PRINTFORMW 「いやぁっ！なんで、なんでおしりでこんなに……ああっ！！」
+			ENDIF
+			CFLAG:7016 = 1
+		;二回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「ご主人様ぁっ！わたし、またおしりで……はぁんっ！」
+				PRINTFORMW すっかり快楽の虜になったのか、小悪魔は全身を打ち震わせている
+				PRINTFORMW 膣口からは愛液を、菊門からは腸液を垂らしながら、だらしない顔つきで絶頂し続けた
+			;それ以外
+			ELSE
+					PRINTFORMW 「ああっ！おしりが、おしりが気持ちいいのおっ！！」
+			ENDIF
+		ENDIF
+	ELSE
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｂ絶頂 CFLAG:5303
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_3
+;初めて
+IF CFLAG:5303 == 0
+	PRINTFORMW 「おっぱいそんないじっちゃやぁっ、ふあぁ！」
+	CFLAG:5303 = 1
+;２回目以降
+ELSE
+	;今回の調教でのＢ絶頂が50以上
+	IF EX:3 >= 50
+		;初めて
+		IF CFLAG:7017 == 0
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「ご主人様ぁ！もっとおっぱいいじって！あぁっ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「胸が、おっぱいがイクぅっ！」
+			ENDIF
+			CFLAG:7017 = 1
+		;二回目以降
+		ELSE
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORMW 「ご主人様またおっぱいでイッちゃいます！あっあっイクッ！」
+			;それ以外
+			ELSE
+				PRINTFORMW 「やぁおっぱいダメ、またイッちゃう！」
+			ENDIF
+		ENDIF
+	ELSE
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;噴乳 CFLAG:5304
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_10
+;初めて
+IF CFLAG:5304 == 0
+	;従順Lv4以上
+	IF ABL:従順 >= 4
+		PRINTFORMW 「わっ！ミルク出ちゃった……、変な気持ちよさがありますね」
+		PRINTFORMW 「……飲んで、みますか？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「えぇっ！？やっ、なにこれ……」
+		PRINTFORMW 「…あんっ、舐めないでくださいよ！」
+	ENDIF
+	CFLAG:5304 = 1
+;２回目以降
+ELSE
+	;従順Lv4以上
+	IF ABL:従順 >= 4
+		IF RAND:2 == 0
+			PRINTFORMW 「ふああっ……、出ちゃいましたね…」
+			PRINTFORMW 「えっと、また飲みますか？」
+			PRINTFORMW 小悪魔はまだ母乳を噴き出す乳房を持ち上げて、目の前に差し出してきた
+		ELSE
+			PRINTFORMW 「ご主人様ぁ！ミルクっ…ミルクいっぱい出ちゃいますぅっ！」
+			PRINTFORML 小悪魔は背中を反らせ、虚空に向けて乳首から盛大に母乳を噴き出した。
+			PRINTFORMW 「はぁ…すごぉい……私、牛さんみたいです……♪」
+		ENDIF
+	;それ以外
+	ELSE
+		PRINTFORMW 「あんまり絞っちゃダメですっ、んん」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精 CFLAG:5305
+;IF TFLAG:9 == 19でＶで逆レイプされて射精した場合を参照可
+;IF TFLAG:9 == 20でＡで逆レイプされて射精した場合を参照可
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_11
+;初めて
+IF CFLAG:5305 == 0
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 「ご主人様、私女の子なのに射精しちゃいますっ！」
+		PRINTFORMW 「んんっ！ふああぁっ！！」
+	;それ以外
+	ELSE
+		PRINTFORMW 「や、ダメっ出ちゃう、ああぁん！」
+	ENDIF
+	CFLAG:5305 = 1
+;２回目以降
+ELSE
+	;恋慕
+	IF TALENT:恋慕
+		LOCAL = RAND:9
+			IF LOCAL <= 1
+				PRINTFORMW 「出ちゃう！　精液でちゃいますご主人様ぁ！」
+				PRINTFORMW 小悪魔は腰を跳ねさせながら、陰茎から大量の精液を噴き出した…
+			ELSEIF LOCAL <= 3
+				PRINTFORMW 「やーっ！　止まんない、止まんないよぉご主人様ぁっ！」
+				PRINTFORMW 「せーえきとまんな……やぁっ出るぅっ！」
+			ELSEIF LOCAL <= 5
+				PRINTFORMW 「せーえき撒き散らして、びくびくしちゃってるよぉ…」
+				PRINTFORMW 「あぅ…ご主人様そんなに見ないでぇ…」
+			ELSEIF LOCAL <= 7
+				PRINTFORMW 「ご主人様ぁっ！　おちんちん気持ちよくって私っ、私ぃっ…やぁぁぁぁっ♪」
+				PRINTFORMW 小悪魔は腰をガクガクと激しく振りながら、そこら中に精液を撒き散らした
+			ELSE
+			;ごめん、唐突に思いついたんだ
+				PRINTFORML 「はぁ、はぁ……。あのぅ、ご主人様ぁ……」
+				PRINTFORMW 「ご主人様って、私の中でイクとすごい気持ちよさそうじゃないですかぁ」
+				PRINTFORMW 「だ、だから…ご主人様の中でイクと、私も気持ちいいかなぁって…」
+				PRINTFORMW 「優しくしますから、い…入れてもいいですか？　いいですよねっ！？」
+				PRINTFORML 射精直後にも関わらず、小悪魔の陰茎はギンギンに復活している
+				PRINTFORMW 血走った目で今にも襲い掛かって来そうだ
+				PRINTFORMW %CALLNAME:MASTER%は　にげだした！
+				PRINTFORML 　
+				LOCAL = RAND:5
+				IF LOCAL <= 1
+					PRINTFORMW 「そんな全速力で逃げなくっても……ぶぅ」
+					PRINTFORMW 小悪魔は頬を膨らませて残念そうにしている
+				ELSE
+					PRINTFORMW しかし　まわりこまれてしまった！
+					PRINTFORMW 「うふふふふ……どこに行こうとしたんですかぁ、ご・しゅ・じ・ん・さ・ま♪」
+					PRINTFORMW 「さぁ……、イキますよご主人様……！」
+					PRINTFORMW %CALLNAME:MASTER%のアッー！という叫び声が部屋に寂しく響いた……
+					EXP:PLAYER:Ａ経験 += 1
+					EXP:PLAYER:苦痛快楽経験 += 1
+					EXP:絶頂経験 += 1
+					EXP:射精経験 += 1
+					PRINTL 小悪魔射精
+					PRINTL 小悪魔の射精経験＋１
+					PRINTL あなたのＡ経験＋１
+					PRINTFORML 「はぁ～♪　すごかったです、またお願いしますね！」
+					PRINTFORMW ツヤツヤとした表情の小悪魔を、%CALLNAME:MASTER%は尻を押さえて蹲りながら見つめていた
+				ENDIF
+			ENDIF
+	;それ以外
+	ELSE
+		PRINTFORMW 「あっダメです！　精液、そんな、あぁっ！！」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;放尿 CFLAG:5306
+;放尿または強制放尿コマンド時は呼び出さない
+;-------------------------------------------------
+@K1007_MESSAGE_ORGASM_12
+SIF SELECTCOM == 111 || SELECTCOM == 620
+	RETURN 0
+;初めて
+IF CFLAG:5306 == 0
+	;PRINTFORMW 
+	CFLAG:5306 = 1
+;２回目以降
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;膣内に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_11
+;主人のペニス
+IF TFLAG:35
+	;恋慕
+	IF TALENT:恋慕
+		;正常位で射精した場合
+		IF SELECTCOM == 20
+			IF RAND:7 == 0
+				PRINTFORML 「ご主人様来て、来てっ。私の中に、いっぱい、いっぱい……あぁっ！」
+				PRINTFORMW ずぷっと小悪魔の一番奥に差し込んで射精する
+				PRINTFORML 脈動にあわせて精液が溢れ、そのたびに小悪魔は体を震えさせる
+				PRINTFORMW 一番奥に押し込んだまま、腰をくくっと使いながら射精の心地よさを味わう
+				PRINTFORML 「ゃんっ、ご主人様……それ感じちゃう……あぁん♪」
+				PRINTFORMW ひくひくと震える膣内とかわいい喘ぎに、%CALLNAME:MASTER%は再び陰茎を硬くしていた
+			ELSEIF RAND:6 == 0
+				PRINTFORML 「っ！　～～～……っ！　は……はぁ……はぁ……いっぱい……入ってきます……」
+				PRINTFORMW ゆっくりと息を吐き、呼吸を整える小悪魔
+				PRINTFORML %CALLNAME:MASTER%も呼吸を整えながら、精液にまみれた膣内をかき回す
+				PRINTFORMW その間お互いを見つめあい、微笑みあう
+				PRINTFORML 「気持ちよくイケました？　物足りないようでしたら、もっとしてもいいんですよ」
+				PRINTFORMW 小悪魔の誘いにあなたはキスをして返し、こつんと奥をつついてやった
+			ELSEIF RAND:5 == 0
+				PRINTFORML %CALLNAME:MASTER%はあまりの気持ちよさに小悪魔に強く抱きついてしまう
+				PRINTFORMW 小悪魔はそんな%CALLNAME:MASTER%の背中に手を回し、やさしく撫で回す
+				PRINTFORML 「んっ、いいですよ……全部出しちゃってください……」
+				PRINTFORMW 「私の中……ご主人様で満たしてください……あぁ……あっつい……」
+				PRINTFORML 小悪魔の母性あふれる声と甘い香りが更に射精を促し、膣内を満たしていく
+				PRINTFORMW 「ふぁ……お腹いっぱいにご主人様です……えへへ……♪」
+			ELSEIF RAND:4 == 0
+				PRINTFORML 射精しながらも腰を振り、膣内の壁へと分身を擦りつける
+				PRINTFORMW 精液に満たされた膣内を擦られるのは小悪魔も気持ちいいのか、体をびくんっと跳ねさせる
+				PRINTFORMW 射精中の陰茎は敏感どころではなく、擦り付ける度に%CALLNAME:MASTER%の全身が快楽に跳ねる
+				PRINTFORMW お互いにびくびくと震えながら、全身に広がる快楽を楽しんだ
+			ELSEIF RAND:3 == 0
+				PRINTFORML 脈動と同じタイミングで締め付けてくる膣内に、射精はなかなか止まらなかった
+				PRINTFORMW 精液全てを搾り取られそうな膣内から陰茎を引き抜こうにも力が入らない
+				PRINTFORMW 「あんっ、もっと出してくださいよー。……サービス、しますよ？」
+				PRINTFORMW 艶やかな小悪魔の笑顔に%CALLNAME:MASTER%は陰茎を再び硬くしていた…
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「あっ…、あぁっ……中であったかいの出てます……」
+				PRINTFORMW 「私の中、ご主人様の精液でいっぱいにしてください……」
+				PRINTFORMW ぽーっとした笑顔で見つめる小悪魔は、天使のように見えた
+			ELSE
+				PRINTFORML 「はぁ、はぁっ、ご主人様ぎゅってしてください……っ」
+				PRINTFORMW %CALLNAME:MASTER%は射精しながら小悪魔に抱きつく
+				PRINTFORML 抱きつくときに亀頭の先が膣内を擦り、さらに精液を吐き出す
+				PRINTFORMW 「あぁっ……。今、いっぱい出ましたよね。中がとろとろになっていきます……」
+				PRINTFORMW お互いの体の熱さを感じながら、精液を流し込んでいった
+			ENDIF
+		;後背位で射精した場合
+		ELSEIF SELECTCOM == 21
+			IF RAND:6 == 0
+				PRINTFORML %CALLNAME:MASTER%は射精しながらもパンッと音が鳴るほど強く腰を振り続ける
+				PRINTFORMW 「やっ、激しっ！　ご主人様イってるのに、すごっ、いぃっ！」
+				PRINTFORML これで最後とばかりに根元まで一気に挿入し、射精を続ける
+				PRINTFORMW お互いに体を震わせながら、荒い息を整える
+				PRINTFORML 「はぁ…はぁ…まだでてます？　んっ……ふふ…締めたら跳ねましたね、かわいい」
+				PRINTFORMW 少し体を捻って振り返る小悪魔は、体のラインが妖艶で、誘っているように見えた
+			ELSEIF RAND:5 == 0
+				PRINTFORML 「あっ、あっ……精液が奥を叩いてます……あぁっ」
+				PRINTFORMW 陰茎を奥深くまで入れ、精液を流し込む
+				PRINTFORML 小悪魔の腰からお尻にかけてのラインをじっくりと撫で回す
+				PRINTFORMW 「な、なんか手つきがえっちですよぉ……ふあぁんっ」
+				PRINTFORML 小悪魔は体をぶるっと震わせ、息を荒くしながら振り返る
+				PRINTFORMW その様子があまりにも艶やかで、%CALLNAME:MASTER%は陰茎を硬くしていた
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「ふふっ、いっぱい出てますね……」
+				PRINTFORMW 射精は止まったが、抱きついてしばらく小悪魔の膣内を味わった
+				PRINTFORMW 「まだ硬いままですね……。えっと、このままもう１回しますか？」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「そこ、そこで出して……っ！　あぁっ熱いっ……！」
+				PRINTFORML 腰を突き出し、子宮口へ陰茎を押し付けて射精を開始する
+				PRINTFORMW 精液が送り込まれるたびにびくんっと体を震わせて喜ぶ小悪魔
+				PRINTFORMW 「はぁ、あぅ……子宮の奥までご主人様でいっぱいです……♪」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 射精を開始すると同時に膣内はぎゅっと締まり、ぐにぐにと蠢きだす
+				PRINTFORMW あまりの気持ちよさに最奥に押し付けたまま腰を打ちつけ、長い長い射精を味わった
+				PRINTFORMW 「はぁ、はぁ……、もー激しすぎですよご主人様。おちんちんが子宮まで入っちゃうかと思いました…」
+			ELSE
+				PRINTFORMW 「あぁっ、ご主人様が中でどくんどくんって、熱い……」
+				PRINTFORMW 小悪魔の腰を掴み、脈動と同時に突き上げて中に精液を注いでいく
+				PRINTFORMW 「もっと出してください……何度でも私で、イッていいですからね」
+			ENDIF
+		;対面座位で射精した場合
+		ELSEIF SELECTCOM == 22
+			IF RAND:6 == 0
+				PRINTFORML 「いっぱいいっぱい出してくださいね、その分だけ気持ちよくなれるんですから」
+				PRINTFORMW 小悪魔は%CALLNAME:MASTER%の首に腕を回し、笑顔で話しかける
+				PRINTFORML 「ところで、次は何でイキます？　もう１回これでもいいですし、後ろからでも……」
+				PRINTFORMW %CALLNAME:MASTER%が射精中にも関わらず、次の精液を求めているようだ…
+				PRINTFORML 「私はやっぱり騎乗位が好きですし……。でもご主人様おっぱい好きですし、こっちにします？」
+				PRINTFORMW %CALLNAME:MASTER%の顔に柔らかな胸を押し当ててアピールする
+				PRINTFORMW 顔に伝わる柔らかさと小悪魔の体温、次への期待が陰茎を再び膨張させる
+				PRINTFORMW 「あ……ご主人様ったら期待しました？　中で膨らみました……ふふっ♪」
+			ELSEIF RAND:5 == 0
+				PRINTFORML 「ご主人様ぁ、もっと、もっとぉ～……。もっと出してくださいよ～……」
+				PRINTFORMW 射精中にも関わらず、小悪魔は腰を振っておねだりをしてくる
+				PRINTFORML 「ほら、休んじゃだめですよ。もっと出すんですから……あんっ」
+				PRINTFORMW くっ、くっと腰を回して膣内に陰茎を擦り付ける
+				PRINTFORML %CALLNAME:MASTER%は小悪魔から離れようとするも、ぎっちりと抱きしめられている
+				PRINTFORMW 「もっと気持ちよくしてあげますからぁ、精液ー、せーえきぃだしてぇご主人様ぁ～」
+				PRINTFORMW 猫なで声で精液を要求する小悪魔は、さしずめ淫魔のように見えた
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「あっ……精液出てます……。ご主人様はそのまま出しててくださいね」
+				PRINTFORMW そう言うと小悪魔は%CALLNAME:MASTER%の肩に手を置いて目を閉じ、ゆったりとした腰使いで動き続ける
+				PRINTFORML 小さく漏れる嬌声と、目の前でふるふると揺れる豊かな胸
+				PRINTFORMW 小悪魔の全てが%CALLNAME:MASTER%の射精を促そうとしているようだ
+				PRINTFORML その姿に心が満たされてくるが、性欲は満たされないようだ
+				PRINTFORMW 「まだ元気ですね……。もう１回、しましょ？」
+			ELSEIF RAND:3 == 0
+				PRINTFORML 射精と同時に小悪魔を抱き寄せ、豊満な胸に顔を埋める
+				PRINTFORMW 小悪魔は%CALLNAME:MASTER%の頭を撫でながら、微笑む
+				PRINTFORML 「いいですよ……。我慢なんかいりません、私の中に全て出して……」
+				PRINTFORMW 体の温かさと体からほのかに立ち上る香り、やさしく締め付ける膣内
+				PRINTFORML そして母性あふれる声が%CALLNAME:MASTER%の全身に沁みこみ、更なる快楽を求めてしまう
+				PRINTFORMW 「あっ……。ふふ、いいですよ。いっぱい、しましょ……♪」
+			ELSEIF RAND:2 == 0
+				PRINTFORML 射精したまま小悪魔と見つめあい、何も言わずにお互いに顔を近づける
+				PRINTFORMW 「んっ……ちゅ……れろ……ん…ちゅるる……ふぁ……っ♪」
+				PRINTFORML ねっとりと舌を絡ませあうディープキスをしながら精液を流し込む
+				PRINTFORMW 「んふっ……ふー……んー……ぷぁ……ご主人様ぁ」
+				PRINTFORMW おねだりをするような小悪魔の瞳に、%CALLNAME:MASTER%は陰茎を再び硬くしていた
+			ELSE
+				PRINTFORML 脈動とともに精液を流し込んでいると、小悪魔に抱きしめられ、胸に顔を押し付けられた
+				PRINTFORMW 豊満な胸から伝わるやわらかさと暖かさ、鼓動が%CALLNAME:MASTER%の顔に伝わる
+				PRINTFORML 「私どきどきしてます……。何度も精液注いでもらってるのに……」
+				PRINTFORMW 谷間から少し顔を上げて小悪魔の顔を見ると切なそうな表情をしている
+				PRINTFORML 「もっとほしいんです……ご主人様を感じたい……」
+				PRINTFORMW 小悪魔のほうから%CALLNAME:MASTER%にキスをし、膣内が貪欲に動き始めた
+			ENDIF
+		;背面座位で射精した場合
+		ELSEIF SELECTCOM == 23
+			IF RAND:6 == 0
+				PRINTFORML 「あぁっ！　あぁんすごぉい……びくんびくんしてるぅ……」
+				PRINTFORMW 小悪魔は手を自分の胸に当て、精液の熱さに身を震わせている
+				PRINTFORML %CALLNAME:MASTER%は何度か突き上げながら射精し、小悪魔の中を白濁で染め上げる
+				PRINTFORMW 「中を精液が伝ってるの……わかります。すごい、えっちで気持ちいい……」
+				PRINTFORMW 「ご主人様で染まったって感じで……幸せなんです」
+			ELSEIF RAND:5 == 0
+				PRINTFORML 「ふぁ…出てるぅ……。あっ、動いちゃだめですよぉ……」
+				PRINTFORMW 「後ろからぎゅってしてください……。んっ……安心します」
+				PRINTFORML 「とくん、とくんってご主人様の暖かいのが……入ってきてます」
+				PRINTFORMW 小悪魔が腰を揺すると、粘着性のある水音が結合部から響く
+				PRINTFORML 「えっちな音……。ね、もっとしませんか？」
+				PRINTFORMW 小悪魔は遊びに誘うように、%CALLNAME:MASTER%に次をねだっている
+			ELSEIF RAND:4 == 0
+				PRINTFORML %CALLNAME:MASTER%は射精の快楽に耐え切れず、小悪魔を抱きしめる
+				PRINTFORMW 力の加減ができず、ぎゅっと小悪魔の胸を掴んでしまう
+				PRINTFORML 豊満な胸に指が埋もれ、柔らかさが伝わってくる
+				PRINTFORMW そのまま射精が終わるまで抱きしめ続け、流し込み続けた
+				PRINTFORML 「ご主人様ぁ、おっぱいちょっとひりひりします……やさしく撫でてくれませんか？」
+				PRINTFORMW %CALLNAME:MASTER%はやさしく揉みまわし、乳首も刺激してやる
+				PRINTFORML 「あっ……ひりひりしたとこ撫でられて……なんか気持ちいっ、んんっ」
+				PRINTFORMW 膣内が喜びを表すように絡みつき、陰茎は再び大きく膨らんでいた
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「んんんっ……あぁ……出てます、入ってきますぅ……」
+				PRINTFORMW 小悪魔は前に両手をつき、膣内を焼く精液の熱さに体を震わせている
+				PRINTFORML この体勢は張りのあるお尻と背中のラインが強調され、とてもいやらしい
+				PRINTFORMW %CALLNAME:MASTER%は小悪魔の腰を掴み、ゆっくり前後に動かす
+				PRINTFORML 「やぁん……出しながら動いたら…気持ちよくなって……ふあぁ」
+				PRINTFORMW 精液を出しながら受けるゆるやかな快楽は、再び陰茎を硬くするには充分な刺激だった
+			ELSEIF RAND:2 == 0
+				PRINTFORML %CALLNAME:MASTER%は射精と同時に小悪魔の腰を引き寄せ、最奥で放つ
+				PRINTFORMW そのまま脱力してしまい、%CALLNAME:MASTER%は後ろに倒れこむ
+				PRINTFORML 小悪魔は%CALLNAME:MASTER%が倒れた事に気づいたのかはわからないが、
+				PRINTFORMW ゆっくりと上下に腰を振り始め、気持ちいい射精を味わってもらおうとしているようだ
+				PRINTFORML 陰茎が小悪魔の中を出たり入ったりしている様子が見え、視覚から快楽が送られてくる
+				PRINTFORMW 小悪魔は振り返ると、妖しくも美しい微笑みで%CALLNAME:MASTER%を魅了する
+				PRINTFORML %CALLNAME:MASTER%は腕に力を入れて起き上がり、後ろから抱きついてキスをする
+				PRINTFORMW 「ちゅっ。ふふっ、気持ちよく出せました？　まだ出し足りなければ、もっと……ね？」
+			ELSE
+				PRINTFORML 「どくっどくって、いっぱい精液が入ってきてます……」
+				PRINTFORMW 小悪魔は%CALLNAME:MASTER%の手を取り、腹部を触らせる
+				PRINTFORML 「ほら……中で震えながらどくんって……わかりますか？」
+				PRINTFORMW %CALLNAME:MASTER%は小悪魔に体を密着させ、耳を甘噛みする
+				PRINTFORML 「やっ、耳は敏感なんですって……。体が震えて……んんっ」
+				PRINTFORMW 体の震えは膣内にも伝わり、陰茎を刺激し、じわじわと膨らんでいった
+			ENDIF
+		;それ以外（騎乗位で射精した場合、のはず）
+		ELSE
+			IF RAND:10 == 0
+				PRINTFORML 「ふふ、気持ちよく出してます？　でも、もっと出ますよね？」
+				PRINTFORMW そう言うと腰の動きを再開し、新たな快楽を%CALLNAME:MASTER%に叩き込む
+				PRINTFORML 小悪魔の腰の動きに合わせて精液を噴出し、激しい快楽に全身が震え始める
+				PRINTFORMW 「あはっ♪　いっぱい出てる、たまたまの中身全部出しちゃいます？」
+				PRINTFORML 小悪魔はとても楽しそうだが%CALLNAME:MASTER%はそれどころではない
+				PRINTFORMW 与えられる快楽が許容量を超え、痙攣に近い震えが襲い始める
+				PRINTFORML %CALLNAME:MASTER%は持っている力を振り絞り、小悪魔の腰を止める
+				PRINTFORMW その際に膣内がぎゅっとしまり、全身を跳ね上げながら大きく射精する
+				PRINTFORML 「ちょっと……やりすぎましたかね？　ご、ごめんなさい……」
+				PRINTFORMW %CALLNAME:MASTER%は全身をびくびくと震えさせ、しばらく動けなかった
+			ELSEIF RAND:9 == 0
+				PRINTFORML 射精を開始しても小悪魔は腰の動かす速度を変えずに振ってくる
+				PRINTFORMW 「んんっ？　どうかしましたかご主人様……くすくす」
+				PRINTFORML 小悪魔は妖艶な微笑を浮かべながら腰を止めようとしない
+				PRINTFORML %CALLNAME:MASTER%は小悪魔の腰に手を伸ばし、押さえつけて止めようとするが、
+				PRINTFORMW 快感に震えて力が出ず、小悪魔の責めを止めることができない
+				PRINTFORML 「うふふ……いい顔ですご主人様。気持ちよさで苦しいっていう顔です……」
+				PRINTFORMW きつく陰茎を締め付けられながら腰を振られ、長い長い射精を続けさせられる
+				PRINTFORML 少しずつ速度が落ち、ようやく腰が止まった
+				PRINTFORMW 「たまにはこんな苦しい快楽、っていうのはどうかなと……やりすぎました？」
+			ELSEIF RAND:8 == 0
+				PRINTFORML 「んっ、んっ、んんっ。いくら気持ちいいからってそんなに跳ね上げられると……」
+				PRINTFORMW 脈動に合わせて腰が跳ね上がり、小悪魔の中を擦りあげてしまう
+				PRINTFORML 「その、もっとしてほしいってねだってるみたいで……したくなっちゃう」
+				PRINTFORMW ゆっくりと腰が前後に動き始め、%CALLNAME:MASTER%を快楽へと導き始める
+				PRINTFORMW 「もう一度、私の中を味わいませんか……？」
+			ELSEIF RAND:7 == 0
+				PRINTFORML 小悪魔の中に射精すると、足をぎゅっと閉じて%CALLNAME:MASTER%の挟み込む
+				PRINTFORMW 脈動の度に体を震わせ、かわいらしく喘ぐ小悪魔
+				PRINTFORML 脈動がおさまってくると、体を後ろに反らし、足をＭ字に開く
+				PRINTFORMW 手を%CALLNAME:MASTER%の膝の少し上に置き、ゆっくり腰を回転させる
+				PRINTFORML 回転にあわせて豊満な胸もふるふると揺れている
+				PRINTFORMW 「イった直後を楽しんでもらうには、適度な直接の刺激と目からの刺激……」
+				PRINTFORMW 「あんっ、もう１回イキたくなったならそのまま出しちゃっても構いませんからね？」
+			ELSEIF RAND:6 == 0
+				PRINTFORML ギリギリまで我慢していたが、小悪魔の腰使いに耐え切れず精液を吹き上げる
+				PRINTFORMW 「来たぁっ、精液いっぱいびゅくびゅくって……はああぁぁ～～……♪」
+				PRINTFORML 喜びの声を上げながらも腰を動かすことをやめない小悪魔
+				PRINTFORMW 快楽に腰を跳ね上げてしまい、自ら小悪魔を上下運動させる形になってしまう
+				PRINTFORMW 「うふふ、まだ足りないんですかぁ？　いいですよ……いっぱいしましょ？」
+			ELSEIF RAND:5 == 0
+				PRINTFORML 射精の脈動と同時に腰を突き上げる%CALLNAME:MASTER%
+				PRINTFORMW その度に小悪魔はかわいらしい喘ぎ声を上げ、%CALLNAME:MASTER%の耳から楽しませる
+				PRINTFORML 突き上げる度にふるっと豊満な胸が揺れ、目を楽しませる
+				PRINTFORMW 揺れる赤い長髪からふわっと香る匂いで、鼻を楽しませる
+				PRINTFORML 触れている肌は汗でしっとりと濡れ、火照っていて、手に吸い付くようだ
+				PRINTFORML 陰茎をやさしく撫で回す膣内は、%CALLNAME:MASTER%を再び勃ちあがらせる
+				PRINTFORMW %CALLNAME:MASTER%は全身で小悪魔という存在を感じ、普通では味わえないような満足感を得る
+				PRINTFORML 「んんっ。ご満足いただけましたか？　……まだみたいですねぇ」
+				PRINTFORMW 「答えなくてもわかります、中のご主人様が元気ですもん♪」
+				PRINTFORMW 「それでは、次はどうやってイキたいですか♪」
+			ELSEIF RAND:4 == 0
+				PRINTFORML 射精直後の敏感な陰茎をきゅんっと小悪魔の膣内が締め付け、蠢きだす
+				PRINTFORMW 膣内は陰茎に絡みつきながら優しく締め上げると、陰茎は再び膨張を始める
+				PRINTFORMW 「イったばっかりなのに…もうこんなに太く、かたぁくなって……」
+				PRINTFORMW 「さぁご主人様、そのおっきなおちんちんとあっつい精液で、私を犯してください♪」
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「はっ、あああぁぁ～～～っ……♪」
+				PRINTFORMW 「びゅくっびゅくってあっついのが……、あぁっ精液気持ちいい…♪」
+				PRINTFORML 小悪魔は精液の熱さに体を震わせながら腰を動かす
+				PRINTFORMW 腰を前にくっと出すタイミングと脈動が重なり、その度に精液を吹き上げてしまう
+				PRINTFORMW 「存分に出してくださいね、いくらでも受け入れてあげますから……」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「あっ♪　あっ♪　あぁっ……♪」
+				PRINTFORMW 「ご主人様の腰も、おちんちんも跳ねてます……ふふっ」
+				PRINTFORMW 「もう１回、イキたくありませんか？　気持ちよくしてあげますよ」
+			ELSE
+				PRINTFORMW 小悪魔の最奥で射精すると、促すように優しく締め付けながらゆっくりと腰を振ってくる
+				PRINTFORMW 「んっ……ふふっ気持ちよさそうです。たくさん出してくださいね」
+				PRINTFORMW 精液を出し切るまでゆったりとした腰使いと締め付けを味わい続けた
+			ENDIF
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:4 == 0
+			PRINTFORML (あっ……おちんちんふるふるってしてる……)
+			PRINTFORMW 「あの、出ちゃいそうですか？　射精、したいんですよね？」
+			PRINTFORML 「遠慮しないで中に全部出しちゃってくださいね……ふぁ…あ…あっ……」
+			PRINTFORMW 「すごい出てますね……ひゃ……精液だけで、気持ちよくなっちゃいそう……」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「一番奥に当たって……ふぁ、すごい勢い……」
+			PRINTFORMW 「中の……まだ元気……。すごい……んぅっ……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「ふあぁ……あっつい、よぅ……」
+			PRINTFORMW 「精液……気持ちいい……」
+		ELSE
+			PRINTFORMW 「中で、中でどくんって精液出しちゃ……はぁん…」
+			PRINTFORMW 膣内は精液の熱さに喜び、陰茎に絡み付いてきた
+		ENDIF
+	;それ以外
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW (精液だめ……中が、膣が喜んじゃうよぅ……！)
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「あっ！　あっ……あぁ……」
+			PRINTFORMW 膣内に感じる精液の熱さに小悪魔は蕩けた表情を浮かべている
+		ELSE
+			PRINTFORMW 「やっ、お腹の中熱い……、あぁダメぇ……」
+		ENDIF
+	ENDIF 
+;それ以外
+ELSE
+ENDIF
+
+;-------------------------------------------------
+;アナルに射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_12
+;主人のペニス
+IF TFLAG:35
+	;恋慕
+	IF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「やぁん、イキながらお尻の中で暴れないでっ……あぁっ」
+			PRINTFORMW 「でも、ご主人様が感じられますから、嫌じゃないですよ…」
+			PRINTFORMW %CALLNAME:MASTER%が腰を振って射精する度に、それに合わせて小悪魔も全身を震わせた
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「んんっ……どろどろしたあっついのが、染みこんでくる…」
+			PRINTFORMW 「おまんこに出してもらうのとは違いますね…」
+			PRINTFORMW 小悪魔は熱っぽい溜息を吐きながら、直腸で%CALLNAME:MASTER%の精液を飲み込む
+		ELSE
+			PRINTFORMW 「あっ、お尻の中にあっついの、いっぱい……」
+			PRINTFORMW 「んんぅ……中で震えてます…」
+			PRINTFORMW 小悪魔は嬉しそうに呟きながら、直腸に力を込めて陰茎から精液を搾り取る
+		ENDIF
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 「お尻の中で、んんんっ、どくんって…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「いやぁ…お尻の中になんて出さないでください…」
+	ENDIF
+;それ以外
+ELSE
+ENDIF
+
+;-------------------------------------------------
+;髪に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_13
+;PRINTFORMW 
+
+;-------------------------------------------------
+;顔に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_14
+;PRINTFORMW 
+
+;-------------------------------------------------
+;口に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_15
+;精液中毒Lv5
+IF ABL:精液中毒 >= 5
+	IF RAND:6 == 0
+		PRINTFORML 「んんっ！　んっく……じゅっ、ちゅくっ……んぅ……」
+		PRINTFORMW 亀頭だけを咥えた小悪魔の口に精液を流し込む
+		PRINTFORML 小悪魔は亀頭の裏に舌を這わせ、波打たせて快楽を送り、射精を促す
+		PRINTFORMW 「ごくんっ……。どろどろの精液……おいしい……」
+		PRINTFORMW 「いっぱい我慢したんですね、すごい勢いでしたよ？　……まだイケそうですか？」
+	ELSEIF RAND:5 == 0
+		PRINTFORML 小悪魔の口の中で射精を開始するが、小悪魔は頭を動かすことをやめない
+		PRINTFORMW 絶頂中にさらに絶頂を味わうような快楽を叩き込まれ、%CALLNAME:MASTER%の腰ががくがくと震えだす
+		PRINTFORML 小悪魔の肩に手を乗せてどうにか倒れずにすんだが、膝も震えだしいつ倒れてもおかしくない
+		PRINTFORMW そんな%CALLNAME:MASTER%の腰に腕を回し、陰茎を深くくわえ込み精液を吸い上げる小悪魔
+		PRINTFORML 長い長い射精と絶頂がようやく終わり、%CALLNAME:MASTER%は倒れこむように座る
+		PRINTFORML 「んっ……ちゅる……おいしい♪　たまたまを刺激してあげますからもう１杯お願いしますね」
+		PRINTFORMW 笑いながらそう言う小悪魔を見て、吸い尽くされるのではないかと思う%CALLNAME:MASTER%だった
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 小悪魔は射精する直前に深く咥えこみ、喉で精液を受け止める
+		PRINTFORMW 送り込まれる精液を喉を鳴らしながら飲み干してゆく……
+		PRINTFORMW 「んんっ…ごちそうさまでした。では、おかわりお願いしますね？」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「んん……もっと、もっと飲ませて……」
+		PRINTFORMW 「お腹の中せーえきでいっぱいにしてぇ……」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「はあぁ…すごい、おいしいよぉ…せーえきおいしい……」
+		PRINTFORMW 「まだ出ますよね…、出して、もっと出して…、せーえき出してぇ…」
+	ELSE
+		PRINTFORMW 小悪魔は射精が終わったにもかかわらず、鈴口に口をつけて吸い上げようとしている
+		PRINTFORMW そんな小悪魔をどうにか陰茎から引き剥がした
+		PRINTFORMW 「やーぁ、まだ出るんです　！すぐお口でしてあげますから出してください！」
+	ENDIF
+;精液中毒Lv3
+ELSEIF ABL:精液中毒 >= 3
+	IF RAND:6 == 0
+		PRINTFORML %CALLNAME:MASTER%が射精する直前に口から陰茎を引き抜く
+		PRINTFORMW 亀頭の裏に舌を押し当て、口を開いて待つ小悪魔
+		PRINTFORML 射精を開始すると震える陰茎から精液が飛び出し、小悪魔の口の中へと飛び込んでいく
+		PRINTFORMW 舌先がちろちろと動き、その度に快楽に震えて多量の精液を吐き出す
+		PRINTFORML やがて射精が止まると小悪魔は口を閉じ、ゆっくり味わって飲み込む
+		PRINTFORMW 「ぅんっ……ご主人様の精液おいしいです……」
+	ELSEIF RAND:5 == 0
+		PRINTFORML 精液を口にため、一気に飲み干そうとする小悪魔
+		PRINTFORMW ごくんっと大きく喉が動き、陰茎をゆるゆると愛撫してくる
+		PRINTFORMW 「ごちそうさまです。それではおかわりを」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「はああぁ……喉が……おなかの中が焼けそうなくらい熱い…」
+		PRINTFORMW 「この感じが好きなんです……、もう１回お願いしますね？」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「あぁ…おいしいです、もっとください……ん、ちぅ」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「こく…こく…ん～～おいしい……♪」
+		PRINTFORMW 「まだ、出ますよね……？」
+	ELSE
+		PRINTFORMW 「イッた直後はびくびく震えててかわいいですねー♪」
+		PRINTFORMW 「中も吸わないともったいないですからねー、ん、じゅるる…ちゅぅ」
+	ENDIF
+;奉仕精神Lv3以上
+ELSEIF ABL:奉仕精神 >= 3
+	IF RAND:6 == 0
+		PRINTFORML 口の中に出された精液を全て飲み、口を放す
+		PRINTFORMW 射精後で敏感になった陰茎をやさしく擦りあげる小悪魔
+		PRINTFORML 「中に残ったのも全部出しちゃいましょうね……お掃除です」
+		PRINTFORMW 尿道に残った精液も絞り上げ、鈴口にたまった精液をちゅっと吸う
+		PRINTFORMW 「ふふっ、大きくなっちゃいましたね。次は何でイキます？」
+	ELSEIF RAND:5 == 0
+		PRINTFORMW 小悪魔は射精直後の亀頭を舌でぐるりと舐め回す
+		PRINTFORMW 鈴口をちゅっと吸い上げ、中に残る精液も飲み込んでいく
+		PRINTFORMW 「ん…綺麗になりましたけど、まだおっきいままですね……。もっとしますか？」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「イッたばっかりなのに、びんびんですね……、つんつん」
+		PRINTFORMW 「もう１回、私の口でイかせてあげましょうか？」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「あっ……ん、いっぱい出ましたね。気持ちよかったですか？」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「んんっ！？　んく、ん……ん……こくっ」
+		PRINTFORMW 「イキそうになったら言ってほしかったですけど、気持ちよかったんですよね？」
+	ELSE
+		PRINTFORMW 「こくっ、んん～～…、けほっ、ご、ごめんなさい…」
+		PRINTFORMW 「すごい濃くって……、ちょっとびっくりしちゃいました」
+	ENDIF
+;それ以外
+ELSE
+	IF RAND:3 == 0
+		PRINTFORMW 「んぐっ……こくっ……。あ……精、液……」
+		PRINTFORMW (いけないのに……もっとほしくなっちゃう……)
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「！？　けほっ、こほっ……ふぁ……」
+		PRINTFORMW (精液の味が……。おい、しい……)
+		PRINTFORMW 小悪魔の視線は虚空を彷徨い、ぽーっとした表情をしている
+	ELSE
+		PRINTFORMW 「んんっ！？　んく……、あ、あぁ……」
+		PRINTFORMW (精液……すごいにおい……、体が熱くなってきちゃう…)
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;胸に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_16
+;奉仕精神Lv5
+IF ABL:奉仕精神 >= 5
+	IF RAND:6 == 0
+		PRINTFORML 射精を開始しても胸で擦りあげる動作はやめず、心地よい柔らかさに包まれながら射精を続ける
+		PRINTFORMW 時折ぎゅっと胸を押し付けられ、陰茎を大きく跳ねさせながら精液を吐き出してしまう
+		PRINTFORML 射精が終わったかと思うと亀頭を咥え、尿道に残った精液を吸い上げる
+		PRINTFORMW その間も胸は動かし続け、持続的に快感が加えられる
+		PRINTFORML 小悪魔が陰茎から口をはなした時には、すでに次の準備ができていた
+		PRINTFORMW 「うふふ、それじゃもう１回イっちゃいましょうか」
+	ELSEIF RAND:5 == 0
+		PRINTFORMW 「おっぱいの中であったかいのが、おちんちんが震えてる…」
+		PRINTFORMW 「んしょ…、わぁおっぱいの間がべとべと……そんなによかったですか？」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「うわー、いっぱいです。谷間に精液のプールができちゃってますよ」
+		PRINTFORMW 「プールに浮かぶ先っぽ……あむっ、ちゅ～……じゅる…こくっ…ちゅ…」
+		PRINTFORMW 小悪魔は亀頭を吸い込みながら、谷間にたまった精液も飲み干していった
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「あはっ♪　びくびくってして、いっぱい出てる……」
+		PRINTFORMW 「私のおっぱい、気持ちよかったですか？　もっとしてあげますよ♪」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 絶頂に震える陰茎を胸に挟みながらゆっくりと擦りあげる
+		PRINTFORMW 胸が亀頭まで擦りあげるたびに、鈴口を割って精液の残りが溢れる
+		PRINTFORMW 「たくさん中に残ってますね、ん、ちゅ、ちゅるっ……んん…じゅぷ…」
+	ELSE
+		PRINTFORMW 「くすっ、おっぱい気持ちよかったです？」
+		PRINTFORMW 「でも満足はされてないみたいですね、まだおっきいままですし」
+		PRINTFORMW 「もう１回、おっぱいいかがです？」
+	ENDIF
+;奉仕精神Lv3以上
+ELSEIF ABL:奉仕精神 >= 3
+	IF RAND:5 == 0
+		PRINTFORMW 「私のおっぱい、そんなに気持ちよかったんですか…？」
+		PRINTFORMW 「ん……ちょっと恥ずかしいです」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「あぁ……、すごいですね……こんなにいっぱい…」
+		PRINTFORMW 「まだまだ気持ちよくしてあげますよ…？」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「ふふっ、いっぱい出しましたね」
+		PRINTFORMW 「えっと…おっぱいのおかわりは、いりますか？」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「わっ、すごい勢い……髪にもかかっちゃいましたよ」
+		PRINTFORMW 「髪にかかると取れにくいんですけど……、気持ちよかったならいいです」
+	ELSE
+		PRINTFORMW 「わぁっおっぱいの中でそんなに跳ねないでください」
+		PRINTFORMW 「んもぅ、ぎゅ～～って抑えれば……わわっ」
+		PRINTFORMW 「もっと跳ねた上に精液がびゅって……も～、仕方のないおちんちんですねぇ」
+	ENDIF
+;それ以外
+ELSE
+	IF RAND:4 == 0
+		PRINTFORMW 「わっ……わっすごい出てる……きゃっ」
+		PRINTFORMW 「谷間が精液でいっぱいに……。そ、そんなによかったんでしょうか……？」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「きゃっ！？　うわぁ……おっぱいの間から精液がびゅびゅって……」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 小悪魔は%CALLNAME:MASTER%の射精が止まるまで、ゆるゆると陰茎を愛撫してくる
+		PRINTFORMW 「ようやく止まった……。でも、おっきいままですね……」
+	ELSE
+		PRINTFORMW (胸に挟まれて、びくびく震えながら精液出して……)
+		PRINTFORMW (ちょっとかわいいかも……って、私何を考えて…？)
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;腹に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_17
+;PRINTFORMW 
+
+;-------------------------------------------------
+;腋に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_18
+;PRINTFORMW 
+
+;-------------------------------------------------
+;手に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_19
+;奉仕精神Lv5
+IF ABL:奉仕精神 >= 5
+	IF RAND:7 == 0
+		PRINTFORML 絶頂を迎えた瞬間に小悪魔に陰茎の根元をつかまれる
+		PRINTFORMW 「んふふ、精液出せないでしょう？　でもこのまま我慢してから出すと気持ちいいんですよ」
+		PRINTFORML 絶頂を迎えても射精できないため、苦しさと快楽に全身が震えだす
+		PRINTFORMW 「わわ……おちんちんが膨らんできた……。そろそろ出させてあげますね」
+		PRINTFORML 陰茎をつかんでいた手の力を緩め、尿道を精液が走り、勢いよく飛び出す
+		PRINTFORMW 「わぁ……すごい勢い……。ね？　気持ちよかったでしょう？」
+	ELSEIF RAND:6 == 0
+		PRINTFORML 「んふふ、出しましたねー……うりうり～」
+		PRINTFORMW 鈴口に残った精液を指でもてあそぶ小悪魔
+		PRINTFORML 射精直後で敏感な陰茎、しかも鈴口を押すように擦られ%CALLNAME:MASTER%の陰茎が大きく震える
+		PRINTFORMW もう一度射精したような快楽に、尿道に残った精液を吹き上げる
+		PRINTFORMW 「きゃっ！？　……今のすごかったですね、もう１回イっちゃいました？」
+	ELSEIF RAND:5 == 0
+		PRINTFORMW 「出た出た～♪　それじゃもっと気持ちよく出せるように擦ってあげますね」
+		PRINTFORML 射精開始前と変わらぬ速さで擦りあげられ、身悶える
+		PRINTFORMW いつまでも続く射精と快楽に腰が跳ね上がり続ける
+		PRINTFORML 止めようにもあまりの快楽で全身に力が入らない
+		PRINTFORMW 「ちょっとやりすぎましたかね……。手が真っ白になっちゃいました」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「んふふ～、ご主人様がイった時の顔…かわいかったですよ♪」
+		PRINTFORMW 「もう１回見せてください、ご主人様のかわいー顔」
+		PRINTFORMW 「さっきよりも気持ちよくしてあげますからね」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「ふふっ、もっと出せますよね？」
+		PRINTFORMW 「いっぱいこすってあげますよ♪」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「たくさん出しましたね～、真っ白になっちゃいました」
+		PRINTFORMW 「もう少しこすってあげますから、尿道に残ってるのも出しちゃってくださいね」
+		PRINTFORMW 「……って、あら～？　また硬くなってますよ？　もう、しょうがない人ですね……素敵です♪」
+	ELSE
+		PRINTFORMW 「ふふ、びくびく震えちゃって……」
+		PRINTFORMW 「まだまだ元気そうですね、次は何でイキたいですか？」
+		PRINTFORMW 「手？口？それともおっぱい？　そ・れ・と・も……私の中ですか？」
+	ENDIF
+;奉仕精神Lv3
+ELSEIF ABL:奉仕精神 >= 3
+	IF RAND:3 == 0
+		PRINTFORMW 「くすっ、気持ちよかったですか？」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「あっ、すごっ……わっ」
+		PRINTFORMW 「すごいいっぱい出ましたね……、そんなによかったんですか？」
+	ELSE
+		PRINTFORMW 「びゅびゅって、わぁ…いっぱい出しましたねー」
+		PRINTFORMW 「あの～……、もう少しこすったら、また出ますか？」
+	ENDIF
+;それ以外
+ELSE
+	IF RAND:3 == 0
+		PRINTFORMW (いけないのに……でもこのにおい……ふぁ…)
+		PRINTFORMW (いいにおい……ダメなのに……はぁ……)
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「びゅっ、びゅって……いっぱいです……」
+	ELSE
+		PRINTFORMW 「きゃっ！？あ、あぁ……」
+		PRINTFORMW (精、液……おいしそうな、におい……あぁ…)
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;秘裂に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_20
+;PRINTFORMW 
+
+;-------------------------------------------------
+;竿に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_21
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尻に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_22
+;PRINTFORMW 
+
+;-------------------------------------------------
+;太腿に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_23
+;PRINTFORMW 
+
+;-------------------------------------------------
+;足に射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_24
+;PRINTFORMW 
+
+;-------------------------------------------------
+;調教者がキスで射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_26
+;PRINTFORMW 
+
+;-------------------------------------------------
+;主人が助手を犯すで射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_27
+;PRINTFORMW 
+
+;-------------------------------------------------
+;調教者がコンドームに射精
+;-------------------------------------------------
+@K1007_MESSAGE_EJAC_PLAYER_28
+;PRINTFORMW 
+
+;========================================================
+;@KOJO_X_MESSAGE_MARKCNG
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を出力されます
+;========================================================
+@KOJO_1007_MESSAGE_MARKCNG
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中も戻る
+SIF TEQUIP:時間止め
+	RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+	RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:精神崩壊
+	RETURN 0
+;刻印取得口上呼び出し
+FOR LOCAL, 0, 7
+	FOR LOCAL:1, 1, 4
+		SIF TFLAG:(LOCAL + 40) == LOCAL:1 && CFLAG:(LOCAL + 5310) < LOCAL:1
+			TRYCALLFORM K1007_MESSAGE_MARK{LOCAL}_{LOCAL:1}
+	NEXT
+NEXT
+
+;----------------------------------------------------------
+;刻印取得時の口上 CFLAG 5310～を使用
+;@KOJO_X_MESSAGE_MARKCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;苦痛刻印取得 CFLAG:5310
+;-------------------------------------------------
+@K1007_MESSAGE_MARK0_1
+;PRINTFORMW 
+CFLAG:5310 = 1
+
+@K1007_MESSAGE_MARK0_2
+;PRINTFORMW 
+CFLAG:5310 = 2
+
+@K1007_MESSAGE_MARK0_3
+PRINTFORMW 「痛い、痛いぃ、うぅ……」
+CFLAG:5310 = 3
+
+;-------------------------------------------------
+;快楽刻印取得 CFLAG:5311
+;-------------------------------------------------
+@K1007_MESSAGE_MARK1_1
+;PRINTFORMW 
+CFLAG:5311 = 1
+
+@K1007_MESSAGE_MARK1_2
+;PRINTFORMW 
+CFLAG:5311 = 2
+
+@K1007_MESSAGE_MARK1_3
+PRINTFORMW 「気持ちいい……、あっ、もっと！」
+PRINTFORMW 「もっと、もっとしてください！気持ちよくしてください！」
+CFLAG:5311 = 3
+
+;-------------------------------------------------
+;屈服刻印取得 CFLAG:5312
+;-------------------------------------------------
+@K1007_MESSAGE_MARK2_1
+;PRINTFORMW 
+CFLAG:5312 = 1
+
+@K1007_MESSAGE_MARK2_2
+;PRINTFORMW 
+CFLAG:5312 = 2
+
+@K1007_MESSAGE_MARK2_3
+PRINTFORMW (私、もう……)
+PRINTFORMW (この人に逆らえません……)
+CFLAG:5312 = 3
+
+;-------------------------------------------------
+;恐怖刻印取得 CFLAG:5313
+;-------------------------------------------------
+@K1007_MESSAGE_MARK3_1
+;PRINTFORMW 
+CFLAG:5313 = 1
+
+@K1007_MESSAGE_MARK3_2
+;PRINTFORMW 
+CFLAG:5313 = 2
+
+@K1007_MESSAGE_MARK3_3
+;PRINTFORMW 
+CFLAG:5313 = 3
+
+;-------------------------------------------------
+;反発刻印取得 CFLAG:5314
+;-------------------------------------------------
+@K1007_MESSAGE_MARK4_1
+;PRINTFORMW 
+CFLAG:5314 = 1
+
+@K1007_MESSAGE_MARK4_2
+;PRINTFORMW 
+CFLAG:5314 = 2
+
+@K1007_MESSAGE_MARK4_3
+PRINTFORMW 怒りの篭った目で%CALLNAME:MASTER%を睨み付けている
+PRINTFORMW その目からは殺意すら感じ取れる
+CFLAG:5314 = 3
+
+;-------------------------------------------------
+;恥辱刻印取得 CFLAG:5316
+;-------------------------------------------------
+@K1007_MESSAGE_MARK6_1
+;PRINTFORMW 
+CFLAG:5316 = 1
+
+@K1007_MESSAGE_MARK6_2
+;PRINTFORMW 
+CFLAG:5316 = 2
+
+@K1007_MESSAGE_MARK6_3
+;PRINTFORMW 
+CFLAG:5316 = 3
+
+;========================================================
+;@KOJO_X_MESSAGE_LOOK_VIDEO
+;ビデオを一緒に鑑賞する時の口上
+;売却前の選択肢で鑑賞を選んだ場合に呼び出される
+;========================================================
+@KOJO_1007_MESSAGE_LOOK_VIDEO
+;PRINTFORMW 
+
+;========================================================
+;@KOJO_X_MESSAGE_IMPRESSION関係
+;ステータス画面を見る時に出力されます
+;一言表示なのでセリフを一行で収めること
+;========================================================
+@KOJO_1007_MESSAGE_IMPRESSION
+;PRINTFORML 　　　「」
+
+;=============================================================================
+;エンディング口上の処理
+;=============================================================================
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING関係
+;単体エンディング
+;-------------------------------------------------
+@KOJO_1007_MESSAGE_SINGLE_ENDING
+DRAWLINE
+PRINTFORMW ―――単体エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+;PRINTFORMW 
+PRINTFORMW  
+PRINTFORMW 　　　　　　　　―― Ending No.{10000+NO:TARGET} (%CALLNAME:TARGET%エンド)
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING_AFTER関係
+;単体エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_1007_MESSAGE_SINGLE_ENDING_AFTER
+;PRINTFORMW 
+RETURN 0
+
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING関係
+;奴隷エンディング
+;-------------------------------------------------
+@KOJO_1007_MESSAGE_SLAVE_ENDING
+DRAWLINE
+PRINTFORMW ―――奴隷エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW あれから数日が過ぎた
+PRINTFORML 小悪魔はいまだに「ご主人様」と呼ぶが、生活は変わった
+PRINTFORMW 食事や掃除、家事全般は彼女が行っている
+PRINTFORML 夜の生活は行うが、もう調教ではない
+PRINTFORMW 時に小さなことで衝突もするが、楽しく暮らしている
+PRINTFORML 　
+PRINTFORMW 鳥が朝を告げるよりも早く、目が覚める
+PRINTFORML 毎日遅くまでくたくたになるまで働くにもかかわらず、朝は早い
+PRINTFORMW その理由は…………
+PRINTFORMW 「んふ……んっんっ、じゅるる……んんぅ……ちゅっ」
+PRINTFORMW 陰茎を這う、ツボを抑えて快感を与えてくる生暖かく柔らかい感触
+PRINTFORML 小悪魔の朝フェラから１日が始まる
+PRINTFORMW 調教していた時から変わらず、朝はこれで起こされている
+PRINTFORMW 朝勃ちの影響もあり、すぐに精を放ってしまう
+PRINTFORMW 「んっ！　んー……ごくんっ……ぷぁっ、はぁ、あむっ……ちゅ…ちぅっ…」
+PRINTFORML 中に残った精液の後始末も忘れずに、吸い上げ飲み込む
+PRINTFORMW 「ごちそうさまです。おはようございます、ご主人様」
+PRINTFORMW にっこりと笑って朝の挨拶をしてくる小悪魔に、笑顔で挨拶を返す
+PRINTFORML 　
+PRINTFORMW 軽い朝食をとり、休憩を挟んで二人で外へ出る
+PRINTFORML 洋館の前には不釣合いの畑を耕し始め、土いじりを始める
+PRINTFORMW 調教中に売ったビデオの収入がたまに入るが、それだけでは暮らしていけない
+PRINTFORMW 自給自足も兼ねて畑を作ろうと言い出したのは小悪魔だった
+PRINTFORML 小悪魔は上着のベストは着ず、Ｙシャツのみで、肘まで捲くり上げている
+PRINTFORMW スカートは普段着ているものより短めの物を着ている
+PRINTFORML 日が昇り始めると、二人とも汗をかき始める
+PRINTFORMW 調教・性交でかく汗とは違い、健康的で清々しいのだが…
+PRINTFORML 「ん？　どうかしましたか、ご主人様？」
+PRINTFORMW シャツが汗で透け、下着と肌がうっすらと透けて見えている
+PRINTFORML 小悪魔の手を引き、木陰へと移動する
+PRINTFORMW 「きゃっ、ご、ご主人様？　またしたくなっちゃったんですか？」
+PRINTFORML 毎日、というわけではないが、こんな姿を見せられて我慢するのは無理である
+PRINTFORMW 服の上から下着が透けているという状況は、性欲を掻き立てる
+PRINTFORML 木に手をつけさせ、スカートを捲り上げて下着の上から刺激を与えると、すぐに濡れ始めた
+PRINTFORMW 下着を横にずらし、後ろから陰茎をゆっくりと挿入する
+PRINTFORMW 「ふぁ……おっきぃ……、あぁゆっくり奥まで入って来て……」
+PRINTFORMW 「じゃなくて、あんっ！　ご主人様っ、また進みませんよ？　やあぁそこ気持ちいいですっ」
+PRINTFORML この後３度行為を続け、小悪魔の予想通り作業は進まなかった
+PRINTFORMW ２度目と３度目は小悪魔に押し倒されての騎乗位だったのは……言うまでもない
+PRINTFORML 　
+PRINTFORMW 小悪魔の作った夕食を取り、話をしながら寝室へと向かう
+PRINTFORML ベッドに寝転がると、小悪魔は着ているものをすべて脱ぎ、膝立ちで跨る
+PRINTFORMW 自分で陰核と膣口を刺激して濡らすと、まだ半勃ちの陰茎をゆっくり咥えこむ
+PRINTFORMW 「ん、んんぅ……はぁ、ご主人様と繋がりました……♪」
+PRINTFORMW 繋がり、幸せそうな笑顔で腰を振ろうとする小悪魔を呼んだ
+PRINTFORML 暮らしていて、いつまでも『小悪魔』と呼ぶのは忍びないと思い、名前をつけてあげた
+PRINTFORMW 精一杯考えて、小悪魔が涙を流して喜んだ、名前を……
+PRINTFORMW 「はい、なんですか、ご主人様っ♪」
+PRINTFORMW 窓から入る月光に照らされた小悪魔の笑顔は、とても綺麗で淫猥だった
+WAIT
+PRINTFORMW この笑顔を、いつまでも見ていたい
+PRINTFORMW この笑顔を、いつまでも守りたい
+PRINTFORMW 苦しいときでも、この笑顔があれば乗り越えられるだろう―――――
+WAIT
+PRINTFORMW ―――――二人で、一緒に
+PRINTFORMW  
+PRINTFORMW 　　　　　　　　―― Ending No.{10000+NO:TARGET} (%CALLNAME:TARGET%奴隷エンド)
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING_AFTER関係
+;奴隷エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_1007_MESSAGE_SLAVE_ENDING_AFTER
+;PRINTFORMW 
+RETURN 0
+
+;=============================================================================
+;売却後エピソード
+;エンディング時に売ったキャラのエピソードを挿入できる
+;=============================================================================
+;-------------------------------------------------
+;エピソード番号決定など
+;-------------------------------------------------
+;@KOJO_1007_SET_SLAVE_AFTERWARDS
+;対象を退避してTFLAG:710を対象にする。
+;LOCAL = TARGET
+;TARGET = TFLAG:710
+
+;淫乱
+;IF TALENT:淫乱
+;	LOCAL:1 = 1
+;エピソードなし
+;ELSE
+;	LOCAL:1 = 0
+;ENDIF
+
+;退避した対象を元に戻す
+;TARGET = LOCAL
+;RETURN LOCAL:1
+
+;-------------------------------------------------
+;エピソード表示
+;-------------------------------------------------
+;@SHOW_SLAVE_AFTERWARDS_K1007, ARG, ARG:1
+;DRAWLINE
+;PRINTFORMW 　%CSVCALLNAME(1007,0)%のその後
+;DRAWLINE
+;IF ARG == 1
+	;PRINTFORMW 
+;ENDIF
+;DRAWLINE
+;RETURN 0
+
+;=============================================================================
+;eratohoYM用プロローグ(及びそれに対応したエピローグ)のテンプレ
+;プロローグNo.7 -(サブタイトル入力欄)-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.7の存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能になる
+@EXIST_PROLOGUE_YM_1007
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.7の表示
+;--------------------------------------------------
+;選択画面にてタイトルを記入する場合はここで
+@SHOW_PROLOGUE_YM_1007
+PRINTL [7] プロローグNo.7 -(サブタイトル入力欄)-
+
+;--------------------------------------------------
+;プロローグNo.7 -(サブタイトル入力欄)-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_YM_1007
+PRINTW 　　　　　　　　―― Prologue No.7 -(サブタイトル入力欄)- (eratohoYM)
+PRINTW  
+DRAWLINE
+PRINTL -------------------------------------GOODLUCK------------------------------------
+DRAWLINE
+PRINTW 
+
+;=============================================================================
+;プロローグNo.7に対応したエピローグ
+;=============================================================================
+;表示させたプロローグに対応するエピローグをノーマルエンドの代わりに表示させることが可能
+;なお、システム上プロローグを作成していないと表示されない
+;--------------------------------------------------
+;プロローグNo.7に対応したエピローグの存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能になる
+@EXIST_EPILOGUE_YM_1007
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.7に対応したエピローグ本文
+;--------------------------------------------------
+@EXE_EPILOGUE_YM_1007
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.01 (ノーマルエンド)
+
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+;■　　　　　　　　　　　　　 以下EXTRAモード用　　　　　　　　　　　　　　　　　　■
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+;EXTRAモードでは主人となったキャラの口上が読み込まれます
+;eratohoYM用とは違い、表示可能なのはデフォルトか主人口上のどちらかなので、選択肢の表示用の関数は存在しません
+;
+;例)○○はかねてから想いを寄せていた××を手中に収めるべく、行動を開始した……みたいな感じ?
+;
+;なおプロローグでキャラを追加したい場合、キャラIDの関係上直接「ADDCHARA Ｘ」を使うよりも
+;「CALL CHARA_STATE_BASIC, Ｘ」を使った方が望ましい。
+;その際、自動的に加入したキャラが調教対象として設定される。
+;また、「CALL CHARA_STATE_BASIC, Ｘ」の後に「CSTR:3 = ～～～～」を入力すると、
+;どのような方法で連れてこられたか記憶することができる。
+;=============================================================================
+;プロローグNo.7 -(サブタイトル入力欄)-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.7の存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能(存在していると判断)になる
+@EXIST_PROLOGUE_EXTRA_1007
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.7 -(サブタイトル入力欄)-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_EXTRA_1007
+
+;………………………………………………
+;キャラ追加イベントを盛り込む場合
+;………………………………………………
+;製作者各人の判断でプロローグにキャラを追加することが可能です。
+;ただし、初期金額以上の値段のキャラを追加する場合、
+;最悪ゲームバランスが崩壊する可能性があります。そのことを踏まえてイベントを追加してください。
+;
+;特定のキャラを追加する場合(Ｘにはキャラ番号を入力)
+;CALL CHARA_STATE_BASIC, Ｘ
+;どのように連れてこられたかを記憶(例：CSTR:3 = 誘拐した。)
+;※あまり長過ぎると表示がずれる可能性あり
+;CSTR:3 = 
+;以下の行を解禁すると上で追加したキャラを購入したことに出来る(＝所持金が減る。ただし0未満にはならない)
+;MONEY = MIN(MONEY - ITEMPRICE:(NO:TARGET), 0)
+;………………………………………………
+
+PRINTW 　　　　　　　　―― EXTRA Prologue No.7 -(サブタイトル入力欄)-
+PRINTW  
+DRAWLINE
+PRINTL ------------------------------------LET’S ENJOY----------------------------------
+DRAWLINE
+PRINTW 

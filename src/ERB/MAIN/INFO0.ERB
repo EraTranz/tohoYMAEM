@@ -1,0 +1,1816 @@
+﻿;=============================================================================
+;情報表示
+;=============================================================================
+;-------------------------------------------------
+;セーブデータに記載される情報
+;-------------------------------------------------
+@SAVEINFO
+#LOCALSIZE 1
+PUTFORM { DAY, 3 }日目\@ ( TIME == 0 ) ? 昼 # 夜 \@ 
+IF TARGET >= 0
+	LOCALS = % CALLNAME:TARGET %
+	IF TALENT:死亡
+		LOCALS = % CALLNAME:TARGET %蹂躙中   
+	ELSEIF ASSI < 0 && (TALENT:相愛 || TALENT:親愛)
+		LOCALS = % CALLNAME:TARGET %熱愛中   
+	ELSE
+		LOCALS = % CALLNAME:TARGET %調教中   
+	ENDIF
+ELSE
+	LOCALS =  
+ENDIF
+PUTFORM % LOCALS, 21 % 
+IF FLAG:8669 & 2
+	LOCALS = Roguelike
+ELSEIF TALENT:MASTER:野菜の錬金術師 && !FLAG:9888
+	LOCALS = YASAI
+ELSEIF FLAG:4 == 1
+	LOCALS = ABNORMAL
+ELSEIF FLAG:4 == 2
+	LOCALS = EXTRA
+ELSEIF FLAG:4 == 3
+	LOCALS = REVERSAL
+ELSEIF FLAG:4 == 4
+	LOCALS = PROSTITUTE
+ELSEIF FLAG:4 >= 50
+	LOCALS = CHALLENGE
+ELSE
+	LOCALS = NORMAL
+ENDIF
+PUTFORM % LOCALS, 10, LEFT %
+VARSET LOCALS,""
+SPLIT "謎 ,易 ,普 ,難 ,狂 ,厄 ,獄 ,超 ,謎 ",",",LOCALS
+LOCAL = LIMIT(FLAG:3 , 0, 8)
+;ＰＬＨＥＮの表記を変更
+PUTFORM %LOCALS:LOCAL%
+
+LOCALS = 
+SIF CHECK_GAMEMODE_ENDING_EXIST() == 1
+	LOCALS = ({FLAG:6}周目)
+PUTFORM  %LOCALS, 9, LEFT%
+
+LOCALS = 
+SIF FLAG:5 & 1
+	LOCALS = ∞
+PUTFORM  %LOCALS, 3, LEFT%
+
+LOCALS = 
+SIF TALENT:MASTER:998
+	LOCALS = ＠
+PUTFORM  %LOCALS, 3, LEFT%
+
+IF LASTLOAD_VERSION <= 0
+	LOCALS = {GAMEBASE_VERSION}
+	SUBSTRING LOCALS, 1, 3
+	PUTFORM   Ver.{GAMEBASE_VERSION / 1000}.%RESULTS%
+ELSEIF TFLAG:990 > 0
+	LOCALS = {LASTLOAD_VERSION + 1}
+	SUBSTRING LOCALS, 1, 3
+	PUTFORM   Ver.{(LASTLOAD_VERSION + 1) / 1000}.%RESULTS%
+ELSE
+	LOCALS = {LASTLOAD_VERSION}
+	SUBSTRING LOCALS, 1, 3
+	PUTFORM   Ver.{LASTLOAD_VERSION / 1000}.%RESULTS%
+ENDIF
+
+;-------------------------------------------------
+;能力確認の処理(1ページ目・総合)
+;-------------------------------------------------
+;オプションによって表示タイプ変更
+;調教中での能力表示はこのページが表示される
+@SHOW_INFO_PAGE_1, ARG
+;弐型表示
+IF FLAG:12 & 2
+	;能力
+	CALL NEW_PRINT_ABL, ARG
+	;素質
+	IF (FLAG:3 < 4 || ARG == MASTER || TALENT:ARG:998 || TALENT:MASTER:超常目算) && FLAG:10 & 32
+		CALL NEW_PRINT_TALENT_CLASSIFICATION, ARG
+	ELSE
+		SIF FLAG:3 < 4 || ARG == MASTER || TALENT:ARG:998 || TALENT:MASTER:超常目算
+			CALL NEW_PRINT_TALENT, ARG
+	ENDIF
+	;刻印
+	SIF ARG != MASTER
+		CALL NEW_PRINT_MARK, ARG
+	;経験
+	CALL NEW_PRINT_EXP, ARG
+;壱型表示
+ELSE
+	;能力
+	CALL SHOW_INFO_ABL, ARG
+	;素質
+	IF (FLAG:3 < 4 || ARG == MASTER || TALENT:ARG:998 || TALENT:MASTER:超常目算) && FLAG:10 & 32
+		CALL NEW_PRINT_TALENT_CLASSIFICATION, ARG
+	ELSE
+		SIF FLAG:3 < 4 || ARG == MASTER || TALENT:ARG:998 || TALENT:MASTER:超常目算
+			CALL SHOW_INFO_TALENT, ARG
+	ENDIF
+	;刻印
+	SIF ARG != MASTER
+		CALL SHOW_INFO_MARK, ARG
+	;経験
+	CALL SHOW_INFO_EXP, ARG
+ENDIF
+
+;-------------------------------------------------
+;能力確認の処理(3ページ目)
+;-------------------------------------------------
+;主人かそれ以外かで表示タイプ変更
+@SHOW_INFO_PAGE_3, ARG
+IF ARG == MASTER
+	;主人の○○数
+	CALL PRINT_MASTER_NUMBER
+	;主人の触手関連のステータス
+	SIF FLAG:15 & 4096
+		CALL PRINT_MASTER_JUEL, ARG
+ELSE
+	;珠
+	IF FLAG:12 & 2
+		CALL NEW_PRINT_JUEL, ARG
+	ELSE
+		CALL SHOW_INFO_JUEL, ARG
+	ENDIF
+ENDIF
+;記念日
+SIF CFLAG:ARG:誕生日 || CFLAG:ARG:購入された日 || CFLAG:ARG:連れてこられた日 || CFLAG:ARG:結婚記念日 || CFLAG:ARG:契約記念日 || CFLAG:ARG:陥落した日 || CFLAG:ARG:初妊娠日 || CFLAG:ARG:初助手被任命日
+	CALL PRINT_MEMORIALDAY, ARG
+
+;両親(子の場合)
+SIF NO:ARG == 2048 || NO:ARG == 2049
+	CALL PRINT_PARENT, ARG
+;子を孕んだ・孕ませたことがある。
+SIF CFLAG:ARG:3001 > 0
+	CALL PRINT_MY_CHILDREN, ARG
+;相性
+CALL PRINT_RELATION, ARG
+
+;-------------------------------------------------
+;能力確認の処理(4ページ目)
+;-------------------------------------------------
+;主人かそれ以外かで表示タイプ変更
+@SHOW_INFO_PAGE_4, ARG
+IF ARG == MASTER
+	;酔い具合
+	CALL PRINT_DRUNK_LIQUOR, ARG
+	;難易度
+	CALL SHOW_DIFFICULTY
+	;この周に迎えたエンディング
+	SIF FLAG:598
+		CALL SHOW_ENDING
+	;変化可能な種族
+	SIF FLAG:70
+		CALL PRINT_MASTER_CHANGEABLE_RACE
+	;助手引継ぎ人数関連
+	SIF FLAG:8
+		CALL PRINT_ASSISTANT_SUCCESSION
+	;収入金額の最高額
+	SIF MONEY:998 > 0
+		CALL INCOME_LIST
+ELSE
+	;酔い具合
+	CALL PRINT_DRUNK_LIQUOR, ARG
+	;習得済み陥落系素質
+	SIF CFLAG:ARG:14 || CFLAG:ARG:15 || CFLAG:ARG:16 || CFLAG:ARG:17
+		CALL PRINT_SLAVE_TALENT_FALL, ARG
+	;蒐集品
+	SIF FLAG:500 > 0 && FLAG:12 & 8
+		CALL PRINT_COLLECTION_YN, ARG
+	;陰核成長具合
+	SIF BASE:ARG:陰核 && TALENT:ARG:オトコ == 0 && TALENT:ARG:ふたなり == 0
+		CALL PRINT_GROWTH_SLAVE_CLITORIS, ARG
+	;陰毛の状態
+	CALL PRINT_PUBIC_HAIR, ARG
+	;烙印キャラ用特殊装備
+	SIF CFLAG:ARG:42
+		CALL PRINT_BRAND_SLAVE_EQUIPMENT, ARG
+	;触手インプラント
+	SIF CFLAG:ARG:41
+		CALL PRINT_TENTACLE_INPLANT_SLAVE, ARG
+	;各種開発度表示処理
+	SIF TALENT:MASTER:超常目算 && (CFLAG:ARG:放尿レベル || CFLAG:ARG:Ｃ開発度 || CFLAG:ARG:Ｖ開発度 || CFLAG:ARG:Ａ開発度 || CFLAG:ARG:Ｂ開発度 || CFLAG:ARG:精飲開発度)
+		CALL PRINT_DEVELOPMENT_LEVEL_SLAVE, ARG
+	;奴隷調教の進行状況表示処理
+	CALL PRINT_SLAVE_TRAIN_PROCESS, ARG
+ENDIF
+
+;-------------------------------------------------
+;能力確認の処理(5ページ目)
+;-------------------------------------------------
+;主人かそれ以外かで表示タイプ変更
+@SHOW_INFO_PAGE_5, ARG
+;体格
+SIF FLAG:16 & 16
+	CALL SHOW_SIZE, ARG
+IF ARG == MASTER
+	;蒐集品の総計
+	SIF FLAG:500 > 0 && FLAG:12 & 8
+		CALL MASTER_COLLECTION_STATUS
+ELSE
+	;奴隷ごとの収入金額の最高額
+	SIF CFLAG:ARG:最高金額_全収入 > 0
+		CALL INCOME_LIST_SLAVE, ARG
+ENDIF
+;逆相性
+CALL PRINT_RERELATION, ARG
+
+;-------------------------------------------------
+;能力確認の処理(6ページ目)
+;-------------------------------------------------
+;主人かそれ以外かで表示タイプ変更
+@SHOW_INFO_PAGE_6, ARG
+IF ARG == MASTER
+	;現有全奴隷の各収入合計一覧表示
+	SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:稼ぎの総額, 1, CHARANUM) > 0
+		CALL PRINT_INCOME_ALLSLAVE, ARG
+	;主人の各種フラグ関連表示
+	CALL PRINT_MASTER_FLAG, ARG
+ELSE
+	;助手経験のある奴隷のみ他の奴隷への調教経験を表示
+	SIF ISASSI:ARG == 1 || ARG == ASSI
+		CALL PRINT_ASSI_TRAIN, ARG
+	;奴隷の各種フラグ関連表示
+	CALL PRINT_SLAVE_FLAG, ARG
+	;使用する個別口上形式を表示
+	CALL PRINT_MESSAGE_TYPE, ARG
+ENDIF
+
+;-------------------------------------------------
+;能力確認の処理(2ページ目)
+;-------------------------------------------------
+;主人かそれ以外かで表示タイプ変更
+@SHOW_INFO_PAGE_2, ARG
+;RPG情報
+CALL PRINT_RPG_INFO, ARG
+IF ARG == MASTER
+	;検討中……
+ELSE
+	;肉体情報
+	CALL PRINT_BODY_INFO, ARG
+ENDIF
+
+;-------------------------------------------------
+;能力表示関係の汎用処理群
+;-------------------------------------------------
+;………………………………………………
+;ABL表示の共通処理部分
+;………………………………………………
+;表示順
+; 0,Ｃ感覚　　 1,Ｖ感覚　　 2,Ａ感覚　　 3,Ｂ感覚
+;10,従順　　　11,欲望　　　12,技巧　　　13,奉仕精神
+;14,露出癖　　20,サドっ気　21,マゾっ気　22,レズっ気(23,ＢＬっ気)
+;30,自慰中毒　31,精液中毒　32,レズ中毒(33,ＢＬ中毒)　34,噴乳中毒
+;35,触手中毒　36,排泄中毒　37,射精中毒　38,獣姦中毒
+;70,料理技能　71,撮影技能　72,歌唱技能　73,工作技能
+;98,触手使役
+@PRINT_ABL_COUNT(ARG)
+#FUNCTION
+LOCAL = -1
+SELECTCASE COUNT
+	CASE 0 TO 3
+		LOCAL = COUNT
+	CASE 4 TO 8
+		LOCAL = COUNT + 6
+	CASE 9, 10
+		LOCAL = COUNT + 11
+	CASE 11
+		;男ならレズっ気、女ならＢＬっ気はないよね？
+		LOCAL = 22 + TALENT:ARG:オトコ
+	CASE 12, 13
+		LOCAL = COUNT + 18
+	CASE 14
+		;男ならレズ中毒、女ならＢＬ中毒はないよね？
+		LOCAL = 32 + TALENT:ARG:オトコ
+	CASE 15
+	;男なら噴乳中毒は無いよね？
+		SIF TALENT:ARG:オトコ == 0
+			LOCAL = 34
+	CASE 16, 17
+		LOCAL = COUNT + 19
+	CASE 18
+	;女でふたなりでないなら射精中毒は無いよね？
+		SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+			LOCAL = 37
+	CASE 19
+		LOCAL = 38
+	CASE 20 TO 23
+		LOCAL = COUNT + 50
+	CASE 24
+		SIF ARG == MASTER && FLAG:15 & 4096
+			LOCAL = 98
+	CASE 25
+		SIF ARG == MASTER
+			LOCAL = 99
+ENDSELECT
+RETURNF LOCAL
+
+;………………………………………………
+;@SHOW_INFO_TALENT系の共通処理
+;………………………………………………
+@SHOW_INFO_EACH_TALENT, ARG
+IF COUNT == 0
+	IF TALENT:ARG:処女 == 1 && JUEL:ARG:快Ｖ == 0 && EXP:ARG:Ｖ経験 == 0 && ABL:ARG:Ｖ感覚 == 0
+		PRINT [生娘] 
+	ELSE
+		PRINTFORM [\@(TALENT:ARG:処女 == 1) ? 処女 # 乙女\@] 
+	ENDIF
+ELSEIF COUNT == 100 && ABL:ARG:Ｃ感覚 >= 5
+	PRINT [Ｃ過敏] 
+ELSEIF COUNT == 102 && ABL:ARG:Ｖ感覚 >= 5
+	PRINT [Ｖ過敏] 
+ELSEIF COUNT == 104 && ABL:ARG:Ａ感覚 >= 5
+	PRINT [Ａ過敏] 
+ELSEIF COUNT == 106 && ABL:ARG:Ｂ感覚 >= 5
+	PRINT [Ｂ過敏] 
+ELSEIF COUNT == 121
+	PRINTFORM [ふたなり\@(TALENT:ARG:ふたなり == 2) ? (玉あり) # \@] 
+ELSEIF (COUNT == 132 || COUNT == 133) && (TALENT:ARG:オトコ || TALENT:ARG:ふたなり)
+	PRINTFORM [%TALENTNAME:COUNT%] 
+ELSEIF COUNT == 153
+	PRINTFORM [\@(CFLAG:ARG:156 & 1) ? 相思相愛 # 相愛\@] 
+ELSEIF COUNT == 164
+	PRINTFORM [\@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 式 # 使い魔\@] 
+ELSEIF COUNT == 171
+	PRINTFORM [\@(TALENT:ARG:オトコ || TALENT:ARG:ふたなり) ? 淫茎 # 淫核\@] 
+ELSEIF COUNT == 212
+	PRINTFORM [半白澤\@(TALENT:ARG:半白澤 == 2) ? (変身中) # \@] 
+ELSEIF COUNT == 265 && TALENT:ARG:COUNT
+	PRINTFORM [常連客{TALENT:ARG:COUNT}人] 
+ELSEIF COUNT == 611
+	PRINTFORM [\@(TALENT:ARG:オトコ) ? 彼女 # 彼氏\@あり] 
+ELSEIF COUNT == 612
+	PRINTFORM [\@(TALENT:ARG:オトコ) ? 家内 # 旦那\@あり] 
+ELSE
+	IF (FLAG:10 & 8) && CFLAG:ARG:11 == 0 && (COUNT == 11 || COUNT == 15 || COUNT == 21 || COUNT == 27 || COUNT == 32 || COUNT == 34 || COUNT == 37 || COUNT == 38 || COUNT == 71)
+		FONTBOLD
+		PRINTFORM [%TALENTNAME:COUNT%] 
+		FONTREGULAR
+	ELSEIF COUNT != 132 && COUNT != 133
+		PRINTFORM [%TALENTNAME:COUNT%] 
+	ENDIF
+ENDIF
+
+;………………………………………………
+;EXP表示の共通処理部分
+;………………………………………………
+;表示順(順番は共通)
+; 0,Ｖ経験　　　　 1,Ａ経験　　　　 2,絶頂経験　　　 
+; 3,射精経験　　　 4,精液経験　　　 5,噴乳経験　　　 
+; 6,放尿経験　　　 7,調教排泄経験　 8,精飲絶頂経験　 
+;10,自慰経験　　　11,調教自慰経験　12,レズ経験(13,ＢＬ経験)　
+;14,露出快楽経験　20,奉仕快楽経験　21,愛情経験　　　
+;22,フェラ経験　　23,キス経験　　　30,苦痛快楽経験　
+;31,緊縛経験　　　32,Ｖ拡張経験　　33,Ａ拡張経験　　
+;34,Ｕ拡張経験　　39,ＳＭ教育経験　40,薬物経験　　　
+;41,Ｃ調律経験　　42,Ｖ調律経験　　43,Ａ快楽経験　　
+;44,Ｂ快楽経験　　45,乳腺開発経験　46,尿道開発経験　
+;50,異常経験　　　51,産卵経験　　　52,出産経験　　　
+;53,触手経験　　　54,吸血経験　　　55,調教失神経験　
+;56,動物性愛経験　70,調理経験　　　71,撮影経験　　　
+;72,被写経験　　　73,歌唱経験　　　74,工作経験　　　
+;75,教育経験　　　76,売春経験　　　97,極楽絶頂経験　
+;98,主人調教経験　99,助手経験　　　
+@PRINT_EXP_COMMON, ARG
+LOCAL:1 = 0
+PL_STR_I:0 = 
+REPEAT 100
+	SELECTCASE COUNT
+		CASE 12
+			LOCAL = (TALENT:ARG:オトコ == 0) ? COUNT # -1
+		CASE 13
+			LOCAL = (TALENT:ARG:オトコ) ? COUNT # -1
+		CASE 56
+			LOCAL = (FLAG:15 & 8192) ? 56 # -1
+		CASEELSE
+			LOCAL = (STRLENS(EXPNAME:COUNT) > 0) ? COUNT # -1
+	ENDSELECT
+	IF LOCAL < 0
+		CONTINUE
+	ELSEIF EXP:ARG:LOCAL > 0
+		PL_STR_I:0 = %EXPNAME:LOCAL%
+		PL_STR_I:0 = %REPLACE(EXPNAME:LOCAL, "経験", "")%
+		IF (FLAG:10 & 8) && ((LOCAL == 0 && CFLAG:ARG:11 & 1) || (LOCAL == 1 && CFLAG:ARG:11 & 2) || (LOCAL == 50 && CFLAG:ARG:11 & 4)|| (LOCAL == 12 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:オトコ && CFLAG:ARG:18 == 0) || (LOCAL == 13 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:オトコ == 0 && CFLAG:ARG:18 == 0))
+			FONTBOLD
+;			PRINTFORM %EXPNAME:LOCAL,12%:\@(EXP:ARG:LOCAL > 99999999) ? 99999999 # {EXP:ARG:LOCAL, 8}\@
+			PRINTFORM %PL_STR_I:0,8%:\@(EXP:ARG:LOCAL > 99999999) ? 99999999 # {EXP:ARG:LOCAL, 8}\@
+			FONTREGULAR
+		ELSE
+;			PRINTFORM %EXPNAME:LOCAL,12%:\@(EXP:ARG:LOCAL > 99999999) ? 99999999 # {EXP:ARG:LOCAL, 8}\@
+			PRINTFORM %PL_STR_I:0,8%:\@(EXP:ARG:LOCAL > 99999999) ? 99999999 # {EXP:ARG:LOCAL, 8}\@
+		ENDIF
+		LOCAL:1 += 1
+		;改行するのか？ 続けて出力するのか？
+		IF LOCAL:1%4 == 0
+			PRINTL 
+		ELSE
+			PRINT 　
+		ENDIF
+	ENDIF
+REND
+SIF LOCAL:1%4 != 0
+	PRINTL 
+
+;-------------------------------------------------
+;調教中で表示される情報(メニュー上)
+;-------------------------------------------------
+@SHOW_STATUS
+VARSET LOCALS,""
+SPLIT "謎 ,易 ,普 ,難 ,狂 ,厄 ,獄 ,超 ,謎 ",",",LOCALS
+LOCALS:0 = %LOCALS:(LIMIT(FLAG:3 , 0, 8))%
+DRAWLINE
+IF EQUIP:戦闘中 && !EQUIP:脱衣
+	CALL PRINT_VIEW_CHARA_IMAGE, TARGET, "立ち絵_服", "調教画面", TEQUIP:コスチュームプレイ
+ELSE
+	CALL PRINT_VIEW_CHARA_IMAGE, TARGET, "立ち絵_裸", "調教画面", TEQUIP:コスチュームプレイ
+ENDIF
+PRINTFORM {DAY}日目
+CALL CALENDAR_PRINT, 1
+IF TIME == 0
+SETCOLOR COLOR("PINK")
+PRINT  (昼)
+RESETCOLOR
+ELSE
+SETCOLOR COLOR("DARK-PINK")
+PRINT  (夜)
+RESETCOLOR
+ENDIF
+;PRINTFORM \@(TIME == 0) ? (昼) # (夜)\@
+PRINTFORM 　所持金:{MONEY}圓　ゲームモード:
+IF TALENT:MASTER:998
+	SETCOLOR COLOR("P-BLUE")
+		PRINT Debug
+		SIF TALENT:998
+			PRINT  ★
+	RESETCOLOR
+ELSEIF FLAG:8669 & 2
+	PRINT Roguelike
+ELSEIF TALENT:MASTER:野菜の錬金術師 && !FLAG:9888
+	PRINT YASAI
+ELSEIF FLAG:4 == 1
+	PRINT ABNORMAL
+ELSEIF FLAG:4 == 2
+	PRINT EXTRA
+ELSEIF FLAG:4 == 3
+	PRINT REVERSAL
+ELSEIF FLAG:4 >= 50
+	PRINT CHALLENGE
+ELSE
+	PRINT NORMAL
+ENDIF
+SIF CHECK_GAMEMODE_ENDING_EXIST() == 1
+	CALL SHOW_DEADLINE
+PRINTL 
+IF EQUIP:戦闘中
+	PRINTFORM 戦闘対象:
+ELSE
+	PRINTFORM 調教対象:
+ENDIF
+PRINTFORM %SHOW_CALLNAME(TARGET)%\@(NO:TARGET >= 3000 && NO:TARGET < 4000 && CALLNAME:TARGET != NAME:TARGET) ? (%ITEMNAME:(NO:TARGET)%) # \@
+;男性ではない
+IF (COM_ABLE_CHECK_FEMALE(TARGET) && !TALENT:死亡) && !(FLAG:3 > 2 && !TALENT:MASTER:超常目算)
+	PRINT  
+	CALL CYCLE_PRINT ,TARGET
+	PRINT  
+ENDIF
+;PRINTFORM \@(NO:TARGET >= 3000 && NO:TARGET < 4000 && CALLNAME:TARGET != NAME:TARGET) ? 　 # \@
+PRINTFORM 　調教者:
+PRINTFORM %SHOW_CALLNAME(PLAYER)%
+;男性ではない
+IF (COM_ABLE_CHECK_FEMALE(PLAYER) && !TALENT:PLAYER:死亡) && !(FLAG:3 > 2 && !TALENT:MASTER:超常目算)
+	PRINT  
+	CALL CYCLE_PRINT ,PLAYER
+	PRINT  
+ENDIF
+PRINTFORM \@(ASSIPLAY) ? (助手) # (主人)\@　
+;残り時間:{100 - TFLAG:107}分
+IF EQUIP:戦闘中
+	PRINTFORM 残り時間:{TFLAG:107 - 60 - 10 * EQUIP:戦闘中}/{100 - 60 - 10 * EQUIP:戦闘中}　
+ELSE
+	PRINTFORM 残り時間:{TFLAG:107}/100　
+ENDIF
+PRINTFORML 難易度：%LOCALS%
+IF FLAG:12 & 4
+	IF ASSIPLAY
+		PRINTFORM (調教度:{CFLAG:3668 / 10}.
+		IF CFLAG:3668 >= 0
+			PRINTFORM {CFLAG:3668 % 10}
+		ELSE
+			PRINTFORM {CFLAG:3668 % 10 * -1}
+		ENDIF
+		PRINT ％ 
+		PRINTFORM ストレス:{CFLAG:ストレス} 
+		IF TALENT:オトコ && TALENT:ASSI:オトコ
+			PRINTFORM ＢＬ経験:{EXP:ＢＬ経験} 
+		ELSEIF TALENT:オトコ == 0 && TALENT:ASSI:オトコ == 0
+			PRINTFORM レズ経験:{EXP:レズ経験} 
+		ENDIF
+		PRINTFORML 異常経験:{EXP:異常経験})
+	ELSE
+		PRINTFORM (主人調教経験:{EXP:主人調教経験} 調教度:{CFLAG:3668 / 10}.
+		IF CFLAG:3668 >= 0
+			PRINTFORM {CFLAG:3668 % 10}
+		ELSE
+			PRINTFORM {CFLAG:3668 % 10 * -1}
+		ENDIF
+		PRINT ％
+		PRINTFORML  好感度:{CFLAG:好感度} ストレス:{CFLAG:ストレス} 異常経験:{EXP:異常経験})
+	ENDIF
+ENDIF
+CALL SHOW_EQUIP_2
+CALL LIFE_BAR, TARGET
+
+LOCAL = MAX(BASE:気力, 0)
+PRINT 気力
+CALL PRINT_COLORBAR, LOCAL, MAXBASE:1, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("緑"), RESULT:1
+PRINTFORM ({LOCAL, 5}/{MAXBASE:1, 5})
+;PRINTFORM 気力%BARSTR(LOCAL,MAXBASE:1,32)%({LOCAL, 5}/{MAXBASE:1, 5})　
+
+;奴隷の酔いゲージを計算
+CALL CALC_GAUGE8, TARGET, 1
+
+;奴隷の理性ゲージを計算
+IF TALENT:理性 && MAXBASE:9 > 0
+	LOCAL = MAX(BASE:理性, 0)
+	PRINT 理性
+	CALL PRINT_COLORBAR, LOCAL, MAXBASE:9, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("他"), RESULT:1
+	PRINTFORM ({LOCAL, 5}/{MAXBASE:9, 5})
+	IF EQUIP:睡眠薬 || TFLAG:899 >= 1
+		PRINTL  ≪無意識≫
+	ELSEIF LOCAL >= 10000
+		PRINTL  ≪元気≫
+	ELSEIF LOCAL >= 7500
+		PRINTL  ≪平常≫
+	ELSEIF LOCAL > 5000
+		PRINTL  ≪消耗≫
+	ELSEIF LOCAL >= 2500
+		PRINTL  ≪放心≫
+	ELSEIF LOCAL > 0
+		PRINTL  ≪恍惚≫
+	ELSEIF LOCAL <= 0
+		PRINTL  ≪撃沈≫
+	ENDIF
+ENDIF
+
+;奴隷の射精ゲージを表示
+SIF TALENT:オトコ || TALENT:ふたなり
+	CALL CALC_GAUGE2_CHARA, TARGET
+;奴隷の噴乳ゲージを表示
+SIF TALENT:母乳体質
+	CALL CALC_GAUGE3_SLAVE, TARGET, 0
+;奴隷の尿意ゲージを表示
+;SIF TEQUIP:利尿剤 || TEQUIP:Ｕ系装着器具 || TALENT:おもらし癖 || EXP:放尿経験
+	CALL CALC_GAUGE4_SLAVE, TARGET, 0
+;奴隷の精飲絶頂ゲージを表示
+SIF TALENT:精愛味覚 && TALENT:PLAYER:超常目算
+	CALL CALC_GAUGEX_SLAVE
+PRINTL 
+;オプションによって表示タイプ変更
+IF FLAG:12 & 2
+	;弐型表示
+	CALL NEW_PRINT_PALAM
+ELSE
+	;壱型表示
+	CALL PRINT_PALAM_2
+ENDIF
+
+LOCAL = MIN(CFLAG:3666 * 3, 21)
+;膣内射精量
+IF LOCAL > 0
+	ALIGNMENT RIGHT
+	SETCOLOR 0x333333
+	PRINT --------------------------
+	SETCOLOR (LOCAL >= 21) ? 0xEEEEEE # 0xB09999
+	PRINT  子宮
+	CALL IN_WOMB_SHOW, LOCAL
+	RESETCOLOR
+	PRINTL      
+	ALIGNMENT LEFT
+ENDIF
+
+IF ASSI > 0
+	LOCAL = MIN(CFLAG:ASSI:3666 * 3, 21)
+	;膣内射精量(助手)
+	IF LOCAL > 0
+		ALIGNMENT RIGHT
+		SETCOLOR 0x333333
+		PRINT --------------------------
+		SETCOLOR (LOCAL >= 21) ? 0xEEEEEE # 0xB09999
+		PRINT  子宮(助手)
+		CALL IN_WOMB_SHOW, LOCAL
+		RESETCOLOR
+		PRINTL      
+		ALIGNMENT LEFT
+	ENDIF
+ENDIF
+
+
+LOCAL = MAX(BASE:PLAYER:体力, 0)
+PRINTFORM 体力\@(ASSIPLAY) ? （助手） # （主人）\@
+CALL PRINT_COLORBARM, LOCAL,MAXBASE:PLAYER:0, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("赤"), RESULT:1, BASE:PLAYER:底力, 0xB99999
+IF BASE:PLAYER:体力 < 500
+	PRINTFORM ({LOCAL, 5}/{MAXBASE:PLAYER:0, 5})
+	PRINTL  ★瀕死★
+ELSE
+	PRINTFORML ({LOCAL, 5}/{MAXBASE:PLAYER:0, 5})
+ENDIF
+
+;主人の射精ゲージを表示
+SIF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	CALL CALC_GAUGE2_CHARA, MASTER
+;助手の射精ゲージを表示
+SIF ASSI >= 0 && (TALENT:ASSI:オトコ || TALENT:ASSI:ふたなり)
+	CALL CALC_GAUGE2_CHARA, ASSI
+;その他キャラの射精ゲージ
+;イベントや機能によりゲージの最大値が変化することもありうるので表示と定義は各装着具毎に設定
+SIF TEQUIP:触手調教 || TEQUIP:特殊風呂入浴中 == 1
+	CALL CALC_GAUGE2_OTHERS
+
+IF FLAG:15 & 4096 && TALENT:寄生
+	CALL CALC_TENTACLE_GAUGE
+		PRINTFORM 触手寄生LV（
+		PRINTFORM %SHOW_CALLNAME(TARGET)%）
+		CALL PRINT_COLORBAR, BASE:触手,MAXBASE:6, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("紫"), RESULT:1
+		PRINTFORML ({BASE:触手, 5}/{MAXBASE:6, 5})
+ENDIF
+DRAWLINE
+
+IF EQUIP:戦闘中
+	;戦闘距離
+	REPEAT 8
+		SIF COUNT == 0 || COUNT == 7
+			CONTINUE
+		FONTBOLD
+		IF ASSI > 0 && 距離:ASSI == COUNT && 距離:MASTER == COUNT && 距離:TARGET == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(TARGET)%、
+			PRINTFORM %SHOW_CALLNAME(ASSI)%、
+			PRINTFORM %SHOW_CALLNAME(MASTER)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:TARGET%、%CALLNAME:ASSI%、%CALLNAME:MASTER%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSEIF 距離:MASTER == COUNT && 距離:TARGET == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(TARGET)%、
+			PRINTFORM %SHOW_CALLNAME(MASTER)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:TARGET%、%CALLNAME:MASTER%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSEIF ASSI > 0 && 距離:ASSI == COUNT && 距離:TARGET == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(TARGET)%、
+			PRINTFORM %SHOW_CALLNAME(ASSI)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:TARGET%、%CALLNAME:ASSI%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSEIF ASSI > 0 && 距離:ASSI == COUNT && 距離:MASTER == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(ASSI)%、
+			PRINTFORM %SHOW_CALLNAME(MASTER)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:ASSI%、%CALLNAME:MASTER%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSEIF 距離:MASTER == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(MASTER)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:MASTER%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSEIF ASSI > 0 && 距離:ASSI == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(ASSI)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:ASSI%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSEIF 距離:TARGET == COUNT
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %SHOW_CALLNAME(TARGET)%
+			LOCAL = 30 - STRLENS(@"%CALLNAME:TARGET%")
+			SIF LOCAL > 0
+				PRINTFORM %@"", LOCAL%
+		ELSE
+			PRINTFORM {COUNT}　
+			FONTREGULAR
+			PRINTFORM %@"", 30, LEFT%
+		ENDIF
+		SIF COUNT == 3 || COUNT == 6
+			PRINTL 
+	REND
+	DRAWLINE
+ENDIF
+
+CALL SHOW_EQUIP_1
+;おねだり口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 99
+
+;-------------------------------------------------
+;体力バー表示
+;-------------------------------------------------
+@LIFE_BAR, ARG
+BASE:ARG:体力 = LIMIT(BASE:ARG:体力, 0, MAXBASE:ARG:0)
+PRINT 体力
+IF TFLAG:999
+	CALL PRINT_COLORBARM, BASE:ARG:体力, MAXBASE:ARG:0, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("赤"), RESULT:1, BASE:ARG:底力, 0xB99999
+ELSE
+	CALL PRINT_COLORBAR, BASE:ARG:体力, MAXBASE:ARG:0, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("赤"), RESULT:1
+ENDIF
+IF TALENT:ARG:死亡
+	PRINTFORM ({BASE:ARG:体力, 5}/{MAXBASE:ARG:0, 5})
+	PRINTL  ★死亡★
+ELSEIF BASE:ARG:体力 < 500
+	PRINTFORM ({BASE:ARG:体力, 5}/{MAXBASE:ARG:0, 5})
+	PRINTL  ★瀕死★
+ELSE
+	PRINTFORML ({BASE:ARG:体力, 5}/{MAXBASE:ARG:0, 5})
+ENDIF
+
+;PRINTFORML 体力%BARSTR(BASE:ARG:体力, MAXBASE:ARG:0, 32)%({BASE:ARG:体力, 5}/{MAXBASE:ARG:0, 5})
+
+;-------------------------------------------------
+;気力バー表示
+;-------------------------------------------------
+@VITALITY_BAR, ARG
+BASE:ARG:気力 = LIMIT(BASE:ARG:気力, 0, MAXBASE:ARG:1)
+PRINT 気力
+CALL PRINT_COLORBAR, BASE:ARG:気力, MAXBASE:ARG:1, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("緑"), RESULT:1
+PRINTFORML ({BASE:ARG:気力, 5}/{MAXBASE:ARG:1, 5})
+
+;PRINTFORML 気力%BARSTR(BASE:ARG:気力, MAXBASE:ARG:1, 32)%({BASE:ARG:気力, 5}/{MAXBASE:ARG:1, 5})
+
+;-------------------------------------------------
+;理性バー表示
+;-------------------------------------------------
+@REASON_BAR, ARG
+SIF !TALENT:ARG:理性 || MAXBASE:9 <= 0
+	RETURN 0
+BASE:ARG:理性 = LIMIT(BASE:ARG:理性, 0, MAXBASE:ARG:9)
+PRINT 理性
+CALL PRINT_COLORBAR, BASE:ARG:理性, MAXBASE:ARG:9, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("他"), RESULT:1
+PRINTFORML ({BASE:ARG:理性, 5}/{MAXBASE:ARG:9, 5})
+
+;PRINTFORML 理性%BARSTR(BASE:ARG:理性, MAXBASE:ARG:9, 32)%({BASE:ARG:理性, 5}/{MAXBASE:ARG:9, 5})
+
+;-------------------------------------------------
+;汚れ表示
+;-------------------------------------------------
+@STAIN_INFO
+#DIM MEMO_LINECOUNT
+MEMO_LINECOUNT = LINECOUNT
+PRINTL 
+
+VARSET LOCALS,""
+SPLIT "の口:,の手:,のＰ:,のＶ:,のＡ:,のＢ:,の足:,の髪:",",",LOCALS
+FOR LOCAL:1, 0, 3
+	IF LOCAL:1 == 0
+		LOCAL = MASTER
+	ELSEIF LOCAL:1 == 1
+		LOCAL = TARGET
+	ELSEIF LOCAL:1 == 2 && ASSI > -1
+		LOCAL = ASSI
+	ELSE
+		CONTINUE
+	ENDIF
+	REPEAT 8
+		SIF COUNT == 2 && TALENT:LOCAL:オトコ == 0 && TALENT:LOCAL:ふたなり == 0
+			CONTINUE
+		SIF COUNT == 3 && TALENT:LOCAL:オトコ
+			CONTINUE
+		SIF COUNT == 5 && TALENT:LOCAL:オトコ
+			CONTINUE
+		SIF COUNT >= 6 && STAIN:LOCAL:COUNT == 0
+			CONTINUE
+		IF COUNT == 6 && TALENT:LOCAL:人魚
+			PRINTFORM %SHOW_CALLNAME(LOCAL)%の尾ひれ:
+		ELSE
+			PRINTFORM %SHOW_CALLNAME(LOCAL)%%LOCALS:COUNT%
+		ENDIF
+		SIF STAIN:LOCAL:COUNT & 1
+			PRINT <愛液>
+		SIF STAIN:LOCAL:COUNT & 2
+			PRINT <ペニス>
+		SIF STAIN:LOCAL:COUNT & 4
+			PRINT <精液>
+		SIF STAIN:LOCAL:COUNT & 8
+			PRINT <アナル>
+		SIF STAIN:LOCAL:COUNT & 16
+			PRINT <母乳>
+		SIF STAIN:LOCAL:COUNT & 64
+			PRINT <粘液>
+		SIF STAIN:LOCAL:COUNT & 128
+			PRINT <経血>
+		SIF STAIN:LOCAL:COUNT & 32
+			PRINT <破瓜の血>
+		PRINTL 
+	REND
+NEXT
+PRINTL 
+FOR LOCAL:1, 0, 3
+	IF LOCAL:1 == 0
+		LOCAL = MASTER
+	ELSEIF LOCAL:1 == 1
+		LOCAL = TARGET
+	ELSEIF LOCAL:1 == 2 && ASSI > -1
+		LOCAL = ASSI
+	ELSE
+		CONTINUE
+	ENDIF
+	REPEAT 8
+		SIF COUNT == 2 && TALENT:LOCAL:オトコ == 0 && TALENT:LOCAL:ふたなり == 0
+			CONTINUE
+		SIF COUNT == 3 && TALENT:LOCAL:オトコ
+			CONTINUE
+		SIF COUNT == 5 && TALENT:LOCAL:オトコ
+			CONTINUE
+		SIF COUNT >= 6 && STAIN:LOCAL:COUNT == 0
+			CONTINUE
+		IF STAIN:LOCAL:COUNT
+			SELECTCASE COUNT
+				CASE 0
+					PRINTFORM [{LOCAL:1 * 10 + COUNT, 3}] 
+					PRINTFORML %SHOW_CALLNAME(LOCAL)%の口を\@ LOCAL == MASTER ? すすぐ # すすがせる \@
+				CASE 1
+					PRINTFORM [{LOCAL:1 * 10 + COUNT, 3}] 
+					PRINTFORML %SHOW_CALLNAME(LOCAL)%の指を拭う
+				CASE 2
+					IF STAIN:LOCAL:COUNT > 2
+						PRINTFORM [{LOCAL:1 * 10 + COUNT, 3}] 
+						PRINTFORML %SHOW_CALLNAME(LOCAL)%のペニスを拭う
+					ENDIF
+				CASE 6
+					PRINTFORM [{LOCAL:1 * 10 + COUNT, 3}] 
+					IF TALENT:LOCAL:人魚
+						PRINTFORML %SHOW_CALLNAME(LOCAL)%の尾ひれを拭う
+					ELSE
+						PRINTFORML %SHOW_CALLNAME(LOCAL)%の足を拭う
+					ENDIF
+			ENDSELECT
+		ENDIF
+	REND
+NEXT
+PRINTFORML [100] 戻る
+INPUT
+SELECTCASE RESULT
+	CASE 0 TO 2, 6
+		IF RESULT == 2
+			STAIN:MASTER:RESULT = 2
+		ELSE
+			STAIN:MASTER:RESULT = 0
+		ENDIF
+	CASE 10 TO 12, 16
+		IF RESULT == 12
+			STAIN:(RESULT - 10) = 2
+		ELSE
+			STAIN:(RESULT - 10) = 0
+		ENDIF
+	CASE 20 TO 22, 26
+		IF ASSI > -1
+			IF RESULT == 22
+				STAIN:ASSI:(RESULT - 20) = 2
+			ELSE
+				STAIN:ASSI:(RESULT - 20) = 0
+			ENDIF
+		ENDIF
+	CASE 100
+		REDRAW 1
+		RETURN 0
+ENDSELECT
+
+CLEARLINE LINECOUNT - MEMO_LINECOUNT
+RESTART
+
+;WAIT
+
+;-------------------------------------------------
+;状況の表示
+;-------------------------------------------------
+;調教対象には使わない、特殊な着脱式の道具を追加した場合はここに追加をしてください
+;（場所変更、マスターや助手が使用する道具等）
+@SHOW_EQUIP_2
+SETCOLOR COLOR("P-RED")
+IF TALENT:PLAYER:野菜の錬金術師 && TEQUIP:YASAIモードで使用
+	IF TEQUIP:YASAIモードで使用 == 2
+		PRINT  [Phモード]
+	ELSEIF TEQUIP:YASAIモードで使用 == 1
+		PRINT  [Exモード]
+	ENDIF
+	PRINTFORM (
+	PRINTFORM %SHOW_CALLNAME(PLAYER)%
+	SETCOLOR COLOR("P-RED")
+	PRINTFORM )
+ENDIF
+IF TALENT:半白澤 == 2 || TALENT:MASTER:半白澤 == 2 || (ASSI >= 0 && TALENT:ASSI:半白澤 == 2)
+	PRINT  [
+	SIF TALENT:半白澤 == 2
+		PRINTFORM %SHOW_CALLNAME(TARGET)% 
+	SIF TALENT:MASTER:半白澤 == 2
+		PRINTFORM %SHOW_CALLNAME(MASTER)% 
+	SIF (ASSI >= 0 && TALENT:ASSI:半白澤 == 2)
+		PRINTFORM %SHOW_CALLNAME(ASSI)% 
+	SETCOLOR COLOR("P-RED")
+	PRINT ハクタク化]
+ENDIF
+IF TEQUIP:縮小化
+	PRINT  [
+	SIF TEQUIP:縮小化 & 1
+		PRINTFORM %SHOW_CALLNAME(TARGET)% 
+	SIF TEQUIP:縮小化 & 2
+		PRINTFORM %SHOW_CALLNAME(MASTER)% 
+	SIF TEQUIP:縮小化 & 4
+		PRINTFORM %SHOW_CALLNAME(ASSI)% 
+	SETCOLOR COLOR("P-RED")
+	PRINT 縮小中]
+ENDIF
+IF TEQUIP:巨大化
+	PRINT  [
+	SIF TEQUIP:巨大化 & 1
+		PRINTFORM %SHOW_CALLNAME(TARGET)% 
+	SIF TEQUIP:巨大化 & 2
+		PRINTFORM %SHOW_CALLNAME(MASTER)% 
+	SIF TEQUIP:巨大化 & 4
+		PRINTFORM %SHOW_CALLNAME(ASSI)% 
+	SETCOLOR COLOR("P-RED")
+	PRINT 巨大化中]
+ENDIF
+SIF CFLAG:0
+	PRINT  [ＥＸ化]
+SIF TFLAG:108
+	PRINT  [パニック中]
+SIF TFLAG:899 >= 1 && !TALENT:死亡
+	PRINT  [失神中]
+SIF TFLAG:152 > 0
+	PRINT  被調教奴隷側が[狂気の目]発動中
+SIF TEQUIP:三角木馬乗馬中
+	PRINT  [三角木馬乗馬中]
+IF TEQUIP:ビデオ撮影
+	LOCAL = 10 - TFLAG:121 + 1
+	IF FLAG:15 & 128
+		PRINTFORM  [撮影中(残{LOCAL}回　撮影者:
+		PRINTFORM \@(FLAG:61 == 2) ? %SHOW_CALLNAME(ASSI)% # %SHOW_CALLNAME(MASTER)%\@
+		SETCOLOR COLOR("P-RED")
+		PRINTFORM )]
+	ELSE
+		PRINTFORM  [撮影中(残{LOCAL}回)]
+	ENDIF
+ELSEIF TEQUIP:ビデオ鑑賞
+	LOCAL = TFLAG:119 - TFLAG:123 + 1
+	PRINTFORM  [鑑賞中(残{LOCAL}回)]
+ENDIF
+IF TEQUIP:89 && TEQUIP:野外プレイ == 0 && TEQUIP:お風呂場プレイ == 0 && TEQUIP:特殊風呂入浴中 == 0
+	IF TEQUIP:89 == 99
+		PRINT  [触手豊穣淫香中]
+	ELSE
+		PRINTFORM  [%ITEMNAME:(609+TEQUIP:89)%効果中]
+	ENDIF
+ENDIF
+SIF TEQUIP:野外プレイ
+	PRINT  [野外プレイ中]
+IF TEQUIP:特殊風呂入浴中 == 1
+	PRINT  [蟲風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 2
+	PRINT  [鰻風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 3
+	PRINT  [ローション風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 4
+	PRINT  [スライム風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 5
+	PRINT  [媚薬風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 6
+	PRINT  [媚薬漬け中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 7
+	PRINT  [水責め中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 8
+	PRINT  [精液風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 9
+	PRINT  [酒風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 10
+	PRINT  [トロロ風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 11
+	PRINT  [毛玉風呂でもふもふ中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 12
+	PRINT  [蒸し風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 13
+	PRINT  [ヤゴコロドーピング中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 14
+	PRINT  [厄毒漬け込み中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 15
+	PRINT  [岩盤浴入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 16
+	PRINT  [札束風呂入浴中]
+ELSEIF TEQUIP:特殊風呂入浴中 == 17
+	PRINT  [酒漬け中]
+ELSEIF TEQUIP:お風呂場プレイ
+	PRINT  [お風呂場プレイ中]
+ENDIF
+IF TEQUIP:羞恥プレイ == 2
+	PRINT  [羞恥（浄玻璃の鏡）プレイ中]
+ELSEIF TEQUIP:羞恥プレイ
+	PRINT  [羞恥（大鏡）プレイ中]
+ENDIF
+SIF TEQUIP:お医者さんプレイ
+	PRINT  [お医者プレイ中]
+SIF TEQUIP:オムツプレイ
+	PRINT  [オムツプレイ中]
+IF TEQUIP:コスチュームプレイ == 1
+	PRINT  [裸エプロン中]
+ELSEIF TEQUIP:コスチュームプレイ == 2
+	PRINT  [スク水プレイ中]
+ELSEIF TEQUIP:コスチュームプレイ == 3
+	PRINT  [女教師]
+ELSEIF TEQUIP:コスチュームプレイ == 4
+	PRINT  [和服]
+ELSEIF TEQUIP:コスチュームプレイ == 5
+	PRINT  [メイド服]
+ELSEIF TEQUIP:コスチュームプレイ == 6
+	PRINT  [体操服＋ブルマ]
+ELSEIF TEQUIP:コスチュームプレイ == 7
+	PRINT  [ナース服]
+ELSEIF TEQUIP:コスチュームプレイ == 8
+	PRINT  [チャイナ服]
+ELSEIF TEQUIP:コスチュームプレイ == 9
+	PRINT  [セーラー服]
+ELSEIF TEQUIP:コスチュームプレイ == 10
+	PRINT  [ネグリジェ]
+ELSEIF TEQUIP:コスチュームプレイ == 11
+	PRINT  [裸Ｙシャツ]
+ELSEIF TEQUIP:コスチュームプレイ == 12
+	PRINT  [ビキニ]
+ELSEIF TEQUIP:コスチュームプレイ == 13
+	PRINT  [危ないレオタード]
+ELSEIF TEQUIP:コスチュームプレイ == 14
+	PRINT  [バニースーツ]
+ELSEIF TEQUIP:コスチュームプレイ == 15
+	PRINT  [ボンデージ]
+ELSEIF TEQUIP:コスチュームプレイ == 16
+	PRINT  [園児服]
+ELSEIF TEQUIP:コスチュームプレイ == 17
+	PRINT  [褌だけ]
+ELSEIF TEQUIP:コスチュームプレイ == 18
+	PRINT  [軍服]
+ELSEIF TEQUIP:コスチュームプレイ == 19
+	PRINT  [ウェディングドレス]
+ELSEIF TEQUIP:コスチュームプレイ == 20
+	PRINT  [ゴスロリ]
+ELSEIF TEQUIP:コスチュームプレイ == 21
+	PRINT  [裸サスペンダー]
+ELSEIF TEQUIP:コスチュームプレイ == 22
+	PRINT  [巫女衣装]
+ENDIF
+IF ASSI >= 0
+	IF TEQUIP:ASSI:コスチュームプレイ == 2
+		PRINT  [助手がスクール水着]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 3
+		PRINT  [助手が女教師コス]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 4
+		PRINT  [助手が和服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 5
+		PRINT  [助手がメイド服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 6
+		PRINT  [助手が体操服＋ブルマ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 7
+		PRINT  [助手がナース服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 8
+		PRINT  [助手がチャイナ服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 9
+		PRINT  [助手がセーラー服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 10
+		PRINT  [助手がネグリジェ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 11
+		PRINT  [助手が裸Ｙシャツ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 12
+		PRINT  [助手がビキニ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 13
+		PRINT  [助手が危ないレオタード]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 14
+		PRINT  [助手がバニースーツ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 15
+		PRINT  [助手がボンデージ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 16
+		PRINT  [助手が園児服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 17
+		PRINT  [助手が褌だけ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 18
+		PRINT  [助手が軍服]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 19
+		PRINT  [助手がウェディングドレス]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 20
+		PRINT  [助手がゴスロリ]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 21
+		PRINT  [助手が裸サスペンダー]
+	ELSEIF TEQUIP:ASSI:コスチュームプレイ == 22
+		PRINT  [助手が巫女衣装]
+	ENDIF
+ENDIF
+SIF TEQUIP:焦らしプレイ
+	PRINT  [焦らしプレイ中]
+SIF TEQUIP:射精止め
+	PRINT  [射精抑制中]
+SIF TEQUIP:暗闇
+	PRINT  [暗闇展開中]
+SIF TEQUIP:時間止め
+	PRINT  [時間停止中]
+SIF TEQUIP:幽明の苦輪 > 0
+	PRINTFORM  [幽明の苦輪発動中:残り{TEQUIP:幽明の苦輪}ターン]
+SIF TEQUIP:狂気の目
+	PRINT  調教側が[狂気の目発動中]
+IF TEQUIP:読心 == 1
+	PRINT  [読心中]
+ELSEIF TEQUIP:読心 == 2
+	PRINT  [触手読心中]
+ENDIF
+IF TEQUIP:精神制御系 == 1
+	PRINT  [操りの糸発動中]
+ELSEIF TEQUIP:精神制御系 == 2
+	PRINT  [触手精神制御中]
+ENDIF
+SIF TEQUIP:房中術 > 0
+	PRINTFORM  [房中術発動中:残り{TEQUIP:房中術}ターン]
+SIF TEQUIP:超凝視
+	PRINT  調教側が[超凝視発動中]
+SIF TEQUIP:キャラ触手 & 1
+	PRINT  [触手潮干狩り中]
+SIF TEQUIP:キャラ触手 & 2
+	PRINT  [触手厄落とし中]
+SIF TEQUIP:キャラ触手 & 4
+	PRINT  [触手言葉責め中]
+SIF TEQUIP:キャラ触手 & 8
+	PRINT  [触手鈴蘭媚薬注入中]
+SIF TEQUIP:キャラ触手 & 16
+	PRINT  [触手有害図書朗読中]
+SIF TEQUIP:キャラ触手 & 32
+	PRINT  [触手淫脈探査中]
+SIF TEQUIP:キャラ触手 & 64
+	PRINT  [触手最終審判開廷中]
+SIF TEQUIP:キャラ触手 & 128
+	PRINT  [触手百裂紅葉円舞中]
+SIF TEQUIP:キャラ触手 & 256
+	PRINT  [触手豊穣淫香充満中]
+SIF TEQUIP:触手調教
+	PRINT  [触手召喚中]
+SIF TEQUIP:触手服
+	PRINT  [触手服着衣中]
+SIF TEQUIP:PLAYER:コンドーム
+	PRINT 調教側が[コンドーム装着]
+PRINTL 
+RESETCOLOR
+
+;-------------------------------------------------
+;使用中の道具を表示
+;-------------------------------------------------
+;一度使用したら解除するまで止まらない道具や調教を
+;追加した場合はここに追加をしてください
+@SHOW_EQUIP_1
+IF EQUIP:戦闘中 || EQUIP:睡眠薬 || TEQUIP:7 || TEQUIP:陰核成長剤 || TEQUIP:産卵促進剤 || TEQUIP:ローション || TEQUIP:媚薬 || TEQUIP:利尿剤 || TEQUIP:賢者の血 || TEQUIP:興奮剤 || TEQUIP:坐剤 || TEQUIP:排卵誘発剤 || TEQUIP:緊急避妊薬 || TEQUIP:鈴蘭の毒 || TEQUIP:昆虫採集セットの薬 || TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ || TEQUIP:Ａ系装着器具 || TEQUIP:氷柱 || TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム || TEQUIP:Ｕ系装着器具 || TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ || TEQUIP:緊縛関連 || TEQUIP:目装着器具 || TEQUIP:口装着器具 || TEQUIP:鼻装着器具 || TEQUIP:耳装着器具 || TEQUIP:シャワープレイ || TEQUIP:触手強制回復 || TEQUIP:触手催眠 || TEQUIP:触手膣内産卵 || TEQUIP:触手腸内産卵 || TEQUIP:触手チキチキ
+	PRINTFORM 使用中(
+	PRINTFORM %SHOW_CALLNAME(TARGET)%) 
+	SETCOLOR COLOR("P-RED")
+	SIF EQUIP:戦闘中
+		PRINT [戦闘中]
+	SIF EQUIP:睡眠薬
+		PRINT [睡眠薬効果発揮中]
+	SIF TEQUIP:7
+		PRINT [感覚増幅薬効果発揮中]
+	SIF TEQUIP:ローション
+		PRINT [ローション使用]
+	SIF TEQUIP:媚薬
+		PRINT [媚薬効果発揮中]
+	SIF TEQUIP:利尿剤
+		PRINT [利尿剤効果発揮中]
+	IF TEQUIP:賢者の血 == 1
+		PRINT [賢者の血反動中]
+	ELSEIF TEQUIP:賢者の血 > 1
+		PRINT [賢者の血効果発揮中]
+	ENDIF
+	IF TEQUIP:興奮剤 > 4
+		PRINT [興奮剤効果発揮中]
+	ELSEIF TEQUIP:興奮剤
+		PRINT [興奮剤反動中]
+	ENDIF
+	SIF TEQUIP:坐剤 & 1
+		PRINT [坐剤効果発揮中]
+	SIF TEQUIP:坐剤 & 2
+		PRINT [膣座薬効果発揮中]
+	SIF TEQUIP:坐剤 & 4
+		PRINT [フリスク効果発揮中]
+	IF TEQUIP:排卵誘発剤 == 2
+		PRINT [触手排卵誘発効果発揮中]
+	ELSEIF TEQUIP:排卵誘発剤 == 1
+		PRINT [排卵誘発剤効果発揮中]
+	ENDIF
+	IF TEQUIP:緊急避妊薬 == 2
+		PRINT [触手避妊膜塗布済み]
+	ELSEIF TEQUIP:緊急避妊薬 == 1
+		PRINT [緊急避妊薬準備済み]
+	ENDIF
+	SIF TEQUIP:陰核成長剤
+		PRINT [陰核成長剤効果発揮中]
+	SIF TEQUIP:産卵促進剤
+		PRINT [産卵促進剤効果発揮中]
+	SIF TEQUIP:鈴蘭の毒
+		PRINT [鈴蘭の毒効果発揮中]
+	SIF TEQUIP:昆虫採集セットの薬
+		PRINT [昆虫採集セットの薬効果発揮中]
+	IF TEQUIP:Ｖ系装着器具
+		IF TEQUIP:触手調教 || TEQUIP:触手服 & 8
+			IF TEQUIP:Ｖ系装着器具 == 27
+				PRINT [触手服愛液採集]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 23
+				PRINT [触手服子宮責め]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 22
+				PRINT [触手服Ｇスポ責め]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 7
+				PRINT [触手愛液採集]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 3
+				PRINT [触手子宮責め]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 2
+				PRINT [触手Ｇスポ責め]
+			ELSEIF TEQUIP:触手服 & 8
+				PRINT [触手服挿入]
+			ELSE
+				PRINT [触手挿入]
+			ENDIF
+		ELSE
+			IF TEQUIP:Ｖ系装着器具 == 9
+				PRINT [焼芋]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 8
+				PRINT [----]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 7
+				PRINT [愛液採集器]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 6
+				PRINT [ヴァギナバルーン]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 5
+				PRINT [ヴァギナバーベル]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 4
+				PRINT [ヴァギナ電極]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 3
+				PRINT [ヴァギナローター]
+			ELSEIF TEQUIP:Ｖ系装着器具 == 2
+				PRINT [要石]
+			ELSE
+				PRINT [バイブ]
+			ENDIF
+		ENDIF
+	ENDIF
+	IF TEQUIP:クスコ == 2
+		PRINT [触手幽霊膣鏡]
+	ELSEIF TEQUIP:クスコ
+		PRINT [クスコ]
+	ENDIF
+	IF TEQUIP:Ａ系装着器具
+		IF TEQUIP:触手調教 || TEQUIP:触手服 & 16
+			IF TEQUIP:Ａ系装着器具 == 27
+				PRINT [触手服浣腸]
+			ELSEIF TEQUIP:Ａ系装着器具 == 23
+				PRINT [触手服貫通]
+			ELSEIF TEQUIP:Ａ系装着器具 == 22
+				PRINT [触手服小腸責め]
+			ELSEIF TEQUIP:Ａ系装着器具 == 7
+				PRINT [触手浣腸]
+			ELSEIF TEQUIP:Ａ系装着器具 == 4
+				PRINT [触手腸内撮影]
+			ELSEIF TEQUIP:Ａ系装着器具 == 3
+				PRINT [触手貫通]
+			ELSEIF TEQUIP:Ａ系装着器具 == 2
+				PRINT [触手小腸責め]
+			ELSEIF TEQUIP:触手服 & 16
+				PRINT [触手服アナル挿入]
+			ELSE
+				PRINT [触手アナル挿入]
+			ENDIF
+		ELSE
+			IF TEQUIP:Ａ系装着器具 == 10
+				PRINT [アナルバーベル]
+			ELSEIF TEQUIP:Ａ系装着器具 == 9
+				PRINT [巨峰]
+			ELSEIF TEQUIP:Ａ系装着器具 == 8
+				PRINT [空気浣腸]
+			ELSEIF TEQUIP:Ａ系装着器具 == 7
+				PRINT [浣腸＋アナルプラグ]
+			ELSEIF TEQUIP:Ａ系装着器具 == 6
+				PRINT [アナルバルーン]
+			ELSEIF TEQUIP:Ａ系装着器具 == 5
+				PRINT [アナルビーズ]
+			ELSEIF TEQUIP:Ａ系装着器具 == 4
+				PRINT [アナル電極]
+			ELSEIF TEQUIP:Ａ系装着器具 == 3
+				PRINT [アナルローター]
+			ELSEIF TEQUIP:Ａ系装着器具 == 2
+				PRINT [アナル要石]
+			ELSE
+				PRINT [アナルバイブ]
+			ENDIF
+		ENDIF
+	ENDIF
+	IF TEQUIP:氷柱 > 0 && TEQUIP:氷柱 <= 2
+		PRINT [氷柱]
+	ELSEIF TEQUIP:氷柱 == 3
+		PRINT [極太氷柱]
+	ELSEIF TEQUIP:氷柱 > 3
+		PRINT [氷塊]
+	ENDIF
+	IF TEQUIP:Ｃ系装着器具
+		IF TEQUIP:触手調教 || TEQUIP:触手服 & 2
+			IF TEQUIP:Ｃ系装着器具 == 26
+				PRINT [触手服放電ペニス責め]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 22
+				PRINT [触手服ペニス責め]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 8
+				PRINT [触手氷精手淫]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 7
+				PRINT [触手妖精按摩]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT [触手放電ペニス責め]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 2
+				PRINT [触手ペニス責め]
+			ELSEIF TEQUIP:触手服 & 2
+				PRINT [触手服クリ責め]
+			ELSE
+				PRINT [触手クリ責め]
+			ENDIF
+		ELSE
+			IF TEQUIP:Ｃ系装着器具 == 9
+				PRINTFORM [傘\@ TALENT:オトコ || TALENT:ふたなり ? フェラ # クンニ \@]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 6
+				PRINT [電極オナホール]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 5
+				PRINT [陰核クリップ]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 4
+				PRINT [陰核電極]
+			ELSEIF TEQUIP:Ｃ系装着器具 == 2
+				PRINT [オナホール]
+			ELSE
+				PRINT [クリキャップ]
+			ENDIF
+		ENDIF
+	ENDIF
+	SIF TEQUIP:コンドーム
+		PRINT [コンドーム装着]
+	IF TEQUIP:Ｕ系装着器具
+		IF TEQUIP:触手調教  || TEQUIP:触手服 & 32
+			IF TEQUIP:Ｕ系装着器具 == 22
+				PRINT [触手服採尿]
+			ELSEIF TEQUIP:Ｕ系装着器具 == 2
+				PRINT [触手採尿]
+			ELSEIF TEQUIP:触手服 & 32
+				PRINT [触手服尿道挿入]
+			ELSE
+				PRINT [触手尿道挿入]
+			ENDIF
+		ELSE
+			IF TEQUIP:Ｕ系装着器具 == 9
+				PRINT [石勺柏]
+			ELSEIF TEQUIP:Ｕ系装着器具 == 4
+				PRINT [尿道電極]
+			ELSEIF TEQUIP:Ｕ系装着器具 == 3
+				PRINT [風船カテーテル]
+			ELSEIF TEQUIP:Ｕ系装着器具 == 2
+				PRINT [採尿器]
+			ELSE
+				PRINT [カテーテル]
+			ENDIF
+		ENDIF
+	ENDIF
+	IF TEQUIP:Ｂ系装着器具
+		IF TEQUIP:触手調教 || TEQUIP:触手服 & 4
+			IF TEQUIP:Ｂ系装着器具 == 23
+				PRINT [触手服乳腺挿入]
+			ELSEIF TEQUIP:Ｂ系装着器具 == 22
+				PRINT [触手服搾乳]
+			ELSEIF TEQUIP:Ｂ系装着器具 == 3
+				PRINT [触手乳腺挿入]
+			ELSEIF TEQUIP:Ｂ系装着器具 == 2
+				PRINT [触手搾乳]
+			ELSEIF TEQUIP:触手服 & 4
+				PRINT [触手服乳首責め]
+			ELSE
+				PRINT [触手乳首責め]
+			ENDIF
+		ELSE
+			IF TEQUIP:Ｂ系装着器具 == 5
+				PRINT [乳首クリップ]
+			ELSEIF TEQUIP:Ｂ系装着器具 == 4
+				PRINT [乳房電極]
+			ELSEIF TEQUIP:Ｂ系装着器具 == 2
+				PRINT [搾乳器]
+			ELSE
+				PRINT [ニプルキャップ]
+			ENDIF
+		ENDIF
+	ENDIF
+	SIF TEQUIP:サラシ
+		PRINT [サラシ]
+	IF TEQUIP:緊縛関連
+		IF TEQUIP:触手調教
+			PRINT [触手緊縛]
+		ELSE
+			IF TEQUIP:緊縛関連 == 2
+				PRINT [四肢緊縛中]
+			ELSEIF TEQUIP:緊縛関連 == 3
+				PRINT [亀甲縛り中]
+			ELSEIF TEQUIP:緊縛関連 == 4
+				PRINT [吊るし上げ中]
+			ELSEIF TEQUIP:緊縛関連 == 5
+				PRINT [荊で緊縛]
+			ELSEIF TEQUIP:緊縛関連 == 6
+				PRINT [蜘蛛の糸で緊縛]
+			ELSEIF TEQUIP:緊縛関連 == 7
+				PRINT [蜘蛛の巣で拘束]
+			ELSEIF TEQUIP:緊縛関連 == 8
+				PRINT [拘束中]
+			ELSEIF TEQUIP:緊縛関連 == 9
+				PRINT [スタン中]
+			ELSE
+				PRINT [縄で緊縛]
+			ENDIF
+		ENDIF
+	ENDIF
+	IF TEQUIP:目装着器具 == 2
+		PRINT [蜘蛛の糸で眼隠し]
+	ELSEIF TEQUIP:目装着器具 == 1
+		PRINT [アイマスク]
+	ENDIF
+	IF TEQUIP:口装着器具 == 4
+		PRINT [触手強制飲酒]
+	ELSEIF TEQUIP:口装着器具 == 3
+		PRINT [強制開口器]
+	ELSEIF TEQUIP:口装着器具 == 2
+		PRINT [触手口辱]
+	ELSEIF TEQUIP:口装着器具 == 1
+		PRINT [ボールギャグ]
+	ENDIF
+	IF TEQUIP:鼻装着器具
+		IF TEQUIP:触手調教
+			SIF TEQUIP:鼻装着器具 == 2
+				PRINT [触手鼻穴挿入中]
+		ENDIF
+		IF TEQUIP:鼻装着器具 == 1
+			PRINT [鼻フック]
+		ELSEIF TEQUIP:鼻装着器具 == 5
+			PRINT [鼻クリップ]
+		ENDIF
+	ENDIF
+	IF TEQUIP:耳装着器具
+		IF TEQUIP:触手調教
+			SIF TEQUIP:耳装着器具 == 2
+				PRINT [触手耳穴挿入中]
+		ENDIF
+		SIF TEQUIP:耳装着器具 == 1
+			PRINT [耳栓]
+	ENDIF
+	IF TEQUIP:シャワープレイ == 3
+		PRINT [シャワー(熱湯)]
+	ELSEIF TEQUIP:シャワープレイ == 2
+		PRINT [シャワー(冷水)]
+	ELSEIF TEQUIP:シャワープレイ == 1
+		PRINT [シャワー]
+	ENDIF
+	IF TEQUIP:触手強制回復 && TEQUIP:触手服 & 64
+		PRINT [触手服強制回復]
+	ELSEIF TEQUIP:触手強制回復
+		PRINT [触手強制回復]
+	ENDIF
+	SIF TEQUIP:触手催眠
+		PRINT [触手催眠]
+	IF TEQUIP:触手膣内産卵 && TEQUIP:触手腸内産卵
+		PRINT [触手両穴産卵]
+	ELSEIF TEQUIP:触手膣内産卵
+		PRINT [触手膣内産卵]
+	ELSEIF TEQUIP:触手腸内産卵
+		PRINT [触手腸内産卵]
+	ELSEIF TEQUIP:触手チキチキ
+		PRINT [触手チキチキ実行中]
+	ENDIF
+	RESETCOLOR
+;ココより↑にTEQUIPに登録したものを書き込む
+	PRINTL 
+ENDIF
+
+IF ASSI >= 0 && TEQUIP:ASSI:緊急避妊薬
+	PRINTFORM 使用中(
+	PRINTFORM %SHOW_CALLNAME(ASSI)%) 
+    SETCOLOR COLOR("P-RED")
+	IF TEQUIP:ASSI:緊急避妊薬 == 1
+		PRINT [助手緊急避妊薬準備済み]
+	ENDIF
+	RESETCOLOR
+	PRINTL 
+ENDIF
+;=============================================================================
+;各種ゲージ計算・表示処理
+;=============================================================================
+;-------------------------------------------------
+;主人・奴隷・助手の射精ゲージ計算処理
+;-------------------------------------------------
+;ふたなりは射精しにくいということで[オトコ]よりも高めに設置
+@CALC_GAUGE2_COMMON(ARG)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL = (TALENT:ARG:オトコ) ? 10000 # 20000
+IF TALENT:ARG:オトコ && TALENT:ARG:早漏
+	LOCAL /= 2
+ELSEIF TALENT:ARG:早漏
+	TIMES LOCAL , 0.75
+ELSEIF TALENT:ARG:遅漏
+	LOCAL *= 2
+ENDIF
+SIF TALENT:ARG:淫核／淫茎
+	LOCAL /= 2
+RETURNF MAX(LOCAL, 0)
+
+;-------------------------------------------------
+;主人・奴隷・助手の射精ゲージ表示処理
+;-------------------------------------------------
+@CALC_GAUGE2_CHARA, ARG
+MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+SIF MAXBASE:ARG:2 <= 0
+	RETURN 0
+IF ARG == ASSI
+	LOCALS = （助手）
+ELSEIF ARG == MASTER
+	LOCALS = （主人）
+ELSE
+	LOCALS = 
+ENDIF
+PRINTFORM 射精%LOCALS%
+CALL PRINT_COLORBAR, BASE:ARG:射精,MAXBASE:ARG:2,32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("水色"), RESULT:1
+PRINTFORML ({BASE:ARG:射精, 5}/{MAXBASE:ARG:2, 5})
+;PRINTFORML 射精%LOCALS%%BARSTR(BASE:ARG:射精,MAXBASE:ARG:2,32)%({BASE:ARG:射精, 5}/{MAXBASE:ARG:2, 5})
+VARSET LOCALS,""
+SPLIT "(-),(マイクロペニス),(ポークビッツ),(粗チン),(並),(マグナム),(巨根),(第３の足),(？)",",",LOCALS
+LOCALS:0 = %LOCALS:(BASE:MASTER:16)%
+SIF FLAG:17 & 2
+	PRINTFORM  …%LOCALS%
+
+;-------------------------------------------------
+;他者の射精ゲージ計算・表示処理
+;-------------------------------------------------
+@CALC_GAUGE2_OTHERS
+IF TEQUIP:触手調教
+	;触手用
+	TFLAG:998 = 10000
+	PRINT 射精（触手）
+ELSEIF TEQUIP:特殊風呂入浴中 == 1
+	;蟲風呂用
+	TFLAG:998 = 10000
+	PRINT 射精（淫蟲）
+ELSE
+	RETURN 0
+ENDIF
+SIF TFLAG:998 <= 0
+	RETURN 0
+CALL PRINT_COLORBAR, TFLAG:997,TFLAG:998,32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("水色"), RESULT:1
+PRINTFORML ({TFLAG:997, 5}/{TFLAG:998, 5})
+;PRINTFORML %BARSTR(TFLAG:997,TFLAG:998,32)%({TFLAG:997, 5}/{TFLAG:998, 5})
+
+;-------------------------------------------------
+;奴隷の噴乳ゲージ計算・表示処理
+;-------------------------------------------------
+;ARG …　誰の噴乳ゲージを計算・表示するのか？
+;ARG:1 …　立っているとゲージそのものは表示しない。
+@CALC_GAUGE3_SLAVE, ARG, ARG:1
+#LOCALSIZE 1
+LOCAL = 10000
+SIF TALENT:ARG:淫乳
+	LOCAL /= 2
+CALL EX_CALCULATION, ARG, LOCAL, EX:ARG:10
+LOCAL = RESULT
+MAXBASE:ARG:3 = MAX(LOCAL, 0)
+SIF MAXBASE:ARG:3 <= 0
+	RETURN 0
+IF !ARG:1
+	PRINT 母乳
+	CALL PRINT_COLORBAR, BASE:ARG:母乳,MAXBASE:ARG:3,32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("EXTRA"), RESULT:1
+	PRINTFORML ({BASE:ARG:母乳, 5}/{MAXBASE:ARG:3, 5})
+ENDIF
+	;PRINTFORML 母乳%BARSTR(BASE:ARG:母乳, MAXBASE:ARG:3, 32)%({BASE:ARG:母乳, 5}/{MAXBASE:ARG:3, 5})
+
+;-------------------------------------------------
+;奴隷の放尿ゲージ計算・表示処理
+;-------------------------------------------------
+;ARG …　誰の放尿ゲージを計算・表示するのか？
+;ARG:1 …　立っているとゲージそのものは表示しない。
+@CALC_GAUGE4_SLAVE, ARG, ARG:1
+#LOCALSIZE 1
+LOCAL = 20000
+IF TALENT:ARG:早漏
+	LOCAL /= 2
+ELSEIF TALENT:ARG:遅漏
+	LOCAL *= 2
+ENDIF
+SIF TALENT:ARG:おもらし癖
+	LOCAL /= 2
+SIF TALENT:ARG:尿道狂
+	LOCAL /= 2
+CALL EX_CALCULATION, ARG, LOCAL, EX:ARG:12
+LOCAL = RESULT
+MAXBASE:ARG:4 = MAX(LOCAL, 0)
+SIF MAXBASE:ARG:4 <= 0
+	RETURN 0
+IF !ARG:1
+	PRINT 尿意
+	CALL PRINT_COLORBAR, BASE:ARG:尿意,MAXBASE:ARG:4,32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("黄色"), RESULT:1
+	PRINTFORML ({BASE:ARG:尿意, 5}/{MAXBASE:ARG:4, 5})
+ENDIF
+	;PRINTFORML 尿意%BARSTR(BASE:ARG:尿意, MAXBASE:ARG:4, 32)%({BASE:ARG:尿意, 5}/{MAXBASE:ARG:4, 5})
+
+;-------------------------------------------------
+;酔いゲージ計算処理
+;-------------------------------------------------
+;強いとその分だけゲージ増加
+;酔いのレベルが80％以上、120％未満で酩酊とする
+;ARG:1が0のとき酔いの深度を非表示、1の時は表示されるように
+@CALC_GAUGE8, ARG, ARG:1
+#LOCALSIZE 2
+LOCAL:1 = 10000
+IF TALENT:ARG:鬼
+	LOCAL:1 *= 2
+ELSEIF TALENT:ARG:河童 || TALENT:ARG:天狗
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:ARG:黄昏の怪物
+	LOCAL:1 *= 2
+ENDIF
+MAXBASE:ARG:8 = LOCAL:1
+IF ARG:1 == 1
+	LOCAL = (BASE:ARG:酔い *100) / LOCAL:1
+	IF LOCAL == 0
+		PRINT  ＜素面＞
+	ELSEIF LOCAL < 40
+		PRINT  ＜微酔＞
+	ELSEIF LOCAL < 80
+		PRINT  ＜酩酊＞
+	ELSEIF LOCAL < 120
+		PRINT  ＜泥酔＞
+	ELSEIF LOCAL < 160
+		PRINT  ＜狂酔＞
+	ELSE
+		PRINT  ＜極酔＞
+	ENDIF
+	PRINTFORML (深度:Lv{LOCAL})
+ENDIF
+
+;-------------------------------------------------
+;理性と酔いゲージ計算処理2
+;-------------------------------------------------
+;強いとその分だけゲージ増加
+;酔いのレベルが80％以上、120％未満で酩酊とする
+;ARG:1が0のとき酔いの深度を非表示、1の時は表示されるように
+@CALC_GAUGE8_2, ARG, ARG:1
+#LOCALSIZE 2
+IF TALENT:ARG:理性 && MAXBASE:ARG:9 > 0
+	IF BASE:ARG:理性 >= 10000
+		PRINT  ≪元気≫
+	ELSEIF BASE:ARG:理性 >= 7500
+		PRINT  ≪平常≫
+	ELSEIF BASE:ARG:理性 > 5000
+		PRINT  ≪消耗≫
+	ELSEIF BASE:ARG:理性 >= 2500
+		PRINT  ≪放心≫
+	ELSEIF BASE:ARG:理性 > 0
+		PRINT  ≪恍惚≫
+	ELSEIF BASE:ARG:理性 <= 0
+		PRINT  ≪撃沈≫
+	ENDIF
+PRINT 　
+ENDIF
+
+LOCAL:1 = 10000
+IF TALENT:ARG:鬼
+	LOCAL:1 *= 2
+ELSEIF TALENT:ARG:河童 || TALENT:ARG:天狗
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:ARG:黄昏の怪物
+	LOCAL:1 *= 2
+ENDIF
+MAXBASE:ARG:8 = LOCAL:1
+IF ARG:1 == 1
+	LOCAL = (BASE:ARG:酔い *100) / LOCAL:1
+	IF LOCAL == 0
+		PRINT  ＜素面＞
+	ELSEIF LOCAL < 40
+		PRINT  ＜微酔＞
+	ELSEIF LOCAL < 80
+		PRINT  ＜酩酊＞
+	ELSEIF LOCAL < 120
+		PRINT  ＜泥酔＞
+	ELSEIF LOCAL < 160
+		PRINT  ＜狂酔＞
+	ELSE
+		PRINT  ＜極酔＞
+	ENDIF
+	PRINTFORML (深度:Lv{LOCAL})
+ENDIF
+
+;-------------------------------------------------
+;奴隷の精飲絶頂ゲージ表示処理
+;-------------------------------------------------
+@CALC_GAUGEX_SLAVE
+PRINT 精飲
+CALL PRINT_COLORBAR, CFLAG:精飲開発度,1000,32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("水色"), RESULT:1
+PRINTFORML ({CFLAG:精飲開発度, 5}/{1000, 5})
+;PRINTFORML 精飲%BARSTR(CFLAG:精飲開発度,1000,32)% ({CFLAG:精飲開発度, 4}/{1000, 4})
+
+;-------------------------------------------------
+;SHOP画面での奴隷及び助手の特殊装備表示処理
+;-------------------------------------------------
+@SHOW_SPECIAL_EQUIPMENT
+IF TARGET >= 0 && CFLAG:42
+	PRINTFORM 《
+	PRINTFORM %SHOW_CALLNAME(TARGET)%:
+	SIF CFLAG:42 & 1
+		PRINT クリトリスリング 
+	SIF CFLAG:42 & 2
+		PRINT 奴隷管理用貞操帯 
+	SIF CFLAG:42 & 4
+		PRINT ベリージュエル 
+	SIF CFLAG:42 & 8
+		PRINT ボンデージ 
+	SIF CFLAG:42 & 16
+		PRINT ラビアピアス 
+	SIF CFLAG:42 & 32
+		PRINT ニプルピアス 
+	PRINT 装着中》　
+ENDIF
+IF ASSI >= 0 && CFLAG:ASSI:42
+	PRINTFORM 《
+	PRINTFORM %SHOW_CALLNAME(ASSI)%:
+	SIF CFLAG:ASSI:42 & 1
+		PRINT クリトリスリング 
+	SIF CFLAG:ASSI:42 & 2
+		PRINT 奴隷管理用貞操帯 
+	SIF CFLAG:ASSI:42 & 4
+		PRINT ベリージュエル 
+	SIF CFLAG:ASSI:42 & 8
+		PRINT ボンデージ 
+	SIF CFLAG:ASSI:42 & 16
+		PRINT ラビアピアス 
+	SIF CFLAG:ASSI:42 & 32
+		PRINT ニプルピアス 
+	PRINTL 装着中》
+ELSE
+	PRINTL 
+ENDIF
+
+;-------------------------------------------------
+;使用する個別口上形式を表示
+;-------------------------------------------------
+@PRINT_MESSAGE_TYPE, ARG
+;弐型表示
+IF FLAG:12 & 2
+	PRINTL □ 使用する個別口上形式
+;壱型表示
+ELSE
+	PRINTL 使用する個別口上形式：
+ENDIF
+PRINTFORM 設定は「%SHOW_MESSAGE_TYPE(CFLAG:ARG:9)%」になっています
+IF CFLAG:ARG:9 == 4
+	TRYCCALLFORM TRY_{NO:ARG}
+		PRINTFORM (
+		PRINTFORM %SHOW_CALLNAME(ARG)%の専用口上は導入済みです)
+	CATCH
+		PRINTFORM (
+		PRINTFORM %SHOW_CALLNAME(ARG)%の専用口上が見つかりません)
+	ENDCATCH
+ENDIF
+PRINTL 
+PRINTFORML コンフィグの設定は「テキスト表示\@(FLAG:10 & 1) ? ON # OFF\@」になっています
+CALL NEW_DRAWLINE
+
+;-------------------------------------------------
+;残留精子表示処理
+;-------------------------------------------------
+@IN_WOMB_SHOW, ARG
+SETCOLOR 0x000000
+PRINT .
+SETCOLOR (16 > ARG) ? 0xBBBBBF # 0xDDBBBB
+PRINTFORM %UNICODE(0x2584)%%UNICODE(0x2584)% 
+RESETCOLOR
+CALL PRINT_COLORBAR2, ARG, 21, 21, UNICODE(0x2584), UNICODE(0x2584), 0xFFEEEE, 0x222222, (65536*10 + 256*10 + 10), 1
+
+;………………………………………………
+;表示形式の表示
+;………………………………………………
+@SHOW_MESSAGE_TYPE(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		RETURNF "未設定"
+	CASE 1
+		RETURNF "使用しない"
+	CASE 2
+		RETURNF "地の文のみ"
+	CASE 4
+		RETURNF "汎用口上のみ"
+	CASE 6
+		RETURNF "汎用口上＋地の文"
+	CASE 8
+		RETURNF "専用口上のみ"
+	CASE 10
+		RETURNF "専用口上＋地の文"
+	CASEELSE
+		RETURNF "不明"
+ENDSELECT

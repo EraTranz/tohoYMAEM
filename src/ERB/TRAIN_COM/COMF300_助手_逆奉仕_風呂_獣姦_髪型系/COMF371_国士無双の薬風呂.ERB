@@ -1,0 +1,237 @@
+﻿;=============================================================================
+;国士無双の薬風呂
+;=============================================================================
+;ドーピングヤゴコロバス
+;浸かったり飲んだりすると攻撃力(調教力)や防御力(ガード)が一時的に上がります
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE371
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:371 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 2048) == 0
+	RETURN 0
+;調教対象か助手が一度も国士無双の薬風呂に入ったことが無い場合、
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && ( (CFLAG:23 & 16) == 0 || (CFLAG:ASSI:23 & 16) == 0 )
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 13
+	RETURN 1
+;主人か助手のどちらかが調合知識を持っていないとダメ
+IF TALENT:MASTER:調合知識 == 0
+	IF ASSI >= 0
+		SIF TALENT:ASSI:調合知識 == 0
+			RETURN 0
+	ELSE
+		RETURN 0
+	ENDIF
+ENDIF
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中じゃ無いとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 13
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 371) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM371
+PRINTL 国士無双の薬風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 371
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 国士無双の薬風呂
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 80
+DOWNBASE:1 += 200
+
+IF TEQUIP:特殊風呂入浴中 == 13
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+SOURCE:欲情追加 = 250
+SOURCE:液体追加 = 1000
+SOURCE:中毒充足 = 150
+SOURCE:薬物浸潤 = 250
+SOURCE:逸脱 = 2500
+
+TEQUIP:特殊風呂入浴中 = 13
+
+;薬物経験
+TCVAR:薬物経験 += 3
+RETURN 1
+
+;--------------------------------------------------
+;ヤゴコロドーピング中
+;--------------------------------------------------
+@EQUIP_COM371
+IF TALENT:オトコ == 0
+	PRINTL ＜少女ヤゴコロドーピング中＞
+ELSE
+	PRINTL ＜紳士ヤゴコロドーピング中＞
+ENDIF
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 50
+
+TFLAG:160 += 1
+SOURCE:液体追加 += 10 * TFLAG:160
+SOURCE:欲情追加 += 15 * TFLAG:160
+SOURCE:中毒充足 += 50 * TFLAG:160
+SOURCE:薬物浸潤 += 75 * TFLAG:160
+SOURCE:逸脱 += 25 * TFLAG:160
+
+;薬物経験
+TCVAR:薬物経験 += 1
+
+SIF TFLAG:160 >= 30
+	CALL DOPING8556_BURST_SLAVE
+RETURN 1
+
+;--------------------------------------------------
+;ヤゴコロ爆発(奴隷)
+;--------------------------------------------------
+;爆発のアレ
+;内容は薬効果リセット、体力減少や苦痛増加など
+@DOPING8556_BURST_SLAVE
+DOWNBASE:0 += 50
+DOWNBASE:1 += 100
+
+SOURCE:痛み += 5000
+SOURCE:中毒充足 += 5000
+SOURCE:逸脱 += 5000
+
+PRINTFORML ＜薬が強すぎたのか%CALLNAME:TARGET%は爆発してしまった＞
+IF (CFLAG:23 & 16) == 0
+	TCVAR:異常経験 += 1
+	CFLAG:23 |= 16
+ENDIF
+
+;実績
+LOADGLOBAL
+SIF !(GLOBAL:2300 & 256)
+	GLOBAL:2300 |= 256
+SAVEGLOBAL
+
+TFLAG:160 = 0
+
+;--------------------------------------------------
+;ヤゴコロ爆発(助手)
+;--------------------------------------------------
+@DOPING8556_BURST_ASSI
+DOWNBASE:ASSI:0 += 50
+
+JUEL:ASSI:恭順 += 50
+JUEL:ASSI:欲情 += 50
+JUEL:ASSI:苦痛 += 100
+JUEL:ASSI:恐怖 += 50
+JUEL:ASSI:否定 += 75
+
+PRINTFORML ＜薬が強すぎたのか%CALLNAME:ASSI%は爆発してしまった＞
+PRINTL 恭順の珠＋50
+PRINTL 欲情の珠＋50
+PRINTL 苦痛の珠＋100
+PRINTL 恐怖の珠＋50
+PRINTL 否定の珠＋75
+
+IF (CFLAG:ASSI:23 & 16) == 0
+	TCVAR:ASSI:異常経験 += 1
+	CFLAG:ASSI:23 |= 16
+ENDIF
+
+;実績
+LOADGLOBAL
+SIF !(GLOBAL:2300 & 256)
+	GLOBAL:2300 |= 256
+SAVEGLOBAL
+
+WAIT
+TFLAG:162 = 0
+
+;--------------------------------------------------
+;ヤゴコロ爆発(主人)
+;--------------------------------------------------
+@DOPING8556_BURST_MASTER
+BASE:MASTER:体力 = MAX(BASE:MASTER:体力 - 100, 10)
+
+PRINTFORML ＜薬が強すぎたのか%CALLNAME:MASTER%は爆発してしまった＞
+
+;実績
+LOADGLOBAL
+SIF !(GLOBAL:2300 & 256)
+	GLOBAL:2300 |= 256
+SAVEGLOBAL
+
+TFLAG:161 = 0
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_371
+IF TEQUIP:特殊風呂入浴中 == 13
+	PRINTFORML %CALLNAME:TARGET%を得体のしれない液体が入った浴槽から引き揚げた
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を得体のしれない液体が入った浴槽に浸からせた
+ENDIF

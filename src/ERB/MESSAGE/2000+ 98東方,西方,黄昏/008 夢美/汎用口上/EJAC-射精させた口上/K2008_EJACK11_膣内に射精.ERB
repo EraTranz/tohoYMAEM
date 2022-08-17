@@ -1,0 +1,120 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;膣内に射精
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_EJAC_GENERAL_11
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORMW 「ちょ、ちょっと！　だ、出したの！？　嘘でしょ……」
+	CASE 2
+		PRINTFORML 「満足した？　そう、じゃあさっさと抜いてよ」
+		PRINTFORMW 「気持ち悪いこと、この上ないわ」
+	CASE 1
+		PRINTFORMW 「だ、出された……　こんな奴なんかに吐き出されるなんて……」
+	CASEELSE
+		PRINTFORMW 「このっ、汚いもの出さないでよ！」
+ENDSELECT
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_EJAC_GENERAL_11
+;RANK0に丸投げ
+CALL K2008_RANK0_EJAC_GENERAL_11
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_EJAC_GENERAL_11
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORML 「ひあっ！？　根元まで入って、ンーッ！」
+		PRINTFORMW 「ふ、ふーっ、ふー……　まだ出てる、ちょっと出しすぎよ」
+	CASE 1
+		PRINTFORMW 「んっ、ビュルビュルって出てる……　気持ちよかった？」
+	CASEELSE
+		PRINTFORML 「出ちゃいそう？　いいわ、締めてあげる」
+		PRINTFORMW 「それっ、んーーッ！　で、出てるぅ」
+ENDSELECT
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_EJAC_GENERAL_11
+;RANK2に丸投げ
+CALL K2008_RANK2_EJAC_GENERAL_11
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_EJAC_GENERAL_11
+SELECTCASE RAND:4
+	CASE 3
+		PRINTFORML 「あはッ、出てる出てる♪　中出しすてきィ」
+	CASE 2
+		PRINTFORML 「……あ、出ちゃう？　出しちゃうの？」
+		PRINTFORMW 「んひっ、お、奥に出さないとッ！　お仕置きだからっ！　ンンーーー！」
+	CASE 1
+		PRINTFORMW 「もっとっ、もっとビューって出してェ」
+	CASEELSE
+		PRINTFORMW 「んぁああっ、出てるッ　お腹に熱っついのがぁ」
+ENDSELECT
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+@K2008_RANK5_EJAC_GENERAL_11
+IF NOWEX:Ｖ絶頂 == 0
+	;RANK4に丸投げ
+	CALL K2008_RANK4_EJAC_GENERAL_11
+ELSE
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「んぎぃッ、根元まで押し込んでぇ♪　ぶぴゅーってぇ」
+			PRINTFORMW 「あ゛ァア゛、%K2008FS_CALL_YOUR_C()%だいしゅきぃ♪　もっとだひてぇええ！」
+		CASE 2
+			PRINTFORML 「あひっ、んほぉオヲー♪　どぷどぷ音たてて膣内射精されて！」
+			PRINTFORMW 「ザーメン叩き込まれてっ、またイクっ、イッちゃう！」
+		CASE 1
+			PRINTFORML 「ンぉおオ！　ブりゅブりゅ精子流しこまてれりゅ！」
+			PRINTFORMW 「子宮も%K2008FS_CALL_MY_V()%もザーメンに蹂躙されたぁ♪」
+		CASEELSE
+			PRINTFORMW 「んぁああっ、出てるッ　%K2008FS_CALL_MY_V()%に熱っついのがぁ」
+	ENDSELECT
+ENDIF
+
+;緊急避妊薬
+IF TEQUIP:緊急避妊薬
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「おなかの中で精子が暴れてる……　お薬効かなかったら絶対妊娠してるぅ」
+		CASE 1
+			PRINTFORMW 「中出し避妊セックスすてきぃ、あぁんっ、まだ出てるぅ」
+		CASEELSE
+			PRINTFORMW 「%K2008FS_CALL_MY_V()%直撃なのに孕めないなんて残念♪」
+	ENDSELECT
+;排卵誘発剤
+ELSEIF TEQUIP:排卵誘発剤
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「おなかの中で精子が暴れてる……　そんなに受精させたいんだ」
+		CASE 1
+			PRINTFORMW 「種付けセックスすてきぃ、あぁんっ、まだ出てるぅ」
+		CASEELSE
+			PRINTFORMW 「……ちゃんと孕めたかしら。　心配なら、もう一度お願いね」
+	ENDSELECT
+;妊娠中
+ELSEIF TALENT:妊娠
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「おなかの中で精子が暴れてる……　まだお腹に赤ちゃんいるのよ？」
+		CASE 1
+			PRINTFORMW 「孕みセックスッ、あぁんっ、中出しすてきぃ」
+		CASEELSE
+			PRINTFORMW 「孕んでるのにぃ、また孕まされちゃう♪」
+	ENDSELECT
+ENDIF

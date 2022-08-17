@@ -1,0 +1,395 @@
+﻿;=============================================================================
+;写真撮影
+;=============================================================================
+;LOCAL:1 = 総合的な価格修整基礎
+;LOCAL:2 = 撮影者および対象の能力による価格修整基礎
+;LOCAL:3 = 場所および装着道具による価格修整基礎
+;LOCAL:4 = 対象に掛かった精液による価格修整基礎
+;LOCAL:5 = 対象奴隷の価格による価格修整基礎
+;LOCAL:6 = 最終的な価格修整
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE102
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:102 > 0
+	RETURN 0
+;撮影コマンド拡張の設定が有効でないとダメ
+SIF (FLAG:15 & 128) == 0
+	RETURN 0
+;展示室の設定が有効でないとダメ
+SIF (FLAG:12 & 8) == 0
+	RETURN 0
+;調教者が「あなた」か、[家電使役知識][工作名人][報道者]のどれかを所有している場合、問題なし
+IF NO:PLAYER != 1000 && TALENT:PLAYER:家電使役知識 == 0 && TALENT:PLAYER:工作名人 == 0 && TALENT:PLAYER:報道者 == 0
+	;それ以外の場合、撮影経験＋工作経験＋教育経験の合計が200以上ないとダメ
+	SIF (EXP:PLAYER:撮影経験 + EXP:PLAYER:工作経験 + EXP:PLAYER:教育経験) < 200
+		RETURN 0
+	;調教者が助手の場合、さらに技巧が4以上必要
+	SIF ASSIPLAY && ABL:ASSI:技巧 < 4
+		RETURN 0
+ENDIF
+;拘束されていない場合は
+IF TEQUIP:緊縛関連 == 0
+	;対象の従順と奉仕精神と露出癖がどれもLv1以上ないとダメ
+	SIF ABL:従順 < 1 || ABL:奉仕精神 < 1 || ABL:露出癖 < 1
+		RETURN 0
+	;反感または不快が500以上あるとダメ
+	SIF PALAM:反感 >= 500 || PALAM:不快 >= 500
+		RETURN 0
+ENDIF
+;カメラとフィルムを持っていないとダメ
+SIF (ITEM:カメラ == 0 || ITEM:フィルム == 0)
+	RETURN 0
+;今回の調教で既に写真を撮っているとダメ(文花帖みたいに連続して写真が撮れないと勝手に解釈)
+SIF TFLAG:124 > 0
+	RETURN 0
+;ビデオ観賞中はダメ
+SIF TEQUIP:ビデオ鑑賞
+	RETURN 0
+;暗闇展開中は調教者がにとりかはたてかもしくは工作技能Lv5以上でないとダメ
+SIF TEQUIP:暗闇 && CAMERA_IN_DARK_ABLE_BONUS(PLAYER) == 0 && ABL:PLAYER:工作技能 < 5
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 102) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM102
+PRINTL 写真撮影
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 102
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 写真撮影
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 80
+
+SOURCE:中毒充足 = 1000
+SOURCE:逸脱 = 2000
+
+;拘束されている場合は逸脱と反感追加
+IF TEQUIP:緊縛関連
+	TIMES SOURCE:逸脱 , 1.20
+	SOURCE:反感追加 = 1000
+ENDIF
+
+;反発持ちが撮影されると反感追加
+SOURCE:反感追加 += (MARK:反発刻印 * 500)
+
+LOCAL:1 = 1
+LOCAL:3 = 0
+;フィルム1つ消費
+CALL USE_PLURAL_ITEM, 76, 1
+
+;調教者のABL:撮影技能をみる
+IF ABL:PLAYER:撮影技能 == 0
+	LOCAL:2 = 1
+ELSEIF ABL:PLAYER:撮影技能 == 1
+	LOCAL:2 = 2
+ELSEIF ABL:PLAYER:撮影技能 == 2
+	LOCAL:2 = 4
+ELSEIF ABL:PLAYER:撮影技能 == 3
+	LOCAL:2 = 7
+ELSEIF ABL:PLAYER:撮影技能 == 4
+	LOCAL:2 = 11
+ELSE
+	LOCAL:2 = 16
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:露出 = 1500
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:露出 = 2000
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:露出 = 2500
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:露出 = 3000
+ELSE
+	SOURCE:露出 = 3700
+ENDIF
+
+;露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:屈従 = 3400
+	LOCAL:2 += 1
+ELSEIF ABL:露出癖 == 1
+	SOURCE:屈従 = 2600
+	LOCAL:2 += 2
+ELSEIF ABL:露出癖 == 2
+	SOURCE:屈従 = 1900
+	LOCAL:2 += 3
+ELSEIF ABL:露出癖 == 3
+	SOURCE:屈従 = 1300
+	LOCAL:2 += 5
+ELSEIF ABL:露出癖 == 4
+	SOURCE:屈従 = 800
+	LOCAL:2 += 8
+ELSE
+	SOURCE:屈従 = 400
+	LOCAL:2 += 12
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:中毒充足 , 0.70
+	TIMES SOURCE:露出 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:中毒充足 , 1.00
+	TIMES SOURCE:露出 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:中毒充足 , 1.30
+	TIMES SOURCE:露出 , 1.20
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:中毒充足 , 1.60
+	TIMES SOURCE:露出 , 1.40
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:中毒充足 , 1.90
+	TIMES SOURCE:露出 , 1.60
+ELSE
+	TIMES SOURCE:中毒充足 , 2.10
+	TIMES SOURCE:露出 , 1.80
+ENDIF
+
+;口系道具装着
+IF TEQUIP:口装着器具
+	LOCAL:1 += 10
+	LOCAL:3 += 1
+ENDIF
+;Ａ系道具装着
+IF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	LOCAL:1 += 15
+	LOCAL:3 += 1
+ENDIF
+;Ｃ系、カテーテル道具装着
+IF TEQUIP:Ｃ系装着器具 || TEQUIP:Ｕ系装着器具
+	LOCAL:1 += 13
+	LOCAL:3 += 1
+ENDIF
+;Ｂ系道具装着
+IF TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ
+	LOCAL:1 += 12
+	LOCAL:3 += 1
+ENDIF
+;Ｖ系道具装着
+IF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	LOCAL:1 += 18
+	LOCAL:3 += 1
+ENDIF
+;眼隠し系道具装着
+IF TEQUIP:目装着器具
+	LOCAL:1 += 12
+	LOCAL:3 += 1
+ENDIF
+;暗闇展開はむしろマイナス
+SIF TEQUIP:暗闇
+	LOCAL:1 -= 10
+;縄で緊縛、荊で緊縛、蜘蛛の糸で緊縛
+IF TEQUIP:緊縛関連 && !GROUPMATCH(TEQUIP:緊縛関連, 8, 9)
+	LOCAL:1 += 10
+	LOCAL:3 += 1
+	IF TEQUIP:緊縛関連 >= 5
+		LOCAL:1 += 5
+	ELSEIF TEQUIP:緊縛関連 >= 2 && TEQUIP:緊縛関連 < 5
+		LOCAL:1 += 5
+	ENDIF
+ENDIF
+;薬剤系効果発揮中
+IF EQUIP:睡眠薬 || TEQUIP:媚薬 || TEQUIP:利尿剤 || TEQUIP:賢者の血 || TEQUIP:興奮剤 || TEQUIP:坐剤 || TEQUIP:排卵誘発剤 || TEQUIP:緊急避妊薬
+	LOCAL:1 += 7
+	LOCAL:3 += 1
+ENDIF
+;場所系
+;野外プレイ、羞恥プレイ中、お風呂場プレイ
+IF TEQUIP:野外プレイ || TEQUIP:お風呂場プレイ || (TEQUIP:羞恥プレイ == 2 || (TEQUIP:羞恥プレイ == 1 && TALENT:吸血鬼 == 0))
+	LOCAL:1 += 22
+	LOCAL:3 += 1
+ENDIF
+;状況系
+;シャワー、ビデオ撮影
+IF TEQUIP:ビデオ鑑賞 || TEQUIP:シャワープレイ
+	LOCAL:1 += 10
+	LOCAL:3 += 1
+ENDIF
+;触手調教、特殊風呂
+IF TEQUIP:特殊風呂入浴中 || TEQUIP:触手調教
+	LOCAL:1 += 10
+	LOCAL:3 += 1
+	IF TEQUIP:触手調教
+		;触手催眠
+		SIF TEQUIP:触手催眠
+			LOCAL:1 += 1
+		;触手膣内産卵
+		SIF TEQUIP:触手膣内産卵
+			LOCAL:1 += 1
+		;触手腸内産卵
+		SIF TEQUIP:触手腸内産卵
+			LOCAL:1 += 1
+		;触手貫通
+		SIF TEQUIP:Ａ系装着器具 == 3
+			LOCAL:1 += 1
+		;触手カテーテル
+		SIF TEQUIP:Ｕ系装着器具
+			LOCAL:1 += 3
+	ENDIF
+ENDIF
+;着衣系他
+;裸エプロン、スク水プレイ、コスプレ、お医者さんプレイ、サラシ装着中
+IF TEQUIP:サラシ || TEQUIP:お医者さんプレイ || TEQUIP:コスチュームプレイ
+	LOCAL:1 += 20
+	LOCAL:3 += 1
+ENDIF
+;何も装着していない場合と複数の道具を装着しているときのボーナス
+IF LOCAL:3 == 0
+	LOCAL:1 += 1
+ELSEIF LOCAL:3 > 1
+	TIMES LOCAL:3 , 1.50
+	LOCAL:1 += LOCAL:3
+ENDIF
+
+;精液の補正はLOCAL:4
+LOCAL:4 = 0
+;精液の汚れ(口、手、ペニス、ヴァギナ、アナル、胸、髪の順)でこれはぶっかけられた奴隷が生えるのであって、撮影者がどうのこうのは関係ないので修正
+SIF STAIN:口 & 4
+	LOCAL:4 += 1
+SIF STAIN:手 & 4
+	LOCAL:4 += 2
+SIF STAIN:ペニス & 4
+	LOCAL:4 += 4
+SIF STAIN:ヴァギナ & 4
+	LOCAL:4 += 5
+SIF STAIN:アナル & 4
+	LOCAL:4 += 9
+SIF STAIN:胸 & 4
+	LOCAL:4 += 2
+SIF STAIN:髪 & 4
+	LOCAL:4 += 2
+;精液の汚れがない場合とあるときのボーナス
+IF LOCAL:4 == 0
+	LOCAL:1 += 1
+ELSE
+	TIMES LOCAL:4 , 1.80
+	LOCAL:1 = MAX(LOCAL:1 - LOCAL:4, 0)
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 1.20
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL:1 , 2.00
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:1 , 2.00
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:1 , 0.80
+ENDIF
+;自制心
+SIF TALENT:自制心
+	TIMES LOCAL:1 , 1.50
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.60
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1 , 0.80
+;抑圧
+SIF TALENT:抑圧
+	TIMES LOCAL:1 , 3.00
+;抵抗
+SIF TALENT:抵抗
+	TIMES LOCAL:1 , 3.00
+;恥じらい
+IF TALENT:恥じらい
+	TIMES LOCAL:1 , 3.50
+;恥薄い
+ELSEIF TALENT:恥薄い
+	TIMES LOCAL:1 , 0.50
+ENDIF
+
+;調教者または助手が報道者か工作名人なら効果増
+IF TALENT:PLAYER:報道者
+	TIMES LOCAL:1 , 1.70
+ELSEIF TALENT:PLAYER:工作名人
+	TIMES LOCAL:1 , 1.30
+ENDIF
+IF ASSI >= 0 && ASSIPLAY == 0
+	IF TALENT:ASSI:報道者
+		TIMES LOCAL:1 , 1.50
+	ELSEIF TALENT:ASSI:工作名人
+		TIMES LOCAL:1 , 1.20
+	ENDIF
+ENDIF
+
+LOCAL:6 = (LOCAL:1 * LOCAL:2)/7
+
+;写真の売値にキャラの値段の一部を加算(奴隷のみ)
+LOCAL:5 = MIN(ITEMPRICE:(NO:TARGET) / 50, 100)
+LOCAL:6 += LOCAL:5
+
+;魅力
+SIF TALENT:魅力
+	TIMES LOCAL:6 , 1.50
+;魅惑
+SIF TALENT:魅惑
+	TIMES LOCAL:6 , 1.75
+;謎の魅力
+SIF TALENT:謎の魅力
+	TIMES LOCAL:6 , 1.50
+;人気
+SIF TALENT:人気
+	TIMES LOCAL:6 , 1.75
+;烙印
+SIF TALENT:烙印
+	TIMES LOCAL:6 , 0.50
+;淫乱
+SIF TALENT:淫乱
+	TIMES LOCAL:6 , 1.50
+
+;写真を売却する場合の値段
+;妊婦の場合はより価格にばらつきがある
+IF TALENT:妊娠 || TALENT:懐卵
+	TFLAG:124 = LOCAL:6 * (25 + RAND:21) / 8
+ELSE
+	TFLAG:124 = LOCAL:6 * (30 + RAND:11) / 8
+ENDIF
+;撮影者が報道者
+SIF TALENT:PLAYER:報道者
+	TIMES TFLAG:124 , 1.25
+;値段がつかない時はその旨を表示
+SIF TFLAG:124 < 1
+	PRINTL どうも撮影はうまくいかなかったようだ。
+
+TCVAR:PLAYER:撮影経験 += 1
+TCVAR:被写経験 += 1
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_102
+PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の痴態を
+SIF TALENT:PLAYER:報道者
+	PRINT ばっちし
+PRINTL フィルムに収めた
+PRINTFORML 後で%CALLNAME:TARGET%の写真を現像するとしよう…
+IF TALENT:感情乏しい == 0 && TALENT:淫乱 == 0 && ABL:露出癖 < 3
+	PRINTFORML %CALLNAME:TARGET%は恥ずかしい格好のまま写真を撮られたことに気づいたのか僅かに顔をこわばらせている……
+ELSEIF TALENT:感情乏しい || TALENT:淫乱
+	PRINTFORML %CALLNAME:TARGET%は恥ずかしい格好のまま写真を撮られたことを全く気にしていないようだ……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は恥ずかしい格好のまま写真を撮られたことで少し顔を赤らめてしまったようだ……
+ENDIF

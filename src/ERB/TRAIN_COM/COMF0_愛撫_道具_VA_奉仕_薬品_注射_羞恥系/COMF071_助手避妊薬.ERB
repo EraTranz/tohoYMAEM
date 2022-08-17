@@ -1,0 +1,132 @@
+﻿;=============================================================================
+;助手避妊薬
+;=============================================================================
+;やっぱ、助手に飲ませないといけないときはあるはず
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE71
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:71 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:緊急避妊薬 == 0
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;主人もしくは奴隷がオトコかふたなりでないとダメ
+SIF EXIST_PENIS(MASTER) == 0 && EXIST_PENIS(TARGET) == 0
+	RETURN 0
+;薬毒耐性の場合ダメ
+SIF TALENT:ASSI:薬毒耐性
+	RETURN 0
+;助手の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(ASSI) == 0
+	RETURN 0
+;妊娠中なら不可
+SIF TALENT:ASSI:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:ASSI:懐卵
+	RETURN 0
+;産卵促進剤を使っていたら使えない(使えないが)
+SIF TEQUIP:ASSI:産卵促進剤
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:ASSI:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;排卵誘発剤を使っていたら使えない(使えないが)
+SIF TEQUIP:ASSI:排卵誘発剤
+	RETURN 0
+;すでに使用中なら使えない
+SIF TEQUIP:ASSI:緊急避妊薬
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 71) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM71
+PRINTL 助手避妊薬
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 71
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 助手避妊薬
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	DOWNBASE:ASSI:1 += 30
+ELSE
+	DOWNBASE:ASSI:1 += 50
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 5
+
+;緊急避妊薬1つ消費
+CALL USE_PLURAL_ITEM, 65, 1
+TEQUIP:ASSI:緊急避妊薬 = 1
+
+;相愛or親愛or烙印持ち
+IF TALENT:相愛 || TALENT:親愛 || TALENT:烙印
+	;[狂気]＋[嫉妬]
+	IF TALENT:嫉妬 && TALENT:狂気
+		SOURCE:反感追加 = 6666
+	;[嫉妬]
+	ELSEIF TALENT:嫉妬
+		SOURCE:反感追加 = 3333
+	;[嫉妬しやすい]
+	ELSEIF TALENT:嫉妬しやすい
+		SOURCE:反感追加 = 666
+	ENDIF
+ELSE
+	;[狂気]＋[嫉妬]
+	IF TALENT:嫉妬 && TALENT:狂気
+		SOURCE:反感追加 = 666
+	;[嫉妬]
+	ELSEIF TALENT:嫉妬
+		SOURCE:反感追加 = 333
+	ENDIF
+ENDIF
+
+SIF TALENT:MASTER:オトコ == 0 && TALENT:ASSI:オトコ == 0
+	TCVAR:ASSI:レズ経験 += 1
+
+;薬物経験
+TCVAR:ASSI:薬物経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+;助手の口上から制御する方法はありません。
+@SYSTXT_TRAIN_MESSAGE_F_COM_71
+PRINTFORML %CALLNAME:MASTER%は、%CALLNAME:ASSI%に緊急避妊薬を飲むように命じた
+PRINTFORM それを見た%CALLNAME:ASSI%は、
+;[恋慕]、[親愛]、[相愛]の最低でも1つを持つ
+IF TALENT:ASSI:恋慕 || TALENT:ASSI:親愛 || TALENT:ASSI:相愛
+	PRINTL 少し寂しそうな表情でこちらを見ている…
+ELSE
+	PRINTL 命令に素直に従おうとしている…
+ENDIF

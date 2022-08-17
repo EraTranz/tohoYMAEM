@@ -1,0 +1,401 @@
+﻿;=============================================================================
+;石勺柏責め
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE405
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:405 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が秋姉妹か[野菜の錬金術師]でないとダメ
+SIF NO:PLAYER != 1037 && NO:PLAYER != 1038 && TALENT:PLAYER:野菜の錬金術師 == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｕ系装着器具 == 9
+	RETURN 1
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;体力が1000未満では装着不可能
+SIF BASE:体力 < 1000 && !(FLAG:16 & 32)
+	RETURN 0
+;気力が500未満の時はダメ
+SIF BASE:気力 < 500 && !(FLAG:16 & 32)
+	RETURN 0
+;Ｕ拡張経験少ないとダメ
+SIF EXP:Ｕ拡張経験 < 5
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;クスコ使用中は不可
+SIF TEQUIP:クスコ
+	RETURN 0
+;調教対象がオトコの場合、Ｃ系装着具使用中は不可
+SIF (TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム) && TALENT:オトコ
+	RETURN 0
+;他のＵ系装着具使用中は不可
+SIF (TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 9) || TEQUIP:氷柱
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 405) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM405
+IF NO:TARGET == 1012 || NO:TARGET == 1015
+	PRINTL 白石勺柏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 405
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 白石勺柏責め
+ELSE
+	PRINTL 石勺柏責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 405
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 石勺柏責め
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 500
+DOWNBASE:1 += 600
+
+SOURCE:露出 = 800
+SOURCE:恭順追加 = 600
+SOURCE:痒み = 700
+SOURCE:屈従 = 1700
+SOURCE:逸脱 = 2000
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 1000
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 1500
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 2000
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 2500
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 3000
+ELSE
+	SOURCE:快Ｃ = 3500
+ENDIF
+
+;EXP:尿道開発経験をみる
+IF EXP:尿道開発経験 < EXPLV:1
+	TIMES SOURCE:快Ｃ , 0.20
+	SOURCE:痛み = 8000
+	TCVAR:異常経験 += 1
+ELSEIF EXP:尿道開発経験 < EXPLV:2
+	TIMES SOURCE:快Ｃ , 0.60
+	SOURCE:痛み = 3600
+ELSEIF EXP:尿道開発経験 < EXPLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	SOURCE:痛み = 1200
+ELSEIF EXP:尿道開発経験 < EXPLV:4
+	TIMES SOURCE:快Ｃ , 1.20
+	SOURCE:痛み = 300
+ELSEIF EXP:尿道開発経験 < EXPLV:5
+	TIMES SOURCE:快Ｃ , 1.40
+	SOURCE:痛み = 30
+ELSE
+	TIMES SOURCE:快Ｃ , 1.60
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.10
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.40
+	SOURCE:痛み += 400
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｃ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｃ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｃ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｃ , 1.10
+ELSE
+	TIMES SOURCE:快Ｃ , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｃ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｃ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｃ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｃ , 1.20
+ELSE
+	TIMES SOURCE:快Ｃ , 1.30
+ENDIF
+
+;オトコ
+SIF TALENT:オトコ
+	TIMES SOURCE:痛み , 4.50
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;野菜性活
+IF TEQUIP:Ｖ系装着器具 == 9 && TEQUIP:Ａ系装着器具 == 9
+	TIMES SOURCE:快Ｃ , 1.80
+ELSEIF TEQUIP:Ｖ系装着器具 == 9 || TEQUIP:Ａ系装着器具 == 9
+	TIMES SOURCE:快Ｃ , 1.20
+ENDIF
+
+IF NO:TARGET == 1012 || NO:TARGET == 1015
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:痛み , 1.50
+ENDIF
+
+TCVAR:尿道開発経験 += 2
+TCVAR:Ｕ拡張経験 += 2
+
+;石勺柏の着脱
+IF TEQUIP:Ｕ系装着器具 == 9
+	TEQUIP:Ｕ系装着器具 = 0
+	TFLAG:165 += 2
+ELSE
+	TEQUIP:Ｕ系装着器具 = 9
+	TFLAG:165 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;アスパラ挿入中
+;--------------------------------------------------
+@EQUIP_COM405
+IF NO:TARGET == 1012 || NO:TARGET == 1015
+	PRINTL ＜ホワイトアスパラ挿入中＞
+ELSE
+	PRINTL ＜アスパラ挿入中＞
+ENDIF
+
+DOWNBASE:0 += 70
+DOWNBASE:1 += 100
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 40
+ELSEIF ABL:01 == 1
+	LOCAL = 120
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL = 360
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL = 600
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL = 900
+ELSE
+	LOCAL = 1300
+ENDIF
+
+;EXP:尿道経験をみる
+;0はありえない
+IF EXP:尿道開発経験 < EXPLV:2
+	TIMES LOCAL , 0.60
+	LOCAL:1 = 240
+ELSEIF EXP:尿道開発経験 < EXPLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:1 = 120
+ELSEIF EXP:尿道開発経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:1 = 60
+ELSEIF EXP:尿道開発経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:1 = 30
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:1 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.10
+	LOCAL:1 += 400
+	TIMES LOCAL:1 , 3.00
+	LOCAL:2 += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.40
+	LOCAL:1 += 150
+	TIMES LOCAL:1 , 1.00
+	LOCAL:2 += 200
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.50
+	LOCAL:2 += 80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.40
+	TIMES LOCAL:1 , 0.20
+ELSE
+	TIMES LOCAL , 1.80
+	TIMES LOCAL:1 , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;オトコ
+SIF TALENT:オトコ
+	TIMES LOCAL:1 , 4.50
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 2.00
+
+;貞操観念(処女はありえない)
+SIF TALENT:貞操観念
+	TIMES LOCAL:1, 3.00
+
+IF NO:TARGET == 1012 || NO:TARGET == 1015
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 1.50
+ENDIF
+
+SOURCE:快Ｃ += LOCAL
+SOURCE:痛み += LOCAL:1
+
+TCVAR:尿道開発経験 += 1
+TCVAR:Ｕ拡張経験 += 1
+
+TFLAG:165 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_405
+IF TEQUIP:Ｕ系装着器具 == 9
+	PRINTFORML %CALLNAME:TARGET%の尿道に咥えされられているをアスパラガスをゆっくりと引き抜いた。
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORM %CALLNAME:TARGET%
+		IF EXP:Ｕ拡張経験 >= 100 && TALENT:淫乱
+			PRINT の開発させきった尿道は、アスパラガスの突起から快楽を貪ろうとするかのように絡みつい
+		ELSEIF TALENT:恋慕 && TALENT:淫乱
+			PRINT は、アスパラガスの突起が尿道璧を擦る度、まるで痙攣するかのように四肢をはねさせ
+		ELSEIF TALENT:恋慕
+			PRINTFORM は、荒い息をつきながらも%CALLNAME:PLAYER%と目が合うと満足げな表情を見せ
+		ELSEIF TALENT:淫乱
+			PRINT は、アスパラガスがもたらす快感にだらしなく舌をたらして嬌声をあげ
+		ELSEIF TALENT:痛みに弱い
+			PRINT は、尿道から巨大な存在感を放つ物体が引きずり出される感覚に耐えきれず、聞くに堪えない絶叫をあげ
+		ELSE
+			PRINT は、抜かれた瞬間ほっとした表情を浮かべているものの、尿道内の喪失感に対する違和感が拭えず困惑し
+		ENDIF
+		PRINTL ている…
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	IF TALENT:オトコ
+		PRINT 陰茎の先端に
+	ELSE
+		PRINT 僅かにヒクついている尿道口に
+	ENDIF
+	PRINTL 瑞々しいアスパラガスをあてがった…
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORM %CALLNAME:TARGET%は
+		IF TALENT:恋慕 && TALENT:淫乱
+			PRINT 熱のこもった視線で“それ”を見つめ、自分から進んで尿道口を大きく拡げている
+		ELSEIF TALENT:恋慕
+			PRINTFORM 笑みを浮かべてはいるものの戸惑いの表情を隠しきれないまま%CALLNAME:PLAYER%を見
+		ELSEIF TALENT:淫乱
+			PRINT 挿入される快感を限界まで引き出そうと尿道口を自分の指でかき回し、ほぐしている
+		ELSEIF TALENT:痛みに弱い
+			PRINT 涙を流しながら叫び声をあげ、手で今まさに自分の尿道に潜り込もうとするモノを払いのけようとし
+		ELSE
+			PRINTFORM 乾いた笑みを浮かべ、%CALLNAME:PLAYER%の手の中のアスパラガスを見つめ
+		ENDIF
+		PRINTL ている…
+	ENDIF
+ENDIF

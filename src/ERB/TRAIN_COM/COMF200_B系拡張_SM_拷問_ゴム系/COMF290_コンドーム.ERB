@@ -1,0 +1,214 @@
+﻿;=============================================================================
+;コンドーム
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE290
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:290 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;コンドームを持っていないとダメ
+SIF ITEM:コンドーム == 0
+	RETURN 0
+;調教者と奴隷の少なくとも一方がオトコかふたなりでないとだめ
+SIF EXIST_PENIS(PLAYER) == 0 && EXIST_PENIS(TARGET) == 0
+	RETURN 0
+;奴隷だけが棒を持っている場合
+IF EXIST_PENIS(PLAYER) == 0 && EXIST_PENIS(TARGET)
+	;乗馬中はダメ
+	SIF TEQUIP:三角木馬乗馬中
+		RETURN 0
+	;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+	SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+		RETURN 0
+	;オムツプレイ中はダメ
+	SIF TEQUIP:オムツプレイ
+		RETURN 0
+	;褌着用中の場合はダメ
+	SIF TEQUIP:コスチュームプレイ == 17
+		RETURN 0
+ENDIF
+;調教者だけが棒を持っている場合
+IF EXIST_PENIS(TARGET) == 0 && EXIST_PENIS(PLAYER)
+	;助手が褌着用中の場合はダメ
+	SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ == 17
+		RETURN 0
+ENDIF
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 290) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM290
+PRINTL コンドーム
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 290
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = コンドーム
+
+TFLAG:99 = -1
+LOCAL = 0
+;対象が棒を持っている
+IF EXIST_PENIS(TARGET)
+	;乗馬中、蒸し風呂と岩盤浴以外の特殊風呂入浴中、オムツプレイ中、褌着用中を除外
+	SIF TEQUIP:三角木馬乗馬中 == 0 && (TEQUIP:特殊風呂入浴中 == 0 || TEQUIP:特殊風呂入浴中 == 12 || TEQUIP:特殊風呂入浴中 == 15) && TEQUIP:オムツプレイ == 0 && TEQUIP:コスチュームプレイ != 17
+		LOCAL |= 1
+ENDIF
+;調教者が棒を持っている
+IF EXIST_PENIS(PLAYER)
+	;助手調教中でなければＯＫ
+	IF ASSIPLAY == 0
+		LOCAL |= 2
+	;助手が褌着用中なら除外
+	ELSEIF ASSI >= 0 && ASSIPLAY && TEQUIP:PLAYER:コスチュームプレイ != 17
+		LOCAL |= 2
+	ENDIF
+ENDIF
+
+;こうなることはないはずだが…
+IF LOCAL == 0
+	PRINTL コンドームを脱着できる者がいません。
+	PRINTL よって何も行われませんでした…
+	RETURN 1
+;対象と調教者の両方が装着できる場合
+ELSEIF LOCAL & 1 && LOCAL & 2
+	PRINTL コンドームの脱着を行います。誰にコンドームを使用しますか？
+	PRINTL (既に装着している対象を選んだ場合、コンドームを外します)
+	PRINTFORML [0] 「調教者」 (\@(TEQUIP:PLAYER:コンドーム) ? 装着済み # 未装着\@)
+	PRINTFORML [1] 「奴隷」 (\@(TEQUIP:コンドーム) ? 装着済み # 未装着\@)
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		TFLAG:99 = 0
+		IF TEQUIP:PLAYER:コンドーム
+			TEQUIP:PLAYER:コンドーム = 0
+		ELSE
+			CALL ITEM_CONSUME_COM290
+			TEQUIP:PLAYER:コンドーム = 1
+		ENDIF
+	ELSEIF RESULT == 1
+		TFLAG:99 = 1
+		IF TEQUIP:コンドーム
+			TEQUIP:コンドーム = 0
+		ELSE
+			CALL ITEM_CONSUME_COM290
+			TEQUIP:コンドーム = 1
+		ENDIF
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+ELSE
+	TFLAG:99 = 2 + !(LOCAL & 2)
+	;調教者のみ装着可能
+	IF LOCAL & 2
+		IF TEQUIP:PLAYER:コンドーム
+			TEQUIP:PLAYER:コンドーム = 0
+		ELSE
+			CALL ITEM_CONSUME_COM290
+			TEQUIP:PLAYER:コンドーム = 1
+		ENDIF
+	;対象のみ装着可能
+	ELSE
+		IF TEQUIP:コンドーム
+			TEQUIP:コンドーム = 0
+		ELSE
+			CALL ITEM_CONSUME_COM290
+			TEQUIP:コンドーム = 1
+		ENDIF
+	ENDIF
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+;調教対象が睡眠中もしくは失神中の場合はソース追加なし。
+SIF EQUIP:睡眠薬 || TFLAG:899 > 0
+	RETURN 1
+
+;調教対象が処女
+IF TALENT:処女 == 1
+	SOURCE:情愛 = 10
+	SOURCE:接触 = 10
+	SOURCE:欲情追加 = 20
+ELSE
+	SOURCE:情愛 = 10
+	SOURCE:屈従 = 20
+ENDIF
+
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES SOURCE:情愛 , 1.50
+RETURN 1
+
+;--------------------------------------------------
+;コンドーム消費・補充処理
+;--------------------------------------------------
+@ITEM_CONSUME_COM290
+;コンドーム1つ消費
+CALL USE_PLURAL_ITEM, 78, 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_290
+SELECTCASE TFLAG:99
+	CASE 0
+		IF TEQUIP:PLAYER:コンドーム == 0
+			PRINTFORML %CALLNAME:PLAYER%は自分でコンドームを外した
+		ELSE
+			;睡眠中、失神、猿轡、目隠し、緊縛、時止め、反発Lv2以上のいずれでもなくて従順３以上の場合
+			IF ABL:従順 >= 3 && EQUIP:睡眠薬 == 0 && TFLAG:899 <= 0 && TEQUIP:口装着器具 == 0 && TEQUIP:目装着器具 == 0 && TEQUIP:緊縛関連 == 0 && TEQUIP:時間止め == 0 && MARK:反発刻印 < 2
+				PRINTFORML %CALLNAME:TARGET%はコンドームを咥え、口を使って%CALLNAME:PLAYER%のペニスに優しくかぶせた……
+			ELSE
+				PRINTFORML %CALLNAME:PLAYER%は自分のペニスにコンドームをかぶせた……
+			ENDIF
+		ENDIF
+	CASE 1
+		IF TEQUIP:コンドーム == 0
+			PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のコンドームを外した
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のペニスにコンドームをかぶせた……
+		ENDIF
+	CASE 2
+		IF EXIST_PENIS(PLAYER)
+			IF TEQUIP:PLAYER:コンドーム == 0
+				PRINTFORML %CALLNAME:PLAYER%は自分でコンドームを外した
+			ELSE
+				;睡眠中、失神、猿轡、目隠し、緊縛、時止め、反発Lv2以上のいずれでもなくて従順３以上の場合
+				IF ABL:従順 >= 3 && EQUIP:睡眠薬 == 0 && TFLAG:899 <= 0 && TEQUIP:口装着器具 == 0 && TEQUIP:目装着器具 == 0 && TEQUIP:緊縛関連 == 0 && TEQUIP:時間止め == 0 && MARK:反発刻印 < 2
+					PRINTFORML %CALLNAME:TARGET%はコンドームを咥え、口を使って%CALLNAME:PLAYER%のペニスに優しくかぶせた……
+				ELSE
+					PRINTFORML %CALLNAME:PLAYER%は自分のペニスにコンドームをかぶせた……
+				ENDIF
+			ENDIF
+		ELSE
+			IF TEQUIP:コンドーム == 0
+				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のコンドームを外した
+			ELSE
+				PRINTFORM %CALLNAME:PLAYER%は
+				SIF ASSIPLAY && ABL:従順 >= 3
+					PRINTFORM コンドームを咥え、口を使って
+				PRINTFORML %CALLNAME:TARGET%のペニスにコンドームをかぶせた……
+			ENDIF
+		ENDIF
+ENDSELECT

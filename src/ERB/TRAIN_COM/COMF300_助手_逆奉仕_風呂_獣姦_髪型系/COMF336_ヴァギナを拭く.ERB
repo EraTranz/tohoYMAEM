@@ -1,0 +1,208 @@
+﻿;=============================================================================
+;ヴァギナを拭く
+;=============================================================================
+;中出しした精液を拭く。
+;Ｖ経験は増えないが快Ｖを与えるとともにＣにも刺激が行く。
+;内容的には小陰唇愛撫を流用
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE336
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:336 > 0
+	RETURN 0
+;Ｖ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2) == 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;中出しされてて、∨に精液汚れが無いとダメ
+SIF (STAIN:ヴァギナ & 4) == 0 || TFLAG:103 <= 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;他のＶ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;お風呂場プレイ中、○○風呂入浴中はダメ
+SIF TEQUIP:お風呂場プレイ || TEQUIP:特殊風呂入浴中
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;焦らしプレイ中はダメ
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 336) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM336
+PRINTL ヴァギナを拭く
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 336
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ヴァギナを拭く
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 30
+DOWNBASE:1 += 70
+
+;接触
+SOURCE:接触 = 300
+;露出
+SOURCE:露出 = 300
+;性行動
+SOURCE:性行動 = 150
+;欲情追加
+SOURCE:欲情追加 = 100
+;羞恥扇情
+SOURCE:羞恥扇情 = 1000
+;逸脱
+SOURCE:逸脱 = 20
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 10
+	SOURCE:情愛 = 25
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 50
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 100
+	SOURCE:情愛 = 80
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 250
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 500
+	SOURCE:情愛 = 115
+ELSE
+	SOURCE:快Ｃ = 800
+	SOURCE:情愛 = 125
+ENDIF
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 5
+	SOURCE:屈従 = 15
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 25
+	SOURCE:屈従 = 25
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 75
+	SOURCE:屈従 = 40
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 150
+	SOURCE:屈従 = 70
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 300
+	SOURCE:屈従 = 130
+ELSE
+	SOURCE:快Ｖ = 600
+	SOURCE:屈従 = 200
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.00
+	TIMES SOURCE:屈従 , 0.20
+	SOURCE:痛み = 100
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.25
+	TIMES SOURCE:屈従 , 0.50
+	SOURCE:痛み = 60
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:屈従 , 0.80
+	SOURCE:痛み = 20
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 0.75
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:痛み = 5
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:屈従 , 1.10
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:痛み = 0
+ENDIF
+
+;Ｖ敏感、鈍感をみる
+;快Ｖ自体のチェックは後でまとめてやる
+IF TALENT:Ｖ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+ELSEIF TALENT:Ｖ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ENDIF
+
+;親愛・相愛
+SIF TALENT:親愛 || TALENT:相愛
+	TIMES SOURCE:情愛 , 1.20
+
+;精液ふき取り。
+SIF STAIN:ヴァギナ & 4
+	STAIN:ヴァギナ -= 4
+
+;とりあえず抜いとく。
+TFLAG:102 = 0
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_336
+PRINTFORM %CALLNAME:TARGET%の\@(TALENT:小柄体型) ? 幼いワレメ # 秘裂\@からあふれる
+IF STAIN:ヴァギナ & 4 && STAIN:ヴァギナ & 64 && TFLAG:103 > 0
+	SIF STAIN:ヴァギナ & 32
+		PRINT 破瓜の血と
+	SIF STAIN:ヴァギナ & 128
+		PRINT 経血と
+	PRINT 精液と触手の体液が混ざり合ってできた濁った液体を
+ELSEIF STAIN:ヴァギナ & 4 && TFLAG:103 > 0
+	IF STAIN:ヴァギナ & 32 && STAIN:ヴァギナ & 128
+		PRINT 血と入り混じって生々しいピンク色の液体となった
+	ELSEIF STAIN:ヴァギナ & 128
+		PRINT 経血と入り混じって生々しいピンク色の液体となった
+	ELSEIF STAIN:ヴァギナ & 32
+		PRINT 破瓜の血と入り混じって生々しいピンク色の液体となった
+	ENDIF
+	PRINT 精液を
+ENDIF
+PRINTL そっと拭ってやった…

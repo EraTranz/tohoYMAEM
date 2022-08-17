@@ -1,0 +1,59 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING関係
+;単体エンディング
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SINGLE_ENDING
+DRAWLINE
+PRINTFORMW ―――単体エンド条件達成―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+
+CALL K2008_SELECT_CALLABLE_FUNCTION("K2008_ENDING_SINGLE_#")
+
+PRINTFORMW 
+PRINTFORMW 　　　　　　　　―― Ending No.{10000+NO:TARGET} (%CALLNAME:TARGET%エンド)
+RETURN 0
+
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING_AFTER関係
+;単体エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SINGLE_ENDING_AFTER
+;PRINTFORMW 
+RETURN 0
+
+
+;-------------------------------------------------
+;■標準
+;-------------------------------------------------
+@K2008_ENDING_SINGLE_1
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+
+PRINTFORML 
+PRINTFORMW それから少し後のお話...
+PRINTFORML 
+PRINTFORMW 「あはは、やっと着いた。こんなに時間がかかるとは予想できなかったわ」
+PRINTFORMW 「えー、私は悪くないわよ。理論は間違ってなかったもんね」
+PRINTFORML 
+PRINTFORMW ここは、可能性空間移動船
+PRINTFORMW ――を模して造られた、新しい名も無き船
+PRINTFORML 『私たちに相応しい新天地を見つけるのよ！』との発案により
+PRINTFORMW 我らが岡崎夢美教授が設計した、世界を飛び越せる不思議な船だ
+PRINTFORML 
+PRINTFORMW ・・・そして今、我々は
+PRINTFORMW 見たことのない世界にいる
+PRINTFORML 
+PRINTFORMW 「なんにせよ、人間として生きていけそうな世界でよかった」
+PRINTFORMW 「前回は宇宙空間、前々回は地底の大空洞、そのさらに前は何だったかしら？」
+PRINTFORML 「そうそう、ナメクジが王国を築いてる世界だったわね」
+PRINTFORMW 「あそこに到着したときは心が折れそうだったわ」
+PRINTFORML 
+PRINTFORMW 何度も世界を飛び越え、ようやくたどり着いたこの場所でしばらく生活することになった
+PRINTFORMW 無論、永住する気はないので、時期が来たら元の世界に戻るつもりでいる
+PRINTFORMW 少し長めの新婚旅行のようなものだ
+PRINTFORML 
+PRINTFORMW 「ふふふ、これからどんな日常が始まるのか楽しみだわ」
+PRINTFORMW 「これからも、どうぞ、よろしくね。　%CALLNAME:MASTER%」

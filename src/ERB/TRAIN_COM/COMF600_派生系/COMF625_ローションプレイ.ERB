@@ -1,0 +1,187 @@
+﻿;=============================================================================
+;ローションプレイ
+;=============================================================================
+;小人体型持ちだと普通にローションを使うと余りすぎるのではないか？という解釈で作成。
+;愛撫しつつローションを塗り込んでいく…という内容のつもり
+;潤滑は単純に液体の量だけでなく、摩擦にも関係していると解釈。
+;故に一定値を超えた潤滑(1万以上とか)というのは愛液等の量が○○Lというよりむしろ滑りやすさって意味のほうが強いと判断し、風呂の仕様に反映
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE625
+#FUNCTION
+;以下の条件を満たしている場合は全身愛撫なローションプレイに変更
+;ローションを持っていないとダメ
+SIF ITEM:ローション == 0
+	RETURNF 0
+;調教者が小人体型のときは技巧が3以上ないとダメ
+IF TALENT:PLAYER:小人体型
+	SIF ABL:PLAYER:技巧 < 3
+		RETURNF 0
+ENDIF
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURNF 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURNF 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURNF 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURNF 0
+;助手がコスプレ中はダメ
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:コスチュームプレイ > 2
+	RETURNF 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURNF 0
+;触手調教中では無い
+SIF TEQUIP:触手調教
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 625) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM625
+PRINTL ローションプレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 625
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ローションプレイ
+SELECTCOM = 625
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:性行動 = 60
+SOURCE:不潔 = 50
+SOURCE:液体追加 = 10000
+SOURCE:露出 = 90
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 10
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 50
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 250
+	SOURCE:情愛 = 160
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 600
+	SOURCE:情愛 = 200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 1000
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:快Ｃ = 1500
+	SOURCE:情愛 = 250
+ENDIF
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 20
+	SOURCE:接触 = 50
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 60
+	SOURCE:接触 = 100
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 210
+	SOURCE:接触 = 160
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 630
+	SOURCE:接触 = 200
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 1260
+	SOURCE:接触 = 230
+ELSE
+	SOURCE:快Ｂ = 1700
+	SOURCE:接触 = 250
+ENDIF
+
+;ボールギャグ使用中のとき指を奴隷の口に入れない
+IF TEQUIP:口装着器具 == 0
+	SOURCE:痛み = 100
+	SOURCE:接触 += 120
+	;プライド高い
+	SIF TALENT:プライド高い
+		SOURCE:不潔 *= 2
+	;汚臭鈍感
+	IF TALENT:汚臭鈍感
+		SOURCE:不潔 /= 4
+	;汚臭敏感
+	ELSEIF TALENT:汚臭敏感
+		SOURCE:不潔 *= 3
+	ENDIF
+	;恋慕
+	IF TALENT:恋慕 && ASSIPLAY == 0
+		SOURCE:情愛 *= 2
+		SOURCE:不潔 /= 10
+	ENDIF
+	;主人の指に汚れがあると不潔150%
+	IF STAIN:PLAYER:手
+		SOURCE:不潔 *= 3
+		SOURCE:不潔 /= 2
+	ENDIF
+
+	;奴隷の口⇔調教者の指の汚れが移動
+	STAIN:口 |= STAIN:PLAYER:手
+	STAIN:PLAYER:手 |= STAIN:口
+ENDIF
+
+;奴隷のＶ⇔調教者の指の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:ヴァギナ
+
+;奴隷のＢ⇔調教者の指の汚れが移動
+STAIN:胸 |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:胸
+
+;ローション1つ消費
+CALL USE_PLURAL_ITEM, 60
+TEQUIP:ローション = 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_625
+PRINTFORML %CALLNAME:PLAYER%はローションを手に付けるとよく馴染むように%CALLNAME:TARGET%に塗りたくった
+
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM %CALLNAME:TARGET%は秘所と
+	IF TALENT:絶壁 || TALENT:貧乳
+		PRINT 未発達な胸の先端に付いた豆
+	ELSEIF TALENT:巨乳 || TALENT:爆乳
+		PRINT 体型に似合わず豊か過ぎるとも言えるたわわの先っぽ
+	ELSE
+		PRINT 小さいが形の良い双丘
+	ENDIF
+	PRINT に塗り込められていくローションの冷たい感触に
+	IF TEQUIP:口装着器具
+		PRINTL 思わず目を瞑ってしまったようだ……
+	ELSE
+		PRINTL 小さく悲鳴をあげた…
+		PRINTL 
+		PRINTFORML その隙を逃すことなく、%CALLNAME:PLAYER%は余ったローションを付けた指を口の中に突き入れ
+		PRINTFORML しばしの間%CALLNAME:TARGET%の口腔を蹂躙しながら空気を求めて暴れまわる舌の感触を楽しんだ……
+	ENDIF
+ENDIF

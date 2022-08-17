@@ -1,0 +1,114 @@
+﻿;=============================================================================
+;髪型を弄る
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE396
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:396 > 0
+	RETURN 0
+;従順4以上必要
+SIF ABL:従順 < 4
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中とダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 396) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM396
+PRINTL 髪型を弄る
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 396
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 髪型を弄る
+TFLAG:201 = 0
+
+	PRINTL 好きなの髪型を選る。
+	PRINT 現在 [
+	PRINTFORML %HAIR_CHECK_1(TARGET)%]
+	REPEAT 22
+		PRINTFORMLC [{COUNT, 2, RIGHT}] %TALENTNAME:(580 + COUNT)%
+	REND
+	PRINTLC [99] そのまま
+	$INPUT_LOOP
+	INPUT
+	IF RESULT >= 0 && RESULT <= 22
+		TFLAG:201 = RESULT
+		REPEAT 22
+			TALENT:(580 + COUNT) = 0
+		REND
+		TALENT:(580 + RESULT) = 1
+		CALL RESET_HAIR_CFLAG, TARGET
+	ELSEIF RESULT == 99
+		TFLAG:201 = RESULT
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:1 += 60
+
+SOURCE:露出 = 100
+SOURCE:屈従 = 100
+
+;ABL:欲望をみる
+IF ABL:欲望 == 1
+	SOURCE:情愛 = 10
+ELSEIF ABL:欲望 == 2
+	SOURCE:情愛 = 25
+ELSEIF ABL:欲望 == 3
+	SOURCE:情愛 = 50
+ELSEIF ABL:欲望 == 4
+	SOURCE:情愛 = 75
+ELSEIF ABL:欲望 == 5
+	SOURCE:情愛 = 100
+ENDIF
+
+;プレイヤーの技巧を見る
+IF ABL:PLAYER:技巧 <= 3
+	SOURCE:痛み = 100
+ELSEIF ABL:PLAYER:技巧 == 4
+	SOURCE:痛み = 10
+ELSE
+	SOURCE:痛み = 0
+ENDIF
+
+;対象の髪の汚れ⇔調教者の手の汚れが相互に移動
+STAIN:手 |= STAIN:PLAYER:髪
+STAIN:PLAYER:髪 |= STAIN:手
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_396
+IF TFLAG:201 == 99
+	PRINTFORML %CALLNAME:TARGET%の髪型をそのままにした。
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の髪型を
+	PRINTFORML %HAIR_CHECK_1(TARGET)%に変えた。
+	IF ABL:PLAYER:技巧 >= 5
+		PRINTL この出来映えなら、まずどこに出しても恥ずかしくはないだろう…
+	ELSEIF ABL:PLAYER:技巧 >= 4
+		PRINTL 持ち前の器用さが助けとなって、まずまずの仕上がりとなった…
+	ELSE
+		PRINTL 不慣れな作業のためか、仕上がりは今ひとつのようだ…
+	ENDIF
+ENDIF

@@ -1,0 +1,225 @@
+﻿;=============================================================================
+;ヴァギナダイビング
+;=============================================================================
+;フィストファックを基に作成
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE234
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:234 > 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;処女には使えない
+SIF TALENT:処女
+	RETURN 0
+;調教者が小人体型であることが前提
+SIF TALENT:PLAYER:小人体型 == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;調教対象が小人体型の場合はダメ
+SIF TALENT:小人体型
+	RETURN 0
+;主人調教の場合、従順が3未満かつ屈服刻印が1未満だとダメ
+SIF PLAYER == MASTER && ABL:従順 < 3 && MARK:薬物刻印 < 1
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 1) == 0
+	RETURN 0
+;小柄体型なら従順が4以上かつマゾっ気が4以上じゃないと実行できない
+IF TALENT:小柄体型
+	SIF ABL:従順 < 4 || ABL:マゾっ気 < 4
+		RETURN 0
+ENDIF
+;妊娠中のときはダイビング系は連続で使えない
+SIF TALENT:妊娠 && (PREVCOM == 234 || PREVCOM == 235)
+	RETURN 0
+;一定のＶ経験とＶ拡張経験が必要([巨躯]の場合は軽減)
+IF TALENT:巨躯
+	LOCAL = 75
+	LOCAL:1 = 10
+ELSE
+	LOCAL = 150
+	LOCAL:1 = 20
+ENDIF
+SIF EXP:Ｖ経験 < LOCAL || EXP:Ｖ拡張経験 < LOCAL:1
+	RETURN 0
+;潤滑不足の場合は不可能
+SIF PALAM:潤滑 < PALAMLV:5
+	RETURN 0
+;調教対象の体力が1500未満または気力が500未満だとダメ
+SIF BASE:体力 < 1500 || BASE:気力 < 500 && !(FLAG:16 & 32)
+	RETURN 0
+;調教者の体力が500未満または気力が250未満だとダメ
+SIF BASE:PLAYER:体力 < 500 || BASE:PLAYER:気力 < 250
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 234) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM234
+IF NO:PLAYER == 1010
+	LOCALS = ヴァギナクレイドル
+ELSEIF PREVCOM == 234
+	LOCALS = 洞窟探検
+ELSE
+	LOCALS = ヴァギナダイビング
+ENDIF
+IF NO:PLAYER == 1023
+	LOCALS = 萃香の%LOCALS%
+ELSEIF NO:PLAYER == 1066
+	LOCALS = 上海の%LOCALS%
+ELSEIF NO:PLAYER == 1067
+	LOCALS = 蓬莱の%LOCALS%
+ENDIF
+PRINTFORML %LOCALS%
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 234
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = %LOCALS%
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+DOWNBASE:0 += 800
+DOWNBASE:1 += 400
+
+SOURCE:露出 = 1200
+SOURCE:恭順追加 = 1200
+SOURCE:痛み = 3500
+SOURCE:屈従 = 1200
+SOURCE:逸脱 = 10000
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 2000
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 2500
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 3000
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 3300
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 3600
+ELSE
+	SOURCE:快Ｖ = 3800
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;連続で使った場合
+IF PREVCOM == 234
+	DOWNBASE:0 += 200
+	DOWNBASE:1 += 100
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:痛み , 2.00
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:逸脱 , 3.00
+ENDIF
+
+TCVAR:Ｖ経験 += 25
+TCVAR:Ｖ拡張経験 += 3
+
+SIF PREVCOM == 234 && TFLAG:134 == NO:PLAYER
+	BASE:気力 /= 2
+
+TFLAG:134 = NO:PLAYER
+BASE:PLAYER:体力 -= 400
+BASE:PLAYER:気力 -= 200
+
+;奴隷のＶ⇔調教者の体の汚れが移動
+STAIN:PLAYER:口 |= STAIN:ヴァギナ
+STAIN:PLAYER:手 |= STAIN:ヴァギナ
+STAIN:PLAYER:胸 |= STAIN:ヴァギナ
+STAIN:ヴァギナ |= STAIN:PLAYER:口
+STAIN:ヴァギナ |= STAIN:PLAYER:手
+STAIN:ヴァギナ |= STAIN:PLAYER:胸
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_234
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	IF PREVCOM == 234 && TFLAG:134 == NO:PLAYER
+		PRINTFORML %CALLNAME:PLAYER%は再び%CALLNAME:TARGET%の秘唇を限界まで広げると、前回よりもさらに奥の方へと侵入を試みた
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTFORML やがてこれ以上は無理と判断したのか%CALLNAME:PLAYER%は体を%CALLNAME:TARGET%の膣から引き抜いた
+		PRINTFORML %CALLNAME:TARGET%は異物が抜けた後もぐったりとしてる……
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の秘唇を大きく広げると、頭を中に突っ込み始めた
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTFORML やがてこれ以上は無理と判断したのか%CALLNAME:PLAYER%は体を%CALLNAME:TARGET%の膣から引き抜いた
+		PRINTFORML %CALLNAME:TARGET%は荒い息を繰り返している……
+	ENDIF
+ELSE
+	IF PREVCOM == 234 && TFLAG:134 == NO:PLAYER
+		PRINTFORML %CALLNAME:PLAYER%は再び%CALLNAME:TARGET%の秘唇を限界まで広げると、前回よりもさらに奥の方へと侵入を試みた
+		PRINTFORML %CALLNAME:TARGET%は子宮口を撫でられるおぞましい感触にとうとう気絶してしまった
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTFORML やがてこれ以上は無理と判断したのか%CALLNAME:PLAYER%は体を%CALLNAME:TARGET%の膣から引き抜いた
+		PRINTFORML 既に気力が尽きたのか、%CALLNAME:TARGET%は異物が抜けた後もぐったりとしてる……
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の秘唇を大きく広げると、頭を中に突っ込み始めた
+		PRINTFORML %CALLNAME:TARGET%は膣内に入り込んでいく巨大な異物感に悲鳴を上げた……
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTL 　　　　　　　　･
+		PRINTFORML やがてこれ以上は無理と判断したのか%CALLNAME:PLAYER%は体を%CALLNAME:TARGET%の膣から引き抜いた
+		PRINTFORML %CALLNAME:TARGET%は目に涙を浮かべ、荒い息を繰り返している……
+	ENDIF
+ENDIF

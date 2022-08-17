@@ -1,0 +1,418 @@
+﻿;=================================================
+;一括レベル上げ機能
+;=================================================
+@AUTO_ABLUP
+#LOCALSIZE 2
+LOCAL:1 = 0
+
+;Ｃ感覚
+$AUTO_ABLUP_0
+CALL CHECK_ISABLUP, 0
+IF RESULT == 1
+	IF ABL:Ｃ感覚 < 5
+		JUEL:快Ｃ -= COST0(0)
+		ABL:Ｃ感覚 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_0
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:0%のレベルが{ABL:Ｃ感覚}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;Ｖ感覚
+$AUTO_ABLUP_1
+CALL CHECK_ISABLUP, 1
+IF RESULT == 1
+	IF ABL:Ｖ感覚 < 5
+		JUEL:快Ｖ -= COST1(0)
+		ABL:Ｖ感覚 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_1
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:1%のレベルが{ABL:Ｖ感覚}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;Ａ感覚
+$AUTO_ABLUP_2
+CALL CHECK_ISABLUP, 2
+IF RESULT == 1
+	IF ABL:Ａ感覚 < 5
+		JUEL:快Ａ -= COST2(0)
+		ABL:Ａ感覚 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_2
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:2%のレベルが{ABL:Ａ感覚}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;Ｂ感覚
+$AUTO_ABLUP_3
+CALL CHECK_ISABLUP, 3
+IF RESULT == 1
+	IF ABL:Ｂ感覚 < 5
+		JUEL:快Ｂ -= COST3(0)
+		ABL:Ｂ感覚 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_3
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:3%のレベルが{ABL:Ｂ感覚}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;従順
+$AUTO_ABLUP_10
+CALL CHECK_ISABLUP, 10
+IF RESULT == 1
+	IF ABL:従順 < 5
+		;恐怖の珠で上げる
+		IF JUEL:恐怖 >= COST10(0)
+			JUEL:恐怖 -= COST10(0)
+			GOTO AUTO_ABLUP_10_2
+		ENDIF
+		;恭順の珠で上げる
+		IF JUEL:恭順 >= COST10(1)
+			JUEL:恭順 -= COST10(1)
+			GOTO AUTO_ABLUP_10_2
+		ENDIF
+		;欲情の珠で上げる
+		IF COST10(2) > 0
+			IF JUEL:欲情 >= COST10(2)
+				JUEL:欲情 -= COST10(2)
+				GOTO AUTO_ABLUP_10_2
+			ENDIF
+		ENDIF
+		;屈服の珠で上げる
+		IF COST10(3) > 0
+			IF JUEL:屈服 >= COST10(3)
+				JUEL:屈服 -= COST10(3)
+				GOTO AUTO_ABLUP_10_2
+			ENDIF
+		ENDIF
+		$AUTO_ABLUP_10_2
+		ABL:従順 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_10
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:10%のレベルが{ABL:従順}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;欲望
+$AUTO_ABLUP_11
+CALL CHECK_ISABLUP, 11
+IF RESULT == 1
+	IF ABL:欲望 < 5
+		;欲情の珠で上げる
+		IF JUEL:欲情 >= COST12(0)
+			JUEL:欲情 -= COST11(0)
+			GOTO AUTO_ABLUP_11_2
+		ENDIF
+		;サドっ気が3以上だと先導の珠でも上昇させることができる
+		IF ABL:サドっ気 >= 3
+			IF JUEL:欲情 >= COST11(1) && JUEL:先導 >= COST11(0)
+				JUEL:欲情 -= COST11(1)
+				JUEL:先導 -= COST11(0)
+				GOTO AUTO_ABLUP_11_2
+			ENDIF
+		ENDIF
+		$AUTO_ABLUP_11_2
+		ABL:欲望 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_11
+	ENDIF
+ELSE
+	IF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:11%のレベルが{ABL:欲望}になりました。
+		SIF ABL:欲望 >= 3 && (TALENT:抑圧 || TALENT:抵抗)
+			CALL YOKUBO_UP_CHECK, 1
+	ENDIF
+ENDIF
+
+
+LOCAL:1 = 0
+
+;技巧
+$AUTO_ABLUP_12
+CALL CHECK_ISABLUP, 12
+IF RESULT == 1
+	IF ABL:技巧 < 5
+		;習得の珠で上げる
+		IF JUEL:習得 >= COST12(0)
+			JUEL:習得 -= COST12(0)
+			GOTO AUTO_ABLUP_12_2
+		ENDIF
+		;サドっ気が3以上だと先導の珠でも上昇させることができる
+		IF ABL:サドっ気 >= 3
+			IF JUEL:習得 >= COST12(1) && JUEL:先導 >= COST12(0)
+				JUEL:習得 -= COST12(1)
+				JUEL:先導 -= COST12(0)
+				GOTO AUTO_ABLUP_12_2
+			ENDIF
+		ENDIF
+		$AUTO_ABLUP_12_2
+		ABL:技巧 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_12
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:12%のレベルが{ABL:技巧}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;奉仕精神
+$AUTO_ABLUP_13
+CALL CHECK_ISABLUP, 13
+IF RESULT == 1
+	IF ABL:奉仕精神 < 5
+		;屈服の珠で上げる
+		IF JUEL:屈服 >= COST13(0) && EXP:絶頂経験 >= COST13(4) && EXP:精液経験 >= COST13(4)
+			JUEL:屈服 -= COST13(0)
+			GOTO AUTO_ABLUP_13_2
+		ENDIF
+		;恭順の珠で上げる
+		IF JUEL:恭順 >= COST13(1) && EXP:奉仕快楽経験 >= COST13(3)
+			JUEL:恭順 -= COST13(1)
+			GOTO AUTO_ABLUP_13_2
+		ENDIF
+		;習得の珠で上げる
+		IF COST13(2) > 0 && JUEL:習得 >= COST13(2) && EXP:絶頂経験 >= 1
+			JUEL:習得 -= COST13(2)
+			GOTO AUTO_ABLUP_13_2
+		ENDIF
+		$AUTO_ABLUP_13_2
+		ABL:奉仕精神 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_13
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:13%のレベルが{ABL:奉仕精神}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;露出癖
+$AUTO_ABLUP_14
+CALL CHECK_ISABLUP, 14
+IF RESULT == 1
+	IF ABL:露出癖 < 5
+		JUEL:恥情 -= COST14(0)
+		ABL:露出癖 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_14
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:14%のレベルが{ABL:露出癖}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;サドっ気
+$AUTO_ABLUP_20
+CALL CHECK_ISABLUP, 20
+IF RESULT == 1
+	IF ABL:サドっ気 < 5
+		;先導の珠で上げる
+		;習得の珠で上げる
+		IF JUEL:先導 >= COST20(0) && JUEL:習得 >= COST20(1)
+			JUEL:先導 -= COST20(0)
+			JUEL:習得 -= COST20(1)
+			GOTO AUTO_ABLUP_20_2
+		ENDIF
+		;先導の珠で上げる
+		;欲情の珠で上げる
+		IF JUEL:先導 >= COST20(2) && JUEL:欲情 >= COST20(3)
+			JUEL:先導 -= COST20(2)
+			JUEL:欲情 -= COST20(3)
+			GOTO AUTO_ABLUP_20_2
+		ENDIF
+		$AUTO_ABLUP_20_2
+		ABL:サドっ気 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_20
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:20%のレベルが{ABL:サドっ気}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;マゾっ気
+$AUTO_ABLUP_21
+CALL CHECK_ISABLUP, 21
+IF RESULT == 1
+	IF ABL:マゾっ気 < 5
+		;苦痛の珠で上げる
+		;屈服の珠で上げる
+		IF JUEL:苦痛 >= COST21(0) && JUEL:屈服 >= COST21(1) && EXP:絶頂経験 >= 1
+			JUEL:苦痛 -= COST21(0)
+			JUEL:屈服 -= COST21(1)
+			GOTO AUTO_ABLUP_21_2
+		ENDIF
+		;苦痛の珠で上げる
+		;欲情の珠で上げる
+		IF COST21(2) > 0 && JUEL:苦痛 >= COST21(2) && JUEL:欲情 >= COST21(3)
+			JUEL:苦痛 -= COST21(2)
+			JUEL:欲情 -= COST21(3)
+			GOTO AUTO_ABLUP_21_2
+		ENDIF
+		$AUTO_ABLUP_21_2
+		ABL:マゾっ気 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_21
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:21%のレベルが{ABL:マゾっ気}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;レズっ気
+$AUTO_ABLUP_22
+CALL CHECK_ISABLUP, 22
+IF RESULT == 1
+	IF !TALENT:オトコ && ABL:レズっ気 < 5
+		;欲情の珠で上げる
+		;屈服の珠で上げる
+		IF JUEL:欲情 >= COST22(0) && JUEL:屈服 >= COST22(1)
+			JUEL:欲情 -= COST22(0)
+			JUEL:屈服 -= COST22(1)
+			GOTO AUTO_ABLUP_22_2
+		ENDIF
+		;快Ｃの珠で上げる
+		IF COST22(2) > 0 && JUEL:快Ｃ >= COST22(2)
+			JUEL:快Ｃ -= COST22(2)
+			GOTO AUTO_ABLUP_22_2
+		ENDIF
+		$AUTO_ABLUP_22_2
+		ABL:レズっ気 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_22
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:22%のレベルが{ABL:レズっ気}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;ＢＬっ気
+$AUTO_ABLUP_23
+CALL CHECK_ISABLUP, 23
+IF RESULT == 1
+	IF TALENT:オトコ && ABL:ＢＬっ気 < 5
+		;欲情の珠で上げる
+		;屈服の珠で上げる
+		IF JUEL:欲情 >= COST23(0) && JUEL:屈服 >= COST23(1)
+			JUEL:欲情 -= COST23(0)
+			JUEL:屈服 -= COST23(1)
+			GOTO AUTO_ABLUP_23_2
+		ENDIF
+		;快Ｃの珠で上げる
+		IF COST22(2) > 0 && JUEL:快Ｃ >= COST23(2)
+			JUEL:快Ｃ -= COST23(2)
+			GOTO AUTO_ABLUP_23_2
+		ENDIF
+		$AUTO_ABLUP_23_2
+		ABL:ＢＬっ気 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_23
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:23%のレベルが{ABL:ＢＬっ気}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;料理技能
+$AUTO_ABLUP_70
+CALL CHECK_ISABLUP, 70
+IF RESULT == 1
+	IF ABL:料理技能 < 5
+		JUEL:習得 -= COST70(0)
+		ABL:料理技能 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_70
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:70%のレベルが{ABL:料理技能}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;撮影技能
+$AUTO_ABLUP_71
+CALL CHECK_ISABLUP, 71
+IF RESULT == 1
+	IF ABL:撮影技能 < 5
+		JUEL:習得 -= COST71(0)
+		ABL:撮影技能 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_71
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:71%のレベルが{ABL:撮影技能}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;歌唱技能
+$AUTO_ABLUP_72
+CALL CHECK_ISABLUP, 72
+IF RESULT == 1
+	IF ABL:歌唱技能 < 5
+		JUEL:習得 -= COST72(0)
+		ABL:歌唱技能 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_72
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:72%のレベルが{ABL:歌唱技能}になりました。
+ENDIF
+
+LOCAL:1 = 0
+
+;工作技能
+$AUTO_ABLUP_73
+CALL CHECK_ISABLUP, 73
+IF RESULT == 1
+	IF ABL:工作技能 < 5
+		JUEL:習得 -= COST73(0)
+		ABL:工作技能 += 1
+		LOCAL:1 = 1
+		GOTO AUTO_ABLUP_73
+	ENDIF
+ELSE
+	SIF LOCAL:1 == 1
+		PRINTFORML %ABLNAME:73%のレベルが{ABL:工作技能}になりました。
+ENDIF
+
+;------------------------------
+PRINTL 
+PRINTW 一括レベルアップしました。

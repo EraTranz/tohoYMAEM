@@ -1,0 +1,115 @@
+﻿;=============================================================================
+;緊急避妊薬
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE67
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:67 > 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:緊急避妊薬 == 0
+	RETURN 0
+;薬毒耐性の場合ダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;調教者がオトコかふたなりでないとだめ
+SIF EXIST_PENIS(PLAYER) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;妊娠中なら不可
+SIF TALENT:妊娠
+	RETURN 0
+;懐卵中はダメ
+SIF TALENT:懐卵
+	RETURN 0
+;産卵促進剤を使っていたら使えない
+SIF TEQUIP:産卵促進剤
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;排卵誘発剤を使っていたら使えない
+SIF TEQUIP:排卵誘発剤
+	RETURN 0
+;すでに使用中なら使えない
+SIF TEQUIP:緊急避妊薬
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 67) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM67
+PRINTL 緊急避妊薬
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 67
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 緊急避妊薬
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+IF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 30
+ELSE
+	DOWNBASE:0 += 0
+	DOWNBASE:1 += 50
+ENDIF
+
+;緊急避妊薬1つ消費
+CALL USE_PLURAL_ITEM, 65, 1
+TEQUIP:緊急避妊薬 = 1
+
+SOURCE:薬物浸潤 = 150
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;薬物経験
+TCVAR:薬物経験 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_67
+PRINTFORML %CALLNAME:TARGET%に見せびらかすように緊急避妊薬を取り出した
+PRINTFORM それを見た%CALLNAME:TARGET%は、
+;[恋慕]、[親愛]、[相愛]の最低でも1つを持つ
+IF TALENT:恋慕 || TALENT:親愛 || TALENT:相愛
+	PRINTL 少し寂しそうな表情でこちらを見ている……
+;[服従]、[烙印]のどちらか
+ELSEIF TALENT:服従 || TALENT:烙印
+	PRINTFORML 次に何をされるかを瞬時に理解し、股を開いて%CALLNAME:PLAYER%に犯されるのを待っている……
+;[淫乱]
+ELSEIF TALENT:淫乱
+	PRINTL 中出しを待ちきれないという様子で体をくねらせている……
+;従順Lv5かつ屈服刻印Lv3かつ反発刻印Lv0
+ELSEIF ABL:従順 >= 5 && MARK:屈服刻印 == 3 && MARK:反発刻印 == 0
+	PRINTL 少しほっとしたような表情でこちらを見ている……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%を軽蔑するような目つきをしている……
+ENDIF

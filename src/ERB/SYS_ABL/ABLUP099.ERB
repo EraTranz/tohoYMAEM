@@ -1,0 +1,217 @@
+﻿;=============================================================================
+;反発刻印
+;=============================================================================
+@ABLUP99
+DRAWLINE
+IF MARK:反発刻印 <= 0
+	PRINTW 反発刻印はありません
+	RETURN 0
+ENDIF
+
+;反発刻印Lvと同じLvの屈服刻印と反発刻印Lv+2Lvの従順が必要
+PRINTFORML %MARKNAME:2%{MARK:反発刻印}LV以上（現在{MARK:屈服刻印}）かつ、%ABLNAME:10%{COST99(2)}LV以上
+
+PRINTFORM [0] - %PALAMNAME:14%の珠×{COST99(0)}\@(COST99(1) > 0) ? 、%PALAMNAME:12%の珠×{COST99(1)} # \@……
+CALL SHOW_ISABLUP_COMMON, CAN99(0)
+
+;恐怖で反発を下げられる場合あるが、副作用として好感度低下及びストレス上昇あり
+IF COST99(3) > 0
+	;反発刻印Lvと同じLvの恐怖刻印と反発刻印Lv+2Lvの従順と反発刻印Lvと同じだけの調教失神経験が必要
+	PRINTFORML %MARKNAME:8%{MARK:反発刻印}LV以上（現在{MARK:恐怖刻印}）かつ、%ABLNAME:10%{COST99(2)}LV以上、%EXPNAME:55%{MARK:反発刻印}以上、
+	PRINTFORM [1] - (副作用あり)%PALAMNAME:17%の珠×{COST99(3)}\@(COST99(4) > 0) ? 、%PALAMNAME:12%の珠×{COST99(4)} # \@……
+	CALL SHOW_ISABLUP_COMMON, CAN99(1)
+ENDIF
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT == 0 || RESULT == 1) && CAN99(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:屈服 -= COST99(0)
+	JUEL:恭順 -= COST99(1)
+ELSEIF RESULT == 1
+	JUEL:恐怖 -= COST99(3)
+	JUEL:恭順 -= COST99(4)
+	;好感度半減
+	CFLAG:好感度 /= 2
+	;ストレス上昇
+	CFLAG:ストレス += COST99(3) + COST99(4)
+	;恐怖刻印が既に3のときに狂気がなければ狂気がついて異常経験＋１(該当すれば何回でも)
+	IF MARK:恐怖刻印 >= 3 && TALENT:狂気 == 0
+		TALENT:狂気 = 1
+		CFLAG:12 |= 1
+		CFLAG:17 |= 2
+		PRINTFORML %CALLNAME:TARGET%はあまりの恐怖に、発狂してしまった……
+		CALL COMMON_UP_EXP, TARGET, 50, 1, 0, 1
+	;恐怖刻印が2以下のときは+1Lv
+	ELSEIF MARK:恐怖刻印 < 3
+		CALL COMMON_MARK_UP, TARGET, 8, MARK:恐怖刻印+1, 0
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+MARK:反発刻印 -= 1
+PRINTFORMW %MARKNAME:9%のレベルが{MARK:反発刻印}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP99
+SIF MARK:反発刻印 <= 0
+	RETURN 0
+
+CALLF CALC_COST99, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP99("CHECK")
+
+@COST99(ARG)
+#FUNCTION
+RETURNF CALC_COST99("GET", ARG)
+
+@CALC_COST99(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF MARK:反発刻印 == 1
+	LOCAL:0 = 5000
+	LOCAL:1 = 1000
+	LOCAL:3 = 6000
+	LOCAL:4 = 1200
+ELSEIF MARK:反発刻印 == 2
+	LOCAL:0 = 10000
+	LOCAL:1 = 2000
+	LOCAL:3 = 12000
+	LOCAL:4 = 2400
+ELSEIF MARK:反発刻印 == 3
+	LOCAL:0 = 50000
+	LOCAL:1 = 5000
+	LOCAL:3 = 60000
+	LOCAL:4 = 6000
+ENDIF
+
+;臆病
+IF TALENT:臆病
+	TIMES LOCAL:3 , 0.75
+	TIMES LOCAL:4 , 0.50
+ENDIF
+;気丈
+IF TALENT:気丈
+	TIMES LOCAL:0 , 3.00
+	LOCAL:3 = 0
+	LOCAL:4 = 0
+ENDIF
+;素直
+IF TALENT:素直
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+ENDIF
+;生意気
+IF TALENT:生意気
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 1.25
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.25
+ENDIF
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 1.25
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.25
+;プライド低い
+ELSEIF TALENT:プライド低い
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:3 , 0.50
+	TIMES LOCAL:4 , 0.75
+ENDIF
+;感情乏しい
+IF TALENT:感情乏しい
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.25
+ENDIF
+;弱味
+IF TALENT:弱味
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:4 , 0.90
+ENDIF
+;恋慕、服従
+IF TALENT:恋慕 || TALENT:服従
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+	IF TALENT:服従
+		TIMES LOCAL:3 , 0.50
+		TIMES LOCAL:4 , 0.50
+	ENDIF
+ENDIF
+
+;反発刻印Lv+2Lvの従順が必要
+LOCAL:2 = MARK:反発刻印 + 2
+
+;難易度HARD以上の場合、必要な屈服の珠は減るが、恭順の珠も必要になってくる
+IF FLAG:3 > 2
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:3 , 0.75
+ELSE
+	LOCAL:1 = 0
+	LOCAL:4 = 0
+ENDIF
+
+RETURNF 0
+
+@CAN99(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP99("GET", ARG)
+
+@CAN_ABLUP99(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;反発刻印Lvと同じLvの屈服刻印が必要
+SIF MARK:反発刻印 > MARK:屈服刻印
+	LOCAL:0 |= 8
+;反発刻印Lvと同じLvの恐怖刻印が必要
+SIF MARK:反発刻印 > MARK:恐怖刻印
+	LOCAL:1 |= 8
+
+;反発刻印Lv+2Lvの従順が必要
+IF COST99(2) > ABL:従順
+	LOCAL:0 |= 4
+	LOCAL:1 |= 4
+ENDIF
+
+;屈服の珠で減らす
+SIF JUEL:屈服 < COST99(0)
+	LOCAL:0 |= 1
+;恭順の珠で減らす
+SIF JUEL:恭順 < COST99(1)
+	LOCAL:0 |= 1
+
+;恐怖の珠で減らす
+IF COST99(3) > 0
+	SIF JUEL:恐怖 < COST99(3)
+		LOCAL:1 |= 1
+	;恭順の珠で減らす
+	SIF JUEL:恭順 < COST99(4)
+		LOCAL:1 |= 1
+	;この場合調教失神経験が反発刻印Lv以上必要
+	SIF EXP:調教失神経験 < MARK:反発刻印
+		LOCAL:1 |= 2
+ELSE
+	LOCAL:1 = 256
+ENDIF
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0)

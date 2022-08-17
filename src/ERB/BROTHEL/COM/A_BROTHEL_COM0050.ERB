@@ -1,0 +1,360 @@
+﻿;=============================================================================
+;Ａ売春　の処理
+;=============================================================================
+;=============================================================================
+;乱交売春　の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド実行可能判定処理
+;-------------------------------------------------
+@PROSTITUTE_ABLE_COM50, ARG
+;キャラが売春可能であるかの共通判定処理を満たしている
+SIF BROTHEL_COM_ABLE_COMMON(ARG) == 0
+	RETURN 0
+;Ａ経験が30以下で[娼婦]を未取得だとダメ
+SIF EXP:ARG:Ａ経験 <= 30 && TALENT:ARG:娼婦 == 0
+	RETURN 0
+;従順、欲望、奉仕精神、露出癖のいずれかがLV0だとダメ
+SIF ABL:ARG:従順 == 0 || ABL:ARG:欲望 == 0 || ABL:ARG:奉仕精神 == 0 || ABL:ARG:露出癖 == 0
+	RETURN 0
+;[小人体型]だとダメ
+SIF TALENT:ARG:小人体型
+	RETURN 0
+RETURN 1
+
+;=============================================================================
+;選択可能処理
+;=============================================================================
+@JUDGE_PROSTITUTE_COM51, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM52, ARG
+;露出癖LV3
+SIF (FLAG:3000 & 2) == 0 || ABL:ARG:露出癖 < 3
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM53, ARG
+CALL JUDGE_PROSTITUTE_COM3, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM54, ARG
+CALL JUDGE_PROSTITUTE_COM4, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM55, ARG
+CALL JUDGE_PROSTITUTE_COM5, ARG
+RETURN RESULT
+;-------------------------------------------------
+;売春コマンドの分岐処理
+;-------------------------------------------------
+@PROSTITUTE_COM50, ARG
+#LOCALSIZE 1
+CALL CHOOSE_PROSTITUTE_COM, ARG, 5
+SELECTCOM = RESULT
+
+SIF TALENT:MASTER:998
+	PRINTFORML SELECTCOM = {SELECTCOM}
+
+;顧客の設定
+CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE2, ARG
+
+;欲望をチェックする。欲望が相手の欲望を上回るかどうか。成功なら欲望レベルの２倍、失敗なら１倍入ります。
+;CBVA売春では、相手の欲望の最大値が4です。
+LOCAL = RAND:5
+IF LOCAL <= ABL:ARG:欲望
+	TFLAG:408 = LOCAL + ABL:ARG:欲望 * 2
+ELSE
+	TFLAG:408 = LOCAL + ABL:ARG:欲望
+ENDIF
+
+;相手からの行動が発生します。相手の技巧がこちらの欲望以下の場合、不満そうな表情が出る可能性があります。
+;相手の技巧＋こちらの従順の２倍＞こちらの欲望＋３なら、問題なく行為を露出癖と奉仕精神を加える事が出来ます。
+;足りない場合は加えられません。
+LOCAL = MAX(RAND:3 + (ABL:ARG:従順 * 2) - 3, 0)
+SIF LOCAL >= ABL:ARG:技巧
+	TFLAG:408 += (ABL:ARG:奉仕精神 + ABL:ARG:露出癖)
+
+;従順がLV3以上ないと、著しく微妙になります
+SIF ABL:ARG:従順 < 3
+	TFLAG:408 /= 10
+
+;内容的にかならずＡを使用します
+TFLAG:403 |= 1
+
+;………………………………………………
+;選択された売春コマンドを実行
+;………………………………………………
+;ここからは、プレイ内容の領分に入ってきますので、分岐後に任せます。
+;ここまでの満足度は合計最大60点。
+;プレイ内容の方で20点。
+;結果、最大80ポイント、平均40程度の満足度になります。ランダムが40を占めるので、割と安定しません。
+;ただし、素質的な要因がある場合は80ポイントを突破をしても構いません。割とアバウト。
+TRYCCALLFORM PROSTITUTE_COM{SELECTCOM}, ARG
+	SIF RESULT == 1
+		RETURN 1
+CATCH
+ENDCATCH
+RETURN 0
+
+;=============================================================================
+;Ａ売春(普通の)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM51, ARG
+DOWNBASE:ARG:0 += 10
+DOWNBASE:ARG:1 += 15
+
+PRINTL Ａ売春 -普通の売春-
+
+
+;Ａ感覚、欲望、技巧、奉仕精神をみる
+TFLAG:408 += ABL:ARG:Ａ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神
+
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:Ａ経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = MAX(TFLAG:401 / 2, 1)
+TCVAR:ARG:苦痛快楽経験 = TFLAG:401
+TCVAR:ARG:Ａ快楽経験 = TFLAG:401
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM51
+PRINTFORML %CALLNAME:TARGET%は顧客と菊穴で繋がったまま、ゆったりとしたトークで楽しんでもらった。
+
+;=============================================================================
+;Ａ売春(Ａソープ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM52, ARG
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 20
+
+
+PRINTL Ａ売春 -ソープ形式-
+
+;Ａ感覚、欲望、技巧、奉仕精神をみる
+TFLAG:408 += ABL:ARG:Ａ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神
+
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;満足度が高め
+SIF TFLAG:404 >= 3
+	TCVAR:ARG:絶頂経験 = TFLAG:401
+
+TCVAR:ARG:Ａ経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+TCVAR:ARG:苦痛快楽経験 = TFLAG:401
+TCVAR:ARG:Ａ快楽経験 = TFLAG:401
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM52
+
+
+;=============================================================================
+;Ａ売春(ＳＡ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM53, ARG
+DOWNBASE:ARG:0 += 25
+DOWNBASE:ARG:1 += 35
+
+PRINTL Ａ売春 -ＳＭプレイ Ｓ型-
+
+
+;Ａ感覚、欲望、技巧、奉仕精神をみる
+TFLAG:408 += ABL:ARG:Ａ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:サドっ気
+
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;満足度が高め
+SIF TFLAG:404 >= 3
+	TCVAR:ARG:絶頂経験 = TFLAG:401
+
+TCVAR:ARG:Ａ経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+TCVAR:ARG:苦痛快楽経験 = TFLAG:401
+TCVAR:ARG:ＳＭ教育経験 = TFLAG:401
+TCVAR:ARG:Ａ快楽経験 = TFLAG:401
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM53
+
+
+;=============================================================================
+;Ａ売春(ＭＡ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM54, ARG
+DOWNBASE:ARG:0 += 25
+DOWNBASE:ARG:1 += 35
+
+
+PRINTL Ａ売春 -ＳＭプレイ Ｍ型-
+
+;Ａ感覚、欲望、技巧、奉仕精神をみる
+TFLAG:408 += ABL:ARG:Ａ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:マゾっ気
+
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;満足度が高め
+SIF TFLAG:404 >= 3
+	TCVAR:ARG:絶頂経験 = TFLAG:401
+
+TCVAR:ARG:Ａ経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+TCVAR:ARG:苦痛快楽経験 = TFLAG:401 * 2
+IF TFLAG:99 == 2
+	TCVAR:ARG:苦痛快楽経験 += TFLAG:401 * 2
+	TCVAR:ARG:緊縛経験 = TFLAG:401
+ENDIF
+TCVAR:ARG:Ａ快楽経験 = TFLAG:401
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM54
+
+;=============================================================================
+;Ａ売春(ママＡ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM55, ARG
+DOWNBASE:ARG:0 += 35
+DOWNBASE:ARG:1 += 50
+
+PRINTL Ａ売春 -人妻-
+
+;Ａ感覚、欲望、技巧、奉仕精神をみる
+TFLAG:408 += ABL:ARG:Ａ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神
+;[母乳体質]
+SIF TALENT:ARG:母乳体質
+	TIMES TFLAG:408, 2.0
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;満足度が高め
+SIF TFLAG:404 >= 3
+	TCVAR:ARG:絶頂経験 = TFLAG:401
+
+TCVAR:ARG:Ａ経験 = TFLAG:401
+TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+TCVAR:ARG:苦痛快楽経験 = TFLAG:401
+TCVAR:ARG:Ａ快楽経験 = TFLAG:401
+IF TALENT:ARG:母乳体質
+	TCVAR:ARG:噴乳経験 = TFLAG:401
+	TCVAR:ARG:Ｂ快楽経験 = TFLAG:401
+ENDIF
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM55
+
+
+
+;=============================================================================
+;Ａ売春(触手)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM56, ARG
+DOWNBASE:ARG:0 += 35
+DOWNBASE:ARG:1 += 50
+
+PRINTL Ａ売春 -触手-
+
+
+;Ａ感覚、欲望、技巧、奉仕精神をみる
+TFLAG:408 += ABL:ARG:Ａ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神
+
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+;Ａ挿入あり
+SIF TFLAG:403 & 1
+	TCVAR:ARG:Ｖ経験 = TFLAG:401
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 20
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM56
+

@@ -1,0 +1,43 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝フェラ
+;TFLAG:99でフェラ経験増加量を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE140
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORML ――目が覚めると、夢美が横で寝ていた
+		PRINTFORML 寝息を立てる柔らかそうな口元を見ると、劣情を駆られてしまう
+		IF K2008F_CAN_EJAC(MASTER)
+			PRINTFORMW いきり立ったペニスを口にあてがうと、そのまま差し込んだ
+		ELSE
+			PRINTFORMW どんどん硬くなっていく巨大なクリトリスを、夢美の口に添えた
+		ENDIF
+		PRINTFORML 
+		PRINTFORML 「くぅー、すぴー、すー、んぷッ、ぶぷぅ、んぶぷぁ、ちゅぱ、んちゅ」
+		PRINTFORMW 「んプ……　ぷぼっ、ンぶぅ、じゅるっ、んぷっ！　ぷはっ！！」
+		PRINTFORML 
+		PRINTFORML 「んもう、%K2008FS_CALL_YOUR_C()%で起こすなんて酷いじゃない」
+		PRINTFORML 「まさに朝飯前って感じね、このままおかわりを所望するわ」
+		PRINTFORML 
+		CALL K2008_VOICE("フェラ")
+		CALL K2008_VOICE("口内射精")
+	CASE 1
+		CALL K2008_COM("奉仕")
+		CALL K2008_VOICE("舐める")
+		PRINTFORMW ――目が覚めると、夢美がペニスにしゃぶりついている
+		PRINTFORML 
+		PRINTFORML 「っぷはぁー、あ、起きちゃった？」
+		PRINTFORML 「朝から元気いいわ、素敵」
+		PRINTFORMW 「おかわり、いただくわね」
+		PRINTFORML 
+		TRYCALLFORM K2008_VOICE("口内射精")
+	CASEELSE
+		CALL K2008_COM("奉仕")
+		CALL K2008_VOICE("フェラ")
+		PRINTFORMW ――夢美のフェラチオ奉仕で目を覚ました
+		PRINTFORML 
+		CALL K2008_VOICE("口内射精")
+		PRINTFORMW 「ぷはっ。　あら、もう起きちゃったの？」
+		PRINTFORMW 「%K2008FS_CALL_YOUR_C()%はとっくに起きてたみたいだし、お寝坊さんね」
+ENDSELECT

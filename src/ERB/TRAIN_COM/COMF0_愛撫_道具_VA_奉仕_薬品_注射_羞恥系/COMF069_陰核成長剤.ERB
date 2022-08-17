@@ -1,0 +1,186 @@
+﻿;=============================================================================
+;陰核成長剤
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE69
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:69 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;薬品系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 32) == 0
+	RETURN 0
+;異常経験フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;陰核成長剤がないとダメ
+SIF ITEM:陰核成長剤 == 0
+	RETURN 0
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
+	RETURN 0
+;既に棒がある（オトコかふたなり）だとダメ
+SIF EXIST_PENIS(TARGET)
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;クリトリスを成長させていないとダメ
+SIF BASE:陰核 == 0
+	RETURN 0
+;クリトリスリングをはめているとダメ
+SIF CFLAG:42 & 1
+	RETURN 0
+;陰核成長剤使用中はダメ
+SIF TEQUIP:陰核成長剤
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム
+	RETURN 0
+;強制開口器以外で口が塞がっているとダメ
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 3
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 69) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM69
+PRINTL 陰核成長剤
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 69
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 陰核成長剤
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;調合知識があれば消費を抑える
+LOCAL:1 = 300
+SIF TALENT:MASTER:調合知識 || (ASSI >= 0 && TALENT:ASSI:調合知識)
+	LOCAL:1 /= 2
+
+DOWNBASE:0 += LOCAL:1
+DOWNBASE:1 += LOCAL:1
+
+SOURCE:性行動 = 300
+SOURCE:薬物浸潤 = 200
+
+;ABL:従順をみる
+IF ABL:Ｃ感覚 == 0
+	TIMES SOURCE:性行動 , 2.00
+ELSEIF ABL:Ｃ感覚 == 1
+	TIMES SOURCE:性行動 , 1.50
+ELSEIF ABL:Ｃ感覚 == 2
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF ABL:Ｃ感覚 == 3
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF ABL:Ｃ感覚 == 4
+	TIMES SOURCE:性行動 , 0.60
+ELSE
+	TIMES SOURCE:性行動 , 0.30
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;薬物経験
+TCVAR:薬物経験 += 2
+
+SIF PLAYER == MASTER
+	TCVAR:Ｃ調律経験 += 2
+
+;陰核成長剤1つ消費
+CALL USE_PLURAL_ITEM, 68, 1
+
+IF EX:0 < 5
+	LOCAL:2 = 5 + RAND:10
+ELSEIF EX:0 < 10
+	LOCAL:2 = 10 + RAND:10
+ELSEIF EX:0 < 20
+	LOCAL:2 = 15 + RAND:15
+ELSEIF EX:0 < 50
+	LOCAL:2 = 20 + RAND:15
+ELSEIF EX:0 < 100
+	LOCAL:2 = 30 + RAND:15
+ELSE
+	LOCAL:2 = 50 + RAND:15
+ENDIF
+BASE:陰核 = MIN(BASE:陰核 + LOCAL:2, 250)
+
+;陰核成長剤効果発揮
+TEQUIP:陰核成長剤 = 1
+RETURN 1
+
+;--------------------------------------------------
+;陰核成長剤効果発揮中
+;--------------------------------------------------
+@EQUIP_COM69
+IF EX:0 < 10
+	LOCAL = 1 + RAND:3
+ELSEIF EX:0 < 50
+	LOCAL = 2 + RAND:3
+ELSEIF EX:0 < 100
+	LOCAL = 3 + RAND:3
+ELSE
+	LOCAL = 5 + RAND:3
+ENDIF
+
+BASE:陰核 = MIN(BASE:陰核 + LOCAL, 250)
+SIF FLAG:12 & 4
+	PRINTFORML 陰核の成長具合:{BASE:陰核}
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_69
+PRINTFORM %CALLNAME:TARGET%に
+SIF ABL:PLAYER:技巧 >= 3
+	PRINT 口移しで
+SIF ABL:従順 == 0
+	PRINT 無理やり
+PRINTL 陰核成長剤を飲ませた
+PRINTFORML %CALLNAME:TARGET%は股間の違和感に困惑している…

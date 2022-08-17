@@ -1,0 +1,139 @@
+﻿;=============================================================================
+;触手撫で回し
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE680
+#FUNCTION
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:680 > 0
+	RETURNF 0
+;触手調教中でないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 680) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM680
+PRINTL 触手撫で回し
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 680
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手撫で回し
+SELECTCOM = 680
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+SOURCE:露出 = 100
+SOURCE:性行動 = 60
+SOURCE:不潔 = 30
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 20
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 100
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 500
+	SOURCE:情愛 = 160
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1200
+	SOURCE:情愛 = 200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2000
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:快Ｃ = 2800
+	SOURCE:情愛 = 250
+ENDIF
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	SOURCE:快Ｂ = 15
+ELSEIF ABL:Ｂ感覚 == 1
+	SOURCE:快Ｂ = 50
+ELSEIF ABL:Ｂ感覚 == 2
+	SOURCE:快Ｂ = 300
+ELSEIF ABL:Ｂ感覚 == 3
+	SOURCE:快Ｂ = 700
+ELSEIF ABL:Ｂ感覚 == 4
+	SOURCE:快Ｂ = 1100
+ELSE
+	SOURCE:快Ｂ = 1600
+ENDIF
+
+SOURCE:トラウマ = SOURCE:情愛 / 4
+SOURCE:情愛 = 0
+
+;オムツプレイ中は快Ｃ半減
+SIF TEQUIP:オムツプレイ
+	SOURCE:快Ｃ /= 2
+
+IF TEQUIP:コスチュームプレイ == 2 || TEQUIP:コスチュームプレイ == 12 || TEQUIP:コスチュームプレイ == 13
+	;スク水・ビキニ・危ないレオタード装着中
+	SOURCE:接触 = 1200
+	SOURCE:露出 += 400
+ELSEIF TEQUIP:コスチュームプレイ == 17 || SOURCE:59 == 21
+	;褌・裸サスペンダー装着中
+	SOURCE:接触 = 1400
+	SOURCE:露出 += 800
+ELSEIF TFLAG:899 <= 0 && EQUIP:睡眠薬 <= 0 && (TALENT:親愛 || TALENT:相愛) && (TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 19)
+	;親愛か相愛でエプロンかウェディングドレス装着中(ただし睡眠や失神していないとき)
+	TIMES SOURCE:情愛 , 1.50 
+ELSEIF TEQUIP:サラシ
+	;サラシ装着中
+	SOURCE:接触 = 1200
+	TIMES SOURCE:快Ｂ , 1.80
+	TIMES SOURCE:情愛 , 1.40
+ENDIF
+
+;奴隷のＰ、Ｖ、Ｂに触手の汚れがつく
+IF EXIST_BAR(TARGET)
+	STAIN:ペニス |= 2
+	STAIN:ペニス |= 4
+ENDIF
+IF TALENT:オトコ == 0
+	STAIN:ヴァギナ |= 2
+	STAIN:ヴァギナ |= 4
+ENDIF
+STAIN:胸 |= 2
+STAIN:胸 |= 4
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_680
+VARSET LOCALS, ""
+SPLIT "ダミー,エプロン,スクール水着,女教師のコスチューム,和服,メイド服,体操服,ナースの衣装,チャイナドレス,セーラー服,ネグリジェ,Ｙシャツ,ビキニ水着,危ないレオタード,バニースーツ,ボンデージ衣装,園児服,褌,軍服,ウェディングドレス,ゴシックロリータ,裸にサスペンダー,巫女衣装",",",LOCALS
+IF TEQUIP:オムツプレイ
+	PRINT オムツ姿の上から愛でるように
+ELSEIF TEQUIP:コスチュームプレイ
+	PRINTFORM %LOCALS:(TEQUIP:コスチュームプレイ)%を着けた
+ELSEIF TEQUIP:サラシ
+	PRINT サラシの上から
+ENDIF
+PRINTFORM %CALLNAME:TARGET%の
+SIF TALENT:小柄体型
+	PRINT 未発達な
+PRINTL 体を触手が弄んでいる…

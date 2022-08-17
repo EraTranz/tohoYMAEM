@@ -1,0 +1,259 @@
+﻿;=============================================================================
+;荊
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE406
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:406 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者が幽香でないとダメ
+SIF NO:PLAYER != 1034
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:緊縛関連 == 5
+	RETURN 1
+;調教者の技巧が3無いとできない
+SIF ABL:PLAYER:技巧 < 3
+	RETURN 0
+;縄で緊縛中、蜘蛛の糸でグルグル巻きはダメ
+SIF TEQUIP:緊縛関連 && TEQUIP:緊縛関連 != 5
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 406) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM406
+PRINTL 荊
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 406
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 荊
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 100
+	DOWNBASE:1 += 150
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 80
+	DOWNBASE:1 += 120
+ELSE
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 90
+ENDIF
+
+LOCAL:1 = 250
+LOCAL:2 = 0
+SOURCE:露出 = 800
+SOURCE:屈従 = 500
+SOURCE:逸脱 = 500
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	LOCAL:2 = 1500
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	LOCAL:2 = 2000
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	LOCAL:2 = 2500
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	LOCAL:2 = 3000
+ELSE
+	LOCAL:2 = 4000
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.40
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+	TIMES LOCAL:2 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+	TIMES LOCAL:2 , 3.00
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:1 , 2.00
+
+;アイマスク装着または暗闇展開時は効果上昇
+SIF TEQUIP:目装着器具
+	TIMES LOCAL:1 , 2.00
+;ボールギャグ装着時は効果上昇
+SIF TEQUIP:口装着器具
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:痛み += LOCAL:1 + LOCAL:2
+SOURCE:露出 += LOCAL:1
+SOURCE:屈従 += LOCAL:1
+SOURCE:逸脱 += LOCAL:1
+
+TCVAR:緊縛経験 += 4
+
+;縄の着脱
+IF TEQUIP:緊縛関連 == 5
+	TEQUIP:緊縛関連 = 0
+ELSE
+	TEQUIP:緊縛関連 = 5
+	;ＳＭ教育経験フラグ
+	SIF ASSIPLAY
+		TFLAG:55 = 2
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;荊で緊縛中
+;--------------------------------------------------
+@EQUIP_COM406
+PRINTL ＜荊で緊縛中＞
+
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 100
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 40
+	DOWNBASE:1 += 80
+ELSE
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 60
+ENDIF
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み += 60
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み += 120
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み += 180
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み += 240
+ELSE
+	SOURCE:痛み += 300
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL = 60
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL = 180
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL = 300
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL = 480
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL = 700
+ELSE
+	LOCAL = 850
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL , 2.00
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+SOURCE:痛み += LOCAL
+SOURCE:露出 += LOCAL
+SOURCE:屈従 += LOCAL
+SOURCE:逸脱 += LOCAL
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+
+TCVAR:緊縛経験 += 3
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_406
+IF TEQUIP:緊縛関連 == 5
+	PRINTFORML %CALLNAME:TARGET%を拘束していた荊は一瞬にして枯れ果て、崩れ落ちていった
+ELSE
+	PRINT 突如床から出現した幾本もの荊が
+	SIF TALENT:小柄体型
+		PRINT 華奢な
+	PRINTFORML %CALLNAME:TARGET%の体を容赦なく絡め取った
+	PRINTFORML %CALLNAME:TARGET%の白く美しい肌に食い込んでいる棘の先端からは赤い血が流れ出ており、荊の色とも相まって怪しげなコントラストを形作っている…
+ENDIF

@@ -1,0 +1,401 @@
+﻿;YM→YMAEコンバータによって作成されました
+;================================================
+;進捗ランク評価関数
+;------------------------------------------------
+;■戻り値
+;	調教の進行度合いを0～5までのランクに換算する
+;------------------------------------------------
+;■戻り値の目安
+;	0:拒絶
+;	1:険悪（開始時の初期状態）
+;	2:普通
+;	3:仲良し
+;	4:親密
+;	5:愛玩対象
+;================================================
+@K2008F_RANK(ARG = __INT_MIN__)
+#FUNCTION
+#DIM _LV
+#DIM _RANK
+
+SELECTCASE ARG
+	CASE __INT_MIN__
+		;基本的にはココ
+		ARG = TARGET
+	CASE MASTER, PLAYER
+		THROW 【K2008エラー】残念ながら、夢美以外には使えません。
+	CASE ASSI
+		;助手としての評価を作る・・・？
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 {ARG} が使用されました
+ENDSELECT
+
+;デバッグ用。弄るときは細心の注意を……
+;RETURNF 3
+
+_LV = 0
+_LV += MARK:ARG:屈服刻印 * (ABL:ARG:従順 - 2 * MARK:ARG:反発刻印)
+_LV += MARK:ARG:快楽刻印 * (ABL:ARG:欲望 - 2 * MARK:ARG:恐怖刻印)
+
+SELECTCASE _LV
+	CASE IS <= -4
+		_RANK = 0
+	CASE -3 TO 1
+		_RANK = 1
+	CASE 2 TO 6
+		_RANK = 2
+	CASE 7 TO 15
+		_RANK = 3
+	CASE 16 TO 24
+		_RANK = 4
+	CASE IS >= 25
+		_RANK = 5
+ENDSELECT
+
+ASSERT INRANGE(_RANK, 0, 5)
+RETURNF _RANK
+
+;================================================
+;対触手の親密度（進展／進捗）ランク確認関数
+;------------------------------------------------
+;■戻り値
+;	通常のランクに触手補正をかけたもの
+;================================================
+@K2008F_TRANK()
+#FUNCTION
+#DIM _TRANK
+
+;通常のランクは半分に補正する（0～2）
+_TRANK = K2008F_RANK() / 2
+;触手中毒があれば+1
+_TRANK += (ABL:触手中毒 > 0)
+;触手中毒の半分を補正値として加算
+_TRANK += ABL:触手中毒 / 2
+;最大値は5で頭打ちにする（数式上は5までしか行かないが）
+_TRANK = MIN(5, _TRANK)
+
+ASSERT INRANGE(_TRANK, 0, 5)
+RETURNF _TRANK
+
+;================================================
+;（部位・行為の）開発ランク評価関数
+;------------------------------------------------
+;■引数
+;	部位や行為の名称
+;------------------------------------------------
+;■戻り値
+;	調教の進行度合いを0～5までのランクに換算する
+;------------------------------------------------
+;■戻り値の目安
+;	0:未開発
+;	1:開発初期段階
+;	2:開発途上
+;	3:開発済み
+;	4:過剰品質
+;	5:限界突破
+;================================================
+@K2008F_DEVRANK(ARGS)
+#FUNCTION
+#DIM _RANK
+_RANK = 0
+
+SELECTCASE ARGS
+	;------------------------------------------------
+	;部位：クリ・ペニス
+	;------------------------------------------------
+	CASE "C", "Ｃ", "クリ", "ペニス", "陰核", "陰茎"
+		SELECTCASE EXP:Ｃ調律経験
+			CASE IS < EXPLV:3
+				;評価0
+			CASE EXPLV:3 TO EXPLV:5
+				_RANK += 1
+			CASE EXPLV:5 TO EXPLV:8
+				_RANK += 2
+			CASE IS >= EXPLV:8
+				_RANK += 3
+		ENDSELECT
+		
+		SELECTCASE ABL:Ｃ感覚
+			CASE 0 TO 1
+				;評価0
+			CASE 2 TO 3
+				_RANK += 1
+			CASE 4 TO 5
+				_RANK += 2
+		ENDSELECT
+		
+		_RANK = LIMIT(_RANK, 0, 4)
+		
+		SIF TALENT:淫核／淫茎
+			_RANK += 1
+		
+	;------------------------------------------------
+	;部位：膣
+	;------------------------------------------------
+	CASE "V", "Ｖ", "ヴァギナ", "膣"
+		SELECTCASE EXP:Ｖ調律経験
+			CASE IS < EXPLV:3
+				;評価0
+			CASE EXPLV:3 TO EXPLV:5
+				_RANK += 1
+			CASE IS >= EXPLV:5
+				_RANK += 2
+		ENDSELECT
+		
+		SELECTCASE ABL:Ｖ感覚
+			CASE 0 TO 1
+				;評価0
+			CASE 2 TO 3
+				_RANK += 1
+			CASE 4 TO 5
+				_RANK += 2
+		ENDSELECT
+		
+		SIF EXP:Ｖ拡張経験 >= EXPLV:2
+			_RANK += 1
+		
+		_RANK = LIMIT(_RANK, 0, 4)
+		
+		SIF TALENT:淫壷
+			_RANK += 1
+		
+	;------------------------------------------------
+	;部位：尻穴
+	;------------------------------------------------
+	CASE "A", "Ａ", "アナル", "アヌス", "肛門", "腸"
+		SELECTCASE EXP:Ａ快楽経験
+			CASE IS < EXPLV:3
+				;評価0
+			CASE EXPLV:3 TO EXPLV:5
+				_RANK += 1
+			CASE IS >= EXPLV:5
+				_RANK += 2
+		ENDSELECT
+		
+		SELECTCASE ABL:Ａ感覚
+			CASE 0 TO 1
+				;評価0
+			CASE 2 TO 3
+				_RANK += 1
+			CASE 4 TO 5
+				_RANK += 2
+		ENDSELECT
+		
+		SIF EXP:Ａ拡張経験 >= EXPLV:2
+			_RANK += 1
+		
+		_RANK = LIMIT(_RANK, 0, 4)
+		
+		SIF TALENT:淫尻
+			_RANK += 1
+	
+	;------------------------------------------------
+	;部位：胸
+	;------------------------------------------------
+	CASE "B", "Ｂ", "バスト", "胸", "乳"
+		SELECTCASE EXP:Ｂ快楽経験
+			CASE IS < EXPLV:3
+				;評価0
+			CASE EXPLV:3 TO EXPLV:6
+				_RANK += 1
+			CASE IS >= EXPLV:6
+				_RANK += 3
+		ENDSELECT
+		
+		SELECTCASE ABL:Ｂ感覚
+			CASE 0 TO 1
+				;評価0
+			CASE 2 TO 3
+				_RANK += 1
+			CASE 4 TO 5
+				_RANK += 2
+		ENDSELECT
+		
+		SIF EXP:乳腺開発経験 >= EXPLV:4
+			_RANK += 1
+		
+		_RANK = LIMIT(_RANK, 0, 4)
+		
+		SIF TALENT:淫乳
+			_RANK += 1
+	
+	;------------------------------------------------
+	;部位：尿道
+	;------------------------------------------------
+	CASE "U", "Ｕ", "尿道"
+		SELECTCASE EXP:尿道開発経験
+			CASE IS < EXPLV:3
+				;評価0
+			CASE EXPLV:3 TO EXPLV:5
+				_RANK += 1
+			CASE EXPLV:5 TO EXPLV:7
+				_RANK += 2
+			CASE IS >= EXPLV:7
+				_RANK += 3
+		ENDSELECT
+		
+		SELECTCASE EXP:Ｕ拡張経験
+			CASE IS < EXPLV:2
+				;評価0
+			CASE EXPLV:2 TO EXPLV:5
+				_RANK += 1
+			CASE IS >= EXPLV:5
+				_RANK += 2
+		ENDSELECT
+		
+		SIF ABL:Ｃ感覚 >= 4 && EXP:尿道開発経験 > 0
+			_RANK += 1
+		
+		_RANK = LIMIT(_RANK, 0, 4)
+		
+		SIF TALENT:尿道狂
+			_RANK += 1
+	
+	;------------------------------------------------
+	;部位：陰毛　（開発というか育成？）
+	;------------------------------------------------
+	CASE "陰毛"
+		;剃毛・脱毛回数を評価
+		SELECTCASE CFLAG:__K2008N_CFLAG_REMOVE_PUBIC_HAIR__
+			CASE IS <= EXPLV:0
+				;評価0
+			CASE IS <= EXPLV:2
+				_RANK += 1
+			CASE IS <= EXPLV:3
+				_RANK += 2
+			CASEELSE
+				_RANK += 3
+		ENDSELECT
+		
+		SELECTCASE K2008F_CFLAGCOM("触手発毛剤")
+			CASE IS <= EXPLV:0
+				;評価0
+			CASE IS <= EXPLV:1
+				_RANK += 1
+			CASEELSE
+				_RANK += 2
+		ENDSELECT
+	
+	;------------------------------------------------
+	;行為：自慰
+	;------------------------------------------------
+	CASE "自慰", "オナニー"
+		SELECTCASE EXP:調教自慰経験
+			CASE IS < EXPLV:3
+				;評価0
+			CASE EXPLV:3 TO EXPLV:5
+				_RANK += 1
+			CASE EXPLV:5 TO EXPLV:7
+				_RANK += 2
+			CASE IS >= EXPLV:7
+				_RANK += 3
+		ENDSELECT
+		
+		SELECTCASE ABL:自慰中毒
+			CASE 0
+				;評価0
+			CASE 1 TO 3
+				_RANK += 1
+			CASE IS >= 4
+				_RANK += 2
+		ENDSELECT
+		
+	;------------------------------------------------
+	;行為：放尿・失禁・おもらし
+	;------------------------------------------------
+	CASE "放尿", "おしっこ"
+		SELECTCASE EXP:放尿経験
+			CASE IS < EXPLV:1
+				;評価0
+			CASE EXPLV:1 TO EXPLV:4
+				_RANK += 1
+			CASE EXPLV:4 TO EXPLV:7
+				_RANK += 2
+			CASE IS >= EXPLV:7
+				_RANK += 3
+		ENDSELECT
+		
+		IF TALENT:おもらし癖
+			SIF ABL:Ｃ感覚 >= 3
+				_RANK += 1
+			SIF ABL:露出癖 >= 3 && EXP:Ｕ拡張経験 >= EXPLV:3
+				_RANK += 1
+		ENDIF
+		
+	;------------------------------------------------
+	;行為：浣腸・排泄
+	;------------------------------------------------
+	CASE "浣腸", "排泄", "排便"
+		SELECTCASE EXP:調教排泄経験
+			CASE IS < EXPLV:2
+				;評価0
+			CASE EXPLV:2 TO EXPLV:4
+				_RANK += 1
+			CASE IS >= EXPLV:4
+				_RANK += 2
+		ENDSELECT
+		
+		SELECTCASE ABL:排泄中毒
+			CASE 0
+				;評価0
+			CASE 1 TO 3
+				_RANK += 1
+			CASE IS >= 4
+				_RANK += 2
+		ENDSELECT
+		
+		SIF ABL:露出癖 >= 3 && EXP:Ａ拡張経験 >= EXPLV:3 && TALENT:おもらし癖
+			_RANK += 1
+		
+	CASEELSE
+		THROW 【K2008エラー】未登録の引数 %ARGS% が使用されました
+ENDSELECT
+
+ASSERT INRANGE(_RANK, 0, 5)
+RETURNF _RANK
+
+;================================================
+;絶頂ランク評価関数
+;------------------------------------------------
+;■戻り値
+;	絶頂の度合いを0～3までのランクに換算する
+;------------------------------------------------
+;■戻り値の目安
+;	0:絶頂なし
+;	1:強絶頂＋強絶頂の二重絶頂まで
+;	2:目安は強絶頂＋強絶頂＋強絶頂の三重絶頂まで
+;	3:それ以上の発狂モード
+;================================================
+@K2008F_ORGASMRANK
+#FUNCTION
+
+#DIM _COUNT
+#DIM _EXRANK
+
+;絶頂数を加算してそれっぽい強弱を作れたらなー
+_EXRANK = 0
+FOR _COUNT, 0, 3+1
+	_EXRANK += NOWEX:_COUNT
+NEXT
+
+;絶頂していなければ終わり
+SIF _EXRANK == 0
+	RETURNF 0
+
+;淫魔は補正
+SIF TALENT:淫魔
+	_EXRANK /= 1 + RAND:3
+
+SELECTCASE _EXRANK
+	CASE IS <= 7
+		;目安は強絶頂＋強絶頂の二重絶頂まで
+		_EXRANK = 1
+	CASE 8 TO 18
+		;目安は強絶頂＋強絶頂＋強絶頂の三重絶頂まで
+		_EXRANK = 2
+	CASEELSE
+		;それ以上の発狂モード
+		_EXRANK = 3
+ENDSELECT
+ASSERT INRANGE(_EXRANK, 1, 3)
+RETURNF _EXRANK

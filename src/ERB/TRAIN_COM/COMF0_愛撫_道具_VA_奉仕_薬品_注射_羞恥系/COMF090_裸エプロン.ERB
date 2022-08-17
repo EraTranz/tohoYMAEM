@@ -1,0 +1,629 @@
+﻿;=============================================================================
+;裸エプロン
+;=============================================================================
+;シチュよりもゲーム性を追求していると解釈したので新妻プレイを元に新規作成
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE90
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:90 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;羞恥プレイ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 512) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 1
+;アイテム｢エプロン｣を持っていないとダメ
+SIF ITEM:エプロン == 0
+	RETURN 0
+;助手じゃダメ
+SIF ASSIPLAY
+	RETURN 0
+;HARDモード以上は別条件
+IF FLAG:3 >= 3
+	;従順が4以上ないとダメ
+	SIF ABL:従順 < 4
+		RETURN 0
+	;気力が500以下だとダメ
+	;SIF BASE:気力 <= 500
+	;	RETURN 0
+	;その周回で1度でも異常経験を付けているとダメ(最初からある分はOK)
+	;SIF CFLAG:11 & 4
+	;	RETURN 0
+ELSE
+	;従順が3以上ないとダメ
+	SIF ABL:従順 < 3
+		RETURN 0
+ENDIF
+;好感度が500以上ないとダメ
+SIF CFLAG:好感度 < 500
+	RETURN 0
+;苦痛または恐怖が1000以上あるとダメ
+SIF PALAM:苦痛 >= 1000 || PALAM:恐怖 >= 1000
+	RETURN 0
+;反感または不快または抑鬱が500以上あるとダメ
+SIF PALAM:反感 >= 500 || PALAM:不快 >= 500 || PALAM:抑鬱 >= 500
+	RETURN 0
+;女主人で相手が同性の場合はレズっ気が3以上ないとダメ
+IF TALENT:MASTER:オトコ == 0 && TALENT:オトコ == 0
+	SIF ABL:レズっ気 < 3
+		RETURN 0
+;男主人で相手が同性の場合はＢＬっ気が3以上ないとダメ
+ELSEIF TALENT:MASTER:オトコ && TALENT:オトコ
+	SIF ABL:ＢＬっ気 < 3
+		RETURN 0
+ENDIF
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外プレイ中はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;羞恥プレイ中はダメ
+SIF TEQUIP:羞恥プレイ
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 90) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM90
+PRINTL 裸エプロン
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 90
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 裸エプロン
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+IF TEQUIP:コスチュームプレイ == 1
+	TEQUIP:コスチュームプレイ = 0
+	RETURN 1
+ENDIF
+
+LOCAL:1 = 100
+LOCAL:2 = 200
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 1.00
+	SOURCE:液体追加 = 0
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 1.10
+	SOURCE:液体追加 = 150
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.20
+	SOURCE:液体追加 = 300
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.30
+	SOURCE:液体追加 = 600
+ELSE
+	TIMES LOCAL:1 , 1.40
+	SOURCE:液体追加 = 1000
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 1.00
+	SOURCE:反感追加 = 500
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 1.20
+	SOURCE:反感追加 = 100
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.40
+	SOURCE:反感追加 = 50
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.50
+	SOURCE:反感追加 = 0
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 2.10
+	SOURCE:反感追加 = 0
+ELSE
+	TIMES LOCAL:1 , 3.00
+	SOURCE:反感追加 = 0
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:奉仕精神 == 1
+	TIMES LOCAL:1 , 1.20
+ELSEIF ABL:奉仕精神 == 2
+	TIMES LOCAL:1 , 1.40
+ELSEIF ABL:奉仕精神 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:奉仕精神 == 4
+	TIMES LOCAL:1 , 1.80
+ELSE
+	TIMES LOCAL:1 , 2.00
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 100
+	SOURCE:欲情追加 = 0
+	SOURCE:逸脱 = 100
+	TIMES LOCAL:1, 0.60
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 500
+	SOURCE:欲情追加 = 50
+	SOURCE:逸脱 = 300
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 100
+	SOURCE:欲情追加 = 100
+	SOURCE:逸脱 = 50
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 50
+	SOURCE:欲情追加 = 150
+	SOURCE:逸脱 = 0
+	TIMES LOCAL:1, 2.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 0
+	SOURCE:欲情追加 = 200
+	SOURCE:逸脱 = 0
+	TIMES LOCAL:1, 2.60
+ELSE
+	SOURCE:露出 = 0
+	SOURCE:欲情追加 = 300
+	SOURCE:逸脱 = 0
+	TIMES LOCAL:1, 3.80
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:2 , 1.50
+;プライド高い
+SIF TALENT:プライド高い
+	TIMES LOCAL:2 , 2.00
+;無関心
+SIF TALENT:無関心
+	TIMES LOCAL:1 , 0.80
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL:1 , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL:1 , 1.50
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES LOCAL:1 , 0.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 1.20
+;献身的
+SIF TALENT:献身的
+	TIMES LOCAL:1 , 1.50
+;相愛
+IF TALENT:相愛
+	TIMES LOCAL:1 , 3.00
+;親愛
+ELSEIF TALENT:親愛
+	TIMES LOCAL:1 , 2.50
+;恋慕
+ELSEIF TALENT:恋慕
+	TIMES LOCAL:1 , 2.00
+ENDIF
+;淫乱
+SIF TALENT:淫乱
+	TIMES LOCAL:1 , 1.20
+
+IF TALENT:MASTER:オトコ
+	;男嫌い
+	IF TALENT:男嫌い && TALENT:恋慕 == 0
+		DOWNBASE:1 += 50
+		TIMES LOCAL:1 , 0.30
+		TIMES LOCAL:2 , 1.50
+	ENDIF
+	;ＢＬっ気Lv2未満
+	IF ABL:ＢＬっ気 < 2 && TALENT:オトコ && TALENT:恋慕 == 0
+		DOWNBASE:1 += 30
+		TIMES LOCAL:1 , 0.40
+		TIMES LOCAL:2 , 1.20
+	ENDIF
+ELSE
+	;女嫌い
+	IF TALENT:女嫌い && TALENT:恋慕 == 0
+		DOWNBASE:1 += 50
+		TIMES LOCAL:1 , 0.30
+		TIMES LOCAL:2 , 1.50
+	ENDIF
+	;レズっ気Lv2未満
+	IF ABL:レズっ気 < 2 && TALENT:オトコ == 0 && TALENT:恋慕 == 0
+		DOWNBASE:1 += 30
+		TIMES LOCAL:1 , 0.40
+		TIMES LOCAL:2 , 1.20
+	ENDIF
+ENDIF
+
+SOURCE:情愛 += LOCAL:1
+SOURCE:恭順追加 += LOCAL:1
+SOURCE:逸脱 += LOCAL:2
+
+TEQUIP:コスチュームプレイ = 1
+;主人経験フラグ
+IF ASSIPLAY == 0
+	SIF ABL:従順 >= 3 || TALENT:恋慕 || TALENT:親愛 || TALENT:服従 || TALENT:淫乱
+		TFLAG:50 += 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;裸エプロン装着中
+;-------------------------------------------------
+@EQUIP_COM90
+PRINTL ＜裸エプロン中＞
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 30
+
+LOCAL = 100
+LOCAL:1 = 200
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 1.00
+	SOURCE:液体追加 += 0
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 1.10
+	SOURCE:液体追加 += 150
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.20
+	SOURCE:液体追加 += 300
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.30
+	SOURCE:液体追加 += 600
+ELSE
+	TIMES LOCAL , 1.40
+	SOURCE:液体追加 += 1000
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 1.00
+	SOURCE:反感追加 += 500
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 1.20
+	SOURCE:反感追加 += 100
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.40
+	SOURCE:反感追加 += 50
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.50
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 2.10
+ELSE
+	TIMES LOCAL , 3.00
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES LOCAL , 1.00
+ELSEIF ABL:奉仕精神 == 1
+	TIMES LOCAL , 1.20
+ELSEIF ABL:奉仕精神 == 2
+	TIMES LOCAL , 1.40
+ELSEIF ABL:奉仕精神 == 3
+	TIMES LOCAL , 1.60
+ELSEIF ABL:奉仕精神 == 4
+	TIMES LOCAL , 1.80
+ELSE
+	TIMES LOCAL , 2.00
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 += 100
+	SOURCE:欲情追加 += 0
+	SOURCE:逸脱 += 100
+	TIMES LOCAL, 0.60
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 += 500
+	SOURCE:欲情追加 += 50
+	SOURCE:逸脱 += 300
+	TIMES LOCAL, 1.00
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 += 100
+	SOURCE:欲情追加 += 100
+	SOURCE:逸脱 += 50
+	TIMES LOCAL, 1.60
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 += 50
+	SOURCE:欲情追加 += 150
+	SOURCE:逸脱 += 0
+	TIMES LOCAL, 2.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 += 0
+	SOURCE:欲情追加 += 200
+	SOURCE:逸脱 += 0
+	TIMES LOCAL, 2.60
+ELSE
+	SOURCE:露出 += 0
+	SOURCE:欲情追加 += 300
+	SOURCE:逸脱 += 0
+	TIMES LOCAL, 3.80
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 1.50
+;プライド高い
+SIF TALENT:プライド高い
+	TIMES LOCAL:1 , 2.00
+;無関心
+SIF TALENT:無関心
+	TIMES LOCAL , 0.80
+;感情乏しい
+SIF TALENT:感情乏しい
+	TIMES LOCAL , 0.80
+;好奇心
+SIF TALENT:好奇心
+	TIMES LOCAL , 1.50
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES LOCAL , 0.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:1 , 1.20
+;献身的
+SIF TALENT:献身的
+	TIMES LOCAL , 1.50
+;相愛
+IF TALENT:相愛
+	TIMES LOCAL , 3.00
+;親愛
+ELSEIF TALENT:親愛
+	TIMES LOCAL , 2.50
+;恋慕
+ELSEIF TALENT:恋慕
+	TIMES LOCAL , 2.00
+ENDIF
+;淫乱
+SIF TALENT:淫乱
+	TIMES LOCAL , 1.20
+
+IF TALENT:MASTER:オトコ
+	;男嫌い
+	IF TALENT:男嫌い && TALENT:恋慕 == 0
+		DOWNBASE:1 += 50
+		TIMES LOCAL , 0.30
+		TIMES LOCAL:1 , 1.50
+	ENDIF
+	;ＢＬっ気Lv2未満
+	IF ABL:ＢＬっ気 < 2 && TALENT:オトコ && TALENT:恋慕 == 0
+		DOWNBASE:1 += 30
+		TIMES LOCAL , 0.40
+		TIMES LOCAL:1 , 1.20
+	ENDIF
+ELSE
+	;女嫌い
+	IF TALENT:女嫌い && TALENT:恋慕 == 0
+		DOWNBASE:1 += 50
+		TIMES LOCAL , 0.30
+		TIMES LOCAL:1 , 1.50
+	ENDIF
+	;レズっ気Lv2未満
+	IF ABL:レズっ気 < 2 && TALENT:オトコ == 0 && TALENT:恋慕 == 0
+		DOWNBASE:1 += 30
+		TIMES LOCAL , 0.40
+		TIMES LOCAL:1 , 1.20
+	ENDIF
+ENDIF
+
+SOURCE:情愛 += LOCAL
+SOURCE:恭順追加 += LOCAL
+SOURCE:逸脱 += LOCAL:1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+;主人経験フラグ
+SIF ASSIPLAY == 0 && (ABL:従順 >= 3 || TALENT:恋慕 || TALENT:親愛 || TALENT:服従 || TALENT:淫乱)
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_90
+IF TEQUIP:コスチュームプレイ == 1
+	PRINTFORML %CALLNAME:TARGET%に着ているエプロンを脱ぐように命じたが拒否された。
+	PRINTL もう少し調教が必要なようだ。
+ELSE
+	PRINTFORML %CALLNAME:TARGET%にエプロンを付けるように命じたが拒否された。
+	PRINTL もう少し調教が必要なようだ。
+ENDIF
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_90
+IF TEQUIP:コスチュームプレイ == 1
+	;相愛のとき
+	IF TALENT:相愛
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%が着ているエプロンを脱がそうと手を掛けると、
+		PRINTFORML %CALLNAME:TARGET%は少し残念そうな顔をしつつも、エプロンを脱がしやすいように身体を動かしてくれた…
+	;反発刻印Lv2以上のとき
+	ELSEIF MARK:反発刻印 > 1
+		PRINTFORML %CALLNAME:PLAYER%が、%CALLNAME:TARGET%が着ているエプロンを脱がそうと手を掛ける前に、
+		PRINTFORML %CALLNAME:TARGET%は自らエプロンを脱いでしまい、そのエプロンを放り投げてしまった…
+	;その他のとき
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%が着ているエプロンを脱がした…
+	ENDIF
+ELSE
+	;相愛のとき
+	IF TALENT:相愛
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の裸体の上からエプロンを着けようとすると、
+		PRINTFORML %CALLNAME:TARGET%は凄くうれしそうな顔をしながら、エプロンを着けやすいように身体を動かしてくれた…
+	;反発刻印Lv2以上のとき
+	ELSEIF MARK:反発刻印 > 1
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の裸体の上からエプロンを着けようとすると、
+		PRINTFORML %CALLNAME:TARGET%は嫌な顔をしつつ逃げようとしたので、それを取り押さえて無理やりエプロンを着させた…
+	;その他のとき
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の裸体の上からエプロンを着させた…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_90, ARG
+LOCAL:99 = ARG
+;ABL:露出癖
+IF ABL:露出癖
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:露出癖
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;反抗的
+IF TALENT:反抗的
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:11%({LOCAL:99})
+ENDIF
+;自制心
+IF TALENT:自制心
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
+ENDIF
+;抵抗
+IF TALENT:抵抗
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:34%({LOCAL:99})
+ENDIF
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+;恥薄い
+ELSEIF TALENT:恥薄い
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;オトコ
+IF TALENT:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 5
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:120%({LOCAL:99})
+ENDIF
+
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 8
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;難易度上昇
+;ビデオで+10
+TFLAG:241 = 27
+SIF TEQUIP:ビデオ撮影
+	TFLAG:241 += 10

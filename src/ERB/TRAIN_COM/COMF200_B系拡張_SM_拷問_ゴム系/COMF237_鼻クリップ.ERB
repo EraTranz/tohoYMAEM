@@ -1,0 +1,184 @@
+﻿;=============================================================================
+;鼻クリップ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE237
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:237 > 0
+	RETURN 0
+;他の鼻装着具使用中は不可
+SIF (TEQUIP:鼻装着器具 && TEQUIP:鼻装着器具 != 5)
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:鼻装着器具 == 5
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:豆つまみ == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 11 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;焦らしプレイ中は不可
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 237) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM237
+PRINTL 鼻クリップ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 237
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 鼻クリップ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 35
+DOWNBASE:1 += 40
+
+IF TEQUIP:鼻装着器具 == 5
+	TEQUIP:鼻装着器具 = 0
+	RETURN 1
+ENDIF
+
+SOURCE:痛み = 600
+;TALENT:痛みに弱いをみる
+IF TALENT:痛みに弱い
+	TIMES SOURCE:痛み , 2.00
+;TALENT:痛みに強いをみる
+ELSEIF TALENT:痛みに強い
+	TIMES SOURCE:痛み , 0.80
+ENDIF
+;TALENT:小人体型をみる
+SIF TALENT:小人体型
+	TIMES SOURCE:痛み , 2.00
+;TALENT:小柄体型をみる
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 1.50
+
+SOURCE:逸脱 = 900
+
+TEQUIP:鼻装着器具 = 5
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;洗濯バサミ(鼻)装備中
+;-------------------------------------------------
+@EQUIP_COM237
+PRINTL ＜洗濯バサミ(鼻)＞
+
+DOWNBASE:0 += 55
+DOWNBASE:1 += 60
+
+LOCAL = 1400
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 120
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 240
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 480
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 960
+ELSE
+	LOCAL:1 = 1920
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 1.40
+	TIMES LOCAL:1 , 0.70
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 1.40
+ENDIF
+
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 1.50
+ENDIF
+;マゾ
+SIF TALENT:マゾ
+	TIMES LOCAL:1 , 1.20
+;ドＭ
+SIF TALENT:ドＭ
+	TIMES LOCAL:1 , 1.50
+
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:痛み += LOCAL
+SOURCE:屈従 += (LOCAL + LOCAL:1)/2
+SOURCE:逸脱 += LOCAL + LOCAL:1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_237
+PRINTFORM %CALLNAME:PLAYER%は、
+IF TEQUIP:鼻装着器具
+	PRINTFORML %CALLNAME:TARGET%の鼻から洗濯バサミを取ってやった…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の鼻を洗濯バサミで挟んだ…
+ENDIF

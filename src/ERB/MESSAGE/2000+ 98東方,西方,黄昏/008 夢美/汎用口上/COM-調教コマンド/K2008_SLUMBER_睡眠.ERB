@@ -1,0 +1,170 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;（専用がないという意味で）汎用コマンド口上
+;その２　睡眠口上
+;--------------------------------------------------------
+;判定関数の評価ではなく、睡眠具合で分ける。
+;睡眠の判定 EQUIP:睡眠薬
+;         0 目覚め（この関数には来ない）
+;   1～2000 まどろみ
+;2001～5000 睡眠
+;5001～9000 熟睡
+;9001～     昏睡
+;--------------------------------------------------------
+;上記をLV化した関数があるので、これで判定をかけるとよい
+;K2008F_SLEEPLV("GET")
+;	4 : 昏睡
+;	3 : 熟睡
+;	2 : 睡眠
+;	1 : まどろみ
+;	0 : 目覚め
+;========================================================
+
+
+
+;-------------------------------------------------
+;パラメータ的には有意な調教とはいえない
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+@K2008_COM_GENERAL_IN_SLUMBER0(ARG:0, ARG:1, ARG:2, ARG:3)
+
+SELECTCASE K2008F_SLEEPLV("GET")
+	CASE IS >= 2
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW ――睡眠薬がよく効いているようだ。まったく反応がない。
+			CASEELSE
+				PRINTFORMW ――静かな寝息だけが聞こえている。
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「すぅ……　んっ……？　……すぅ」
+				PRINTFORMW 眠りが浅くなっているようだ。起きるのも時間の問題か。
+			CASEELSE
+				PRINTFORMW ――身じろぎの回数が増えてきた。そろそろ起きるか？
+		ENDSELECT
+ENDSELECT
+
+
+;-------------------------------------------------
+;快楽系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+@K2008_COM_GENERAL_IN_SLUMBER1(ARG:0, ARG:1, ARG:2, ARG:3)
+
+SELECTCASE K2008F_SLEEPLV("GET")
+	CASE IS >= 2
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW ――睡眠薬がよく効いているようだ。まったく反応がない。
+			CASEELSE
+				PRINTFORMW ――静かな寝息だけが聞こえている。
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「すぅ……　ん……？　……すぅ」
+				PRINTFORMW 眠りが浅くなっているようだ。起きるのも時間の問題か。
+			CASEELSE
+				PRINTFORMW ――身じろぎの回数が増えてきた。そろそろ起きるか？
+		ENDSELECT
+ENDSELECT
+
+
+
+;-------------------------------------------------
+;好感系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+@K2008_COM_GENERAL_IN_SLUMBER2(ARG:0, ARG:1, ARG:2, ARG:3)
+
+SELECTCASE K2008F_SLEEPLV("GET")
+	CASE IS >= 2
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW ――睡眠薬がよく効いているようだ。まったく反応がない。
+			CASEELSE
+				PRINTFORMW ――静かな寝息だけが聞こえている。
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「すぅ……　ん……？　……すぅ」
+				PRINTFORMW 眠りが浅くなっているようだ。起きるのも時間の問題か。
+			CASEELSE
+				PRINTFORMW ――身じろぎの回数が増えてきた。そろそろ起きるか？
+		ENDSELECT
+ENDSELECT
+
+
+
+;-------------------------------------------------
+;拒絶系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+@K2008_COM_GENERAL_IN_SLUMBER3(ARG:0, ARG:1, ARG:2, ARG:3)
+
+SELECTCASE K2008F_SLEEPLV("GET")
+	CASE IS >= 2
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW ――睡眠薬がよく効いているようだ。まったく反応がない。
+			CASEELSE
+				PRINTFORMW ――静かな寝息だけが聞こえている。
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「すぅ……　ん……？　……すぅ」
+				PRINTFORMW 眠りが浅くなっているようだ。起きるのも時間の問題か。
+			CASEELSE
+				PRINTFORMW ――身じろぎの回数が増えてきた。そろそろ起きるか？
+		ENDSELECT
+ENDSELECT
+
+
+
+;-------------------------------------------------
+;苦痛系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+@K2008_COM_GENERAL_IN_SLUMBER4(ARG:0, ARG:1, ARG:2, ARG:3)
+
+SELECTCASE K2008F_SLEEPLV("GET")
+	CASE IS >= 2
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW ――睡眠薬がよく効いているようだ。まったく反応がない。
+			CASEELSE
+				PRINTFORMW ――静かな寝息だけが聞こえている。
+		ENDSELECT
+	
+	CASEELSE
+		SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「すぅ……　ん……？　……すぅ」
+				PRINTFORMW 眠りが浅くなっているようだ。起きるのも時間の問題か。
+			CASEELSE
+				PRINTFORMW ――身じろぎの回数が増えてきた。そろそろ起きるか？
+		ENDSELECT
+ENDSELECT

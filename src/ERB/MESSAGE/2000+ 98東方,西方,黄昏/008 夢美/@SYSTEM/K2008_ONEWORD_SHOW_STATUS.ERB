@@ -1,0 +1,20 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;ステータス画面用の一言口上
+;========================================================
+@K2008_ONEWORD_SHOW_STATUS
+
+;表示を固定したい場合
+IF 0
+	;デバッグ用
+	CALL K2008_SELECT_CALLABLE_FUNCTION("K2008_ONEWORD_SHOW_STATUS_#")
+ELSEIF CFLAG:__K2008N_CFLAG_FIRST__ == 0
+	;購入（入手）後、まだ調教してない
+	CALL K2008_ONEWORD_SHOW_STATUS_NEVER
+ELSEIF EQUIP:睡眠薬 > 0
+	;睡眠薬投与
+	CALL K2008_ONEWORD_SHOW_STATUS_SLEEP
+ELSE
+	;特に指定がなければ自動選択
+	CALL K2008_SELECT_CALLABLE_FUNCTION("K2008_ONEWORD_SHOW_STATUS_#")
+ENDIF

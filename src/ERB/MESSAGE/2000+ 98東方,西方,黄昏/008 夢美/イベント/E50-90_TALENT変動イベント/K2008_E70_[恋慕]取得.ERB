@@ -1,0 +1,91 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;恋慕取得イベント
+;-------------------------------------------------
+;わりとあっさり流す感じで書いてます。
+;この口上全般、恋慕とか淫乱とかあんまり気にしてないので……
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE70
+PRINTFORMW ……
+PRINTFORMW 夢美のこちらを見る目がおかしい
+PRINTFORML 
+PRINTFORMW 「うーん、まあ、なんというか、もう嫌いじゃないというか、ねぇ？」
+
+;一応、面倒な作業をした人にはご褒美ということで
+SELECTCASE CFLAG:__K2008N_CFLAG_SOURCEHISTORY__ & 0b1111
+	CASE 0b0001
+		;快Ｃのみで恋慕取得
+		;ふたなり
+		IF TALENT:ふたなり > 0
+			PRINTFORMW 「『こんなもの』生やさせて、女の子を何だと思ってるのよ」
+		;肥大陰核
+		ELSEIF TALENT:肥大陰核 > 0
+			PRINTFORML 「怪しいお薬だと思ったら、とんでもない薬だったし」
+			PRINTFORMW 「こんなの股間にぶら下げてたら、ただの変態じゃないのよ」
+		ENDIF
+		PRINTFORMW 「こんなに弄ってくれちゃって……　どうしてくれるのよ、まったく」
+		PRINTFORMW 「お陰様で%K2008FS_CALL_MY_C()%が大好きになっちゃったじゃない」
+		PRINTFORML 
+		PRINTFORMW 「……もちろん%CALLNAME:MASTER%も好き。素敵よね、こういう関係も」
+	CASE 0b0010
+		;快Ｖのみで恋慕取得
+		;処女（ロータ挿入で頑張れば可能だが相当大変）、乙女はNG
+		IF TALENT:処女 == 1 && K2008F_CAN_EJAC(MASTER)
+			PRINTFORML 「酷いことをいっぱいされるのかと思ってたんだけど」
+			PRINTFORMW 「意外に優しい、のかしらね？　うーん、謎が深いわ」
+			PRINTFORMW 「もう少しでもいいから……　素敵なこと教えてくれるかしら」
+		;非処女、ペニスのＶ挿入経験なし
+		ELSEIF CFLAG:__K2008N_CFLAG_COUNT_PTOV__ == 0 && K2008F_CAN_EJAC(MASTER)
+			PRINTFORML 「それなりには、大事にしてくれてるみたいだし」
+			PRINTFORMW 「けどそろそろ次の……　オトナな関係になるのも素敵じゃない？」
+		ELSE
+			PRINTFORMW 「やることヤっちゃってるというか、ヤることしかやってないというか」
+			PRINTFORML 「私としては、もうちょっとムードあるお付き合いもしたいなぁ」
+			PRINTFORMW 「……なんて夢を見すぎかな？　期待くらいはさせて頂戴」
+		ENDIF
+	CASE 0b0100
+		;快Ａのみで恋慕取得
+		PRINTFORML 「まさかこんな徹底的にお尻の穴ばかり弄ってくるなんて」
+		PRINTFORMW 「私、女の子なのよ？　もっと胸とか、じょ、女性器とか、手を出してもいいじゃない」
+		PRINTFORMW 「ううぅ、惚れた相手が肛愛主義者だったなんて……」
+		PRINTFORMW 
+		PRINTFORML 「……それはそれで、素敵」
+		PRINTFORMW 「うーん、毒されちゃってるわね私も」
+	CASE 0b1000
+		;快Ｂのみで恋慕取得
+		PRINTFORML 「胸がドキドキするの、なんでかしらね」
+		PRINTFORMW 「きっと%CALLNAME:MASTER%に弄られたせいだわ、そうに違いないの」
+		PRINTFORMW 「もっと揉んでくれたら……　落ち着くかしらね」
+		PRINTFORML 
+		SELECTCASE K2008FS_BSIZE()
+			CASE "絶壁"
+				PRINTFORMW 「も、揉む胸がない……　ですってぇえええ！！」
+				PRINTFORMW 「こんなッ！」
+				PRINTFORMW 　「貧相なッ！」
+				PRINTFORMW 　　「体にッ！！」
+				PRINTFORMW 「したのは、どこの、誰だったかしらぁああ！？」
+			CASE "貧乳"
+				PRINTFORMW 「……もっと揉んでくれたら、元の大きさに戻るのかしら？」
+				PRINTFORMW 「うーん、身軽で良いといえばいいんだけど、やっぱり前のほうが」
+				PRINTFORMW 「貧乳は希少価値？　何よ、その理不尽な説明」
+			CASE "並乳"
+				PRINTFORML 「はぁ？　揉んだのに大きくなってない？」
+				PRINTFORMW 「なによ、私の胸じゃ不満！？　だったら毎日毎日揉んで揉んで揉みしだきに来なさい！」
+			CASE "巨乳"
+				PRINTFORMW 「そうねぇ、これくらい胸が大きいと、私も女として自信が持てるわ」
+				PRINTFORMW 「下からも持てるって……？　あ、なに持ち上げてるのよ、こら！」
+			CASE "爆乳"
+				PRINTFORMW 「……揉んでくれたら、とは言ったけど」
+				PRINTFORMW 「なぁんで、私の胸に顔をうずめてるのかしらァ？」
+		ENDSELECT
+		PRINTFORMW 「まったく、デリカシーのかけらもないんだから……」
+		PRINTFORML 
+		PRINTFORMW 「けど、嫌いじゃないわ。　そういうところも、何だかんだで素敵」
+	CASEELSE
+		;快ＣＶＡＢなしでは奉仕快楽経験が得られない（はず）
+		;複数個所の快経験があるときはあっさり流す
+ENDSELECT
+
+PRINTFORMW 「ふふふ。　これからよろしくね、%CALLNAME:MASTER%」
+PRINTFORML 
+PRINTFORMW どうやら、%CALLNAME:MASTER%に恋慕の情を抱いてしまったようだ……

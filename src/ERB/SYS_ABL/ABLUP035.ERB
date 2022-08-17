@@ -1,0 +1,253 @@
+﻿;=============================================================================
+;触手中毒
+;=============================================================================
+@ABLUP35
+DRAWLINE
+SIF ABL:触手中毒 >= 5
+	JUMP ABLUP_MAX
+
+;上げるときは異常経験必要（素質：[中毒しやすい][淫乱]なら無視できる）
+SIF COST35(4)
+	PRINTFORM %EXPNAME:50%{COST35(4)}以上、かつ
+;欲望が必要
+PRINTFORML %ABLNAME:11%{ABL:触手中毒 + 1}LV以上、かつ
+
+PRINTFORM [0] - %PALAMNAME:31%の珠×{COST35(0)}、%PALAMNAME:13%の珠×{COST35(1)}、%EXPNAME:53%{COST35(2)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN35(0)
+
+PRINTFORM [1] - %PALAMNAME:31%の珠×{COST35(0)}、%PALAMNAME:17%の珠×{COST35(3)}、%EXPNAME:53%{COST35(2)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN35(1)
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT == 0 || RESULT == 1) && CAN35(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:侵蝕 -= COST35(0)
+	JUEL:欲情 -= COST35(1)
+ELSEIF RESULT == 1
+	JUEL:侵蝕 -= COST35(0)
+	JUEL:恐怖 -= COST35(3)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:触手中毒 += 1
+PRINTFORMW %ABLNAME:35%のレベルが{ABL:触手中毒}になりました。
+
+;奴隷の触手中毒を上昇させると主人に一定量触手の珠が入る様になる
+IF ABL:触手中毒 == 1
+	LOCAL:0 = 100
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:0 = 500
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:0 = 1000
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:0 = 3000
+ELSEIF ABL:触手中毒 >= 5
+	LOCAL:0 = 6000
+ENDIF
+CALL COMMON_UP_JUEL, MASTER, 198, (LOCAL:0), 1
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP35
+SIF ABL:触手中毒 >= 5
+	RETURN 0
+
+CALLF CALC_COST35, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP35("CHECK")
+
+@COST35(ARG)
+#FUNCTION
+RETURNF CALC_COST35("GET", ARG)
+
+@CALC_COST35(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:触手中毒 == 0
+	LOCAL:0 = 4000
+	LOCAL:1 = 15000
+	LOCAL:2 = 100
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:0 = 10000
+	LOCAL:1 = 30000
+	LOCAL:2 = 250
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:0 = 22000
+	LOCAL:1 = 70000
+	LOCAL:2 = 750
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:0 = 50000
+	LOCAL:1 = 150000
+	LOCAL:2 = 1500
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+		TIMES LOCAL:2 , 2.00
+	ENDIF
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:0 = 80000
+	LOCAL:1 = 360000
+	LOCAL:2 = 3000
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 3.00
+		TIMES LOCAL:1 , 3.00
+		TIMES LOCAL:2 , 3.00
+	ENDIF
+ENDIF
+
+;自制心
+IF TALENT:自制心
+	TIMES LOCAL:0 , 2.50
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 1.50
+ENDIF
+;禁断の知識
+IF TALENT:禁断の知識
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ENDIF
+;快感に素直
+IF TALENT:快感に素直
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+;快感の否定
+ELSEIF TALENT:快感の否定
+	TIMES LOCAL:0 , 1.75
+	TIMES LOCAL:1 , 1.75
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 0.75
+ENDIF
+;中毒しやすい
+IF TALENT:中毒しやすい
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+;中毒しにくい
+ELSEIF TALENT:中毒しにくい
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+ENDIF
+;[中毒扇動]有効
+IF TFLAG:995 == 1
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ENDIF
+;懐卵
+IF TALENT:懐卵
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:2 , 0.90
+ENDIF
+;寄生
+IF TALENT:寄生
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+ENDIF
+;相愛・隷属(心が主人に向いているので触手になびきにくい)
+IF TALENT:相愛 || TALENT:隷属
+	TIMES LOCAL:0 , 1.80
+	TIMES LOCAL:1 , 1.80
+	TIMES LOCAL:2 , 1.50
+ENDIF
+;狂気
+IF TALENT:狂気
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+ENDIF
+
+;触手インプラント
+IF CFLAG:41
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 0.75
+ENDIF
+
+LOCAL:3 = LOCAL:1 / 20
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 3
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+;上げるときは異常経験必要（素質：[中毒しやすい][淫乱]なら無視できる）
+IF TALENT:中毒しやすい == 0 && TALENT:淫乱 == 0
+	IF ABL:触手中毒 <= 2
+		LOCAL:4 = ABL:触手中毒 + 1
+	ELSEIF ABL:触手中毒 == 3
+		LOCAL:4 = 5
+	ELSE
+		LOCAL:4 = 10
+	ENDIF
+ENDIF
+
+RETURNF 0
+
+@CAN35(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP35("GET", ARG)
+
+@CAN_ABLUP35(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;異常経験が必要な場合
+IF EXP:異常経験 < COST35(4)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+ENDIF
+
+;触手経験が必要
+IF EXP:触手経験 < COST35(2)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+ENDIF
+
+;欲望が必要
+IF ABL:欲望 < ABL:触手中毒 + 1
+	LOCAL:0 |= 4
+	LOCAL:1 |= 4
+ENDIF
+
+;侵蝕の珠で上げる
+IF JUEL:侵蝕 < COST35(0)
+	LOCAL:0 |= 1
+	LOCAL:1 |= 1
+ENDIF
+;欲情の珠で上げる
+SIF JUEL:欲情 < COST35(1)
+	LOCAL:0 |= 1
+;恐怖の珠で上げる
+SIF JUEL:恐怖 < COST35(3)
+	LOCAL:1 |= 1
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0)

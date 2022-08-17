@@ -1,0 +1,213 @@
+﻿;=============================================================================
+;従順
+;=============================================================================
+@ABLUP10
+DRAWLINE
+SIF ABL:従順 >= 5
+	JUMP ABLUP_MAX
+
+;ＬＶ４から５に上げるときは異常経験必要（素質：[臆病][素直][妄信][淫乱]なら無視できる）
+SIF COST10(4)
+	PRINTFORML %EXPNAME:50%あり、かつ
+
+PRINTFORM [0] - %PALAMNAME:17%の珠×{COST10(0)}……
+CALL SHOW_ISABLUP_COMMON, CAN10(0)
+
+PRINTFORM [1] - %PALAMNAME:12%の珠×{COST10(1)}……
+CALL SHOW_ISABLUP_COMMON, CAN10(1)
+
+IF COST10(2) > 0
+	PRINTFORM [2] - %PALAMNAME:13%の珠×{COST10(2)}……
+	CALL SHOW_ISABLUP_COMMON, CAN10(2)
+ENDIF
+
+IF COST10(3) > 0
+	PRINTFORM [3] - %PALAMNAME:14%の珠×{COST10(3)}……
+	CALL SHOW_ISABLUP_COMMON, CAN10(3)
+ENDIF
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 100
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF RESULT >= 0 && RESULT <= 3 && CAN10(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:恐怖 -= COST10(0)
+ELSEIF RESULT == 1
+	JUEL:恭順 -= COST10(1)
+ELSEIF RESULT == 2
+	JUEL:欲情 -= COST10(2)
+ELSEIF RESULT == 3
+	JUEL:屈服 -= COST10(3)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:従順 += 1
+PRINTFORMW %ABLNAME:10%のレベルが{ABL:従順}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP10
+SIF ABL:従順 >= 5
+	RETURN 0
+
+CALLF CALC_COST10, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP10("CHECK")
+
+@COST10(ARG)
+#FUNCTION
+RETURNF CALC_COST10("GET", ARG)
+
+@CALC_COST10(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:従順 == 0
+	LOCAL:0 = (TALENT:臆病) ? 7 # 10
+	LOCAL:1 = 10
+	LOCAL:2 = 300
+	LOCAL:3 = 200
+ELSEIF ABL:従順 == 1
+	LOCAL:0 = (TALENT:臆病) ? 90 # 150
+	LOCAL:1 = 100
+	LOCAL:2 = 1000
+	LOCAL:3 = 1200
+ELSEIF ABL:従順 == 2
+	LOCAL:0 = (TALENT:臆病) ? 500 # 1000
+	LOCAL:1 = 800
+	LOCAL:2 = 2000
+	LOCAL:3 = 3000
+ELSEIF ABL:従順 == 3
+	LOCAL:0 = (TALENT:臆病) ? 1200 # 3000
+	LOCAL:1 = 3000
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+	ENDIF
+ELSEIF ABL:従順 == 4
+	LOCAL:0 = (TALENT:臆病) ? 2400 # 8000
+	LOCAL:1 = 15000
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 3.00
+		TIMES LOCAL:1 , 3.00
+	ENDIF
+ENDIF
+
+;反抗的
+IF TALENT:反抗的
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:3 , 1.50
+;素直
+ELSEIF TALENT:素直
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:3 , 0.50
+ENDIF
+;気丈
+IF TALENT:気丈
+	TIMES LOCAL:0 , 3.00
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 1.50
+ENDIF
+;生意気
+IF TALENT:生意気
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:3 , 1.50
+ENDIF
+;恋慕
+SIF TALENT:恋慕
+	TIMES LOCAL:1 , 0.50
+;淫乱
+IF TALENT:淫乱
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 0.80
+ENDIF
+;人形
+IF TALENT:人形
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 0.80
+ENDIF
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 4
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+;ＬＶ４から５に上げるときは異常経験必要（素質：[臆病][素直][妄信][淫乱]なら無視できる）
+SIF ABL:従順 == 4 && TALENT:臆病 == 0 && TALENT:素直 == 0 && TALENT:妄信 == 0 && TALENT:淫乱 == 0
+	LOCAL:4 = 1
+
+RETURNF 0
+
+@CAN10(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP10("GET", ARG)
+
+@CAN_ABLUP10(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;異常経験が必要な場合
+IF EXP:異常経験 < COST10(4)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+	LOCAL:2 |= 2
+	LOCAL:3 |= 2
+ENDIF
+
+;恐怖の珠で上げる
+SIF JUEL:恐怖 < COST10(0)
+	LOCAL:0 |= 1
+
+;恭順の珠で上げる
+SIF JUEL:恭順 < COST10(1)
+	LOCAL:1 |= 1
+
+;欲情の珠で上げる
+IF COST10(2) > 0
+	SIF JUEL:欲情 < COST10(2)
+		LOCAL:2 |= 1
+ELSE
+	LOCAL:2 = 256
+ENDIF
+
+;屈服の珠で上げる
+IF COST10(3) > 0
+	SIF JUEL:屈服 < COST10(3)
+		LOCAL:3 |= 1
+ELSE
+	LOCAL:3 = 256
+ENDIF
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0 || LOCAL:2 == 0 || LOCAL:3 == 0)

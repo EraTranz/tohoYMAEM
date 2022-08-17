@@ -1,0 +1,337 @@
+﻿;YM→YMAEコンバータによって作成されました
+;========================================================
+;（専用がないという意味で）汎用コマンド口上
+;========================================================
+
+;-------------------------------------------------
+;快楽系
+;ARG:0	= 快楽系の評価値
+;ARG:1	= 好感系の評価値
+;ARG:2	= 拒絶系の評価値
+;ARG:3	= 苦痛系の評価値
+;-------------------------------------------------
+
+;-------------------------------------------------
+;RANK = 0
+;-------------------------------------------------
+@K2008_RANK0_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＞拒絶＋苦痛の場合
+IF ARG:0 > ARG:2 + ARG:3
+	;快楽限界超過（淫乱で判定値+1、淫魔で+1、即落ちで-1）
+	IF ARG:0 >= 5 + (TALENT:淫乱 > 0) + (TALENT:淫魔 > 0) - (TALENT:即落ち > 0)
+		SELECTCASE RAND:3
+			CASE 2
+				PRINTFORMW 「あひっ、んくっ、いひぃ、いひよぉ……　んぁっ、ぁ、ぁあっ！」
+			CASE 1
+				PRINTFORMW 「き、気持ちよくなんか、こんなのっ、こんなのぉおおお」
+			CASEELSE
+				PRINTFORMW 「んはっ、はっ、はひっ、ひぁっ、ひゃぁああ！」
+		ENDSELECT
+	;快楽が大きめ
+	ELSEIF ARG:0 >= 3
+		SELECTCASE RAND:4
+			CASE 3
+				PRINTFORMW 「んあぁ、んっ、ンッ！　はふぅ……　じろじろ見ないでよ」
+			CASE 2
+				PRINTFORMW 「ふぁ、ん、んぅっ……　ッ、こっち見ないでよ！！」
+			CASE 1
+				PRINTFORMW 「あんっ、ん、んくっ……　な、なによ」
+			CASEELSE
+				PRINTFORMW 「こんなのっ……　何よ！」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:4
+			CASE 3
+				PRINTFORMW 「まったく、こんなの不愉快なだけだわ」
+			CASE 2
+				PRINTFORMW 「ぜんぜん駄目ね。気持ちいいなんて理解できないわ」
+			CASE 1
+				PRINTFORMW 「何よ、いまさら快楽で堕そうっていうの？」
+			CASEELSE
+				PRINTFORMW 「はしたなく喘ぐ娘が好きなら他所をあたりなさい」
+		ENDSELECT
+	ENDIF
+
+;拒絶／苦痛が大きな快楽の場合
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「痛いのが気持ちいいかって？」
+			PRINTFORMW 「大丈夫？　ついに頭にウジでも湧いちゃったの？」
+		CASE 1
+			PRINTFORMW 「気に入らないとすぐこういう手段に出る。芸がない上に無様ね」
+		CASEELSE
+			PRINTFORMW 「一度自分に同じことをしてみたら？　きっと新天地が見えるわよ」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 1
+;-------------------------------------------------
+@K2008_RANK1_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＞拒絶＋苦痛の場合
+IF ARG:0 > ARG:2 + ARG:3
+	;快楽限界超過（淫乱で判定値+1、淫魔で+1、即落ちで-1）
+	IF ARG:0 >= 5 + (TALENT:淫乱 > 0) + (TALENT:淫魔 > 0) - (TALENT:即落ち > 0)
+		SELECTCASE RAND:3
+			CASE 2
+				PRINTFORMW 「あひっ、んくっ、いひぃ、いひよぉ……　んぁっ、ぁ、ぁあっ！」
+			CASE 1
+				PRINTFORMW 「き、気持ちよくなんか、こんなのっ、こんなのぉおおお」
+			CASEELSE
+				PRINTFORMW 「んはっ、はっ、はひっ、ひぁっ、ひゃぁああ！」
+		ENDSELECT
+	;快楽が大きめ
+	ELSEIF ARG:0 >= 3
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMW 「ンッ！？　な、何でもないわ、ちょっとビックリしただけよ」
+			CASE 5
+				PRINTFORMW 「ふーっ、ふぅーっ……　なんともないわよ？　こ、これくらい」
+			CASE 4
+				PRINTFORMW 「んぅぅ、なんなの、何なのコレぇ……　」
+			CASE 3
+				PRINTFORMW 「えっ、何よこれ、んんっ」
+			CASE 2
+				PRINTFORMW 「ふぁ、ん、んぅっ……　ッ、こっち見ないでよ！！」
+			CASE 1
+				PRINTFORMW 「あんっ、ん、んくっ……　な、なによ」
+			CASEELSE
+				PRINTFORMW 「こんなのっ……　何よ！」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:8
+			CASE 7
+				PRINTFORMW 「時間の無駄よね。　こんなことしたって何も出ないわよ」
+			CASE 6
+				PRINTFORMW 「……こんなことして楽しいの？　そう、さっぱり分からないわね」
+			CASE 5
+				PRINTFORMW 「ん、何なのよさっきから……」
+			CASE 4
+				PRINTFORMW 「はぁ……　何がいいのかさっぱりだわ」
+			CASE 3
+				PRINTFORMW 「嫌悪感ばかりが先走るわ……　もう諦めたら？」
+			CASE 2
+				PRINTFORMW 「何をどうすれば、こんなのが気持ちいいなんて思えるのかしら……」
+			CASE 1
+				PRINTFORMW 「まったく、さっさと切り上げなさい」
+			CASEELSE
+				PRINTFORMW 「気持ち悪いわね……　こんなの何がいいの？」
+		ENDSELECT
+	ENDIF
+;拒絶／苦痛が大きな快楽の場合
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「大人しくしてれば何してもいいってわけじゃないのよ、分かってる？」
+		CASE 1
+			PRINTFORMW 「嫌がるような真似を平然とするのね」
+		CASEELSE
+			PRINTFORMW 「きらいよ……　そういうのは」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 2
+;-------------------------------------------------
+@K2008_RANK2_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＞拒絶＋苦痛の場合
+IF ARG:0 > ARG:2 + ARG:3
+	;快楽限界超過（淫乱で判定値+1、淫魔で+1、即落ちで-1）
+	IF ARG:0 >= 6 + (TALENT:淫乱 > 0) + (TALENT:淫魔 > 0) - (TALENT:即落ち > 0)
+		SELECTCASE RAND:3
+			CASE 2
+				PRINTFORMW 「あアァ！？　だめ、ダメッ！　気持ち良すぎっ、イイのぉおお！」
+			CASE 1
+				PRINTFORMW 「んっ、んんンーッ！　もっと、もっと！　もっと気持ちいいの欲しいッ！」
+			CASEELSE
+				PRINTFORMW 「ア、アひぃ！　こんなの、体覚えちゃったらダメッ、ダメなの！　忘れられないのおぉぉ！」
+		ENDSELECT
+	;快楽が大きめ
+	ELSEIF ARG:0 >= 4
+		SELECTCASE RAND:5
+			CASE 4
+				PRINTFORMW 「何コレェ……　んん、ふっ、んあぁぁ、素敵」
+			CASE 3
+				PRINTFORMW 「いぃ……　気持ちいいのぉ、頭の中がとろーんって」
+			CASE 2
+				PRINTFORMW 「あんっ、も、もうちょっと強く……　んんんっ」
+			CASE 1
+				PRINTFORMW 「ん、気持ちいい……　んふぅ」
+			CASEELSE
+				PRINTFORMW 「んはぁー、あぁんっ、声出ちゃう……」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:5
+			CASE 4
+				PRINTFORMW 「んー、何だろう……　嫌な感じじゃないけど、ちょっと不思議ね」
+			CASE 3
+				PRINTFORMW 「なんだかむず痒いわね。前はこんな事なかったのに」
+			CASE 2
+				PRINTFORMW 「んっ！？　な、なんでもないから気にしないで頂戴」
+			CASE 1
+				PRINTFORMW 「このあいだみたいに、その……　なっ、なんでもないわ」
+			CASEELSE
+				PRINTFORMW 「あら、よくよく味わってみると少しは素敵ね」
+		ENDSELECT
+	ENDIF
+;拒絶／苦痛が大きな快楽の場合
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「ひ、酷いわ……　次はやさしめでお願いね」
+		CASE 1
+			PRINTFORMW 「も、もうちょっと丁寧に、ね？　お願い。」
+		CASEELSE
+			PRINTFORMW 「それも素敵だけど……ほかにマシなのはないのかしら？」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 3
+;-------------------------------------------------
+@K2008_RANK3_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＞拒絶＋苦痛の場合
+IF ARG:0 > ARG:2 + ARG:3
+	;快楽限界超過（淫乱で判定値+1、淫魔で+1、即落ちで-1）
+	IF ARG:0 >= 7 + (TALENT:淫乱 > 0) + (TALENT:淫魔 > 0) - (TALENT:即落ち > 0)
+		SELECTCASE RAND:3
+			CASE 2
+				PRINTFORMW 「あアァ！？　だめ、ダメッ！　気持ち良すぎっ、イイのぉおお！」
+			CASE 1
+				PRINTFORMW 「んっ、んんンーッ！　もっと、もっと！　もっと気持ちいいの欲しいッ！」
+			CASEELSE
+				PRINTFORMW 「ア、アひぃ！　こんなの、体覚えちゃったらダメッ、ダメなの！　忘れられないのおぉぉ！」
+		ENDSELECT
+	;快楽が大きめ
+	ELSEIF ARG:0 >= 5
+		SELECTCASE RAND:5
+			CASE 4
+				PRINTFORMW 「あっ、んぁああ！　あたまにビリビリ来るゥ、素敵ッ！」
+			CASE 3
+				PRINTFORMW 「んぉおおっ？　なにっ、なにコレェ、ゾクゾクくるっ」
+			CASE 2
+				PRINTFORMW 「あひぃっ、あぁん、気持ちいい……　ああぁぁ、すごぃい」
+			CASE 1
+				PRINTFORMW 「んっ、んんぅ、もっと欲しいわぁ」
+			CASEELSE
+				PRINTFORMW 「あはぁ、すてきぃ……　気持ちいいのぉ」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:4
+			CASE 3
+				PRINTFORMW 「私こんなにふしだらじゃ無かったのに。慣れって怖いわね」
+			CASE 2
+				PRINTFORMW 「んぅっ！　やだ……　私どうしちゃったのかしら」
+			CASE 1
+				PRINTFORMW 「快楽に流されるのも悪くないわね。素敵」
+			CASEELSE
+				PRINTFORMW 「もうちょっとくらい気持ちよくなっても……　いいのかも」
+		ENDSELECT
+	ENDIF
+;拒絶／苦痛が大きな快楽の場合
+ELSE
+	CALL K2008_RANK2_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+ENDIF
+
+;-------------------------------------------------
+;RANK = 4
+;-------------------------------------------------
+@K2008_RANK4_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＞拒絶＋苦痛の場合
+IF ARG:0 > ARG:2 + ARG:3
+	;快楽限界超過（淫乱で判定値+1、淫魔で+1、即落ちで-1）
+	IF ARG:0 >= 7 + (TALENT:淫乱 > 0) + (TALENT:淫魔 > 0) - (TALENT:即落ち > 0)
+		SELECTCASE RAND:3
+			CASE 2
+				PRINTFORMW 「イっ、イクッ！　こんなのっ、すぐイッちゃう！！」
+			CASE 1
+				PRINTFORMW 「ぇあッ、あ、アタマ混乱しちゃうぅ～　いっ、イクッ！？　ひぁっ」
+			CASEELSE
+				PRINTFORMW 「あひぃッ！？　いっ、イィ！！　気持ちよすぎッ！」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMW 「もっ、だめ！　止まらないのッ」
+			CASE 4
+				PRINTFORMW 「もっと気持ちよくなれる？　素敵ね、大歓迎よ」
+			CASE 3
+				PRINTFORMW 「頭が真っ白になっちゃう……　すてきぃ」
+			CASE 2
+				PRINTFORMW 「こんなに気持ちいいなんて、素敵ね」
+			CASE 1
+				PRINTFORMW 「んうっ、もっと、もっとぉ！」
+			CASEELSE
+				PRINTFORMW 「あはぁ、これ気持ちいいから夢中になっちゃう」
+		ENDSELECT
+	ENDIF
+;拒絶／苦痛が大きな快楽の場合
+ELSE
+	SELECTCASE RAND:5
+		CASE 4
+			PRINTFORMW 「もっと気持ちよくなれる？　素敵ね、大歓迎よ」
+		CASE 3
+			PRINTFORMW 「痛っ、けど素敵。もっと激しくしていいわよ」
+		CASE 2
+			PRINTFORMW 「あんっ、お仕置きされてるみたいでっ、すてきぃ！」
+		CASE 1
+			PRINTFORMW 「攻められて抵抗できないなんて……素敵ね」
+		CASEELSE
+			PRINTFORMW 「偶にはこういうのも悪くないわね」
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;RANK = 5
+;-------------------------------------------------
+@K2008_RANK5_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+
+;快楽＞拒絶＋苦痛の場合
+IF ARG:0 > ARG:2 + ARG:3
+	;快楽限界超過（淫乱で判定値+1、淫魔で-1、即落ちで-1）
+	IF ARG:0 >= 7 + (TALENT:淫乱 > 0) + (TALENT:淫魔 > 0) - (TALENT:即落ち > 0)
+		SELECTCASE RAND:8
+			CASE 7
+				PRINTFORMW 「んお゛ぉ゛　潮吹きアクメくる゛ぅ゛ー！！」
+			CASE 6
+				PRINTFORMW 「あ゛ぁー　あたまトロけりゅ♪　んひい゛ぃ」
+			CASE 5
+				PRINTFORMW 「ひゃぁ！？　あァ♪　来ちゃうっ、でっかいの来ちゃぅ♪」
+			CASE 4
+				PRINTFORMW 「すりゅ！　だらひなぃ顔すりゅからぁ観ててぇ♪　もっとぉ、あっ、あひぁ！？」
+			CASE 3
+				PRINTFORMW 「イっ、イかせて！　いくっ♪　イっひゃう♪」
+			CASE 2
+				PRINTFORMW 「あっあたま真っ白ッ、あへっ、ひぁ♪」
+			CASE 1
+				PRINTFORMW 「いひっ、いぐぅ♪　バカになる♪　イっちゃう♪」
+			CASEELSE
+				PRINTFORMW 「ひぁっ！？　こっ、これスゴ過ぎ！　ひぁっ、ゃぁ、ぁ、あ、あァ♪」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMW 「いひっ、いひのぉ♪　もっと気持ちいいの欲しいのぉ」
+			CASE 4
+				PRINTFORMW 「あひっ！　いいのっ、気持ちいいのぉ」
+			CASE 3
+				PRINTFORMW 「頭が真っ白になっちゃう……　すてきぃ」
+			CASE 2
+				PRINTFORMW 「こんなに気持ちいいなんて、素敵ね」
+			CASE 1
+				PRINTFORMW 「んうっ、もっと、もっとぉ！」
+			CASEELSE
+				PRINTFORMW 「あはぁ、これ気持ちいいから夢中になっちゃう」
+		ENDSELECT
+	ENDIF
+;拒絶／苦痛が大きな快楽の場合
+ELSE
+	CALL K2008_RANK4_COM_GENERAL_PLEASURE(ARG:0, ARG:1, ARG:2, ARG:3)
+ENDIF
+

@@ -1,0 +1,205 @@
+﻿;=============================================================================
+;クリキャップ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE14
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:14 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;触手服が先に責めてるときはダメ
+SIF TEQUIP:触手服 & 2
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｃ系装着器具 == 1
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:クリキャップ == 0
+	RETURN 0
+;調教対象が[小人体型]の場合は主人が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;対象にペニスがあるならダメ
+SIF EXIST_BAR(TARGET)
+	RETURN 0
+;調教者が助手の場合、技巧3以上じゃないと使えない。
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;他のＣ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 1
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 14) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM14
+PRINTL 電動クリキャップ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 14
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 電動クリキャップ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 120
+SOURCE:逸脱 = 70
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 200
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 900
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1600
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2400
+ELSE
+	SOURCE:快Ｃ = 3000
+ENDIF
+
+;クリキャップの着脱
+IF TEQUIP:Ｃ系装着器具
+	TEQUIP:Ｃ系装着器具 = 0
+ELSE
+	TEQUIP:Ｃ系装着器具 = 1
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+SIF PLAYER == MASTER && TEQUIP:Ｃ系装着器具 == 1
+	TCVAR:Ｃ調律経験 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;クリキャップ装備中
+;-------------------------------------------------
+@EQUIP_COM14
+IF TEQUIP:触手調教 || TEQUIP:触手服 & 2
+	PRINTL ＜触手クリ責め中＞
+ELSE
+	PRINTL ＜クリキャップ装備中＞
+ENDIF
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 20
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 40
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 120
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL = 250
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL = 450
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL = 600
+ELSE
+	LOCAL = 750
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+SOURCE:快Ｃ += LOCAL
+SOURCE:露出 += 50
+SOURCE:欲情追加 += 50
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_14
+IF TEQUIP:Ｃ系装着器具
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%から電動クリキャップを外した…
+	ELSE
+		IF MARK:反発刻印 > 1
+			PRINTFORML %CALLNAME:PLAYER%が手を伸ばそうとする前に、%CALLNAME:TARGET%は電動クリキャップを外して放り投げた…
+		ELSEIF TALENT:相愛 && ASSIPLAY == 0
+			PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%から電動クリキャップを外した
+			PRINTFORML %CALLNAME:TARGET%は、次にどこを責めてくれるのかを期待しつつ%CALLNAME:PLAYER%を熱い視線で見つめてきた…
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%から電動クリキャップを外した…
+		ENDIF
+	ENDIF
+ELSE
+	IF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%に電動クリキャップを取り付けた…
+	ELSE
+		IF MARK:反発刻印 > 1
+			PRINTFORML %CALLNAME:PLAYER%は、嫌がる%CALLNAME:TARGET%を無理やり押さえつけた
+			PRINTFORML そして、%CALLNAME:TARGET%の秘部に電動クリキャップを取り付けた…
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%に電動クリキャップを取り付けた…
+		ENDIF
+	ENDIF
+ENDIF

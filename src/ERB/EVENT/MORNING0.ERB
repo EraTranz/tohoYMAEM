@@ -1,0 +1,121 @@
+﻿;=============================================================================
+;朝に起こるイベント関連
+;=============================================================================
+;0……朝フェラ
+;1……朝新妻プレイ（相愛時限定）
+;2……朝パイズリ
+;3……朝騎乗位
+;4……朝騎乗位アナル
+;5……キスで起こされる
+;6……朝の足コキ
+;7……朝の３Ｐ
+
+;実行判定関数を通して判定。
+;各条件式は可読性を優先して分割している。
+;-----------------------------------------------
+;朝のイベント分岐判定
+;-----------------------------------------------
+@MORNING_EVENT_JUDGMENT
+;純愛モード無効時は朝フェラのみ発生
+IF (FLAG:12 & 32) == 0
+	LOCAL = 0
+;条件によってイベントの種類が増える
+ELSEIF TALENT:恋慕
+	LOCAL = RAND:8
+;それ以外(朝フェラしか発生しない)
+ELSE
+	LOCAL = 0
+ENDIF
+RESULT = 0
+
+;実行判定処理
+;不可能な朝イベントが呼ばれたら0が返ってくる
+;ただし、朝フェラが出来ない場合は処理を切り上げる
+$JUDGMENT
+TRYCALLFORM MORNING_EVENT_JUDGMENT_{LOCAL}
+
+;朝フェラが出来ない場合は朝イベント終了
+IF RESULT == 0 && LOCAL == 0
+	RETURN 0
+;0が返ってきたら朝フェラを再チェック
+ELSEIF RESULT == 0
+	LOCAL = 0
+	GOTO JUDGMENT
+ENDIF
+
+;朝イベント呼び出し
+TRYCALLFORM MORNING_EVENT_{LOCAL}
+
+;-----------------------------------------------
+;朝イベントの汎用実行判定
+;-----------------------------------------------
+;実行可能なら1/不可なら0
+;ARG:0……主人の竿判定（0ならなくてOK、1なら男限定、2ならふたなりを含む）
+@MORNING_EVENT_COMMON_JUDGMENT(ARG)
+#FUNCTION
+;男ではない
+IF ARG == 1 && TALENT:MASTER:オトコ == 0
+	RETURNF 0
+;竿自体がない
+ELSEIF ARG == 2 && TALENT:MASTER:オトコ == 0 && TALENT:MASTER:ふたなり == 0
+	RETURNF 0
+ENDIF
+;欲望が4未満、奉仕精神が4未満、精液中毒が1未満、反発刻印あり、いずれか一つを満たす場合は0を返す
+SIF ABL:欲望 < 4 || ABL:奉仕精神 < 4 || ABL:精液中毒 == 0 || MARK:反発刻印 > 0
+	RETURNF 0
+;育児室に居て出産前なら不可能
+SIF CFLAG:4 == 2 && (TALENT:妊娠 == 1 || TALENT:抱卵中 == 1)
+	RETURNF 0
+;調教したことがないキャラは不可能
+SIF CFLAG:1610 == 0
+	RETURNF 0
+RETURNF 1
+
+;-----------------------------------------------
+;朝の搾りたてミルク（別枠イベント）
+;-----------------------------------------------
+@MORNING_EVENT_MILK
+;反発刻印があるとダメ
+SIF MARK:反発刻印 > 0
+	RETURN 0
+;噴乳中毒
+IF ABL:噴乳中毒 == 1
+	LOCAL = 1
+ELSEIF ABL:噴乳中毒 == 2
+	LOCAL = 2
+ELSEIF ABL:噴乳中毒 == 3
+	LOCAL = 3
+ELSEIF ABL:噴乳中毒 == 4
+	LOCAL = 4
+ELSE
+	LOCAL = 5
+ENDIF
+
+;献身的
+SIF TALENT:献身的
+	LOCAL += 1
+;Ｂ敏感
+IF TALENT:Ｂ敏感
+	LOCAL += 1
+;Ｂ鈍感
+ELSEIF TALENT:Ｂ鈍感
+	LOCAL -= 1
+ENDIF
+;恋慕
+SIF TALENT:恋慕
+	LOCAL += 1
+;淫乱
+SIF TALENT:淫乱
+	LOCAL += 1
+;条件を満たしていない
+SIF LOCAL < 1
+	RETURN 0
+
+DRAWLINE
+;口上の関数の144を使用
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 144, LOCAL
+
+;噴乳経験
+CALL COMMON_UP_EXP,TARGET, 5, LOCAL , 0, 1
+DRAWLINE
+WAIT

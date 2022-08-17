@@ -1,0 +1,2226 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;SHOPメニュー関連
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;SHOPメニュー本処理
+;=============================================================================
+;複数調教と大人数対応を合成。複数調教用キャラカードチェックを削除
+;コマンドメニュー及び条件を変更
+;｢@SELECT_TARGET｣を削除
+;｢@SHOW_CHARADATA_MENU｣＝ステータス表示
+;｢@CHARA_SALE｣＝キャラ売却
+;｢@SALEITEM_CHECK｣｢@USE_ITEM｣＝アイテムの購入と使用
+;--------------------------------------------------
+;SHOPメニュー冒頭
+;--------------------------------------------------
+@EVENTSHOP
+#ONLY
+;!;[SKIPSTART]
+PRINTW このバリアントはEmuera以外では実行できません
+QUIT
+;!;[SKIPEND]
+
+;ゲームオーバー時にロードしなかった時の処理
+IF FLAG:1 == 1
+	LOADGAME
+	IF FLAG:1 == 1
+		PRINTW データをロードしなかったので終了します
+		QUIT
+	ENDIF
+	RETURN 0
+ENDIF
+;日付が変わったときのイベント呼び出し
+;開始時には絶対発生しないので、それを条件からはじく
+;（REVERSAL、CHALLENGEモードでの特定条件でのバグ回避のため）
+SIF TIME == 0 && DAY > 1
+	CALL EVENT_NEWDAY
+;実際のSHOPの処理へ
+DRAWLINE
+DRAWLINE
+
+;--------------------------------------------------
+;SHOPメニュー(表示)
+;--------------------------------------------------
+@SHOW_SHOP
+;引き継ぎ処理実行中の判定OFF
+TFLAG:994 = 0
+ライン数:0 = LINECOUNT
+;CHALLENGEモードにおけるキャラ補充処理
+SIF CHARANUM < 100 && FLAG:4 >= 50
+	CALL FILL_CHARA
+DRAWLINE
+CALL PRINT_VIEW_CHARA_IMAGE, TARGET, "立ち絵_服", "通常画面"
+PRINTFORM {DAY}日目
+CALL CALENDAR_PRINT, 1
+IF TIME == 0
+SETCOLOR COLOR("PINK")
+PRINT  (昼)
+RESETCOLOR
+ELSE
+SETCOLOR COLOR("DARK-PINK")
+PRINT  (夜)
+RESETCOLOR
+ENDIF
+;PRINTFORM \@(TIME == 0) ? (昼) # (夜)\@
+;主人に[Debug]がある=debugモードである場合
+IF TALENT:MASTER:998
+	SETCOLOR COLOR("P-BLUE")
+	PRINT  ＊Debug＊
+	RESETCOLOR
+ELSEIF FLAG:8669 & 2
+	SETCOLOR COLOR("ORANGE")
+	PRINT  ＊Roguelike＊
+	RESETCOLOR
+ENDIF
+;期限表示
+SIF CHECK_GAMEMODE_ENDING_EXIST() == 1
+	CALL SHOW_DEADLINE
+PRINTL 
+IF DAY:7 == 1 && FLAG:17 & 1 && ITEM:娼館
+	SETCOLOR COLOR("P-RED")
+	PRINTFORML ☆毎週日曜は娼館の日☆
+	RESETCOLOR
+ENDIF
+CALL SHOW_HOUSE
+;主人、助手、調教対象奴隷の体力表示
+PRINTFORM %SHOW_CALLNAME(MASTER)%(主人)　
+;男性ではない
+IF (COM_ABLE_CHECK_FEMALE(MASTER) && !TALENT:MASTER:死亡) && !(FLAG:3 > 2 && !TALENT:MASTER:超常目算)
+	PRINT  
+	CALL CYCLE_PRINT ,MASTER
+	PRINT 　
+ENDIF
+;酔いがあれば酔い表示
+CALL CALC_GAUGE8, MASTER, 1
+PRINT 　
+CALL LIFE_BAR, MASTER
+IF TARGET >= 0
+	PRINTFORM %SHOW_CALLNAME(TARGET)%
+	IF TALENT:死亡
+		PRINTFORM (蹂躙中)　
+	ELSEIF ASSI < 0 && (TALENT:相愛 || TALENT:親愛)
+		PRINTFORM (熱愛中)　
+	ELSE
+		PRINTFORM (調教中)　
+	ENDIF
+	;男性ではない
+	IF (COM_ABLE_CHECK_FEMALE(TARGET) && !TALENT:死亡) && !(FLAG:3 > 2 && !TALENT:MASTER:超常目算)
+		PRINT  
+		CALL CYCLE_PRINT ,TARGET
+		PRINT 　
+	ENDIF
+	;酔いがあれば酔い表示
+	CALL CALC_GAUGE8_2, TARGET, 1
+	PRINT 　
+	CALL LIFE_BAR, TARGET
+	PRINT 　
+	CALL VITALITY_BAR, TARGET
+	IF TALENT:理性 && MAXBASE:TARGET:9 > 0
+		PRINT 　
+		CALL REASON_BAR, TARGET
+	ENDIF
+	;触手関連のゲージも表示する
+	IF FLAG:15 & 4096 && TALENT:寄生
+		CALL CALC_TENTACLE_GAUGE
+		PRINT 　
+		PRINT 寄生
+		CALL PRINT_COLORBAR, MAX(BASE:触手, 0),MAXBASE:6, 32, UNICODE(0x2585), UNICODE(0x2585), BARCOLORSET("紫"), RESULT:1
+		PRINTFORML ({BASE:触手, 5}/{MAXBASE:6, 5})
+		;PRINTFORML 寄生%BARSTR(MAX(BASE:触手, 0), MAXBASE:6, 32)%({BASE:触手, 5}/{MAXBASE:6, 5})
+	ENDIF
+	IF CFLAG:3666 > 0
+		PRINT 　
+		SETCOLOR 0x333333
+		SETCOLOR (CFLAG:3666 * 3 >= 21) ? 0xEEEEEE # 0xB09999
+		PRINT 残留精液
+		CALL IN_WOMB_SHOW, CFLAG:3666 * 3
+		RESETCOLOR
+		PRINTL 
+	ENDIF
+ENDIF
+IF ASSI >= 0
+	PRINTFORM %SHOW_CALLNAME(ASSI)%(助手)　
+	;男性ではない
+	IF (COM_ABLE_CHECK_FEMALE(ASSI) && !TALENT:ASSI:死亡) && !(FLAG:3 > 2 && !TALENT:MASTER:超常目算)
+		PRINT  
+		CALL CYCLE_PRINT ,ASSI
+		PRINT 　
+	ENDIF
+	;酔いがあれば酔い表示
+	CALL CALC_GAUGE8, ASSI, 1
+	PRINT 　
+	CALL LIFE_BAR, ASSI
+ENDIF
+;SIF ASSI >= 0
+;	PRINTFORM (助手\@(TALENT:ASSI:嫉妬) ? 嫉妬中 #\@:%CALLNAME:ASSI%)　
+DRAWLINE
+PRINTFORM 所持金:{MONEY}圓
+;目標金額表示
+SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+	CALL SHOW_GOAL
+PRINTL 
+;調教対象奴隷及び助手の特殊装備表示
+SIF (TARGET >= 0 && CFLAG:42) || (ASSI >= 0 && CFLAG:ASSI:42)
+	CALL SHOW_SPECIAL_EQUIPMENT
+;所持アイテム表示が有効の時は所有しているアイテムが自動的に表示される
+IF FLAG:10 & 2
+	CALL ARRANGE_PRINT_ITEM
+	IF FLAG:9549 & 2 
+		PRINTBUTTON "[70] - 展開", 70
+	ELSE
+		PRINTBUTTON "[70] - 閉じる", 70
+	ENDIF
+	PRINTL 
+ELSE
+    PRINTL 所持アイテム:なし 
+ENDIF
+DRAWLINE
+
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+;『禁断の知識』、『調合知識』を持っている
+;主人と助手全体から禁断の知識と調合知識を検索
+;ビット演算でLOCAL:3=1が有効のときは調合知識を、LOCAL:3=2が有効のときは禁断の知識を所持していることを示す
+REPEAT CHARANUM
+	;失踪中なら除外
+	SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1024
+		CONTINUE
+	IF COUNT == 0
+		;主人が禁断の知識か調合知識を持っている
+		SIF TALENT:MASTER:調合知識
+			LOCAL:3 |= 1
+		SIF TALENT:MASTER:禁断の知識
+			LOCAL:3 |= 2
+	ELSE
+		;現助手＋元助手のキャラ数の確認
+		IF CFLAG:COUNT:1 > 1
+			LOCAL:0 += 1
+			;助手の誰かが禁断の知識か調合知識を持っている
+			SIF TALENT:COUNT:調合知識
+				LOCAL:3 |= 1
+			SIF TALENT:COUNT:禁断の知識
+				LOCAL:3 |= 2
+		ENDIF
+		;売却もしくは解放可能なキャラ数の確認
+		SIF ((FLAG:12 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:1 >= 1 && CFLAG:COUNT:3 == 0 && TALENT:COUNT:烙印 == 0 && TALENT:COUNT:壊造人格 == 0)) && TALENT:COUNT:使い魔 == 0
+			LOCAL:1 += 1
+		;TIMEに合った調教キャラが居るか(主人公と奴隷は排除)
+		SIF COUNT != TARGET
+			LOCAL:2 += 1
+		;妖精風呂の条件。一文字変数は妖精(FAIRY)のマルキュー
+		IF FLAG:15 & 1024 && FLAG:74 & 8192
+			;オトコ、妊娠、抱卵、懐卵を持たない妖精キャラを見る
+			SIF TALENT:COUNT:オトコ == 0 && TALENT:COUNT:妊娠 == 0 && TALENT:COUNT:抱卵中 == 0 && TALENT:COUNT:懐卵 == 0 && TALENT:COUNT:妖精
+				LOCAL:9 += 1
+		ENDIF
+		;使い魔にできるキャラが居るかの判定
+		;主人が[禁断の知識]持ち前提
+		IF TALENT:MASTER:禁断の知識
+			;すでに使い魔なら確定、そうでないならなれるかチェック
+			IF TALENT:COUNT:使い魔
+				LOCAL:4 |= 1
+			ELSE
+				;[使い魔]条件を満たしているか？
+				SIF !FAMILIAR_ABLE(COUNT)
+					CONTINUE
+				;所持金200000圓必要
+				SIF MONEY < 200000
+					CONTINUE
+				LOCAL:4 |= 2
+			ENDIF
+		ENDIF
+	ENDIF
+REND
+
+;購入可能な奴隷の人数の算出
+LOCAL:5 = CALC_SLAVE_CAPACITY()
+
+;アイテム・奴隷陳列フラグの削除
+VARSET ITEMSALES, 0
+
+;エンディングに飛ぶかどうか
+SIF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1 && MONEY >= MONEY:100 + FLAG:575
+	LOCAL:6 = 1
+
+FOR PC_VAR1, 0, 10
+	CALLF SET_LIST, PC_VAR1, LOCAL:PC_VAR1
+NEXT
+;酔いつぶれていない調教対象が存在し、主人も酔いつぶれていない場合
+;調教突入コマンドだが、ネーミングは式中関数で切り出した。
+SIF TARGET >= 0 && BASE:酔い <= MAXBASE:8 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+	PRINTFORMLC [100] - %NAME_SHOPCOMMAND_100()%
+;SIF CHARANUM > 0
+;	PRINTFORMLC [101] - 外出
+SIF CHARANUM > 0
+	PRINTLC [102] - 能力の表示
+PRINTLC [103] - 休憩
+;主人以外にキャラがいる場合
+SIF CHARANUM > 1
+	PRINTLC [104] - 能力の上昇
+;調教対象が存在し、その対象が汎用口上を使用する場合
+SIF TARGET >= 0 && CFLAG:9 & 2
+	PRINTLC [105] - 主人の呼び方
+;調教対象が存在し、その対象が汎用口上を使用する場合
+SIF TARGET >= 0 && CFLAG:9 & 2
+	PRINTLC [106] - 奴隷称号変更
+;助手可能な奴隷が1人以上いる場合
+SIF LOCAL:0 >= 1
+	PRINTLC [108] - 助手変更
+;主人と調教対象以外にTIMEに合った調教可能な奴隷が1人以上いる もしくは　調教対象が存在する場合
+SIF LOCAL:2 >= 1 || TARGET >= 0
+	PRINTLC [109] - 調教対象変更
+;資金がある場合
+SIF MONEY > 0
+	PRINTLC [110] - 道具購入
+;道具がある場合
+SIF ITEM_NUM() > 0
+	PRINTLC [111] - 道具売却
+;CHALLENGEモードではなくて、資金があり、置いておける奴隷に余裕がある場合
+SIF CHARANUM < LOCAL:5 && MONEY > 0 && FLAG:4 < 50
+	PRINTLC [112] - 奴隷購入
+;売却もしくは解放可能な奴隷が存在する場合(PROSTITUTEモードでは不可)
+SIF LOCAL:1 >= 1 && FLAG:4 != 4
+	PRINTFORMLC [113] - \@(FLAG:12 & 32) ? 奴隷売却・解放 # 奴隷売却\@
+;CHALLENGEモードではなくて、資金があり、置いておける奴隷に余裕がある場合
+SIF CHARANUM < LOCAL:5 && FLAG:17 & 4 && MONEY > 0 && FLAG:4 < 50
+	PRINTLC [114] - 奴隷市場
+;主人が[禁断の知識]を持ち、奴隷の中に[使い魔(もしくは式)]になる資格を持つものがいる場合
+SIF TALENT:MASTER:禁断の知識 && LOCAL:4 > 0
+	PRINTFORMLC [115] - \@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 式にする # 使い魔にする\@
+;食糧管理はいつでもできる
+SIF CHARANUM > 0
+	PRINTLC [116] - 食糧管理
+;資金があり、CHALLENGEモード、または、PROSTITUTEモードであるかそれとも今までに売却した奴隷が10人以上の場合
+SIF (FLAG:34 >= 10 || FLAG:4 >= 50 || FLAG:4 == 4) && MONEY > 0
+	PRINTLC [120] - 秘密の道具屋
+;CONFIGで「技能訓練士」が有効で、資金がある場合
+SIF FLAG:12 & 4096 && MONEY > 0
+	PRINTLC [121] - 技能訓練士
+;主人もしくはその場におり助手可能な奴隷のいずれか一人が[調合知識]か[禁断の知識]を持っており、資金がある場合
+SIF LOCAL:3 && MONEY > 0
+	PRINTLC [122] - 薬屋
+;調教対象が存在し、CONFIGの「弁当・ライブ」が有効な場合
+IF TARGET >= 0 && FLAG:12 & 16
+	IF !TALENT:死亡
+		;調教対象の従順Lvが2以上の場合
+		SIF ABL:従順 >= 2
+			PRINTFORMLC [130] - \@(TALENT:恋慕) ? 愛情料理 # 料理を作らせる\@
+		;主人の技巧Lvが3以上で、調教対象が助手可能になっている場合
+		SIF ABL:MASTER:技巧 >= 3 && CFLAG:1 == 2
+			PRINTLC [131] - 自分で何か料理
+		;マイクがあり、連続野外ライブフラグが立っておらず、調教対象の露出癖Lvが3以上で、
+		;[恋慕]を持っているか従順Lvが5以上の場合。ただし、夜でない場合で調教対象が[吸血鬼]持ちの場合には特注日傘も必要となる。
+		SIF ITEM:マイク && TFLAG:154 == 0 && ABL:露出癖 >= 3 && (TALENT:恋慕 || ABL:従順 >= 5) && (TIME == 1 || TALENT:吸血鬼 == 0 || (TALENT:吸血鬼 && ITEM:特注日傘 ))
+			PRINTLC [132] - 野外ライブを開く
+		;調教対象が助手可能になっている場合..(ry
+		SIF ITEM:マイク && TFLAG:153 == 0 && TARGET >= 0 && CFLAG:1 == 2 && CFLAG:1 == 2 && (TIME == 1 || TALENT:MASTER:吸血鬼 == 0 || (TALENT:MASTER:吸血鬼 && ITEM:特注日傘 )) && FLAG:12 & 16
+			PRINTLC [133] - 自分でライブを開く
+	ENDIF
+ENDIF
+	
+;調教対象が存在な場合 + 調教対象の従順Lvが3以上の場合
+SIF TARGET >= 0 && !TALENT:死亡 && ABL:従順 >= 3
+	PRINTFORMLC [134] - 働かせる
+;主人の技巧Lvが3以上
+SIF ABL:MASTER:技巧 > 3
+	PRINTLC [135] - 自分で働く
+;主人が[雌雄可変]を持っている場合
+SIF TALENT:MASTER:雌雄可変
+	PRINTLC [140] - 主人性別変更
+;蒐集品を500種以上そろえると展示室の名前が変更。それだけ
+SIF FLAG:500 > 0 && FLAG:12 & 8
+	PRINTFORMLC [150] - \@(FLAG:500 >= 500) ? 幻想郷秘宝館 # 展示室へ行く\@
+;CONFIGの「紳士的な触手系コマンド」が有効で、進化の秘法がある場合
+SIF FLAG:15 & 4096 && ITEM:進化の秘法
+	PRINTLC [160] - 触手開発・培養施設
+;CONFIGの「特殊風呂系コマンド」が有効な場合
+SIF FLAG:15 & 1024
+	PRINTFORMLC [161] - \@(SPECIALBATH_CHECK() < 16) ? 風呂場改装 # 風呂場を見る\@
+;CONFIGの「特殊風呂系コマンド」が有効で、妖精風呂改装しており、基準を満たす妖精が30匹以上いる場合
+SIF LOCAL:9 >= 30 && FLAG:15 & 1024 && FLAG:74 & 8192
+	PRINTLC [162] - 妖精風呂に入る
+;CONFIGの「拷問系、精神操作系コマンド」が有効で秘密の地下室が設置されており、主人が酔いつぶれていない場合
+SIF FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+	PRINTLC [163] - 秘密の地下室
+;主人以外にキャラが存在し、ハーブ園が設置されており、主人が酔いつぶれていない場合
+SIF FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+	PRINTLC [165] - ハーブ園
+;CONFIGの「娼館機能」が有効で、娼館が設置されており、時間帯が昼である場合
+SIF FLAG:17 & 1 && ITEM:娼館 && TIME == 0
+	PRINTLC [166] - 娼館に出向く
+;CONFIGの「強くてニューゲーム」が無効であり
+IF FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1
+	SIF !FLAG:577 && 100000 + MIN(FLAG:66 * 5000, 400000) - FLAG:576 > 0
+		PRINTLC [167] - 借金追加
+	SIF FLAG:575 > 0;!FLAG:578 && 
+		PRINTLC [168] - 借金返済
+ENDIF
+;もし前回育児部屋コマンドを実行したのがこのターンではなくて、
+;育児部屋コマンドフラグが立っておれば、ここでそのフラグを寝せる。
+IF TFLAG:700 == 1 && (TFLAG:701 != DAY || TFLAG:702 != TIME)
+	TFLAG:700 = 0
+	TFLAG:701 = -1
+	TFLAG:702 = -1
+ENDIF
+IF (TFLAG:701 != DAY || TFLAG:702 != TIME)
+	FOR LOCAL:25, 0, CHARANUM
+		CFLAG:(LOCAL:25):3008 = 0
+	NEXT
+ENDIF
+;育児室がオンの状態(だれかが妊娠・育児中の場合など)であり、育児室フラグが立っていない場合
+SIF FLAG:603 == 1 && TFLAG:700 == 0
+	PRINTLC [170] - 育児部屋に行く
+IF !(FLAG:8669 & 2)
+	PRINTLC [200] - セーブ
+	PRINTLC [300] - ロード
+ENDIF
+;主人も含めてキャラが1人以上いる場合(すなわち、必ず成立するはず)
+SIF CHARANUM > 0
+	PRINTLC [400] - キャラ検索
+;周回数が2周以上の場合
+SIF FLAG:6 > 1
+	PRINTLC [500] - エンディング一覧
+;エンドレスに突入していないNORMALかANNORMALモードにおいて、資金をエンディング条件以上にしている場合
+SIF LOCAL:6 == 1
+	PRINTLC [543] - 時は満ちた
+;CONFIGの「強くてニューゲーム」が有効であり、なおかつこの周回に既にBADやWRONGでないエンディングを迎えている場合
+SIF FLAG:5 & 2 && FLAG:12 & 1 && (FLAG:5 & 4) == 0
+	PRINTLC [555] - ニューゲーム開始
+;主人と調教対象以外にTIMEに合った調教可能な奴隷が1人以上いる場合
+SIF LOCAL:2 >= 1
+	PRINTLC [666] - キャラソート
+PRINTLC [777] - コンフィグ
+;YASAIモードでなおかつ、資金があり、置いておける奴隷に余裕がある場合
+SIF MONEY > 0 && FLAG:570 & 1 && CHARANUM < LOCAL:5 && !FLAG:9888
+	PRINTLC [830] - 特殊奴隷購入
+;主人が[野菜の錬金術師]を持っている場合
+IF TALENT:MASTER:野菜の錬金術師
+	;主人が酔いつぶれておらず、野菜の在庫数が最大(99999999個)未満の場合
+	SIF BASE:MASTER:酔い <= MAXBASE:MASTER:8 && FLAG:574 < 99999999
+		PRINTLC [831] - 野菜錬成
+	;主人が酔いつぶれておらず、資金があり、畑拡張の余地(最大20Lvまで)がある場合
+	SIF FLAG:573 < 20 && MONEY > 0 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+		PRINTLC [832] - 畑拡張
+	;野菜の在庫があり、調教対象が存在し、対象の体力が最大ではない場合
+	SIF FLAG:574 > 0 && TARGET >= 0 && BASE:体力 < MAXBASE:0
+		PRINTLC [833] - 野菜再生
+ENDIF
+SIF FLAG:800 > 0
+	PRINTLC [990] - 実績特典
+PRINTLC [998] - 東方調教典
+;主人に[Debug]がある=debugモードである場合
+SIF TALENT:MASTER:998
+	PRINTLC [999] - DEBUG MODE
+PRINTL 
+
+;--------------------------------------------------
+;SHOPメニュー(ユーザーSHOP)
+;--------------------------------------------------
+@USERSHOP
+IF RESULT == 70 && FLAG:10 & 2
+    ライン数:1 = LINECOUNT
+    IF FLAG:9549 & 2
+		FLAG:9549 = 0
+	ELSE
+		FLAG:9549 |= 2
+	ENDIF
+	CLEARLINE ライン数:1 - ライン数:0
+	RETURN 0
+ELSEIF RESULT == 100 && TARGET >= 0
+	;調教対象が酔いつぶれている場合(この場合には主人が酔いつぶれているということは表示されない)
+	IF BASE:酔い > MAXBASE:8
+		PRINTFORML 酔いのせいか%CALLNAME:TARGET%の顔が真っ青だ
+		PRINTW しばらく休ませた方がいいだろう……
+	;主人が酔いつぶれている場合
+	ELSEIF BASE:MASTER:酔い > MAXBASE:MASTER:8
+		PRINTL 酔いのせいか気分が悪い
+		PRINTW しばらく休んだ方がよさそうだ……
+	;主人も調教対象も酔いつぶれていない場合(助手が酔いつぶれていたらTrain冒頭で助手だけ離脱する)
+	ELSE
+		BEGIN TRAIN
+		RETURN 1
+	ENDIF
+;ELSEIF RESULT == 101
+;	CALL SHOP_COM_101
+ELSEIF RESULT == 102 && CHARANUM > 0
+	CALL SHOW_CHARADATA_MENU
+ELSEIF RESULT == 103
+	PRINTFORML \@(TIME == 0) ? 夜まで休む # 朝まで寝る\@ことにした……
+	;TARGETがいないときに、追加日常イベントを発生させるための梃入れ
+	SIF TARGET < 0
+		RESULT = TARGET
+	;休憩フラグを立てる
+	FLAG:0 = 1
+	;調教対象が存在し、CONFIGの「日常生活」が有効な場合、日常エロイベントが発生する
+	SIF TARGET >= 0 && FLAG:12 & 64
+		CALL DAILY_EVENT_JUDGMENT
+	;日常エロイベントが起きなかった場合で、日常イベント強化をしていたらワンチャン
+	SIF RESULT <= 0 && FLAG:12 & 16384
+		CALL DAILY_LIFE
+	BEGIN TURNEND
+	RETURN 1
+ELSEIF RESULT == 104 && CHARANUM > 1
+	CALL ABL_MANUAL_MENU
+ELSEIF RESULT == 105 && TARGET >= 0 && CFLAG:9 & 2
+	CALL COMMAND_MASTER_NAME
+ELSEIF RESULT == 106 && TARGET >= 0 && CFLAG:9 & 2
+	CALL CHANGE_SLAVE_NICKNAME
+ELSEIF RESULT == 108 && GET_LIST(0) >= 1
+	CALL SELECT_ASSI
+ELSEIF RESULT == 109 && (GET_LIST(2) >= 1 || TARGET >= 0)
+	CALL CHANGE_TARGET
+ELSEIF RESULT == 110 && MONEY > 0
+	CALL TOOL_BUY_MAIN
+ELSEIF RESULT == 111 && ITEM_NUM() > 0
+	DRAWLINE
+	DRAWLINE
+	CALL TOOL_SALE_MAIN
+ELSEIF RESULT == 112 && MONEY > 0 && CHARANUM < GET_LIST(5) && FLAG:4 < 50
+	CALL CHARA_BUY_MAIN
+ELSEIF RESULT == 113 && GET_LIST(1) >= 1 && FLAG:4 != 4
+	CALL CHARA_SALE
+ELSEIF RESULT == 114 && MONEY > 0 && CHARANUM < GET_LIST(5) && FLAG:17 & 4 && FLAG:4 < 50
+	CALL CHARA_LISTBUY
+ELSEIF RESULT == 115 && TALENT:MASTER:禁断の知識 && GET_LIST(4) > 0
+	CALL FAMILIAR_SELECT
+ELSEIF RESULT == 116 && CHARANUM > 0
+	CALL FOODMANAGE
+ELSEIF RESULT == 120 && (FLAG:34 >= 10 || FLAG:4 >= 50 || FLAG:4 == 4) && MONEY > 0
+	CALL BUY_SPECIAL_ITEM
+ELSEIF RESULT == 121 && FLAG:12 & 4096 && MONEY > 0
+	CALL BUY_SKILL
+ELSEIF RESULT == 122 && GET_LIST(3) && MONEY > 0
+	CALL BUY_DRUG
+ELSEIF RESULT == 130 && TARGET >= 0 && !TALENT:死亡 && ABL:従順 >= 2 && FLAG:12 & 16
+	CALL LUNCH_JUDGE
+	RETURN 1
+ELSEIF RESULT == 131 && TARGET >= 0 && !TALENT:死亡 && ABL:MASTER:技巧 > 3 && CFLAG:1 == 2 && FLAG:12 & 16
+	CALL LUNCH_SELF
+	RETURN 1
+ELSEIF RESULT == 132 && TARGET >= 0 && !TALENT:死亡 && ITEM:マイク && TFLAG:154 == 0 && ABL:露出癖 >= 3 && (TALENT:恋慕 || ABL:従順 >= 5)  && (TIME == 1 || TALENT:吸血鬼 == 0 || (TALENT:吸血鬼 && ITEM:特注日傘)) && FLAG:12 & 16
+	CALL CONCERT_JUDGE
+	RETURN 1
+ELSEIF RESULT == 133 && TARGET >= 0 && !TALENT:死亡 && ITEM:マイク && CFLAG:1 == 2 && TFLAG:153 == 0 && CFLAG:1 == 2 && (TIME == 1 || TALENT:MASTER:吸血鬼 == 0 || (TALENT:MASTER:吸血鬼 && ITEM:特注日傘 )) && FLAG:12 & 16
+	CALL CONCERT_SELF
+	RETURN 1
+ELSEIF RESULT == 134 && TARGET >= 0 && !TALENT:死亡 && ABL:従順 >= 3
+	CALL WORKING_JUDGE
+	RETURN 1
+ELSEIF RESULT == 135 && ABL:MASTER:技巧 > 3
+	CALL WORKING_SELF
+	RETURN 1
+ELSEIF RESULT == 140 && TALENT:MASTER:雌雄可変
+	CALL CHANGE_SEX, MASTER
+	RETURN 1
+ELSEIF RESULT == 150 && FLAG:500 > 0 && FLAG:12 & 8
+	PRINTFORMW \@(FLAG:500 >= 500) ? 幻想郷秘宝館 # 展示室\@に向かった……
+	DRAWLINE
+	DRAWLINE
+	CALL COLLECTION_ROOM_MENU
+ELSEIF RESULT == 160 && FLAG:15 & 4096 && ITEM:進化の秘法
+	PRINTW 触手開発・培養施設へと足を運んだ……
+	DRAWLINE
+	DRAWLINE
+	CALL TENTACLE_LABORATORY
+ELSEIF RESULT == 161 && FLAG:15 & 1024
+	;改装可能な特殊風呂がまだ残っている場合
+	IF SPECIALBATH_CHECK() < 16
+		PRINTW 風呂場へと足を運んだ……
+		DRAWLINE
+		DRAWLINE
+		CALL BATH_REFORM
+	;改装可能な全特殊風呂を完備している場合
+	ELSE
+		PRINTW 風呂場の機能を表示します
+		DRAWLINE
+		CALL SHOW_BATH_ABL
+		WAIT
+		DRAWLINE
+	ENDIF
+ELSEIF RESULT == 162 && FLAG:15 & 1024 && FLAG:74 & 8192 && GET_LIST(9) >= 30
+	PRINTW 妖精風呂を作って入ります
+	CALL FAIRIES_BATH
+ELSEIF RESULT == 163 && FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+	PRINTW 秘密の地下室へと足を運んだ……
+	CALL HIDDEN_BASEMENT_MENU
+ELSEIF RESULT == 165 && FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+	PRINTW ハーブ園関連の指示を出すことにした
+	CALL SHOP_HARB_MENU
+ELSEIF RESULT == 166 && FLAG:17 & 1 && ITEM:娼館 && TIME == 0
+	PRINTW 娼館へと足を運んだ……
+	CALL BROTHEL_SELECT_MENU
+ELSEIF RESULT == 167 && !FLAG:577 && FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1 && 100000 + MIN(FLAG:66 * 5000, 400000) - FLAG:576 > 0
+	CALL SHOW_DEBT, 0
+ELSEIF RESULT == 168 && FLAG:5 == 0 && CHECK_GAMEMODE_ENDING_EXIST() == 1 && FLAG:575 > 0; && !FLAG:578
+	CALL SHOW_DEBT, 1
+ELSEIF RESULT == 170 && FLAG:603 == 1 && TFLAG:700 == 0
+	PRINTW 育児部屋に向かった……
+	DRAWLINE
+	DRAWLINE
+	CALL CHILD_CARE_ROOM
+ELSEIF RESULT == 200 && !(FLAG:8669 & 2)
+	;セーブする際の不要な変数リセット処理
+	CALL RESET_VAR_SAVE
+	SAVEGAME
+ELSEIF RESULT == 300 && !(FLAG:8669 & 2)
+	LOADGAME
+ELSEIF RESULT == 400 && CHARANUM > 0
+	CALL SEARCH_CHARADATA_MENU
+ELSEIF RESULT == 500 && FLAG:6 > 1
+	CALL ENDING_LIST
+ELSEIF RESULT == 543 && GET_LIST(6) == 1
+	CALL ENDING_CONFIRM
+ELSEIF RESULT == 555 && FLAG:5 & 2 && FLAG:12 & 1
+	CALL NEWGAME_SELECT
+	RETURN 0
+ELSEIF RESULT == 666 && GET_LIST(2) >= 1
+	CALL CHARA_SORT
+ELSEIF RESULT == 777
+	TFLAG:201 = 0
+	CALL SWEET_POTATO_CONFIGURATION
+ELSEIF RESULT == 830 && MONEY > 0 && FLAG:570 & 1 && CHARANUM < GET_LIST(5) && !FLAG:9888
+	CALL IRC_CHARA_BUY
+ELSEIF RESULT == 831 && TALENT:MASTER:野菜の錬金術師 && BASE:MASTER:酔い <= MAXBASE:MASTER:8 && FLAG:574 < 99999999
+	CALL IRC_ANATA_YASAI
+ELSEIF RESULT == 832 && TALENT:MASTER:野菜の錬金術師 && FLAG:573 < 20 && MONEY > 0 && BASE:MASTER:酔い <= MAXBASE:MASTER:8
+	CALL YASAI_FARM
+ELSEIF RESULT == 833 && TALENT:MASTER:野菜の錬金術師 && FLAG:574 > 0 && TARGET >= 0 && BASE:体力 < MAXBASE:0
+	CALL YASAI_REVIVAL
+ELSEIF RESULT == 990; && FLAG:800 > 0
+	CALL TROPHY_BONUS, 1, FLAG:800
+ELSEIF RESULT == 998
+	CALL DICTIONARY_MENU
+ELSEIF (RESULT == 999 && TALENT:MASTER:998) || RESULT == 3054635427
+	PRINTW デバッグメニューを呼び出します
+	CALL DEBUG_MENU_SHOP
+ELSEIF RESULT == -1 && TARGET
+	CALL SHOW_CHARADATA_PAGE, TARGET
+	IF RESULT == 1
+		TFLAG:600 = 0
+	ELSE
+		CALL SHOW_CHARADATA_MENU
+	ENDIF
+ELSE
+	REUSELASTLINE  
+ENDIF
+RETURN 0
+
+;=============================================================================
+;SHOPより呼び出される基本的な処理
+;=============================================================================
+;-------------------------------------------------
+;調教対象選択
+;-------------------------------------------------
+@CHANGE_TARGET
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+;CHARADATA_LISTのために待避
+LOCAL:99 = GET_LIST(2)
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人は除外
+	SIF COUNT == MASTER
+		CONTINUE
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORM 現在
+PRINTFORML \@(TARGET >= 0) ? %SHOW_CALLNAME(TARGET)%を調教中 # 調教中のキャラはいません\@
+PRINTFORML 誰を調教しますか？ ＜page.{LOCAL+1}＞
+DRAWLINE
+IF TARGET >= 0
+	PRINTL   [ 0]調教しない
+	DRAWLINE
+ENDIF
+CALL CHARADATA_LIST, LOCAL, LOCAL:99
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 1111 && LOCAL > 0
+	LOCAL -= 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && LOCAL < LOCAL:1
+	LOCAL += 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT == 0
+	RESULT = -1
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+IF RESULT != -1 && TARGET != RESULT
+	LOCAL:5 = RESULT
+	LOCAL:6 = TARGET
+	;調教対象から外された
+	SIF TARGET > 0
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 128, LOCAL:5
+	TARGET = LOCAL:5
+	ASSI = (ASSI == TARGET) ? -1 # ASSI
+	;調教対象に選択された
+	SIF TARGET > 0
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 124, LOCAL:6
+	IF CFLAG:TARGET:401 && TARGET > 0
+		PRINTL 売春状態が解除されました。
+		CALL PROSTITUTION_LAYOFF_GENERAL, TARGET
+	ENDIF
+ELSEIF RESULT != -1
+	;調教対象から外されそうになった
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 127
+ELSE
+	;調教対象から外された
+	SIF TARGET > 0
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 128, -1
+	TARGET = -1
+ENDIF
+
+;-------------------------------------------------
+;助手変更処理
+;-------------------------------------------------
+@SELECT_ASSI
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人は除外
+	SIF COUNT == MASTER
+		CONTINUE
+	;死亡
+	SIF TALENT:COUNT:死亡
+		CONTINUE
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;助手可能でないものは除外
+	SIF CFLAG:COUNT:1 < 2
+		CONTINUE
+	;酔い潰れている場合も除外
+	SIF BASE:COUNT:酔い > MAXBASE:COUNT:8
+		CONTINUE
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORM 現在
+PRINTFORML \@(ASSI >= 0) ? %SHOW_CALLNAME(ASSI)%が助手 # 助手はいません\@
+PRINTFORML 誰を助手にしますか？(現在の助手は☆、現在の調教対象は★) ＜page.{LOCAL+1}＞
+DRAWLINE
+PRINTL   [ 0]助手なし
+DRAWLINE
+CALL ASSI_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 1111 && LOCAL > 0
+	LOCAL -= 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && LOCAL < LOCAL:1
+	LOCAL += 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT == 0
+	;助手解任の日数記録(ターンまでは無理)
+	SIF ASSI >= 0
+		CFLAG:ASSI:47 = DAY
+	ASSI = -1
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;助手解任の日数記録(ターンまでは無理)
+SIF ASSI >= 0
+	CFLAG:ASSI:47 = DAY
+ASSI = RESULT
+IF ASSI >= 0 && CFLAG:ASSI:401
+	PRINTL 売春状態が解除されました。
+	CALL PROSTITUTION_LAYOFF_GENERAL, ASSI
+ENDIF
+CALL ASSI_CHANGE
+ISASSI:ASSI = 1
+TARGET = (TARGET == ASSI) ? -1 # TARGET
+
+;-------------------------------------------------
+;助手可能キャラ一覧の表示処理
+;-------------------------------------------------
+@ASSI_LIST, ARG
+LOCALS:0 = ♀
+LOCALS:1 = ♂
+REPEAT 20
+	LOCAL = GET_LIST(COUNT + ARG * 20)
+	SIF LOCAL == 0
+		CONTINUE
+
+	IF LOCAL == ASSI
+		PRINT ☆
+	ELSEIF LOCAL == TARGET
+		PRINT ★
+	ELSE
+		PRINT 　
+	ENDIF
+	CALL ARRANGE_CHARALIST, LOCAL
+	IF LOCAL == ASSI
+		PRINT 　　　　 
+	ELSEIF EXP:LOCAL:助手経験 >= EXPLV:5
+		PRINT [経験者] 
+	ELSEIF ISASSI:LOCAL == 1
+		PRINT [元助手] 
+	ELSE
+		PRINT [未経験] 
+	ENDIF
+	PRINTFORM %LOCALS:(TALENT:LOCAL:オトコ)% %ABLNAME:12%Lv{ABL:LOCAL:技巧} 
+	PRINTFORML %ABLNAME:(22+TALENT:LOCAL:オトコ)%Lv{ABL:LOCAL:(22+TALENT:LOCAL:オトコ)} %ABLNAME:(32+TALENT:LOCAL:オトコ)%Lv{ABL:LOCAL:(32+TALENT:LOCAL:オトコ)} \@(TALENT:LOCAL:両刀) ? 両刀 #\@
+REND
+
+;-------------------------------------------------
+;ステータス表示(キャラ一覧)
+;-------------------------------------------------
+@SHOW_CHARADATA_MENU
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+LOCAL:2 = 0
+;CHARADATA_LISTのために待避
+LOCAL:99 = GET_LIST(2)
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人は除外
+	SIF COUNT == MASTER
+		CONTINUE
+	;失踪中などこの場にいないなら除外
+	SIF CFLAG:COUNT:4 == 1 || CFLAG:COUNT:4 == 8192
+		CONTINUE
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+MARK:MASTER:98 = 1
+$PRINT_LIST
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORML ステータスを表示させたいキャラを選んでください　＜page.{TFLAG:600+1}＞
+DRAWLINE
+PRINTFORM 　[ 0]
+PRINTFORM %SHOW_CALLNAME(MASTER)%
+PRINTFORML (主人)
+DRAWLINE
+CALL CHARADATA_LIST, TFLAG:600, LOCAL:99
+DRAWLINE
+PRINTFORMLC \@(TFLAG:600 <= 0) ? 　 # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(TFLAG:600 >= LOCAL:1) ? 　 # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 5555
+	TFLAG:600 = 0
+	RETURN 0
+ELSEIF RESULT == 1111 && TFLAG:600 > 0
+	TFLAG:600 -= 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && TFLAG:600 < LOCAL:1
+	TFLAG:600 += 1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+CALL SHOW_CHARADATA_PAGE, RESULT
+IF RESULT == 1
+	TFLAG:600 = 0
+	RETURN 0
+ENDIF
+RESTART
+
+;-------------------------------------------------
+;ステータス表示(各キャラごと)
+;-------------------------------------------------
+@SHOW_CHARADATA_PAGE, ARG
+#DIM ALRAUNE, 3
+;ページ判別はLOCALで
+LOCAL = 1
+VARSET PL_VAR_L, 0
+$PRINT_PAGE
+ライン数:0 = LINECOUNT
+TFLAG:217 = 0
+TFLAG:218 = 0
+;前後のキャラを表示できるか判定
+IF TFLAG:213
+;解凍キャラがいるかどうか
+	SIF STRLENS(GLOBALS:(TFLAG:216 -1)) > 0
+		TFLAG:217 = 1
+	SIF STRLENS(GLOBALS:(TFLAG:216 +1)) > 0
+		TFLAG:218 = 1
+ELSE
+	ALRAUNE:1 = -1
+	ALRAUNE:2 = -1
+	FOR ALRAUNE, 0, CHARANUM
+		SIF MARK:ALRAUNE:98 == 0 || ALRAUNE == ARG
+			CONTINUE
+		IF ALRAUNE < ARG
+			ALRAUNE:1 = ALRAUNE
+		ELSE
+			ALRAUNE:2 = ALRAUNE
+			BREAK
+		ENDIF
+	NEXT
+ENDIF
+
+CALL NEW_DRAWLINE
+CALL GET_RACE , ARG
+PRINTFORM %SHOW_CALLNAME(ARG)%\@(NO:ARG >= 3000 && NO:ARG < 4000 && CALLNAME:ARG != NAME:ARG) ? (%ITEMNAME:(NO:ARG)%) # \@
+;男性ではない
+IF (COM_ABLE_CHECK_FEMALE(ARG) && !TALENT:ARG:死亡) && !(FLAG:3 > 2 && !TALENT:MASTER:超常目算)
+		PRINT 　
+		CALL CYCLE_PRINT ,ARG
+		PRINT 　
+ENDIF
+PRINTFORM  種族：%STR:2%
+SIF TALENT:MASTER:998
+	PRINTFORM 　キャラ番号:{NO:ARG}
+PRINTFORM 　体力:({BASE:ARG:体力, 4}/{MAXBASE:ARG:0, 4})　気力:({BASE:ARG:気力, 4}/{MAXBASE:ARG:1, 4})
+SIF ARG != MASTER
+	PRINTFORM 　理性:\@(TALENT:ARG:理性) ? ({BASE:ARG:理性, 4}/{MAXBASE:ARG:9, 4}) # 無い\@
+PRINTL 
+IF ARG != MASTER && FLAG:12 & 4
+	CALL PRINT_SLAVE_STATUS, ARG
+ELSEIF ARG == MASTER && FLAG:12 & 4
+	CALL PRINT_MASTER_STATUS, ARG
+ENDIF
+CALLFORM SHOW_INFO_PAGE_{LOCAL}, ARG
+PRINTFORMLC \@(LOCAL == 1) ? 　 # [ 1]前のページ\@
+PRINTLC [5]メイン画面へ戻る
+PRINTFORMLC \@(LOCAL == 6) ? 　 # [ 9]次のページ\@
+PRINTL 
+;登録番号が現在表示されている前後のキャラの判定が『リストに表示される』になっている場合、そのキャラに切り替えるボタンを表示
+;なお、判定基準は呼び出し元に依存
+IF TFLAG:213
+	PRINTFORMLC \@(TFLAG:217) ? [11]前のキャラ # 　\@
+ELSE
+	PRINTFORMLC \@(ALRAUNE:1 < 0 || TFLAG:213) ? 　 # [11]前のキャラ\@
+ENDIF
+PRINTLC [5555]リストに戻る
+IF TFLAG:213
+	PRINTFORMLC \@(TFLAG:218) ? [99]次のキャラ # 　\@
+ELSE
+	PRINTFORMLC \@(ALRAUNE:2 < 0 || TFLAG:213) ? 　 # [99]次のキャラ\@
+ENDIF
+PRINTL 
+;解凍参照時
+IF TFLAG:213 && CFLAG:ARG:99 / 100 != 2
+	PRINTL 
+	PRINTFORMLC %SHOW_CALLNAME(ARG)%を購入しますか？%"　"*4%
+	PRINTFORM [100] 購入する　　
+	PRINTPLAINFORM {TFLAG:215}
+	PRINTL 圓
+ENDIF
+$INPUT_LOOP_2
+INPUT
+IF RESULT == 5555
+	PL_VAR_L:0 = 0
+	PL_VAR_L:2 = 0
+	IF TFLAG:213
+		CLEARLINE 2
+		RETURN 1
+	ENDIF
+	RETURN 0
+ELSEIF RESULT == 5
+	IF TFLAG:213
+		CLEARLINE 2
+		RETURN 2
+	ENDIF
+	RETURN 1
+ELSEIF RESULT == 100 && TFLAG:213 && CFLAG:ARG:99 / 100 != 2
+	RETURN 0
+ELSEIF RESULT == 1 && LOCAL > 1
+	LOCAL -= 1
+	PL_VAR_L:0 = 0
+	PL_VAR_L:2 = 0
+	PL_VAR_L:4 = 0
+ELSEIF RESULT == 9 && LOCAL < 6
+	LOCAL += 1
+	PL_VAR_L:0 = 0
+	PL_VAR_L:2 = 0
+	PL_VAR_L:4 = 0
+ELSEIF RESULT == 11 && ((ALRAUNE:1 >= 0 && !TFLAG:213) || (TFLAG:213 && TFLAG:217))
+	IF TFLAG:213
+		TFLAG:216 = TFLAG:216 - 1
+		;キャラ参照後削除
+		DELCHARA CHARANUM - 1
+		;キャラの追加
+		CALL CHARA_EXTRACTION, TFLAG:216
+		ARG = CHARANUM -1
+		SPLIT GLOBALS:(TFLAG:216), "_", LOCALS
+		TFLAG:215 = TOINT(LOCALS:2)
+	ELSE
+		ARG = ALRAUNE:1
+	ENDIF
+	PL_VAR_L:0 = 0
+	PL_VAR_L:2 = 0
+	PL_VAR_L:4 = 0
+ELSEIF RESULT == 99 && ((ALRAUNE:2 >= 0 && !TFLAG:213) || (TFLAG:213 && TFLAG:218))
+	IF TFLAG:213
+		TFLAG:216 = TFLAG:216 + 1
+		;キャラ参照後削除
+		DELCHARA CHARANUM - 1
+		;キャラの追加
+		CALL CHARA_EXTRACTION, TFLAG:216
+		ARG = CHARANUM -1
+		SPLIT GLOBALS:(TFLAG:216), "_", LOCALS
+		TFLAG:215 = TOINT(LOCALS:2)
+	ELSE
+		ARG = ALRAUNE:2
+	ENDIF
+	PL_VAR_L:0 = 0
+	PL_VAR_L:2 = 0
+	PL_VAR_L:4 = 0
+ELSEIF RESULT == 4 && LOCAL == 3 && PL_VAR_L:0 > 0
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	PL_VAR_L:0--
+ELSEIF RESULT == 6 && LOCAL == 3 && PL_VAR_L:0 < PL_VAR_L:1
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	PL_VAR_L:0++
+ELSEIF RESULT == 44 && LOCAL == 3 && PL_VAR_L:2 > 0
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	PL_VAR_L:2--
+ELSEIF RESULT == 66 && LOCAL == 3 && PL_VAR_L:2 < PL_VAR_L:3
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	PL_VAR_L:2++
+ELSEIF RESULT == 444 && (LOCAL == 3 || LOCAL == 5 || LOCAL == 6) && PL_VAR_L:4 > 0
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	PL_VAR_L:4--
+ELSEIF RESULT == 666 && (LOCAL == 3 || LOCAL == 5 || LOCAL == 6) && PL_VAR_L:4 < PL_VAR_L:5
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	PL_VAR_L:4++
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_2
+ENDIF
+GOTO PRINT_PAGE
+
+;--------------------------------------------------
+;購入可能な奴隷の人数の算出
+;--------------------------------------------------
+;RETURNFで購入可能な奴隷の人数を返す様に
+@CALC_SLAVE_CAPACITY
+#FUNCTION
+RETURNF (FLAG:4 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93, BORDER_SLAVE_CAPACITY())
+
+;--------------------------------------------------
+;家の収容可能な奴隷の限界人数
+;--------------------------------------------------
+;RETURNFで購入可能な奴隷の人数を返す様に
+@BORDER_SLAVE_CAPACITY
+#FUNCTION
+SELECTCASE FLAG:90
+	CASE 5
+		RETURNF 1000
+	CASE 3, 4
+		RETURNF 501
+	CASE 2
+		RETURNF 101
+	CASE 1
+		RETURNF 51
+	CASEELSE
+		RETURNF 31
+ENDSELECT
+
+;--------------------------------------------------
+;期限表示処理
+;--------------------------------------------------
+@SHOW_DEADLINE
+IF FLAG:5 & 1
+	SETCOLOR COLOR("AQUA")
+	PRINT  ∞
+ELSE
+	LOCAL = MAX(FLAG:999 - DAY, 0)
+	FONTSTYLE (LOCAL == 0) ? 1 # 0
+	IF LOCAL == 0
+		SETCOLOR COLOR("P-RED")
+		PRINT  最終日
+	ELSE
+		PRINTFORM  残り{LOCAL}日
+	ENDIF
+	;PRINTFORM \@(LOCAL == 0) ? 最終日 # 残り{LOCAL}日\@
+	FONTSTYLE 0
+ENDIF
+RESETCOLOR
+
+;--------------------------------------------------
+;目標金額表示処理
+;--------------------------------------------------
+@SHOW_GOAL
+IF MONEY:100 + FLAG:575 - MONEY > 0
+	PRINTFORM  (目標金額まで後{MAX(MONEY:100 - MONEY, 0)}圓
+	SIF FLAG:575
+		PRINTFORM 　借金残り{FLAG:575}圓
+	PRINT )
+ELSE
+	SETCOLOR COLOR("AQUA")
+	PRINT  (目標金額達成)
+	RESETCOLOR
+ENDIF
+
+;--------------------------------------------------
+;[100]調教する関連のコマンド名前選定処理
+;--------------------------------------------------
+@NAME_SHOPCOMMAND_100
+#FUNCTIONS
+;REVERSALモードの時用(調教されるのが最初に選んだキャラでなくてもこちら)
+IF FLAG:4 == 3
+	;死亡持ち
+	IF TALENT:死亡
+		RETURNF "蹂躙される"
+	;反発刻印3以上
+	ELSEIF MARK:反発刻印 >= 3
+		RETURNF "反抗する"
+	;相愛持ちで確率（下の尽くすも出したいので）
+	ELSEIF TALENT:相愛 && RAND:3
+		RETURNF "愛を捧げる"
+	;親愛持ち
+	ELSEIF TALENT:親愛
+		RETURNF "主人に尽くす"
+	;壊造人格持ち
+	ELSEIF TALENT:壊造人格
+		RETURNF "調整される"
+	;精神崩壊or傀儡持ち
+	ELSEIF TALENT:精神崩壊 || TALENT:傀儡
+		RETURNF "可愛がられる"
+	;服従or烙印or隷属持ちで確率
+	ELSEIF (TALENT:服従 || TALENT:烙印 || TALENT:隷属) && RAND:3
+		RETURNF "躾けてもらう"
+	;淫乱持ちで確率
+	ELSEIF TALENT:淫乱 && RAND:3
+		RETURNF "犯される"
+	ELSE
+		RETURNF "調教される"
+	ENDIF
+;REVERSALモードでないゲームモード用
+ELSE
+	;死亡持ち
+	IF TALENT:死亡
+		RETURNF "蹂躙する"
+	;相愛持ち
+	ELSEIF TALENT:相愛
+		RETURNF "愛し合う"
+	;壊造人格持ち
+	ELSEIF TALENT:壊造人格
+		RETURNF "調整する"
+	;精神崩壊or傀儡持ち
+	ELSEIF TALENT:精神崩壊 || TALENT:傀儡
+		RETURNF "可愛がる"
+	;反発刻印3以上で確率
+	ELSEIF MARK:反発刻印 >= 3 && RAND:3
+		RETURNF "お仕置きをする"
+	;服従or烙印or隷属or反発刻印3以上で確率
+	ELSEIF (TALENT:服従 || TALENT:烙印 || TALENT:隷属 || MARK:反発刻印 >= 3) && RAND:3
+		RETURNF "躾をする"
+	;淫乱持ちで確率
+	ELSEIF TALENT:淫乱 && RAND:3
+		RETURNF "肉欲を満たす"
+	;その他
+	ELSE
+		RETURNF "調教する"
+	ENDIF
+ENDIF
+;ここに来る可能性はないはずだが念のため
+RETURNF "調教する"
+
+;=============================================================================
+;[使い魔]関連の処理
+;=============================================================================
+;--------------------------------------------------
+;[使い魔]の付与/解除の対象選択処理
+;--------------------------------------------------
+@FAMILIAR_SELECT
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+;CHARADATA_LISTのために待避
+LOCAL:99 = GET_LIST(2)
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人には使えない
+	SIF COUNT == 0
+		CONTINUE
+	;死亡
+	SIF TALENT:COUNT:死亡
+		CONTINUE
+	;この場にいない時は使えない
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	IF TALENT:COUNT:使い魔 == 0
+		;[使い魔]条件を満たしていることが必要
+		SIF !FAMILIAR_ABLE(COUNT)
+			CONTINUE
+		;所持金200000圓必要
+		SIF MONEY < 200000
+			CONTINUE
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+DRAWLINE
+IF NO:MASTER == 1021 || NO:MASTER == 1022
+	PRINTFORML 誰を式とする/式を破棄しますか？　＜page.{LOCAL+1}＞
+ELSE
+	PRINTFORML 誰と使い魔の契約を結ぶ/破棄しますか？　＜page.{LOCAL+1}＞
+ENDIF
+CALL CHARADATA_LIST, LOCAL, LOCAL:99
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 1111 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+CALL FAMILIAR_PLEDGE, RESULT
+RESTART
+
+;--------------------------------------------------
+;[使い魔]の付与/解除の契約処理
+;--------------------------------------------------
+@FAMILIAR_PLEDGE, ARG
+LOCAL = TARGET
+TARGET = ARG
+IF TALENT:使い魔
+	IF NO:MASTER == 1021 || NO:MASTER == 1022
+		PRINTFORML %SHOW_CALLNAME(TARGET)%の式を破棄します
+		PRINTL よろしいですか？
+	ELSE
+		PRINTFORML %SHOW_CALLNAME(TARGET)%と結んでいる契約を破棄します
+		PRINTL よろしいですか？
+	ENDIF
+ELSE
+	IF NO:MASTER == 1021 || NO:MASTER == 1022
+		PRINTFORML %SHOW_CALLNAME(TARGET)%に数式を埋め込み、式として自分の配下に置きます(200000圓必要)
+		PRINTFORM ※注意！　
+		PRINTFORML %SHOW_CALLNAME(TARGET)%を式にしている間は別れることができなくなります
+		PRINTFORML それでもいいですか？　　所持金:{MONEY}圓
+	ELSE
+		PRINTFORML %SHOW_CALLNAME(TARGET)%の存在を書き換え、使い魔として自分の配下に置きます(200000圓必要)
+		PRINTFORM ※注意！　
+		PRINTFORML %SHOW_CALLNAME(TARGET)%を使い魔にしている間は別れることができなくなります
+		PRINTFORML それでもいいですか？　　所持金:{MONEY}圓
+	ENDIF
+ENDIF
+DRAWLINE
+PRINTC [0]はい
+PRINTC [1]いいえ
+PRINTL 
+$INPUT_LOOP_2
+INPUT
+IF RESULT == 1
+	TARGET = LOCAL
+	RETURN 0
+ELSEIF RESULT != 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_2
+ENDIF
+IF TALENT:使い魔
+	IF NO:MASTER == 1021 || NO:MASTER == 1022
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:TARGET%に埋め込まれていた数式を解除した
+	ELSE
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:TARGET%との間に結ばれていた契約を破棄した
+	ENDIF
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 204
+	PRINTFORMW %CALLNAME:TARGET%はどことなく残念そうな表情を浮かべている……
+	IF NO:MASTER == 1021 || NO:MASTER == 1022
+		PRINTFORMW %CALLNAME:TARGET%は[式]を失った
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は[%TALENTNAME:164%]を失った
+	ENDIF
+	TALENT:使い魔 = 0
+	SIF CFLAG:15 & 8
+		CFLAG:15 -= 8
+ELSE
+	IF NO:MASTER == 1021 || NO:MASTER == 1022
+		PRINTFORMW %CALLNAME:TARGET%は数式を埋め込まれ、%CALLNAME:MASTER%の式となった
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は契約を結び、%CALLNAME:MASTER%の使い魔となった
+	ENDIF
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 203
+	PRINTL 
+	PRINTFORMW %CALLNAME:TARGET%は[\@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 使い魔 # 式\@]を得た
+	PRINTW  
+	PRINTFORMW ―――%CALLNAME:TARGET%は\@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 使い魔 # 式\@として%CALLNAME:MASTER%の支配下に置かれました―――
+	PRINTW ………………
+	PRINTW …………
+	PRINTW ……
+	PRINTFORMW ＜\@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 契約 # 数式\@により%CALLNAME:TARGET%と深い絆で結ばれました＞
+	PRINTFORML ＜%CALLNAME:TARGET%と別れられなくなりました＞
+	TALENT:使い魔 = 1
+	CFLAG:15 |= 8
+	MONEY -= 200000
+ENDIF
+PRINTW  
+TARGET = LOCAL
+
+;=============================================================================
+;キャラの能力・素質・経験・刻印検索
+;=============================================================================
+;TFLAG:0の値で検索する属性を指定(1:能力, 2:素質, 3:経験, 4:刻印)
+;@SHOW_SEARCH_CHARADATAのARGの値(@SEARCH_CHARADATA_INPUTのRESULTの値に依存)で属性の番号を指定
+;(例：TFLAG:0 = 1, @SEARCH_CHARADATA_INPUTのRESULT = 1でＣ感覚を所持しているキャラを検索・表示されるように)
+;--------------------------------------------------
+;検索メインメニュー
+;--------------------------------------------------
+@SEARCH_CHARADATA_MENU
+TFLAG:0 = 0
+DRAWLINE
+PRINTL 何を検索しますか？
+PRINTL  [1] 能力
+PRINTL  [2] 素質
+PRINTL  [3] 経験
+PRINTL  [4] 刻印
+PRINTL  [5] 珠
+PRINTL  [6] 記念日
+PRINTFORML  [7] 体力気力\@(FLAG:16 & 16) ? および体格 #\@
+PRINTL  [8] 好感度稼ぎストレスなど
+PRINTL  [9] 称号・主人への呼び名
+IF TALENT:MASTER:998
+	PRINTL [10] Debug用CFLAG
+	PRINTL [11] Debug用CSTR
+ENDIF
+PRINTL [100]やめる
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 1
+ELSEIF RESULT == 1
+	TSTR:99 = 能力
+ELSEIF RESULT == 2
+	TSTR:99 = 素質
+ELSEIF RESULT == 3
+	TSTR:99 = 経験
+ELSEIF RESULT == 4
+	TSTR:99 = 刻印
+ELSEIF RESULT == 5
+	TSTR:99 = 珠
+ELSEIF RESULT == 6
+	TSTR:99 = 記念日
+ELSEIF RESULT == 7
+	TSTR:99 = 体力気力\@(FLAG:16 & 16) ? および体格 #\@
+ELSEIF RESULT == 8
+	TSTR:99 = 好感度稼ぎストレスなど
+ELSEIF RESULT == 9
+	TSTR:99 = 称号・主人への呼び名
+ELSEIF RESULT == 10 && TALENT:MASTER:998
+	TSTR:99 = Debug用CFLAG
+ELSEIF RESULT == 11 && TALENT:MASTER:998
+	TSTR:99 = Debug用CSTR
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+TFLAG:0 = RESULT
+CALL SEARCH_CHARADATA_INPUT
+RESTART
+
+;--------------------------------------------------
+;キャラ能力検索
+;--------------------------------------------------
+@SEARCH_CHARADATA_INPUT
+VARSET LOCAL, 0
+VARSET LOCALS,""
+SPLIT "誕生日,購入された日,連れてこられた日,結婚記念日,契約記念日,陥落した日",",",LOCALS
+$PRINT_LIST
+LOCAL:2 = 0
+DRAWLINE
+PRINTFORML 検索する%TSTR:99%\@(TFLAG:0 == 10) ? (0～9999) # \@\@(TFLAG:0 == 11) ? (0～99) # \@を選択してください。 ＜page.{LOCAL:1}＞
+IF TFLAG:0 == 6
+	REPEAT 6
+		LOCAL:(COUNT + 100) = 0
+		TSTR:0 = %LOCALS:COUNT%
+		SIF LOCAL:2 / 30 >= LOCAL:1 && LOCAL:2 / 30 < 1 + LOCAL:1
+			PRINTFORMLC [{COUNT, 3}] %TSTR:0, 12, LEFT%
+		LOCAL:2 += 1
+		LOCAL:(COUNT + 100) = 1
+	REND
+ELSEIF TFLAG:0 != 10 && TFLAG:0 != 11
+	REPEAT 250
+		LOCAL:(COUNT + 100) = 0
+		IF TFLAG:0 == 1
+			SIF COUNT >= 100
+				CONTINUE
+			SIF STRLENS(ABLNAME:COUNT) <= 0
+				CONTINUE
+			TSTR:0 = %ABLNAME:COUNT%
+		ELSEIF TFLAG:0 == 2
+			SIF STRLENS(TALENTNAME:COUNT) <= 0
+				CONTINUE
+			TSTR:0 = %TALENTNAME:COUNT%
+			SIF COUNT == 164 && (NO:MASTER == 1021 || NO:MASTER == 1013)
+				TSTR:0 = 式
+		ELSEIF TFLAG:0 == 3
+			SIF COUNT >= 100
+				CONTINUE
+			SIF STRLENS(EXPNAME:COUNT) <= 0
+				CONTINUE
+			TSTR:0 = %EXPNAME:COUNT%
+		ELSEIF TFLAG:0 == 4
+			SIF COUNT >= 12
+				CONTINUE
+			SIF STRLENS(MARKNAME:COUNT) <= 0
+				CONTINUE
+			TSTR:0 = %MARKNAME:COUNT%
+		ELSEIF TFLAG:0 == 5
+			SIF (COUNT >= 20 && COUNT < 30) || COUNT > 198
+				CONTINUE
+			SIF STRLENS(PALAMNAME:COUNT) <= 0
+				CONTINUE
+			TSTR:0 = %PALAMNAME:COUNT%の珠
+		ELSEIF TFLAG:0 == 7
+			SIF COUNT >= 2 && COUNT <= 9 || COUNT > 99
+				CONTINUE
+			SIF (FLAG:16 & 16) == 0 && COUNT >= 10
+				CONTINUE
+			SIF STRLENS(BASENAME:COUNT) <= 0
+				CONTINUE
+			TSTR:0 = %BASENAME:COUNT%
+		ELSEIF TFLAG:0 == 8
+			SIF STRLENS(CFLAGNAME:COUNT) <= 0
+				CONTINUE
+			SIF (COUNT == 31 || (COUNT >= 60 && COUNT <= 64)) && TALENT:MASTER:超常目算 == 0 && TALENT:MASTER:998 == 0
+				CONTINUE
+			SIF (COUNT == 80 || COUNT == 81) && FLAG:13 & 1024 == 0
+				CONTINUE
+			TSTR:0 = %CFLAGNAME:COUNT%
+		ELSEIF TFLAG:0 == 9
+			IF COUNT == 0
+				TSTR:0 = 称号
+			ELSEIF COUNT == 1
+				TSTR:0 = 主人への呼び名
+			ELSE
+				CONTINUE
+			ENDIF
+		ENDIF
+		SIF LOCAL:2 / 30 >= LOCAL:1 && LOCAL:2 / 30 < 1 + LOCAL:1
+			PRINTFORMLC [{COUNT, 3}] %TSTR:0, 12, LEFT%
+		LOCAL:2 += 1
+		LOCAL:(COUNT + 100) = 1
+	REND
+ENDIF
+PRINTL 
+DRAWLINE
+IF TFLAG:0 != 10 && TFLAG:0 != 11
+	PRINTFORMLC \@(LOCAL:1 <= 0) ? %" " * 16% # [1001]前のページ\@
+	PRINTLC [1000]戻る
+	PRINTFORMLC \@(LOCAL:1 >= LOCAL:2 / 30) ? %" " * 16% # [1009]次のページ\@
+ELSE
+	PRINTLC [10000]戻る
+ENDIF
+PRINTL 
+$INPUT_LOOP_0
+INPUT
+IF TFLAG:0 != 10 && TFLAG:0 != 11 && RESULT == 1000
+	RETURN 1
+ELSEIF TFLAG:0 > 9 && TFLAG:0 < 12 && RESULT == 10000
+	RETURN 1
+ELSEIF RESULT == 1001 && TFLAG:0 != 10
+	IF LOCAL:1 > 0
+		LOCAL:1 -= 1
+		GOTO PRINT_LIST
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_0
+	ENDIF
+ELSEIF RESULT == 1009 && TFLAG:0 != 10
+	IF LOCAL:1 < LOCAL:2 / 30
+		LOCAL:1 += 1
+		GOTO PRINT_LIST
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_0
+	ENDIF
+ELSEIF RESULT < 0 || (TFLAG:0 != 10 && TFLAG:0 != 11 && (RESULT > 250 || LOCAL:(RESULT + 100) == 0)) || (TFLAG:0 == 10 && RESULT > 9999) || (TFLAG:0 == 11 && RESULT > 99)
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_0
+ENDIF
+
+IF TFLAG:0 == 1
+	TSTR:0 = %ABLNAME:RESULT%
+ELSEIF TFLAG:0 == 2
+	TSTR:0 = %TALENTNAME:RESULT%
+ELSEIF TFLAG:0 == 3
+	TSTR:0 = %EXPNAME:RESULT%
+ELSEIF TFLAG:0 == 4
+	TSTR:0 = %MARKNAME:RESULT%
+ELSEIF TFLAG:0 == 5
+	TSTR:0 = %PALAMNAME:RESULT%の珠
+ELSEIF TFLAG:0 == 6
+	TSTR:0 = %LOCALS:RESULT%
+ELSEIF TFLAG:0 == 7
+	TSTR:0 = %BASENAME:RESULT%
+ELSEIF TFLAG:0 == 8
+	IF (RESULT == 80 || RESULT == 81) && FLAG:13 & 1024 == 0
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_0
+	ENDIF
+	TSTR:0 = %CFLAGNAME:RESULT%
+ELSEIF TFLAG:0 == 9
+	IF RESULT == 0
+		TSTR:0 = 称号
+	ELSEIF RESULT == 1
+		TSTR:0 = 主人への呼び名
+	ENDIF
+ELSEIF TFLAG:0 == 10
+	TSTR:0 = CFLAG:{RESULT}
+ELSEIF TFLAG:0 == 11
+	TSTR:0 = CSTR:{RESULT}
+ENDIF
+CALL SHOW_SEARCH_CHARADATA, RESULT
+RESTART
+
+;--------------------------------------------------
+;キャラ検索ページ表示
+;--------------------------------------------------
+@SHOW_SEARCH_CHARADATA, ARG
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;失踪中のキャラは排除
+	SIF CFLAG:COUNT:4 == 1 || CFLAG:LOCAL:4 == 8192
+		CONTINUE
+	IF TFLAG:0 == 1
+		SIF ABL:COUNT:ARG == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 2
+		SIF TALENT:COUNT:ARG == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 3
+		SIF EXP:COUNT:ARG == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 4
+		SIF MARK:COUNT:ARG == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 5
+		SIF JUEL:COUNT:ARG == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 6
+		SIF CFLAG:COUNT:(ARG+3110) == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 8 || TFLAG:0 == 10
+		SIF CFLAG:COUNT:ARG == 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 9 && TSTR:0 == "称号"
+		STRLENS NICKNAME:COUNT
+		SIF RESULT <= 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 9 && TSTR:0 == "主人への呼び名"
+		STRLENS MASTERNAME:COUNT
+		SIF RESULT <= 0
+			CONTINUE
+	ELSEIF TFLAG:0 == 11
+		STRLENS CSTR:COUNT:ARG
+		SIF RESULT <= 0
+			CONTINUE
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+DRAWLINE
+PRINTFORML %TSTR:0%を所持しているキャラの一覧です ＜page.{LOCAL+1}＞
+CALL SHOW_SEARCH_LIST, LOCAL, ARG
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 1111 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 9999 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+CALL SHOW_CHARADATA_PAGE, RESULT
+RESTART
+
+;--------------------------------------------------
+;キャラ能力検索の表示
+;--------------------------------------------------
+@SHOW_SEARCH_LIST, ARG, ARG:1
+LOCAL = 0
+LOCAL:2 = 0
+IF MARK:MASTER:98 == 1
+	DRAWLINE
+	CALL ARRANGE_SEARCH_LIST, MASTER, ARG:1
+	PRINTFORM 　[ 0]
+	PRINTFORML %SHOW_CALLNAME(MASTER)%(主人) %STR:3%
+	LOCAL:2 += 1
+ENDIF
+DRAWLINE
+REPEAT 20
+	LOCAL = GET_LIST(COUNT + ARG * 20)
+	;条件に合わないキャラは排除
+	SIF LOCAL == 0
+		CONTINUE
+	SIF MARK:LOCAL:98 == 0
+		CONTINUE
+	IF LOCAL == TARGET
+		PRINT ☆
+	ELSEIF LOCAL == ASSI
+		PRINT ★
+	ELSEIF CFLAG:LOCAL:4 == 4
+		PRINT ◆
+	ELSEIF CFLAG:LOCAL:4 == 2
+		PRINT ◇
+	ELSEIF CFLAG:LOCAL:4 == 16
+		PRINT ■
+	ELSEIF CFLAG:LOCAL:4 == 1024
+		PRINT ▼
+	ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+		PRINT ▽
+	ELSEIF CFLAG:LOCAL:1 == 2
+		PRINT ○
+	ELSE
+		PRINT 　
+	ENDIF
+	;キャラ名前呼び出し
+	CALL ARRANGE_CHARALIST, LOCAL
+	;キャラ体力表示
+	CALL ARRANGE_CHARALIFE, LOCAL
+	CALL ARRANGE_SEARCH_LIST, LOCAL, ARG:1
+	IF (FLAG:10 & 8) && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:11 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:11 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:11 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:オトコ && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:オトコ == 0 && CFLAG:LOCAL:18 == 0)))
+		FONTBOLD
+		PRINTFORML  %STR:3%
+		FONTREGULAR
+	ELSE
+		PRINTFORML  %STR:3%
+	ENDIF
+	LOCAL:2 += 1
+REND
+PRINTFORML 　\@(LOCAL:2 == 0) ? 該当するキャラはいません # ☆:調教中 ★:助手 ○:助手可 ◇:育児中 ◆:触手幽閉中 ■:牢収監中 ▼：売春中 ▽:ハーブ作業中を表しています\@
+
+;-------------------------------------------------
+;検索表示補助処理
+;-------------------------------------------------
+@ARRANGE_SEARCH_LIST, ARG, ARG:1
+
+IF TFLAG:0 == 1
+	LOCAL = ABL:ARG:(ARG:1)
+ELSEIF TFLAG:0 == 3
+	LOCAL = EXP:ARG:(ARG:1)
+ELSEIF TFLAG:0 == 4
+	LOCAL = MARK:ARG:(ARG:1)
+ELSEIF TFLAG:0 == 5
+	LOCAL = JUEL:ARG:(ARG:1)
+ELSEIF TFLAG:0 == 6
+	LOCAL = CFLAG:ARG:(3110 + ARG:1)
+ELSEIF TFLAG:0 == 7
+	LOCAL = BASE:ARG:(ARG:1)
+ELSEIF TFLAG:0 == 8 || TFLAG:0 == 10
+	LOCAL = CFLAG:ARG:(ARG:1)
+ELSE
+	LOCAL = 0
+ENDIF
+;1000万以上は表示しない
+LOCAL = MIN (LOCAL, 9999999)
+
+IF TFLAG:0 == 1 || TFLAG:0 == 4
+	STR:2 = (LV{LOCAL})
+ELSEIF TFLAG:0 == 2 && ARG:1 == 0 && TALENT:ARG:(ARG:1) > 1
+	STR:2 = (再生)
+ELSEIF TFLAG:0 == 2 && ARG:1 == 121 && TALENT:ARG:(ARG:1) > 1
+	STR:2 = (玉あり)
+ELSEIF TFLAG:0 == 2 && ARG:1 == 265
+	STR:2 = {TALENT:ARG:(ARG:1)}人
+ELSEIF TFLAG:0 == 2
+	STR:2 = 
+ELSEIF TFLAG:0 == 7
+	CALL MAKE_SIZE, 1, ARG
+	IF ARG:1 == 10
+		STR:2 = {BASE:ARG:10 / 10}.{BASE:ARG:10 % 10}cm
+	ELSEIF ARG:1 == 11
+		STR:2 = {BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg
+	ELSEIF ARG:1 == 12
+		STR:2 = {BASE:ARG:12 / 10}.{BASE:ARG:12 % 10}cm
+	ELSEIF ARG:1 == 13
+		STR:2 = {BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm
+	ELSEIF ARG:1 == 14
+		STR:2 = {BASE:ARG:14 / 10}.{BASE:ARG:14 % 10}cm
+	ELSE
+		STR:2 = ({LOCAL})
+	ENDIF
+ELSEIF TFLAG:0 == 6
+	STR:2 = ({LOCAL}日目)
+ELSEIF TFLAG:0 == 9 && TSTR:0 == "称号"
+	STR:2 = : %NICKNAME:ARG%
+ELSEIF TFLAG:0 == 9 && TSTR:0 == "主人への呼び名"
+	STR:2 = : %MASTERNAME:ARG%
+ELSEIF TFLAG:0 == 11
+	STR:2 = : %CSTR:ARG:(ARG:1)%
+ELSE
+	STR:2 = ({LOCAL})
+ENDIF
+STR:3 = %TSTR:0, 12%%STR:2%
+SIF TFLAG:0 == 2 && ARG:1 == 153 && CFLAG:ARG:156 & 1
+	STR:3 = %"相思相愛", 12%%STR:2%
+
+RETURN 1
+
+;=============================================================================
+;今まで見たエンディングの一覧
+;=============================================================================
+;SHOPより呼び出される
+;現在特殊ハーレムエンドと単体エンド、奴隷エンドに対応
+;単体・奴隷エンドはFLAG:(4500＋キャラ番号)で判断(ビット演算で1=単体エンド, 2=奴隷エンド)
+;ノーマルエンド、特殊ハーレムエンドはFLAG:10000で判定
+;なお、フラグの追加処理は単体・奴隷エンドではアイテムを購入したときに(SHOP.ERB)、
+;ノーマルエンド、特殊ハーレムエンドはエンディング時に(ENDING.ERB)行われる
+@ENDING_LIST
+;変数のリセット
+VARSET LOCAL, 0
+
+;通常・ハーレムエンドの有無
+LOCAL:1 = (FLAG:10000 > 0)
+;個別エンドのページ数
+LOCAL:2 = PAGE_ENDING_LIST()
+
+;ページをめくったときなどはここから
+$PRINT_LIST_PAGE
+DRAWLINE
+IF LOCAL:1 == 0 && LOCAL:2 == 0
+	;普通はここには来ないはずだが念のため
+	PRINTL 今までに見たエンディングはありません
+ELSE
+	PRINTFORML 今まで見たエンディングの一覧です ＜page.{1 + LOCAL}＞
+	IF LOCAL:1 == 1 && LOCAL == 0
+		CALL ENDING_HAREM_LIST
+	ELSE
+		CALL ENDING_CHARA_LIST, (LOCAL - LOCAL:1)
+	ENDIF
+ENDIF
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16 % # [1111]前のページ\@
+PRINTLC [5555]戻る
+PRINTFORMLC \@(LOCAL >= (LOCAL:1 + LOCAL:2 - 1)) ? %" " * 16 % # [9999]次のページ\@
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 5555
+	RETURN 0
+ELSEIF RESULT == 1111 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST_PAGE
+ELSEIF RESULT == 9999 && LOCAL < (LOCAL:1 + LOCAL:2 - 1)
+	LOCAL += 1
+	GOTO PRINT_LIST_PAGE
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+ENDIF
+
+;--------------------------------------------------
+;通常・ハーレムエンド表示
+;--------------------------------------------------
+@ENDING_HAREM_LIST
+LOCAL = 0
+PRINTL □ 通常・ハーレムEND-----------------------------------------------------------
+REPEAT 99
+	IF FLAG:(10001+COUNT)
+		CALL ENDING_HAREM_NAME
+		LOCAL += 1
+		IF LOCAL % 2 == 0
+			PRINTL 
+		ELSE
+			PRINT 　
+		ENDIF
+	ENDIF
+REND
+SIF LOCAL % 2 == 1
+	PRINTL 
+
+;通常・ハーレムエンド補助表示
+@ENDING_HAREM_NAME
+STR:0 = %STR:(10001+COUNT)%
+IF COUNT == 15 || COUNT == 17
+	IF FLAG:(10001+COUNT) & 1 && FLAG:(10001+COUNT) & 2
+		STR:0 += "Ⅰ＆Ⅱ"
+	ELSEIF FLAG:(10001+COUNT) & 2
+		STR:0 += "Ⅱ"
+	ELSEIF FLAG:(10001+COUNT) & 1
+		STR:0 += "Ⅰ"
+	ENDIF
+ENDIF
+STRLENS STR:0
+LOCAL = 26 - RESULT
+STR:1 = % " " * LOCAL %
+PRINTFORM “Ending No.{COUNT+1, 2} (%STR:0%)”%STR:1%
+RETURN 1
+
+;--------------------------------------------------
+;単体エンド表示
+;--------------------------------------------------
+@ENDING_CHARA_LIST, ARG
+LOCALS:0 = %" " * 2%
+LOCALS:1 = ○
+LOCALS:2 = ●
+LOCALS:3 = ◎
+
+LOCAL:10 = 0
+
+PRINTL □ 個別END---------------------------------------------------------------------
+REPEAT 20
+	LOCAL = GET_LIST(COUNT + ARG * 20)
+	SIF LOCAL == 0
+		CONTINUE
+	;～の個別ENDを表示
+	PRINTFORM %LOCALS:(FLAG:LOCAL)%“Ending No.{LOCAL} (%ITEMNAME:(LOCAL - 10000)%エンド)”
+	LOCAL:10 += 1
+	IF LOCAL:10 % 2 == 0
+		PRINTL 
+	ELSE
+		STR:0 = %ITEMNAME:(LOCAL - 10000)%
+		STRLENS STR:0
+		LOCAL:11 = 16 - RESULT
+		STR:1 = % " " * LOCAL:11 %
+		PRINTFORM %STR:1%　
+	ENDIF
+REND
+SIF LOCAL:10 % 2 == 1
+	PRINTL 
+
+;エンディング一覧のページ数決定用
+@PAGE_ENDING_LIST
+#FUNCTION
+VARSET LOCAL, 0
+
+;エンディングフラグが存在していたら表示可能フラグを立てる
+CALLF CLEAR_LIST
+FOR LOCAL, 11000, 15099
+	IF FLAG:LOCAL
+		CALLF SET_LIST, LOCAL:1, LOCAL
+		LOCAL:1 += 1
+	ENDIF
+NEXT
+RETURNF (LOCAL:1 + 19) / 20
+
+;--------------------------------------------------
+;主人の呼び名を設定させる
+;--------------------------------------------------
+@COMMAND_MASTER_NAME
+$PRINT_LIST
+DRAWLINE
+PRINTFORM 現在調教中の
+PRINTFORML %SHOW_CALLNAME(TARGET)%から主人への呼びかけを変更することが出来ます。
+STRLENS MASTERNAME:TARGET
+PRINTFORML 現在の呼び名は\@(RESULT > 0) ? 「%MASTERNAME:TARGET%」です。 # 任せてます。\@
+PRINTL 
+PRINTLC [0] 呼び名を奴隷に任せる
+PRINTLC [1] 呼び名を自分で決める
+PRINTLC [2] ご主人様とする
+PRINTLC [3] マスターとする
+PRINTFORMLC [4] \@(TALENT:MASTER:オトコ) ? お兄ちゃん # お姉ちゃん\@とする
+PRINTFORMLC [5] \@(TALENT:MASTER:オトコ) ? お兄様 # お姉様\@とする
+PRINTLC [6] 名前＋様とする
+PRINTLC [7] 名前（呼び捨て）とする
+PRINTL 
+DRAWLINE
+PRINTLC [1000]戻る
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT < 0 || RESULT > 7
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	PRINTFORMW 主人への奴隷からの呼び名を奴隷に任せました。
+	MASTERNAME:TARGET = 
+	RESULT = 2
+ELSEIF RESULT == 2
+	PRINTFORMW 主人への奴隷からの呼び名を「ご主人様」とするように命令しました。
+	MASTERNAME:TARGET = ご主人様
+	RESULT = 2
+ELSEIF RESULT == 3
+	PRINTFORMW 主人への奴隷からの呼び名を「マスター」とするように命令しました。
+	MASTERNAME:TARGET = マスター
+	RESULT = 2
+ELSEIF RESULT == 4
+	PRINTFORMW 主人への奴隷からの呼び名を\@(TALENT:MASTER:オトコ) ? 「お兄ちゃん」 # 「お姉ちゃん」\@とするように命令しました。
+	MASTERNAME:TARGET = \@(TALENT:MASTER:オトコ) ? お兄ちゃん # お姉ちゃん\@
+	RESULT = 2
+ELSEIF RESULT == 5
+	PRINTFORMW 主人への奴隷からの呼び名を\@(TALENT:MASTER:オトコ) ? 「お兄様」 # 「お姉様」\@とするように命令しました。
+	MASTERNAME:TARGET = \@(TALENT:MASTER:オトコ) ? お兄様 # お姉様\@
+	RESULT = 2
+ELSEIF RESULT == 6
+	PRINTFORMW 主人への奴隷からの呼び名を「%CALLNAME:MASTER%様」とするように命令しました。
+	MASTERNAME:TARGET = %CALLNAME:MASTER%様
+	RESULT = 2
+ELSEIF RESULT == 7
+	PRINTFORMW 主人への奴隷からの呼び名を「%CALLNAME:MASTER%」とするように命令しました。
+	MASTERNAME:TARGET = %CALLNAME:MASTER%
+	RESULT = 2
+ENDIF
+IF RESULT == 2
+	SIF CFLAG:TARGET:9 & 4
+		CALL DEFINE_JINKAKU_SELECT, TARGET
+	RETURN 1
+ENDIF
+PRINTFORML %CALLNAME:TARGET%から主人への新しい呼び名を入力してください。
+PRINTFORML 空白の場合は変更しません。
+
+$INPUT_LOOP2
+INPUTS
+STRLENS RESULTS
+SIF RESULTS == ""
+	RETURN 0
+MASTERNAME:TARGET = %RESULTS%
+PRINTFORML 主人への%CALLNAME:TARGET%からの呼び名は
+PRINTFORMW 「%MASTERNAME:TARGET%」とするように命令しました。
+SIF CFLAG:TARGET:9 & 4
+	CALL DEFINE_JINKAKU_SELECT, TARGET
+RETURN 1
+
+;--------------------------------------------------
+;奴隷の称号を変更する
+;with 奴隷の称号の選択(@SELECT_SLAVE_TITLE)
+;--------------------------------------------------
+@CHANGE_SLAVE_NICKNAME
+$PRINT_LIST
+;本来の称号の文字数保持用ローカル変数のリセット
+LOCAL = 0
+DRAWLINE
+PRINTFORM 現在調教中の
+PRINTFORML %SHOW_CALLNAME(TARGET)%の称号を変えることができます。
+;現状で両方を持つことはないが念のため
+SIF TALENT:博麗の巫女 || TALENT:風祝
+	PRINTFORML \@(TALENT:博麗の巫女) ? 「博麗の巫女」もしくは #\@\@(TALENT:風祝) ? 「風祝」もしくは、 # 、\@
+PRINTL 本来の称号（二つ名）または、今まで見た異名か、名乗らないを選択できます
+PRINTL また、本来の称号の設定がなければ、戻せません。
+STRLENS NICKNAME:TARGET
+PRINTFORML 現在\@(RESULT > 0) ? の称号は「%NICKNAME:TARGET%」です。 # は称号を持って(名乗って)いません。\@
+CSVNICKNAME NO:TARGET , 0
+STRLENS RESULTS
+LOCAL = RESULT
+PRINTL 
+PRINTL [ 0] 現在の称号のままにする
+;SPキャラは本来の称号に戻せないようにする
+IF LOCAL > 0 && CFLAG:0 == 0
+	PRINTFORML [ 1] 本来の称号(%RESULTS%)に戻す
+;ただし、霊夢様・魔梨沙・ロリスは戻せるように
+ELSEIF NO:TARGET == 1001 && CFLAG:0 == 2
+	PRINTFORML [ 1] 本来の称号(鬼巫女)に戻す
+	RESULTS = 鬼巫女
+	LOCAL = 6
+ELSEIF NO:TARGET == 1002 && CFLAG:0 == 1
+	PRINTFORML [ 1] 本来の称号(魔法と紅夢からなる存在)に戻す
+	RESULTS = 魔法と紅夢からなる存在
+	LOCAL = 22
+ELSEIF NO:TARGET == 1014 && CFLAG:0 == 1
+	PRINTFORML [ 1] 本来の称号(死の少女)に戻す
+	RESULTS = 死の少女
+	LOCAL = 8
+ENDIF
+PRINTL [ 2] 称号を名乗らせないようにする
+SIF TALENT:博麗の巫女
+	PRINTL [ 3] 博麗の巫女とする
+SIF TALENT:風祝
+	PRINTL [ 4] 風祝とする
+	PRINTL [10] 称号を変える
+DRAWLINE
+
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTFORMW %CALLNAME:TARGET%の称号を変更しませんでした。
+	RETURN 1
+ELSEIF RESULT < 0 || RESULT > 10
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 3 && TALENT:博麗の巫女
+	PRINTFORMW %CALLNAME:TARGET%の称号を「博麗の巫女」としました。
+	NICKNAME:TARGET = 博麗の巫女
+	RETURN 1
+ELSEIF RESULT == 4 && TALENT:風祝
+	PRINTFORMW %CALLNAME:TARGET%の称号を「風祝」としました。
+	NICKNAME:TARGET = 風祝
+	RETURN 1
+ELSEIF RESULT == 3 || RESULT == 4
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 2
+	PRINTFORMW %CALLNAME:TARGET%の称号を名乗らせないようにしました。
+	NICKNAME:TARGET = 
+	RETURN 1
+ELSEIF RESULT == 10
+	CALL SELECT_SLAVE_TITLE
+	RETURN 1
+ELSEIF LOCAL < 1
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+NICKNAME:TARGET = %RESULTS%
+PRINTFORMW %CALLNAME:TARGET%の称号を本来のものに戻しました。
+RETURN 1
+
+;--------------------------------------------------
+;奴隷の称号の選択画面
+;--------------------------------------------------
+@SELECT_SLAVE_TITLE
+#LOCALSIZE 3
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORM 現在、
+PRINTFORML %SHOW_CALLNAME(TARGET)%が変更できる称号の一覧です。
+PRINTFORML どの称号にしますか？
+
+CALL NEW_DRAWLINE
+LOCAL = 0
+LOCAL:2 = 0
+SIF TALENT:TARGET:オトコ
+	LOCAL = 20
+FOR PC_VAR1, 0, 20
+	LOCAL:1 = POWER( 2, PC_VAR1)
+	IF CFLAG:TARGET:4000 & LOCAL:1
+		PRINTFORM [{PC_VAR1, 2}] 
+		IF PC_VAR1 == 8 && TALENT:TARGET:オトコ == 0
+			PRINTFORM \@(TALENT:TARGET:処女) ? 処女 # 乙女\@%TSTRNAME:(30 + PC_VAR1 + LOCAL), 26, LEFT%
+		ELSE
+			PRINTFORM %TSTRNAME:(30 + PC_VAR1 + LOCAL), 30, LEFT%
+		ENDIF
+		LOCAL:2++
+		;改行
+		IF (LOCAL:2%2) == 0
+			PRINTL 
+		ELSE
+			PRINT 　
+		ENDIF
+	ENDIF
+NEXT
+SIF LOCAL:2 % 2 == 1
+	PRINTL 
+DRAWLINE
+PL_VAR_X:0 = 0
+SIF TALENT:TARGET:オトコ
+	PL_VAR_X:0 = 10
+FOR PC_VAR1, 0, 10
+	LOCAL:1 = POWER( 2, PC_VAR1)
+	IF CFLAG:TARGET:4001 & LOCAL:1
+		PRINTFORM [{PC_VAR1 + 20, 2}] 
+		IF PC_VAR1 == 6 || PC_VAR1 == 7
+			PRINTFORML %CALLNAME:MASTER%%TSTRNAME:(10 + PC_VAR1 + PL_VAR_X:0)%
+		ELSE
+			PRINTFORML %TSTRNAME:(10 + PC_VAR1 + PL_VAR_X:0)%
+		ENDIF
+	ENDIF
+NEXT
+CALL NEW_DRAWLINE
+PRINTLC [100]称号を変えない。※なお、上記以外の数を入れるとメイン画面に戻ります。
+PRINTL 
+PL_VAR_X:0 = 0
+$INPUT_LOOP1
+INPUT
+IF RESULT == 100 || RESULT < 0 || RESULT > 27 || RESULT == 2
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	RETURN 0
+ENDIF
+CALL SET_SLAVE_TITLE, RESULT
+PL_VAR_X:0 = 0
+PRINTFORMW メイン画面に戻ります
+
+
+;--------------------------------------------------
+;奴隷の称号の決定
+;--------------------------------------------------
+@SET_SLAVE_TITLE, ARG
+LOCAL = 0
+LOCALS = 
+SIF TALENT:TARGET:オトコ
+	LOCAL = 20
+IF ARG < 20
+	PL_VAR_X:0 = POWER( 2, ARG)
+	SIF TALENT:TARGET:オトコ
+		LOCAL = 20
+ELSE
+	PL_VAR_X:1 = POWER( 2, ARG - 20)
+	SIF TALENT:TARGET:オトコ
+		LOCAL = 10
+ENDIF
+IF CFLAG:TARGET:4000 & PL_VAR_X:0
+	LOCALS = \@(TALENT:TARGET:処女)==1 ? 処女 # 乙女\@
+	SIF TALENT:TARGET:オトコ || ARG != 8
+		LOCALS = 
+	NICKNAME:TARGET = 『%LOCALS%%TSTRNAME:(30 + ARG + LOCAL)%』
+	PRINTFORML 称号を%NICKNAME:TARGET%に変更しました
+ELSEIF CFLAG:TARGET:4001 & PL_VAR_X:1
+    IF ARG == 16 || ARG == 17 || ARG == 26 || ARG == 27
+	NICKNAME:TARGET = 『%CALLNAME:MASTER%%TSTRNAME:(ARG - 10 + LOCAL)%』
+	ELSE
+	NICKNAME:TARGET = 『%TSTRNAME:(ARG - 10 + LOCAL)%』
+	ENDIF
+	PRINTFORML 称号を%NICKNAME:TARGET%に変更しました
+ELSEIF ARG <= 17
+	PRINTFORML 称号『%TSTRNAME:(30 + ARG + LOCAL)%』は取得していません。
+ELSEIF ARG >= 20 && ARG <= 27
+	PRINTFORML 称号『%TSTRNAME:(ARG - 10 + LOCAL)%』は取得していません。
+ENDIF
+
+;=============================================================================
+;特殊汎用処理
+;=============================================================================
+;--------------------------------------------------
+;アイテム補充汎用処理
+;--------------------------------------------------
+;ARG…アイテム番号、ARG:1…補充されるアイテム個数が代入される
+;ただしARG:1の最低値は1とする
+@FILL_PLURAL_ITEM, ARG, ARG:1
+ARG:1 = MAX(ARG:1, 1)
+
+ITEM:ARG += ARG:1
+MONEY:0 -= ITEMPRICE:ARG * ARG:1
+
+;--------------------------------------------------
+;奴隷売却稼ぎ加算処理
+;--------------------------------------------------
+;高級奴隷売却稼ぎ加算処理と共用
+@INCOME_SLAVE_SALE, ARG
+MONEY:ARG = MIN (MONEY:ARG+MONEY:1, 10000000000000000)
+
+;--------------------------------------------------
+;最高金額判定処理
+;--------------------------------------------------
+@NEW_HIGH_INCOME_ALL, ARG
+MONEY:ARG = MONEY:1
+;ハイスコア更新処理
+MONEY:998 = MAX(MONEY:998, MONEY:1)
+
+;--------------------------------------------------
+;奴隷の稼ぎ金額判定処理
+;--------------------------------------------------
+@NEW_HIGH_INCOME_SLAVE, ARG
+CFLAG:ARG = MONEY:1
+;ハイスコア更新処理
+CFLAG:最高金額_全収入 = MAX(CFLAG:最高金額_全収入, MONEY:1)
+
+;………………………………………………
+;汎用関数化
+;………………………………………………
+@NEW_HIGH_INCOME_COMMON, ARG, ARG:1
+CFLAG:ARG:(ARG:1) = MONEY:1
+;ハイスコア更新処理
+CFLAG:ARG:最高金額_全収入 = MAX(CFLAG:ARG:最高金額_全収入, MONEY:1)
+
+;--------------------------------------------------
+;奴隷の稼ぎ合計処理
+;--------------------------------------------------
+@TOTAL_INCOME_SLAVE, ARG
+CFLAG:稼ぎの総額 = MIN (CFLAG:稼ぎの総額 + ARG, 10000000000000000)
+
+;………………………………………………
+;汎用関数化
+;………………………………………………
+@TOTAL_INCOME_COMMON, ARG, ARG:1
+CFLAG:ARG:稼ぎの総額 = MIN (CFLAG:ARG:稼ぎの総額 + ARG:1, 10000000000000000)
+
+;--------------------------------------------------
+;各奴隷の売春の稼ぎ合計処理
+;--------------------------------------------------
+@TOTAL_INCOME_BY_BROTHEL, ARG
+CFLAG:ARG:最高金額_集団売春 = MIN (CFLAG:ARG:最高金額_集団売春 + MONEY:1, 10000000000000000)
+

@@ -1,0 +1,392 @@
+﻿;=============================================================================
+;アナル要石
+;=============================================================================
+;通常は弱いアナルバイブでしかないが、抜いたときに大地震が発生
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE438
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:438 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;拷問系、精神操作系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;Ａ拡張経験が0の場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && EXP:Ａ拡張経験 == 0
+	RETURN 0
+;調教者もしくは調教対象が天子でないとダメ
+SIF NO:TARGET != 1052 && NO:PLAYER != 1052
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ａ系装着器具 == 2
+	RETURN 1
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;小柄体型なら従順が4以上かつマゾっ気が4以上じゃないと実行できない
+IF TALENT:小柄体型
+	SIF ABL:従順 < 4 || ABL:マゾっ気 < 4
+		RETURN 0
+ENDIF
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURN 0
+;一定のＡ経験が必要
+SIF EXP:Ａ経験 < EXPLV:3
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;他のＡ系装着具使用中は不可
+SIF (TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 2) || TEQUIP:氷柱
+	RETURN 0
+;クスコ挿入中はダメ
+SIF TEQUIP:クスコ
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 438) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM438
+PRINTL アナル要石
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 438
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アナル要石
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:Ａ系装着器具 == 2
+	DOWNBASE:0 += 500
+	DOWNBASE:1 += 300
+
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		SOURCE:快Ａ = 1000
+		SOURCE:情愛 = 10
+		SOURCE:屈従 = 100
+	ELSEIF ABL:Ａ感覚 == 1
+		SOURCE:快Ａ = 2000
+		SOURCE:情愛 = 30
+		SOURCE:屈従 = 700
+	ELSEIF ABL:Ａ感覚 == 2
+		SOURCE:快Ａ = 3000
+		SOURCE:情愛 = 100
+		SOURCE:屈従 = 1500
+	ELSEIF ABL:Ａ感覚 == 3
+		SOURCE:快Ａ = 4500
+		SOURCE:情愛 = 200
+		SOURCE:屈従 = 3000
+	ELSEIF ABL:Ａ感覚 == 4
+		SOURCE:快Ａ = 6000
+		SOURCE:情愛 = 450
+		SOURCE:屈従 = 5000
+	ELSE
+		SOURCE:快Ａ = 8000
+		SOURCE:情愛 = 750
+		SOURCE:屈従 = 8000
+	ENDIF
+
+	;アナル要石をはめていたターンより快Ａと体力消耗修整
+	IF TFLAG:170
+		SOURCE:快Ａ = 200 * TFLAG:170
+		DOWNBASE:0 += 75 * TFLAG:170
+	ENDIF
+ELSE
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 150
+
+	;ABL:Ａ感覚をみる
+	IF ABL:Ａ感覚 == 0
+		SOURCE:快Ａ = 80
+		SOURCE:屈従 = 300
+	ELSEIF ABL:Ａ感覚 == 1
+		SOURCE:快Ａ = 250
+		SOURCE:屈従 = 800
+	ELSEIF ABL:Ａ感覚 == 2
+		SOURCE:快Ａ = 600
+		SOURCE:屈従 = 1400
+	ELSEIF ABL:Ａ感覚 == 3
+		SOURCE:快Ａ = 1000
+		SOURCE:屈従 = 1800
+	ELSEIF ABL:Ａ感覚 == 4
+		SOURCE:快Ａ = 1300
+		SOURCE:屈従 = 2100
+	ELSE
+		SOURCE:快Ａ = 1700
+		SOURCE:屈従 = 2400
+	ENDIF
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 0.50
+	SOURCE:痛み = 5000
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み = 1800
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.10
+	SOURCE:痛み = 1000
+ELSE
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み = 600
+ENDIF
+
+SOURCE:露出 = 1200
+SOURCE:逸脱 = 6200
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 10000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+	SOURCE:痛み += 3600
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み += 1200
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み += 200
+ELSE
+	TIMES SOURCE:快Ａ , 1.40
+	SOURCE:痛み += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.10
+ELSE
+	TIMES SOURCE:快Ａ , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ａ , 0.70
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ａ , 0.90
+ELSE
+	TIMES SOURCE:快Ａ , 1.00
+ENDIF
+
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+;アナル要石の着脱
+IF TEQUIP:Ａ系装着器具 == 2
+	SOURCE:逸脱 *= 2
+	TFLAG:170 = 0
+	TCVAR:Ａ経験 += 25
+	TCVAR:Ａ拡張経験 += 3
+	TEQUIP:Ａ系装着器具 = 0
+ELSE
+	TCVAR:Ａ経験 += 2
+	SIF EXP:Ａ拡張経験 == 0
+		TCVAR:異常経験 += 1
+	TCVAR:Ａ拡張経験 += 1
+	TEQUIP:Ａ系装着器具 = 2
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;要石アナル挿入中
+;-------------------------------------------------
+@EQUIP_COM438
+PRINTL ＜要石アナル挿入中＞
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 90
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL = 20
+	LOCAL:1 = 100
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 60
+	LOCAL:1 = 300
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL = 150
+	LOCAL:1 = 500
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL = 250
+	LOCAL:1 = 800
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL = 400
+	LOCAL:1 = 1000
+ELSE
+	LOCAL = 800
+	LOCAL:1 = 1400
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:3
+	TIMES LOCAL , 1.10
+	LOCAL:2 = 50
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:2 = 10
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES LOCAL , 1.30
+	LOCAL:2 = 0
+ELSE
+	TIMES LOCAL , 1.40
+	LOCAL:2 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.40
+	LOCAL:2 += 3000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:2 += 1500
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:2 += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:2 += 500
+ELSE
+	TIMES LOCAL , 1.40
+	LOCAL:2 += 100
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.70
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 0.90
+ELSE
+	TIMES LOCAL , 1.00
+ENDIF
+
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:2 , 2.00
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	LOCAL:1 /= 3
+
+SOURCE:快Ａ += LOCAL
+SOURCE:屈従 += LOCAL:1
+SOURCE:痛み += LOCAL:2
+
+;自慰実行時は経験＋1
+IF CHECK_COM_MASTURBATION(SELECTCOM)
+	TCVAR:Ａ経験 += 2
+ELSE
+	TCVAR:Ａ経験 += 1
+ENDIF
+
+TFLAG:170 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_438
+IF TEQUIP:Ａ系装着器具 == 2
+	PRINTFORML %CALLNAME:TARGET%の菊門にはめ込まれていた要石を引き抜いた
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML お尻への圧迫感から解放され、%CALLNAME:TARGET%はホッと一息ついた瞬間、想像を超えた快感に襲われた
+		PRINTFORML アヌスに与えられる強烈な刺激に耐え切れず%CALLNAME:TARGET%の眼は上を向き、アヌスからは腸液が飛び散っている……
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 粘液にまみれた
+	PRINTL 菊門に要石を突っ込んだ…
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は不浄の穴を無理やり拡げられ、絶叫を上げている……
+ENDIF

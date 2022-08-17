@@ -1,0 +1,202 @@
+﻿;=============================================================================
+;触手強制飲酒
+;=============================================================================
+;触手生贄を通じて触手と一体化した萃香を召喚、
+;触手が分泌した酒を口移しで飲ませて強制的に酔わせる……という難解過ぎるプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE583
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:583 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:口装着器具 == 4
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[SUIKA触手]を得ていないとダメ
+SIF (FLAG:98 & 8) == 0
+	RETURN 0
+;萃香を触手生贄に捧げていない(=萃香が何らかの形で存在している)とダメ
+SIF (FLAG:97 & 8) == 0
+	RETURN 0
+;口が塞がっているときは不可
+SIF TEQUIP:口装着器具 && TEQUIP:口装着器具 != 4
+	RETURN 0
+;触手貫通中はダメ
+SIF TEQUIP:Ａ系装着器具 == 3
+	RETURN 0
+;触手強制回復中(口内)はダメ
+SIF TEQUIP:触手強制回復 == 1
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 583) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM583
+PRINTL 触手強制飲酒
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 583
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手強制飲酒
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 100
+DOWNBASE:1 += 150
+
+LOCAL:1 = 200
+LOCAL:2 = 300
+LOCAL:3 = 500
+LOCAL:4 = 1000
+SOURCE:酒酔い = 2500
+SOURCE:鬼殺し = 1500
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 0.10
+	TIMES LOCAL:4 , 4.00
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 0.50
+	TIMES LOCAL:4 , 2.50
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:4 , 1.50
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 1.00
+	TIMES LOCAL:4 , 1.00
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:1 , 1.80
+	TIMES LOCAL:2 , 1.80
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 0.50
+ELSE
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 2.50
+	TIMES LOCAL:3 , 2.00
+	TIMES LOCAL:4 , 0.10
+ENDIF
+
+;キス魔
+IF TALENT:キス魔
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 2.50
+ENDIF
+
+;萃香との相性あるなしで補正が上下
+LOCAL:5 = 23
+IF RELATION:(LOCAL:5) > 0 && RELATION:(LOCAL:5) != 100
+	LOCAL:1 *= RELATION:(LOCAL:5)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:5)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:5)
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:(LOCAL:5)
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:性行動 = LOCAL:1
+SOURCE:達成感 = LOCAL:2
+SOURCE:屈従 = LOCAL:3
+SOURCE:逸脱 = LOCAL:4
+
+IF TEQUIP:口装着器具 == 4
+	TEQUIP:口装着器具 = 0
+ELSE
+	TEQUIP:口装着器具 = 4
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手強制飲酒中
+;-------------------------------------------------
+@EQUIP_COM583
+PRINTL ＜触手強制飲酒中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 10
+
+LOCAL = 250
+LOCAL:1 = 100
+
+;キス魔
+IF TALENT:キス魔
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+SOURCE:酒酔い += LOCAL
+SOURCE:鬼殺し += LOCAL:1
+
+;萃香の性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_583
+IF TEQUIP:口装着器具 == 4
+	PRINTFORML %CALLNAME:PLAYER%の命令を受けると、萃香は一瞬怪訝そうな表情を浮かべた
+	PRINTFORML しかし自分で酒が飲めると判断したのか、%CALLNAME:TARGET%の唇を一舐めした後離れていった
+	PRINTFORML 酒で顔を赤らめながら目を白黒にしている%CALLNAME:TARGET%に淫靡な笑みを投げかけると、萃香は触手を咥えて何かを呑む仕草をしながら肉の大口に身を潜ませ、そのまま何処かへと消えて行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に応じたのか、何処からともなく人一人が入れそうな太さの触手が現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと怪獣が口を開かせるように先端が二つに割れ、中から触手と一体化した萃香が酒の芳香をまき散らしながら裸身に瓢箪のようにくびれた触手を体に巻き付かせた姿で身を乗り出した
+	PRINTFORML 萃香は酔っ払っているのかどうかわからない感じで%CALLNAME:MASTER%に向かって一礼すると、
+	PRINT 身に巻きつかせている触手の先端を咥え、何か液体を口に含めたかと思うと、
+	IF TALENT:猫舌
+		PRINTFORML %CALLNAME:TARGET%に覆いかぶさるように顔を近づけ、そのまま口に自分の舌を滑り込ませ、ざらつく舌を自らの舌でそっと押さえつつ、口に含めた液体を流し込んだ…
+	ELSE
+		PRINTFORML 病的とも言えるほどの白い手で%CALLNAME:TARGET%のあごを優しく持ちあげ、%CALLNAME:TARGET%の口に自分の口を被せると、そのまま口に含めた液体を流し込んだ…
+	ENDIF
+	PRINTFORML 触手から分泌された酒らしきものの不思議な味と刺激、そして独特の臭みが%CALLNAME:TARGET%を酔わせ、理性をかき乱してゆく……
+ENDIF

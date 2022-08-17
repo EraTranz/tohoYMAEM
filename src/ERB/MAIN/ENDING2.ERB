@@ -1,0 +1,688 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;エンディング関連処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ここではバッドエンド(触手関連のエンドも含む)の表示処理を中心に行う
+;--------------------------------------------------
+;ゲームオーバー表示処理
+;--------------------------------------------------
+@BADEND_COMMON
+PRINTW  
+DRAWLINE
+PRINTL ------------------------------------GAMEOVER-----------------------------------
+DRAWLINE
+PRINTW  
+CALL BADGAME_CONTINUE
+
+;=============================================================================
+;バッドエンド用
+;=============================================================================
+;--------------------------------------------------
+;バッドエンド
+;--------------------------------------------------
+@BADEND_1
+DRAWLINE
+PRINTFORMW ―――{DAY}日経過―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 気がつくと%CALLNAME:MASTER%は自分の部屋にいた
+PRINTW 数ヶ月前、あの不思議な世界に迷い込む前に暮らしていた｢自分の部屋｣だ
+SIF ASSI >= 0
+	PRINTFORMW %CALLNAME:ASSI%を呼んでも返事はない
+SIF TARGET >= 0
+	PRINTFORMW %CALLNAME:TARGET%を探しても姿はみえない
+PRINTW まるで全てが幻だったかのように、部屋は以前のままの様子を保っていた……
+PRINTW  
+PRINTFORMW そうして%CALLNAME:MASTER%はいつもの日常に帰ってきた
+PRINTW 当たり前の毎日を過ごしながら時々思う
+PRINTW あの少女たちとの享楽の日々は本当に夢だったのだろうか、と
+PRINTW そんな思いに囚われるたび、ふと周囲の空間が歪んだように見える気がした……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-01 (Bad Ending)
+CALL SHOW_AFTERWARDS, 99
+QUIT
+
+;--------------------------------------------------
+;経営破綻エンド
+;--------------------------------------------------
+@BADEND_2
+PRINTW ―――お金が底を尽きました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 資金のやりくりに失敗した%CALLNAME:MASTER%は調教師稼業からの撤退を余儀なくされた
+PRINTW かつては嬌声が響いていた館からそっと去りゆく姿が
+PRINTFORMW %CALLNAME:MASTER%最後の目撃談となった……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は何処かへ去ってしまいました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-02 (ＫＡ破綻)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;自殺エンド
+;--------------------------------------------------
+@BADEND_3
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は消えました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-03 (自殺)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;陵辱転落エンド
+;--------------------------------------------------
+@BADEND_4
+PRINTW ―――調教師としての誇りを喪失しました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 奴隷だったはずの者どもに陵辱され続けた%CALLNAME:MASTER%は身も心も穢され続け、
+PRINTW ついに調教師としての誇りを投げ捨ててしまったのである。
+PRINTFORMW いまや、%CALLNAME:MASTER%はただの性奴隷として、快楽を貪り続けるだけの存在に堕ちてしまった。
+PRINTFORMW そんな、%CALLNAME:MASTER%は今日もまた、淫らな喘ぎ声を叫び続けるのであった……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は性奴隷にされてしまいました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-04 (陵辱転落エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;
+;--------------------------------------------------
+@BADEND_5
+DRAWLINE
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は消えました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-05 (エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;毒殺エンド
+;--------------------------------------------------
+@BADEND_6
+DRAWLINE
+PRINTFORMW ―――%CALLNAME:MASTER%の体力が尽きました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 毒で体力を消耗してしまった%CALLNAME:MASTER%は
+PRINTFORMW どさりと音を立て、仰向けに倒れてしまった
+PRINTFORM %CALLNAME:MASTER%は
+IF FLAG:5 == 0
+	PRINTW この不思議な世界に迷い込んでから一体どのくらい日が過ぎたのか
+	PRINTW 何故このような事が起きてしまったのか
+ELSE
+	PRINTW 何故このような真似を思いついたのか
+	PRINTFORMW どうして%CALLNAME:TARGET%を調教したいなんて思い至ったのか
+ENDIF
+PRINTW ……などの疑問を頭の中で幾度となく繰り返すが
+PRINTW 一つも解決を見出す事が出来ず、
+PRINTW まるで泡がはじけていくかの様に、
+PRINTW あるいはノイズが入るかの様に、
+PRINTFORMW %CALLNAME:MASTER%の意識が途切れ途切れになっていく……
+PRINTW  
+PRINTFORMW 視界が白くかすれていく中、最後に見えたのは――
+PRINTFORMW 憎悪、そして不安の表情を顔に浮かべ、%CALLNAME:MASTER%を見下ろしている
+PRINTFORMW %CALLNAME:TARGET%の姿だった……
+PRINTW  
+PRINTFORMW 微かな罪悪感を覚えつつ、やがて%CALLNAME:MASTER%の意識は薄まっていき――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は消えました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-06 (死因:毒殺)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;逆調教エンド
+;--------------------------------------------------
+@BADEND_7
+DRAWLINE
+PRINTFORMW ―――%CALLNAME:MASTER%の体力が尽きました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTW 命を奪うまではいかなかったものの、毒で体力を蝕まれ、
+PRINTFORMW %CALLNAME:MASTER%は崩れ落ちるように倒れてしまった
+PRINTFORMW %CALLNAME:MASTER%の視界が急速に白く霞がかっていく中、
+PRINTFORMW 恐る恐ると言った感じで近づいてくる%CALLNAME:TARGET%を見た……
+PRINTW  
+PRINTW ああ、なんだか眠くなってきた――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ――気が付くと%CALLNAME:MASTER%は後ろ手に縛られた状態で椅子の上に座っていた
+PRINTFORML あたりを見回すとそこには赤い蝋燭を手にした%CALLNAME:TARGET%が
+PRINTFORMW 壊れた笑みを浮かべ、%CALLNAME:MASTER%を見下ろしていた
+PRINTFORML これから始まる恐怖に%CALLNAME:MASTER%の顔が歪むところを見ると、
+PRINTFORMW %CALLNAME:TARGET%はうっとりとした目で%CALLNAME:MASTER%が着けている服に手を伸ばし――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は徹底的に調教されました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-07 (逆調教エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;主人毒弁当エンド
+;--------------------------------------------------
+@BADEND_8
+PRINTL 
+PRINTFORMW どうも%CALLNAME:MASTER%は%CALLNAME:TARGET%の弁当を食べてから体調がおかしくなったようだ
+PRINTFORML 仕方ないので、部屋で少し横になろう……と思って部屋に向かう途中で、
+PRINTFORMW 世界が歪んで%CALLNAME:MASTER%はその場で倒れ伏してしまった
+PRINTFORMW そうして%CALLNAME:MASTER%が立ち上がることは二度となかったという……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は消えました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-08 (主人毒弁当エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;主人刺殺エンド
+;--------------------------------------------------
+@BADEND_9, ARG
+PRINTL 
+PRINTFORMW %CALLNAME:ARG%が居なくなった部屋を掃除していると、来訪者を告げるノックの音が聞こえた
+PRINTFORML 警戒しつつ扉を開けると、全身を衝撃が襲った
+PRINTFORMW 胸に突き立ったナイフから、真っ赤な液体が流れ出している
+PRINTFORMW 倒れ伏した%CALLNAME:MASTER%からは、%CALLNAME:ARG%の表情を伺うことはできなかった……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は消えました★★★
+PRINTW 　　　　　　　　―― Ending No.-09 (主人刺殺エンド)
+
+;奴隷に刺されたイベント口上呼び出し
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 182
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;ヤンデレデッドエンド
+;--------------------------------------------------
+@BADEND_10
+PRINTL 
+PRINTW 誰かが近づいてくる……
+PRINTFORMW そう思った瞬間、%CALLNAME:MASTER%の視界は暗転した
+PRINTW 遠ざかる意識の中に聞きなれた声が聞こえてくる
+PRINTW ああ、この声は……
+PRINTW  
+PRINTFORMW その後、%CALLNAME:MASTER%の姿を見たものはいない……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は行方不明になりました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-10 (嫉妬の果てに)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;チョコレートエンド
+;--------------------------------------------------
+@BADEND_11
+PRINTL 
+PRINTFORMW 「ねぇ、%CALLNAME:MASTER%」
+PRINTFORMW 背後からかけられた声に反応する直前、%CALLNAME:MASTER%は頭部に強い衝撃を感じた……
+PRINTFORMW 状況を理解できないまま、%CALLNAME:MASTER%はその後も数発頭部を殴打される感覚に見舞われる
+PRINTFORMW 意識が薄らいでいく中、%CALLNAME:MASTER%はふと%CALLNAME:TARGET%の声を聞こえた気がした
+PRINTW  
+PRINTFORMW なんの偶然か、一瞬だけ%CALLNAME:MASTER%の視界が晴れた
+PRINTFORMW そこで見た光景は手で顔を覆って泣きじゃくっている%CALLNAME:TARGET%の姿だった……
+PRINTFORMW やがて鈍痛を伴いながらぼやけていく視界を眺めているうちに%CALLNAME:MASTER%は思った
+PRINTW あの時素直にチョコレートを食べていればよかった、と……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は消えました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-11 (届かなかった思い)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;監禁致死エンド
+;--------------------------------------------------
+@BADEND_12
+TARGET = TFLAG:900
+DRAWLINE
+PRINTW ―――監禁致死エンド条件達成―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 地下牢の中に閉じ込めていた%CALLNAME:TARGET%は死んでしまった
+PRINTFORMW そのことを悔いた%CALLNAME:MASTER%は調教師を続けていく自信を喪失したのである
+PRINTW  
+PRINTFORMW 後日、屋敷から逃げるように立ち去る%CALLNAME:MASTER%の姿が目撃されたという……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は逃亡しました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-12 (監禁致死エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;娼館経営破綻エンド Part.1
+;--------------------------------------------------
+@BADEND_13
+DRAWLINE
+PRINTW ―――娼館経営破綻エンド Part.1 条件達成―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 資金のやりくりに失敗した%CALLNAME:MASTER%は調教師、及び、娼館経営稼業からの撤退を余儀なくされた
+PRINTW かつては嬌声が響いていた館からそっと去りゆく姿が
+PRINTFORMW %CALLNAME:MASTER%最後の目撃談となった……
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は何処かへ去ってしまいました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-13 (娼館経営破綻エンド Part.1)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;娼館経営破綻エンド Part.2
+;--------------------------------------------------
+@BADEND_14
+DRAWLINE
+PRINTW ―――娼館経営破綻エンド Part.2 条件達成―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW 【訃報】「%CALLNAME:MASTER%館」経営者の%CALLNAME:MASTER%、自殺
+PRINTFORMW 　かつて、ホテル稼業で時の人となった%CALLNAME:MASTER%が、
+PRINTFORMW {DAY:5}月{DAY:6}日未明、自身の経営するホテルの一室で首を吊った状態で発見された。
+PRINTFORMW 白狼天狗自警団の調べによりますと、第一発見者は、%CALLNAME:(TFLAG:99)%で、
+PRINTFORMW 報告書を提出しようと、%CALLNAME:MASTER%のいる部屋に入ったところ、既に事切れていた、とのことだった。
+PRINTFORMW 　%CALLNAME:MASTER%のホテルの経営が芳しくなく、行き詰ったことによる自殺、と、大天狗検察団は判断した模様。
+PRINTFORMW 経営者を失った「%CALLNAME:MASTER%館」の次の経営者が見つかっておらず、じきに倒産するとのことである。
+PRINTW 	・
+PRINTW 	・
+PRINTW 	・
+PRINTFORMW 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　文々。新聞　{DAY:5}月{DAY:6 + 1}日　朝刊より抜粋
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTL 
+PRINTL 
+PRINTW 　　　　　　　　―― Ending No.-13 (娼館経営破綻エンド Part.2)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;ロードするか終了するか…
+;--------------------------------------------------
+@BADGAME_CONTINUE
+IF FLAG:8669 & 2
+	PRINTL 次からはくれぐれも気を付けてくださいね？
+	PRINTL [0] タイトルに戻る
+	PRINTL [1] ゲームを終了します
+	PRINTL 
+	$INPUT_LOOP_4096
+	INPUT
+	IF RESULT == 0
+		RESETDATA
+		JUMP SYSTEM_TITLE
+	ELSEIF RESULT == 1
+		LOADGAME
+		PRINTW お疲れ様でした。ゲームを終了します
+		QUIT
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP_4096
+	ENDIF
+ELSE
+	PRINTL データをロードしてやり直しますか？
+	PRINTLC [0]いや、もうやめる。
+	PRINTLC [1]データをロードして続ける。
+	PRINTL 
+	$INPUT_LOOP
+	INPUT
+	IF RESULT == 0
+		PRINTW お疲れ様でした。ゲームを終了します
+	ELSEIF RESULT == 1
+		LOADGAME
+		PRINTW データをロードしなかったので終了します
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE
+		GOTO INPUT_LOOP
+	ENDIF
+	QUIT
+ENDIF
+
+;=============================================================================
+;特殊バッドエンド用
+;=============================================================================
+;エンディング後ゲームを続けることはできるが、周回プレイは不可能
+;--------------------------------------------------
+;相互調教エンド判定
+;--------------------------------------------------
+@JUDGE_WRONGEND_1
+LOCAL:1 = 0
+FOR LOCAL, 0, CHARANUM
+	;失踪キャラは除外
+	SIF CFLAG:LOCAL:4 == 1 || CFLAG:LOCAL:4 == 8192
+		CONTINUE
+	;相互調教エンド用助手可反発3人数カウント
+	SIF CFLAG:LOCAL:1 == 2 && MARK:LOCAL:反発刻印 == 3
+		LOCAL:1 += 1
+NEXT
+;相互調教エンド
+SIF LOCAL:1 >= 10
+	JUMP WRONGEND_1
+;バッドエンド
+CALL BADEND_1
+
+;--------------------------------------------------
+;相互調教エンド
+;--------------------------------------------------
+@WRONGEND_1
+LOCAL = MAX(CHARANUM - 1, 1)
+PRINTFORMW ―――{DAY}日経過―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW %CALLNAME:MASTER%は一仕事終えた充足感に包まれながら床に就こうとした
+PRINTW そのとき、先ほどまで調教していた奴隷たちが大挙して部屋に押し寄せてきた
+PRINTFORMW %CALLNAME:MASTER%は何事かと問いただしたが、誰の返事もない
+PRINTW  
+PRINTFORMW 突如、%CALLNAME:MASTER%の腹に拳が打ち込まれた
+PRINTFORMW そのまま抵抗することもできないまま、%CALLNAME:MASTER%は手足を拘束され自由を奪われた
+EXP:MASTER:緊縛経験 += LOCAL
+PRINTW  
+PRINTW 奴隷の逆襲にあうのは初めてではなかったが、今回は様子がおかしい……
+PRINTW 今までは単独だったのに、今回に限って何故大所帯なのだろう
+PRINTW 不振に思い問いただすと、いきなり一人が「愛してる」と呟いた
+PRINTW そして、申し合わせたかのように一斉に動き始めた
+PRINTFORMW ある者は「好きです」と言いながら%CALLNAME:MASTER%の身体を鞭で打ちすえ
+PRINTFORMW ある者は「ずっと一緒に暮らしましょう」と呟きながら%CALLNAME:MASTER%の腹部に拳を打ち込んだ
+EXP:MASTER:苦痛快楽経験 += LOCAL*2
+PRINTW 交代で大量の媚薬を次々と口移しで飲まされ
+EXP:MASTER:薬物経験 += LOCAL*2
+;性別チェック。ふたなりはスルー
+IF TALENT:MASTER:オトコ
+	PRINTW 陰茎を扱かれ、射精したにも関わらず刺激を与えられ続けた
+	EXP:MASTER:絶頂経験 += LOCAL
+	EXP:MASTER:射精経験 += LOCAL
+	IF EXP:MASTER:触手経験
+		PRINTW ふと、拘束が緩くなる
+		PRINTW が、次の瞬間どこからともなく現れた異形の触手に全身を嬲られる
+		PRINTW 触手が全身を締め上げ、穴という穴を犯し、陰茎を扱き続け
+		EXP:MASTER:Ａ経験 += LOCAL*2
+		CFLAG:MASTER:11 |= 2
+		EXP:MASTER:絶頂経験 += LOCAL
+		EXP:MASTER:射精経験 += LOCAL
+	ELSE
+		PRINTW それらが永遠とも思える程に続き
+	ENDIF
+ELSE
+	PRINTW バイブ、拳、酒瓶などあらゆる物を挿入された
+	EXP:MASTER:Ｖ経験 += LOCAL*2
+	TALENT:MASTER:処女 = 0
+	CFLAG:MASTER:11 |= 1
+	EXP:MASTER:Ａ経験 += LOCAL*2
+	CFLAG:MASTER:11 |= 2
+	EXP:MASTER:Ｖ拡張経験 += LOCAL
+	EXP:MASTER:Ａ拡張経験 += LOCAL
+	IF EXP:MASTER:触手経験
+		PRINTW ふと、拘束が緩くなる
+		PRINTW が、次の瞬間どこからともなく現れた異形の触手に全身を嬲られる
+		PRINTW 触手が全身を締め上げ、穴という穴を犯し
+		EXP:MASTER:Ｖ経験 += LOCAL*2
+		EXP:MASTER:Ａ経験 += LOCAL*2
+		IF TALENT:MASTER:ふたなり
+			EXP:MASTER:絶頂経験 += LOCAL
+			EXP:MASTER:射精経験 += LOCAL
+		ENDIF
+	ELSE
+		PRINTW それらが永遠とも思える程に続き
+	ENDIF
+ENDIF
+PRINTFORMW 一際大きな絶頂の後、%CALLNAME:MASTER%の意識は遠のいていった……
+PRINTW  
+PRINTFORMW やがて意識を取り戻した%CALLNAME:MASTER%は決心した
+PRINTW 今、ここにいる奴隷たちは売却しない
+PRINTW 後悔し、泣き叫び、許しを乞いたくなるまで
+PRINTW 『愛し合い続ける』と……
+PRINTW  
+PRINTW やがて夜が明け日が空高く昇ったが、屋敷の中は暗かった
+PRINTW 今日もまた、深く暗い幻想の宴が始まる……
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.Ⅰ (相互調教エンド)
+CALL WRONGGAME_CONTINUE
+
+;--------------------------------------------------
+;ゲーム続行処理
+;--------------------------------------------------
+@WRONGGAME_CONTINUE
+PRINTL ゲームを続けますか？
+PRINTLC [0]終わる
+PRINTLC [1]続ける
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	PRINTW お疲れ様でした。ゲームを終了します
+	QUIT
+ELSEIF RESULT == 1
+	FLAG:5 |= 1
+	FLAG:5 |= 2
+	FLAG:5 |= 4
+	FLAG:575 = 0
+	FLAG:576 = 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+;=============================================================================
+;触手系エンド用
+;=============================================================================
+;触手ハーレムエンドはキャラ触手が出そろっていないので未実装
+@ENDING_TENTACLE
+;触手使役Lv3未満だと取り込まれエンド
+IF ABL:MASTER:触手使役 < 3
+	CALL ENDING_TENTACLE_1
+ELSE
+	;主人の触手使役がLv4以上([オトコ]の場合はLv3以上)でキャラ触手を生成していると触手姫ハーレムの判定へ
+	SIF ABL:MASTER:触手使役 >= (4 - TALENT:MASTER:オトコ) && FLAG:97 > 0 && FLAG:98 > 0
+		CALL ENDING_COUNT_CHARATENTACLE
+	;キャラ触手を10人以上開発していると触手姫エンドへ
+	IF TFLAG:0 >= 10
+		CALL ENDING_4
+	ELSE
+		TFLAG:0 = 0
+		;主人の触手使役がLv4以上([オトコ]の場合はLv3以上)で、この周回で30人以上捧げていると触手開発判定へ
+		SIF ABL:MASTER:触手使役 >= (4 - TALENT:MASTER:オトコ) && FLAG:33 >= 30
+			CALL ENDING_COUNT_SPECIALTENTACLE
+		;キャラ触手以外の触手を15種開発していると触手使いエンドへ
+		IF TFLAG:0 >= 15
+			CALL ENDING_3
+		;いずれの条件を満たしていないと緊縛されて放置エンド
+		ELSE
+			CALL ENDING_TENTACLE_2
+		ENDIF
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;エンディングにおけるキャラ触手数の判定
+;--------------------------------------------------
+@ENDING_COUNT_CHARATENTACLE
+TFLAG:0 = CHARATENTACLE_CHECK()
+;キャラ触手が10人(種?)いないときは触手ハーレムにならず、バッドエンド行き
+SIF TFLAG:0 < 10
+	RETURN 0
+
+;ノーマル・ハーレムエンド合計到達回数カウント
+SIF FLAG:10004 == 0
+	FLAG:10000 += 1
+PRINTW ―――触手ハーレム条件達成―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+
+;--------------------------------------------------
+;エンディングにおけるキャラ触手以外の触手能力数の判定
+;--------------------------------------------------
+@ENDING_COUNT_SPECIALTENTACLE
+TFLAG:0 = SPECIALTENTACLE_CHECK()
+;開発した触手が10種を満たないときは触手使いエンドにならず、バッドエンド行き
+SIF TFLAG:0 < 10
+	RETURN 0
+
+;ノーマル・ハーレムエンド合計到達回数カウント
+SIF FLAG:10004 == 0
+	FLAG:10000 += 1
+PRINTW ―――特殊触手エンド条件達成―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+
+;--------------------------------------------------
+;キャラ触手数の判定
+;--------------------------------------------------
+;キャラ触手の数を返す
+@CHARATENTACLE_CHECK
+#FUNCTION
+LOCAL:1 = 0
+FOR LOCAL, 0, 20
+	LOCAL:1 += GETBIT(FLAG:98, LOCAL)
+NEXT
+RETURNF LOCAL:1
+
+;--------------------------------------------------
+;キャラ触手以外の触手能力数の判定
+;--------------------------------------------------
+;触手能力の数を返す
+@SPECIALTENTACLE_CHECK
+#FUNCTION
+LOCAL:1 = 0
+FOR LOCAL, 0, 20
+	LOCAL:1 += GETBIT(FLAG:75, LOCAL)
+NEXT
+SIF DA:1000:15
+	LOCAL:1 += 1
+RETURNF LOCAL:1
+
+;--------------------------------------------------
+;触手生贄エンド
+;--------------------------------------------------
+@ENDING_TENTACLE_1
+DRAWLINE
+PRINTFORMW ―――触手に捧げた人数:{FLAG:33}人―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW %CALLNAME:MASTER%に使役されていた触手は制御を離れ、暴走を始めた
+PRINTFORMW 自由を手に入れたことに歓喜しているのか、触手たちはかつての主人である%CALLNAME:MASTER%の元へと殺到した…
+PRINTW  
+PRINTW  
+PRINTW  
+PRINTFORMW 意識を取り戻した%CALLNAME:MASTER%はすぐに自分の置かれた状況を理解できなかった
+PRINTW 触手の壁に囲まれた中、両腕は高々と持ち上げられ、両足は大きく広げられた状態で固定されていた
+PRINTFORM ある触手は%CALLNAME:MASTER%の
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTW ペニスに取り付き、精液を吸い上げているような動作を繰り返している
+ELSE
+	PRINTW ヴァギナの奥深くに入り込み、下腹部に形容しがたい快感を与え続けている
+ENDIF
+PRINTFORMW 別の触手は%CALLNAME:MASTER%のアヌスに潜り込み、後の穴の調教と排泄物の処理を同時にこなしていた
+PRINTFORMW 触手は時々%CALLNAME:MASTER%の口をこじ開けると栄養が詰まった体液を流し込み、
+PRINTFORMW その後性感帯を刺激して%CALLNAME:MASTER%からエネルギーを吸収するサイクルを続けている…
+PRINTW 交互に押し寄せる快感と脱力感の中、ふと今まで生贄にされた者達の末路が今の自分を重なり合ったが、
+PRINTFORMW 次の瞬間、%CALLNAME:MASTER%の思考は白い世界の中へと沈み、そのまま帰ることは無かった……
+PRINTFORMW ―――%CALLNAME:MASTER%は触手の糧にされました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%は触手の虜になりました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-1τ (触手生贄エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;触手暴走エンド
+;--------------------------------------------------
+@ENDING_TENTACLE_2
+DRAWLINE
+PRINTFORMW ―――触手に捧げた人数:{FLAG:33}人―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW %CALLNAME:MASTER%に使役されていた触手は制御を離れ、暴走を始めた
+PRINTFORMW 自由を手に入れたことに歓喜しているのか、触手たちはかつての主人である%CALLNAME:MASTER%の元へと殺到した…
+PRINTW  
+PRINTW  
+PRINTW  
+PRINTFORMW 気がつくと%CALLNAME:MASTER%の周りは触手で埋め尽くされていた
+PRINTFORMW 暴走した触手はまたたく間に%CALLNAME:MASTER%の館を住民諸共飲み込み、
+PRINTW 獲物に快楽を与え、エネルギーを搾取する行動を繰り返しているようだ
+SIF TARGET >= 0
+	PRINTFORMW 時折肉の壁の向こうから聞こえる嬌声は触手に捕まった%CALLNAME:TARGET%のものだろう…
+PRINTFORMW 幸か不幸か、触手はかつての主人だった%CALLNAME:MASTER%を襲う気配を一向に見せない
+PRINTW  
+PRINTW 体を絡め取られ、満足に身動きをとることができないまま一体どれくらいの時間が過ぎたのか
+PRINTFORMW 無限ともいえる退屈に耐えかね、%CALLNAME:MASTER%は考えることすらやめてしまった……
+PRINTFORMW ―――%CALLNAME:MASTER%の館は触手によって埋め尽くされました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ★★★%CALLNAME:MASTER%の心は壊れました★★★
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.-2τ (触手暴走エンド)
+CALL BADEND_COMMON
+
+;--------------------------------------------------
+;触手姫エンドキャラ分岐テキスト
+;--------------------------------------------------
+@ENDING_4_TEXT
+VARSET LOCALS, ""
+SPLIT "さとり ,にとり ,幽々子 ,萃香 ,アリス ,雛 ,文 ,パルスィ ,メディスン ,パチュリー ,大妖精 ,チルノ ,ナズーリン ,映姫 ,静葉 ,穣子 ,諏訪子 ",",",LOCALS
+FOR LOCAL, 0,17
+	SIF GETBIT(FLAG:97, LOCAL) && GETBIT(FLAG:98, LOCAL)
+		PRINTFORM %LOCALS:LOCAL%
+NEXT
+PRINTW ……
+PRINTW かつて幻想郷の中でも名の知れた少女達であったそれらは
+PRINTW 心を折られ、快楽を教え込まれ、挙句の果てに触手に取り込まれた者のなれの果てなのか
+PRINTW 彼女達の意識は触手のそれと解けて混ざりあい、
+PRINTFORMW 今では%CALLNAME:MASTER%を愉しませることが全てと化していた……
+PRINTW  
+PRINTFORMW %CALLNAME:MASTER%が指示しなくても、彼女達は%CALLNAME:MASTER%への奉仕を怠ることは無い
+IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+	PRINTFORMW 彼女達は自らの手や胸、口を用いて%CALLNAME:MASTER%の肉棒に快楽を与え、
+	PRINTFORMW あるいは膣内やアナルで%CALLNAME:MASTER%の精液を搾り出す
+	PRINTW  
+	PRINTFORMW 時には寝そべっている%CALLNAME:MASTER%に跨っては肉棒を蜜壷で飲み込み、
+ELSE
+	PRINTFORMW 触手と半ば同化したの少女達は跪き、%CALLNAME:MASTER%の艶やかな陰核をその舌できれいにし、
+	PRINTFORMW あるいは主の\@(TALENT:MASTER:絶壁) ? 乳首を指の腹で押しつぶしたり、指先で軽く引っ掻き、弄り倒し # 乳房を病的とも言えるほど白く、繊細な手で揉みしだい\@ている
+	PRINTFORMW 時には寝そべっている%CALLNAME:MASTER%の顔に跨っては蜜壷から溢れる淫液を捧げ、
+ENDIF
+PRINTW 時には唇を重ね、主と舌を絡ませ唾液を交換する
+PRINTFORMW ぐっしょりと股間を濡らしては、%CALLNAME:MASTER%を求め、
+PRINTW また少女同士で秘所をすり合わせ、乳を舐め合い、指を菊門に埋めて嬌声を響かせる
+PRINTW  
+PRINTW 同化した触手に穴という穴を犯しつくされ、少女達の虚ろな瞳で歓喜の笑みを浮かべる
+PRINTW 瑞々しい肌も白濁で汚されては舐めとられ、その身からは常に淫臭が放たれるまでに至る
+PRINTW  
+PRINTW 触手に囚われ、逃げることも死ぬことも許されぬ少女達は、
+PRINTFORMW その艶めかしい身体で幾度となく%CALLNAME:MASTER%とまぐわいながら、
+PRINTW 快楽に溺れ、醒めることのない淫夢を見続けるのであった……

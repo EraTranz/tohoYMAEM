@@ -1,0 +1,1783 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;21をキャラ番号に置換して使用してください(霊夢なら1、蓮子なら49、魅魔なら100)。
+;
+;このファイルでは0～99番のコマンドの口上用関数が置いてあります。
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;藍口上
+;==============================================================
+;========================================================
+;コマンド口上前の共通関数
+;特定の条件下でコマンド口上を表示させないようにする場合はRETURN 1
+;1以外を返した場合はコマンド口上は表示される
+;========================================================
+@KOJO_1021_TRAIN_MESSAGE_S_BEFORE
+;眠ってる場合は戻る
+SIF EQUIP:睡眠薬
+	RETURN 1
+;口枷がある場合は戻る
+SIF TEQUIP:口装着器具 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SELECTCOM != 583)
+	RETURN 1
+;時止め中は戻る
+SIF TEQUIP:時間止め && SELECTCOM != 418
+	RETURN 1
+;失神回復時は戻る
+SIF TFLAG:898 == 1
+	RETURN 1
+;精神崩壊の場合は戻る
+;SIF TALENT:精神崩壊
+;	RETURN 1
+
+;========================================================
+;コマンド口上
+;CFLAG:9000～9099までの100個を使用して、
+;選んだコマンドを対象に初めて使ったかどうかを判別できる
+;「IF TFLAG:95 == 1」で初回か2回目以降なのかで表示内容を変えることが出来る
+;========================================================
+;-------------------------------------------------
+;愛撫
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_0
+IF RAN == 1
+	IF TALENT:恋慕
+		;おむつプレイ
+		IF TEQUIP:オムツプレイ
+			IF TALENT:おもらし癖
+				PRINTW 「あ、あっ、おむつ、安心して……おしっこ漏れちゃ……あっ」
+				PRINTW 「おしっこの穴、そ、そこ……もっと、もっともっと撫でて……」
+			ELSEIF !TALENT:オトコ
+				PRINTW 「おむつ越しじゃ……ちょっと分かりにくい、かな？」
+				PRINTW 「おむつの中は、私の愛液でいっぱいなんですよ？」
+			ENDIF
+			SIF PENIS(TARGET)
+				PRINTW 紙おむつを身につける赤子のような姿とは裏腹に、逞しく成長したペニスが股間を盛り上げている……
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTW 「気持ちいいです……」
+					PRINTW 「もっと、私を触って……私を感じて……」
+					PRINTL 
+					PRINTL 
+					PRINTW 「大好きです……」 
+				CASE 1
+					PRINTW 「ふぁ……ご主人様の手、大きくて、温かい……」
+					PRINTW 「式としてこんなの、贅沢で……嬉しいです」
+				CASE 2
+					PRINTW 「優しくされるのが、愛されているようで」
+					PRINTW 「橙にも、紫様にも、一緒に感じさせてあげたいくらい」
+					PRINTW 「でも、ご主人様は、私だけのご主人様ですからね」
+			ENDSELECT
+			IF PENIS(TARGET)
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTW 藍の胸、腹、そして竿を優しくなぞる
+						PRINTW 反り返ったペニスはぴくんと跳ねて、あなたの手に先走りを擦り付けた
+					CASE 1
+						PRINTW 藍のペニスは硬く、肉穴で包めばすぐにでも射精してしまいそうだ
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ELSEIF MARK:屈服刻印 == 3
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「んっ……ご主人様の手……」
+				PRINTW 「なんか私、気持ちよくなってきちゃいました…」
+			CASE 1
+				PRINTW 「もっと、触ってもいいんですよ？」
+				PRINTW 「私は、ご主人様の式ですから」
+			CASE 2
+				PRINTW 「わ、私は、ご主人様の体、触らなくてもいいんですか……？」
+				PRINTW 「私も、ちょっとは……触りたい、かな？」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「ううぅ……」
+				PRINTW 「そんなところ、触っちゃ、ぁ……」
+			CASE 1
+				PRINTW 「だ、だめですよぉ、ご主人様……こんなの……」
+				PRINTW 「恥ずかしいです……」
+			CASE 2
+				PRINTW 「ご主人様が、私の体を……さ、触って」
+				PRINTW 「女の体として、扱われるなんて……」
+		ENDSELECT
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTW 「どうだ……愛する主人の体は……」
+				PRINTW 「私だって……緊張しているよ……」
+			CASE 1
+				PRINTW 「ふふん、いやらしい指だ」
+				PRINTW 「なかなかうまくできてるじゃないか」
+			CASE 2
+				PRINTW 「もっと、下を責めてくれ……はっ……うっ、ん……」
+				PRINTW 「ふ……ふふっ、便利な式になったものだな」
+			CASE 3
+				PRINTW 後ろの尻尾を優しく撫でると、藍は顔を赤く染めた
+				PRINTW 「それと一緒に触られたら……尻尾が快感覚えちゃう、かも……」
+		ENDSELECT
+		IF PENIS(TARGET)
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTW 首筋、胸、腹と指を這わせ、下半身のペニスに触れる
+					PRINTW 膨らんだ竿をゆっくりとなぞると、亀頭がじわりと濡れていた
+				CASE 1
+					IF TALENT:ふたなり
+						PRINTW 男女の性器を兼ね添える股間の、男根の付け根、女陰の入り口を愛撫する
+						PRINTW 裏筋を流れ落ちる先走りが、膣液と混ざりあなたの指に絡みついた
+					ELSEIF TALENT:オトコ
+						PRINTW 亀頭を撫で、陰嚢を優しく揉みしだき、後ろの穴に指が触れると、可愛らしい声と共に陰嚢がきゅっと締まった
+					ENDIF
+				CASE 2
+					PRINTW 堂々と勃起する藍の陰茎を撫でまわし、悪戯のように先端を藍の腹に重ねる
+					PRINTW 鈴口から垂れる先走りが藍の臍に流れ込み、それを塗りこむようにあなたは腹を撫でた
+			ENDSELECT
+		ENDIF
+	ELSEIF MARK:屈服刻印 == 3
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「そんなに触られたら……」
+				PRINTW 「少なからず、感じて……しまうじゃないか……」
+			CASE 1
+				PRINTW 「くぅぅ……」
+				PRINTW 「妙に巧いのが逆に気に食わないっ」
+				PRINTW 「私が……責めたかったのに……」
+			CASE 2
+				PRINTW 「はぁ、はぁ……そこは、ダメだってば……」
+				PRINTW 「私が耐えられなくなってしまう……」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「そんなにべたべた触るなっ！」
+			CASE 1
+				PRINTW 「あまり調子に乗るんじゃない……」
+			CASE 2
+				PRINTW 「クソが……女を求めるのは千年早い」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;クンニ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_1
+IF TALENT:パイパン
+	SELECTCASE RAND:3
+		CASE 0
+			PRINTW 毛が落ちて幼いままに戻った陰唇が、あなたの目の前で素直に快楽を訴えている
+		CASE 1
+			PRINTW 貞操を隠す陰毛を失った今、縦に割れた膣口はあなたの舌を容易く受け入れた
+		CASE 2
+			PRINTW 不思議なことに、毛を失い露わになった藍の秘部は、使い込まれたとは思えないように初々しく整っている
+			PRINTW そこに舌を這わせるあなたは、まるで幼女のような綺麗な股間に性的な興奮を覚えた
+	ENDSELECT
+ELSE
+	SELECTCASE RAND:2
+		CASE 0
+			PRINTW 陰毛に覆われた藍の秘部から発する、牝と獣の蒸れた臭いがあなたの鼻を掠める
+		CASE 1
+			PRINTW 体液に濡れた陰毛も舐めるように、あなたは舌での愛撫を続けた
+	ENDSELECT
+ENDIF
+
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:6
+			CASE 0
+				PRINTW 「ふあぁぁ……」
+				PRINTW 「ご主人様が動物みたいに……私のおまんこをぺろぺろって…」
+			CASE 1
+				PRINTW 「ど、どうですか？　私の、あ、愛液の……味」
+				PRINTW 「こんなに溢れ出すの、初めてです」
+			CASE 2
+				PRINTW 「はふぅ……ご主人様の舌……あったかい……」
+				PRINTW 「だけど、その……臭くないですか……？」
+				PRINTW 「私、ケモノだから……」
+			CASE 3
+				PRINTW 「私、気持ちよくなりすぎて……」
+				PRINTW 「だから、ご主人様も一緒に、気持ちよくなりませんか？」
+				PRINTW 「その……シックスナインで」
+			CASE 4
+				PRINTW 「熱い……全部が、熱い……」
+				PRINTW 「こんなにも無防備に、牝穴を晒して……発情しすぎて、ご主人様の唾液だけで孕んじゃいそう……」
+			CASE 5
+				PRINTW 「舌が……舌が……ああ……」
+				PRINTW 「私の中を抉って、ダメにしてくる……」
+		ENDSELECT
+	ELSEIF MARK:屈服刻印 == 3
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTW 「ご主人様、だめですってば……」
+				PRINTW 「私のなんて……汚いですし……ご主人様に失礼です……」
+			CASE 1
+				PRINTW 「んっ…くぅ……」
+				PRINTW 「はぁん、もうだめですぅ、声漏れちゃいますぅ…」
+			CASE 2
+				PRINTW 「はっ、はっ」
+				PRINTW 「ご主人様ぁ……」
+			CASE 3
+				PRINTW 「ご主人様は、何を考えてやってるんです……？」
+				PRINTW 「私の頭は、もうご主人様でいっぱいです……もう……」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「んっ、ご主人様……」
+				PRINTW 「だめですって、こんなの……」
+			CASE 1
+				PRINTW 「どうしてそんなに舐めるんですか……」
+				PRINTW 「やぁ……吸っちゃだめ……」
+			CASE 2
+				PRINTW 「ご主人様にされるなんて、想像もしなかった……」
+		ENDSELECT
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:6
+			CASE 0
+				PRINTW 「ふふふ、まるで犬だな」
+				PRINTW 「そんなに私のここが美味しいか…くぅ…」
+			CASE 1
+				PRINTW 「ああ、すごい、こんなにぴちゃぴちゃいってる」
+				PRINTW 「ほら、存分に舐めるがいいさ。枯れるまでな」
+			CASE 2
+				PRINTW 「ああ……溢れそうだ」
+				PRINTW 「快楽も……うぐぅ……声も、汁も……」
+			CASE 3
+				PRINTW 「ほぅら、お前の大好きな私の愛液だぞ」
+				PRINTW 「ひゃん！　しゃぶりつくの、早すぎだ！」
+				PRINTW 「この犬め。そんなに狐の秘部が好きか」
+			CASE 4
+				PRINTW 「牡を……牡の種を欲しがってるんだ、この淫乱な穴は」
+				PRINTW 「栄えれば何だっていいわけじゃない……お前の、お前のが欲しいんだ」
+			CASE 5
+				PRINTW 「息がかかる……それだけで、びりびりとおかしくなりそうだ……」
+				PRINTW 「その口で、目一杯犯して欲しい」
+		ENDSELECT
+	ELSEIF MARK:屈服刻印 == 3
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTW 「私のを舐めるなんてずいぶん物好きだな」
+				PRINTW 「式にこんなことさせるなんて……ダメだな、私」
+			CASE 1
+				PRINTW 「な、なんだ、そんなにしゃぶりついて……」
+				PRINTW 「ここが美味しい？ バカを言え」
+			CASE 2
+				PRINTW 「ぅぅ、そんなにぺろぺろ舐めるなぁ……」
+				PRINTW 「恥ずかしいだろ……」
+			CASE 3
+				PRINTW 「今その気になれば頭をかち割ることもできそうだが……」
+				PRINTW 「う……ふ、ふん、せっかくだからもう少し楽しませてやる」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「おい、やめないか」
+				PRINTW 「お互い汚いだけだろう……」
+			CASE 1
+				PRINTW 「だからやめろってぇ……」
+				PRINTW 「私が嫌なんだ」
+			CASE 2
+				PRINTW 「今のお前は、とても見ていられん」
+				PRINTW 「不誠実で無様な姿は私とて見たくないからな」
+		ENDSELECT
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;アナル愛撫
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_2
+IF RAN == 1
+	IF TALENT:恋慕
+;		SELECTCASE TEQUIP:Ａ系装着器具
+;			;アナルバイブ
+;			CASE 1
+;				PRINTW 
+;			;ローター
+;			CASE 3
+;			;電極
+;			CASE 4
+;			;アナルビーズ
+;			CASE 5
+;			;浣腸
+;			CASE 7
+;			;その他
+;			CASEELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「ふぁ、お尻の穴…犯されちゃいますぅ…」
+				PRINTFORMW 「お腹……圧迫されてるよぉ……」
+			CASE 1
+				PRINTFORMW 「んあぁ、中、掻き回されえてぇ…」
+				PRINTFORMW 「気持ちいいよぉ…」
+			CASE 2
+				PRINTFORMW 「おしり……ぬぷぬぷしてるよぉ……」
+				PRINTFORMW 「きゅん、ってしちゃう……」
+			;ボツ
+				;PRINTFORMW 「ほぐされてる……括約筋緩んじゃうよぉ……」
+				;PRINTFORMW 「おむつ性活になっちゃう……」
+		ENDSELECT
+	ELSE
+		IF RAND:2 == 0
+			PRINTW 「お、お尻の穴なんて…普通じゃないですよぉ…」
+		ELSE
+			PRINTW 「気持ち悪いよぉ……」
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF RAND:2 == 0
+			PRINTFORMW 「ふぁ、お尻の穴…指、入ってきてぇ…」
+		ELSE
+			PRINTFORMW 「んあぁ、中、掻き回されえてぇ…」
+			PRINTFORMW 「絞めつけちゃう…っ」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTW 「だから違うっ…ぐぅぅ…」
+		ELSE
+			PRINTW 「お前は何をやってるんだ……そんなところ触るもんじゃ……」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 0
+;-------------------------------------------------
+;胸愛撫
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_3
+IF RAN == 1
+	IF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「あひゅ……おっぱい、気持ちいい……」
+			PRINTFORMW 「ご主人様……上手……」
+			PRINTFORMW 「相性……良いのかなぁ……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「あ…気持ちいい…」
+			PRINTFORMW 「ご主人様の大きな手で、私の胸が包まれて…」
+		ELSE
+			PRINTFORMW 「私の胸、どうですか？」
+			PRINTFORMW 「聞いてばかりなのも、おかしいですけど…」
+			PRINTFORMW 「でも、胸には自信があるんです」
+			PRINTFORMW 「ご主人様…私の胸を、もっと乱暴に…」
+		ENDIF
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「んっ……ふー……ふー……」
+			PRINTFORMW 「もう少し……優しくしてください……」
+			PRINTFORMW 「そう……うん……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「胸、ですか」
+			PRINTFORMW 「そんなに揉みたいなら、どうぞ…」
+			PRINTFORMW 「私も、まんざらでもありませんから」
+		ELSE
+			PRINTFORMW 「ぁん、くすぐったいような、気持いいような…」
+			PRINTFORMW 「少し、緊張してきました」
+			PRINTFORMW 「分かります？　私の鼓動…」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「あ、あんまり強く触らないでください、ね……？」
+			PRINTFORMW 「ちょっと、びっくりしちゃうので……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「んっ…………っ……」
+			PRINTFORMW 「あ……声、抑えなくてもいいんですか……？」
+		ELSE
+			PRINTFORMW 「こうやってじゃれあうなんて……いつ以来ですかね」
+			PRINTFORMW 「私も、少しは成長しましたか？」
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF RAND:4 == 0
+			PRINTFORMW 「ひぅ……な、なんで………………嬉しい」
+			PRINTFORMW 「好きな人に触ってもらえることが……好きな人に求められることが……」
+			PRINTFORMW 「嬉しい……」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「手……暖かいな……」
+			PRINTFORMW 「安心する……」
+			PRINTFORMW 「ねぇ、もっと……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「ふふっ……ど、どうだ……？」
+			PRINTFORMW 「あ、あまり強く揉まないでくれ……緊張してるんだ……」
+			PRINTFORMW 「胸には、少し自信があるしな……」
+		ELSE
+			PRINTFORMW 「はぅ！　乳首……いいよぉ……！」
+			PRINTFORMW 「痺れちゃう……」
+		ENDIF
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「うんっ……」
+			PRINTFORMW 「主人の胸を撫でるのは……どういう気分だ？」
+			PRINTFORMW 「恋しい？　だったら、ちょっと嬉しいな……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「胸、か」
+			PRINTFORMW 「まぁ、たしかに嫌だがな」
+			PRINTFORMW 「…お前なら、そんなに嫌じゃない」
+		ELSE
+			PRINTFORMW 「なかなか巧いな」
+			PRINTFORMW 「どこでそんな技術を身につけた？」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「あまり執拗に触らないでくれるか」
+			PRINTFORMW 「汚らわしい」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「………………………………」
+		ELSE
+			PRINTFORMW 「……意気消沈だな」
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;指挿入れ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_4
+IF RAN == 1
+	IF TALENT:恋慕
+		IF RAND:2 == 0 && PENIS(MASTER)
+			PRINTFORMW 「指なんかより…ご主人様のそれのほうが…」
+			PRINTFORMW 「んっ、指…ご主人様の指ぃっ…」
+		ELSE
+			PRINTFORMW 「もっと……奥まで挿れてください……っ」
+			PRINTFORMW 「私の体は……心配しなくていいですから……」
+			PRINTFORMW 「ご主人様の指で……感じたい……」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「うぅぅ…指なんて…気持ち悪いです…」
+			PRINTFORMW 「んっ…ぐっ…」
+		ELSE
+			PRINTFORMW 「なんか……なんか……」
+			PRINTFORMW 「変な感じです……」
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF RAND:2 == 0 && PENIS(MASTER)
+			PRINTFORMW 「指なんかより…お前のそれのほうが…」
+			PRINTFORMW 「んっ、指…指ぃっ…」
+		ELSE
+			PRINTFORMW 「はふぅ……いい……指、気持ちいいよ……」
+			PRINTFORMW 「もっと……弄っていいんだぞ……？」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「おい、やめろ、指なんて汚いもの。やめろって…！」
+			PRINTFORMW 「んぐっ…はぁ、んっ…」
+		ELSE
+			PRINTFORMW 「手は洗ったのか？」
+			PRINTFORMW 「……清潔にして欲しい」
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;フェラする
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_5
+IF RAN == 1
+	IF TALENT:恋慕
+		IF ABL:射精中毒 >= 4
+			IF RAND:5 == 0
+				PRINTFORMW 「顔とか……口とか……あとおなかの中とか……」
+				PRINTFORMW 「いろんなところに、出したいなぁ……」
+				PRINTFORMW 「私のせーしでまっしろになったご主人様を見てみたいです……♪」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「ご主人様のお口まんこ、オナホみたっ、い……それ以上……っ！」
+				PRINTFORMW 「あー……ご主人様のお口にどぴゅってしたいなぁ……」
+				PRINTFORMW 「私のせーし、全部飲んでくれますよね……？」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 藍のペニスを舐めるあなたを、藍はぼーっとした目で見つめている
+				PRINTFORMW 「ご主人様……かわいい……」
+				PRINTFORMW 「出したいなぁ……ご主人様に……」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ねぇ、ご主人様、私のおちんちん、もっとおいしそうに舐めて……」
+				PRINTFORMW 「ご主人様のお口、私のせーしでたくさん犯してあげますね……」
+				PRINTFORMW 「溜まってるもの、ぜーんぶ出してあげますね……♪」
+			ELSE
+				PRINTFORMW 「私、ご主人様のあそこも舐めたいな……」
+				PRINTFORMW 「一緒に気持ちよくなったら、びゅーびゅーってもっとたくさん出るかな……？」
+				PRINTFORMW 「ご主人様を、妊娠させたい……いろんなところを……」
+			ENDIF
+		ELSE
+			IF RAND:3 == 0
+				PRINTFORMW 「はぐっ……ご主人様の舌、すごくあたたかくて……」
+				PRINTFORMW 「私のせーし、全部吸い取られちゃいそう……」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「私のおちんちんのにおい、私でもわかる……」
+				PRINTFORMW 「ご主人様はこれが好きで舐めてるんですよね……？」
+				PRINTFORMW 「なら、私もこのにおい好きかも……」
+			ELSE
+				PRINTFORMW 「ご主人様、動物みたい……」
+				PRINTFORMW 「私も、ご主人様の口にいっぱい注いであげますね」
+				PRINTFORMW 「愛情とか、せーしとか、ご主人様をべとべとにしてあげる♪」
+			ENDIF
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「おちんちん、おかしくなりそう……」
+			PRINTFORMW 「白いのぴゅっぴゅしちゃうよぉ……私、女の子なのに……」
+			PRINTFORMW 「出ちゃう……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「そんなに舐めたら……」
+			PRINTFORMW 「ご主人様のお口に射精しちゃう……」
+		ELSE
+			PRINTFORMW 「うぅ……気持ちいいけど……」
+			PRINTFORMW 「ご主人様は汚くないんですか？」
+			PRINTFORMW 「私の、その……おちんちんなんて……」
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF ABL:射精中毒 >= 4
+			IF RAND:4 == 0
+				PRINTFORMW 藍はあなたの頭を押さえつけると、あなたの喉までペニスを突き入れた
+				PRINTFORMW 「ごっ、ごめん……だけど、気持ちいいから、もう私の好きにさせてもらうね……！」
+				PRINTFORMW あなたは口腔を無理やり犯され、藍は快楽を貪り光悦の表情を見せている
+				PRINTFORMW 「私のおちんぽ、もっと気持ちよくして……っ！」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「ふぁー……こうやって……好きな人にペニスを舐めてもらえるなんて……」
+				PRINTFORMW 「こうやって舐めてもらうの、私、幸せ……」
+				PRINTFORMW 「お礼にたくさん出してあげるからな……」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「どう……私の、変な形じゃない？」
+				PRINTFORMW 「これでも、精液はたくさん出るから……」
+				PRINTFORMW 「私の精液でよければ、いくらでも飲んでくれ」
+				PRINTFORMW 「私も、頑張ってたくさん出すから……」
+			ELSE
+				PRINTFORMW 「射精、気持ちいいから……もっとたくさん舐めてもらいたいな……」
+				PRINTFORMW 「お前の口の中、精液でどろどろにしたい……」
+			ENDIF
+		ELSE
+			IF RAND:3 == 0
+				PRINTFORMW 「私の先走りなのか……お前のよだれなのか……私のペニス、ぬるぬるしてる……」
+				PRINTFORMW 「違うのも、白いのも出ちゃうかも……」
+				PRINTFORMW 「もっと、ぴゅっぴゅするくらい舐めて……」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ペニス、びりびりする……」
+				PRINTFORMW 「そ、そんな舌先で突いちゃだめ……出る……」
+			ELSE
+				PRINTFORMW 「なんでだろ……すごい、おなかがきゅんってする……」
+				PRINTFORMW 「なんか幸せで……お前の口に全部出したいって、そんな感じ……」
+				PRINTFORMW 
+			ENDIF
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「はぅ……だめ……」
+			PRINTFORMW 「本当、それ以上舐めたら……射精しちゃう……」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「私が精液出すところなんて、見られたくない……」
+			PRINTFORMW 「やめてくれ……」
+		ELSE
+			PRINTFORMW 「舐めるんなら自分のを舐めればいいだろう……」
+			PRINTFORMW 「もしくは男でもさらって犯すか……わざわざ私を選ばなくても……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;キスする
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_6
+IF RAN == 1
+	IF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「ん、ちゅる、じゅ…」
+			PRINTFORMW 「ぷはぁ、ご主人様とのキス…嬉しいです。えへへ」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「はぁぅ……ん……れろ……」
+			PRINTFORMW 「もっと舌を絡めて……」
+			PRINTFORMW 互いの唾液の送り合い、舌の絡ませ合い、獣がじゃれるよりも深く交わり合っていた
+		ELSE
+			PRINTFORMW 「ご主人様……もっと……」
+			PRINTFORMW 藍はあなたの舌を舌先で愛撫しながら、口腔の唾液を舐め尽くすかのように犯してくる
+			PRINTFORMW 二人の接吻は、長く……淫靡な雰囲気を漂わせていた
+		ENDIF
+	ELSEIF MARK:屈服刻印 == 3
+		IF RAND:2 == 0
+			PRINTFORMW 「んん……ねぇ……ご主人様……」
+			PRINTFORMW 「ご主人様は、私のことが好きで、こうやってキスをしてくれるんですか……？」
+		ELSE
+			PRINTFORMW 「ん……ちゅ……んむ……」
+			PRINTFORMW 「ご主人様は……私とキスしてどんな気持ちになります？」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「うぅ……気持ち悪い……」
+		ELSE
+			PRINTFORMW 「……………………」
+			PRINTFORMW 「…………………………うぇ……」
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「ん、ちゅる、じゅ…」
+			PRINTFORMW 「お前とのキスも、悪くないな、ふふっ」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「ほらほら……もっと激しく……」
+			PRINTFORMW 藍はあなたの口の奥、舌の根元まで舌を深く突き入れてくる
+			PRINTFORMW 互いに呼吸も止めるような濃厚なキスを、蕩けるような快感に浸りながら堪能していた
+		ELSE
+			PRINTFORMW ちゅぱ、ちゅぱ、と、数を重ねての軽いキス
+			PRINTFORMW 藍はあなたの背中に腕を回しながら、小さく微笑んだ
+		ENDIF
+	ELSEIF MARK:反発刻印 == 3
+		IF RAND:2 == 0
+			PRINTFORMW 「舌を噛み切ってやろうか……」
+			PRINTFORMW 「まぁ私は賢いからもっと他の方法で打開するがな」
+		ELSE
+			PRINTFORMW 「んぐぅ……臭っ……」
+			PRINTFORMW 「リビドーも糞も無いな」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「はしたない……」
+			PRINTFORMW 「接吻にも礼儀があるだろう。ちゃんと相手のことを考えるとかな」
+			PRINTFORMW 「私はあまりいい気分ではないな」
+		ELSE
+			PRINTFORMW 「お前は一体どんな気持ちで口付けを交わしているんだ？」
+			PRINTFORMW 「愛を持ってのことか、それとも調教の業務か」
+			PRINTFORMW 「はたまた、ご機嫌取りか……憐れだな」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;自慰
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_7
+IF RAN == 1
+	IF RCOM:7 == 0
+		IF RAN == 1
+			PRINTFORMW 「ご主人様の前で…？」
+			PRINTFORMW 「ううぅ、そんな…」
+			PRINTFORMW 藍は羞恥に顔を赤く染めているが、何度も迫ると諦めたように恥部に指を沿えた。
+			PRINTFORMW 「わ、分かりました。って、ち、近いですよ！　もっと離れて見てください…」
+			RCOM:7 = 1
+		ENDIF
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORMW 「はぁ、はぁ、ご主人様に見られて…ご主人様ぁ…」
+			PRINTFORMW 何度もあなたを呼びながら、音を立てて自分を慰めていった。
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		;二穴バイブ
+		IF TEQUIP:Ｖ系装着器具 == 1 && TEQUIP:Ａ系装着器具 == 1
+			PRINTW 「二本とも……お腹の中で暴れて、苦し…気持ち、良い……」
+		;バイブ
+		ELSEIF TEQUIP:Ｖ系装着器具 == 1
+			PRINTW 「はぁ、はぁ、私が欲しいのは……これじゃない……」
+			PRINTW （ちんぽ欲しい……生のちんぽが欲しい！）
+		;アナルバイブ
+		ELSEIF TEQUIP:Ａ系装着器具 == 1
+			PRINTW 「後ろは一杯でも……前が寂しい、な？」
+		;その他
+		ELSE
+			PRINTW 藍は自らの人差し指と中指を膣で飲み込み、快楽の張り巡らされる肉を擦っている
+		ENDIF
+		;ビデオカメラ
+		IF TEQUIP:ビデオ撮影
+			PRINTW 視聴者に見せつけるかのように、ビデオカメラで自分のいやらしい部分をアップで写している
+		;野外プレイ
+		ELSEIF TEQUIP:野外プレイ
+			PRINTW 野外であることが頭に入っていないのか、辺り構わずたくさんの声と液を漏らしている
+		ENDIF
+		;オナホ
+		IF TEQUIP:Ｃ系装着器具 == 2
+			PRINTW 同時にペニスを包み込む柔らかい筒を握っては、上下に激しく動かす
+		;ふたなり
+		ELSEIF TALENT:ふたなり
+			PRINTW 当然のように男性器の手淫も始め、多方向から押し寄せる快楽を貪っている
+		ENDIF
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「あまり他人に見せつけるものじゃないよな……」
+				PRINTW 「だからといって、お前だから良いというわけでもないんだが」
+			CASE 1
+				PRINTW （私のオナニー……何かやり方が変だったりしない、よな……）
+				PRINTW （あぁ、分からないから恥ずかしい……）
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;何もしない
+;そのうち押し倒されてそのまま騎乗位に発展するような何かを書きたい
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_9
+IF RAN == 1
+	IF TALENT:恋慕
+		PRINTFORMW 「その……何かしてくださいよぉ……ご主人様……」
+		PRINTFORMW 「放置プレイなんて……切ないです……」
+	ELSE
+		PRINTFORMW 「じゃ、じゃあ私休みますね……」
+		IF PENIS(MASTER)
+			PRINTFORMW （よく見るとご主人様のおちんちん、あんなに大きいんだ……）
+		ELSE
+			PRINTFORMW （なんかご主人様の体、いい匂い……かも）
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		PRINTFORMW 「バテるのが早いぞ？」
+		PRINTFORMW 「体力不足め……そこがかわいいんだけどな♪」
+	ELSE
+		PRINTFORMW 「なんか嫌だなぁ……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ローター
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_10
+IF TALENT:ふたなり	
+	PRINTW 女性器と男性器の間にローターが触れると、両方の性器から体液が滲んだ。
+ELSE
+	PRINTW 膣口がローターを咥えこまんとばかりにひくひくと蠢いている……
+ENDIF
+
+;-------------------------------------------------
+;電気按摩
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_11
+IF RAN == 1
+	IF TALENT:ふたなり
+		PRINTW 「おちんちん、だめっ！ さ、先っぽ、壊れそう……！」
+	ELSE
+		PRINTW 「振動すごい……お腹の中まで、響いてくる……」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:ふたなり
+		PRINTW 「振動、強すぎて……ちんぽ気持ちいい……はぁ、ふ……」
+	ELSE
+		PRINTW （刺激、強すぎて……頭のなか真っ白になりそう）
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;バイブ
+;TEQUIP:Ｖ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_12
+;解除時
+IF TEQUIP:Ｖ系装着器具 == 0
+	IF PALAM:潤滑 >= PALAMLV:4
+		PRINTW バイブレーターですっかり溶けきった肉壷から蜜がどろりとこぼれた。
+	ELSE
+		PRINTW 紛い物の形を覚えた膣口がひくひくと開閉を繰り返している。
+	ENDIF
+;装着時
+ELSE
+	IF RAN == 1
+		IF TALENT:ふたなり
+			PRINTW 「ご主っ、人様っ！ おちんちんが……変、変です！」
+		ELSE
+			IF PENIS(MASTER)
+				PRINTW 「大きい、けど……ご主人様のに比べたら」
+			ELSE
+				PRINTW 「ご主人様……ここ、使うんですか？」
+			ENDIF
+		ENDIF
+	ELSEIF RAN == 2
+		IF TALENT:ふたなり
+			PRINTW 「ちんぽ、中から抉られて……おかしくなりそう……」
+		ELSE
+			PRINTW いとも簡単にバイブを飲み込んだ藍の膣が、愛液を垂れ流して震えている……
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナルバイブ
+;TEQUIP:Ａ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_13
+;解除時
+IF TEQUIP:Ａ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;クリキャップ
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_14
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;ニプルキャップ
+;TEQUIP:Ｂ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_15
+;解除時
+IF TEQUIP:Ｂ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;オナホール
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_16
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	IF RAN == 1
+		PRINTW 「ひゃぁっ……中がどろどろ……」
+		PRINTW 「こんな小さいのじゃ……私の、おちんちん、潰れちゃいそう……」
+	ELSEIF RAN == 2
+		IF TALENT:恋慕
+			PRINTW 「きっついオナホ……こんなものより……」
+			PRINTW 藍はあなたを一瞥すると、ペニスをぴくんと跳ねさせた
+		ELSE
+			PRINTW 「ちんぽ……溶けちゃいそう……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;電極オナホール
+;TEQUIP:Ｃ系装着器具 == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_17
+;解除時
+IF TEQUIP:Ｃ系装着器具 == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;正常位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_20
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「あ、私を、犯してくれるんですね」
+				PRINTFORMW 「嬉しいです……ご主人様と一つになれて」
+				PRINTFORMW 「んっ、くぅ……はぁん♪ ご主人様ぁ、ご主人様ぁ……」
+			CASE 1
+				PRINTFORMW 「もう……我慢できませんっ」
+				PRINTFORMW 「ご主人様の……おちんちん、私にくださいっ」
+				PRINTFORMW そう言う藍を焦らしながら、あなたはゆっくりと膣内にペニスを挿入していった……
+				PRINTFORMW 「ふぅ、ん……はぁ、ごっ、ごしゅじんさまのおひいんひん、ひもちいいれすぅ♪」
+			CASE 2
+				PRINTFORMW 「ご主人様の、おっきくて、私、おかしくなりそうっ！」
+				PRINTFORMW 「ふあ、はぁ、ん……ひぁん♪」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「さ、さすがに……だめですって！ くっ、ううぅ……」
+				PRINTFORMW 「中に……入ってきてるぅ……」
+			CASEELSE
+				PRINTFORMW 「やぁ……抜いてください、ご主人様ぁ……」
+				PRINTFORMW 「ふぁん、あはぁ……」
+		ENDSELECT
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「ふふ……挿れたいんだな？ 挿れたいんだな？」
+				PRINTW 「こんなに大きくして……先走りがすごいぞ？」
+				PRINTW そう言いながら藍はあなたの亀頭を指先で弄り倒す。糸を引く我慢汁が彼女の指に絡みつく
+				PRINTW あなたはそのどうしようもない感覚に苦悶の表情を浮かべた。
+				PRINTW 「仕方がないな。特別に許可してやろう」
+				PRINTW 寝転がり秘貝を指で広げる彼女の入口に、あなたは亀頭をこすりつけながらぬぷりと飲み込ませていった
+				PRINTW 「はっ、入った……ふっ、ふ……ほら、どうした？ 私を、めちゃくちゃにしていいんだぞ……？」
+			CASE 1
+				PRINTW 「あぁっ、もう……好きっ、好きっ……大好きぃっ」
+				PRINTW 藍はあなたをぎゅっと抱き寄せ、何かが溢れだしたようにずっと愛を叫んでいた
+			CASEELSE
+				PRINTW 「はあっ、はあっ、激しい、よぉ……」
+				PRINTW 「はぅっ……そんな奥……らめぇっ……！」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「おい……いい加減にしろ！」
+				PRINTW 「さすがにそっちは……あっ、ああっ！ 入ってぇ…くぅ…」
+			CASEELSE
+				PRINTW 「やめろぉ…さすがにお前でも、許さないぞぉ…」
+				PRINTW 「はうぅ…」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;後背位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_1021
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「ふふっ、後ろからですか」
+				PRINTW 「顔が見えない分、ご主人様を確かに感じたいです……」
+				PRINTW 「ああっ……入ってくる……ご主人様が、私の中に……」
+			CASE 1
+				PRINTW 「まるでっ……動物、ケダモノみたい……はぁん♪」
+				PRINTW 「ごしゅじんさまぁ……すごい、すごいよぉ……」
+			CASEELSE
+				PRINTW 「はぁ……はぁっ、奥、当たって……くりゅくりゅされてるぅ……」
+				PRINTW 「子宮、ご主人様にたくさん犯されて、嬉しいよぉ……」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「後ろからなんて、私何もできなっ……」
+				PRINTW あなたは藍に何も抵抗させないと言わんばかりに、後ろから激しく陰茎を突き入れる。
+				PRINTW 「やっ、ん……ひどい、ご主人様ぁ……激しい……」
+			CASEELSE
+				PRINTW 「んっ……尻尾、いじっちゃやぁ……」
+				PRINTW 「だめっ、だめぇ……だめになっちゃう……妊娠しちゃったら……だめだよぉ……」
+		ENDSELECT
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 四つん這いになった藍の尻尾に顔を埋めながら、あなたは柔らかい膣肉を堪能している
+				PRINTW 「尻尾、好きなのか？」
+				PRINTW 彼女は器用に尻尾を動かし、あなたの体を優しく撫でる
+				PRINTW 紛れも無い"藍"の仕草と香りに、あなたの興奮は留まることがなかった
+			CASE 1
+				PRINTW 彼女は尻尾を揺らしながら、膣内をきゅんきゅんと締め付ける
+				PRINTW 「尻尾……ぅん、お前になら、触ってもらっても……」
+				PRINTW 「弱いところは、好きな人にしか、任せ、られないの……」
+				PRINTW あなたが丁寧に尻尾を愛撫すると、藍は蕩けてしまいそうな甘い嬌声を上げた
+			CASEELSE
+				PRINTW 「もっと奥まで……もっと深くまで感じたい……」
+				PRINTW 彼女を抱きしめ一番深いところまで突き入れ、互いに互いを分かち合った
+				PRINTW 「………………幸せだよ」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「いい加減にしてもらいたいものだな」
+				PRINTW 後ろから突く行為で顔はよく見えないが、きっと呆れと静かな怒りを浮かべた表情をしているのだろう
+				PRINTW 「この期に及んで種付けまでしたがるとは……この馬鹿式が……」
+			CASEELSE
+				PRINTW 「そこを使うというのは……意味が分かっているのか？」
+				PRINTW 「結果と責任の意味だ……」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;対面座位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_22
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「これなら、ご主人様の顔が近くで見えますね」
+				PRINTW 「んっ、ご主人様、愛してます」
+				PRINTW 互いに舌を絡ませながら、藍はゆっくりと腰を降ろしていった。
+				PRINTW 「ほらっ……見て、ご主人様……」
+				PRINTW 「私達……繋がって、愛し合ってるんですよ……」
+				PRINTW 「ねっ……ご主人様……ご主人様ぁ……」
+			CASEELSE
+				PRINTW 「大好きですっ……ご主人様っ……！」
+				PRINTW そう言いながら抱きしめてくる藍の力は、痕が残りそうなほど強い。
+				PRINTW あなたも負けじと愛を込めて、藍の体をぎゅっと強く抱きしめた。
+		ENDSELECT
+	ELSE
+		PRINTW 「ご、ご主人様ぁ、さすがに抱き合うなんて……」
+		PRINTW その恥じらう藍を見ていると、どんな反応をするのかと楽しみになって
+		PRINTW 焦らしたり、意地悪をしたくなってくる
+		PRINTW 「ぅぅん、ご主人様、のが……私の中に……っ」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「ふふっ、近くで顔が見れるな」
+				PRINTW 「お前の感じてる姿、存分に……ちゅっ、眺めてやろう」
+				PRINTW 軽いキスを楽しんだ後、あなたは下から藍の内側を突き上げた。
+				PRINTW 「はぅ……はぁっ、我慢、してるの？
+				PRINTW 「その顔、すごく可愛くて……」
+				PRINTW 「ふふっ……」
+			CASEELSE
+				PRINTW 「好きぃ……大好きぃ……だから、もっとっ……」
+				PRINTW 「抱きしめて……私を……求めて……っ」
+				PRINTW 快楽に襲われどこかに飛んでしまいそうな意識の中、そんな声が聞こえたような気がして
+				PRINTW あなたは半ば無意識に藍を抱きしめ、激しく求め合っていた 
+		ENDSELECT
+	ELSE
+		PRINTW 「嫌だ。
+		PRINTW と言ってもどうしようもない話なのだろうな……」
+		PRINTW 「……許さないからな」
+		PRINTW 彼女の気迫に圧されそうになるも、あなたも既に後には引けなかった。
+		PRINTW 「……………………」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;背面座位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_23
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「尻尾、邪魔じゃないですか……？」
+				PRINTW 「きっとやりにくいですよね……」
+				PRINTW 「でもなんだかんだでしたがるご主人様、ちょっと可愛いです」
+			CASEELSE
+				PRINTW 「あっ、うなじ……くすぐったい……」
+		ENDSELECT
+	ELSE
+		PRINTW 「な、なんか恥ずかしいですよぉ……ご主人様……」
+		PRINTW 「他のやりかたは……ないんですか？」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 藍は膣内を上下するあなたのペニスの裏筋を指でなぞったり
+				PRINTW 陰嚢を揉みしだいたりしながら、時折体をぴくんと震わせる
+			CASEELSE
+				PRINTW 「もっと……もっとぉ……」
+				PRINTW 弱々しい声を上げながら、藍は自分の指で秘部を慰め始める。
+				PRINTW 不意にもあなたのペニスに刺激が走り、小さな喘ぎ声を漏らした
+		ENDSELECT
+	ELSE
+		PRINTFORMW 「だから……」
+		PRINTFORMW 「体位がどうあれ、私はこんなの嬉しくない……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;騎乗位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_24
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「私が上、ですか？」
+				PRINTW 「わ、分かりました、その代わり……」
+				PRINTW 「たくさん搾りとってあげますから、たくさん出してくださいねっ♪」
+			CASEELSE
+				PRINTW 「はぁっ……はぁ、んっ……」
+				PRINTW 「結構、疲れますね、これ……」
+				PRINTW 苦しそうな藍の手にあなたは指を絡め、藍にあわせて腰を動かした。
+				PRINTW 「んっ、ありがとうございます……私、頑張って気持よくしてあげます」
+		ENDSELECT
+	ELSE
+		PRINTW 「ご主人様がやれって言うのなら……やるしかありませんね」
+		PRINTW 「これ以上変なこと、しないでくださいね？」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「ほらっ、私はいくらでも受け止められるぞ」
+				PRINTW 「こうすれば……たくさん出るんだったかな？」
+				PRINTW 藍は熟れた手つきであなたの陰嚢とアナルをなぞる
+				PRINTW あなたのペニスはびくっと恐れるように脈打ち、藍は期待通りと言わんばかりの妖しい笑みを浮かべた
+			CASEELSE
+				PRINTW 「ふふふっ、どうだ、私に先導される気分は」
+				PRINTW 藍は舌をちろっと出し、あなたの乳首やへそ周りをくすぐるように愛撫している
+		ENDSELECT
+	ELSE
+		PRINTW 「ぐぅぅ……仕方ない。やってやろう……」
+		PRINTW 「どうなっても知らないからな……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;逆レイプ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_25
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「ひぅっ……もう、ご主人様がわざわざ動かなくてもいいのに」
+				PRINTW 「欲しいならたくさん出してあげますから、ちゃんと全部飲み込んでくださいね」
+			CASE 1
+				PRINTW 「ひゃぁっ！ ご主人様のおまんこ、あったかいですぅ……」
+				PRINTW 「あぁ、締め付けちゃ……私、すぐ、で、出ちゃ……うっ……」
+			CASE 2
+				PRINTW 「ああ、ご主人様！ じょうず！ じょうず！」
+				PRINTW 「ご主人様から私のおちんちん使ってくれるなんて、気持ち良くて死んじゃいそう！」
+		ENDSELECT
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTW 「くぅ……ずいぶんと積極的なやつだ」
+				PRINTW 「そんなに私の精子が欲しいか、この淫乱め」
+				PRINTW 男根を包まれる藍は成すがままに、あなたの膣内を味わっている。
+			CASE 1
+				PRINTW 「ふふん、私が一発だけで終わると思うなよ」
+				PRINTW 「私が涸れるまでお前の子宮で受け止めてもらおう……しっかり私の子を孕むんだぞ？」
+			CASE 2
+				PRINTW 「うっ……さすが、私の牡の部分を引き出してくれるな」
+				PRINTW 「はぁ、全部搾り取られちゃいそうだ……」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;助手を犯す
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_26
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面立位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_27
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面立位
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_28
+;PRINTFORMW 
+
+;-------------------------------------------------
+;正常位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_30
+
+;-------------------------------------------------
+;後背位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_31
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面座位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_32
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面座位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_33
+;PRINTFORMW 
+
+;-------------------------------------------------
+;騎乗位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_34
+;PRINTFORMW 
+
+;-------------------------------------------------
+;逆アナルレイプ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_35
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手のＡを犯す
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_36
+;PRINTFORMW 
+
+;-------------------------------------------------
+;対面立位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_37
+;PRINTFORMW 
+
+;-------------------------------------------------
+;背面立位アナル
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_38
+;PRINTFORMW 
+
+;-------------------------------------------------
+;手淫
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_40
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「うーん……手よりももっと楽しいやり方があるんじゃないですか？」
+				PRINTW 「それでも、やっぱり手がいいんですか……」
+				PRINTW 「えへへ、変態さんですね……」
+			CASEELSE
+				PRINTW 「たまには私がやり返しちゃいますよ♪」
+				PRINTW いじらしい微笑みを浮かべた藍は、我慢汁に濡れるあなたの鈴口を指の腹ですりすりとなぞる
+				PRINTW 「気持ちよさそうに喘いじゃって……かわいいですよ、ご主人様」
+				PRINTW すぅっと糸をひく先走りを藍は口に含んで小悪魔のような笑みを見せた
+		ENDSELECT
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTW 「ここだけじゃ……足りないんじゃないか？」
+				PRINTW 藍は片手であなたのペニスを擦りあげながら、もう片方の手であなたの尻穴を掻き回した
+				PRINTW 「あはっ、びくんってなった♪」
+			CASEELSE
+				PRINTW 「近くで見ると、日に日に大きくなっている気がするな」
+				PRINTW 「量も申し分ない……私との交配に相応しいやつだよお前は」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;フェラチオ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_41
+IF TALENT:恋慕
+	IF RAN == 1
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「んっ、れろ、どうですか？ ご主人様」
+				PRINTFORMW 「気持いいのなら、なによりです」
+			CASEELSE
+				PRINTFORMW 「れろ…はむっ…」
+				PRINTFORMW 大胆にも亀頭から咥える藍の舌使いと温かな口内に、あなたは体を震わせる。
+				PRINTFORMW 「どうれす？ ごひゅひんはま？」
+		ENDSELECT
+	ELSEIF RAN == 2
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「うっ……」
+				PRINTFORMW 「ま、まぁ、主だからといって、奉仕されるばかりでもな……」
+				PRINTFORMW 藍は自分を納得させるように独り言を言い、あなたのペニスを指で弄る
+				PRINTW まじまじと興奮と緊張が入り混じる生娘のような表情を浮かべ、亀頭に甘い吐息を吐きかけながら舌を這わせる
+				PRINTFORMW 「んっ……れぅ……はぁ…」
+				PRINTFORMW 柔らかい舌の優し目な刺激を身に受け悶えるあなたに、藍はずっと子供のように無垢な視線を送っていた、
+			CASEELSE
+				PRINTW （私、上手にできてるかな……気持よくなれてるかな……）
+				PRINTW （でも直接聞くのもなんか恥ずかしいし……）
+				PRINTW （ごめんな……でも、たくさん出してたくさん気持よくなれてるといいな……）
+				PRINTW 藍は唾液に塗れたあなたのペニスを丁寧に舐め続けている
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;パイズリ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_42
+IF RAN == 1
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「どうですか？　私の胸、気持ちいいですか？」
+				PRINTFORMW 「ふふっ、そうですか。それはよかったです」
+			CASE 1
+				PRINTFORMW 「んしょ、私はその……胸は、ちょっと自信がありますから……」
+				PRINTFORMW 「ご主人様、よく私の胸をちらちら見てましたよね、ふふ、分かりますよ」
+				PRINTFORMW 「だから、この私の胸で、たくさんご主人様を気持よくしてあげますからね♪」
+		ENDSELECT
+	ELSE
+		PRINTFORMW 「なんかなぁ……臭うし……」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「どうだ？　私の胸、気持ちいいか？」
+				PRINTFORMW 「ふふっ、そうか。それはよかった」
+			CASE 1
+				PRINTFORMW 「ほら、びくびく震えてるぞ？」
+				PRINTFORMW 「もったいぶらずに出していいんだぞ……またいくらでも出させてやるからな」
+		ENDSELECT
+	ELSE
+		PRINTFORMW 「はぁ……私の胸はこんなことをするためにあるんじゃない……」
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;素股
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_43
+IF RAN == 1
+	IF TALENT:パイパン
+		PRINTW 「ご主人様……私の下の口が、ご主人様のおちんちん挟んでるのがよく見えますね」
+		PRINTW 藍は毛の生えていない無垢な股間をあなたの竿に擦りつけている……
+	ELSE
+		PRINTW 藍の金色の陰毛があなたのペニスに程よい刺激を与えている……
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:パイパン
+		IF TALENT:恋慕
+			PRINTW 「ふふん、挿れる前からこんなに大きくして……堪え性が無いな♪」
+			PRINTW 挑発的な口調とは裏腹に、毛の生えていない綺麗な秘部はまるで幼女のようだ
+		ELSE
+			PRINTW 「毛が無いと……こうやってまじまじと擦られると何か変な感じだな……」
+		ENDIF
+	ELSE
+		PRINTW 互いの性器を擦り付け合うと、藍の陰毛が互いの体液で濡れていた……
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナル舐め強制
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_44
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナルおねだり
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_45
+IF RAN == 1
+	IF TALENT:恋慕
+		IF ABL:Ａ感覚 >= 4 && RAND:3 == 0
+			PRINTFORMW 藍はその場に寝転がり、足を上げて自らのアヌスに両手の指を添える
+			PRINTFORMW それを指で見えるように拡げると、藍は甘い吐息を荒げながら懇願してきた
+			PRINTFORMW 「私の……はっ、う、藍のおしりまんこ……ご主人様のおちんちんでじゅぽじゅぽしてください……っ！」
+			PRINTFORMW 「ご主人様……ご主人様、私もう、我慢できま……ううぅ……」
+			PRINTFORMW 「は、早く……おしりうずうずしちゃう……っ！」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 藍は横向きに寝転がり、片手でアヌスを拡げてちらつかせている
+			PRINTFORMW 「ご主人様……ご主人様のせーしで、私のおなかいっぱいにして……？」
+		ELSE
+			PRINTFORMW 「うぅ……おしり、っていうのも変だけど……」
+			PRINTFORMW 「挿れて……？　ご主人様……？」
+			PRINTFORMW 「私のおしりで、たくさん気持ちよくなって……いや……」
+			PRINTFORMW 「わ、私のおしりまんこ、たくさん気持よくしてくださいっ……！」
+		ENDIF
+	ELSE
+		PRINTFORMW 「ら、藍のおしり、そのぶっといおちんぽでたくさんずぼずぼしてくださいっ！」
+		PRINTFORMW 「……って言えばいいんですか？」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF ABL:Ａ感覚 >= 4
+			PRINTFORMW 四つん這いになった藍はあなたの顔を見つめながら両手の指でアヌスを拡げた
+			PRINTFORMW 「…………お前だけの、ものだから……たくさん犯してくれ」
+			PRINTFORMW 「お前の精液、全部私が受け止めてやるからな♪」
+		ELSE
+			PRINTFORMW 足を広げて地べたに座る藍は、秘部から溢れる愛液を指で掬うとアヌスに塗りたくった
+			PRINTFORMW 「私のここ、もう一つの穴に、たくさん注いで……？」
+			PRINTFORMW 小悪魔のような瞳で見つめてくる藍の頬は、ほんのり赤く染まっていた
+		ENDIF
+	ELSE
+		IF ABL:Ａ感覚 >= 4
+			PRINTFORMW 「私のおしり、ぐちゅぐちゅして……？」
+			PRINTFORMW 「なんか……前より気持ちよくなってきたかも……」
+		ELSE
+			PRINTFORMW 「けっ、ケツマンコじゅっぼじゅっぼしてくださいっ！」
+			PRINTFORMW （本当は嫌なんだけどなぁ……）
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;足舐め強制
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_46
+;PRINTFORMW 
+
+;-------------------------------------------------
+;足扱き
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_47
+;PRINTFORMW 
+
+;-------------------------------------------------
+;髪扱き
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_48
+IF RAN == 1
+	IF TALENT:恋慕
+		IF RAND:2 == 0
+			PRINTFORMW 「えへっ、私の髪、どうですか……？」
+			PRINTFORMW 「ご主人様のために、って言っても、こうやっておちんちんごしごしするためじゃないですけど……」
+			PRINTFORMW 「もっと、ご主人様に好きになってもらえるようにって、頑張って手入れしてて……」
+			PRINTFORMW 「気に入ってもらえて、私嬉しいです♪」
+		ELSE
+			PRINTFORMW 「もっと、私の髪、好きなようにしていいですよ？」
+			PRINTFORMW 「え、藍に委ねたいって……」
+			PRINTFORMW 「優しいんですね……ご主人様大好きです……」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「……痛くないですか？」
+			PRINTFORMW 「私の髪、ちょっと硬いから……」
+			PRINTFORMW 「痛かったら言ってくださいね？」
+		ELSE
+			PRINTFORMW 「どんな感じですか……？」
+			PRINTFORMW 「気持ちいい？　なら良かったです」
+		ENDIF
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF RAND:2 == 0
+			PRINTFORMW 「ん……私の……髪の毛、我慢汁でぬるぬるだ」
+			PRINTFORMW 「我慢しないで、私の髪に出してもいいんだぞ……ふふ」
+		ELSE
+			PRINTFORMW 藍はあなたのペニスにはらはらと髪を絡ませ、優しく扱き始めた
+			PRINTFORMW 「髪って気持ちいのかな……ふふ、見れば分かるよ」
+			PRINTFORMW 「すごく気持ちよさそうな顔してるし、これも震えてるしな♪」
+			IF PENIS(TARGET)
+				PRINTFORMW 「後で私のもやってもらいたいな……お前に」
+			ENDIF
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「あぁ？　髪で扱くのか？」
+			PRINTFORMW 「うぅ……汚いなぁもう……」
+		ELSE
+			PRINTFORMW 「こんなことするためのものじゃないんだけどなぁ……私の髪は……」
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;腋扱き
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_49
+;PRINTFORMW 
+
+;-------------------------------------------------
+;全身扱き
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_50
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尻扱き
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_51
+;PRINTFORMW 
+
+;-------------------------------------------------
+;竿扱き
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_52
+;PRINTFORMW 
+
+;-------------------------------------------------
+;玉揉み強制
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_53
+;PRINTFORMW 
+
+;-------------------------------------------------
+;玉舐め強制
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_54
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナル愛撫強制
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_55
+IF RAN == 1
+	IF TALENT:恋慕
+		IF PENIS(TARGET)
+			PRINTFORMW 「ああ……ご主人様のおしり……」
+			PRINTFORMW 「私のおちんちん、突っ込みたくてうずうずしてます……」
+		ELSE
+			PRINTFORMW 「ご主人様のおしりの穴……」
+			PRINTFORMW 「私におちんちんがあれば、セックスできるのになぁ……」
+		ENDIF
+	ELSE
+		PRINTFORMW 「こ、こんなところ、どうして触らないといけないんですか……」
+		PRINTFORMW 「ちゃんと洗ってますよね……？」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:恋慕
+		IF PENIS(TARGET)
+			PRINTFORMW 「そんなにひくひくさせて、どうしたんだ？」
+			PRINTFORMW 「ふふ、私のこれが欲しいのか？」
+			PRINTFORMW そう言いながら藍は自らのそそり立つペニスに手を添えた
+		ELSE
+			PRINTFORMW 「ほら、我慢せず声を出していいんだぞ……？」
+		ENDIF
+	ELSE
+		PRINTFORMW 「…………汚らわしい、自分で触ればいいのに……」
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;ナイズリ
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_56
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ローション
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_60
+IF RAN == 1
+	PRINTFORMW 「ひんやりする……」
+	PRINTFORMW 「なんか、変な感じ……」
+	PRINTFORMW 
+ELSEIF RAN == 2
+	PRINTFORMW 「ひゃっ、急に塗るな！」
+	PRINTFORMW 「まぁ、でも潤滑は大事だな……」
+	PRINTFORMW 「ちゃんと私のことを考えてるんだろうからな、評価してやろう」
+	PRINTFORMW 「だから……痛くするなよ？」
+ENDIF
+;-------------------------------------------------
+;媚薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_61
+IF RAN == 1
+	IF TALENT:媚薬中毒
+		IF RAND:2 == 0
+			PRINTFORMW 「はぁ………………はぁ………………」
+			PRINTFORMW 「媚薬……その薬で、私を……もっと……」
+			PRINTFORMW 「メチャクチャにして……！」
+		ELSE
+			PRINTFORMW 藍は舌を出しながら、艶のある喘ぎ声を出している
+			PRINTFORMW 「これ……これですよ……最高の気分です……」
+			PRINTFORMW 「ご主人様……もっと、もっと……交わりましょう？」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「ん……媚薬、ですか……」
+		PRINTFORMW 「もっと、ご主人様と一緒に……獣みたいに、えっちできる……」
+	ELSE
+		PRINTFORMW 「こんなの……使っちゃって……」
+		PRINTFORMW 「不甲斐ないご主人様ですね……」
+	ENDIF
+ELSEIF RAN == 2
+	IF TALENT:媚薬中毒
+		PRINTFORMW 「ふふ……これだよ……」
+		PRINTFORMW 「この血が滾るような感覚……」
+		PRINTFORMW 「気持ちいいなぁ……もう」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「いいね……こういうのも……」
+		PRINTFORMW 「理性を忘れて、本能のままに……」
+	ELSE
+		PRINTFORMW 「こんなものまで使って……」
+		PRINTFORMW 「本当に最低だなお前は」
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;利尿薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_62
+IF RAN == 1
+	PRINTFORMW 「んー……なんか、トイレに行きたいような……」
+ELSEIF RAN == 2
+	PRINTFORMW 「何を飲ませたんだ？」
+ENDIF
+;-------------------------------------------------
+;座薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_63
+;PRINTFORMW 
+
+;-------------------------------------------------
+;座薬(膣)
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_64
+;PRINTFORMW 
+
+;-------------------------------------------------
+;強精神薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_65
+;PRINTFORMW 
+
+;-------------------------------------------------
+;排卵誘発剤
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_66
+;PRINTFORMW 
+
+;-------------------------------------------------
+;緊急避妊薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_67
+;PRINTFORMW 
+
+;-------------------------------------------------
+;産卵促進剤
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_68
+;PRINTFORMW 
+
+;-------------------------------------------------
+;陰核成長剤
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_69
+;PRINTFORMW 
+
+;-------------------------------------------------
+;興奮剤
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_70
+;PRINTFORMW 
+
+;-------------------------------------------------
+;助手避妊薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_71
+;PRINTFORMW 
+
+;-------------------------------------------------
+;感覚増幅薬
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_72
+;PRINTFORMW 
+
+;-------------------------------------------------
+;お香を焚く
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_79
+;シダーウッド
+IF TFLAG:99 == 0
+	;PRINTFORMW 
+;ペパーミント
+ELSEIF TFLAG:99 == 1
+	;PRINTFORMW 
+;ジャスミン
+ELSEIF TFLAG:99 == 2
+	;PRINTFORMW 
+;ラヴェンダー
+ELSEIF TFLAG:99 == 3
+	;PRINTFORMW 
+;ムスク
+ELSEIF TFLAG:99 == 4
+	;PRINTFORMW 
+;フランキンセンス
+ELSEIF TFLAG:99 == 5
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;クリトリス注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_80
+;PRINTFORMW 
+
+;-------------------------------------------------
+;ヴァギナ注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_81
+;PRINTFORMW 
+
+;-------------------------------------------------
+;アナル注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_82
+;PRINTFORMW 
+
+;-------------------------------------------------
+;バスト注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_83
+;PRINTFORMW 
+
+;-------------------------------------------------
+;尿道注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_84
+;PRINTFORMW 
+
+;-------------------------------------------------
+;Ｃ肥大注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_85
+;PRINTFORMW 
+
+;-------------------------------------------------
+;Ｃ強精神薬注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_86
+;PRINTFORMW 
+
+;-------------------------------------------------
+;採血注射
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_88
+;PRINTFORMW 
+
+;-------------------------------------------------
+;裸エプロン
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_90
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;スク水プレイ
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_91
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;お医者プレイ
+;TEQUIP:お医者さんプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_92
+;解除時
+IF TEQUIP:お医者さんプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;コスプレ
+;TEQUIP:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_93
+;解除時
+IF TEQUIP:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;助手コスプレ
+;TEQUIP:ASSI:コスチュームプレイ == 0で解除口上
+;-------------------------------------------------
+@KOJO_1021_TRAIN_MESSAGE_S_COM_94
+;解除時
+IF TEQUIP:ASSI:コスチュームプレイ == 0
+	;PRINTFORMW 
+;装着時
+ELSE
+	;PRINTFORMW 
+ENDIF

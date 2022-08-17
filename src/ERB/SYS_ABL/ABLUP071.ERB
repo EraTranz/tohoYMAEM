@@ -1,0 +1,129 @@
+﻿;=============================================================================
+;撮影技能
+;=============================================================================
+@ABLUP71
+SIF (FLAG:15 & 128) == 0 || (ITEM:ビデオカメラ == 0 && ITEM:カメラ == 0)
+	RETURN 0
+DRAWLINE
+SIF ABL:撮影技能 >= 5
+	JUMP ABLUP_MAX
+
+PRINTFORM [0] - %PALAMNAME:11%の珠×{COST71(0)}、%EXPNAME:71%{COST71(1)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN71(0)
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && CAN71(0) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:習得 -= COST71(0)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:撮影技能 += 1
+PRINTFORMW %ABLNAME:71%のレベルが{ABL:撮影技能}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP71
+SIF ABL:撮影技能 >= 5
+	RETURN 0
+
+CALLF CALC_COST71, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP71("CHECK")
+
+@COST71(ARG)
+#FUNCTION
+RETURNF CALC_COST71("GET", ARG)
+
+@CALC_COST71(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:撮影技能 == 0
+	LOCAL:0 = 1
+	LOCAL:1 = 10
+ELSEIF ABL:撮影技能 == 1
+	LOCAL:0 = (EXP:撮影経験 >= EXPLV:3) ? 15 # 25
+	LOCAL:1 = 30
+ELSEIF ABL:撮影技能 == 2
+	LOCAL:0 = (EXP:撮影経験 >= EXPLV:4) ? 150 # 200
+	LOCAL:1 = 60
+ELSEIF ABL:撮影技能 == 3
+	LOCAL:0 = (EXP:撮影経験 >= EXPLV:5) ? 1500 # 3000
+	LOCAL:1 = 100
+ELSEIF ABL:撮影技能 == 4
+	LOCAL:0 = (EXP:撮影経験 >= EXPLV:5) ? 10000 # 20000
+	LOCAL:1 = 150
+ENDIF
+
+;習得早い
+IF TALENT:習得早い
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.75
+;習得遅い
+ELSEIF TALENT:習得遅い
+	TIMES LOCAL:0 , 1.20
+	TIMES LOCAL:1 , 1.10
+ENDIF
+;報道者 (例：あやや）
+IF TALENT:報道者
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.90
+ENDIF
+;工作名人（例：にとり）
+IF TALENT:工作名人
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+ENDIF
+
+;ゆかりん
+IF NO:TARGET == 1022
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.90
+;早苗さん
+ELSEIF NO:TARGET == 1042
+	TIMES LOCAL:0 , 0.90
+	TIMES LOCAL:1 , 0.90
+ENDIF
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 2
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+RETURNF 0
+
+@CAN71(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP71("GET", ARG)
+
+@CAN_ABLUP71(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;習得の珠で上げる
+SIF JUEL:習得 < COST71(0)
+	LOCAL:0 |= 1
+;撮影経験が必要
+SIF EXP:撮影経験 < COST71(1)
+	LOCAL:0 |= 2
+
+RETURNF (LOCAL:0 == 0)

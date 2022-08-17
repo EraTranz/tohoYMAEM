@@ -1,0 +1,753 @@
+﻿;=============================================================================
+;コース売春 (ゴム)の処理
+;=============================================================================
+;基本的にお客は1人とする。
+;-------------------------------------------------
+;売春コマンド実行可能判定処理
+;-------------------------------------------------
+@PROSTITUTE_ABLE_COM160, ARG
+;キャラが売春可能であるかの共通判定処理を満たしている
+SIF BROTHEL_COM_ABLE_COMMON(ARG) == 0
+	RETURN 0
+SIF (FLAG:3000 & 2) == 0
+	RETURN 0
+;Ｖ経験またはＡ経験が30以下で[娼婦]を未取得だとダメ
+SIF (EXP:ARG:Ｖ経験 <= 30 || EXP:ARG:Ａ経験 <= 30) && TALENT:ARG:娼婦 == 0
+	RETURN 0
+;従順、欲望、奉仕精神、露出癖のいずれかがLV0だとダメ
+SIF ABL:ARG:従順 == 0 || ABL:ARG:欲望 == 0 || ABL:ARG:奉仕精神 == 0 || ABL:ARG:露出癖 == 0
+	RETURN 0
+;[小人体型]だとダメ
+SIF TALENT:ARG:小人体型
+	RETURN 0
+RETURN 1
+
+;=============================================================================
+;選択可能処理
+;=============================================================================
+@JUDGE_PROSTITUTE_COM161, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM162, ARG
+CALL JUDGE_PROSTITUTE_COM2, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM163, ARG
+CALL JUDGE_PROSTITUTE_COM52, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM164, ARG
+CALL JUDGE_PROSTITUTE_COM3, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM165, ARG
+CALL JUDGE_PROSTITUTE_COM4, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM166, ARG
+CALL JUDGE_PROSTITUTE_COM5, ARG
+RETURN RESULT
+;-------------------------------------------------
+;売春コマンドの分岐処理
+;-------------------------------------------------
+@PROSTITUTE_COM160, ARG
+#LOCALSIZE 1
+CALL CHOOSE_PROSTITUTE_COM, ARG, 16
+SELECTCOM = RESULT
+
+SIF TALENT:MASTER:998
+	PRINTFORML SELECTCOM = {SELECTCOM}
+
+;顧客の設定
+CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE3, ARG
+
+;欲望をチェックする。欲望が相手の欲望を上回るかどうか。成功なら欲望レベルの２倍、失敗なら１倍入ります。
+;CBVA売春では、相手の欲望の最大値が4です。
+LOCAL = RAND:5
+IF LOCAL <= ABL:ARG:欲望
+	TFLAG:408 = LOCAL + ABL:ARG:欲望 * 2
+ELSE
+	TFLAG:408 = LOCAL + ABL:ARG:欲望
+ENDIF
+
+;相手からの行動が発生します。相手の技巧がこちらの欲望以下の場合、不満そうな表情が出る可能性があります。
+;相手の技巧＋こちらの従順の２倍＞こちらの欲望＋３なら、問題なく行為を露出癖と奉仕精神を加える事が出来ます。
+;足りない場合は加えられません。
+LOCAL = MAX(RAND:3 + (ABL:ARG:従順 * 2) - 3, 0)
+SIF LOCAL >= ABL:ARG:技巧
+	TFLAG:408 += (ABL:ARG:奉仕精神 + ABL:ARG:露出癖)
+
+;従順がLV3以上ないと、著しく微妙になります
+SIF ABL:ARG:従順 < 3
+	TFLAG:408 /= 10
+
+;内容的にかならずＶを使用します
+TFLAG:403 |= 1
+;;常に顧客の子を妊娠する可能性があります
+;TFLAG:416 = 1
+
+;………………………………………………
+;選択された売春コマンドを実行
+;………………………………………………
+;ここからは、プレイ内容の領分に入ってきますので、分岐後に任せます。
+TRYCCALLFORM PROSTITUTE_COM{SELECTCOM}, ARG
+	SIF RESULT == 1
+		RETURN 1
+CATCH
+ENDCATCH
+RETURN 0
+
+;=============================================================================
+;コース売春 (ゴム)(普通)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM161, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 150
+
+PRINTL コース売春 (ゴム) -普通-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM:0--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM161
+
+;=============================================================================
+;コース売春 (ゴム)(コスプレイ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM162, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 150
+
+PRINTL コース売春 (ゴム) -コスプレ-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:露出快楽経験 += TFLAG:401 * REM_NUM:0
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM162
+
+;=============================================================================
+;コース売春 (ゴム)(ソープ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM163, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 150
+
+PRINTL コース売春 (ゴム) -ソープ-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:露出快楽経験 += TFLAG:401 * REM_NUM:0
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM163
+
+;=============================================================================
+;コース売春 (ゴム)(ＳＭ系Ｓ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM164, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 150
+
+PRINTL コース売春 (ゴム) -ＳＭ系Ｓ-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:サドっ気 + ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:ＳＭ教育経験 += TFLAG:401 * REM_NUM:0
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM164
+
+;=============================================================================
+;コース売春 (ゴム)(ＳＭ系Ｍ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM165, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 150
+
+PRINTL コース売春 (ゴム) -ＳＭ系Ｍ-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:マゾっ気 + ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:苦痛快楽経験 += TFLAG:401 * REM_NUM:0
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM165
+
+;=============================================================================
+;コース売春 (ゴム)(ママ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM166, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 150
+
+PRINTL コース売春 (ゴム) -人妻-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+;母乳体質
+SIF TALENT:ARG:母乳体質
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM166
+
+;=============================================================================
+;コース売春 (ゴム)(触手)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM167, ARG
+#DIM RC_NUM
+#DIM REM_NUM, 2
+#DIM MAX_NUM_MEM
+VARSET LOCAL, 0
+DOWNBASE:ARG:0 += 200
+DOWNBASE:ARG:1 += 300
+
+PRINTL コース売春 (ゴム) -触手-
+
+;セットなので総合力が問われる、最大で60
+FOR RC_NUM:0, 0, 3
+	TFLAG:408 += (ABL:ARG:(RAND:4) + ABL:ARG:(10 + RAND:5)) * 2
+NEXT
+;中毒能力(自慰と精液のみ)があれば固定で加算
+TFLAG:408 += ABL:ARG:自慰中毒 + ABL:ARG:精液中毒
+
+;[処女]
+IF TALENT:ARG:処女 == 1
+	TFLAG:408 *= 5
+	TFLAG:403 |= 4
+;[乙女]
+ELSEIF TALENT:ARG:処女 == 2
+	TFLAG:408 *= 2
+	TFLAG:403 |= 32
+ENDIF
+;[汚れ無視]、[快感に素直]
+SIF TALENT:ARG:汚れ無視 || TALENT:ARG:快感に素直
+	TFLAG:408 *= 2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+REM_NUM:0 = RAND(2, 4)
+
+MAX_NUM_MEM = MAX(TFLAG:401 / 2, 1)
+
+FOR RC_NUM:0, 0, REM_NUM:0
+	SELECTCASE RAND:4
+		CASE 0 && ABL:ARG:Ｃ感覚 > 0
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+		CASE 1 && ABL:ARG:Ｃ感覚 > 1
+			TCVAR:ARG:Ｖ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+		CASE 2 && ABL:ARG:Ｃ感覚 > 2
+			TCVAR:ARG:Ａ経験 += TFLAG:401
+			TCVAR:ARG:絶頂経験 += TFLAG:401
+			TCVAR:ARG:苦痛快楽経験 += TFLAG:401
+			TCVAR:ARG:Ａ快楽経験 += TFLAG:401
+		CASE 3 && ABL:ARG:Ｃ感覚 > 3
+			TCVAR:ARG:絶頂経験 += MAX_NUM_MEM
+			TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			IF TALENT:ARG:母乳体質
+				TCVAR:ARG:噴乳経験 += TFLAG:401
+				TCVAR:ARG:Ｂ快楽経験 += TFLAG:401
+			ENDIF
+		CASEELSE
+			RC_NUM--
+			CONTINUE
+	ENDSELECT
+NEXT
+
+TCVAR:ARG:自慰経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:奉仕快楽経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:フェラ経験 += TFLAG:401 * REM_NUM:0 / 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:キス経験 += TFLAG:401 * REM_NUM:0 / 2
+TCVAR:ARG:触手経験 += TFLAG:401 * REM_NUM:0
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 160
+;ルール無視してヤっちゃった
+IF BRO_COMMIT_CRIME(ARG) == 1
+	TFLAG:403 |= 8
+	TFLAG:416 = 1
+	TCVAR:ARG:精液経験 = 4
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM167
+

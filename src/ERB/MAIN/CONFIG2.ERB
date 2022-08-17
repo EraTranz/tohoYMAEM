@@ -1,0 +1,397 @@
+﻿;=============================================================================
+;調教モード拡張
+;=============================================================================
+@CONFIGURATION_4
+#LOCALSIZE 1
+;項目全てオン
+LOCAL = 511
+PRINTL 現在、調教モード拡張機能の設定は以下のようになっています。
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+PRINTFORML \@(FLAG:14 & 1) ? ○ # ×\@[ 0] 調教コマンドフィルタ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 2) ? ○ # ×\@[ 1] 気力体力上昇
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 4) ? ○ # ×\@[ 2] ヤンデレもーど
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 8) ? ○ # ×\@[ 3] ランダム性排除
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 16) ? ○ # ×\@[ 4] 猫フェラパッチ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 32) ? ○ # ×\@[ 5] ふたたまパッチ
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 64) ? ○ # ×\@[ 6] 調教メニュー登録
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 128) ? ○ # ×\@[ 7] ふたなりイベント抑制
+;-------------------------------------------------
+PRINTFORML \@(FLAG:14 & 256) ? ○ # ×\@[ 8] 精飲絶頂
+;-------------------------------------------------
+IF FLAG:14 & 1
+	PRINTFORML \@(FLAG:2 & 1) ? ○ # ×\@[20] Ｖ系調教フィルタ
+;-------------------------------------------------
+	PRINTFORML \@(FLAG:2 & 2) ? ○ # ×\@[21] Ａ系調教フィルタ
+;-------------------------------------------------
+	PRINTFORML \@(FLAG:2 & 4) ? ○ # ×\@[22] 異常調教フィルタ
+ENDIF
+;-------------------------------------------------
+SIF FLAG:14 < LOCAL
+	PRINTL 　[98] 全部有効
+SIF FLAG:14
+	PRINTL 　[99] 全部無効
+PRINTL  [100] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 98 && FLAG:14 < LOCAL
+	PRINTW 調教モード拡張機能を全て使えるように設定しました
+	FLAG:14 = LOCAL
+	FLAG:2 |= 7
+ELSEIF RESULT == 99 && FLAG:14
+	PRINTW 調教モード拡張機能を全て使えないように設定しました
+	FLAG:14 = 0
+	FLAG:2 = 0
+ELSEIF RESULT == 0
+	PRINTFORMW 調教コマンドフィルタ機能を\@(FLAG:14 & 1) ? 無効 # 有効\@にしました
+	SIF FLAG:14 & 1
+		FLAG:2 = 0
+	FLAG:14 ^= 1
+ELSEIF RESULT == 1
+	PRINTFORMW 調教終了時に気力・体力の上昇が\@(FLAG:14 & 2) ? 起きない # 起きる\@ように設定しました
+	FLAG:14 ^= 2
+ELSEIF RESULT == 2
+	PRINTFORMW ヤンデレもーどを\@(FLAG:14 & 4) ? 無効 # 有効\@にしました
+	FLAG:14 ^= 4
+ELSEIF RESULT == 3
+	PRINTFORMW 一部コマンドの\@(FLAG:14 & 8) ? 効果を元のランダムなものに戻 # ランダム効果を自分で選択できるように\@しました
+	FLAG:14 ^= 8
+ELSEIF RESULT == 4
+	PRINTFORMW 猫フェラパッチの機能を\@(FLAG:14 & 16) ? 無効 # 有効\@にしました
+	FLAG:14 ^= 16
+ELSEIF RESULT == 5
+	PRINTFORMW ふたたまパッチの機能を\@(FLAG:14 & 32) ? 無効 # 有効\@にしました
+	FLAG:14 ^= 32
+ELSEIF RESULT == 6
+	PRINTFORMW 調教メニューの登録機能を\@(FLAG:14 & 64) ? 無効 # 有効\@にしました
+	FLAG:14 ^= 64
+ELSEIF RESULT == 7
+	PRINTFORMW ふたなりイベントを抑制し\@(FLAG:14 & 128) ? ません # ます\@
+	FLAG:14 ^= 128
+ELSEIF RESULT == 8
+	PRINTFORMW 精飲絶頂機能を\@(FLAG:14 & 256) ? 無効 # 有効\@にしました
+	FLAG:14 ^= 256
+ELSEIF RESULT == 20 && FLAG:14 & 1
+	PRINTFORMW Ｖ系調教フィルタを\@(FLAG:2 & 1) ? オフ # オン\@にしました。
+	FLAG:2 ^= 1
+ELSEIF RESULT == 21 && FLAG:14 & 1
+	PRINTFORMW Ａ系調教フィルタを\@(FLAG:2 & 2) ? オフ # オン\@にしました。
+	FLAG:2 ^= 2
+ELSEIF RESULT == 22 && FLAG:14 & 1
+	PRINTFORMW 異常調教フィルタを\@(FLAG:2 & 4) ? オフ # オン\@にしました。
+	FLAG:2 ^= 4
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+;=============================================================================
+;コマンド拡張
+;=============================================================================
+@CONFIGURATION_5
+#LOCALSIZE 1
+;項目全てオン
+LOCAL = 32767
+PRINTL 現在、コマンド拡張機能の設定は以下のようになっています。
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+PRINTFORML \@(FLAG:15 & 1) ? ○ # ×\@[ 0] Ｃ系拡張コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 2) ? ○ # ×\@[ 1] Ｖ系拡張コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 4) ? ○ # ×\@[ 2] Ａ系拡張コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 8) ? ○ # ×\@[ 3] Ｂ系拡張コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 16) ? ○ # ×\@[ 4] 拷問系、精神操作系コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 32) ? ○ # ×\@[ 5] 薬品系拡張コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 64) ? ○ # ×\@[ 6] 注射系コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 128) ? ○ # ×\@[ 7] 撮影コマンド拡張
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 256) ? ○ # ×\@[ 8] 野外調教コマンド拡張
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 512) ? ○ # ×\@[ 9] 羞恥プレイ系拡張コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 1024) ? ○ # ×\@[10] 特殊風呂系コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 2048) ? ○ # ×\@[11] 調教者奉仕・ウフフ系コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 4096) ? ○ # ×\@[12] 紳士的な触手系コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 8192) ? ○ # ×\@[13] 獣姦系コマンド
+;-------------------------------------------------
+PRINTFORML \@(FLAG:15 & 16384) ? ○ # ×\@[14] キャラ専用コマンド
+;-------------------------------------------------
+SIF FLAG:15 < LOCAL
+	PRINTL 　[98] 全部有効
+SIF FLAG:15
+	PRINTL 　[99] 全部無効
+PRINTL [100] 戻る
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 98 && FLAG:15 < LOCAL
+	PRINTFORMW コマンド拡張機能を全て使えるように設定しました
+	FLAG:15 = LOCAL
+ELSEIF RESULT == 99 && FLAG:15
+	PRINTFORMW コマンド拡張機能を全て使えないように設定しました
+	FLAG:15 = 0
+ELSEIF RESULT == 0
+	PRINTFORMW Ｃ系拡張コマンドを\@(FLAG:15 & 1) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 1
+ELSEIF RESULT == 1
+	PRINTFORMW Ｖ系拡張コマンドを\@(FLAG:15 & 2) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 2
+ELSEIF RESULT == 2
+	PRINTFORMW Ａ系拡張コマンドを\@(FLAG:15 & 4) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 4
+ELSEIF RESULT == 3
+	PRINTFORMW Ｂ系拡張コマンドを\@(FLAG:15 & 8) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 8
+ELSEIF RESULT == 4
+	PRINTFORMW 拷問系、精神操作系コマンドを\@(FLAG:15 & 16) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 16
+ELSEIF RESULT == 5
+	PRINTFORMW 薬品系拡張コマンドを\@(FLAG:15 & 32) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 32
+ELSEIF RESULT == 6
+	PRINTFORMW 注射系コマンドを\@(FLAG:15 & 64) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 64
+ELSEIF RESULT == 7
+	PRINTFORMW 撮影コマンド拡張を\@(FLAG:15 & 128) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 128
+ELSEIF RESULT == 8
+	PRINTFORMW 野外調教コマンド拡張を\@(FLAG:15 & 256) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 256
+ELSEIF RESULT == 9
+	PRINTFORMW 羞恥プレイ系拡張コマンドを\@(FLAG:15 & 512) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 512
+ELSEIF RESULT == 10
+	PRINTFORMW 特殊風呂系コマンドを\@(FLAG:15 & 1024) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 1024
+ELSEIF RESULT == 11
+	PRINTFORMW 調教者奉仕・ウフフ系を\@(FLAG:15 & 2048) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 2048
+ELSEIF RESULT == 12
+	PRINTFORMW 紳士的な触手系コマンドを\@(FLAG:15 & 4096) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 4096
+ELSEIF RESULT == 13
+	PRINTFORMW 獣姦系コマンドを\@(FLAG:15 & 8192) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 8192
+ELSEIF RESULT == 14
+	PRINTFORMW キャラ専用コマンドを\@(FLAG:15 & 16384) ? 無効 # 有効\@にしました
+	FLAG:15 ^= 16384
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+;=============================================================================
+;特殊調教モード
+;=============================================================================
+@CONFIGURATION_6
+#LOCALSIZE 1
+;項目全てオン
+;LOCAL = 15
+PRINTL 現在、特殊調教モードの設定は以下のようになっています。
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+PRINTFORML \@(FLAG:16 & 1) ? ○ # ×\@[ 0] パニックモード
+;-------------------------------------------------
+PRINTFORML \@(FLAG:16 & 2) ? ○ # ×\@[ 1] 失神モード
+;-------------------------------------------------
+PRINTFORML \@(FLAG:16 & 4) ? ○ # ×\@[ 2] 犯されモード
+;-------------------------------------------------
+PRINTFORML \@(FLAG:16 & 8) ? ○ # ×\@[ 3] 自慰隠蔽発覚モード
+;-------------------------------------------------
+PRINTFORML \@(FLAG:16 & 16) ? ○ # ×\@[ 4] 身体測定
+SIF FLAG:16 & 16
+	PRINTFORML 　　[41] 全キャラの身長・体重・3サイズを初期化
+;-------------------------------------------------
+PRINTFORML \@(FLAG:16 & 32) ? ○ # ×\@[ 5] 死亡モード
+PRINTL  [100] やめる
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	PRINTFORMW パニックモードを\@(FLAG:16 & 1) ? 無効 # 有効\@にしました
+	FLAG:16 ^= 1 
+ELSEIF RESULT == 1
+	PRINTFORMW 失神モードを\@(FLAG:16 & 2) ? 無効 # 有効\@にしました
+	FLAG:16 ^= 2
+ELSEIF RESULT == 2
+	PRINTFORMW 犯されモードを\@(FLAG:16 & 4) ? 無効 # 有効\@にしました
+	FLAG:16 ^= 4
+ELSEIF RESULT == 3
+	PRINTFORMW 自慰隠蔽発覚モードを\@(FLAG:16 & 8) ? 無効 # 有効\@にしました
+	FLAG:16 ^= 8
+ELSEIF RESULT == 4
+	PRINTFORMW 各キャラの体格などを表示\@(FLAG:16 & 16) ? しません # します\@
+	FLAG:16 ^= 16
+ELSEIF RESULT == 41 && FLAG:16 & 16
+	PRINTFORML 全キャラの体格などの情報を削除します
+	PRINTFORML [0]いいえ
+	PRINTFORML [1]はい
+	CALL INPUTINT,0,1
+	IF RESULT == 1
+		PRINTFORMW 全キャラの体格などを初期化しました
+		REPEAT CHARANUM
+			BASE:COUNT:10 = 0
+			BASE:COUNT:11 = 0
+			BASE:COUNT:12 = 0
+			BASE:COUNT:13 = 0
+			BASE:COUNT:14 = 0
+			BASE:COUNT:15 = 0
+			BASE:COUNT:16 = 0
+			MAXBASE:COUNT:10 = 0
+			MAXBASE:COUNT:11 = 0
+			MAXBASE:COUNT:12 = 0
+			MAXBASE:COUNT:13 = 0
+			MAXBASE:COUNT:14 = 0
+			MAXBASE:COUNT:15 = 0
+			CFLAG:COUNT:508 = 0
+			CFLAG:COUNT:509 = 0
+			;身長・体重・3サイズの生成処理
+			CALL MAKE_SIZE, 1, COUNT
+		REND
+	ENDIF
+ELSEIF RESULT == 5
+	PRINTFORMW 死亡モードを\@(FLAG:16 & 32) ? 無効 # 有効\@
+	FLAG:16 ^= 32
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0
+
+;=============================================================================
+;機能拡張
+;=============================================================================
+;名称を以下のように変更するかも
+;Ｓパッチ→娼館機能
+;技師パッチ→技師工作機能
+@CONFIGURATION_7
+#LOCALSIZE 1
+PRINTL 現在、カテゴリ機能拡張の設定は以下のようになっています。
+$INPUT_LOOP_0
+PRINTL 変更したい内容を選択してください
+DRAWLINE
+;-------------------------------------------------
+PRINTFORML \@(FLAG:17 & 1) ? ○ # ×\@[ 0] 娼館機能
+;-------------------------------------------------
+;PRINTFORML \@(FLAG:17 & 2) ? ○ # ×\@[ 1] 技師工作機能(未実装)
+;-------------------------------------------------
+PRINTFORML \@(FLAG:17 & 4) ? ○ # ×\@[ 2] 奴隷市場機能
+;FLAG:17 & 8 市場登録
+;-------------------------------------------------
+IF FLAG:17 & 4
+	PRINTFORML 　\@(FLAG:17 & 64) ? ○ # ×\@[21] 筒抜けモード
+	PRINTFORML 　\@(FLAG:17 & 128) ? ○ # ×\@[22] 無名たけモード
+	IF FLAG:17 & 16
+		PRINTFORML 　　[23] 状態表示モード:簡単表示
+	ELSEIF FLAG:17 & 32
+		PRINTFORML 　　[23] 状態表示モード:詳細表示
+	ELSE
+		PRINTFORML 　　[23] 状態表示モード:毎回選択
+	ENDIF
+	PRINTFORML 　　[24] 市場登録キャラを初期化
+	PRINTFORML 　　[25] 履歴ログを削除
+ENDIF
+	
+PRINTL  [100] やめる
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	IF FLAG:17 & 1 && FLAG:4 == 4
+		PRINTFORMW “PROSTITUTE”モードでは、娼館機能を封印することは出来ません
+	ELSE
+		PRINTFORMW 娼館機能を\@(FLAG:17 & 1) ? 無効 # 有効\@にしました
+		FLAG:17 ^= 1
+	ENDIF
+ELSEIF RESULT == 1
+	PRINTFORMW 技師工作機能を\@(FLAG:17 & 2) ? 無効 # 有効\@にしました
+	FLAG:17 ^= 2
+ELSEIF RESULT == 2
+	PRINTFORMW 奴隷市場機能を\@(FLAG:17 & 4) ? 無効 # 有効\@にしました
+	FLAG:17 ^= 4
+ELSEIF RESULT == 21 && FLAG:17 & 4
+	PRINTFORMW 筒抜けモードを\@(FLAG:17 & 64) ? 無効 # 有効\@にしました
+	FLAG:17 ^= 64
+ELSEIF RESULT == 22 && FLAG:17 & 4
+	PRINTFORMW 無名たけモードを\@(FLAG:17 & 128) ? 無効 # 有効\@にしました
+	FLAG:17 ^= 128
+ELSEIF RESULT == 23 && FLAG:17 & 4
+	SIF FLAG:17 & 16
+		FLAG:17 ^= 16
+	SIF FLAG:17 & 32
+		FLAG:17 ^= 32
+	PRINTL 市場内の状態表示モードを選んでください
+	PRINTL [0]簡単表示
+	PRINTL [1]詳細表示
+	PRINTL [2]毎回選択
+	CALL INPUTINT,0,1,2
+	IF RESULT == 0
+		FLAG:17 ^= 16
+	ELSEIF RESULT == 1
+		FLAG:17 ^= 32
+	ENDIF
+ELSEIF RESULT == 24 && FLAG:17 & 4
+	PRINTFORML 市場から自動売却されたキャラクターの情報を削除します
+	PRINTFORML [0]いいえ
+	PRINTFORML [1]はい
+	CALL INPUTINT,0,1
+	IF RESULT == 1
+		LOADGLOBAL
+		VARSET GLOBALS, "", 100, 200
+		SAVEGLOBAL
+		PRINTW 自動売却されたキャラクターの情報を初期化しました
+	ENDIF
+ELSEIF RESULT == 25 && FLAG:17 & 4
+	PRINTFORML 奴隷市場の履歴ログを全て削除します
+	PRINTFORML [0]いいえ
+	PRINTFORML [1]はい
+	CALL INPUTINT,0,1
+	IF RESULT == 1
+		LOADGLOBAL
+		VARSET GLOBALS, "", 380, 401
+		SAVEGLOBAL
+		PRINTW 奴隷市場の履歴ログを全て削除しました
+	ENDIF
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE 正しい値を入力してください
+	GOTO INPUT_LOOP_1
+ENDIF
+DRAWLINE
+PRINT 他に
+GOTO INPUT_LOOP_0

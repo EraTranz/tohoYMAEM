@@ -1,0 +1,1021 @@
+﻿;=============================================================================
+;野外プレイ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE104
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:104 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:野外プレイ
+	RETURN 1
+;アイテム｢リード付き首輪｣を持っていないとダメ
+SIF ITEM:首輪＋リード == 0
+	RETURN 0
+;主人か対象か助手が吸血鬼で、時間が昼の場合、特注日傘をもっていないとダメ
+IF TIME == 0 && ITEM:特注日傘 == 0
+	SIF TALENT:MASTER:吸血鬼 || TALENT:吸血鬼
+		RETURN 0
+	SIF ASSI >= 0 && TALENT:ASSI:吸血鬼
+		RETURN 0
+ENDIF
+;主人か対象か助手が人魚の場合、たらい＋台車をもっていないとダメ
+IF ITEM:たらい＋台車 == 0
+	SIF TALENT:MASTER:人魚 || TALENT:人魚
+		RETURN 0
+	SIF ASSI >= 0 && TALENT:ASSI:人魚
+		RETURN 0
+ENDIF
+;従順かマゾっ気が3以上ないとダメ
+SIF ABL:従順 < 3 && ABL:マゾっ気 < 3
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;蜘蛛の巣にかけているときは移動できない
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;羞恥プレイ中はダメ
+SIF TEQUIP:羞恥プレイ
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 104) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM104
+IF NO:TARGET == 1041
+	PRINTL 椛の散歩
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 104
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 椛の散歩
+ELSE
+	PRINTL 野外プレイ
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 104
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 野外プレイ
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+IF TEQUIP:野外プレイ
+	IF FLAG:15 & 256
+		TFLAG:150 = 0
+		TFLAG:151 = 0
+	ENDIF
+	TEQUIP:野外プレイ = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 150
+
+LOCAL:1 = 500
+LOCAL:2 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL:1, 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 50
+	SOURCE:液体追加 += 50
+	TIMES LOCAL:1, 1.20
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	TIMES LOCAL:1, 1.40
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 400
+	SOURCE:液体追加 += 400
+	TIMES LOCAL:1, 1.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 750
+	SOURCE:液体追加 += 750
+	TIMES LOCAL:1, 2.00
+ELSE
+	SOURCE:中毒充足 += 1300
+	SOURCE:液体追加 += 1300
+	TIMES LOCAL:1, 3.00
+ENDIF
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL:1 , 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL:1 , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:2 , 2.00
+
+SOURCE:トラウマ += LOCAL:2 / 2
+SOURCE:羞恥扇情 += LOCAL:1 / 2
+SOURCE:逸脱 = LOCAL:2
+
+;臆病
+SIF TALENT:臆病
+	TIMES SOURCE:逸脱 , 2.00
+
+SOURCE:露出 = LOCAL:1
+SOURCE:恭順追加 = LOCAL:1 / 2
+TEQUIP:野外プレイ = 1
+
+TFLAG:151 = 0
+;自室の場合、何も無い。
+SIF FLAG:15 & 256
+	CALL OUTDOOR_GO_WHERE
+RETURN 1
+
+;-------------------------------------------------
+;野外プレイ中
+;-------------------------------------------------
+@EQUIP_COM104
+IF NO:TARGET == 1041
+	PRINTL ＜椛お散歩中＞
+ELSE
+	PRINTL ＜野外プレイ中＞
+ENDIF
+
+RESETCOLOR
+;野外プレイ拡張処理
+;他の場所にいるときはコンフィグを無効にしても効果は終了時続く
+SIF TFLAG:150
+	CALL OUTDOOR_SITUATION_CHANGE
+SETCOLOR COLOR("P-RED")
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 100
+
+LOCAL = 500
+LOCAL:1 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	SOURCE:液体追加 += 0
+	TIMES LOCAL, 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 50
+	SOURCE:液体追加 += 50
+	TIMES LOCAL, 1.20
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 150
+	SOURCE:液体追加 += 150
+	TIMES LOCAL, 1.40
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 400
+	SOURCE:液体追加 += 400
+	TIMES LOCAL, 1.60
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 750
+	SOURCE:液体追加 += 750
+	TIMES LOCAL, 2.00
+ELSE
+	SOURCE:中毒充足 += 1300
+	SOURCE:液体追加 += 1300
+	TIMES LOCAL, 3.00
+ENDIF
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL , 2.00
+ELSE
+	TIMES LOCAL , 3.00
+ENDIF
+
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	TIMES LOCAL , 1.50
+;解放
+SIF TALENT:解放
+	TIMES LOCAL , 1.50
+;恥じらい
+SIF TALENT:恥じらい
+	TIMES LOCAL:1 , 2.00
+
+IF TFLAG:150
+	;状況による変化
+	IF TFLAG:151 == 1
+		TIMES LOCAL , 0.80
+		TIMES LOCAL:1 , 0.80
+	ELSEIF TFLAG:151 == 2
+		TIMES LOCAL , 0.90
+		TIMES LOCAL:1 , 0.90
+	ELSEIF TFLAG:151 == 3
+		TIMES LOCAL , 2.00
+		TIMES LOCAL:1 , 2.00
+	ELSEIF TFLAG:151 == 4
+		TIMES LOCAL , 1.20
+		TIMES LOCAL:1 , 1.20
+	ENDIF
+ENDIF
+
+SOURCE:トラウマ += LOCAL:1 / 2
+SOURCE:羞恥扇情 += LOCAL / 2
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:露出 += LOCAL
+SOURCE:逸脱 += LOCAL:1
+SOURCE:恭順追加 += LOCAL / 2
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:露出癖 >= 3
+	TFLAG:50 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_104
+IF TEQUIP:野外プレイ
+	IF FLAG:15 & 256 && TFLAG:899 == 0
+		IF TFLAG:151 == 4
+			PRINTFORML %CALLNAME:MASTER%が家に帰る事を告げると、%OUTDOOR_GALLERY_NAME()%達は残念そうに見送った。
+		ELSEIF TFLAG:151 == 3
+			PRINTFORML %CALLNAME:TARGET%達は、逃げるように家へと帰った。
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%達は、誰にも見つからないように家へと帰った。
+		ENDIF
+	ELSE
+		PRINTL 部屋に戻ってきた…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:TARGET%に首輪をつけて外に連れ出した…
+ENDIF
+
+;-------------------------------------------------
+;外出先選択
+;-------------------------------------------------
+@OUTDOOR_GO_WHERE
+;選択できる外出先の条件
+;博麗神社の条件：霊夢、まりさ、アリス、紫、すいか、あきゅー、魅魔、里の人間
+;紅魔館の条件：霊夢、まりさ、美鈴、咲夜、パチェ、こあ、れみりゃ、フラン、メイド妖精、黒メイド妖精、ここぁ
+;冥界の条件：霊夢、まりさ、咲夜、橙、プリズムリバー３人組、妖夢、コココ、藍、紫、半霊、妖忌、半霊(忌)、亡霊
+;竹林の条件：霊夢、まりさ、咲夜、レミリア、アリス、妖夢、コココ、紫、けーね、てゐ、イナバ、えーりん、てるよ、妹子、地上の兎
+;彼岸の条件：霊夢、まりさ、チルノ、咲夜、虹川三人集、妖夢、みすちー、てゐ、イナバ、あやや、毒、ゆうかりん、えーき、小町、亡霊、地獄鬼、死神
+;妖怪の山の条件：主人が[河童]か、霊夢、まりさ、秋姉妹、hina、にとり、もみもみ、文、早苗、蛇、蛙、さらに萃香と勇儀、鴉天狗、白狼天狗、旧都鬼
+;旧地獄跡市外の条件：主人が[呪精]か、霊夢、まりさ、キスメ、ヤマメ、ぱるしー、遊戯王、さとり、お燐、おくう、こいし、ゾンビフェアリー、黒呪精、地獄鴉、亡霊、旧都鬼
+;妖精の森の条件：主人が[呪精]を持たない[妖精]か、大妖精、チルノ、リリーホワイト、三月精、リリーブラック、赤妖精、青妖精、緑妖精、黄妖精、朱妖精、蒼妖精、翠妖精、金妖精
+;有頂天の条件：霊夢、まりさ、パチェ、咲夜、レミリア、アリス、妖夢、幽々子、紫、萃香、イナバ、文、小町、いくさん、てんこ、天人
+;太陽の畑(昼)：大妖精、チルノ、リリーＷ、サニー、ルナチャ、スター、リリーＢ、無名妖精たち
+;太陽の畑(夜)：霊夢、魔理沙、リリカ、メルラン、ルナサ、ミスティア、メディスン、幽香、ひまわり妖精、黒ひまわり妖精、夜雀
+;月の都：紫、永琳、ルナチャイルド、メリー、豊姫、依姫、レイセン、玉兎、キナコ
+;魔界：霊夢、魔理沙、魅魔、サラ、ルイズ、ユキ、マイ、夢子、神綺、ナズーリン、小傘、一輪、雲山、ムラサ、星、白蓮、ぬえ、魔界人
+;地獄界：(未実装)
+;命蓮寺の条件：霊夢、魔理沙、早苗、ナズーリン、小傘、一輪、雲山、ムラサ、星、白蓮、ぬえ(未実装)
+
+;人里の条件：あなた、霊夢、まりさ、咲夜、けーね、えーりん、妹子、にとり、早苗、あきゅー、れんこん、エリー、霖之助、里の人間（妖夢、てるよ、妖忌を除く、人の血を持つ人＋穣子＋にとり＋アリスの人形＋河童）、ナズーリン、小傘、一輪、雲山、ムラサ、星、白蓮、ぬえ
+;あなた館の条件：霊夢様、ＩＲＣあなた、触手娘、ドリアード、リリーグレイ
+;他にも、色々追加してみてはどうでしょうか？
+LOCAL:1 = 0
+REPEAT 20
+	LOCAL = 1
+	POWER LOCAL, 2, COUNT
+	SIF CFLAG:MASTER:300 & LOCAL || CFLAG:300 & LOCAL || (ASSI >= 0 && CFLAG:ASSI:300 & LOCAL)
+		LOCAL:1 |= LOCAL
+REND
+
+PRINTL さて、どこへいこうか。
+PRINTL [0]家の中庭
+SIF LOCAL:1 & 1
+	PRINTL [1]博麗神社
+SIF LOCAL:1 & 2
+	PRINTL [2]紅魔館
+SIF LOCAL:1 & 4
+	PRINTL [3]冥界
+SIF LOCAL:1 & 8
+	PRINTL [4]竹林
+SIF LOCAL:1 & 16
+	PRINTL [5]彼岸
+SIF LOCAL:1 & 32
+	PRINTL [6]妖怪の山
+SIF LOCAL:1 & 64
+	PRINTL [7]旧地獄市外
+SIF LOCAL:1 & 128
+	PRINTL [8]妖精の森
+SIF LOCAL:1 & 256
+	PRINTL [9]有頂天
+SIF LOCAL:1 & 512
+	PRINTL [10]太陽の畑
+SIF LOCAL:1 & 1024
+	PRINTL [11]太陽の畑
+SIF LOCAL:1 & 2048
+	PRINTL [12]月の都
+SIF LOCAL:1 & 4096
+	PRINTL [13]魔界
+SIF LOCAL:1 & 8192
+	PRINTL [14]地獄界
+SIF LOCAL:1 & 32768
+	PRINTL [15]命蓮寺
+SIF LOCAL:1 & 65536
+	PRINTL [16]神霊廟
+;SIF LOCAL:1 & 131072
+;	PRINTL [17]輝針城
+SIF LOCAL:1 & 16384
+	PRINTL [99]人里
+SIF LOCAL:1 & 524288
+	PRINTL [831]あなた館
+
+$INPUT_LOOP2
+INPUT
+IF RESULT == 0
+	;家の中庭
+	TFLAG:150 = 0
+ELSEIF RESULT == 1 && LOCAL:1 & 1
+	;博麗神社
+	TFLAG:150 = 1
+ELSEIF RESULT == 2 && LOCAL:1 & 2
+	;紅魔館
+	TFLAG:150 = 2
+ELSEIF RESULT == 3 && LOCAL:1 & 4
+	;冥界
+	TFLAG:150 = 3
+ELSEIF RESULT == 4 && LOCAL:1 & 8
+	;竹林
+	TFLAG:150 = 4
+ELSEIF RESULT == 5 && LOCAL:1 & 16
+	;彼岸
+	TFLAG:150 = 5
+ELSEIF RESULT == 6 && LOCAL:1 & 32
+	;妖怪の山
+	TFLAG:150 = 6
+ELSEIF RESULT == 7 && LOCAL:1 & 64
+	;旧地獄市外
+	TFLAG:150 = 7
+ELSEIF RESULT == 8 && LOCAL:1 & 128
+	;妖精の森
+	TFLAG:150 = 8
+ELSEIF RESULT == 9 && LOCAL:1 & 256
+	;有頂天
+	TFLAG:150 = 9
+ELSEIF RESULT == 10 && LOCAL:1 & 512
+	;太陽の畑(昼)
+	TFLAG:150 = 10
+ELSEIF RESULT == 11 && LOCAL:1 & 1024
+	;太陽の畑(夜)
+	TFLAG:150 = 10
+ELSEIF RESULT == 12 && LOCAL:1 & 2048
+	;月の都
+	TFLAG:150 = 11
+ELSEIF RESULT == 13 && LOCAL:1 & 4096
+	;魔界
+	TFLAG:150 = 12
+	
+ELSEIF RESULT == 14 && LOCAL:1 & 8192
+	;地獄界
+	TFLAG:150 = 13
+ELSEIF RESULT == 15 && LOCAL:1 & 32768
+	;命蓮寺
+	TFLAG:150 = 14
+ELSEIF RESULT == 16 && LOCAL:1 & 65536
+	;神霊廟
+	TFLAG:150 = 15
+;ELSEIF RESULT == 17 && LOCAL:1 & 131072
+;	;輝針城
+;	TFLAG:150 = 16
+
+;他の場所を追加するならここ
+
+ELSEIF RESULT == 99 && LOCAL:1 & 16384
+	;人里
+	TFLAG:150 = 99
+ELSEIF RESULT == 831 && LOCAL:1 & 524288
+	;あなた館
+	TFLAG:150 = 831
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP2
+ENDIF
+;野外プレイの状況をリセット
+TFLAG:151 = 1
+;場所移動メッセージの口上・地の文表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 0, TFLAG:150
+
+;--------------------------------------------------
+;状況変化
+;--------------------------------------------------
+@OUTDOOR_SITUATION_CHANGE
+LOCAL:1 = 99
+;野外調教、集団視姦モード
+IF TFLAG:151 == 4
+	;地の文表示用
+	LOCAL:1 = 6
+;野外調教、見つかるかどうかどきどきするモード
+ELSE
+	LOCAL = RAND:10
+	;状況悪化
+	IF LOCAL <= ABL:露出癖
+		;集団視姦モードへ
+		IF TFLAG:151 == 3
+			;地の文表示用
+			LOCAL:1 = 5
+			TFLAG:151 = 4
+		ELSEIF TFLAG:151 == 2
+			;地の文表示用
+			LOCAL:1 = 4
+			TFLAG:151 = 3
+		ELSEIF TFLAG:151 == 1
+			;地の文表示用
+			LOCAL:1 = 3
+			TFLAG:151 = 2
+		ENDIF
+	;発見者、逃亡
+	ELSEIF LOCAL >= ABL:露出癖 && TFLAG:151 == 3
+		;地の文表示用
+		LOCAL:1 = 2
+		TFLAG:151 = 1
+	;状況、回復
+	ELSEIF LOCAL >= 7 && TFLAG:151 == 2
+		;地の文表示用
+		LOCAL:1 = 1
+		TFLAG:151 = 1
+	;現状維持
+	ELSE
+		;地の文表示用
+		LOCAL:1 = 0
+	ENDIF
+ENDIF
+
+;状況変化メッセージの口上・地の文表示
+SIF LOCAL:1 != 99
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 1, LOCAL:1
+
+;--------------------------------------------------
+;野外調教、集団視姦モード時のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_6
+PRINTL 
+PRINTFORM 集まった%OUTDOOR_GALLERY_NAME()%達は
+LOCAL = RAND:4
+IF LOCAL == 0 && (TALENT:オトコ == 0 || (TALENT:オトコ && TALENT:PLAYER:オトコ))
+	PRINTFORML 食い入るように%CALLNAME:TARGET%の痴態を見つめている。
+ELSEIF LOCAL == 0 && TALENT:PLAYER:オトコ == 0
+	PRINTL 食い入るように繰り広げられる痴態を見つめている。
+ELSEIF LOCAL == 1 && TFLAG:150 == 3
+	PRINTL 自分の股間を弄くりながら、見つめてくる。
+ELSEIF LOCAL == 2 && TALENT:オトコ == 0
+	PRINTFORML 羨ましそうに%CALLNAME:PLAYER%を見つめている。
+ELSEIF LOCAL == 2 && TALENT:PLAYER:オトコ == 0
+	PRINTL 羨ましそうにこちらを見つめている。
+ELSEIF LOCAL == 2
+	PRINTFORML 両手で顔を覆って、指の隙間から%CALLNAME:PLAYER%を見つめている。
+ELSEIF TALENT:オトコ == 0 || (TALENT:オトコ && TALENT:PLAYER:オトコ)
+	PRINTFORML %CALLNAME:TARGET%の姿に目からハートを飛ばしている。
+ELSEIF TALENT:PLAYER:オトコ == 0
+	PRINTL こちらの様子に目からハートを飛ばしている。
+ENDIF
+PRINTFORM %CALLNAME:TARGET%
+;その回に公開露出ライブで乱交されている場合は専用
+IF TFLAG:176 == 1
+	PRINTL は陵辱された直後でぐったりしている。
+ELSEIF TFLAG:176 == 2
+	PRINTL はさらなる獲物がないか周囲を見回している。
+ELSEIF ABL:露出癖 >= 3
+	LOCAL = RAND:3
+	IF PALAM:欲情 >= PALAMLV:8
+		PRINTL はあまりにも感じすぎて、まともに現状を把握できないようだ。
+	ELSEIF LOCAL == 0
+		PRINTL は見られるのが嬉しいのか、それに手を振って応えた。
+	ELSEIF LOCAL == 1
+		PRINTL が恥じらいの表情を見せると、周囲はさらに色めきたった。
+	ELSEIF LOCAL == 2
+		PRINTL は見られて感じているのか、さらに顔を紅潮させた。
+	ENDIF
+ELSE
+	PRINTL は必死に恥ずかしさをこらえている。
+ENDIF
+
+;--------------------------------------------------
+;野外調教、状況悪化3段階目(集団視姦モードに移行)のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_5
+PRINTL 
+IF TFLAG:150 == 2
+	PRINTL どうやら、メイド妖精達は熱気に当てられたらしい。
+ELSEIF TFLAG:150 == 3
+	PRINTL どうやら、浮遊霊達のお気に召したらしい。
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を発見したのは%OUTDOOR_GALLERY_NAME()%達であった。
+ENDIF
+PRINTFORML 集まった%OUTDOOR_GALLERY_NAME()%達はとても興奮しているようだ。
+IF (TFLAG:150 == 1 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 3 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 4 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 6 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 7 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 9 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 10 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 11 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 12 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) || (TFLAG:150 == 99 && (TALENT:オトコ == 0 || TALENT:PLAYER:オトコ == 0)) 
+	PRINT 彼らは
+ELSE
+	PRINT 彼女らは
+ENDIF
+LOCAL = 0
+SELECTCASE TFLAG:150
+	;博麗神社
+	CASE 1
+		IF CFLAG:MASTER:300 & 1
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 1
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 1
+			LOCAL = 3
+		ENDIF
+	;紅魔館
+	CASE 2
+		IF CFLAG:MASTER:300 & 2
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 2 && NO:TARGET != 3001 && NO:TARGET != 3008
+			PRINTFORM 調教されている%CALLNAME:TARGET%に何度も謝りながら、
+		ELSEIF NO:TARGET == 3001 || NO:TARGET == 3008
+			LOCAL = 4
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 2
+			LOCAL = 3
+		ENDIF
+	;冥界
+	CASE 3
+		IF CFLAG:MASTER:300 & 4
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 4
+			PRINTFORM 調教されているのが、%CALLNAME:TARGET%である事に気づくとふよふよしながら
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 4
+			LOCAL = 3
+		ENDIF
+	;竹林
+	CASE 4
+		IF CFLAG:MASTER:300 & 8
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 8
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 8
+			LOCAL = 3
+		ENDIF
+	;彼岸
+	CASE 5
+		IF CFLAG:MASTER:300 & 16
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 16
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 8
+			LOCAL = 3
+		ENDIF
+	;妖怪の山
+	CASE 6
+		IF CFLAG:MASTER:300 & 32
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 32
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 32
+			LOCAL = 3
+		ENDIF
+	;旧地獄跡市外
+	CASE 7
+		IF CFLAG:MASTER:300 & 64
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 64
+			LOCAL = 2
+		ELSEIF ASSI >= 0
+			SIF CFLAG:ASSI:300 & 64
+				LOCAL = 3
+		ENDIF
+	;妖精の森
+	CASE 8
+		IF CFLAG:MASTER:300 & 128
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 128
+			LOCAL = 4
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 128
+			LOCAL = 3
+		ENDIF
+	;有頂天
+	CASE 9
+		IF CFLAG:MASTER:300 & 256
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 256
+			PRINTFORM 調教されているのが、%CALLNAME:TARGET%である事に気づくと酒を片手に、
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 256
+			LOCAL = 3
+		ENDIF
+	;太陽の畑
+	CASE 10
+		;昼
+		IF TIME == 0
+			IF CFLAG:MASTER:300 & 512
+				LOCAL = 1
+			ELSEIF CFLAG:300 & 512
+				LOCAL = 4
+			ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 512
+				LOCAL = 3
+			ENDIF
+		;夜
+		ELSE
+			IF CFLAG:MASTER:300 & 1024
+				LOCAL = 1
+			ELSEIF CFLAG:300 & 1024
+				LOCAL = 2
+			ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 1024
+				LOCAL = 3
+			ENDIF
+		ENDIF
+	;月の都
+	CASE 11
+		IF CFLAG:MASTER:300 & 2048
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 2048
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 2048
+			LOCAL = 3
+		ENDIF
+	;魔界
+	CASE 12
+		IF CFLAG:MASTER:300 & 4096
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 4096
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 4096
+			LOCAL = 3
+		ENDIF
+		
+	;地獄界
+	CASE 13
+		IF CFLAG:MASTER:300 & 8192
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 8192
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 8192
+			LOCAL = 3
+		ENDIF
+	;命蓮寺
+	CASE 14
+		IF CFLAG:MASTER:300 & 32768
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 32768
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 32768
+			LOCAL = 3
+		ENDIF
+	;神霊廟
+	CASE 15
+		IF CFLAG:MASTER:300 & 65536
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 65536
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 65536
+			LOCAL = 3
+		ENDIF
+	;輝針城
+	CASE 16
+		IF CFLAG:MASTER:300 & 131072
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 131072
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 131072
+			LOCAL = 3
+		ENDIF
+		
+	;人里
+	CASE 99
+		IF CFLAG:MASTER:300 & 16384
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 16384
+			LOCAL = 2
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 16384
+			LOCAL = 3
+		ENDIF
+	;あなた館
+	CASE 831
+		IF CFLAG:MASTER:300 & 524288
+			LOCAL = 1
+		ELSEIF CFLAG:300 & 524288
+			PRINTFORM 調教されているのが、%CALLNAME:TARGET%である事に気づくと顔を赤らめながら
+		ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 524288
+			LOCAL = 3
+		ENDIF
+ENDSELECT
+SELECTCASE LOCAL
+	CASE 1
+		PRINTFORM %CALLNAME:MASTER%の了承を取って、
+	CASE 2
+		PRINTFORM 調教されているのが、%CALLNAME:TARGET%である事に気づくとニヤニヤしながら
+	CASE 3
+		PRINTFORM %CALLNAME:ASSI%の了承を取って、
+	CASE 4
+		PRINTFORM 調教されているのが、%CALLNAME:TARGET%である事に気づくとワイワイガヤガヤと、
+ENDSELECT
+PRINTFORML 食い入るように%CALLNAME:TARGET%の痴態を見つめはじめた。
+PRINTFORML %CALLNAME:TARGET%は思わず\@(ABL:露出癖 >= 3) ? とても嬉しそうに笑った。 # 今にも泣き出しそうだ。\@
+
+;--------------------------------------------------
+;野外調教、状況悪化2段階目のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_4
+PRINTL 
+IF TFLAG:150 == 2
+	PRINT 気づけば、周囲のメイド達は明確に
+ELSEIF TFLAG:150 == 3
+	PRINT 気づけば、周囲の霊は明確に
+ELSE
+	PRINT ふと気づけば、誰かが
+ENDIF
+PRINTFORML %CALLNAME:TARGET%の事を見つめている。
+PRINTL 
+PRINTFORML %CALLNAME:TARGET%は思わず\@(ABL:露出癖 >= 3) ? 期待に満ちた視線をそちらへ送った。 # 視線をそらした。\@
+
+;--------------------------------------------------
+;野外調教、状況悪化1段階目のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_3
+PRINTL 
+SELECTCASE TFLAG:150
+	CASE 1
+		PRINT 近くから、誰かの歩く足音が聞こえてくる。
+	CASE 2
+		PRINT なんだか、周囲のメイド達がこちらをちらちら見ているような気がする。
+	CASE 3
+		PRINT なんだか、周囲の浮遊霊達がこちらを見ているような気がする。
+	CASE 4
+		PRINT 近くから、何者かの歩く足音が聞こえてくる。
+	CASE 5
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	CASE 6
+		PRINT 近くから、何かの風を切る音が聞こえてくる。
+	CASE 7
+		PRINT 近くから、誰かの歩く足音が聞こえてくる。
+	CASE 8
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	CASE 9
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	CASE 10
+		PRINTFORM 近くから、誰かの\@(TIME == 0) ? 楽しげな会話 # 熱狂的な叫び\@が聞こえてくる。
+	CASE 11
+		PRINT 近くから、何者かの歩く足音が聞こえてくる。
+	CASE 12
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	
+	CASE 13
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	CASE 14
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	CASE 15
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	CASE 16
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	
+	
+	CASE 98
+		PRINT 近くから、何者かの歩く足音が聞こえてくる。
+	CASE 99
+		PRINT 近くから、誰かの歩く足音が聞こえてくる。
+	CASE 831
+		PRINT なんだか、庭の野菜妖精達がこちらをちらちら見ているような気がする。
+ENDSELECT
+PRINTL 
+PRINTFORML %CALLNAME:TARGET%\@(ABL:露出癖 >= 3) ? の瞳は期待と恥ずかしさで潤んでいる。 # は恐怖と恥ずかしさのあまり、思わず体を硬直させた。\@
+
+;--------------------------------------------------
+;野外調教、発見者逃亡時のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_2
+PRINTL 
+IF TFLAG:150 == 2
+	PRINTFORML 周囲のメイド達は%CALLNAME:MASTER%の視線に気づくと、
+	PRINTL 慌てて視線をそらした。
+ELSEIF TFLAG:150 == 3
+	PRINTFORML 周囲の霊は%CALLNAME:MASTER%の視線に気づくと、
+	PRINTL 何事も無かったようにまた漂い始めた。
+ELSE
+	PRINTFORML 発見した誰かは%CALLNAME:TARGET%達の姿と行為を見ると、
+	PRINTL 素っ頓狂な声を上げて逃げ出してしまった。
+ENDIF
+
+;--------------------------------------------------
+;野外調教、状況回復時のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_1
+PRINTL 
+IF TFLAG:150 == 2
+	PRINTL しばらくすると、周囲のメイド達は再び見てみぬ振りをはじめた。
+ELSEIF TFLAG:150 == 3
+	PRINTL しばらくすると、周囲の霊はふたたび漂い始めた。
+ELSE
+	PRINTL しばらくすると、周囲はまた静かになった。
+ENDIF
+PRINTFORML %CALLNAME:TARGET%は\@(ABL:露出癖 >= 3) ? 残念そうにしながらも行為を続けた。 # 少し落ち着いたものの、まだ緊張は解けていない。\@
+
+;--------------------------------------------------
+;野外調教、現状維持時のメッセージ
+;--------------------------------------------------
+@OUTDOOR_SITUATION_0
+PRINTL 
+IF TFLAG:151 == 2
+	PRINTFORM 相変わらず、
+	IF TFLAG:150 == 99
+		PRINT 近くから、誰かの歩く足音が聞こえてくる。
+	ELSEIF TFLAG:150 == 831
+		PRINT 近くから、野菜妖精達のにぎやかな声が聞こえてくる。
+	ELSEIF TFLAG:150 == 1
+		PRINT 近くから、誰かの歩く足音が聞こえてくる。
+	ELSEIF TFLAG:150 == 2
+		PRINT 周囲のメイド達がこちらをちらちら見ているような気がする。
+	ELSEIF TFLAG:150 == 3
+		PRINT 周囲の浮遊霊達がこちらを見ているような気がする。
+	ELSEIF TFLAG:150 == 4
+		PRINT 近くから、何者かの歩く足音が聞こえてくる。
+	ELSEIF TFLAG:150 == 5
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 6
+		PRINT 近くから、何かの風を切る音が聞こえてくる。
+	ELSEIF TFLAG:150 == 7
+		PRINT 近くから、誰かの歩く足音が聞こえてくる。
+	ELSEIF TFLAG:150 == 8
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 9
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 10 && TIME == 0
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 10
+		PRINT 近くから、誰かの熱狂的な叫びが聞こえてくる。
+	ELSEIF TFLAG:150 == 11
+		PRINT 近くから、何者かの歩く足音が聞こえてくる。
+	ELSEIF TFLAG:150 == 12
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 13
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 14
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 15
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 16
+		PRINT 近くから、誰かの楽しげな会話が聞こえてくる。
+	ELSEIF TFLAG:150 == 98
+		PRINT 近くから、何者かの歩く足音が聞こえてくる。
+	ENDIF
+	PRINTL 
+	PRINTFORML %CALLNAME:TARGET%の\@(ABL:露出癖 >= 3) ? 瞳は期待と恥ずかしさで潤んでいる。 # 顔は恥ずかしさのあまり真っ赤になっている。\@
+ELSE
+	PRINTFORM 相変わらず、
+	IF TFLAG:150 == 2
+		PRINT 周囲のメイド達は見てみぬ振りを続けている。
+	ELSEIF TFLAG:150 == 3
+		PRINT 周囲の浮遊霊に変化は見られない。
+	ELSE
+		PRINT 周囲に人の気配は無い。
+	ENDIF
+	PRINTL 
+	PRINTFORML %CALLNAME:TARGET%は\@(ABL:露出癖 >= 3) ? なんだか少しつまらなさそうだ # いつ誰が来るか気が気でない\@。
+ENDIF
+
+;--------------------------------------------------
+;見物人の名前
+;--------------------------------------------------
+@OUTDOOR_GALLERY_NAME
+#FUNCTIONS
+;主に俺の精神安定の為に♂×♂のときは、見物客を女性に
+IF TFLAG:150 == 99 && NO:TARGET == 1026 && TIME == 0
+		RETURNF "学校の子供"
+ELSEIF TFLAG:150 == 99 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "人里の娘"
+ELSEIF TFLAG:150 == 99
+	RETURNF "人里の男"
+ELSEIF TFLAG:150 == 831
+	RETURNF "野菜妖精"
+ELSEIF TFLAG:150 == 1 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "参拝客の少女"
+ELSEIF TFLAG:150 == 1
+	RETURNF "参拝客の男"
+ELSEIF TFLAG:150 == 2
+	RETURNF "メイド妖精"
+ELSEIF TFLAG:150 == 3
+	RETURNF "浮遊霊"
+ELSEIF TFLAG:150 == 4
+	RETURNF "ウサギ"
+ELSEIF TFLAG:150 == 5
+	RETURNF "花の妖精"
+ELSEIF TFLAG:150 == 6 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "天狗の娘"
+ELSEIF TFLAG:150 == 6
+	RETURNF "天狗の男"
+ELSEIF TFLAG:150 == 7
+	RETURNF "旧地獄の住民"
+ELSEIF TFLAG:150 == 8
+	RETURNF "妖精"
+ELSEIF TFLAG:150 == 9 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "天人の娘"
+ELSEIF TFLAG:150 == 9
+	RETURNF "天人の男"
+ELSEIF TFLAG:150 == 10 && TIME == 0
+	RETURNF "ひまわり妖精"
+ELSEIF TFLAG:150 == 10 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "妖怪少女"
+ELSEIF TFLAG:150 == 10
+	RETURNF "妖怪の男"
+ELSEIF TFLAG:150 == 11
+	RETURNF "玉兎"
+ELSEIF TFLAG:150 == 12
+	RETURNF "魔界人"
+ELSEIF TFLAG:150 == 13
+	RETURNF "地獄界の住人"
+ELSEIF TFLAG:150 == 14 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "参拝客の女"
+ELSEIF TFLAG:150 == 14
+	RETURNF "参拝客の男"
+ELSEIF TFLAG:150 == 15 && TALENT:オトコ && TALENT:PLAYER:オトコ
+	RETURNF "見物客の女"
+ELSEIF TFLAG:150 == 15
+	RETURNF "見物客の男"
+ELSEIF TFLAG:150 == 16
+	RETURNF "魔界人"
+ENDIF

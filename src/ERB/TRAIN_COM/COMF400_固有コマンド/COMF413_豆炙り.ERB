@@ -1,0 +1,158 @@
+﻿;=============================================================================
+;豆炙り
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE413
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:413 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;調教者がＥＸ化していない妹紅でないとダメ
+SIF NO:PLAYER != 1031 || CFLAG:PLAYER:0
+	RETURN 0
+;対象にペニスがあるならダメ
+SIF EXIST_BAR(TARGET)
+	RETURN 0
+;Ｃ系装着具使用中は不可
+SIF TEQUIP:Ｃ系装着器具
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;裸エプロン、スク水プレイ、コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 413) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM413
+PRINTL 豆炙り
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 413
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 豆炙り
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 150
+DOWNBASE:1 += 150
+
+SOURCE:露出 = 200
+SOURCE:屈従 = 500
+SOURCE:逸脱 = 500
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 40
+	SOURCE:痛み = 100
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 160
+	SOURCE:痛み = 500
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 700
+	SOURCE:痛み = 750
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1500
+	SOURCE:痛み = 1500
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 2400
+	SOURCE:痛み = 2500
+ELSE
+	SOURCE:快Ｃ = 3300
+	SOURCE:痛み = 3000
+ENDIF
+
+;調教者のABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	TIMES SOURCE:快Ｃ , 0.60
+	TIMES SOURCE:痛み , 4.00
+ELSEIF ABL:PLAYER:技巧 == 1
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:痛み , 2.00
+ELSEIF ABL:PLAYER:技巧 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:痛み , 1.50
+ELSEIF ABL:PLAYER:技巧 == 3
+	TIMES SOURCE:快Ｃ , 1.20
+	TIMES SOURCE:痛み , 1.20
+ELSEIF ABL:PLAYER:技巧 == 4
+	TIMES SOURCE:快Ｃ , 1.40
+	TIMES SOURCE:痛み , 1.10
+ELSE
+	TIMES SOURCE:快Ｃ , 1.60
+	TIMES SOURCE:痛み , 1.00
+ENDIF
+
+;サド、ドＳ、サドっ気3以上を見る
+SIF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ || ABL:PLAYER:サドっ気 > 2
+	TIMES SOURCE:痛み , 2.00
+;Ｃ敏感、鈍感をみる
+IF TALENT:Ｃ敏感
+	TIMES SOURCE:快Ｃ , 1.50
+ELSEIF TALENT:Ｃ鈍感
+	TIMES SOURCE:快Ｃ , 0.60
+ENDIF
+;炎が苦手そうな方々(チルノ、レティ、リグル、ミスティア、夜雀)
+IF ABURARE_ITAIYO_BONUS(TARGET)
+	TIMES SOURCE:痛み , 2.00
+	SOURCE:トラウマ += 3000
+ENDIF
+
+;奴隷のＶ⇔調教者の手の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:ヴァギナ
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+
+SIF PLAYER == MASTER
+	TCVAR:Ｃ調律経験 += 2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_413
+PRINTFORML %CALLNAME:PLAYER%は指先に火を灯すと
+PRINTFORM %CALLNAME:TARGET%の
+SIF ABL:Ｃ感覚 >= 3
+	PRINT 大きく膨らんだ
+IF TALENT:小柄体型
+	PRINT 可愛らしいお豆さんを
+ELSE
+	PRINT 桃色の真珠のような陰核を
+ENDIF
+SIF TALENT:サド || TALENT:ドＳ || ABL:サドっ気 > 2
+	PRINT じっくりと
+;炎が苦手そうな方々(チルノ、レティ、リグル、ミスティア、夜雀)
+IF ABURARE_ITAIYO_BONUS(TARGET) && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTL 炙った。
+	PRINTFORML %CALLNAME:TARGET%はあまりの熱さに、泣き叫んでしまった…
+;その他
+ELSE
+	PRINTL 炙った…
+ENDIF

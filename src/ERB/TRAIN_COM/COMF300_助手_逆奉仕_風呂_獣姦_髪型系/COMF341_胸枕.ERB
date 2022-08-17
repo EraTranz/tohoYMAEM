@@ -1,0 +1,98 @@
+﻿;=============================================================================
+;胸枕
+;=============================================================================
+;完全趣味コマンドなので実用性０
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE341
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:341 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;主人でないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;従順4以上必要
+SIF ABL:従順 < 4
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;ウェディングドレス・ゴスロリ着用中の場合技巧4以上必須
+SIF (TEQUIP:コスチュームプレイ == 19 || TEQUIP:コスチュームプレイ == 20) && ABL:技巧 < 4
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 341) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM341
+PRINTL 胸枕
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 341
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 胸枕
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+SOURCE:主導権 = 150
+SOURCE:恭順追加 = 50
+
+;対象の胸の汚れ⇔調教者の髪の汚れが相互に移動
+STAIN:胸 |= STAIN:PLAYER:髪
+STAIN:PLAYER:髪 |= STAIN:胸
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_341
+PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+IF TALENT:絶壁
+	PRINT あるのか分からないような
+ELSEIF TALENT:貧乳
+	PRINT 枕にするには少し足りない
+ELSEIF TALENT:巨乳
+	PRINT たっぷりとした柔らかそうな
+ELSEIF TALENT:爆乳
+	PRINT 頭が埋まってしまいそうな
+ELSE
+	PRINT ちょうど良い大きさの
+ENDIF
+PRINTL 胸に寝転んだ…

@@ -1,0 +1,258 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;一言システムのテンプレ
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_0
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+PRINTFORMW テンプレ
+
+
+;-------------------------------------------------
+;特に指定なし
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_1
+SIF __K2008N_CAN_CALL__
+	RETURN 1
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTDATAL
+			DATA 　　　「えーと、アレをこうして……　あらら？　材料が足りないだなんて」
+		ENDDATA
+	CASE 2 TO 3
+		PRINTDATAL
+			DATA 　　　「ねえ、なんで私なんか買ったの？」
+		ENDDATA
+	CASE 4 TO 5
+		PRINTDATAL
+			DATA 　　　「いちど吹っ切れちゃうと、こんな生活も悪くないわね」
+		ENDDATA
+ENDSELECT
+
+
+;-------------------------------------------------
+;朝
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_2
+SIF __K2008N_CAN_CALL__
+	RETURN TIME == 0
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「また、いつもの朝かぁ……　はぁ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「ふふふ、いい朝だわ」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「おはようございます。今日も来てくれるかしら？」
+ENDSELECT
+
+;-------------------------------------------------
+;夜
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_3
+SIF __K2008N_CAN_CALL__
+	RETURN TIME == 1
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「もう夜なのね……　はぁ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「ふふふ、夜ってワクワクするわね！」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「こんばんは。今夜も来てくれるかしら？」
+ENDSELECT
+
+
+;-------------------------------------------------
+;C開発
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_10
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_DEVRANK("C") >= 4
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「んっ、%K2008FS_CALL_MY_C()%が擦れて……」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「%K2008FS_CALL_MY_C()%気持ちいいわ、病みつきになりそう」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「%K2008FS_CALL_MY_C()%弄りたい……　ちょっと楽しんじゃおう♪」
+ENDSELECT
+
+;-------------------------------------------------
+;V開発
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_11
+SIF __K2008N_CAN_CALL__
+	RETURN TALENT:オトコ == 0 && K2008F_DEVRANK("V") >= 4
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「膣は性交の器官だもんね。敏感なのも仕方ない……　のかしら？」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「お腹の奥がうずいちゃう……　指じゃ届かないわねぇ」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「%K2008FS_CALL_MY_V()%の快感は本物だわ。これはじっくり研究しないと」
+ENDSELECT
+
+;-------------------------------------------------
+;A開発
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_12
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_DEVRANK("A") >= 4
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「お尻をあんなに弄るなんて……　正気の沙汰じゃないわよね」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「お尻の穴が気持ちいい、なんて夢にも思わなかったわねぇ」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「お尻に何か入ってないと寂しいなんて……　私も立派な変態ね♪」
+ENDSELECT
+
+;-------------------------------------------------
+;B開発
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_13
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_DEVRANK("B") >= 4
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「ふ、服が擦れて胸が……　ブラどこいったっけ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「おっぱい揉むの気持ちいい……　つ、爪立てても平気かな」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「乳首がこれ以上敏感になったら……　服なんて着れないかも」
+ENDSELECT
+
+;-------------------------------------------------
+;U開発中（拡張は無し）
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_14
+SIF __K2008N_CAN_CALL__
+	RETURN EXP:Ｕ拡張経験 == EXPLV:0 && INRANGE(EXP:尿道開発経験, EXPLV:1, EXPLV:5 - 1)
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「尿道を開発するとか何考えてるのよ……」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「おしっこ穴、痛いけど……　これからどうなっちゃうのかしら」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「尿道姦なんてロマンがあるわね、素敵かも」
+ENDSELECT
+
+;-------------------------------------------------
+;U開発中（拡張あり）
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_15
+SIF __K2008N_CAN_CALL__
+	RETURN EXP:Ｕ拡張経験 >= EXPLV:1 && INRANGE(EXP:尿道開発経験, EXPLV:1, EXPLV:5 - 1)
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「尿道が弄られたなんて……　嘘でしょ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「尿道炎とか膀胱炎が怖いけど、尿道開発も素敵だわ」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「尿道ってどこまで拡がるのかしら……」
+ENDSELECT
+
+;-------------------------------------------------
+;U開発完了
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_16
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_DEVRANK("U") >= 4
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「おしっこ出すとズキズキするわ……　泌尿器科いかなきゃ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「ふふふ、おしっこ我慢が癖になっちゃった」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「今度は膀胱の中まで開発してくださいね、%CALLNAME:MASTER%♪」
+ENDSELECT
+
+;-------------------------------------------------
+;放尿
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_17
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_DEVRANK("放尿") >= 3
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「ふぅ～　当たり前だけど、トイレは一人で行くものよね」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「はあぁ、一人でトイレも悪くないわね」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「はあ～　じょぼじょぼオシッコ出すの気持ちいいわぁ、素敵」
+ENDSELECT
+
+;-------------------------------------------------
+;放尿癖（朝）
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_18
+SIF __K2008N_CAN_CALL__
+	RETURN TIME:0 == 0 && TALENT:おもらし癖 && K2008F_DEVRANK("放尿") >= 3
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「あわわわ……　濡らしちゃった布団ごまかさなきゃ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「やっちゃった、寝る前にトイレ行ったのになぁ」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「またおねしょしちゃったわ。　お仕置されちゃう♪」
+ENDSELECT
+
+;-------------------------------------------------
+;放尿癖（夜）
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_19
+SIF __K2008N_CAN_CALL__
+	RETURN TIME:0 == 1 && TALENT:おもらし癖 && K2008F_DEVRANK("放尿") >= 3
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「夜尿症なんてバレたら何言われるか……」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「ん、おトイレ……　おしっこしてから寝なきゃ」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「さて、寝る前にいっぱいお水飲んで、おねしょの準備しなきゃ」
+ENDSELECT
+
+;-------------------------------------------------
+;精愛味覚
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_20
+SIF __K2008N_CAN_CALL__
+	RETURN TALENT:精愛味覚 > 0
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「味覚で性的快楽が得られるなんて都市伝説よ……　私は大丈夫、きっと」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「精液の喉越しも悪くないわ、素敵」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「せーえき……　せーえき……　精液どこぉおおお」
+ENDSELECT
+
+;-------------------------------------------------
+;陰毛なし
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_31
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_PUBIC_HAIR_DENSITY() == 0
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「パイパンだから何よ。　恥ずかしくもなんともないわ」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「恥毛とか言うのに、ない方が恥ずかしいなんて不思議ね」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「ツルツルのワレメが好きなの？　素敵」
+ENDSELECT
+
+
+;-------------------------------------------------
+;陰毛多い
+;-------------------------------------------------
+@K2008_ONEWORD_SHOW_STATUS_32
+SIF __K2008N_CAN_CALL__
+	RETURN K2008F_PUBIC_HAIR_DENSITY() >= 4
+SELECTCASE K2008F_RANK()
+	CASE 0 TO 1
+		PRINTSINGLEFORM 　　　「ううぅ、下の毛がこんなにビッシリ……」
+	CASE 2 TO 3
+		PRINTSINGLEFORM 　　　「お部屋を掃除しても掃除しても、あちこちから縮れ毛が……」
+	CASE 4 TO 5
+		PRINTSINGLEFORM 　　　「お尻の穴まで陰毛がびっしり……　これも素敵ね」
+ENDSELECT

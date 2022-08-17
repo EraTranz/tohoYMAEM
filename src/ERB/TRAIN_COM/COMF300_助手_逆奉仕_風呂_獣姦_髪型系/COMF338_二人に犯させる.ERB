@@ -1,0 +1,675 @@
+﻿;=============================================================================
+;二人に犯させる
+;=============================================================================
+;主人が助手と対象にＶとＡに挿入するようにさせるもの。
+;二人に「犯される」ではないことに注意。主導権は主人。
+;TFLAG:131を利用。1なら助手がＶ挿入、2ならＡ挿入。口や尿道を犯す選択はない。
+;挿しっぱなし判定からこれは孤立させている。つまりこのプレイの前後はコンボしない。
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE338
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:338 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;助手がいないとダメ
+SIF ASSI < 0
+	RETURN 0
+;主人でないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;主人の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(MASTER) == 0
+	RETURN 0
+;主人に一定のＡ経験が必要
+SIF EXP:MASTER:Ａ経験 < EXPLV:3
+	RETURN 0
+;主人が[禁断の知識]持ちじゃないとき、体格差が2段階以内か調教者が[禁断の知識]持ちじゃないとダメ
+IF TALENT:MASTER:禁断の知識 == 0
+	IF COMMON_BODYSIZE_CHECK(MASTER, ASSI) == 0 && COMMON_BODYSIZE_CHECK(ASSI, MASTER) == 0
+		RETURN 0
+	ELSEIF COMMON_BODYSIZE_CHECK(MASTER, TARGET) == 0
+		RETURN 0
+	ELSEIF COMMON_BODYSIZE_CHECK(ASSI, TARGET) == 0
+		RETURN 0
+	ENDIF
+ENDIF
+;調教対象にペニスがないとダメ
+SIF EXIST_BAR(TARGET) == 0
+	RETURN 0
+;助手にペニスがないとダメ
+SIF EXIST_BAR(ASSI) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬 || EQUIP:ASSI:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;オナホール・電極オナホール使用中はダメ
+SIF TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;縄使用中はダメ
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;オナホール・電極オナホール使用中はダメ
+SIF TEQUIP:Ｃ系装着器具 == 2 || TEQUIP:Ｃ系装着器具 == 6
+	RETURN 0
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+SIF TEQUIP:お風呂場プレイ && ITEM:プレイマット == 0
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;助手が褌着用中の場合、助手の技巧4以上必須
+SIF ASSI >= 0 && TEQUIP:ASSI:コスチュームプレイ == 17 && ABL:ASSI:技巧 < 4
+	RETURN 0
+;褌着用中の場合技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:技巧 < 4
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2 || TEQUIP:ASSI:コスチュームプレイ == 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 338) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM338
+PRINTL 二人に犯させる
+
+;どっちがどっちに挿すかは助手優先で感覚と素質を見る
+IF ABL:MASTER:Ｖ感覚 > ABL:MASTER:Ａ感覚 || TALENT:MASTER:淫壷
+	TFLAG:131 = 1
+ELSEIF ABL:MASTER:Ｖ感覚 < ABL:MASTER:Ａ感覚 || TALENT:MASTER:淫尻
+	TFLAG:131 = 2
+ELSE
+	TFLAG:131 = 1 + RAND:2
+ENDIF
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 338
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+TSTR:0 = 二人に犯させる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;射精ゲージチェック1 (助手)
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:助手の技巧をみる
+IF ABL:ASSI:技巧 == 0
+	LOCAL = 40
+ELSEIF ABL:ASSI:技巧 == 1
+	LOCAL = 250
+ELSEIF ABL:ASSI:技巧 == 2
+	LOCAL = 600
+ELSEIF ABL:ASSI:技巧 == 3
+	LOCAL = 1300
+ELSEIF ABL:ASSI:技巧 == 4
+	LOCAL = 1700
+ELSE
+	LOCAL = 2800
+ENDIF
+
+;助手の従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(ASSI, LOCAL)
+;助手の奉仕精神をみる
+LOCAL = EJACULATIONCHECK_ABL_13_1(ASSI, LOCAL)
+
+IF TFLAG:131 == 1
+	;主人のＶ感覚をみる
+	LOCAL = EJACULATIONCHECK_ABL_1_1(MASTER, LOCAL)
+	;主人のＶ経験をみる
+	LOCAL = EJACULATIONCHECK_EXP_0_1(MASTER, LOCAL)
+ELSE
+	;主人のＡ感覚をみる
+	LOCAL = EJACULATIONCHECK_ABL_2_1(MASTER, LOCAL)
+	;主人のＡ経験をみる
+	LOCAL = EJACULATIONCHECK_EXP_1_1(MASTER, LOCAL)
+ENDIF
+
+;助手のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(ASSI, LOCAL)
+
+SIF EXIST_PENIS(ASSI)
+	BASE:ASSI:射精 += LOCAL
+
+;-------------------------------------------------
+;射精ゲージチェック2 (対象)
+;-------------------------------------------------
+LOCAL:1 = 0
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL:1 = 40
+ELSEIF ABL:技巧 == 1
+	LOCAL:1 = 250
+ELSEIF ABL:技巧 == 2
+	LOCAL:1 = 600
+ELSEIF ABL:技巧 == 3
+	LOCAL:1 = 1300
+ELSEIF ABL:技巧 == 4
+	LOCAL:1 = 1700
+ELSE
+	LOCAL:1 = 2800
+ENDIF
+
+;従順をみる
+LOCAL:1 = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL:1)
+;奉仕精神をみる
+LOCAL:1 = EJACULATIONCHECK_ABL_13_1(TARGET, LOCAL:1)
+
+IF TFLAG:131 == 1
+	;主人のＡ感覚をみる
+	LOCAL:1 = EJACULATIONCHECK_ABL_2_1(MASTER, LOCAL:1)
+	;主人のＡ経験をみる
+	LOCAL:1 = EJACULATIONCHECK_EXP_1_1(MASTER, LOCAL:1)
+ELSE
+	;主人のＶ感覚をみる
+	LOCAL:1 = EJACULATIONCHECK_ABL_1_1(MASTER, LOCAL:1)
+	;主人のＶ経験をみる
+	LOCAL:1 = EJACULATIONCHECK_EXP_0_1(MASTER, LOCAL:1)
+ENDIF
+
+;調教対象のＣ感覚をみる
+LOCAL:1 = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL:1)
+
+SIF EXIST_PENIS(TARGET)
+	BASE:射精 += LOCAL:1
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+
+;助手がＡ、対象がＶの場合
+IF TFLAG:131 == 2
+	DOWNBASE:0 += 30
+	DOWNBASE:1 += 420
+	DOWNBASE:ASSI:0 += 64
+	DOWNBASE:ASSI:1 += 48
+
+	SOURCE:接触 = 1000
+	SOURCE:情愛 = 2200
+	SOURCE:主導権 = 1500
+	SOURCE:欲情追加 = 300
+	SOURCE:中毒充足 += 400
+	SOURCE:逸脱 = 640
+
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		SOURCE:快Ｃ = 500
+		SOURCE:性行動 = 1000
+	ELSEIF ABL:Ｃ感覚 == 1
+		SOURCE:快Ｃ = 900
+		SOURCE:性行動 = 1300
+	ELSEIF ABL:Ｃ感覚 == 2
+		SOURCE:快Ｃ = 1300
+		SOURCE:性行動 = 1600
+	ELSEIF ABL:Ｃ感覚 == 3
+		SOURCE:快Ｃ = 1800
+		SOURCE:性行動 = 2000
+	ELSEIF ABL:Ｃ感覚 == 4
+		SOURCE:快Ｃ = 2300
+		SOURCE:性行動 = 2400
+	ELSE
+		SOURCE:快Ｃ = 2900
+		SOURCE:性行動 = 3000
+	ENDIF
+	SIF EXIST_BAR(ASSI)
+		CFLAG:ASSI:主人のＡ犯し回数 += 1
+	SIF EXIST_BAR(TARGET)
+		CFLAG:主人のＶ犯し回数 += 1
+
+;助手がＶ、対象がＡの場合
+ELSE
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 460
+	DOWNBASE:ASSI:0 += 40
+	DOWNBASE:ASSI:1 += 40
+
+	SOURCE:接触 = 700
+	SOURCE:情愛 = 2000
+	SOURCE:主導権 = 1200
+	SOURCE:欲情追加 = 550
+	SOURCE:中毒充足 += 600
+	SOURCE:逸脱 = 1140
+
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		SOURCE:快Ｃ = 800
+		SOURCE:性行動 = 1200
+	ELSEIF ABL:Ｃ感覚 == 1
+		SOURCE:快Ｃ = 1000
+		SOURCE:性行動 = 1500
+	ELSEIF ABL:Ｃ感覚 == 2
+		SOURCE:快Ｃ = 1500
+		SOURCE:性行動 = 1800
+	ELSEIF ABL:Ｃ感覚 == 3
+		SOURCE:快Ｃ = 2000
+		SOURCE:性行動 = 2300
+	ELSEIF ABL:Ｃ感覚 == 4
+		SOURCE:快Ｃ = 2500
+		SOURCE:性行動 = 2700
+	ELSE
+		SOURCE:快Ｃ = 3200
+		SOURCE:性行動 = 3500
+	ENDIF
+	SIF EXIST_BAR(ASSI)
+		CFLAG:ASSI:主人のＶ犯し回数 += 1
+	SIF EXIST_BAR(TARGET)
+		CFLAG:主人のＡ犯し回数 += 1
+ENDIF
+
+;ABL:欲望をみる
+IF ABL:欲望 == 0
+	SOURCE:液体追加 = 80
+	SOURCE:屈従 = 2560
+ELSEIF ABL:欲望 == 1
+	SOURCE:液体追加 = 160
+	SOURCE:屈従 = 3040
+ELSEIF ABL:欲望 == 2
+	SOURCE:液体追加 = 280
+	SOURCE:屈従 = 3680
+ELSEIF ABL:欲望 == 3
+	SOURCE:液体追加 = 480
+	SOURCE:屈従 = 4320
+ELSEIF ABL:欲望 == 4
+	SOURCE:液体追加 = 680
+	SOURCE:屈従 = 4960
+ELSE
+	SOURCE:液体追加 = 960
+	SOURCE:屈従 = 5600
+ENDIF
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	TIMES SOURCE:情愛 , 0.10
+	TIMES SOURCE:液体追加 , 0.50
+ELSEIF ABL:奉仕精神 == 1
+	TIMES SOURCE:情愛 , 0.40
+	TIMES SOURCE:液体追加 , 0.80
+ELSEIF ABL:奉仕精神 == 2
+	TIMES SOURCE:情愛 , 0.70
+	TIMES SOURCE:液体追加 , 1.00
+ELSEIF ABL:奉仕精神 == 3
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:液体追加 , 1.50
+ELSEIF ABL:奉仕精神 == 4
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:液体追加 , 2.00
+ELSE
+	TIMES SOURCE:情愛 , 2.00
+	TIMES SOURCE:液体追加 , 2.50
+ENDIF
+
+;ABL:主人の技巧をみる
+IF ABL:MASTER:技巧 == 0
+	TIMES SOURCE:快Ｃ , 0.50
+	TIMES SOURCE:性行動 , 0.50
+ELSEIF ABL:MASTER:技巧 == 1
+	TIMES SOURCE:快Ｃ , 0.80
+	TIMES SOURCE:性行動 , 0.80
+ELSEIF ABL:MASTER:技巧 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+	TIMES SOURCE:性行動 , 1.00
+ELSEIF ABL:MASTER:技巧 == 3
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:性行動 , 1.50
+ELSEIF ABL:MASTER:技巧 == 4
+	TIMES SOURCE:快Ｃ , 2.50
+	TIMES SOURCE:性行動 , 2.50
+ELSE
+	TIMES SOURCE:快Ｃ , 4.00
+	TIMES SOURCE:性行動 , 4.00
+ENDIF
+
+;主人が処女
+IF TALENT:MASTER:処女
+	PRINTFORML ＜%CALLNAME:MASTER%が処女＞
+	IF TALENT:MASTER:処女 == 1
+		TIMES SOURCE:主導権 , 4.00
+		TIMES SOURCE:屈従 , 5.00
+		TIMES SOURCE:逸脱 , 3.00
+		IF ABL:Ｃ感覚 < 1
+			PRINTFORML そして%ABLNAME:0%が1になった
+			ABL:Ｃ感覚 = 1
+		ENDIF
+	ELSE
+		TIMES SOURCE:主導権 , 3.00
+		TIMES SOURCE:屈従 , 3.80
+		TIMES SOURCE:逸脱 , 2.40
+	ENDIF
+	TFLAG:4 += TALENT:MASTER:処女
+	TALENT:MASTER:処女 = 0
+	STAIN:MASTER:ヴァギナ |= 32
+ENDIF
+TCVAR:MASTER:Ｖ経験 += 1
+TCVAR:MASTER:Ａ経験 += 1
+
+;-------------------------------------------------
+;射精チェック1 (助手)
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(ASSI)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;射精した人物を設定
+	TFLAG:92 = ASSI
+	;射精された人物を設定
+	TFLAG:94 = MASTER
+	;射精箇所タイプを設定
+	IF TFLAG:131 == 1
+		TFLAG:703 = 1
+	ELSE
+		TFLAG:703 = 2
+	ENDIF
+	;射精箇所選択の可・不可
+	TFLAG:704 = 0
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;-------------------------------------------------
+;射精チェック2 (対象)
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(TARGET)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	TIMES SOURCE:性行動 , 3.00
+
+	;ABL:射精中毒をみる
+	IF ABL:射精中毒 == 0
+		SOURCE:中毒充足 += 0
+		TIMES SOURCE:快Ｃ , 2.00
+		TIMES SOURCE:屈従, 2.00
+	ELSEIF ABL:射精中毒 == 1
+		SOURCE:中毒充足 += 50
+		TIMES SOURCE:快Ｃ , 2.50
+		TIMES SOURCE:屈従, 1.60
+	ELSEIF ABL:射精中毒 == 2
+		SOURCE:中毒充足 += 150
+		TIMES SOURCE:快Ｃ , 3.00
+		TIMES SOURCE:屈従, 1.00
+	ELSEIF ABL:射精中毒 == 3
+		SOURCE:中毒充足 += 300
+		TIMES SOURCE:快Ｃ , 4.50
+		TIMES SOURCE:屈従, 0.70
+	ELSEIF ABL:射精中毒 == 4
+		SOURCE:中毒充足 += 600
+		TIMES SOURCE:快Ｃ , 6.00
+		TIMES SOURCE:屈従, 0.40
+	ELSE
+		SOURCE:中毒充足 += 1200
+		TIMES SOURCE:快Ｃ , 8.00
+		TIMES SOURCE:屈従, 0.10
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = TARGET
+	;射精された人物を設定
+	TFLAG:94 = MASTER
+	;射精箇所タイプを設定
+	IF TFLAG:131 == 1
+		TFLAG:703 = 2
+	ELSE
+		TFLAG:703 = 1
+	ENDIF
+	;射精箇所選択の可・不可
+	TFLAG:704 = 0
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+IF TFLAG:131 == 1 && EXIST_BAR(TARGET)
+	;奴隷のＰ⇔主人のＡの汚れが移動
+	STAIN:ペニス |= STAIN:MASTER:アナル
+	STAIN:MASTER:アナル |= STAIN:ペニス
+ELSEIF TFLAG:131 == 2 && EXIST_BAR(TARGET)
+	;奴隷のＰ⇔主人のＶの汚れが移動
+	STAIN:ペニス |= STAIN:MASTER:ヴァギナ
+	STAIN:MASTER:ヴァギナ |= STAIN:ペニス
+ENDIF
+
+IF TFLAG:131 == 1 && EXIST_BAR(ASSI)
+	;助手のＰ⇔主人のＶの汚れが移動
+	STAIN:ASSI:ペニス |= STAIN:MASTER:ヴァギナ
+	STAIN:MASTER:ヴァギナ |= STAIN:ASSI:ペニス
+ELSEIF TFLAG:131 == 2 && EXIST_BAR(ASSI)
+	;助手のＰ⇔主人のＡの汚れが移動
+	STAIN:ASSI:ペニス |= STAIN:MASTER:アナル
+	STAIN:MASTER:アナル |= STAIN:ASSI:ペニス
+ENDIF
+
+SIF TALENT:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:レズ経験 += 7
+SIF TALENT:ASSI:オトコ == 0 && TALENT:MASTER:オトコ == 0
+	TCVAR:ASSI:レズ経験 += 7
+
+;処女喪失の後でペニスを抜いているか
+TFLAG:101 = (TFLAG:101 == 2) ? 1 # 0
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_338
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_338
+PRINTFORML %CALLNAME:MASTER%は%CALLNAME:ASSI%と%CALLNAME:TARGET%にペニスを挿入してもよいと伝えた。
+IF TFLAG:131 == 1
+	PRINTFORM %CALLNAME:ASSI%は%CALLNAME:MASTER%の
+	SIF TALENT:PLAYER:処女 == 1
+		PRINT 男を受け入れた事のない
+	PRINTL ヴァギナにペニスを挿入した。
+	PRINTFORML 一方、%CALLNAME:TARGET%は%CALLNAME:MASTER%のアナルを犯した。
+ELSE
+	PRINTFORM %CALLNAME:TARGET%は%CALLNAME:MASTER%の
+	SIF TALENT:PLAYER:処女 == 1
+		PRINT 男を受け入れた事のない
+	PRINTL ヴァギナにペニスを挿入した。
+	PRINTFORML 一方、%CALLNAME:ASSI%は%CALLNAME:MASTER%のアナルを犯した。
+ENDIF
+PRINTFORML %CALLNAME:ASSI%と%CALLNAME:TARGET%は、それぞれ、
+PRINTFORML %CALLNAME:MASTER%を犯しながら、その快感を貪り尽くそうと必死に身体を揺らし続けた。
+PRINTL しばらく繋がっていた三人は、やがて身体をそれぞれ離した…
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_338, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2 * 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;快感に素直
+IF TALENT:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
+;快感の否定
+ELSEIF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 2
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;ABL:助手の欲望
+IF ABL:ASSI:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:ASSI:欲望
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% 助手の%ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;助手の快楽刻印
+IF MARK:ASSI:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:ASSI:快楽刻印
+	TFLAG:240 += LOCAL:99 * 2
+	RESULTS = %RESULTS% 助手の%MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
+ENDIF
+
+;※助手パラ関連の宿題
+;PALAM:助手の欲情
+;GETPALAMLV PALAM:ASSI:欲情, 5
+;LOCAL:2 = RESULT
+;IF LOCAL:2
+;	SIF LOCAL:99
+;		RESULTS = %RESULTS% + 
+;	LOCAL:99 = LOCAL:2 * 2
+;	TFLAG:240 += LOCAL:99
+;	RESULTS = %RESULTS% 助手の%PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+;ENDIF
+
+;助手が快感に素直
+IF TALENT:ASSI:快感に素直
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:70%({LOCAL:99})
+;助手が快感の否定
+ELSEIF TALENT:ASSI:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 2
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:71%({LOCAL:99})
+ENDIF
+;助手が恋慕
+IF TALENT:ASSI:恋慕
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 3
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% 助手が%TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;主人が処女
+IF TALENT:MASTER:処女 == 1
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 15
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:MASTER%が処女({LOCAL:99})
+ENDIF
+;主人が貞操観念
+IF TALENT:MASTER:貞操観念
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 15
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:MASTER%が貞操観念({LOCAL:99})
+;主人が貞操無頓着
+ELSEIF TALENT:MASTER:貞操無頓着
+	RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %CALLNAME:MASTER%が貞操無頓着({LOCAL:99})
+	LOCAL:99 = 1
+ENDIF
+
+;主人のABL:技巧
+IF ABL:MASTER:技巧
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:MASTER:技巧
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %CALLNAME:MASTER%の%ABLNAME:12%Lv{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+TFLAG:241 = 36

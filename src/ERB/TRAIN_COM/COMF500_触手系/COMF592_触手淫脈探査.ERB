@@ -1,0 +1,204 @@
+﻿;=============================================================================
+;触手淫脈探査
+;=============================================================================
+;触手生贄を通じて触手と一体化したナズーリンを召喚、
+;奴隷の敏感な部分をダウジングで感知し、より効率よく快楽を与えていく……という超微妙なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE592
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:592 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:キャラ触手 & 32
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[NAZRIN触手]を得ていないとダメ
+SIF (FLAG:98 & 4096) == 0
+	RETURN 0
+;ナズーリンを触手生贄に捧げていない(=ナズーリンが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 4096) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 592) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM592
+PRINTL 触手淫脈探査
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 592
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手淫脈探査
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 50
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	LOCAL:1 = 1200
+	LOCAL:2 = 500
+	LOCAL:3 = 2500
+ELSEIF ABL:露出癖 == 1
+	LOCAL:1 = 1000
+	LOCAL:2 = 600
+	LOCAL:3 = 1800
+ELSEIF ABL:露出癖 == 2
+	LOCAL:1 = 800
+	LOCAL:2 = 700
+	LOCAL:3 = 1200
+ELSEIF ABL:露出癖 == 3
+	LOCAL:1 = 1000
+	LOCAL:2 = 800
+	LOCAL:3 = 600
+ELSEIF ABL:露出癖 == 4
+	LOCAL:1 = 1200
+	LOCAL:2 = 900
+	LOCAL:3 = 200
+ELSE
+	LOCAL:1 = 1500
+	LOCAL:2 = 1000
+	LOCAL:3 = 100
+ENDIF
+
+;ナズーリンとの相性あるなしで補正が上下
+LOCAL:4 = 71
+IF RELATION:(LOCAL:4) > 0 && RELATION:(LOCAL:4) != 100
+	LOCAL:1 *= RELATION:(LOCAL:4)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:4)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:4)
+	LOCAL:3 /= 100
+ENDIF
+
+SOURCE:露出 = LOCAL:1
+SOURCE:トラウマ = LOCAL:2
+SOURCE:逸脱 = LOCAL:3
+
+IF TEQUIP:キャラ触手 & 32
+	TEQUIP:キャラ触手 -= 32
+ELSE
+	TEQUIP:キャラ触手 |= 32
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手淫脈ダウジング中
+;-------------------------------------------------
+@EQUIP_COM592
+PRINTL ＜触手淫脈ダウジング中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 100
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	LOCAL:1 = 420
+	LOCAL:2 = 50
+	LOCAL:3 = 1200
+ELSEIF ABL:露出癖 == 1
+	LOCAL:1 = 380
+	LOCAL:2 = 100
+	LOCAL:3 = 900
+ELSEIF ABL:露出癖 == 2
+	LOCAL:1 = 360
+	LOCAL:2 = 200
+	LOCAL:3 = 600
+ELSEIF ABL:露出癖 == 3
+	LOCAL:1 = 380
+	LOCAL:2 = 300
+	LOCAL:3 = 300
+ELSEIF ABL:露出癖 == 4
+	LOCAL:1 = 420
+	LOCAL:2 = 400
+	LOCAL:3 = 100
+ELSE
+	LOCAL:1 = 450
+	LOCAL:2 = 500
+	LOCAL:3 = 50
+ENDIF
+
+;ナズーリンとの相性あるなしで補正が上下
+LOCAL = 71
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+ENDIF
+
+SOURCE:露出 += LOCAL:1
+SOURCE:トラウマ += LOCAL:2
+SOURCE:逸脱 += LOCAL:3
+
+;ABL:触手使役のレベルで効果が強化
+IF ABL:PLAYER:触手使役 <= 3
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:快Ｖ , 1.50
+	TIMES SOURCE:快Ａ , 1.50
+	TIMES SOURCE:快Ｂ , 1.50
+ELSEIF ABL:PLAYER:触手使役 == 4
+	TIMES SOURCE:快Ｃ , 2.00
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:快Ｂ , 2.00
+ELSE
+	TIMES SOURCE:快Ｃ , 2.50
+	TIMES SOURCE:快Ｖ , 2.50
+	TIMES SOURCE:快Ａ , 2.50
+	TIMES SOURCE:快Ｂ , 2.50
+ENDIF
+
+;ナズーリンの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_592
+IF TEQUIP:キャラ触手 & 32
+	PRINTFORML %CALLNAME:PLAYER%の命令に不満を感じたのか、ナズーリンは一瞬表情を曇らせた
+	PRINTFORML しかし気を取り直したのか%CALLNAME:TARGET%に近寄ると、先程あぶり出した敏感な部分をロッドで突っつき、%CALLNAME:TARGET%が悶絶している隙に触手の中へと戻って行った
+	PRINTFORML ナズーリンは%CALLNAME:TARGET%の様子に満足したのか、怪しげな笑みを残してそのまま肉塊の向こう側へと帰って行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に応じてくすんだ色巨大な触手がどこからともかく現れた
+	PRINTFORML %CALLNAME:TARGET%に近いた触手は皮がめくれるように身を開かせると、中から化け物の一部と化したナズーリンがその身を外界に曝け出した
+	PRINTFORML ナズーリンは%CALLNAME:MASTER%に恭しく一礼した後愛用のダウジングロッドを取り出し、%CALLNAME:TARGET%の身体の上にかざすと、まるで水脈を探すような仕草を始めた
+	PRINTFORML ロッドを構えたまま、ナズーリンは濁った瞳で%CALLNAME:TARGET%の敏感な部分を的確に探り出し、時折ロッドの先で淫部を突いたり言葉責めをしながらより効果的に責める方法を模索している…
+ENDIF

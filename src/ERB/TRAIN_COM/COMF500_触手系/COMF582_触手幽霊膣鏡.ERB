@@ -1,0 +1,484 @@
+﻿;=============================================================================
+;触手幽霊膣鏡
+;=============================================================================
+;触手生贄を通じて下半身が触手と一体化したゆゆ様を召喚、
+;抱きしめながら幽霊体質の透明な触手を挿入して擬似的な触手クスコを再現……という超意味不なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE582
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:582 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:クスコ == 2
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[YUYUKO触手]を得ていないとダメ
+SIF (FLAG:98 & 4) == 0
+	RETURN 0
+;幽々子を触手生贄に捧げていない(=幽々子が何らかの形で存在している)とダメ
+SIF (FLAG:97 & 4) == 0
+	RETURN 0
+;触手挿入中はダメ
+SIF TEQUIP:Ｖ系装着器具
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 582) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM582
+PRINTL 触手幽霊膣鏡
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 582
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手幽霊膣鏡
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 75
+DOWNBASE:1 += 150
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 80
+	SOURCE:液体追加 = 0
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 150
+	SOURCE:液体追加 = 150
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 360
+	SOURCE:液体追加 = 500
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 720
+	SOURCE:液体追加 = 800
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1000
+	SOURCE:液体追加 = 1200
+ELSE
+	SOURCE:快Ｖ = 1800
+	SOURCE:液体追加 = 2000
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 300
+	SOURCE:屈従 = 600
+	SOURCE:トラウマ = 1800
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 500
+	SOURCE:屈従 = 500
+	SOURCE:トラウマ = 1000
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 500
+	SOURCE:屈従 = 400
+	SOURCE:トラウマ = 600
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 500
+	SOURCE:屈従 = 300
+	SOURCE:トラウマ = 300
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 1000
+	SOURCE:屈従 = 200
+	SOURCE:トラウマ = 200
+ELSE
+	SOURCE:露出 = 1300
+	SOURCE:屈従 = 100
+	SOURCE:トラウマ = 150
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:露出 , 0.80
+	SOURCE:逸脱 = 1500
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:露出 , 1.10
+	SOURCE:逸脱 = 800
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:露出 , 1.30
+	SOURCE:逸脱 = 200
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:露出 , 1.50
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:露出 , 1.70
+ELSE
+	TIMES SOURCE:露出 , 2.10
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み = 6500
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み = 2000
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 500
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:痛み = 100
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.40
+	SOURCE:痛み = 10
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 4.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.40
+	SOURCE:痛み += 400
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.50
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:トラウマ , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.90
+	TIMES SOURCE:トラウマ , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:トラウマ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.10
+	TIMES SOURCE:トラウマ , 0.90
+ELSE
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:トラウマ , 0.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:トラウマ , 1.30
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.90
+	TIMES SOURCE:トラウマ , 1.20
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:トラウマ , 1.10
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.10
+	TIMES SOURCE:トラウマ , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:トラウマ , 0.90
+ELSE
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:トラウマ , 0.80
+ENDIF
+
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES SOURCE:逸脱 , 4.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES SOURCE:露出 , 1.50
+	TIMES SOURCE:逸脱 , 1.20
+ENDIF
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.50
+
+;幽々子との相性あるなしで補正が上下
+LOCAL:1 = 20
+IF RELATION:(LOCAL:1) > 0 && RELATION:(LOCAL:1) != 100
+	SOURCE:露出 *= RELATION:(LOCAL:1)
+	SOURCE:露出 /= 100
+	SOURCE:屈従 *= RELATION:(LOCAL:1)
+	SOURCE:屈従 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:(LOCAL:1) < 100
+		SOURCE:トラウマ *= (200-RELATION:(LOCAL:1))
+	ELSE
+		SOURCE:トラウマ *= RELATION:(LOCAL:1)
+	ENDIF
+	SOURCE:トラウマ /= 100
+	SOURCE:逸脱 *= RELATION:(LOCAL:1)
+	SOURCE:逸脱 /= 100
+ENDIF
+
+TCVAR:Ｖ経験 += 5
+
+;触手幽霊膣鏡の着脱
+IF TEQUIP:クスコ
+	TEQUIP:クスコ = 0
+ELSE
+	TEQUIP:クスコ = 2
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手膣鏡挿入中
+;-------------------------------------------------
+@EQUIP_COM582
+PRINTL ＜触手膣鏡挿入中＞
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 40
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	LOCAL:1 = 50
+	LOCAL:4 = 80
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL:1 = 100
+	LOCAL:4 = 160
+ELSEIF ABL:Ｖ感覚 == 2
+	LOCAL:1 = 150
+	LOCAL:4 = 240
+ELSEIF ABL:Ｖ感覚 == 3
+	LOCAL:1 = 200
+	LOCAL:4 = 360
+ELSEIF ABL:Ｖ感覚 == 4
+	LOCAL:1 = 300
+	LOCAL:4 = 600
+ELSE
+	LOCAL:1 = 500
+	LOCAL:4 = 960
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:屈従 += 300
+	LOCAL:2 += 150
+	LOCAL:4 += 1000
+ELSEIF ABL:露出癖 == 1
+	SOURCE:屈従 += 250
+	LOCAL:2 += 250
+	LOCAL:4 += 800
+ELSEIF ABL:露出癖 == 2
+	SOURCE:屈従 += 200
+	LOCAL:2 += 300
+	LOCAL:4 += 400
+ELSEIF ABL:露出癖 == 3
+	SOURCE:屈従 += 150
+	LOCAL:2 += 500
+	LOCAL:4 += 200
+ELSEIF ABL:露出癖 == 4
+	SOURCE:屈従 += 100
+	LOCAL:2 += 700
+	LOCAL:4 += 100
+ELSE
+	SOURCE:屈従 += 50
+	LOCAL:2 += 1000
+	LOCAL:4 += 50
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:2 , 0.80
+	SOURCE:逸脱 += 1500
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:2 , 1.10
+	SOURCE:逸脱 += 800
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:2 , 1.30
+	SOURCE:逸脱 += 200
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:2 , 1.50
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:2 , 1.70
+ELSE
+	TIMES LOCAL:2 , 2.10
+ENDIF
+
+;EXP:Ｖ経験をみる
+;処女はありえない
+IF EXP:Ｖ経験 < EXPLV:2
+	TIMES LOCAL:1 , 0.60
+	LOCAL:3 = 180
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES LOCAL:1 , 1.00
+	LOCAL:3 = 75
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.20
+	LOCAL:3 = 20
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.40
+	LOCAL:3 = 0
+ELSE
+	TIMES LOCAL:1 , 1.60
+	LOCAL:3 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL:1 , 0.10
+	LOCAL:3 += 400
+	TIMES LOCAL:3 , 3.00
+	LOCAL:4 += 1000
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL:1 , 0.40
+	LOCAL:3 += 150
+	TIMES LOCAL:3 , 1.00
+	LOCAL:4 += 200
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:3 , 0.50
+	LOCAL:4 += 80
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL:1 , 1.40
+	TIMES LOCAL:3 , 0.20
+ELSE
+	TIMES LOCAL:1 , 1.80
+	TIMES LOCAL:3 , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:4 , 1.20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:4 , 1.10
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:4 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:4 , 0.90
+ELSE
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:4 , 0.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:4 , 1.30
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+	TIMES LOCAL:4 , 1.20
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:4 , 1.10
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+	TIMES LOCAL:4 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+	TIMES LOCAL:4 , 0.90
+ELSE
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:4 , 0.80
+ENDIF
+
+;プライド高い
+SIF TALENT:プライド高い
+	TIMES SOURCE:逸脱 , 1.20
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:2 , 0.80
+	TIMES SOURCE:逸脱 , 0.80
+ENDIF
+;貞操観念
+SIF TALENT:貞操観念
+	TIMES SOURCE:逸脱 , 2.00
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:2 , 1.50
+	TIMES SOURCE:逸脱 , 1.20
+ENDIF
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:3 , 1.50
+
+;幽々子との相性あるなしで補正が上下
+LOCAL = 20
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+	LOCAL:4 *= RELATION:LOCAL
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:快Ｖ += LOCAL:1
+SOURCE:露出 += LOCAL:2
+SOURCE:痛み += LOCAL:3
+SOURCE:トラウマ += LOCAL:4
+
+TCVAR:Ｖ経験 += 3
+
+;幽々子の性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;露出快楽経験入手判定
+TFLAG:100 |= 2
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_582
+IF TEQUIP:クスコ == 2
+	PRINTFORML %CALLNAME:PLAYER%の命令に従い、幽々子はいったん%CALLNAME:TARGET%から離れると
+	PRINTFORML %CALLNAME:TARGET%の膣から半透明の触手を引き抜いた
+	PRINTFORML 幽々子は触手に付いた%CALLNAME:TARGET%の愛液を指ですくい取り、怪しげな笑みを浮かべながらぺろりと舌先で軽く舐めとった
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 恐怖で震えている%CALLNAME:TARGET%を尻目に、そのまま幽々子は肉壁の向こうへと消えて行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に反応し、肉壁の奥から人が入れる程の太さを誇る触手が一本現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと先端が割れ、中から下半身が異形のモノと同化した幽々子が病的なまでに白い裸身を曝しつつ這いずり出てきた
+	PRINTFORML 幽々子は%CALLNAME:MASTER%に向かって優雅に一礼すると、そのまま覆いかぶさるように%CALLNAME:TARGET%を後ろから抱きしめ、魂が抜け落ちたような瞳を細めかと思うと、全体が蒼白く輝いている半透明な触手を%CALLNAME:TARGET%の膣にねじ込ませた
+	PRINTFORML 幽霊のように半透明な触手は%CALLNAME:TARGET%の膣内の様子をまるで映写機の如く、粘液で濡れた壁に像を映し出す
+	PRINTFORML 半透明な物体に圧迫され、ヒク付いた膣壁は触手から放たれた燐光によって照らし出される…
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 幽々子は%CALLNAME:TARGET%の恐怖心と羞恥心を煽りたてるようにその様子を詳細に語り始めた……
+ENDIF

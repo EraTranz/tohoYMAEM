@@ -1,0 +1,299 @@
+﻿;=============================================================================
+;触手貫通
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE524
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:524 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;一度も触手貫通をしたことが無い場合、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:24 & 32) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23) && TEQUIP:触手服 & 16
+	RETURN 1
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;触手が[遠隔精密制御]を得ていないとダメ
+SIF (FLAG:75 & 512) == 0
+	RETURN 0
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;他のＡ系触手責め中は不可
+SIF TEQUIP:Ａ系装着器具 && TEQUIP:Ａ系装着器具 != 3 && TEQUIP:Ａ系装着器具 != 23
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !TEQUIP:触手調教 && !(TEQUIP:触手服 & 16) && (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23)
+	RETURN 0
+;ボールギャグ装着中、触手口辱中はダメ
+SIF TEQUIP:口装着器具
+	RETURN 0
+;触手強制回復中(口内)はダメ
+SIF TEQUIP:触手強制回復 == 1
+	RETURN 0
+;卵が邪魔で触手貫通できない
+SIF TEQUIP:触手腸内産卵
+	RETURN 0
+;触手催眠中は不可
+SIF TEQUIP:触手催眠
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 524) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM524
+PRINTL 触手貫通
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 524
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手貫通
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23)
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 200
+	TEQUIP:Ａ系装着器具 = 0
+	;触手経験フラグ
+	TFLAG:90 = 0
+
+	SIF TEQUIP:触手服 & 16
+		TEQUIP:触手服 &= 0b1101111
+
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 500
+DOWNBASE:1 += 500
+LOCAL:1 = 2500
+LOCAL:2 = 1000
+LOCAL:3 = 0
+;EXP:触手経験をみる
+IF EXP:触手経験 < EXPLV:1
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:触手経験 < EXPLV:2
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:触手経験 < EXPLV:3
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:触手経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.50
+ELSEIF EXP:触手経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL:1 , 0.80
+ENDIF
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	LOCAL:3 += 0
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:3 += 50
+	TIMES LOCAL:2 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:3 += 120
+	TIMES LOCAL:2 , 1.40
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:3 += 350
+	TIMES LOCAL:2 , 1.60
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:3 += 900
+	TIMES LOCAL:2 , 1.80
+ELSE
+	LOCAL:3 += 2000
+	TIMES LOCAL:2 , 2.00
+ENDIF
+
+SOURCE:トラウマ += LOCAL:1 * 2
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:快Ａ += LOCAL:2 * 2
+SOURCE:痛み += LOCAL:1
+SOURCE:中毒充足 += LOCAL:3
+SOURCE:不潔 += LOCAL:2 * 10
+SOURCE:屈従 += LOCAL:2 * 2
+SOURCE:逸脱 += LOCAL:2 * 5
+SOURCE:支配 += LOCAL:2
+
+TEQUIP:Ａ系装着器具 = 3
+
+;触手服への命令として飛んできた場合
+IF !TEQUIP:触手調教 && (TEQUIP:触手服 && !(TEQUIP:触手服 & 16))
+	TEQUIP:Ａ系装着器具 = 23
+	TEQUIP:触手服 |= 16
+ENDIF
+
+STAIN:アナル |= 64
+;触手中毒LV4以上なら無視するように変更
+IF (CFLAG:24 & 32) == 0 && ABL:触手中毒 < 4
+	TCVAR:異常経験 += 4
+	;暴れたのですごく痛い…たぶん
+	SOURCE:痛み += 9000
+	CFLAG:24 |= 32
+	;反発刻印判定復活
+	SIF MARK:反発刻印 < 3 && MARK:反発刻印 <= MARK:97
+		MARK:97 = 0
+ENDIF
+TCVAR:Ａ経験 += 2
+;触手経験フラグ
+TFLAG:90 = 2
+
+;コマンド属性：触手
+TFLAG:98 = 8
+RETURN 1
+
+;--------------------------------------------------
+;触手貫通
+;--------------------------------------------------
+@EQUIP_COM524
+PRINTL ＜触手貫通中＞
+CALL DISPLAY_EQUIP_MESSAGE_COM, 524
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 200
+
+LOCAL:1 = 500
+LOCAL:2 = 100
+LOCAL:3 = 0
+LOCAL = NO:TARGET
+
+;DITEMTYPE:所持している調教対象が産んだ触手の数が多いほど与える刺激が増える
+IF DA:LOCAL:11 < 5
+	TIMES LOCAL:2 , 1.00
+ELSEIF DA:LOCAL:11 < 10
+	TIMES LOCAL:2 , 1.20
+ELSEIF DA:LOCAL:11 < 15
+	TIMES LOCAL:2 , 1.50
+ELSEIF DA:LOCAL:11 < 20
+	TIMES LOCAL:2 , 1.80
+ELSEIF DA:LOCAL:11 < 30
+	TIMES LOCAL:2 , 2.10
+ELSE
+	TIMES LOCAL:2 , 2.50
+ENDIF
+
+;EXP:触手経験をみる
+IF EXP:触手経験 < EXPLV:1
+	TIMES LOCAL:1 , 3.00
+ELSEIF EXP:触手経験 < EXPLV:2
+	TIMES LOCAL:1 , 2.50
+ELSEIF EXP:触手経験 < EXPLV:3
+	TIMES LOCAL:1 , 2.00
+ELSEIF EXP:触手経験 < EXPLV:4
+	TIMES LOCAL:1 , 1.50
+ELSEIF EXP:触手経験 < EXPLV:5
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL:1 , 0.80
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	LOCAL:3 += 0
+	TIMES LOCAL:2 , 1.00
+ELSEIF ABL:触手中毒 == 1
+	LOCAL:3 += 50
+	TIMES LOCAL:2 , 1.20
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:3 += 120
+	TIMES LOCAL:2 , 1.40
+ELSEIF ABL:触手中毒 == 3
+	LOCAL:3 += 350
+	TIMES LOCAL:2 , 1.60
+ELSEIF ABL:触手中毒 == 4
+	LOCAL:3 += 900
+	TIMES LOCAL:2 , 1.80
+ELSE
+	LOCAL:3 += 2000
+	TIMES LOCAL:2 , 2.00
+ENDIF
+
+SOURCE:トラウマ += LOCAL:1 * 2
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:快Ａ += LOCAL:2 * 2
+SOURCE:痛み += LOCAL:1
+SOURCE:屈従 += LOCAL:2 * 2
+SOURCE:支配 += LOCAL:2
+SOURCE:中毒充足 += LOCAL:3
+SOURCE:逸脱 += LOCAL:2 * 2
+SOURCE:不潔 += LOCAL:2 * 5
+
+TCVAR:Ａ経験 += 2
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_524
+IF (TEQUIP:Ａ系装着器具 == 3 || TEQUIP:Ａ系装着器具 == 23)
+	PRINTFORML %CALLNAME:TARGET%の消化管を貫通していた触手を口の中に戻させた
+	PRINTFORML 触手は%CALLNAME:TARGET%の内臓を傷つけないように緩慢とした動作で動いていき、やがてアナルから引き抜かれた……
+ELSE
+	PRINTFORML 細くて長い触手が%CALLNAME:TARGET%のアナルに潜り込んだ触手はゆっくりと腸内から胃、そして食道へと辿り上がっていく…
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 体の中で異変を感じていた%CALLNAME:TARGET%だったが、自分の口から伸びてきた触手を見た瞬間、
+		IF (CFLAG:24 & 32) == 0 && ABL:触手中毒 >= 3
+			PRINTL 一瞬驚愕のあまり目を見開くが、次の瞬間触手が体内を満たす感覚に悦びを感じたのか鼻から甘い息を一つ吐き出した…
+		ELSEIF (CFLAG:24 & 32) == 0
+			PRINTL かつてない恐怖感に耐えられなくなり、ついにはパニックを起こして暴れるが、全ては無駄に終わってしまう…
+		ELSEIF ABL:触手中毒 < 2 && ABL:マゾっ気 < 3
+			PRINT 自分の生殺与奪の権は既に触手に握られることを悟ったのか、
+			IF ABL:従順 >= 4 || MARK:屈服刻印 > 2
+				PRINTL 諦観したような表情を浮かべ、早く悪夢が終わるのを待つことにしたようだ…
+			ELSEIF ABL:マゾっ気 >= 4 || TALENT:淫乱
+				PRINTL こんなプレイも悪くないなと思い直したようだ…
+			ELSE
+				PRINTL 恐怖で全身を震わせている…
+			ENDIF
+		ELSE
+			PRINTL 体の中の異物感と征服された快感、そして微かな恐怖感を味わいながら触手に更なる刺激をねだった…
+		ENDIF
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_524
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	IF ABL:触手中毒 >= 2 && ABL:マゾっ気 >= 3
+		PRINTFORML %CALLNAME:TARGET%は触手に身体の隅々まで制圧されている状況にすら幸福感を見出している…
+	ELSEIF ABL:触手中毒 >= 2
+		PRINTFORML %CALLNAME:TARGET%は触手に貫通されている快感と軽い窒息感に頬を上気させている…
+	ELSEIF ABL:マゾっ気 >= 3 || TALENT:淫乱
+		PRINTFORML %CALLNAME:TARGET%は得体のしれない異物感にすら快楽を感じているようだ…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は触手に貫かれたまま恐怖に震えている…
+	ENDIF
+ENDIF

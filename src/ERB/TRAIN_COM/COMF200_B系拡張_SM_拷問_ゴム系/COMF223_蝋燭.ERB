@@ -1,0 +1,176 @@
+﻿;=============================================================================
+;蝋燭
+;=============================================================================
+;針を基に作成。マゾっ気により気力減少が変化
+;そのまま使うと最悪鞭以下になりかねないが、
+;緊縛中、あるいはＣＢ敏感だったり感覚が育っていると効果が上昇するように
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE223
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:223 > 0
+	RETURN 0
+;低温蝋燭を持っていないとダメ
+SIF ITEM:低温蝋燭 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 223) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM223
+PRINTL 蝋燭
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 223
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 蝋燭
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 60
+
+SOURCE:逸脱 = 10000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 2500
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 2700
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 3500
+ELSE
+	SOURCE:痛み = 4000
+ENDIF
+
+;Ｃ系装着道具を使用していない場合
+IF TEQUIP:Ｃ系装着器具 == 0 && ((TALENT:オトコ && TEQUIP:コンドーム == 0 && TEQUIP:Ｕ系装着器具 == 0) || TALENT:オトコ == 0)
+	;Ｃ感覚が4以上
+	SIF ABL:Ｃ感覚 > 3
+		TIMES SOURCE:痛み , 1.20
+	;Ｃ敏感
+	IF TALENT:Ｃ敏感
+		TIMES SOURCE:痛み , 1.50
+	;Ｃ鈍感
+	ELSEIF TALENT:Ｃ鈍感
+		TIMES SOURCE:痛み , 0.50
+	ENDIF
+ENDIF
+;Ｂ系装着道具を使用していない場合
+IF TEQUIP:Ｂ系装着器具 == 0 && TEQUIP:サラシ == 0
+	;Ｂ感覚が4以上
+	SIF ABL:Ｂ感覚 > 3
+		TIMES SOURCE:痛み , 1.20
+	;Ｂ敏感
+	IF TALENT:Ｂ敏感
+		TIMES SOURCE:痛み , 1.50
+	;Ｂ鈍感
+	ELSEIF TALENT:Ｂ鈍感
+		TIMES SOURCE:痛み , 0.50
+	ENDIF
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	SOURCE:中毒充足 = 10
+	SOURCE:逸脱 += 40000
+	DOWNBASE:1 += 120
+ELSEIF ABL:マゾっ気 == 1
+	SOURCE:中毒充足 = 50
+	SOURCE:逸脱 += 10000
+	DOWNBASE:1 += 100
+ELSEIF ABL:マゾっ気 == 2
+	SOURCE:中毒充足 = 250
+	SOURCE:逸脱 += 5000
+	DOWNBASE:1 += 80
+ELSEIF ABL:マゾっ気 == 3
+	SOURCE:中毒充足 = 1000
+	SOURCE:逸脱 += 1000
+	DOWNBASE:1 += 60
+ELSEIF ABL:マゾっ気 == 4
+	SOURCE:中毒充足 = 1600
+	SOURCE:逸脱 += 100
+	DOWNBASE:1 += 50
+ELSE
+	SOURCE:中毒充足 = 2500
+	SOURCE:逸脱 += 50
+	DOWNBASE:1 += 40
+ENDIF
+
+;緊縛していると効果アップ
+IF TEQUIP:緊縛関連
+	TIMES SOURCE:痛み , 1.20
+	TIMES SOURCE:中毒充足 , 1.10
+ENDIF
+;連続で使うと効果がアップ
+IF SELECTCOM == PREVCOM
+	TIMES SOURCE:痛み , 1.25
+	TIMES SOURCE:中毒充足 , 1.20
+	TIMES DOWNBASE:1 , 1.10
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 3
+	TFLAG:50 += 1
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 3
+
+;蝋燭1本消費
+CALL USE_PLURAL_ITEM, 80, 1
+
+;同一コマンド連続実行ペナルティ回避
+TFLAG:96 = 1
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_223
+PRINTFORM %CALLNAME:PLAYER%は蝋燭に火を灯すと熱されたロウを
+SIF TEQUIP:緊縛関連 && !GROUPMATCH(TEQUIP:緊縛関連, 8, 9)
+	PRINT 緊縛されて動けない
+SIF GROUPMATCH(TEQUIP:緊縛関連, 8, 9)
+	PRINT 拘束されて動けない
+PRINTFORM %CALLNAME:TARGET%の
+IF TALENT:PLAYER:サド || TALENT:PLAYER:ドＳ
+	PRINT 敏感な部分を集中的に
+ELSE
+	;(eraElona用素質[アルビノ]の代わり)
+	IF TALENT:痛みに弱い
+		PRINT 真珠のように真っ白で艶やかな素肌に
+	ELSE
+		PRINT 体の上に
+	ENDIF
+ENDIF
+PRINTL 垂らした

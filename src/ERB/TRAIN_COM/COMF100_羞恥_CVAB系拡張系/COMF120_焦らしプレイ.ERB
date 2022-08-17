@@ -1,0 +1,211 @@
+﻿;=============================================================================
+;焦らしプレイ
+;=============================================================================
+;eraSQの「てかげん」参考
+;ただしバランス調整のため大幅弱体化
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE120
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:120 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;調教者に技巧3以上ないとダメ（[サド]・[小悪魔]ならＯＫ）
+SIF ABL:PLAYER:技巧 < 3 && TALENT:PLAYER:サド == 0 && TALENT:PLAYER:小悪魔 == 0
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 120) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM120
+PRINTL 焦らしプレイ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 120
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 焦らしプレイ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 50
+
+SOURCE:欲情追加 = 120
+SOURCE:屈従 = 70
+SOURCE:逸脱 = 70
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;焦らしプレイのon/off
+IF TEQUIP:焦らしプレイ
+	TEQUIP:焦らしプレイ = 0
+ELSE
+	TEQUIP:焦らしプレイ = 1
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;焦らしプレイ中
+;--------------------------------------------------
+@EQUIP_COM120
+TFLAG:99 = 0
+;自慰・アナニー・胸自慰・騎乗乳房自慰
+IF GROUPMATCH(SELECTCOM, 7, 182, 205, 613)
+	TFLAG:99 = 1
+;騎乗位・騎乗位アナル・素股・ダブル素股・泡踊り・貝合わせ・助手を犯させる(ペニスあり)・助手のＡを犯させる(ペニスあり)・正常位させる・後背位させる・Ａ正常位させる・Ａ後背位させる・二人に犯させる・犬を犯させる・豚を犯させる
+ELSEIF GROUPMATCH(SELECTCOM, 24, 34, 43, 301, 306, 323, 324, 332, 333, 338, 352, 382, 384)  || ((SELECTCOM == 307 || SELECTCOM == 308) && EXIST_PENIS(TARGET))
+	TFLAG:99 = 2
+;尻子玉抜き
+ELSEIF SELECTCOM == 402
+	TFLAG:99 = 3
+;注射・昆虫採集セット
+ELSEIF (SELECTCOM >= 80 && SELECTCOM < 90) || TEQUIP:昆虫採集セットの薬
+	TFLAG:99 = 4
+;賢者の血反動
+ELSEIF TEQUIP:賢者の血 == 1
+	TFLAG:99 = 5
+;蟲・スライム・鰻風呂
+ELSEIF TEQUIP:特殊風呂入浴中
+	TFLAG:99 = 6
+;射精止め解除での射精
+ELSEIF SELECTCOM == 191 && TEQUIP:射精止め == 0 && BASE:射精 >= MAXBASE:2
+	TFLAG:99 = 7
+;焦らせなさそうな装備アイテム（主観）
+;バイブ・アナルバイブ・クリキャップ・ニプルキャップ・搾乳器・オナホール・電極オナホール・浣腸・Ａ電極・Ｂ電極・Ｖ電極・巨峰・焼芋・氷柱
+ELSEIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ || TEQUIP:Ａ系装着器具 || TEQUIP:氷柱 || TEQUIP:Ｃ系装着器具 || TEQUIP:Ｕ系装着器具 || TEQUIP:Ｂ系装着器具
+	TFLAG:99 = 8
+ENDIF
+IF TFLAG:99
+	CALL DISPLAY_EQUIP_MESSAGE_COM, 120
+	PRINTL ＜焦らしプレイを終了します＞
+	TEQUIP:焦らしプレイ = 0
+	RETURN 0
+ENDIF
+
+PRINTL ＜焦らしプレイ中＞
+
+DOWNBASE:0 += 25
+DOWNBASE:1 += 40
+
+LOCAL:1 = 160
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.20
+ELSE
+	TIMES LOCAL:1 , 1.30
+ENDIF
+
+TIMES SOURCE:快Ｃ , 0.25
+TIMES SOURCE:快Ｖ , 0.25
+TIMES SOURCE:快Ａ , 0.25
+TIMES SOURCE:快Ｂ , 0.25
+SOURCE:欲情追加 += 50
+SOURCE:屈従 += LOCAL:1
+SOURCE:逸脱 += 50
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_120
+IF TEQUIP:焦らしプレイ
+	IF PALAM:快Ｃ >= (PALAMLV:4 - 1) ||  PALAM:快Ｖ >= (PALAMLV:4 - 1) ||  PALAM:快Ａ >= (PALAMLV:4 - 1) ||  PALAM:快Ｂ >= (PALAMLV:4 - 1)
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%をイかせてやることにした…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を焦らすのをやめた…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を焦らすことにした…
+ENDIF
+
+;--------------------------------------------------
+;装着時メッセージ
+;--------------------------------------------------
+@SYSTXT_EQUIP_MESSAGE_COM_120
+RESETCOLOR
+SELECTCASE TFLAG:99
+	CASE 1
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%は自らの手で好きなように快楽を貪っている…
+	CASE 2
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%は自ら腰を振り快感を貪っている…
+	CASE 3
+		PRINTL 
+		PRINTFORML 快感を与えずに尻子玉を抜き取ることはできそうにない…
+	CASE 4
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%は薬物のもたらす法悦に鳴き叫んでいる。焦らすのは無理そうだ…
+	CASE 5
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%は蓄積した快楽に一気に襲われ、ガクガク痙攣している
+		PRINTFORML 何もしなくても絶頂しそうで、焦らすどころではなさそうだ…
+	CASE 6
+		PRINTL 
+		IF TEQUIP:特殊風呂入浴中 == 1
+			PRINT 淫蟲
+		ELSEIF TEQUIP:特殊風呂入浴中 == 2
+			PRINT 鰻
+		ELSEIF TEQUIP:特殊風呂入浴中 == 4
+			PRINT スライム
+		ELSEIF TEQUIP:特殊風呂入浴中 == 11
+			PRINT 毛玉達
+		ELSE
+			PRINT 浴槽内の液体
+		ENDIF
+		PRINTFORML が%CALLNAME:TARGET%を責め続け、焦らすことができない…
+	CASE 7
+		PRINTL 
+		PRINTFORML 戒めを解かれた%CALLNAME:TARGET%のペニスから、焦らす間もなく精液がドクドク噴き出す…
+	CASE 8
+		PRINTL 
+		PRINTFORML 道具が%CALLNAME:TARGET%を責め続け、焦らすことができない…
+ENDSELECT
+SETCOLOR COLOR("P-RED")

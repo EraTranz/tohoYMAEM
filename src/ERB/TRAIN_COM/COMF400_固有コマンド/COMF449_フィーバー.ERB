@@ -1,0 +1,156 @@
+﻿;=============================================================================
+;フィーバー！
+;=============================================================================
+;衣玖さんのための強化型ふぉーゆーっ！
+;しつこく使うと嫌われるのは同様でふぉーゆーっ！と共用
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE449
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:449 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;対象、または調教者が衣玖さんでないとダメ
+SIF NO:TARGET != 1051 && NO:PLAYER != 1051
+	RETURN 0
+;調教者が主人か[恋慕]か奉仕経験Lv3以上じゃないとダメ
+SIF ASSIPLAY && TALENT:PLAYER:恋慕 == 0 && ABL:PLAYER:奉仕精神 < 3
+	RETURN 0
+;調教者が[精神崩壊]、[傀儡]だとダメ
+SIF TALENT:PLAYER:精神崩壊 || TALENT:PLAYER:傀儡
+	RETURN 0
+;調教対象が[精神崩壊]、[傀儡]だとダメ
+SIF TALENT:精神崩壊 || TALENT:傀儡
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;目隠し、耳栓、暗闇展開をしていた場合効果は無し
+SIF TEQUIP:目装着器具 || TEQUIP:耳装着器具 || TEQUIP:暗闇
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 449) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM449
+;土曜の夜は！
+IF DAY:7 == 7 && TIME == 1
+	PRINTL サタデーナイトフィーバー！
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 449
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = サタデーナイトフィーバー！
+ELSE
+	PRINTL フィーバー！
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 449
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = フィーバー！
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 5
+DOWNBASE:1 += 45
+
+IF TFLAG:143 > 10
+	SOURCE:逸脱 = (TFLAG:143 - 10) * 10
+ELSE
+	SOURCE:中毒充足 = 60 - (TFLAG:143 * 5)
+ENDIF
+
+;逆フィーバー！
+IF NO:TARGET == 1051
+	;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:露出 = 500
+		SOURCE:トラウマ = 400
+		SOURCE:逸脱 += 100
+		SOURCE:反感追加 = 250
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:露出 = 250
+		SOURCE:トラウマ = 50
+		SOURCE:逸脱 += 50
+		SOURCE:反感追加 = 100
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:露出 = 150
+		SOURCE:トラウマ = 10
+		SOURCE:逸脱 += 25
+		SOURCE:反感追加 = 50
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:露出 = 75
+		SOURCE:逸脱 += 10
+		SOURCE:反感追加 = 25
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:露出 = 50
+	ELSE
+		SOURCE:露出 = 250
+	ENDIF
+;ものホンのフィーバー！
+ELSEIF NO:PLAYER == 1051
+	;ABL:奉仕精神をみる
+	IF ABL:奉仕精神 == 0
+		SOURCE:情愛 = 10
+		SOURCE:達成感 = 10
+	ELSEIF ABL:奉仕精神 == 1
+		SOURCE:情愛 = 25
+		SOURCE:達成感 = 20
+	ELSEIF ABL:奉仕精神 == 2
+		SOURCE:情愛 = 50
+		SOURCE:達成感 = 40
+	ELSEIF ABL:奉仕精神 == 3
+		SOURCE:情愛 = 75
+		SOURCE:達成感 = 60
+	ELSEIF ABL:奉仕精神 == 4
+		SOURCE:情愛 = 100
+		SOURCE:達成感 = 80
+	ELSE
+		SOURCE:情愛 = 150
+		SOURCE:達成感 = 120
+	ENDIF
+	SOURCE:中毒充足 *= 2
+ENDIF
+
+;サタデーナイトはフィーバー！
+IF DAY:7 == 7 && TIME == 1
+	TIMES SOURCE:達成感 , 1.20
+	TIMES SOURCE:中毒充足 , 1.20
+ENDIF
+
+;カウント
+TFLAG:143 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_449
+;サタデーナイトフィーバー！
+IF DAY:7 == 7 && TIME == 1
+	PRINTFORML %CALLNAME:PLAYER%は左手を腰に当て、右手の人差し指を真っ直ぐ上に上げ、%CALLNAME:TARGET%を見つめながら満面の笑みを浮かべ「サタデーナイトフィーバー！」と叫び、ポーズを決めた…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は左手を腰に当て、右手の人差し指を真っ直ぐ上に上げ、%CALLNAME:TARGET%を見つめながら満面の笑みを浮かべ「フィーバー！」と叫び、ポーズを決めた…
+ENDIF

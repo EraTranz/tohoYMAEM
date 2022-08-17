@@ -1,0 +1,477 @@
+﻿;=============================================================================
+;植物園およびハーブ関連処理
+;=============================================================================
+;-------------------------------------------------
+;SHOPコマンドでの植物園処理
+;-------------------------------------------------
+@SHOP_HARB_MENU
+DRAWLINE
+PRINTL 何を行いますか？
+DRAWLINE
+SIF FLAG:79 & 2
+	PRINTLC [0] ハーブ開発指示
+SIF FLAG:79 & 4
+	PRINTLC [1] ハーブ生産指示
+PRINTL 
+PRINTL [100]戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && FLAG:79 & 2
+	PRINTW ハーブの開発を指示します。
+	CALL DEVELOP_HARB_MENU
+	SIF RESULT == 1
+		RETURN 1
+ELSEIF RESULT == 1 && FLAG:79 & 4
+	PRINTW ハーブの生産を指示します
+	CALL MAKE_HARB_MENU
+	SIF RESULT == 1
+		RETURN 1
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;-------------------------------------------------
+;ハーブ開発指示
+;-------------------------------------------------
+@DEVELOP_HARB_MENU
+DRAWLINE
+IF (FLAG:80 & 63) == 63
+	PRINTL 全てのハーブの開発は完了しています。
+	RETURN 0
+ELSEIF FLAG:83 > 0 && FLAG:83 <= 99
+	PRINTL 現在開発中のハーブがあります。
+	CALL STOP_DEVELOP_HARB
+	RETURN RESULT
+ENDIF
+SIF (FLAG:80 & 1) == 0
+	PRINTLC [0] シダーウッド
+SIF (FLAG:80 & 2) == 0
+	PRINTLC [1] ペパーミント
+SIF (FLAG:80 & 4) == 0
+	PRINTLC [2] ジャスミン
+SIF (FLAG:80 & 8) == 0
+	PRINTLC [3] ラヴェンダー
+SIF (FLAG:80 & 16) == 0
+	PRINTLC [4] ムスク
+SIF (FLAG:80 & 32) == 0 && (FLAG:80 & 31) == 31
+	PRINTLC [5] フランキンセンス
+PRINTL 
+DRAWLINE
+PRINTL どのハーブを開発しますか？
+PRINTL 一度に研究できるハーブは一種類のみです。
+PRINTL 
+PRINTL [100]選択せずに戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT >= 0 && RESULT <= 4 && GETBIT(FLAG:80, RESULT) == 0
+	PRINTFORMW %ITEMNAME:(610+RESULT)%の開発をさせます。
+	CALL DEVELOP_HARB_CHIEF_SLAVE_LIST, RESULT
+	SIF RESULT == 1
+		RETURN 1
+ELSEIF RESULT == 5 && (FLAG:80 & 32) == 0 && (FLAG:80 & 31) == 31
+	PRINTW フランキンセンスの開発をさせます。
+	CALL DEVELOP_HARB_CHIEF_SLAVE_LIST, RESULT
+	SIF RESULT == 1
+		RETURN 1
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;-------------------------------------------------
+;ハーブ開発担当者の選定
+;-------------------------------------------------
+;条件は「主人」「助手」「対象」ではなくて、その場にいる(失踪、育児、幽閉、投獄、売春中は不可)
+;媚薬中毒・売春中毒でない（研究どころではない）、妊娠・抱卵中・懐卵ではない（研究どころではない）
+;幼児退行・精神崩壊・傀儡でない（研究するだけの知性がない）、嫉妬・拒絶でない（研究そのものを拒絶する）
+;酔いとストレスがないこと、体力と気力が500以上なのも条件
+;技巧Lv5で、料理技能+工作技能Lvの合計が5以上必要
+;助手可能で陥落しており、反発刻印がなく、[禁断の知識]or[魔術技能]or[調合知識]or[治療]or[野菜の錬金術師]or[教育者]or[工作名人]の中から2つ以上所持しているもの
+;ARG = 開発するハーブの種類
+@DEVELOP_HARB_CHIEF_SLAVE_LIST, ARG
+DRAWLINE
+IF CHARANUM <= 1
+	PRINTL 開発を担当させられる奴隷がいません。
+	RETURN 0
+ENDIF
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;開発担当資格がないとダメ
+	SIF HARB_CHIEF_SLAVE_LIST(COUNT, 0) == 0
+		CONTINUE
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = LOCAL:2 / 20
+
+$PRINT_LIST
+PRINTFORML 誰に%ITEMNAME:(610+ARG)%の開発を命令しますか？ ＜page.{LOCAL+1}＞
+CALL USE_ITEM_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	GOTO INPUT_LOOP_0
+ENDIF
+LOCAL:3 = TARGET
+TARGET = RESULT
+PRINTFORML ＜%CALLNAME:TARGET%に%ITEMNAME:(610+ARG)%の開発を担当させますか？＞
+PRINTL 一旦開発を始めると、開発中止するか完了するまで担当からは外せません。
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1
+	TARGET = LOCAL:3
+	RETURN 0
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_1
+ENDIF
+PRINTFORML %CALLNAME:TARGET%は、ハーブ園の開発施設で%ITEMNAME:(610+ARG)%の開発に着手します。
+PRINTW 開発中は、開発中止もしくは完了まで調教対象もしくは助手に任命できませんし、収監や売春もできません。
+CFLAG:4 |= 2048
+FLAG:81 = ARG + 1
+FLAG:83 = 1
+TARGET = LOCAL:3
+RETURN 1
+
+;-------------------------------------------------
+;ハーブ開発中止。
+;-------------------------------------------------
+@STOP_DEVELOP_HARB
+VARSET LOCAL
+;現在開発担当中の奴隷を探す処理
+LOCAL:1 = FINDCHARA(CFLAG:4, 2048, 0)
+PRINTFORML 現在、%CALLNAME:(LOCAL:1)%が%ITEMNAME:(609+FLAG:81)%を開発しています。
+PRINTL 開発を中止しますか？
+PRINTL 開発を中止した場合、今までの開発の成果は喪失します。
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	RETURN 0
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP
+ENDIF
+CFLAG:(LOCAL:1):4 = 0
+FLAG:81 = 0
+FLAG:83 = 0
+PRINTFORML %ITEMNAME:(609+FLAG:81)%の開発を中止しました。
+PRINTFORML %CALLNAME:(LOCAL:1)%は調教対象に選べるようになりました。
+RETURN 1
+
+;-------------------------------------------------
+;ハーブ生産指示
+;-------------------------------------------------
+@MAKE_HARB_MENU
+DRAWLINE
+IF FLAG:80 <= 0
+	PRINTL どのハーブも開発されていないので生産することはできません。
+	RETURN 0
+ELSEIF MINARRAY(ITEM, 610, 616) > 98
+	PRINTL どのハーブも在庫は一杯あるのでこれ以上生産する必要はありません。
+	RETURN 0
+ENDIF
+SIF FLAG:80 & 1 && ITEM:シダーウッド < 99
+	PRINTLC [0] シダーウッド
+SIF FLAG:80 & 2 && ITEM:ペパーミント < 99
+	PRINTLC [1] ペパーミント
+SIF FLAG:80 & 4 && ITEM:ジャスミン < 99
+	PRINTLC [2] ジャスミン
+SIF FLAG:80 & 8 && ITEM:ラヴェンダー < 99
+	PRINTLC [3] ラヴェンダー
+SIF FLAG:80 & 16 && ITEM:ムスク < 99
+	PRINTLC [4] ムスク
+SIF FLAG:80 & 32 && ITEM:フランキンセンス < 99
+	PRINTLC [5] フランキンセンス
+PRINTL 
+DRAWLINE
+PRINTL どのハーブを生産させますか？
+PRINTL 一度に生産できるハーブは一種類のみです。
+PRINTL 
+PRINTL [100]選択せずに戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT >= 0 && RESULT <= 5 && GETBIT(FLAG:80, RESULT) == 1 && ITEM:(610+RESULT) < 99
+	PRINTFORMW %ITEMNAME:(610+RESULT)%の生産をさせます。
+	CALL MAKE_HARB_CHIEF_SLAVE_LIST, RESULT
+	SIF RESULT == 1
+		RETURN 1
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+;-------------------------------------------------
+;ハーブ生産担当者の選定
+;-------------------------------------------------
+;条件は「主人」「助手」「対象」ではなくて、その場にいる(失踪、育児、幽閉、投獄、売春中は不可)
+;媚薬中毒・売春中毒でない（生産どころではない）、妊娠・抱卵中・懐卵ではない（生産どころではない）
+;幼児退行・精神崩壊・傀儡でない（生産するだけの知性がない）、嫉妬・拒絶でない（生産そのものを拒絶する）
+;酔いとストレスがないこと、体力と気力が500以上なのも条件
+;技巧Lv5で、料理技能+工作技能Lvの合計が4以上必要
+;助手可能で陥落しており、反発刻印がなく、[禁断の知識]or[魔術技能]or[調合知識]or[治療]or[野菜の錬金術師]or[教育者]or[工作名人]の中から1つ以上所持しているもの
+;ARG = 生産するハーブの種類
+@MAKE_HARB_CHIEF_SLAVE_LIST, ARG
+DRAWLINE
+IF CHARANUM <= 1
+	PRINTL 生産を担当させられる奴隷がいません。
+	RETURN 0
+ENDIF
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;生産担当資格がないとダメ
+	SIF HARB_CHIEF_SLAVE_LIST(COUNT, 1) == 0
+		CONTINUE
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+PRINTFORML 誰に%ITEMNAME:(610+ARG)%の生産を命令しますか？ ＜page.{LOCAL+1}＞
+SIF FLAG:82
+	PRINTL なお、現生産担当を選択した場合には解任だけします。
+CALL USE_ITEM_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	GOTO INPUT_LOOP_0
+ENDIF
+LOCAL:3 = TARGET
+TARGET = RESULT
+IF CFLAG:4 == 4096
+	PRINTFORML ＜%CALLNAME:TARGET%を生産担当から解任しますか？＞
+	PRINTLC [0]はい
+	PRINTLC [1]いいえ
+	PRINTL 
+	$INPUT_LOOP_2
+	INPUT
+	IF RESULT == 1
+		TARGET = LOCAL:3
+		RETURN 0
+	ELSEIF RESULT != 0
+		GOTO INPUT_LOOP_2
+	ENDIF
+	PRINTFORML %CALLNAME:TARGET%を、生産担当から外しました。
+	CFLAG:4 = 0
+	FLAG:82 = 0
+	TARGET = LOCAL:3
+	RETURN 1
+ELSE
+	PRINTFORML ＜%CALLNAME:TARGET%に%ITEMNAME:(610+ARG)%の生産を担当させますか？＞
+	IF FLAG:82
+		PRINTL なお、生産担当は一人ですので、別の生産担当を選んだときは
+		PRINTL 以前の生産担当は解任されます。
+	ENDIF
+	PRINTLC [0]はい
+	PRINTLC [1]いいえ
+	PRINTL 
+	$INPUT_LOOP_1
+	INPUT
+	IF RESULT == 1
+		TARGET = LOCAL:3
+		RETURN 0
+	ELSEIF RESULT != 0
+		GOTO INPUT_LOOP_1
+	ENDIF
+	;現在生産担当中の奴隷を解任する処理
+	COUNT = FINDCHARA(CFLAG:4, 4096, 0)
+	IF COUNT >= 0 && COUNT != TARGET
+		PRINTFORML %CALLNAME:COUNT%を、生産担当から外しました。
+		CFLAG:COUNT:4 = 0
+	ENDIF
+	PRINTFORML %CALLNAME:TARGET%は、ハーブ園の生産施設で%ITEMNAME:(610+ARG)%の生産に着手します。
+	PRINTFORMW 生産中は、調教対象もしくは助手に任命できませんし、収監や売春もできません。
+	CFLAG:4 |= 4096
+	FLAG:82 = ARG + 1
+	TARGET = LOCAL:3
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;ハーブ生産および開発担当者資格を調べる式中関数
+;-------------------------------------------------
+;条件に関しては呼び出し元のコメントを参照すること。
+;ARG = 生産もしくは開発担当候補のキャラ
+;ARG:1 = 0が開発担当、1が生産担当の資格を調べる
+@HARB_CHIEF_SLAVE_LIST(ARG, ARG:1)
+#FUNCTION
+;異常範囲なら除外する
+SIF ARG < 0 || ARG >= CHARANUM || ARG:1 < 0 || ARG:1 > 1
+	RETURNF 0
+;主人、助手、調教対象はダメ
+SIF GROUPMATCH(ARG, MASTER, ASSI, TARGET) > 0
+	RETURNF 0
+;その場にいないキャラは除外(現生産もしくは開発担当者を除く)
+IF ARG:1 == 0
+	SIF CFLAG:ARG:4 && CFLAG:ARG:4 != 2048
+		RETURNF 0
+ELSEIF ARG:1 == 1
+	SIF CFLAG:ARG:4 && CFLAG:ARG:4 != 4096
+		RETURNF 0
+ENDIF
+;酔いとストレスがあるとダメ
+SIF BASE:ARG:酔い || CFLAG:ARG:ストレス
+	RETURNF 0
+;助手可能でないとダメ
+SIF CFLAG:ARG:1 < 2
+	RETURNF 0
+;陥落していないとダメ
+SIF TALENT:ARG:恋慕 == 0 && TALENT:ARG:服従 == 0 && TALENT:ARG:淫乱 == 0
+	RETURNF 0
+;[媚薬中毒][売春中毒][妊娠][抱卵中][懐卵][幼児退行][精神崩壊][傀儡][拒絶][嫉妬]のいずれかがあるとダメ
+SIF TALENT:ARG:媚薬中毒 || TALENT:ARG:売春中毒 || TALENT:ARG:妊娠 || TALENT:ARG:抱卵中 || TALENT:ARG:懐卵 || TALENT:ARG:幼児退行 || TALENT:ARG:精神崩壊 || TALENT:ARG:傀儡 || TALENT:ARG:嫉妬 || TALENT:ARG:拒絶
+	RETURNF 0
+;反発刻印あるとダメ
+SIF MARK:ARG:反発刻印
+	RETURNF 0
+;対象の体力と気力が500以上でないとダメ
+SIF BASE:ARG:体力 < 500 || BASE:ARG:気力 < 500
+	RETURNF 0
+;技巧Lvが5未満、料理技能＋工作技能Lvの合計が5未満だとダメ
+SIF ABL:ARG:技巧 < 5 || (ABL:ARG:料理技能 + ABL:ARG:工作技能) < 5
+	RETURNF 0
+;必要素質条件を調べる
+IF ARG:1 == 0
+	;[禁断の知識]or[魔術技能]or[調合知識]or[治療]or[野菜の錬金術師]or[教育者]or[工作名人]の中から２つ以上持っていないとダメ
+	SIF (TALENT:ARG:禁断の知識 > 0) + (TALENT:ARG:魔術技能 > 0) + (TALENT:ARG:調合知識 > 0) + (TALENT:ARG:治療 > 0) + (TALENT:ARG:野菜の錬金術師 > 0) + (TALENT:ARG:教育者 > 0) + (TALENT:ARG:工作名人 > 0) < 2
+		RETURNF 0
+ELSEIF ARG:1 == 1
+	;[禁断の知識]or[魔術技能]or[調合知識]or[治療]or[野菜の錬金術師]or[教育者]or[工作名人]のいずれかがないとダメ
+	SIF (TALENT:ARG:禁断の知識 > 0) + (TALENT:ARG:魔術技能 > 0) + (TALENT:ARG:調合知識 > 0) + (TALENT:ARG:治療 > 0) + (TALENT:ARG:野菜の錬金術師 > 0) + (TALENT:ARG:教育者 > 0) + (TALENT:ARG:工作名人 > 0) < 1
+		RETURNF 0
+ENDIF
+
+RETURNF 1
+
+;-------------------------------------------------
+;ターン終了時のハーブ開発の処理
+;-------------------------------------------------
+;ARG = 開発者の登録キャラ番号(元のTFLAG:900)
+@DEVELOP_HARB_TURNEND, ARG
+VARSET LOCAL
+;調教対象を退避
+LOCAL:1 = TARGET
+;開発担当者を対象にする
+TARGET = ARG
+;[禁断の知識]or[魔術技能]or[調合知識]or[治療]or[野菜の錬金術師]or[教育者]or[工作名人]の合計を基礎値にする
+LOCAL =  (TALENT:禁断の知識 > 0) + (TALENT:魔術技能 > 0) + (TALENT:調合知識 > 0) + (TALENT:治療 > 0) + (TALENT:野菜の錬金術師 > 0) + (TALENT:教育者 > 0) + (TALENT:工作名人 > 0)
+;乱数
+LOCAL:2 = 1 + RAND:3
+;進捗度上昇値決定
+LOCAL:3 = LOCAL * (LOCAL:2)
+LOCAL:3 += ABL:工作技能 * (1+RAND:2)
+;現在の進捗度に加算する
+FLAG:83 += LOCAL:3
+;100%を越えたら補正するとともに、上昇値も補正する。
+IF FLAG:83 > 100
+	LOCAL:4 = FLAG:83 - 100
+	FLAG:83 = 100
+	LOCAL:3 -= LOCAL:4
+ENDIF
+DRAWLINE
+PRINTFORML ハーブ研究施設において、%CALLNAME:TARGET%は黙々と%ITEMNAME:(609+FLAG:81)%の開発を続けている…
+PRINTFORML 現在の開発度はおよそ{FLAG:83*1}％ぐらいという報告があった。
+
+;研究担当者の工作経験の加算処理
+CALL COMMON_UP_EXP, TARGET, 74, 1, 0
+
+;100%に達していたら開発完了
+IF FLAG:83 >= 100
+	PRINTFORML ついに、%ITEMNAME:(609+FLAG:81)%の開発が完了しました。
+	PRINTFORML 今後、生産担当者がおれば%ITEMNAME:(609+FLAG:81)%の生産が可能になります。
+	PRINTFORML %CALLNAME:TARGET%は開発担当者から離れ、調教対象に選べるようになります。
+	SETBIT FLAG:80, FLAG:81 - 1
+	CFLAG:4 = 0
+	FLAG:83 = 0
+	FLAG:81 = 0
+ENDIF
+DRAWLINE
+;退避してあった調教対象を戻す
+TARGET = LOCAL:1
+
+;-------------------------------------------------
+;ターン終了時のハーブ生産の処理
+;-------------------------------------------------
+;ARG = 生産者の登録キャラ番号(元のTFLAG:900)
+@MAKE_HARB_TURNEND, ARG
+VARSET LOCAL
+
+;調教対象を退避
+LOCAL:1 = TARGET
+;開発担当者を対象にする
+TARGET = ARG
+;[禁断の知識]or[魔術技能]or[調合知識]or[治療]or[野菜の錬金術師]or[教育者]or[工作名人]の合計を基礎値にする
+LOCAL =  (TALENT:禁断の知識 > 0) + (TALENT:魔術技能 > 0) + (TALENT:調合知識 > 0) + (TALENT:治療 > 0) + (TALENT:野菜の錬金術師 > 0) + (TALENT:教育者 > 0) + (TALENT:工作名人 > 0)
+TIMES LOCAL, 10.0
+LOCAL += ABL:工作技能 * (2+RAND:3)
+;乱数
+LOCAL:2 = RAND:101
+;いくつできるかな？
+LOCAL:3 = (LOCAL:2 < LOCAL) ? 2 # 1
+;現在の進捗度に加算する
+ITEM:(609+FLAG:82) += LOCAL:3
+;99を越えたら補正するとともに、上昇値も補正する。
+IF ITEM:(609+FLAG:82) > 99
+	ITEM:(609+FLAG:82) = 99
+	LOCAL:3 -= 1
+ENDIF
+DRAWLINE
+PRINTFORML ハーブ生産施設において、%CALLNAME:TARGET%は黙々と%ITEMNAME:(609+FLAG:82)%の生産を続けている…
+
+;99個に達していたら生産完了
+IF ITEM:(609+FLAG:82) >= 99
+	PRINTFORML %ITEMNAME:(609+FLAG:82)%の在庫が一杯になったために、生産を終了します。
+	PRINTFORML %CALLNAME:TARGET%は生産担当者から離れ、調教対象に選べるようになります。
+	CFLAG:4 = 0
+	FLAG:82 = 0
+ENDIF
+DRAWLINE
+;退避してあった調教対象を戻す
+TARGET = LOCAL:1

@@ -1,0 +1,223 @@
+﻿;=============================================================================
+;アナル愛撫
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE2
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:2 > 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;その調教中に浣腸プレイ＋排泄があった場合、調教者が汚れ無視もしくは汚臭鈍感を持たないなら実行できない
+SIF TFLAG:140 & 256 && TALENT:PLAYER:汚臭鈍感 == 0 && TALENT:PLAYER:汚れ無視 == 0
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;触手調教中の場合
+SIF TEQUIP:触手調教 && EXCOM_ABLE682() == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 2) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM2
+;触手調教中だと、「触手アナル愛撫」に派生
+SIF TEQUIP:触手調教
+	JUMP COM682
+
+PRINTL アナル愛撫
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 2
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = アナル愛撫
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 100
+
+SOURCE:露出 = 850
+SOURCE:逸脱 = 400
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 20
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 75
+	SOURCE:屈従 = 350
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 300
+	SOURCE:屈従 = 400
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 700
+	SOURCE:屈従 = 650
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 1100
+	SOURCE:屈従 = 1000
+ELSE
+	SOURCE:快Ａ = 1500
+	SOURCE:屈従 = 1500
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	SOURCE:痛み = 500
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:屈従 , 0.50
+	SOURCE:痛み = 400
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+	SOURCE:痛み = 300
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+	SOURCE:痛み = 200
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.60
+	SOURCE:痛み = 100
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:屈従 , 1.80
+	SOURCE:痛み = 50
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	TIMES SOURCE:屈従 , 0.10
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+	TIMES SOURCE:痛み , 2.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSE
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.30
+	TIMES SOURCE:屈従 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:屈従 , 1.30
+ELSE
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.60
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ鈍感
+	TIMES SOURCE:痛み , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ敏感
+	TIMES SOURCE:痛み , 0.60
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+IF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+ELSEIF TALENT:処女 && TALENT:貞操観念
+	SOURCE:屈従 /= 2
+ENDIF
+
+TCVAR:Ａ経験 += 1
+
+;奴隷のＡ⇔調教者の指の汚れが移動
+STAIN:アナル |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:アナル
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_2
+IF TEQUIP:Ａ系装着器具 == 1
+	PRINTFORML 小刻みに震えるアナルバイブを前後に抜き差しした…
+ELSEIF TEQUIP:Ａ系装着器具 == 2
+	PRINTFORML 肛門に刺さっている要石をつかみ、まるでドアノブを捻るように軽く回してみた…
+ELSEIF TEQUIP:Ａ系装着器具 == 3
+	PRINTFORML 音を立てて振動しているローターを前後に抜き差しした…
+ELSEIF TEQUIP:Ａ系装着器具 == 4
+	PRINTFORML かすかに音を立てる電極でグリグリと菊穴をこねくりまわした…
+ELSEIF TEQUIP:Ａ系装着器具 == 5
+	PRINTFORML ビーズの紐を引っ張って軽く出し入れしてやった…
+ELSEIF TEQUIP:Ａ系装着器具 == 6
+	PRINTFORML アナルを限界まで広げているバルーンを前後に動かしてやった…
+ELSEIF TEQUIP:Ａ系装着器具 == 7
+	PRINTFORML 排泄感に震える菊穴をプラグでグリグリとほじってやった…
+ELSEIF TEQUIP:Ａ系装着器具 == 8
+	PRINTFORML 膨満感に震えるお尻をプラグでグリグリとほじってやった…
+ELSEIF TEQUIP:Ａ系装着器具 == 9
+	PRINTFORML 菊門に深々と入り込んでいるブドウの蔓をつまみ、軽く周りを撫でてやった…
+ELSEIF TEQUIP:Ａ系装着器具 == 10
+	PRINTFORML 菊門に挿入されているバーベルを軽く揺らしてやった…
+ELSEIF TEQUIP:氷柱 >= 4
+	PRINTFORML お尻にでっかく鎮座する巨大な氷の塊を手でグリグリと揺らしてやった…
+ELSEIF TEQUIP:氷柱 == 3
+	PRINTFORML 菊門から出ている太い氷柱を手でグリグリと回してやった…
+ELSEIF TEQUIP:氷柱 
+	PRINTFORML 肛門に刺さっている氷柱をつかみ、まるでドアノブを捻るように軽く回してみた…
+ELSEIF TEQUIP:焦らしプレイ
+	PRINTFORML 指を深く入れずに菊門の皺を指先で優しくなぞった…
+ELSE
+	PRINTFORM %CALLNAME:TARGET%のアナルを弄っ
+	SIF PALAM:欲情 >= PALAMLV:3 && ABL:Ａ感覚 >= 3
+		PRINT て、指先で直腸までかきまわし
+	PRINTL た…
+ENDIF

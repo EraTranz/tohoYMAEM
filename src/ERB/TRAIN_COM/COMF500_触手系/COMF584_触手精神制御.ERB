@@ -1,0 +1,175 @@
+﻿;=============================================================================
+;触手精神制御
+;=============================================================================
+;触手生贄を通じて触手と一体化したアリスを召喚、
+;変異した操りの糸で相手の心を操作し、反感を抑える……という超ド級変態プレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE584
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:584 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:精神制御系 == 2
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[ALICE触手]を得ていないとダメ
+SIF (FLAG:98 & 16) == 0
+	RETURN 0
+;アリスを触手生贄に捧げていない(=アリスが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 16) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 584) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM584
+PRINTL 触手精神制御
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 584
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手精神制御
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 100
+
+SOURCE:逸脱 = 30000
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:屈従 = 30
+	SOURCE:支配 = 20
+	TIMES SOURCE:逸脱 , 2.00
+ELSEIF ABL:従順 == 1
+	SOURCE:屈従 = 80
+	SOURCE:支配 = 40
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:従順 == 2
+	SOURCE:屈従 = 160
+	SOURCE:支配 = 80
+	TIMES SOURCE:逸脱 , 1.00
+ELSEIF ABL:従順 == 3
+	SOURCE:屈従 = 320
+	SOURCE:支配 = 160
+	TIMES SOURCE:逸脱 , 0.50
+ELSEIF ABL:従順 == 4
+	SOURCE:屈従 = 700
+	SOURCE:支配 = 320
+	TIMES SOURCE:逸脱 , 0.25
+ELSE
+	SOURCE:屈従 = 1200
+	SOURCE:支配 = 640
+	TIMES SOURCE:逸脱 , 0.10
+ENDIF
+
+;服従
+IF TALENT:服従
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:支配 , 1.20
+	TIMES SOURCE:逸脱 , 0.20
+ENDIF
+
+;MARK:恐怖刻印をみる
+IF MARK:恐怖刻印 == 1
+	TIMES SOURCE:支配 , 1.20
+ELSEIF MARK:恐怖刻印 == 2
+	TIMES SOURCE:支配 , 1.50
+ELSEIF MARK:恐怖刻印 >= 3
+	TIMES SOURCE:支配 , 2.00
+ENDIF
+
+;MARK:反発刻印をみる
+IF MARK:反発刻印 == 1
+	TIMES SOURCE:逸脱 , 0.50
+ELSEIF MARK:反発刻印 == 2
+	TIMES SOURCE:逸脱 , 0.25
+ELSEIF MARK:反発刻印 >= 3
+	TIMES SOURCE:逸脱 , 0.10
+ENDIF
+
+IF TEQUIP:精神制御系 == 2
+	TEQUIP:精神制御系 = 0
+ELSE
+	TEQUIP:精神制御系 = 2
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手精神制御中
+;-------------------------------------------------
+@EQUIP_COM584
+PRINTL ＜触手精神制御中＞
+
+DOWNBASE:0 += 5
+DOWNBASE:1 += 10
+
+;アリスの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_584
+IF TEQUIP:精神制御系 == 2
+	PRINTFORML アリスは%CALLNAME:PLAYER%の命令を受けると魔力を遮断し、%CALLNAME:TARGET%を絡め取っていた糸を消し去った
+	PRINTFORML 魔力による影響か、%CALLNAME:TARGET%は焦点の定まらない目で虚空を見つめている…
+	PRINTFORML ぼーっとしている%CALLNAME:TARGET%を尻目にアリス触手の花の中に戻ると、肉の花弁を閉ざしてそのまま元来た道を引き返して行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%が命令を下すと%CALLNAME:TARGET%の背後の壁がぱっくりと割れ、奥から人一人が余裕で入るほどの巨大な触手が這いずり出てきた
+	PRINTFORML %CALLNAME:TARGET%に近づいた触手はバラが咲くように身を開かせると、中から下半身を触手と一つになったアリスが姿を見せた
+	PRINTFORM アリスは%CALLNAME:MASTER%に対して恭しく一礼すると、アルカイックスマイルを浮かべつつ%CALLNAME:TARGET%に近づき、
+	IF TFLAG:899 == 0
+		PRINTFORML 指先から目に見えない魔力の糸を伸ばして%CALLNAME:TARGET%の躰を絡め取った
+		PRINTFORM %CALLNAME:TARGET%はうなじに糸が絡みついた瞬間、
+		IF MARK:反発刻印
+			PRINT それまでの反抗的だった顔つきが消え、
+		ELSEIF PALAM:恐怖 >= PALAMLV:4 || (MARK:恐怖刻印 && ABL:触手中毒 == 0)
+			PRINT 恐怖でひきつっていた顔は緩み、
+		ELSE
+			PRINT 一瞬表情が顔から抜け落ちたと思いきや、
+		ENDIF
+		PRINTL 何が楽しいのかよくわからないような笑みを浮かべて始めた…
+	ELSE
+		PRINTFORML 指先から目に見えない魔力の糸を伸ばして%CALLNAME:TARGET%の躰を絡め取った
+	ENDIF
+ENDIF

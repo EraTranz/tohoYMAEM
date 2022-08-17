@@ -1,0 +1,228 @@
+﻿;=============================================================================
+;時間停止
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE418
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:418 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;YASAIモードか、咲夜さん・輝夜姫専用
+IF TALENT:PLAYER:野菜の錬金術師
+	SIF FLAG:574 < 3000
+		RETURN 0
+ELSEIF NO:PLAYER != 1009 && NO:PLAYER != 1030
+	RETURN 0
+ENDIF
+;実行者の気力が100以下だと実行できない
+SIF BASE:PLAYER:気力 <= 100
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:時間止め
+	RETURN 1
+;すでに実行しているとダメ
+SIF TFLAG:140 & 16
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 418) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM418
+IF TALENT:PLAYER:野菜の錬金術師
+	IF TEQUIP:時間止め
+		PRINTL ヴォーテクス
+
+		;戦闘判定
+		CALL COM_TRY_BATTLE, 418
+		;実行できない
+		SIF RESULT == 1
+			RETURN 1
+
+		TSTR:0 = ヴォーテクス
+	ELSE
+		PRINTFORML 野菜数：{FLAG:574}
+		PRINTL 時間停止を実行するには、3000個の野菜を消費する必要があります
+		PRINTL 時間停止を実行しますか？
+		PRINTL [0] はい
+		PRINTL [1] いいえ
+
+		$INPUT_LOOP
+		INPUT
+		IF RESULT == 1
+			RETURN 0
+		ELSEIF RESULT == 0
+			FLAG:574 -= 3000
+		ELSE
+			CLEARLINE 1
+			REUSELASTLINE
+			GOTO INPUT_LOOP
+		ENDIF
+
+		PRINTL クイックタイモ
+
+		;戦闘判定
+		CALL COM_TRY_BATTLE, 418
+		;実行できない
+		IF RESULT == 1
+			FLAG:574 += 3000
+			RETURN 1
+		ENDIF
+
+		TSTR:0 = クイックタイモ
+	ENDIF
+ELSEIF NO:PLAYER == 1009
+	PRINTL プライベートスクウェア
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 418
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = プライベートスクウェア
+ELSEIF TEQUIP:時間止め
+	PRINTL 永夜返し
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 418
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 永夜返し
+ELSE
+	PRINTL 時間停止
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 418
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 時間停止
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;とまった時間が動き出す
+IF TEQUIP:時間止め
+	TEQUIP:時間止め = 0
+	TFLAG:158 = -1
+	TFLAG:140 |= 16
+
+	TIMES TFLAG:280 , 0.70
+	TIMES TFLAG:281 , 0.70
+	TIMES TFLAG:282 , 0.70
+
+	DOWNBASE:0 += TFLAG:298
+	DOWNBASE:1 += TFLAG:299
+
+	FOR LOCAL, 0, 33
+		SOURCE:LOCAL += TFLAG:(LOCAL + 250)
+		TFLAG:(LOCAL + 250) = 0
+	NEXT
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 0
+
+TEQUIP:時間止め = 1
+TFLAG:158 = PLAYER
+RETURN 1
+
+;-------------------------------------------------
+;時間停止中
+;-------------------------------------------------
+;時止め中は全てのパラメーターが入らないように
+@EQUIP_COM418
+IF NO:(TFLAG:158) == 1009
+	PRINT ＜プライベートスクウェア発動中
+ELSEIF NO:(TFLAG:158) == 1030
+	PRINT ＜永夜返し発動中
+ELSE
+	PRINT ＜時間停止中
+ENDIF
+DOWNBASE:0 += 15
+DOWNBASE:1 += 15
+
+TIMES DOWNBASE:0 , 0.90
+TIMES DOWNBASE:1 , 0.90
+
+TFLAG:298 += DOWNBASE:0
+TFLAG:299 += DOWNBASE:1
+
+DOWNBASE:0 = 0
+DOWNBASE:1 = 0
+
+FOR LOCAL , 0 , 33
+	TFLAG:(LOCAL + 250) += SOURCE:LOCAL
+	SOURCE:LOCAL = 0
+NEXT
+
+;使ったキャラの気力を低下させる。
+BASE:(TFLAG:158):1 = MAX(BASE:(TFLAG:158):1 - 100, 0)
+
+PRINTFORML 　実行者残り気力：{BASE:(TFLAG:158):1}＞
+RETURN 1
+
+;-------------------------------------------------
+;時間停止の強制解除
+;時間停止中に体力切れで調教終了しないようにする処理
+;-------------------------------------------------
+@TIMESTOP_RELEASE
+TEQUIP:時間止め = 0
+TFLAG:158 = -1
+TFLAG:140 |= 16
+
+TIMES TFLAG:280 , 0.80
+TIMES TFLAG:281 , 0.80
+TIMES TFLAG:282 , 0.80
+
+TIMES TFLAG:298 , 1.10
+TIMES TFLAG:299 , 1.10
+
+DOWNBASE:0 += TFLAG:298
+DOWNBASE:1 += TFLAG:299
+
+FOR LOCAL, 0, 33
+	SOURCE:LOCAL += TFLAG:(LOCAL + 250)
+	TFLAG:(LOCAL + 250) = 0
+NEXT
+PRINTFORML 実行者の気力が尽きてしまい、時間停止が強制解除されてしまいました。
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_418
+IF TEQUIP:時間止め
+	;咲夜さんのプライベートスクウェア
+	IF NO:PLAYER == 1009
+		PRINTFORML %CALLNAME:PLAYER%はその時間と空間を操る力を止めることにより、%CALLNAME:TARGET%の時間を再開させた…
+	;輝夜姫さまの永夜返し
+	ELSEIF NO:PLAYER == 1030
+		PRINTFORML %CALLNAME:PLAYER%はその永遠と須臾を操る力を止めることにより、%CALLNAME:TARGET%の時間を返してあげた…
+	;YASAIモード専用時間停止
+	ELSE
+		PRINTL そして時はｒｙ
+	ENDIF
+ELSE
+	;咲夜さんのプライベートスクウェア
+	IF NO:PLAYER == 1009
+		PRINTFORML %CALLNAME:PLAYER%はその時間と空間を操る力を少しだけ解放することにより、%CALLNAME:TARGET%の時間を止めてしまった…
+	;輝夜姫さまの永夜返し
+	ELSEIF NO:PLAYER == 1030
+		PRINTFORML %CALLNAME:PLAYER%はその永遠と須臾を操る力を少しだけ解放することにより、%CALLNAME:TARGET%の時間を奪い去ってしまった…
+	;YASAIモード専用時間停止
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の時間を止めた
+	ENDIF
+ENDIF

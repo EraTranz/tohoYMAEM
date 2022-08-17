@@ -1,0 +1,249 @@
+﻿;=============================================================================
+;触手チキチキ
+;=============================================================================
+;前提が凄く厳しい分だけ、効果はきわめて絶大。
+;機械の奴隷の各所に特別な触手を接続し電流を流しつつ好き勝手にハッキングするコマンド
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE556
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:556 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;調教者は触手使役LV4以上必要
+SIF ABL:PLAYER:触手使役 < 4
+	RETURN 0
+;触手が[放電触手]を得ていないとダメ
+SIF (FLAG:75 & 4) == 0
+	RETURN 0
+;触手が[極細触手]を得ていないとダメ
+SIF (FLAG:75 & 16) == 0
+	RETURN 0
+;触手が[遠隔精密制御]を得ていないとダメ
+SIF (FLAG:75 & 512) == 0
+	RETURN 0
+;機械でないとダメ
+SIF TALENT:機械 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 556) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM556
+PRINTL 触手チキチキ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 556
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手チキチキ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 80
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 2000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 2500
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 2800
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 3000
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	SOURCE:痛み = 3300
+ELSE
+	SOURCE:痛み = 3600
+ENDIF
+
+LOCAL:1 = 1000
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.80
+	LOCAL:2 = 5000
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.50
+	LOCAL:2 = 3000
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+	LOCAL:2 = 2000
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:2 = 1000
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 500
+ELSE
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 200
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:2 , 1.50
+	LOCAL:3 = 0
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:2 , 1.20
+	LOCAL:3 = 10
+ELSEIF ABL:触手中毒 == 2
+	LOCAL:3 = 30
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:2 , 0.80
+	LOCAL:3 = 60
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:2 , 0.60
+	LOCAL:3 = 100
+ELSE
+	TIMES LOCAL:2 , 0.50
+	LOCAL:3 = 250
+ENDIF
+
+SOURCE:中毒充足 = LOCAL:3
+SOURCE:トラウマ = (LOCAL:1 + LOCAL:2) / 2
+SOURCE:逸脱 = LOCAL:2
+
+;触手の接続or解放
+IF TEQUIP:触手チキチキ
+	TEQUIP:触手チキチキ = 0
+ELSE
+	TEQUIP:触手チキチキ = 1
+ENDIF
+;触手経験フラグ
+TFLAG:90 = 0
+
+;コマンド属性：触手
+TFLAG:98 = 8
+RETURN 1
+
+;-------------------------------------------------
+;触手チキチキ実行中
+;-------------------------------------------------
+@EQUIP_COM556
+PRINTL ＜触手チキチキ実行中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 20
+
+;快CVABの獲得ソース合計を達成感、恭順追加、欲情追加、中毒充足に加算する
+LOCAL:1 = SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ
+SOURCE:達成感 += LOCAL:1
+SOURCE:恭順追加 += LOCAL:1
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:中毒充足 += LOCAL:1
+;不潔逸脱反感追加の獲得ソース合計を快CVABのソースに加算するが、当該ソースがある場合のみとする。
+LOCAL:2 = SOURCE:不潔 + SOURCE:逸脱 + SOURCE:反感追加
+SOURCE:快Ｃ += (SOURCE:快Ｃ < 1) ? 0 # LOCAL:2
+SOURCE:快Ｖ += (SOURCE:快Ｖ < 1) ? 0 # LOCAL:2
+SOURCE:快Ａ += (SOURCE:快Ａ < 1) ? 0 # LOCAL:2
+SOURCE:快Ｂ += (SOURCE:快Ｂ < 1) ? 0 # LOCAL:2
+
+;不潔～反感追加獲得ソースがある場合はそれを軽減する
+FOR LOCAL, 30, 33
+	IF SOURCE:LOCAL
+		;ABL:触手中毒をみる
+		IF ABL:触手中毒 == 0
+			TIMES SOURCE:LOCAL , 0.90
+		ELSEIF ABL:触手中毒 == 1
+			TIMES SOURCE:LOCAL , 0.75
+		ELSEIF ABL:触手中毒 == 2
+			TIMES SOURCE:LOCAL , 0.50
+		ELSEIF ABL:触手中毒 == 3
+			TIMES SOURCE:LOCAL , 0.35
+		ELSEIF ABL:触手中毒 == 4
+			TIMES SOURCE:LOCAL , 0.20
+		ELSE
+			TIMES SOURCE:LOCAL , 0.10
+		ENDIF
+	ENDIF
+NEXT
+
+;電流の苦痛は受ける
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み += 200
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み += 250
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み += 280
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み += 300
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	SOURCE:痛み += 330
+ELSE
+	SOURCE:痛み += 360
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	LOCAL:3 = 30
+	LOCAL:4 = 20
+ELSEIF ABL:従順 == 1
+	LOCAL:3 = 80
+	LOCAL:4 = 40
+ELSEIF ABL:従順 == 2
+	LOCAL:3 = 160
+	LOCAL:4 = 80
+ELSEIF ABL:従順 == 3
+	LOCAL:3 = 320
+	LOCAL:4 = 160
+ELSEIF ABL:従順 == 4
+	LOCAL:3 = 700
+	LOCAL:4 = 320
+ELSE
+	LOCAL:3 = 1200
+	LOCAL:4 = 640
+ENDIF
+
+;服従
+IF TALENT:服従
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.20
+ENDIF
+
+;MARK:恐怖刻印をみる
+IF MARK:恐怖刻印 == 1
+	TIMES LOCAL:4 , 1.20
+ELSEIF MARK:恐怖刻印 == 2
+	TIMES LOCAL:4 , 1.50
+ELSEIF MARK:恐怖刻印 >= 3
+	TIMES LOCAL:4 , 2.00
+ENDIF
+
+;屈従と支配のソースに加算
+SOURCE:屈従 += LOCAL:3
+SOURCE:支配 += LOCAL:4
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_556
+IF TEQUIP:触手チキチキ
+	PRINTFORML 触手は%CALLNAME:TARGET%への干渉を取り止めて、身体の各部から分離した…
+ELSE
+	PRINTFORML 不気味な動きをしながら触手が%CALLNAME:TARGET%の身体に取り付き、身体の内外のいくつかの場所に「接続」された
+	PRINTFORML そして、触手を通じて%CALLNAME:TARGET%にさまざまなプログラム的干渉がはじまった
+	PRINTFORML その圧倒的かつ傲慢な陵辱に%CALLNAME:TARGET%は全身を激しく揺らして反応するしかなかった…
+ENDIF

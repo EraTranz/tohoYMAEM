@@ -1,0 +1,128 @@
+﻿;=============================================================================
+;技巧
+;=============================================================================
+@ABLUP12
+DRAWLINE
+SIF ABL:技巧 >= 5
+	JUMP ABLUP_MAX
+
+PRINTFORM [0] - %PALAMNAME:11%の珠×{COST12(0)}……
+CALL SHOW_ISABLUP_COMMON, CAN12(0)
+
+;サドっ気が3以上だと先導の珠でも上昇させることができる
+IF ABL:サドっ気 >= 3
+	PRINTFORM [1] - %PALAMNAME:11%の珠×{COST12(1)}、%PALAMNAME:32%の珠×{COST12(0)}……
+	CALL SHOW_ISABLUP_COMMON, CAN12(1)
+ENDIF
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT == 0 || RESULT == 1) && CAN12(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:習得 -= COST12(0)
+ELSEIF RESULT == 1
+	JUEL:習得 -= COST12(1)
+	JUEL:先導 -= COST12(0)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:技巧 += 1
+PRINTFORMW %ABLNAME:12%のレベルが{ABL:技巧}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP12
+SIF ABL:技巧 >= 5
+	RETURN 0
+
+CALLF CALC_COST12, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP12("CHECK")
+
+@COST12(ARG)
+#FUNCTION
+RETURNF CALC_COST12("GET", ARG)
+
+@CALC_COST12(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:技巧 == 0
+	LOCAL:0 = 1
+ELSEIF ABL:技巧 == 1
+	LOCAL:0 = 25
+ELSEIF ABL:技巧 == 2
+	LOCAL:0 = 200
+ELSEIF ABL:技巧 == 3
+	LOCAL:0 = 3000
+	;一線越えない
+	SIF TALENT:一線越えない
+		TIMES LOCAL:0 , 2.00
+ELSEIF ABL:技巧 == 4
+	LOCAL:0 = 20000
+	;一線越えない
+	SIF TALENT:一線越えない
+		TIMES LOCAL:0 , 3.00
+ENDIF
+
+;プライド高い
+SIF TALENT:プライド高い
+	TIMES LOCAL:0 , 1.50
+;求聞持
+SIF TALENT:求聞持
+	TIMES LOCAL:0 , 0.75
+;キョンシー
+SIF TALENT:キョンシー
+	TIMES LOCAL:0 , 1.50
+
+LOCAL:1 = LOCAL:0 / 2
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 2
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+RETURNF 0
+
+@CAN12(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP12("GET", ARG)
+
+@CAN_ABLUP12(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;習得の珠で上げる
+SIF JUEL:習得 < COST12(0)
+	LOCAL:0 |= 1
+
+;サドっ気が3以上だと先導の珠でも上昇させることができる
+IF ABL:サドっ気 >= 3
+	;習得の珠で上げる
+	SIF JUEL:習得 < COST12(1)
+		LOCAL:1 |= 1
+	;先導の珠で上げる
+	SIF JUEL:先導 < COST12(0)
+		LOCAL:1 |= 1
+ELSE
+	LOCAL:1 = 256
+ENDIF
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0)

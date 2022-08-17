@@ -1,0 +1,532 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;お客関係の各種計算処理など
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;娼館に来る顧客の設定処理
+;=============================================================================
+;-------------------------------------------------
+;新・顧客の設定1 for キャバ or GH
+;-------------------------------------------------
+;娼婦の人気で最高10人、店の人気で最高5人。それに常連客をあわせ、最高20人の客を相手に……となります。
+;なお、人気が最高レベルでの、平均値は12,13人となります。
+@PROSTITUTE_SET_NEW_CUSTOMER_TYPE1, ARG
+#LOCALSIZE 4
+;客の人数を決定します。
+TFLAG:401 = 0
+;期待度のボーナス判定
+LOCAL:3 = 0
+
+;判定回数
+LOCAL:1 = 0
+PL_VAR_I = 0
+;[常連客]が居る場合、追加
+SIF TALENT:ARG:常連客
+	LOCAL:1 += TALENT:ARG:常連客
+
+;娼婦の人気をみる
+SELECTCASE CFLAG:ARG:66
+	CASE IS <= 300
+		TFLAG:401 += 1
+	CASE IS <= 600
+		TFLAG:401 += 2
+ENDSELECT
+LOCAL:1 += CFLAG:ARG:66 / 20
+
+
+SIF EXP:ARG:売春経験 > 0
+	LOCAL:1 += EXP:ARG:66 / 20
+
+;店に人気をみる
+LOCAL:2 = FLAG:3005 / 20
+;日曜日は客が来やすい
+SIF DAY:7 == 1
+	TIMES LOCAL:2 , 1.50
+LOCAL:1 += LOCAL:2
+LOCAL:1 *= 2
+SIF LOCAL:1 >= 35
+	PL_VAR_I = RAND:( MIN(LOCAL:1/5 - 6, 46) )
+LOCAL:1 = LIMIT(LOCAL:1, 1, 35) + PL_VAR_I
+SIF TALENT:MASTER:998
+	PRINTFORML 抽出回数:{LOCAL:1}
+
+;客は最大で20人まで
+FOR LOCAL, 0, LOCAL:1
+	SELECTCASE TFLAG:401
+		CASE IS < 5
+			TFLAG:401 += RAND:2
+		CASE IS < 10
+			TFLAG:401 += (RAND:3 > 0) ? 0 # 1
+		CASE IS < 15
+			TFLAG:401 += (RAND:4 > 0) ? 0 # 1
+		CASEELSE
+			TFLAG:401 += (RAND:5 > 0) ? 0 # 1
+	ENDSELECT
+NEXT
+SIF TALENT:MASTER:998
+	PRINTFORML お客抽出補正前:{TFLAG:401}
+
+;[売春中毒]持ちだと20人で一定
+SIF TALENT:ARG:売春中毒 && TFLAG:401 < 20
+	TFLAG:401 = 20
+
+TFLAG:401 = LIMIT(TFLAG:401, 1, 20)
+
+;常連客が代表のお客かどうか調べます
+;代表が常連客だった場合、期待度の判定にボーナスが付く
+TFLAG:402 = (TALENT:ARG:常連客 > 0 && RAND:(TFLAG:401) < RAND:(TALENT:ARG:常連客)) ? 1 # 0
+
+;続いて、期待値の決定。
+CALL PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+;TFLAG:400に期待値が入力される
+
+TFLAG:403 = 0
+;一定確率でビデオ撮影を行ないます。
+IF RAND:5 == 0 && FLAG:3000 & 4
+	TFLAG:403 |= 16
+	TFLAG:400 += 1
+ENDIF
+
+;-------------------------------------------------
+;新・顧客の期待度の設定
+;-------------------------------------------------
+;ARG:1に値が入っていると期待度のランクが上昇
+@PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+#LOCALSIZE 1
+;娼婦人気で期待値も変化
+SELECTCASE CFLAG:ARG:66
+	;スーパースター
+	CASE IS >= 1000
+		LOCAL = 75
+		LOCAL += RAND:50
+		TFLAG:400 += LOCAL
+	;スター
+	CASE IS >= 500
+		LOCAL = 50 + RAND:26
+		TFLAG:400 += LOCAL
+	;人気者
+	CASE IS >= 250
+		LOCAL = CFLAG:ARG:66 / 10
+		LOCAL += RAND:25
+		TFLAG:400 += LOCAL
+	;売れっ娘
+	CASE IS >= 100
+		LOCAL = CFLAG:ARG:66 / 10
+		LOCAL += RAND:20
+		TFLAG:400 += LOCAL
+	;期待の新人
+	CASE IS >= 50
+		LOCAL = CFLAG:ARG:66 / 10
+		LOCAL += RAND:5
+		TFLAG:400 += LOCAL
+	;ただの新人
+	CASEELSE
+		LOCAL = CFLAG:ARG:66 / 10
+		TFLAG:400 += LOCAL
+ENDSELECT
+
+;[売春中毒]所持のとき、期待値が跳ね上がる
+IF TALENT:ARG:売春中毒 && CFLAG:ARG:66 > 1000
+	TFLAG:400 = RAND(75, CFLAG:ARG:66 / 10)
+;	FOR PC_VAR1, 0, RAND(2, 5)
+;		TIMES TFLAG:400 , 1.5
+;	NEXT
+ENDIF
+
+;娼婦経験豊富だとやっぱり期待するよね？
+SELECTCASE EXP:ARG:売春経験
+	CASE IS > 6500
+		TIMES TFLAG:400 , 2.25
+	CASE IS > 2500
+		TIMES TFLAG:400 , 2.0
+	CASE IS > 1000
+		TIMES TFLAG:400 , 1.5
+	CASE IS > 500
+		TIMES TFLAG:400 , 1.25
+ENDSELECT
+;常連客なら
+SIF TFLAG:402 > 0
+	TFLAG:408 += TFLAG:400
+;[売春中毒]所持のとき、期待値が跳ね上がる
+IF TALENT:ARG:売春中毒
+	FOR PC_VAR1, 0, RAND(2, 5)
+		TIMES TFLAG:400 , 1.5
+	NEXT
+ENDIF
+;-------------------------------------------------
+;新・顧客の満足度の判定
+;-------------------------------------------------
+;満足度に応じて、結果が出ます。
+@PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+#DIM CHOOSE_NUM
+;売春内容に関係なく加算されるボーナス
+;売却ルーチンを一部流用
+;[中毒扇動]
+SIF TALENT:ARG:中毒扇動
+	TIMES TFLAG:408 , 2.0
+;[魅力]
+SIF TALENT:ARG:魅力
+	TIMES TFLAG:408 , 1.1
+;[魅惑]
+SIF TALENT:ARG:魅惑
+	TIMES TFLAG:408 , 1.1
+;[謎の魅力]
+SIF TALENT:ARG:謎の魅力
+	TIMES TFLAG:408 , 1.5
+;[人気]
+SIF TALENT:ARG:人気
+	TIMES TFLAG:408 , 2.0
+;[淫乱]
+SIF TALENT:ARG:淫乱
+	TIMES TFLAG:408 , 1.1
+;[娼婦]
+SIF TALENT:ARG:娼婦
+	TIMES TFLAG:408 , 1.1
+
+
+;売春経験補正
+SELECTCASE EXP:ARG:売春経験
+	CASE IS <= 25
+		TFLAG:408 += EXP:ARG:売春経験
+	CASE IS <= 100
+		TFLAG:408 += EXP:ARG:売春経験 / 2 + 13
+	CASE IS <= 250
+		TFLAG:408 += EXP:ARG:売春経験 / 3 + 30
+	CASE IS <= 500
+		TFLAG:408 += EXP:ARG:売春経験 / 4 + 51
+	CASE IS <= 1000
+		TFLAG:408 += EXP:ARG:売春経験 / 5 + 76
+	CASEELSE
+		TFLAG:408 += EXP:ARG:売春経験 / 10
+ENDSELECT
+
+;[売春中毒]所持で、常連客じゃないときいちゃもんをつけることがある
+IF TALENT:ARG:売春中毒 && TFLAG:402 == 0
+	TFLAG:408 /= 2
+ENDIF
+
+SIF TALENT:MASTER:998
+	PRINTFORM 客の期待値:{TFLAG:400}	客の満足度:{TFLAG:408}	
+
+LOCAL = MAX(TFLAG:400, 10)
+PL_VAR_X:0 = LOCAL
+PL_VAR_X:1 = (TFLAG:408 - LOCAL) * 100
+SELECTCASE TFLAG:408 - LOCAL
+	;最高
+	CASE IS >= LOCAL * 2
+		IF LOCAL >= 50
+			IF TFLAG:408 / 30 > 9
+				SELECTCASE RAND:(MIN(TFLAG:408 / 3, 20))
+					CASE 9, 10
+						TFLAG:404 = 6
+					CASE 7 TO 12
+						TFLAG:404 = 5
+					CASE 4 TO 15
+						TFLAG:404 = 4
+					CASEELSE
+						TFLAG:404 = 3
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:(TFLAG:408 / 30)
+					;貢いでもいい
+					CASE 9
+						TFLAG:404 = 6
+					;毎日来たい
+					CASE 6 TO 8
+						TFLAG:404 = 5
+					;また来たい
+					CASE 3 TO 5
+						TFLAG:404 = 4
+					;最高
+					CASEELSE
+						TFLAG:404 = 3
+				ENDSELECT
+			ENDIF
+		ELSE
+			TFLAG:404 = 3
+		ENDIF
+	;良い
+	CASE IS >= LOCAL
+		TFLAG:404 = 2
+	;やや良い
+	CASE IS >= LOCAL / 2
+		TFLAG:404 = 1
+	;普通
+	CASE IS >= 0
+		TFLAG:404 = 0
+	;やや悪い
+	CASE IS >= -1 * LOCAL / 10
+		TFLAG:404 = -1
+	;悪い
+	CASE IS >= -1 * LOCAL / 4
+		TFLAG:404 = -2
+	;最悪
+	CASE IS >= -1 * LOCAL * 2 / 3
+		TFLAG:404 = -3
+	;二度とこない
+	CASEELSE
+		TFLAG:404 = -6
+ENDSELECT
+
+SIF TALENT:MASTER:998
+	PRINTFORML 客の評価:{TFLAG:404}
+;-------------------------------------------------
+;新・顧客の設定2 for 売春
+;-------------------------------------------------
+;売春は基本的にマンツーマン
+;なので最大5人に設定
+@PROSTITUTE_SET_NEW_CUSTOMER_TYPE2, ARG
+;客の人数を決定します。
+TFLAG:401 = 0
+
+;判定回数
+LOCAL:1 = 0
+PL_VAR_I = 0
+;[常連客]が居る場合、最大で20人まで追加
+SIF TALENT:ARG:常連客
+	LOCAL:1 = MIN(TALENT:ARG:常連客, 20)
+
+;娼婦の人気をみる
+SIF EXP:ARG:売春経験 > 0
+	LOCAL:1 += CFLAG:ARG:66 / 20
+
+;店に人気をみる
+LOCAL:2 = FLAG:3005 / 20
+;日曜日は客が来やすい
+SIF DAY:7 == 1
+	TIMES LOCAL:2 , 1.50
+LOCAL:1 += LOCAL:2
+SIF LOCAL:1 >= 15
+	PL_VAR_I = RAND:( MIN(LOCAL:1/7 - 1, 21) )
+LOCAL:1 = LIMIT(LOCAL:1, 1, 15) + PL_VAR_I
+SIF TALENT:MASTER:998
+	PRINTFORML 抽出回数:{LOCAL:1}
+
+;客は最大で5人まで
+FOR LOCAL, 0, LOCAL:1
+	TFLAG:401 += (RAND:5) ? 0 # 1
+NEXT
+SIF TALENT:MASTER:998
+	PRINTFORML お客抽出補正前:{TFLAG:401}
+
+;[売春中毒]持ちだと5人で一定
+SIF TALENT:ARG:売春中毒 && TFLAG:401 < 5
+	TFLAG:401 = 5
+
+TFLAG:401 = LIMIT(TFLAG:401, 1, 5)
+
+;常連客が代表のお客かどうか調べます
+;代表が常連客だった場合、期待度の判定にボーナスが付く
+TFLAG:402 = (TALENT:ARG:常連客 > 0 && RAND:(LOCAL:1) < RAND:(TALENT:ARG:常連客)) ? 1 # 0
+
+;続いて、期待値の決定。
+CALL PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+;TFLAG:400に期待値が入力される
+
+;続いて、満足度の決定。
+;TFLAG:400で満足度判定を行います
+;ここでは、満足度に関する共通の処理を行ないます。
+;ランダムで50を追加します。売春経験に応じて期待値は上昇します。一対一の時と違い、どれだけ経験があってもランダム性が残ります。
+;SELECTCASE PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+;	CASE 7
+;		TFLAG:400 = RAND:10 + 40
+;	CASE 6
+;		TFLAG:400 = RAND:21 + 30
+;	CASE 5
+;		TFLAG:400 = RAND:26 + 25
+;	CASE 4
+;		TFLAG:400 = RAND:31 + 20
+;	CASE 3
+;		TFLAG:400 = RAND:36 + 15
+;	CASE 2
+;		TFLAG:400 = RAND:41 + 10
+;	CASE 1
+;		TFLAG:400 = RAND:46 + 5
+;	CASEELSE
+;		TFLAG:400 = RAND:51
+;ENDSELECT
+;一定確率でビデオ撮影を行ないます。
+TFLAG:403 = 0
+IF RAND:5 == 0 && FLAG:3000 & 4
+	TFLAG:403 |= 16
+	TFLAG:400 += 1
+ENDIF
+
+
+
+;-------------------------------------------------
+;新・顧客の設定3 for セット売春
+;-------------------------------------------------
+;セット売春なんで客は一人
+@PROSTITUTE_SET_NEW_CUSTOMER_TYPE3, ARG
+;客の人数を決定します。
+TFLAG:401 = 1
+
+;判定回数
+LOCAL:1 = 0
+
+;[常連客]が居る
+SIF TALENT:ARG:常連客
+	LOCAL:1 = TALENT:ARG:常連客
+
+;娼婦の人気をみる
+SIF EXP:ARG:売春経験 > 0
+	LOCAL:1 += CFLAG:ARG:66 / 20
+
+;店に人気をみる
+LOCAL:2 = FLAG:3005 / 20
+;日曜日は客が来やすい
+SIF DAY:7 == 1
+	TIMES LOCAL:2 , 1.50
+LOCAL:1 += LOCAL:2
+
+;常連客が代表のお客かどうか調べます
+;代表が常連客だった場合、期待度の判定にボーナスが付く
+TFLAG:402 = (TALENT:ARG:常連客 > 0 && RAND:(LOCAL:1) < RAND:(TALENT:ARG:常連客)) ? 1 # 0
+
+;続いて、期待値の決定。
+CALL PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+;TFLAG:400に期待値が入力される
+
+;一定確率でビデオ撮影を行ないます。
+TFLAG:403 = 0
+IF RAND:5 == 0 && FLAG:3000 & 4
+	TFLAG:403 |= 16
+	TFLAG:400 += 1
+ENDIF
+
+;-------------------------------------------------
+;新・顧客の設定4 for ストリップ劇場
+;-------------------------------------------------
+;セット売春なんで客は一人
+@PROSTITUTE_SET_NEW_CUSTOMER_TYPE4, ARG
+;客の人数を決定します。
+TFLAG:401 = 1
+
+;判定回数
+LOCAL:1 = 0
+
+;[常連客]が居る
+SIF TALENT:ARG:常連客
+	LOCAL:1 = TALENT:ARG:常連客
+
+;娼婦の人気をみる
+SIF EXP:ARG:売春経験 > 0
+	LOCAL:1 += CFLAG:ARG:66 / 20
+
+;店に人気をみる
+LOCAL:2 = FLAG:3005 / 20
+;日曜日は客が来やすい
+SIF DAY:7 == 1
+	TIMES LOCAL:2 , 1.50
+LOCAL:1 += LOCAL:2
+
+;常連客が代表のお客かどうか調べます
+;代表が常連客だった場合、期待度の判定にボーナスが付く
+TFLAG:402 = (TALENT:ARG:常連客 > 0 && RAND:(LOCAL:1) < RAND:(TALENT:ARG:常連客)) ? 1 # 0
+
+;続いて、期待値の決定。
+CALL PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+;TFLAG:400に期待値が入力される
+
+;一定確率でビデオ撮影を行ないます。
+TFLAG:403 = 0
+IF RAND:5 == 0 && FLAG:3000 & 4
+	TFLAG:403 |= 16
+	TFLAG:400 += 1
+ENDIF
+
+
+
+;-------------------------------------------------
+;顧客の設定2
+;-------------------------------------------------
+;集団視姦、乱交で利用
+;娼婦の人気で最高25人、店の人気で最高10人。それに常連客をあわせ、最高50人の客を相手に……となります。
+@PROSTITUTE_SET_CUSTOMER_TYPE2, ARG
+#LOCALSIZE 4
+;客の人数を決定します。
+TFLAG:401 = 0
+
+;判定回数
+LOCAL:1 = 0
+
+;[常連客]が居る場合、最大で20人まで追加
+SIF TALENT:ARG:常連客
+	LOCAL:1 = LIMIT(TALENT:ARG:常連客, 0, 20)
+
+;娼婦の人気をみる
+SIF EXP:ARG:売春経験 > 0
+	LOCAL:1 += LIMIT(CFLAG:ARG:66 / 4, 0, 25)
+
+;店に人気をみる
+LOCAL:2 = LIMIT(FLAG:3005 / 5, 0, 10)
+;日曜日は客が来やすい
+SIF DAY:7 == 1
+	TIMES LOCAL:2 , 1.50
+LOCAL:1 += LOCAL:2
+
+;客は最大で50人まで
+FOR LOCAL, 0, LOCAL:1
+	TFLAG:401 += RAND:2
+NEXT
+TFLAG:401 = LIMIT(TFLAG:401, 3, 50)
+
+;常連客が代表のお客かどうか調べます
+;代表が常連客だった場合、期待度の判定にボーナスが付く
+TFLAG:402 = (TALENT:ARG:常連客 > 0 && RAND:(TFLAG:401) < TALENT:ARG:常連客) ? 1 # 0
+
+;続いて、満足度の決定。
+;TFLAG:400で満足度判定を行います
+;ここでは、満足度に関する共通の処理を行ないます。
+;ランダムで50を追加します。売春経験に応じて期待値は上昇します。一対一の時と違い、どれだけ経験があってもランダム性が残ります。
+;SELECTCASE PROSTITUTE_SET_NEW_CUSTOMER_EXPECTATION, ARG
+;	CASE 7
+;		TFLAG:400 = RAND:10 + 40
+;	CASE 6
+;		TFLAG:400 = RAND:21 + 30
+;	CASE 5
+;		TFLAG:400 = RAND:26 + 25
+;	CASE 4
+;		TFLAG:400 = RAND:31 + 20
+;	CASE 3
+;		TFLAG:400 = RAND:36 + 15
+;	CASE 2
+;		TFLAG:400 = RAND:41 + 10
+;	CASE 1
+;		TFLAG:400 = RAND:46 + 5
+;	CASEELSE
+;		TFLAG:400 = RAND:51
+;ENDSELECT
+;一定確率でビデオ撮影を行ないます。
+TFLAG:403 = 0
+IF RAND:5 == 0 && FLAG:3000 & 4
+	TFLAG:403 |= 16
+	TFLAG:400 += 1
+ENDIF
+
+;-------------------------------------------------
+;顧客の設定3
+;-------------------------------------------------
+;夜のパーティの顧客設定
+@SPRING_PERSON_C
+#LOCALSIZE 1
+TFLAG:401 = 0
+SIF FLAG:3005 == 0
+	RETURN 0
+
+FOR LOCAL, 0, FLAG:3005
+	TFLAG:401 += RAND:2
+NEXT
+
+;-------------------------------------------------
+;顧客の設定4
+;-------------------------------------------------
+;夜のパーティの常連客設定
+@SPRING_PERSON_D, ARG
+#LOCALSIZE 1
+SIF TALENT:ARG:常連客 == 0
+	RETURN 0
+
+FOR LOCAL, 0, TALENT:ARG:常連客
+	TFLAG:401 += RAND:2
+NEXT

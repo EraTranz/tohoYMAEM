@@ -1,0 +1,172 @@
+﻿;=============================================================================
+;触手採尿
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE528
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:528 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF (TEQUIP:Ｕ系装着器具 == 2 || TEQUIP:Ｕ系装着器具 == 22) && TEQUIP:触手服 & 32
+	RETURN 1
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0 && TEQUIP:触手服 == 0
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[抗菌触手]を得ていないとダメ
+SIF (FLAG:75 & 64) == 0
+	RETURN 0
+;他の触手尿道責め中はダメ
+SIF TEQUIP:Ｕ系装着器具 && TEQUIP:Ｕ系装着器具 != 2 && TEQUIP:Ｕ系装着器具 != 22
+	RETURN 0
+;責め始めた記憶がないのにすでに責められてる場合はダメ
+SIF !TEQUIP:触手調教 && !(TEQUIP:触手服 & 32) && (TEQUIP:Ｕ系装着器具 == 2 || TEQUIP:Ｕ系装着器具 == 22)
+	RETURN 0
+;[オトコ]の場合、触手Ｃ責め中や道具装着もダメ
+SIF TALENT:オトコ && (TEQUIP:Ｃ系装着器具 || TEQUIP:コンドーム)
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 528) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM528
+PRINTL 触手採尿
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 528
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手採尿
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 75
+DOWNBASE:1 += 150
+
+SOURCE:露出 = 200
+SOURCE:達成感 = 200
+SOURCE:欲情追加 = 100
+SOURCE:痛み = 300
+SOURCE:屈従 = 500
+SOURCE:中毒充足 = 300
+SOURCE:逸脱 = 400
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL:1 = 200
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL:1 = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL:1 = 900
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL:1 = 1600
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL:1 = 2400
+ELSE
+	LOCAL:1 = 3000
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:中毒充足 += 0
+	TIMES LOCAL:1 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+ELSEIF ABL:露出癖 == 1
+	SOURCE:中毒充足 += 60
+	TIMES LOCAL:1 , 1.10
+	TIMES SOURCE:逸脱 , 1.10
+ELSEIF ABL:露出癖 == 2
+	SOURCE:中毒充足 += 120
+	TIMES LOCAL:1 , 1.15
+	TIMES SOURCE:逸脱 , 1.25
+ELSEIF ABL:露出癖 == 3
+	SOURCE:中毒充足 += 240
+	TIMES LOCAL:1 , 1.25
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:露出癖 == 4
+	SOURCE:中毒充足 += 480
+	TIMES LOCAL:1 , 1.30
+	TIMES SOURCE:逸脱 , 1.75
+ELSE
+	SOURCE:中毒充足 += 960
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:逸脱 , 2.00
+ENDIF
+
+;おもらし癖
+IF TALENT:おもらし癖
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:痛み , 1.75
+ENDIF
+;Ｃ敏感とＣ鈍感
+IF TALENT:Ｂ敏感
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL:1 , 0.60
+ENDIF
+;オトコ
+SIF TALENT:オトコ
+	TIMES SOURCE:痛み , 3.50
+;尿道狂
+SIF TALENT:尿道狂
+	TIMES LOCAL:1 , 1.20
+
+SOURCE:快Ｃ += LOCAL:1
+
+;採尿触手の着脱
+IF (TEQUIP:Ｕ系装着器具 == 2 || TEQUIP:Ｕ系装着器具 == 22)
+	TEQUIP:Ｕ系装着器具 = 0
+	TCVAR:尿道開発経験 += 2
+	
+	SIF TEQUIP:触手服 & 32
+		TEQUIP:触手服 &= 0b1011111
+ELSE
+	STAIN:ペニス |= 2
+	STAIN:ペニス |= 4
+	STAIN:ペニス |= 64
+
+	TCVAR:Ｕ拡張経験 += 1
+	TCVAR:尿道開発経験 += 1
+	TEQUIP:Ｕ系装着器具 = 2
+	
+	;触手服への命令として飛んできた場合
+	IF !TEQUIP:触手調教 && (TEQUIP:触手服 && !(TEQUIP:触手服 & 32))
+		TEQUIP:Ｕ系装着器具 = 22
+		TEQUIP:触手服 |= 32
+	ENDIF
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_528
+IF (TEQUIP:Ｕ系装着器具 == 2 || TEQUIP:Ｕ系装着器具 == 22)
+	PRINTFORML 触手は%CALLNAME:TARGET%の尿道を解放した
+ELSE
+	PRINTFORML 吸盤状の触手が%CALLNAME:TARGET%の尿道口に取り付き、尿を吸いあげはじめた
+ENDIF

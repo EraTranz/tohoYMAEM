@@ -1,0 +1,205 @@
+﻿;=============================================================================
+;陰核クリップ
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE130
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:130 > 0
+	RETURN 0
+;Ｃ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:豆つまみ == 0
+	RETURN 0
+;オトコまたはふたなりだとダメ
+SIF EXIST_PENIS(TARGET)
+	RETURN 0
+;他のＣ系装着具使用中は不可
+SIF (TEQUIP:Ｃ系装着器具 && TEQUIP:Ｃ系装着器具 != 5) || TEQUIP:コンドーム
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;裸エプロン、スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 1 || TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;焦らしプレイ中は不可
+SIF TEQUIP:焦らしプレイ
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 130) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM130
+PRINTL 陰核クリップ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 130
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 陰核クリップ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 30
+DOWNBASE:1 += 30
+
+IF TEQUIP:Ｃ系装着器具 == 5
+	TEQUIP:Ｃ系装着器具 = 0
+	RETURN 1
+ENDIF
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:痛み = 300
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:痛み = 400
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:痛み = 500
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:痛み = 600
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:痛み = 800
+ELSE
+	SOURCE:痛み = 1000
+ENDIF
+SOURCE:逸脱 = 1000
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+
+TEQUIP:Ｃ系装着器具 = 5
+RETURN 1
+
+;-------------------------------------------------
+;洗濯バサミ(クリトリス)
+;-------------------------------------------------
+@EQUIP_COM130
+PRINTL ＜洗濯バサミ(クリトリス)＞
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 50
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	LOCAL = 600
+ELSEIF ABL:Ｃ感覚 == 1
+	LOCAL = 800
+ELSEIF ABL:Ｃ感覚 == 2
+	LOCAL = 1000
+ELSEIF ABL:Ｃ感覚 == 3
+	LOCAL = 1200
+ELSEIF ABL:Ｃ感覚 == 4
+	LOCAL = 1400
+ELSE
+	LOCAL = 2000
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL:1 = 0
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL:1 = 120
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL:1 = 240
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:1 = 480
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL:1 = 960
+ELSE
+	LOCAL:1 = 1920
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 1.40
+	TIMES LOCAL:1 , 0.70
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 0.90
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL , 0.70
+	TIMES LOCAL:1 , 1.40
+ENDIF
+
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 1.50
+ENDIF
+;マゾ
+SIF TALENT:マゾ
+	TIMES LOCAL:1 , 1.20
+;Ｃ敏感
+IF TALENT:Ｃ敏感
+	TIMES LOCAL , 2.00
+;Ｃ鈍感
+ELSEIF TALENT:Ｃ鈍感
+	TIMES LOCAL , 0.75
+ENDIF
+;ドＭ
+SIF TALENT:ドＭ
+	TIMES LOCAL:1 , 1.50
+
+SOURCE:快Ｃ += (LOCAL+LOCAL:1)/10
+SOURCE:欲情追加 += LOCAL:1
+SOURCE:痛み += LOCAL
+SOURCE:屈従 += (LOCAL+LOCAL:1)/2
+SOURCE:逸脱 += LOCAL+LOCAL:1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_130
+IF TEQUIP:Ｃ系装着器具 == 5
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%が手を伸ばそうとする前に、%CALLNAME:TARGET%はクリトリスから洗濯バサミを外して放り投げた…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のクリトリスから洗濯バサミを外した…
+	ENDIF
+ELSE
+	IF MARK:反発刻印 > 1 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:PLAYER%は、嫌がる%CALLNAME:TARGET%を無理やり押さえつけ、その\@(TALENT:Ｃ敏感) ? 敏感な # \@クリトリスを洗濯バサミで挟んだ…
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の\@(TALENT:Ｃ敏感) ? 敏感な # \@クリトリスを洗濯バサミで挟んだ…
+	ENDIF
+ENDIF

@@ -1,0 +1,126 @@
+﻿;=============================================================================
+;傘を愛撫する
+;=============================================================================
+;小傘ちゃんの傘は性感帯なの。いじられるともうびしょぬれ♪
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE447
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:447 > 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;対象が小傘でないとダメ
+SIF NO:TARGET != 1072
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 447) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM447
+PRINTL 傘を愛撫する
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 447
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 傘を愛撫する
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 80
+
+SOURCE:露出 = 50
+SOURCE:性行動 = 80
+SOURCE:不潔 = 10
+
+;ABL:Ｃ感覚をみる
+IF ABL:Ｃ感覚 == 0
+	SOURCE:快Ｃ = 30
+	SOURCE:情愛 = 50
+ELSEIF ABL:Ｃ感覚 == 1
+	SOURCE:快Ｃ = 150
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｃ感覚 == 2
+	SOURCE:快Ｃ = 750
+	SOURCE:情愛 = 160
+ELSEIF ABL:Ｃ感覚 == 3
+	SOURCE:快Ｃ = 1800
+	SOURCE:情愛 = 200
+ELSEIF ABL:Ｃ感覚 == 4
+	SOURCE:快Ｃ = 3000
+	SOURCE:情愛 = 230
+ELSE
+	SOURCE:快Ｃ = 4200
+	SOURCE:情愛 = 250
+ENDIF
+
+;プレイヤーのABL:技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	TIMES SOURCE:快Ｃ , 0.80
+	SOURCE:液体追加 = 100
+ELSEIF ABL:PLAYER:技巧 == 1
+	TIMES SOURCE:快Ｃ , 0.90
+	SOURCE:液体追加 = 200
+ELSEIF ABL:PLAYER:技巧 == 2
+	TIMES SOURCE:快Ｃ , 1.00
+	SOURCE:液体追加 = 350
+ELSEIF ABL:PLAYER:技巧 == 3
+	TIMES SOURCE:快Ｃ , 1.10
+	SOURCE:液体追加 = 600
+ELSEIF ABL:PLAYER:技巧 == 4
+	TIMES SOURCE:快Ｃ , 1.20
+	SOURCE:液体追加 = 850
+ELSE
+	TIMES SOURCE:快Ｃ , 1.50
+	SOURCE:液体追加 = 1200
+ENDIF
+
+;汚臭鈍感
+IF TALENT:汚臭鈍感
+	SOURCE:不潔 /= 4
+;汚臭敏感
+ELSEIF TALENT:汚臭敏感
+	SOURCE:不潔 *= 3
+ENDIF
+;プライド高い
+SIF TALENT:プライド高い
+	SOURCE:不潔 *= 2
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SOURCE:情愛 *= 2
+	SOURCE:不潔 /= 10
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 5
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 5
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_447
+;恋慕で主人調教
+IF TALENT:恋慕 && ASSIPLAY == 0
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の本体である傘を念入りに愛撫した。
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は本体に愛しい人からの愛撫を受けて、深い快感と確かな愛情を感じている…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の本体である傘を念入りに愛撫した。
+	SIF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML %CALLNAME:TARGET%は本体から伝わる刺激を受けている…
+ENDIF

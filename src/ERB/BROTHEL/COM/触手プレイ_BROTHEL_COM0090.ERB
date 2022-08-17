@@ -1,0 +1,589 @@
+﻿;=============================================================================
+;触手プレイの処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド実行可能判定処理
+;-------------------------------------------------
+@PROSTITUTE_ABLE_COM90, ARG
+;キャラが売春可能であるかの共通判定処理を満たしている
+SIF BROTHEL_COM_ABLE_COMMON(ARG) == 0
+	RETURN 0
+;娼館に触手部屋が無いとダメ
+SIF (FLAG:3000 & 8) == 0
+	RETURN 0
+;触手に対して耐性がないと不可、ぶっちゃけると反発履歴がある奴隷は大概は通る。
+SIF NEVER_MIND_TO_TENTACLE(ARG) == 0
+	RETURN 0
+;[小人体型]だとダメ
+SIF TALENT:ARG:小人体型
+	RETURN 0
+RETURN 1
+
+;=============================================================================
+;触手選択可能処理
+;=============================================================================
+@NEVER_MIND_TO_TENTACLE(ARG)
+#FUNCTION
+;触手召喚や、YMでのソース計算を流用
+;キソ値
+LOCAL = 100
+;EXP:触手経験をみる
+IF EXP:ARG:触手経験 < EXPLV:1
+	TIMES LOCAL , 2.50
+ELSEIF EXP:ARG:触手経験 < EXPLV:2
+	TIMES LOCAL , 2.00
+ELSEIF EXP:ARG:触手経験 < EXPLV:3
+	TIMES LOCAL , 1.50
+ELSEIF EXP:ARG:触手経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+ELSEIF EXP:ARG:触手経験 < EXPLV:5
+	TIMES LOCAL , 0.80
+ELSE
+	TIMES LOCAL , 0.60
+ENDIF
+
+;ABL:触手中毒をみる
+IF ABL:ARG:触手中毒 == 0
+	TIMES LOCAL , 1.00
+ELSEIF ABL:ARG:触手中毒 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:ARG:触手中毒 == 2
+	TIMES LOCAL , 0.80
+ELSEIF ABL:ARG:触手中毒 == 3
+	TIMES LOCAL , 0.70
+ELSEIF ABL:ARG:触手中毒 == 4
+	TIMES LOCAL , 0.60
+ELSE
+	TIMES LOCAL , 0.50
+ENDIF
+;感情乏しい
+SIF TALENT:ARG:感情乏しい
+	TIMES LOCAL , 0.60
+;寄生
+SIF TALENT:ARG:寄生
+	TIMES LOCAL , 0.70
+;懐卵
+SIF TALENT:ARG:懐卵
+	TIMES LOCAL , 0.80
+;触手インプラント
+SIF CFLAG:ARG:41
+	TIMES LOCAL , 0.75
+;以上が触手召喚によるソース計算
+;以下は、UP:20(反感)とUP:21(不快)の計算
+;まずは不快
+LOCAL *= 10
+LOCAL:2 = LOCAL
+LOCAL:1 = LOCAL * 5
+
+;MARK:恐怖刻印をみる
+SELECTCASE MARK:ARG:恐怖刻印
+	CASE 0
+		TIMES LOCAL:2 , 0.30
+	CASE 1
+		TIMES LOCAL:2 , 0.60
+	CASE 2
+		TIMES LOCAL:2 , 1.00
+	CASEELSE
+		TIMES LOCAL:2 , 1.50
+ENDSELECT
+;臆病
+SIF TALENT:ARG:臆病
+	TIMES LOCAL:2 , 7.50
+;500以上あると反発刻印なので不可
+;ただし、過去に反発履歴がある場合は可
+;反発刻印のあるなしは重複条件
+SIF LOCAL:2 >= 500 && MARK:ARG:97 == 0
+	RETURNF 0
+SIF LOCAL:2 >= 2000 && MARK:ARG:97 == 1
+	RETURNF 0
+SIF LOCAL:2 >= 4000 && MARK:ARG:97 == 2
+	RETURNF 0
+;以下、反感
+;好奇心と保守的はここで処理
+SIF TALENT:ARG:好奇心
+	TIMES LOCAL:1 , 0.30
+SIF TALENT:ARG:保守的
+	TIMES LOCAL:1 , 3.00
+
+;ABL:従順をみる
+SELECTCASE ABL:ARG:従順
+	CASE 0
+		TIMES LOCAL:1 , 1.00
+	CASE 1
+		TIMES LOCAL:1 , 0.80
+	CASE 2
+		TIMES LOCAL:1 , 0.70
+	CASE 3
+		TIMES LOCAL:1 , 0.40
+	CASE 4
+		TIMES LOCAL:1 , 0.20
+	CASEELSE
+		TIMES LOCAL:1 , 0.00
+ENDSELECT
+SIF LOCAL:1 == 0
+	RETURNF 1
+;ABL:欲望をみる
+SELECTCASE ABL:ARG:欲望
+	CASE 0
+		TIMES LOCAL:1 , 1.00
+	CASE 1
+		TIMES LOCAL:1 , 0.75
+	CASE 2
+		TIMES LOCAL:1 , 0.55
+	CASE 3
+		TIMES LOCAL:1 , 0.30
+	CASE 4
+		TIMES LOCAL:1 , 0.10
+	CASEELSE
+		TIMES LOCAL:1 , 0.00
+ENDSELECT
+SIF LOCAL:1 == 0
+	RETURNF 1
+;パイパン(小人体型もしくは小柄体型は除く)
+SIF TALENT:ARG:パイパン && TALENT:ARG:小人体型 == 0 && TALENT:ARG:小柄体型 == 0
+	TIMES LOCAL:1 , 1.80
+;マゾ
+SIF TALENT:ARG:マゾ
+	TIMES LOCAL:1 , 0.50
+;クリトリスリング
+SIF CFLAG:ARG:42 & 1
+	TIMES LOCAL:1 , 1.25
+;ラビアピアス
+SIF CFLAG:ARG:42 & 16
+	TIMES LOCAL:1 , 1.30
+;ニプルピアス
+SIF CFLAG:ARG:42 & 32
+	TIMES LOCAL:1 , 1.20
+;500以上あると反発刻印なので不可
+;ただし、過去に反発履歴がある場合は可
+;反発刻印のあるなしは重複条件
+SIF (LOCAL:1 >= 500 || LOCAL:1 + LOCAL:2 >= 500) && MARK:ARG:97 == 0
+	RETURNF 0
+SIF (LOCAL:1 >= 2000 || LOCAL:1 + LOCAL:2 >= 2000) && MARK:ARG:97 == 1
+	RETURNF 0
+SIF (LOCAL:1 >= 4000 || LOCAL:1 + LOCAL:2 >= 4000) && MARK:ARG:97 == 2
+	RETURNF 0
+
+RETURNF 1
+;=============================================================================
+;選択可能処理
+;=============================================================================
+@JUDGE_PROSTITUTE_COM91, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM92, ARG
+;一定のＶorＡ経験が必要
+SIF (EXP:ARG:Ｖ経験 <= 30 && EXP:ARG:Ａ経験 <= 30) && TALENT:ARG:娼婦 == 0
+	RETURN 0
+;体力は1000以上
+SIF BASE:ARG:体力 < 1000
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM93, ARG
+;触手使役術があれば可能
+SIF TALENT:ARG:触手使役術
+	RETURN 1
+;禁断の知識があれば技巧Lv5で可能
+SIF TALENT:ARG:禁断の知識 && ABL:ARG:技巧 > 4
+	RETURN 1
+;触手中毒Lv5または触手経験が豊富なら可能
+SIF ABL:ARG:触手中毒 == 5 || EXP:ARG:触手経験 >= 1500
+	RETURN 1
+RETURN 0
+@JUDGE_PROSTITUTE_COM94, ARG
+CALL JUDGE_PROSTITUTE_COM93, ARG
+SIF RESULT == 0
+	RETURN 0
+;サドっ気があれば可能
+SIF ABL:ARG:サドっ気
+	RETURN 1
+;マゾっ気Lv3があれば奉仕精神Lv5で可能
+SIF ABL:ARG:マゾっ気 > 2 && ABL:ARG:奉仕精神 > 4
+	RETURN 1
+RETURN 0
+@JUDGE_PROSTITUTE_COM95, ARG
+;触手中毒Lv2以下だと不可
+SIF ABL:ARG:触手中毒 < 3
+	RETURN 0
+;一定のＶorＡ経験とＶorＡ感覚Lv5が必要
+SIF EXP:ARG:Ｖ経験 < 150 * (1 + TALENT:ARG:一線越えない) && ABL:ARG:Ｖ感覚 < 5 && EXP:ARG:Ａ経験 < 225 * (1 + TALENT:ARG:一線越えない) && ABL:ARG:Ａ感覚 < 5
+	RETURN 0
+;体力は1500以上
+SIF BASE:ARG:体力 < 1500
+	RETURN 0
+RETURN 1
+
+@JUDGE_PROSTITUTE_COM96, ARG
+CALL JUDGE_PROSTITUTE_COM93, ARG
+SIF RESULT == 0
+	RETURN 0
+;サドっ気Lv5があれば可能
+SIF ABL:ARG:サドっ気 > 4
+	RETURN 1
+;マゾっ気Lv5があれば奉仕精神Lv5とサドっ気Lv3で可能
+SIF ABL:ARG:マゾっ気 > 4 && ABL:ARG:奉仕精神 > 4 && ABL:ARG:サドっ気 > 2
+	RETURN 1
+RETURN 0
+;-------------------------------------------------
+;売春コマンドの分岐処理
+;-------------------------------------------------
+@PROSTITUTE_COM90, ARG
+#LOCALSIZE 1
+CALL CHOOSE_PROSTITUTE_COM, ARG, 9
+SELECTCOM = RESULT
+
+SIF TALENT:MASTER:998
+	PRINTFORML SELECTCOM = {SELECTCOM}
+
+;顧客の設定
+CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE3, ARG
+
+;欲望をチェックする。欲望が相手の欲望を上回るかどうか。成功なら欲望レベルの２倍、失敗なら１倍入ります。
+;CBVA売春では、相手の欲望の最大値が4です。
+LOCAL = RAND:5
+IF LOCAL <= ABL:ARG:欲望
+	TFLAG:408 = LOCAL + ABL:ARG:欲望 * 2
+ELSE
+	TFLAG:408 = LOCAL + ABL:ARG:欲望
+ENDIF
+
+;相手からの行動が発生します。相手の技巧がこちらの欲望以下の場合、不満そうな表情が出る可能性があります。
+;相手の技巧＋こちらの従順の２倍＞こちらの欲望＋３なら、問題なく行為を露出癖と奉仕精神を加える事が出来ます。
+;足りない場合は加えられません。
+LOCAL = MAX(RAND:3 + (ABL:ARG:従順 * 2) - 3, 0)
+SIF LOCAL >= ABL:ARG:技巧
+	TFLAG:408 += (ABL:ARG:奉仕精神 + ABL:ARG:露出癖)
+
+;従順がLV3以上ないと、著しく微妙になります
+SIF ABL:ARG:従順 < 3
+	TFLAG:408 /= 10
+
+SIF EXP:ARG:触手経験 == 0
+	TCVAR:ARG:異常経験 = 1
+;………………………………………………
+;選択された売春コマンドを実行
+;………………………………………………
+;ここからは、プレイ内容の領分に入ってきますので、分岐後に任せます。
+;ここまでの満足度は合計最大60点。
+;プレイ内容の方で20点。
+;結果、最大80ポイント、平均40程度の満足度になります。ランダムが40を占めるので、割と安定しません。
+;ただし、素質的な要因がある場合は80ポイントを突破をしても構いません。割とアバウト。
+TRYCCALLFORM PROSTITUTE_COM{SELECTCOM}, ARG
+	SIF RESULT == 1
+		RETURN 1
+CATCH
+ENDCATCH
+RETURN 0
+
+;=============================================================================
+;異常売春(浣腸)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM91, ARG
+DOWNBASE:ARG:0 += 200
+DOWNBASE:ARG:1 += 300
+
+PRINTL 触手プレイ -愛撫-
+
+;Ｃ感覚、Ｂ感覚、欲望、技巧、露出癖、マゾっ気をみる
+TFLAG:408 += RAND(18, MAX(19, ABL:ARG:Ｃ感覚 + ABL:ARG:Ｂ感覚 + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:露出癖 + ABL:ARG:マゾっ気) )
+
+;[汚れ無視]
+SIF TALENT:ARG:汚れ無視
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+LOCAL:0 = RAND(1, 5)
+TCVAR:ARG:絶頂経験 = 2 * LOCAL:0
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+	TCVAR:ARG:射精経験 = 2 * LOCAL:0
+TCVAR:ARG:露出快楽経験 = RAND(1, 3) * LOCAL:0
+TCVAR:ARG:Ｂ快楽経験 = RAND(1, 3) * LOCAL:0
+TCVAR:ARG:触手経験 = RAND(3, 7)
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 90
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM91
+
+;=============================================================================
+;異常売春(フィスト)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM92, ARG
+DOWNBASE:ARG:0 += 300
+DOWNBASE:ARG:1 += 600
+
+LOCALS:0 = 触手プレイ -ソフトＶ-
+LOCALS:1 = 触手プレイ -ソフトＡ-
+
+IF EXP:ARG:Ａ経験 <= 30
+	LOCAL = 0
+ELSEIF EXP:ARG:Ｖ経験 <= 30
+	LOCAL = 1
+ELSE
+	LOCAL = RAND:2
+ENDIF
+PRINTFORML %LOCALS:(LOCAL)%
+;欲望、技巧、露出癖、マゾっ気をみる
+TFLAG:408 += RAND(15, MAX(16, ABL:ARG:(1 + LOCAL) + ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:露出癖 + ABL:ARG:マゾっ気) )
+
+;[汚れ無視]、
+SIF TALENT:ARG:汚れ無視
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+LOCAL:1 = RAND(1, 5)
+TCVAR:ARG:LOCAL = 3 * LOCAL:1
+TCVAR:ARG:絶頂経験 = LOCAL:1
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+	TCVAR:ARG:射精経験 = LOCAL:1
+TCVAR:ARG:露出快楽経験 = RAND(1, 3) * LOCAL:1
+TCVAR:ARG:触手経験 = RAND(5, 9)
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 90
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM92
+
+
+;=============================================================================
+;異常売春(放尿)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM93, ARG
+DOWNBASE:ARG:0 += 50
+DOWNBASE:ARG:1 += 500
+
+PRINTL （客に）触手プレイ -愛撫-
+
+;欲望、技巧、露出癖、サドっ気をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:露出癖 + ABL:ARG:サドっ気
+
+;[プライド高い]
+SIF TALENT:ARG:プライド高い
+	TIMES TFLAG:408, 1.25
+;[サド][ドＳ]
+SIF TALENT:ARG:サド || TALENT:ARG:ドＳ
+	TIMES TFLAG:408, 2.00
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:奉仕快楽経験 = RAND(4, 9)
+TCVAR:ARG:ＳＭ教育経験 = RAND(1, 5)
+TCVAR:ARG:触手経験 = RAND(1, 5)
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 90
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM93
+
+;=============================================================================
+;異常売春(野外浣腸)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM94, ARG
+DOWNBASE:ARG:0 += 100
+DOWNBASE:ARG:1 += 500
+
+PRINTL （客に）触手プレイ -ソフトＳ-
+
+;欲望、技巧、露出癖、サドっ気をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:露出癖 + ABL:ARG:サドっ気
+
+;[プライド高い]
+SIF TALENT:ARG:プライド高い
+	TIMES TFLAG:408, 1.25
+;[サド][ドＳ]
+SIF TALENT:ARG:サド || TALENT:ARG:ドＳ
+	TIMES TFLAG:408, 2.00
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:奉仕快楽経験 = RAND(6, 9)
+TCVAR:ARG:ＳＭ教育経験 = RAND(4, 8)
+TCVAR:ARG:触手経験 = RAND(1, 5)
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 90
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM94
+
+;=============================================================================
+;異常売春(野外放尿)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM95, ARG
+DOWNBASE:ARG:0 += 750
+DOWNBASE:ARG:1 += 1200
+
+LOCALS:0 = 触手プレイ -ハードＶ-
+LOCALS:1 = 触手プレイ -ハードＡ-
+LOCALS:2 = 触手プレイ -ハード口辱-
+LOCALS:3 = 触手プレイ -両穴ハード-
+LOCALS:4 = 触手プレイ -３点バースト-
+
+IF EXP:ARG:Ａ経験 < 225 * (1 + TALENT:ARG:一線越えない) || ABL:ARG:Ａ感覚 < 5
+	LOCAL = RAND:2 * 2
+	LOCAL:1 = (LOCAL == 0) ? ABL:ARG:Ｖ感覚 # ABL:ARG:技巧
+ELSEIF EXP:ARG:Ｖ経験 < 150 * (1 + TALENT:ARG:一線越えない) || ABL:ARG:Ｖ感覚 < 5
+	LOCAL = RAND:2 + 1
+	LOCAL:1 = (LOCAL == 1) ? ABL:ARG:Ａ感覚 # ABL:ARG:技巧
+ELSE
+	SELECTCASE RAND:15
+		CASE 0, 4, 9, 12
+			LOCAL = 0
+			LOCAL:1 = ABL:ARG:Ｖ感覚
+		CASE 1, 5, 10, 13
+			LOCAL = 1
+			LOCAL:1 = ABL:ARG:Ａ感覚
+		CASE 2, 6, 11, 14
+			LOCAL = 2
+			LOCAL:1 = ABL:ARG:技巧
+		CASE 3, 8
+			LOCAL = 3
+			LOCAL:1 = ABL:ARG:Ｖ感覚 + ABL:ARG:Ａ感覚
+		CASE 7
+			LOCAL = 4
+			LOCAL:1 = ABL:ARG:Ｖ感覚 + ABL:ARG:Ａ感覚 + ABL:ARG:技巧
+	ENDSELECT
+ENDIF
+;欲望、露出癖、マゾっ気をみる
+TFLAG:408 += LOCAL:1 + ABL:ARG:欲望 + ABL:ARG:露出癖 + ABL:ARG:マゾっ気
+
+;[汚れ無視]、
+SIF TALENT:ARG:汚れ無視
+	TIMES TFLAG:408, 2.0
+;[マゾ][ドＭ]
+SIF TALENT:ARG:マゾ || TALENT:ARG:ドＭ
+	TIMES TFLAG:408, 2.0
+;[倒錯的]
+SIF TALENT:ARG:倒錯的
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+
+LOCAL:1 = RAND(6, 10)
+SIF LOCAL == 0 || LOCAL == 3 || LOCAL == 4
+	TCVAR:ARG:Ｖ経験 = LOCAL:1
+SIF LOCAL == 1 || LOCAL == 3 || LOCAL == 4
+	TCVAR:ARG:Ａ経験 = LOCAL:1
+TCVAR:ARG:絶頂経験 = LOCAL:1
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり
+	TCVAR:ARG:射精経験 = RAND(1, 5)
+SIF TALENT:ARG:母乳体質
+	TCVAR:ARG:噴乳経験 = RAND(1, 5)
+SIF TALENT:ARG:精愛味覚 && LOCAL >= 2 && LOCAL <= 4
+	TCVAR:ARG:精飲絶頂経験 = RAND(1, 5)
+TCVAR:ARG:露出快楽経験 = 2 * LOCAL:1
+TCVAR:ARG:苦痛快楽経験 = 2 * LOCAL:1
+TCVAR:ARG:緊縛経験 = 2 * LOCAL:1
+TCVAR:ARG:触手経験 = 2 * LOCAL:1
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 90
+RETURN 1
+
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM95
+
+;=============================================================================
+;異常売春(獣姦ショー)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM96, ARG
+DOWNBASE:ARG:0 += 200
+DOWNBASE:ARG:1 += 500
+
+LOCALS:0 = （客に）触手プレイ -ハードＳ-
+
+;欲望、技巧、露出癖、サドっ気をみる
+TFLAG:408 += ABL:ARG:欲望 + ABL:ARG:技巧 + ABL:ARG:奉仕精神 + ABL:ARG:露出癖 + ABL:ARG:サドっ気
+
+;[プライド高い]
+SIF TALENT:ARG:プライド高い
+	TIMES TFLAG:408, 1.50
+;[サド][ドＳ]
+SIF TALENT:ARG:サド || TALENT:ARG:ドＳ
+	TIMES TFLAG:408, 2.00
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:奉仕快楽経験 = RAND(9, 12)
+TCVAR:ARG:ＳＭ教育経験 = RAND(9, 12)
+TCVAR:ARG:触手経験 = RAND(4, 9)
+
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+TFLAG:405 = 90
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM96
+
+
+
+;=============================================================================
+;異常売春(獣姦ショー)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM97, ARG
+
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM97
+

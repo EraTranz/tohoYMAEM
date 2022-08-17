@@ -1,0 +1,24 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;開発度関連をフォローするイベント
+;Ｃ敏感を取得するイベントなどの兆候をわかりやすくするため使う？
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE19
+;SIF CFLAG:Ｃ開発度 >= 1000 && TALENT:Ｃ敏感 == 0
+	;PRINTFORMW 
+;SIF CFLAG:Ｖ開発度 >= 2000 && TALENT:Ｖ敏感 == 0
+	;PRINTFORMW 
+;SIF CFLAG:Ａ開発度 >= 2500 && TALENT:Ａ敏感 == 0
+	;PRINTFORMW 
+;SIF CFLAG:Ｂ開発度 >= 5000 && TALENT:Ｂ敏感 == 0
+	;PRINTFORMW 
+;IF CFLAG:精飲開発度 >= 10000 && TALENT:精愛味覚 == 0
+	;PRINTFORMW 
+;ENDIF
+
+
+;■ターンエンド時の口上システム処理で使用する。
+CALL K2008_COMEND
+
+;SELECTCOMの更新にあわせてCFLAG番号も無効化しておく
+__K2008N_CFLAG_SELECTCOM__ = -1

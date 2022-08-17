@@ -1,0 +1,298 @@
+﻿;=============================================================================
+;触手潮干狩り
+;=============================================================================
+;触手生贄を通じて下半身が触手と一体化したにとりを召喚、
+;機械タイプの触手を使ってバチバチィっと電気責めを行う……というおにちく(？)なプレイ
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE581
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:581 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:キャラ触手 & 1
+	RETURN 1
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[NITORI触手]を得ていないとダメ
+SIF (FLAG:98 & 2) == 0
+	RETURN 0
+;にとりを触手生贄に捧げていない(=にとりが何らかの形で存在している)とダメ
+SIF (FLAG:97 & 2) == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 581) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM581
+PRINTL 触手潮干狩り
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 581
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手潮干狩り
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 40
+DOWNBASE:1 += 100
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	LOCAL:1 = 100
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	LOCAL:1 = 150
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	LOCAL:1 = 300
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	LOCAL:1 = 500
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	LOCAL:1 = 750
+ELSE
+	LOCAL:1 = 1000
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.80
+	LOCAL:2 = 6000
+	LOCAL:3 = 0
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.50
+	LOCAL:2 = 4000
+	LOCAL:3 = 10
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+	LOCAL:2 = 3000
+	LOCAL:3 = 30
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:2 = 2000
+	LOCAL:3 = 60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 1000
+	LOCAL:3 = 100
+ELSE
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 500
+	LOCAL:3 = 250
+ENDIF
+
+;ABL:触手時中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 0.00
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:2 , 1.20
+	TIMES LOCAL:3 , 0.50
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 0.80
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 1.00
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:2 , 0.60
+	TIMES LOCAL:3 , 1.50
+ELSE
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 2.10
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:2 , 1.20
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 2.50
+
+LOCAL:4 = (LOCAL:1 + LOCAL:2 + 1000) / 3
+
+;にとりとの相性あるなしで補正が上下
+LOCAL:5 = 40
+IF RELATION:(LOCAL:5) > 0 && RELATION:(LOCAL:5) != 100
+	LOCAL:1 *= RELATION:(LOCAL:5)
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:(LOCAL:5)
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:(LOCAL:5)
+	LOCAL:3 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:(LOCAL:5) < 100
+		LOCAL:4 *= (200-RELATION:(LOCAL:5))
+	ELSE
+		LOCAL:4 *= RELATION:(LOCAL:5)
+	ENDIF
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:痛み += LOCAL:1
+SOURCE:中毒充足 += LOCAL:3
+SOURCE:トラウマ += LOCAL:4
+SOURCE:逸脱 += LOCAL:2
+
+;触手潮干狩りのON/OFF
+IF TEQUIP:キャラ触手 & 1
+	TEQUIP:キャラ触手 -= 1
+ELSE
+	TEQUIP:キャラ触手 |= 1
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手潮干狩り中
+;-------------------------------------------------
+@EQUIP_COM581
+PRINTL ＜触手潮干狩り中＞
+
+DOWNBASE:0 += 25
+DOWNBASE:1 += 60
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	LOCAL:1 = 200
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	LOCAL:1 = 250
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	LOCAL:1 = 360
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	LOCAL:1 = 500
+ELSEIF PALAM:苦痛 < PALAMLV:5
+	LOCAL:1 = 810
+ELSE
+	LOCAL:1 = 1200
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 1.80
+	LOCAL:2 = 3000
+	LOCAL:3 = 0
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.50
+	LOCAL:2 = 2000
+	LOCAL:3 = 5
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.20
+	LOCAL:2 = 1500
+	LOCAL:3 = 15
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL:2 = 1000
+	LOCAL:3 = 30
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 0.80
+	LOCAL:2 = 500
+	LOCAL:3 = 50
+ELSE
+	TIMES LOCAL:1 , 0.60
+	LOCAL:2 = 250
+	LOCAL:3 = 100
+ENDIF
+
+;ABL:触手時中毒をみる
+IF ABL:触手中毒 == 0
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 0.00
+ELSEIF ABL:触手中毒 == 1
+	TIMES LOCAL:2 , 1.20
+	TIMES LOCAL:3 , 0.50
+ELSEIF ABL:触手中毒 == 2
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 0.80
+ELSEIF ABL:触手中毒 == 3
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 1.00
+ELSEIF ABL:触手中毒 == 4
+	TIMES LOCAL:2 , 0.60
+	TIMES LOCAL:3 , 1.50
+ELSE
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 2.10
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:2 , 1.20
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 2.50
+
+LOCAL:4 = (LOCAL:1 + LOCAL:2 + 1000) / 3
+
+;にとりとの相性あるなしで補正が上下
+LOCAL = 40
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	LOCAL:2 *= RELATION:LOCAL
+	LOCAL:2 /= 100
+	LOCAL:3 *= RELATION:LOCAL
+	LOCAL:3 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:LOCAL < 100
+		LOCAL:4 *= (200-RELATION:LOCAL)
+	ELSE
+		LOCAL:4 *= RELATION:LOCAL
+	ENDIF
+	LOCAL:4 /= 100
+ENDIF
+
+SOURCE:痛み += LOCAL:1
+SOURCE:中毒充足 += LOCAL:3
+SOURCE:トラウマ += LOCAL:4
+SOURCE:逸脱 += LOCAL:2
+
+;にとりの性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_581
+IF TEQUIP:キャラ触手 & 1
+	PRINTFORML %CALLNAME:PLAYER%の命令に従い、にとりは帯電している細長い触手を引っこませた
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 焦らすような痛みから解放されたことに%CALLNAME:TARGET%はどことなく安堵の表情を浮かべている
+		PRINTFORML にとりは%CALLNAME:TARGET%の汗をぺろりと舌先で軽く舐めると、荒い息を繰り返している%CALLNAME:TARGET%を残し、そのまま肉壁の向こうへと消えて行った……
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に反応し、何処からともなく機械と生物が融合した異様な姿の触手が現れた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと先端が開き、中から下半身が用途不明の機械と異臭のする肉塊に繋がれたにとりが姿を現した
+	PRINTFORML にとりは%CALLNAME:MASTER%に向かって軽く一礼すると、無表情のまま%CALLNAME:TARGET%に近づき、
+	PRINTFORML 熊手のように先端が分かれた機械タイプ触手を数本取り出し、%CALLNAME:TARGET%にあてがった
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORML 金属独特の冷感に当てられ、%CALLNAME:TARGET%は思わず\@(TEQUIP:口装着器具 || TEQUIP:触手強制回復 == 1) ? 体を縮みこませた # 声を上げてしまった\@
+		PRINTFORML その様子に満足したのか、にとりは一瞬怪しげな笑みを口元に浮かばせると、いきなり触手の先端が帯電し始めた…
+		PRINTFORML %CALLNAME:TARGET%は突然襲った電気責めを逃れようと必死に身体を捩じらせている……
+	ENDIF
+ENDIF

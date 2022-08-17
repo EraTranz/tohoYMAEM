@@ -1,0 +1,1005 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;薬アイテム使用時の特殊処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;以下少しややこしい処理を行うアイテムをここで行う。
+;=============================================================================
+;アイテム：鎮静茶のストレス回復処理
+;=============================================================================
+;ARG＝回復対象のキャラ登録番号
+@DRUG_HEAL_MENTAL, ARG
+LOCAL = 500
+;[楽観的]
+IF TALENT:ARG:楽観的
+	TIMES LOCAL , 1.25
+;[悲観的]
+ELSEIF TALENT:ARG:悲観的
+	TIMES LOCAL , 0.75
+ENDIF
+;[抑圧]
+IF TALENT:ARG:抑圧
+	TIMES LOCAL , 0.50
+;[解放]
+ELSEIF TALENT:ARG:解放
+	TIMES LOCAL , 1.50
+ENDIF
+;[妊娠]、[懐卵]
+SIF TALENT:ARG:妊娠 || TALENT:ARG:懐卵
+	TIMES LOCAL , 0.75
+;[寄生]
+SIF TALENT:ARG:寄生
+	TIMES LOCAL , 0.75
+
+CFLAG:ARG:ストレス = MAX(CFLAG:ARG:ストレス - LOCAL, 0)
+
+;=============================================================================
+;アイテム：栄養剤の体力・気力回復処理
+;=============================================================================
+;ARG＝回復対象のキャラ登録番号
+@DRUG_HEAL_LIFE, ARG
+LOCAL = 300
+;[薬毒耐性]
+SIF TALENT:ARG:薬毒耐性
+	TIMES LOCAL , 0.50
+;[回復早い]
+IF TALENT:ARG:回復早い
+	TIMES LOCAL , 1.25
+;[回復遅い]
+ELSEIF TALENT:ARG:回復遅い
+	TIMES LOCAL , 0.75
+ENDIF
+;[吸血鬼]
+IF TALENT:ARG:吸血鬼
+	IF TIME == 0
+		TIMES LOCAL , 0.75
+	ELSE
+		TIMES LOCAL , 1.25
+	ENDIF
+ENDIF
+;[日光浴]、[月光浴]
+IF (TALENT:ARG:日光浴 && TIME == 0) || (TALENT:ARG:月光浴 && TIME == 1)
+	TIMES LOCAL , 1.25
+	BASE:ARG:気力 = MAXBASE:ARG:1
+ENDIF
+
+;[治療](主人)
+SIF TALENT:MASTER:治療
+	TIMES LOCAL , 1.50
+;[調合知識]＋[禁断の知識](主人)
+SIF TALENT:MASTER:調合知識 && TALENT:MASTER:禁断の知識
+	TIMES LOCAL , 2.00
+;[魔術技能](主人)
+SIF TALENT:MASTER:魔術技能
+	TIMES LOCAL , 1.20
+
+BASE:ARG:体力 = MIN(BASE:ARG:体力 + LOCAL, MAXBASE:ARG:0)
+BASE:ARG:気力 = MIN(BASE:ARG:気力 + LOCAL*2, MAXBASE:ARG:1)
+
+;=============================================================================
+;アイテム：記憶消去薬の処理
+;=============================================================================
+@ERASE_MEMORY, ARG
+;元の助手、調教対象の登録番号を保存
+LOCAL:2 = TARGET
+;助手を選択した場合、記憶が消えるので外す処理をここで行う
+IF ASSI != ARG
+	LOCAL:3 = ASSI
+ELSE
+	LOCAL:3 = -1
+ENDIF
+ADDCHARA NO:ARG
+TARGET = CHARANUM-1
+;素質の引き継ぎ(イベントなどで変化した分は除く)
+;[服従]、[隷属]、[烙印]は最初から弾く
+FOR LOCAL, 0, 230
+	;陥落系の素質は基本無視。ただし淫乱と恋慕のみ陥落判定のためのフラグを立てる
+	;イベントで変化したものはフラグで判断(弄りようがないので口上で変化した分は除く)
+	IF LOCAL == 150 || LOCAL == 160 || LOCAL == 170
+		SIF TALENT:ARG:LOCAL
+			CFLAG:20 |= 32
+	ELSEIF LOCAL > 150 && LOCAL < 180 && LOCAL != 157 && LOCAL != 158
+		CONTINUE
+	ELSEIF LOCAL == 10
+		IF CFLAG:ARG:12 & 4
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 11
+		SIF CFLAG:ARG:13 & 8
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 13
+		IF CFLAG:ARG:12 & 2048
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 15
+		SIF CFLAG:ARG:13 & 16
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 21
+		SIF CFLAG:ARG:13 & 4
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 22
+		IF CFLAG:ARG:12 & 8
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 25
+		IF CFLAG:ARG:12 & 32
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 26
+		IF CFLAG:ARG:12 & 16
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 27
+		SIF CFLAG:ARG:13 & 64
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 28
+		IF CFLAG:ARG:12 & 64
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 30
+		SIF CFLAG:ARG:13 & 256
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 31
+		IF CFLAG:ARG:13 & 256
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 32
+		SIF CFLAG:ARG:13 & 1
+			TALENT:LOCAL = 1
+		IF CFLAG:ARG:12 & 128
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 33
+		SIF CFLAG:ARG:13 & 2048
+			TALENT:LOCAL = 1
+		IF CFLAG:ARG:12 & 65536
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 34
+		SIF CFLAG:ARG:13 & 2
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 37
+		SIF CFLAG:ARG:13 & 512
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 38
+		SIF CFLAG:ARG:13 & 1024
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 39
+		IF CFLAG:ARG:12 & 1024
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 44
+		SIF CFLAG:ARG:13 & 4096
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 46
+		IF CFLAG:ARG:12 & 16384
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 62
+		IF CFLAG:ARG:12 & 256
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 61
+		IF CFLAG:ARG:12 & 512
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 66
+		IF CFLAG:ARG:12 & 32768
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 70
+		IF CFLAG:ARG:13 & 32
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 71
+		SIF CFLAG:ARG:13 & 32
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 130
+		IF CFLAG:ARG:12 & 2
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ELSE
+			TALENT:LOCAL = 0
+		ENDIF
+	ELSEIF LOCAL == 131
+		SIF CFLAG:ARG:13 & 128
+			TALENT:LOCAL = 1
+	ELSEIF LOCAL == 157
+		IF CFLAG:ARG:12 & 4096
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSEIF LOCAL == 158
+		IF CFLAG:ARG:12 & 1
+			CONTINUE
+		ELSEIF TALENT:ARG:LOCAL
+			TALENT:LOCAL = 1
+		ENDIF
+	ELSE
+		TALENT:LOCAL = TALENT:ARG:LOCAL
+	ENDIF
+NEXT
+FOR LOCAL, 0, 100
+	;経験の温存処理
+	EXP:LOCAL = EXP:ARG:LOCAL
+	;感覚系と(技巧以外の)技能系は温存
+	SIF LOCAL < 10 || (LOCAL >= 70 && LOCAL < 90)
+		ABL:LOCAL = ABL:ARG:LOCAL
+	;ゲージ保存
+	IF LOCAL >= 0 && LOCAL < 17
+		BASE:LOCAL = BASE:ARG:LOCAL
+		MAXBASE:LOCAL = MAXBASE:ARG:LOCAL
+	ENDIF
+NEXT
+;CSTR3を継承
+CSTR:3  = \@(CFLAG:17 & 16) ? %CSTR:ARG:3% # 『%CSTR:ARG:3%』という経緯の奴隷に記憶消去薬を使用した。\@
+;ＳＰキャラフラグ
+CFLAG:0 = CFLAG:ARG:0
+;種族変更フラグ
+CFLAG:5 = CFLAG:ARG:5
+;体力上昇累積の判定
+CFLAG:体力上昇累積分 = CFLAG:ARG:体力上昇累積分
+;気力上昇累積の判定
+CFLAG:気力上昇累積分 = CFLAG:ARG:気力上昇累積分
+;口上表示の個別設定フラグ
+CFLAG:9 = CFLAG:ARG:9
+;蒐集品
+CFLAG:10 = CFLAG:ARG:10
+;恋慕系素質の判定
+CFLAG:14 = CFLAG:ARG:14
+;服従系素質の判定
+CFLAG:15 = CFLAG:ARG:15
+;淫乱系素質の判定
+CFLAG:16 = CFLAG:ARG:16
+;崩壊系素質の判定
+CFLAG:17 = CFLAG:ARG:17
+;引き継ぎキャラ判定
+CFLAG:18 = CFLAG:ARG:18
+;放尿レベルも保存
+CFLAG:放尿レベル = CFLAG:ARG:放尿レベル
+;媚薬中毒日数カウント・媚薬中毒レベルも保存
+CFLAG:32 = CFLAG:ARG:32
+;鈴蘭の毒を使った回数も保存
+CFLAG:33 = CFLAG:ARG:33
+;触手を使って卵を産んでいる場合はその判定も保存
+CFLAG:触手出産数 = CFLAG:ARG:触手出産数
+;妊娠、懐卵日数カウントも保存
+CFLAG:35 = CFLAG:ARG:35
+;陰毛を剃ったり抜いたりしている場合は継承
+CFLAG:36 = CFLAG:ARG:36
+;陰核肥大関連
+SIF CFLAG:ARG:37 & 16
+	CFLAG:37 = 16
+;尻尾の本数
+CFLAG:40 = CFLAG:ARG:40
+;触手インプラント
+CFLAG:41 = CFLAG:ARG:41
+;烙印キャラ用特殊装備フラグ
+CFLAG:42 = CFLAG:ARG:42
+;コスプレ、露出ライブ、説教or薀蓄、パイズリ回数も保存
+FOR LOCAL, 50, 57
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+;稼ぎも保存
+FOR LOCAL, 80, 97
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+;５ページ系経歴フラグに関しても保存
+FOR LOCAL, 150, 156
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+FOR LOCAL, 160, 166
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+FOR LOCAL, 170, 175
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+;地下牢でされたことフラグも保存
+CFLAG:180 = CFLAG:ARG:180
+
+;子供関連およびキャラIDおよび記念日のうち誕生日・購入された日・連れてこられた日は保存
+FOR LOCAL, 3100, 3112
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+;記念日調査フラグは購入、連行、誕生日のビットのみ保存
+SIF CFLAG:ARG:3128 & 1
+	CFLAG:3128 |= 1
+SIF CFLAG:ARG:3128 & 2
+	CFLAG:3128 |= 2
+SIF CFLAG:ARG:3128 & 4
+	CFLAG:3128 |= 4
+;種族遺伝子保存
+FOR LOCAL, 3200, 3400
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+
+;条件を満たしている場合はなんらかの素質が追加
+;技巧が5のときは習得スピードが1段階上昇
+IF ABL:ARG:技巧 >= 5 && TALENT:習得早い == 0
+	IF TALENT:習得遅い
+		TALENT:習得遅い = 0
+	ELSE
+		TALENT:習得早い = 1
+	ENDIF
+ENDIF
+;奉仕精神5で[献身的]取得
+SIF ABL:ARG:奉仕精神 >= 5 && TALENT:献身的 == 0
+	TALENT:献身的 = 1
+;露出癖5で[目立ちたがり]取得
+SIF ABL:ARG:露出癖 >= 5 &&  TALENT:目立ちたがり == 0
+	TALENT:目立ちたがり = 1
+;マゾっ気かサドっ気5かつレズっ気かＢＬっ気5で[倒錯的]取得
+SIF (ABL:ARG:サドっ気 >= 5 || ABL:ARG:マゾっ気 >= 5) && (ABL:ARG:レズっ気 >= 5 || ABL:ARG:ＢＬっ気 >= 5) && TALENT:倒錯的 == 0
+	TALENT:倒錯的 = 1
+;レズっ気5かつレズ中毒5で[男嫌い]取得
+SIF ABL:ARG:レズっ気 >= 5 && ABL:ARG:レズ中毒 >= 5 && TALENT:男嫌い == 0
+	TALENT:男嫌い = 1
+;ＢＬっ気5かつＢＬ中毒5で[女嫌い]取得
+SIF ABL:ARG:ＢＬっ気 >= 5 && ABL:ARG:ＢＬ中毒 >= 5 && TALENT:女嫌い == 0
+	TALENT:女嫌い = 1
+;自慰、精液、レズ(またはＢＬ)、噴乳、触手中毒が全て5なら[中毒しやすい]取得
+IF ABL:ARG:自慰中毒 >= 5 && ABL:ARG:精液中毒 >= 5 && (ABL:ARG:レズ中毒 >= 5 || ABL:ARG:ＢＬ中毒 >= 5) && ABL:ARG:噴乳中毒 >= 5 && ABL:ARG:触手中毒 >= 5 && TALENT:中毒しやすい == 0
+	TALENT:中毒しやすい = 1
+	TALENT:中毒しにくい = 0
+ENDIF
+;[服従]を持っていた場合、従順が1上昇
+;[妄信]を持っていた場合、従順が2上昇
+IF TALENT:ARG:妄信 || TALENT:ARG:服従
+	ABL:従順 = MIN(ABL:従順 + 1, 5)
+	SIF TALENT:ARG:妄信
+		ABL:従順 = MIN(ABL:従順 + 1, 5)
+ENDIF
+;[サド]を持っていた場合、欲望とサドっ気が1上昇
+IF TALENT:ARG:サド
+	ABL:欲望 = MIN(ABL:欲望 + 1, 5)
+	ABL:サドっ気 = MIN(ABL:サドっ気 + 1, 5)
+ENDIF
+;[マゾ]を持っていた場合、露出癖とマゾっ気が1上昇
+IF TALENT:ARG:マゾ
+	ABL:露出癖 = MIN(ABL:露出癖 + 1, 5)
+	ABL:マゾっ気 = MIN(ABL:マゾっ気 + 1, 5)
+ENDIF
+;[烙印]→[傷物]変換
+SIF TALENT:ARG:烙印
+	TALENT:傷物 = 1
+;[精神崩壊]→[感情乏しい]変換
+SIF TALENT:ARG:精神崩壊
+	TALENT:感情乏しい = 1
+;[傀儡]→[精神崩壊]変換
+IF TALENT:ARG:傀儡
+	TALENT:精神崩壊 = 1
+	CFLAG:17 |= 4
+ENDIF
+;[壊造人格]→[狂気]変換
+IF TALENT:ARG:壊造人格
+	TALENT:狂気 = 1
+	CFLAG:12 |= 1
+	CFLAG:17 |= 2
+ENDIF
+
+;記憶消去薬を一度使ったかどうかの判定
+CFLAG:17 |= 16
+;記憶を消すので性格反転状態は保存
+MARK:80 = MARK:ARG:80
+MARK:81 = MARK:ARG:81
+;呼び名保存
+NAME:TARGET = %CALLNAME:ARG%
+CALLNAME:TARGET = %CALLNAME:ARG%
+
+SIF TALENT:変遷
+	CALL GRAY_TALENT
+IF NO:TARGET == 5002 && FLAG:570 & 4 && NO:MASTER == 5000
+	FLAG:570 |= 2
+	FLAG:570 &= 59
+ENDIF
+IF NO:TARGET == 5001
+	IF FLAG:570 & 16
+		TALENT:MASTER:触手使役術 = 0
+		ABL:MASTER:触手使役 = 0
+	ELSEIF FLAG:570 & 32
+		ABL:MASTER:触手使役 = FLAG:572
+	ENDIF
+	FLAG:570 &= 15
+ENDIF
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 324, 0
+PRINTFORMW ＜%CALLNAME:ARG%は調教の記憶を失った＞
+;[使い魔]になっていた場合はメッセージが出る
+IF TALENT:ARG:使い魔
+	PRINTFORMW ＜%CALLNAME:ARG%と結んでいた盟約が破棄されてしまった＞
+	SIF CFLAG:ARG:15 & 8
+		CFLAG:15 -= 8
+ENDIF
+;妖精化した後に使った場合専用分岐
+IF MARK:ARG:87 > 0
+	PRINTFORMW ＜%CALLNAME:ARG%は妖精にされたことを忘れてしまった＞
+	MARK:87 = 3
+ENDIF
+;薬物経験
+CALL COMMON_UP_EXP, TARGET, 40, 1, 1, 1
+
+;口上で必要なフラグを保存
+FOR LOCAL, 4900, 4949
+	CFLAG:LOCAL = CFLAG:ARG:LOCAL
+NEXT
+
+SWAPCHARA TARGET, ARG
+DELCHARA CHARANUM-1
+TARGET = LOCAL:2
+ASSI = LOCAL:3
+
+;「人格設定」
+CALL DEFINE_JINKAKU_SELECT, ARG
+
+;=============================================================================
+;アイテム：人魚姫の薬の処理
+;=============================================================================
+@MERMAID_EVENT, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 326, 0
+PRINTFORML ＜%CALLNAME:ARG%は人間になった＞
+PRINTFORML %CALLNAME:ARG%は[音痴]を得た
+
+;恋慕か服従がなければ反発刻印3を得て、従順が0になる
+IF TALENT:ARG:恋慕 == 0 && TALENT:ARG:服従 == 0
+	PRINTFORMW ＜%CALLNAME:ARG%はショックを受けている＞
+	SIF MARK:ARG:反発刻印 < 3
+		CALL COMMON_MARK_UP, ARG, 9, 3, 0
+	SIF ABL:ARG:従順 > 0
+		PRINTW そして従順がLV0に下がった
+	ABL:ARG:従順 = 0
+ENDIF
+
+;素質[卵生][人魚]消滅
+TALENT:ARG:卵生 = 0
+TALENT:ARG:人魚 = 0
+;素質[音痴]追加。[音感]があれば消滅
+SIF TALENT:ARG:音感
+	TALENT:ARG:音感 = 0
+TALENT:ARG:音痴 = 1
+
+;CFLAG:5 = 何らかの方法で種族を変えられたフラグ。12を仮に人間とする
+CFLAG:ARG:5 = 12
+;種族遺伝子変化(一旦既存の遺伝子を半減させ、後で減少させた分の数値を人間の遺伝子に上積み)
+LOCAL:3 = 0
+FOR LOCAL , 3200 , 3400
+	LOCAL:3 += CFLAG:ARG:LOCAL / 2
+	CFLAG:ARG:LOCAL /= 2
+NEXT
+CFLAG:ARG:3201 += LOCAL:3
+
+;口上用に使うフラグ、人間化後最初の調教開始時用。85を仮に人間とする
+;人間化フラグ
+MARK:ARG:85 = 1
+
+;薬物経験
+CALL COMMON_UP_EXP, ARG, 40, 1, 1, 1
+;初体験時は異常経験が入る
+;CFLAG:29 = 種族改造初体験判定。128を仮に人間とする
+IF (CFLAG:ARG:29 & 128) == 0
+	CALL COMMON_UP_EXP, ARG, 50, 1, 0
+	CFLAG:ARG:29 |= 1
+ENDIF
+
+;=============================================================================
+;アイテム：白の飴玉の処理
+;=============================================================================
+@FAIRY_EVENT, ARG
+LOCAL:1 = RAND:100
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり || TALENT:ARG:具現
+	CFLAG:ARG:509 = 0
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 334, LOCAL:1
+PRINTFORML ＜%CALLNAME:ARG%は妖精になった＞
+;AQN大ショック！
+IF NO:ARG == 1048
+	PRINTFORMW ＜%CALLNAME:ARG%は大きなショックを受けている＞
+	SIF MARK:ARG:反発刻印 < 3
+		CALL COMMON_MARK_UP, ARG, 9, 3, 0
+	SIF ABL:ARG:従順 > 0
+		PRINTW そして従順がLV0に下がった
+	ABL:ARG:従順 = 0
+ENDIF
+
+;素質[妖精]追加
+TALENT:ARG:妖精 = 1
+CFLAG:ARG:5 = 1
+;種族遺伝子変化(一旦既存の遺伝子を半減させ、後で減少させた分の数値を妖精の遺伝子に上積み)
+LOCAL:3 = 0
+FOR LOCAL , 3200 , 3400
+	LOCAL:3 += CFLAG:ARG:LOCAL / 2
+	CFLAG:ARG:LOCAL /= 2
+NEXT
+CFLAG:ARG:3203 += LOCAL:3
+
+;口上用に使うフラグ、妖精化後最初の調教開始時用
+;妖精化フラグ
+MARK:ARG:87 = 1
+
+;男の場合、消去。ホモでなければレズっ気上昇
+IF TALENT:ARG:オトコ
+	TALENT:ARG:オトコ = 0
+	TALENT:ARG:処女 = 1
+	LOCAL:2 = ABL:ARG:レズっ気 + 3
+	IF ABL:ARG:ＢＬっ気 <= LOCAL:2
+		LOCAL:2 = ABL:ARG:ＢＬっ気
+		ABL:ARG:レズっ気 += 3
+		ABL:ARG:レズっ気 -= LOCAL:2
+	ELSE
+		ABL:ARG:レズっ気 = 0
+	ENDIF
+	ABL:ARG:ＢＬっ気 = 0
+ENDIF
+
+;回復早く。もともと遅いと打ち消して普通。
+IF TALENT:ARG:回復遅い
+	TALENT:ARG:回復遅い = 0
+ELSE
+	TALENT:ARG:回復早い = 1
+ENDIF
+
+;小柄体型に。低確率で小人体型に。もともと小柄、小人体型でなければ胸も１ランク減少
+IF TALENT:ARG:小人体型 == 0 && TALENT:ARG:小柄体型 == 0
+	IF TALENT:ARG:絶壁 == 0
+		IF TALENT:ARG:爆乳
+			TALENT:ARG:爆乳 = 0
+			TALENT:ARG:巨乳 = 1
+		ELSEIF TALENT:ARG:巨乳
+			TALENT:ARG:巨乳 = 0
+		ELSEIF TALENT:ARG:貧乳
+			TALENT:ARG:貧乳 = 0
+			TALENT:ARG:絶壁 = 1
+			IF TALENT:ARG:母乳体質
+				TALENT:ARG:母乳体質 = 0
+				MAXBASE:ARG:3 = 0
+			ENDIF
+		ELSE
+			TALENT:ARG:貧乳 = 1
+		ENDIF
+	ENDIF
+	SIF TALENT:ARG:巨躯
+		TALENT:ARG:巨躯 = 0
+	IF LOCAL:1 < 2
+		TALENT:ARG:小人体型 = 1
+	ELSE
+		TALENT:ARG:小柄体型 = 1
+	ENDIF
+ENDIF
+
+;[生意気]追加
+SIF TALENT:ARG:生意気 == 0
+	TALENT:ARG:生意気 = 1
+;[自制心]消滅
+SIF TALENT:ARG:自制心
+	TALENT:ARG:自制心 = 0
+;[無関心]と[好奇心]まわりの変動
+IF TALENT:ARG:無関心
+	TALENT:ARG:無関心 = 0
+ELSEIF TALENT:ARG:好奇心 == 0
+	TALENT:ARG:好奇心 = 1
+ENDIF
+;[感情乏しい]消滅
+SIF TALENT:ARG:感情乏しい
+	TALENT:ARG:感情乏しい = 0
+
+;AQNとの相性を悪くする
+SIF RELATION:ARG:1048 > 0
+	RELATION:ARG:1048 = MIN(RELATION:ARG:48, 70)
+
+;薬の影響で体力が減少
+BASE:ARG:体力 = MAX(BASE:ARG:体力, 499)
+
+;「人格設定」
+CALL DEFINE_JINKAKU_SELECT, ARG
+
+IF TALENT:ARG:おもらし癖 == 0 && RAND:50 == 0
+	PRINTFORML %CALLNAME:ARG%は突然もぞもぞし始めた……
+	PRINTL すると足をつたって液体が流れ始めた
+	PRINTW どうやら、身体の急な変動の影響で[おもらし癖]がついてしまったようだ……
+	TALENT:ARG:おもらし癖 = 1
+	CALL CALC_GAUGE4_SLAVE, ARG, 1
+ELSEIF TALENT:ARG:動物耳 == 0 && RAND:50 == 0
+	PRINTFORML %CALLNAME:ARG%は頭のあたりを気にしているようだ……
+	PRINTL そうしているうちに突然髪の毛の間からかわいい耳が飛び出してきた
+	PRINTW 薬の副作用か[動物耳]ができてしまったようである……
+	TALENT:ARG:動物耳 = 1
+ENDIF
+
+;薬物経験
+CALL COMMON_UP_EXP, ARG, 40, 1, 1, 1
+;初体験時は異常経験が入る
+IF (CFLAG:ARG:29 & 1) == 0
+	;AQNのみ2入る
+	IF NO:ARG == 1048
+		CALL COMMON_UP_EXP, ARG, 50, 2, 0
+	ELSE
+		CALL COMMON_UP_EXP, ARG, 50, 1, 0
+	ENDIF
+	CFLAG:ARG:29 |= 1
+ENDIF
+
+PRINTFORM %CALLNAME:ARG%は体力を激しく消耗
+IF ARG == MASTER
+	PRINTL し、立ち上がった途端倒れそうになった
+	PRINTW どうやら、多少の休息が必要なようだ……
+ELSE
+	PRINTL しているらしく、立ち上がるそぶりも見せない
+	PRINTW 回復するまで調教は控えた方がよさそうだ……
+ENDIF
+
+;=============================================================================
+;アイテム：黒い飴玉の処理
+;=============================================================================
+;--------------------------------------------------
+;アイテムでＥＸ化するイベント集
+;--------------------------------------------------
+;アイテム使用処理から呼び出される
+;キャラによって体力・気力の増減値や能力、経験の値、追加/削除される素質によって大きく異なるので
+;変化するキャラ毎に関数を呼び出す方式を採用
+;その後、黒い飴玉使用した際に生じる共通のイベント(SPフラグ追加など)を通す様に
+@EX_EVENT, ARG
+LOCAL = TARGET
+TARGET = ARG
+;SHOP画面から来た場合にはイベント口上は呼び出さない
+SIF TFLAG:225 != 1
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 335, 0
+
+;ＳＰキャラフラグ
+CFLAG:0 = 1
+
+IF NO:TARGET == 1001
+	;霊夢様
+	CALL EX_CHARA01
+ELSEIF NO:TARGET == 1002
+	;魔梨沙
+	CALL EX_CHARA02
+ELSEIF NO:TARGET == 1003
+	;ルーミア
+	CALL EX_CHARA03
+ELSEIF NO:TARGET == 1004
+	;巨大妖精
+	CALL EX_CHARA04
+ELSEIF NO:TARGET == 1005
+	;チルノ
+	;淫乱、淫核、淫壷、淫尻、淫乳、尿道狂、キス魔、ドＳ、ドＭのいずれかを取得している場合は倍チルノに
+	IF TALENT:淫乱 || TALENT:淫核／淫茎 || TALENT:淫壷 || TALENT:淫尻 || TALENT:淫乳 || TALENT:尿道狂 || TALENT:キス魔 || TALENT:ドＳ || TALENT:ドＭ
+		CALL EX_CHARA05_2
+	ELSE
+		CALL EX_CHARA05_1
+	ENDIF
+ELSEIF NO:TARGET == 1007
+	;小悪魔
+	;即落ちを取得している場合はラヴォスこぁに
+	IF TALENT:即落ち
+		CALL EX_CHARA07_1
+	;Ｃ感覚と触手中毒が共にLv3以上だとクリスタルこぁに
+	ELSEIF ABL:Ｃ感覚 >= 3 && ABL:触手中毒 >= 3
+		CALL EX_CHARA07_3
+	ELSE
+		CALL EX_CHARA07_2
+	ENDIF
+ELSEIF NO:TARGET == 1014
+	;ちびアリス
+	CALL EX_CHARA14
+ELSEIF NO:TARGET == 1020
+	;生前のゆゆ様
+	CALL EX_CHARA20
+ELSEIF NO:TARGET == 1031
+	;貴族の娘の妹紅
+	CALL EX_CHARA31
+ELSEIF NO:TARGET == 1038
+	;稔子
+	CALL EX_CHARA38
+ELSEIF NO:TARGET == 1040
+	;ぐりんだむ
+	CALL EX_CHARA40
+ELSEIF NO:TARGET == 1042
+	;早苗様
+	CALL EX_CHARA42
+ELSEIF NO:TARGET == 1063
+	;ただの地獄鴉のお空
+	CALL EX_CHARA63
+ELSEIF NO:TARGET == 2029
+	;比良乃(新Ver.)
+	CALL EX_CHARA129
+ELSE
+	PRINTFORMW ＜残念ながら%CALLNAME:TARGET%には使えません＞
+	RETURN 0
+ENDIF
+
+;気力・体力回復
+BASE:体力 = MAXBASE:0
+BASE:気力 = MAXBASE:1
+SIF TALENT:理性
+	BASE:理性 = MAXBASE:9
+CFLAG:3668 = MIN(CFLAG:3668, 500 - 5 * RAND:30)
+
+;SHOP画面から来た場合には以下の処理は行わない（すなわち異常経験＋１にならない）
+SIF TFLAG:225 == 1
+	RETURN 0
+
+;ＥＸ化の共通イベント。従順と奉仕精神は低下、パラメータ半減、反発以外の刻印はリセット
+IF TARGET != MASTER
+	IF ABL:従順 > 0
+		ABL:従順 = (ABL:従順 <= 2) ? 0 # ABL:従順 - 2
+		PRINTFORML ＜%CALLNAME:TARGET%の%ABLNAME:10%は{ABL:従順}になった＞
+	ENDIF
+	IF ABL:奉仕精神 > 0
+		ABL:奉仕精神 = (ABL:奉仕精神 <= 2) ? 0 # ABL:奉仕精神 - 2
+		PRINTFORML ＜%CALLNAME:TARGET%の%ABLNAME:13%は{ABL:奉仕精神}になった＞
+	ENDIF
+	FOR LOCAL:1, 0, 20
+		JUEL:(LOCAL:1) /= 2
+	NEXT
+	FOR LOCAL:1, 0, 5
+		LOCAL:2 = (LOCAL:1 == 4) ? 8 # LOCAL:1
+		IF MARK:(LOCAL:2)
+			MARK:(LOCAL:2) = 0
+			PRINTFORML ＜%CALLNAME:TARGET%の%MARKNAME:(LOCAL:2)%は{MARK:(LOCAL:2)}になった＞
+		ENDIF
+	NEXT
+ENDIF
+
+;「人格設定」
+CALL DEFINE_JINKAKU_SELECT, TARGET
+
+;異常経験
+CALL COMMON_UP_EXP, TARGET, 50, 1, 0, 1
+;薬物経験
+CALL COMMON_UP_EXP, TARGET, 40, 1, 1, 1
+;CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 335, 1
+;WAIT
+
+TARGET = LOCAL
+RETURN 1
+
+;--------------------------------------------------
+;ＥＸ化可能かどうかチェックする関数(黒の飴玉によるもの)
+;--------------------------------------------------
+;XEXTRAモードの主人選別には使えない
+@ABLE_EX_CHANGES(ARG)
+#FUNCTION
+;霊夢
+IF NO:ARG == 1001
+	RETURNF 1
+;魔理沙
+ELSEIF NO:ARG == 1002
+	RETURNF 1
+;ルーミア
+ELSEIF NO:ARG == 1003
+	RETURNF 1
+;大妖精
+ELSEIF NO:ARG == 1004
+	RETURNF 1
+;チルノ
+ELSEIF NO:ARG == 1005
+	RETURNF 1
+;小悪魔
+ELSEIF NO:ARG == 1007
+	RETURNF 1
+;アリス
+ELSEIF NO:ARG == 1014
+	RETURNF 1
+;幽々子
+ELSEIF NO:ARG == 1020
+	RETURNF 1
+;妹紅
+ELSEIF NO:ARG == 1031
+	RETURNF 1
+;穣子
+ELSEIF NO:ARG == 1038
+	RETURNF 1
+;にとり
+ELSEIF NO:ARG == 1040
+	RETURNF 1
+;早苗
+ELSEIF NO:ARG == 1042
+	RETURNF 1
+;お空
+ELSEIF NO:ARG == 1063
+	RETURNF 1
+;比良乃
+ELSEIF NO:ARG == 2029
+	RETURNF 1
+ENDIF
+RETURNF 0
+
+;=============================================================================
+;アイテム：灰の飴玉の処理
+;=============================================================================
+@REVERSE_CHARACTER, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 336, 0
+PRINTFORMW ＜%CALLNAME:ARG%は性格が逆転した＞
+
+;反転処理
+;臆病と気丈
+SWAP TALENT:ARG:臆病, TALENT:ARG:気丈
+;反抗的と大人しい
+SWAP TALENT:ARG:反抗的, TALENT:ARG:大人しい
+;生意気と素直
+SWAP TALENT:ARG:素直, TALENT:ARG:生意気
+;プライド高いと低い
+SWAP TALENT:ARG:プライド高い, TALENT:ARG:プライド低い
+;自制心と解放
+SWAP TALENT:ARG:自制心, TALENT:ARG:解放
+;無関心と好奇心
+SWAP TALENT:ARG:無関心, TALENT:ARG:好奇心
+;楽観的と悲観的
+SWAP TALENT:ARG:楽観的, TALENT:ARG:悲観的
+;[貞操観念]と[貞操無頓着]
+SWAP TALENT:ARG:貞操観念, TALENT:ARG:貞操無頓着
+;[恥じらい]と[恥薄い]
+SWAP TALENT:ARG:恥じらい, TALENT:ARG:恥薄い
+;[痛みに強い]と[痛みに弱い]
+SWAP TALENT:ARG:痛みに弱い, TALENT:ARG:痛みに強い
+;[習得早い]と[習得遅い]
+SWAP TALENT:ARG:習得早い, TALENT:ARG:習得遅い
+;[快感に素直]と[快感に否定]
+SWAP TALENT:ARG:快感に素直, TALENT:ARG:快感の否定
+;[サド]と[マゾ]
+SWAP TALENT:ARG:サド, TALENT:ARG:マゾ
+;[幼稚]と[母性]
+SWAP TALENT:ARG:幼稚, TALENT:ARG:母性
+
+;「人格設定」
+CALL DEFINE_JINKAKU_SELECT, ARG
+
+;副作用
+FOR LOCAL, 0, 2
+	MAXBASE:ARG:LOCAL -= (MAXBASE:ARG:LOCAL > 1500) ? 200 # 100
+	BASE:ARG:LOCAL = MIN(BASE:ARG:LOCAL, MAXBASE:ARG:LOCAL)
+NEXT
+;異常経験
+SIF MARK:ARG:80 == 0
+	CALL COMMON_UP_EXP, ARG, 50, 1, 0, 1
+;薬物経験
+CALL COMMON_UP_EXP, ARG, 40, 1, 1, 1
+;性格反転刻印
+;口上で簡単に処理できるようにするためのおまじない
+;偶数：元の性格、奇数：反転……と言う感じで
+MARK:ARG:80 = (MARK:ARG:80 == 1) ? 2 # 1
+
+;=============================================================================
+;アイテム：睡眠薬の処理
+;=============================================================================
+;-------------------------------------------------
+;睡眠薬使用処理
+;-------------------------------------------------
+@SLEEP_DRUG
+DRAWLINE
+IF (MONEY/2000) > (50 - EQUIP:睡眠薬/1000)
+	LOCAL:1 = 50 - EQUIP:睡眠薬/1000
+	LOCAL:2 = 1
+ELSE
+	LOCAL:1 = MONEY/2000
+	LOCAL:2 = 0
+ENDIF
+PRINTFORML 睡眠薬をどれだけ使いますか？ （1-{LOCAL:1}、0だと使わない）
+PRINTLC [0] 使わない
+PRINTLC [1] 1個
+SIF LOCAL:1 >= 5
+	PRINTLC [5] 5個
+SIF LOCAL:1 >= 10
+	PRINTLC [10] 10個
+SIF LOCAL:1 != 1 && LOCAL:1 != 5 && LOCAL:1 != 10
+	PRINTFORMLC [{LOCAL:1}] 買えるだけ
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	RETURN 0
+ELSEIF RESULT < 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF RESULT > LOCAL:1
+	CLEARLINE 1
+	REUSELASTLINE
+	IF LOCAL:2
+		REUSELASTLINE 量が多過ぎて睡眠薬の味しかしません。減らしてください
+	ELSE
+		REUSELASTLINE お金が足りません
+	ENDIF
+	GOTO INPUT_LOOP
+ELSE
+	PRINTFORMW ＜{RESULT*2000}圓分の睡眠薬を%CALLNAME:TARGET%の食事に混ぜました＞
+	MONEY -= 2000 * RESULT
+	LOCAL = RESULT * 1000
+	;気丈
+	SIF TALENT:気丈
+		TIMES LOCAL, 0.5
+	;薬毒耐性
+	SIF TALENT:薬毒耐性
+		TIMES LOCAL, 0.1
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 315, LOCAL
+	EQUIP:睡眠薬 += LOCAL
+	;薬物経験
+	CALL COMMON_UP_EXP, TARGET, 40, (LOCAL/10000), 1, 1
+ENDIF
+
+;-------------------------------------------------
+;睡眠プレイ開始判定
+;-------------------------------------------------
+@SLEEP_CHECK
+IF EQUIP:睡眠薬 >= 10000
+	DRAWLINE
+	PRINTFORMW %CALLNAME:MASTER%が部屋に入ると、%CALLNAME:TARGET%は死んだように眠っていた
+	PRINTW 軽く肩を揺すってみても、身じろぎ一つしない
+	PRINTFORMW これなら、ちょっとやそっとの事では目覚めそうにない……
+ELSEIF EQUIP:睡眠薬 > 0
+	PRINTFORMW %CALLNAME:MASTER%が部屋に入ると、%CALLNAME:TARGET%は眠っていた
+	PRINTW 軽く肩に触れると、何やら寝言を言いながら身じろぎした
+	PRINTFORMW 起こさないように慎重に触れる必要がありそうだ……
+ELSE
+	PRINTFORMW 薬が足りなかったのか、%CALLNAME:TARGET%は眠っていなかった……
+ENDIF
+
+;-------------------------------------------------
+;目覚め判定
+;-------------------------------------------------
+@WAKE_CHECK
+;快ＣＶＡＢ上昇の4分の1＋苦痛上昇の2倍
+LOCAL = (UP:0 + UP:1 + UP:2 + UP:3)/4 + (UP:16)*2
+;絶頂経験増分×100
+LOCAL += (NOWEX:0+NOWEX:1+NOWEX:2+NOWEX:3)*100
+;現在の睡眠度の10分の1
+LOCAL += (EQUIP:睡眠薬)/10
+;処女喪失したら+20000（ほぼ間違いなく起きる）
+LOCAL += (TFLAG:0)*20000
+;最後に、減少量が100未満なら100にする
+LOCAL = MAX(LOCAL, 100)
+
+EQUIP:睡眠薬 -= LOCAL
+
+SETCOLOR COLOR("P-RED")
+IF EQUIP:睡眠薬 <= 0
+	PRINTL ＜目覚め＞
+	EQUIP:睡眠薬 = 0
+	SOURCE:屈従 += 1000
+	SOURCE:逸脱 += 3000
+ELSEIF EQUIP:睡眠薬 < 2000
+	PRINTL ＜まどろみ＞
+ELSEIF EQUIP:睡眠薬 < 5000
+	PRINTL ＜睡眠＞
+ELSEIF EQUIP:睡眠薬 < 9000
+	PRINTL ＜熟睡＞
+ELSE
+	PRINTL ＜昏睡＞
+ENDIF
+RESETCOLOR
+
+SIF TALENT:MASTER:998
+	PRINTFORML 睡眠度:{EQUIP:睡眠薬}

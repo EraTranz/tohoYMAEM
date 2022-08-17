@@ -1,0 +1,565 @@
+﻿;=============================================================================
+;何もしない
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE9
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:9 > 0
+	RETURN 0
+;連続では使えない
+SIF PREVCOM == 9
+	RETURN 0
+;PHANTASMの場合のみ一度でも実行しているとダメ
+SIF TFLAG:140 & 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 9) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM9
+CALL AUTONOMOUSLY
+
+;実行不可
+SIF !RESULT
+	TFLAG:699 = 0
+
+IF TFLAG:699 > 0
+	;勝手にやる
+ELSEIF NO:TARGET == 1006
+	PRINTL 門番さんの優雅なシエスタ
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 9
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 門番さんの優雅なシエスタ
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+ELSE
+	PRINTL 何もしない
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 9
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 何もしない
+	CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+ENDIF
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+;露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 10
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 30
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 60
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 100
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 150
+ELSE
+	SOURCE:露出 = 200
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:露出 , 0.80
+	SOURCE:欲情追加 = 0
+	SOURCE:液体追加 = 0
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:露出 , 1.00
+	SOURCE:欲情追加 = 30
+	SOURCE:液体追加 = 20
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:露出 , 1.20
+	SOURCE:欲情追加 = 70
+	SOURCE:液体追加 = 40
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:露出 , 1.40
+	SOURCE:欲情追加 = 120
+	SOURCE:液体追加 = 70
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:露出 , 1.50
+	SOURCE:欲情追加 = 180
+	SOURCE:液体追加 = 110
+ELSE
+	TIMES SOURCE:露出 , 1.70
+	SOURCE:欲情追加 = 250
+	SOURCE:液体追加 = 150
+ENDIF
+
+SIF PALAM:欲情 >= PALAMLV:3
+	TFLAG:82 = 1
+;PHANTASMの場合、一度実行したらその調教中は使えない
+SIF FLAG:3 >= 5
+	TFLAG:140 |= 1
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_9
+IF EQUIP:戦闘中
+	PRINTFORML %CALLNAME:PLAYER%は動きを止めて、%CALLNAME:TARGET%の反応を観察していた。
+	IF (EQUIP:睡眠薬 || TFLAG:899 > 0 ) && PALAM:欲情 >= PALAMLV:3
+		PRINTFORML 欲情させられている%CALLNAME:TARGET%の身体はもの欲しそうに妖しく震えていた…
+	ELSEIF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:TARGET%の身体は僅かに震えている…
+	ELSEIF PALAM:欲情 >= PALAMLV:3
+		PRINTFORML 欲情させられている%CALLNAME:TARGET%はもの欲しそうな視線を送ってきた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の動きを警戒している…
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は少し調教の手を緩めることにした。
+	IF (EQUIP:睡眠薬 || TFLAG:899 > 0 ) && PALAM:欲情 >= PALAMLV:3
+		PRINTFORML だが、既に十分に欲情させられている%CALLNAME:TARGET%の身体はもの欲しそうに妖しく震えていた…
+	ELSEIF EQUIP:睡眠薬 || TFLAG:899 > 0
+		PRINTFORML %CALLNAME:TARGET%の身体は僅かに震えている…
+	ELSEIF PALAM:欲情 >= PALAMLV:3
+		PRINTFORML だが、既に十分に欲情させられている%CALLNAME:TARGET%はもの欲しそうな視線を送ってきた…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%も少し身体を休めている…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;調教対象が勝手にコマンドを実行する処理
+;-------------------------------------------------
+@AUTONOMOUSLY
+;犯されモード無効なら判定必要なし
+SIF (FLAG:16 & 4) == 0
+	RETURN 0
+;主人に服従する系統の素質を持っていたら判定無し
+SIF TALENT:妄信 || TALENT:服従 || TALENT:烙印 || TALENT:隷属 || TALENT:使い魔 || TALENT:傀儡 || TALENT:壊造人格
+	RETURN 0
+;縛られてたり、触手拘束中、三角木馬騎乗中は何もできない
+SIF TEQUIP:緊縛関連 || TEQUIP:触手調教 || TEQUIP:三角木馬乗馬中
+	RETURN 0
+;睡眠・失神中・時止め・パニック中は何もできない
+SIF EQUIP:睡眠薬 || TEQUIP:時間止め || TFLAG:899 || TFLAG:108
+	RETURN 0
+
+;素質と能力を見る
+VARSET LOCAL, 0
+
+;反抗的
+SIF TALENT:反抗的
+	LOCAL += 3000
+;素直
+SIF TALENT:素直
+	LOCAL -= 3000
+;生意気
+SIF TALENT:生意気
+	LOCAL += 500
+;プライド高い
+SIF TALENT:プライド高い
+	LOCAL += 1000
+;プライド低い
+SIF TALENT:プライド低い
+	LOCAL -= 1000
+;ツンデレ
+SIF TALENT:ツンデレ
+	LOCAL += 500
+;自制心
+SIF TALENT:自制心
+	LOCAL -= 2000
+;無関心
+SIF TALENT:無関心
+	LOCAL -= 1000
+;好奇心
+SIF TALENT:好奇心
+	LOCAL += 1000
+;保守的
+SIF TALENT:保守的
+	LOCAL -= 500
+;一線越えない
+SIF TALENT:一線越えない
+	LOCAL -= 3000
+;目立ちたがり
+SIF TALENT:目立ちたがり
+	LOCAL += 1000
+;恥じらい
+SIF TALENT:恥じらい
+	LOCAL -= 1000
+;恥薄い
+SIF TALENT:恥薄い
+	LOCAL += 1000
+;男嫌い
+SIF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	LOCAL -= 5000
+;女嫌い
+SIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	LOCAL -= 5000
+;弱味
+SIF TALENT:弱味
+	LOCAL -= 3000
+;自慰しやすい
+SIF TALENT:自慰しやすい
+	LOCAL += 1000
+;献身的
+SIF TALENT:献身的
+	LOCAL -= 2000
+;精液味覚
+SIF TALENT:精愛味覚
+	LOCAL += 2000
+;快感に素直
+SIF TALENT:快感に素直
+	LOCAL += 1000
+;快楽の否定
+SIF TALENT:快感の否定
+	LOCAL -= 1000
+;サド
+SIF TALENT:サド
+	LOCAL += 5000
+;プレイヤーが魅惑
+SIF TALENT:PLAYER:魅惑
+	LOCAL += 500
+;プレイヤーが謎の魅力
+SIF TALENT:PLAYER:謎の魅力
+	LOCAL += 500
+;小悪魔
+SIF TALENT:小悪魔
+	LOCAL += 1000
+;嫉妬
+SIF TALENT:嫉妬
+	LOCAL += 5000
+;狂気
+SIF TALENT:狂気
+	LOCAL += 5000
+;淫乱
+SIF TALENT:淫乱
+	LOCAL += 5000
+;淫魔
+SIF TALENT:淫魔
+	LOCAL += 5000
+;媚薬使用中
+SIF TEQUIP:媚薬
+	LOCAL += 7000
+;興奮剤使用中
+SIF TEQUIP:興奮剤
+	LOCAL += 4000
+;焦らしプレイ中
+IF TEQUIP:焦らしプレイ
+	LOCAL += 4000
+	;寸止め累積数
+	SIF EX:20 || EX:21 || EX:22 || EX:23 || EX:30 || EX:31 || EX:32
+		LOCAL += 2000
+	SIF EX:20 + EX:21 + EX:22 + EX:23 >= 10
+		LOCAL += 1000
+	SIF EX:20 + EX:21 + EX:22 + EX:23 >= 20
+		LOCAL += 1000
+ENDIF
+;異常経験の回数
+SIF EXP:異常経験 > 0
+	LOCAL += EXP:異常経験 * 500
+;反発刻印
+IF MARK:反発刻印 == 0
+	LOCAL -= 1000
+ELSEIF MARK:反発刻印 == 1
+	LOCAL += 500
+ELSEIF MARK:反発刻印 == 2
+	LOCAL += 1000
+ELSEIF MARK:反発刻印 >= 3
+	LOCAL += 1500
+ENDIF
+;恐怖刻印
+IF MARK:恐怖刻印 == 1
+	LOCAL -= 500
+ELSEIF MARK:恐怖刻印 == 2
+	LOCAL -= 800
+ELSEIF MARK:恐怖刻印 >= 3
+	LOCAL -= 1500
+ENDIF
+
+;従順のレベル
+LOCAL -= ABL:従順 * 1000
+;欲望のレベル
+LOCAL += ABL:欲望 * 500
+
+;発情中
+IF TALENT:常時発情 || (TALENT:発情可 && (TALENT:危険日 || TALENT:排卵))
+	LOCAL += 1000
+	;！媚薬使用中、興奮剤使用中
+	SIF !TEQUIP:媚薬 && !TEQUIP:興奮剤
+		LOCAL += 2000
+ENDIF
+
+;理性
+IF !TALENT:理性
+	LOCAL += 1000
+ELSE
+	SELECTCASE (BASE:理性 / 120)
+		;理性が0以下
+		CASE IS <= 0
+			LOCAL += 800
+		;理性が20未満
+		CASE IS < 20
+			LOCAL += 600
+		;理性が40未満
+		CASE IS < 40
+			LOCAL += 400
+		;理性が60未満
+		CASE IS < 60
+			LOCAL += 200
+		;理性が80未満
+		CASE IS < 80
+			LOCAL += 0
+		;理性が100未満
+		CASE IS < 100
+			LOCAL -= 100
+		;理性が100以上
+		CASEELSE
+			LOCAL -= 200
+	ENDSELECT
+ENDIF
+
+;連続
+IF PREVCOM == 9
+	LOCAL += 500
+	IF PREVCOM:1 == 9
+		LOCAL += 500
+		IF PREVCOM:2 == 9
+			LOCAL += 500
+			IF PREVCOM:3 == 9
+				LOCAL += 500
+				IF PREVCOM:4 == 9
+					LOCAL += 500
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;一旦条件を満たすと毎回実行してくれちゃうので、勝手に行動すると補正をかける
+SIF TFLAG:698 > 0
+	LOCAL -= TFLAG:698 * 50000
+
+;欲情との合計
+;欲情を直接足すと簡単に実行してくれちゃうので、条件は厳しめに
+LOCAL:2 = POWER(SQRT(SQRT(PALAM:欲情)), 3) + LOCAL
+
+;実行コマンド選別
+;無いとは思うけれど、愛撫の可能性も考慮して-1
+LOCAL:99 = -1
+
+;欲望が3以上で縄や触手を装備していない
+IF ABL:欲望 >= 3
+	;実行値が50000以上
+	IF LOCAL:2 >= 50000
+		TFLAG:699 = 3
+		;淫乱系部位素質持ちだと1/3の確立で素質に応じたコマンド実行
+		IF (TALENT:淫核／淫茎 || TALENT:淫壷 || TALENT:淫尻 || TALENT:淫乳) && RAND:3 == 0
+			;淫尻
+			IF TALENT:淫尻
+				IF EXIST_BAR(PLAYER)
+					LOCAL:99 = 34
+				ELSE
+					LOCAL:99 = 182
+				ENDIF
+			;淫壺（非処女）
+			ELSEIF TALENT:淫壷 && TALENT:オトコ == 0 && TALENT:処女 == 0 && EXP:Ｖ経験 > 0
+				IF EXIST_BAR(PLAYER)
+					LOCAL:99 = 24
+				ELSE
+					LOCAL:99 = 7
+				ENDIF
+			;淫乳
+			ELSEIF TALENT:淫乳
+				;絶壁でなくて相手に棒があればパイズリ、でなければ、胸自慰か自慰
+				IF TALENT:絶壁 == 0 && TALENT:オトコ == 0 && EXIST_BAR(PLAYER)
+					LOCAL:99 = 42
+				ELSEIF TALENT:オトコ == 0
+					LOCAL:99 = 205
+				ELSE
+					LOCAL:99 = 7
+				ENDIF
+			;淫核（陰茎）
+			ELSE
+				LOCAL:99 = 7
+			ENDIF
+		;乱数にひっかからなければ、ランダムで実行コマンド決定（ここでひっかからなければ何もしない）
+		ELSE
+			IF EXIST_BAR(PLAYER)
+				IF RAND:11 == 0 && TFLAG:143 <= 2 && (NO:PLAYER == 1007 || NO:TARGET == 1007) && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 349
+				ELSEIF RAND:10 == 0
+					LOCAL:99 = 7
+				ELSEIF RAND:9 == 0
+					LOCAL:99 = 40
+				ELSEIF RAND:8 == 0 && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 41
+				ELSEIF RAND:7 == 0 && TALENT:絶壁 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 42
+				ELSEIF RAND:6 == 0
+					LOCAL:99 = 43
+				ELSEIF RAND:5 == 0 && TALENT:TARGET:処女 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 24
+				ELSEIF RAND:4 == 0 && TEQUIP:お風呂場プレイ
+					LOCAL:99 = 352
+				ELSEIF RAND:3 == 0 && ABL:Ａ感覚 >= 3
+					LOCAL:99 = 34
+				ENDIF
+			ELSE
+				IF RAND:7 == 0 && TFLAG:143 <= 2 && (NO:PLAYER == 1007 || NO:TARGET == 1007) && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 349
+				ELSEIF RAND:6 == 0
+					LOCAL:99 = 7
+				ELSEIF RAND:5 == 0 && TALENT:TARGET:オトコ == 0
+					LOCAL:99 = 110
+				ELSEIF RAND:4 == 0
+					LOCAL:99 = 327
+				ELSEIF RAND:3 == 0 && TALENT:TARGET:オトコ == 0
+					LOCAL:99 = 205
+				ENDIF
+			ENDIF
+		ENDIF
+	;実行値が30000以上
+	ELSEIF LOCAL:2 >= 30000
+		TFLAG:699 = 2
+		;入れっぱなしの場合
+		IF TFLAG:102
+			IF PREVCOM >= 20 && PREVCOM <= 24 && TALENT:オトコ == 0
+				LOCAL:99 = 24
+			ELSE
+				LOCAL:99 = 34
+			ENDIF
+		;バイブ挿入中
+		ELSEIF TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ａ系装着器具 == 1
+			LOCAL:99 = 7
+		;それ以外
+		ELSE
+			IF EXIST_BAR(PLAYER)
+				IF RAND:4 == 0 && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 41
+				ELSEIF RAND:3 == 0 && TALENT:絶壁 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 42
+				ELSEIF RAND:2 == 0 && ABL:Ａ感覚 >= 3
+					LOCAL:99 = 34
+				ELSEIF TALENT:オトコ == 0
+					LOCAL:99 = 24
+				ENDIF
+			ELSE
+				IF RAND:3 == 0
+					LOCAL:99 = 327
+				ELSEIF RAND:2 == 0
+					LOCAL:99 = 7
+				ENDIF
+			ENDIF
+		ENDIF
+	;実行値が15000以上
+	ELSEIF LOCAL:2 >= 15000
+		TFLAG:699 = 1
+		;入れっぱなしの場合
+		IF TFLAG:102
+			IF PREVCOM >= 20 && PREVCOM <= 24
+				LOCAL:99 = 24
+			ELSE
+				LOCAL:99 = 34
+			ENDIF
+		;バイブ挿入中
+		ELSEIF TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ａ系装着器具 == 1
+			IF EXIST_BAR(PLAYER)
+				IF RAND:10 < 3
+					LOCAL:99 = 7
+				ELSEIF RAND:7 == 0
+					LOCAL:99 = 40
+				ELSEIF RAND:6 == 0 && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 41
+				ELSEIF RAND:5 == 0 && TALENT:絶壁 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 42
+				ELSEIF RAND:4 == 0 && TALENT:TARGET:処女 == 0 && TEQUIP:Ａ系装着器具 == 1 && TALENT:オトコ == 0
+					LOCAL:99 = 24
+				ELSEIF RAND:3 == 0 && ABL:Ａ感覚 >= 3 && TEQUIP:Ｖ系装着器具 == 1
+					LOCAL:99 = 34
+				ENDIF
+			ELSE
+				SIF RAND:3 == 0
+					LOCAL:99 = 7
+			ENDIF
+		;二穴バイブ挿入中
+		ELSEIF TEQUIP:Ｖ系装着器具 == 1 && TEQUIP:Ａ系装着器具 == 1
+			IF EXIST_BAR(PLAYER)
+				IF RAND:10 < 4
+					LOCAL:99 = 7
+				ELSEIF RAND:6 == 0
+					LOCAL:99 = 40
+				ELSEIF RAND:5 == 0 && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 41
+				ELSEIF RAND:4 == 0 && TALENT:絶壁 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 42
+				ENDIF
+			ELSE
+				SIF RAND:3 == 0
+					LOCAL:99 = 7
+			ENDIF
+		;それ以外
+		ELSE
+			IF EXIST_BAR(PLAYER)
+				IF RAND:11 == 0 && TFLAG:143 <= 2 && (NO:PLAYER == 1007 || NO:TARGET == 1007) && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 349
+				ELSEIF RAND:10 == 0
+					LOCAL:99 = 7
+				ELSEIF RAND:9 == 0
+					LOCAL:99 = 40
+				ELSEIF RAND:8 == 0 && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 41
+				ELSEIF RAND:7 == 0 && TALENT:絶壁 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 42
+				ELSEIF RAND:6 == 0
+					LOCAL:99 = 43
+				ELSEIF RAND:5 == 0 && TALENT:TARGET:処女 == 0 && TALENT:オトコ == 0
+					LOCAL:99 = 24
+				ELSEIF RAND:4 == 0 && TEQUIP:お風呂場プレイ
+					LOCAL:99 = 352
+				ELSEIF RAND:3 == 0 && ABL:Ａ感覚 >= 3
+					LOCAL:99 = 34
+				ENDIF
+			ELSE
+				IF RAND:7 == 0 && TFLAG:143 <= 2 && (NO:PLAYER == 1007 || NO:TARGET == 1007) && TEQUIP:口装着器具 == 0
+					LOCAL:99 = 349
+				ELSEIF RAND:6 == 0
+					LOCAL:99 = 7
+				ELSEIF RAND:5 == 0 && TALENT:TARGET:オトコ == 0
+					LOCAL:99 = 110
+				ELSEIF RAND:4 == 0
+					LOCAL:99 = 327
+				ELSEIF RAND:3 == 0 && TALENT:TARGET:オトコ == 0
+					LOCAL:99 = 205
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;実行するコマンドが無ければ
+IF LOCAL:99 < 0
+	RETURN 0
+;実行するコマンドが有れば
+ELSE
+	;COM_ABLE関数で実行判定
+	CALLFORM COM_ABLE{LOCAL:99}
+	;実行不可なら終了
+	SIF RESULT == 0
+		RETURN 0
+	
+	RESULT = 1
+	SELECTCOM = LOCAL:99
+	JUMPFORM COM{LOCAL:99}
+ENDIF

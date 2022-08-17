@@ -1,0 +1,475 @@
+﻿;=============================================================================
+;ソープ・Glory Hole関連　の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド実行可能判定処理
+;-------------------------------------------------
+@PROSTITUTE_ABLE_COM30, ARG
+;キャラが売春可能であるかの共通判定処理を満たしている
+SIF BROTHEL_COM_ABLE_COMMON(ARG) == 0
+	RETURN 0
+RETURN 1
+
+;=============================================================================
+;選択可能処理
+;=============================================================================
+@JUDGE_PROSTITUTE_COM31, ARG
+CALL JUDGE_PROSTITUTE_COM52, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM32, ARG
+CALL JUDGE_PROSTITUTE_COM2, ARG
+RETURN RESULT
+@JUDGE_PROSTITUTE_COM33, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM34, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM35, ARG
+RETURN 1
+@JUDGE_PROSTITUTE_COM36, ARG
+;[オトコ]
+SIF TALENT:ARG:オトコ
+	RETURN 0
+;[絶壁]だと不可
+IF TALENT:ARG:絶壁
+	RETURN 0
+;[貧乳]だと技巧4以上必要
+ELSEIF TALENT:ARG:貧乳 && ABL:ARG:技巧 < 4
+	RETURN 0
+;[巨乳]なら技巧2以上必要
+ELSEIF TALENT:ARG:巨乳 && ABL:ARG:技巧 < 2
+	RETURN 0
+;[爆乳]なら技巧LV1以上必要
+ELSEIF TALENT:ARG:爆乳 && ABL:ARG:技巧 < 1
+	RETURN 0
+;それ以外の場合は技巧3以上必要
+ELSEIF TALENT:ARG:貧乳 == 0 && TALENT:ARG:巨乳 == 0 && TALENT:ARG:爆乳 == 0 && ABL:ARG:技巧 < 3
+	RETURN 0
+ENDIF
+RETURN 1
+@JUDGE_PROSTITUTE_COM37, ARG
+;ARGにペニスがついているとダメ
+SIF EXIST_BAR(ARG)
+	RETURN 0
+RETURN 1
+@JUDGE_PROSTITUTE_COM38, ARG
+;ARGにペニスがついてないとダメ
+SIF EXIST_BAR(ARG) == 0
+	RETURN 0
+RETURN 1
+;-------------------------------------------------
+;売春コマンドの分岐処理
+;31:ソープ(挿入なし)
+;32:アロママッサージ
+;33:Glory Hole(手淫)
+;34:Glory Hole(フェラ)
+;35:Glory Hole(足コキ)
+;36:Glory Hole(パイズリ)
+;37:Glory Hole(素股)
+;38:Glory Hole(兜あわせ)
+
+;-------------------------------------------------
+@PROSTITUTE_COM30, ARG
+#LOCALSIZE 1
+CALL CHOOSE_PROSTITUTE_COM, ARG, 3
+SELECTCOM = RESULT
+
+SIF TALENT:MASTER:998
+	PRINTFORML SELECTCOM = {SELECTCOM}
+
+;顧客の設定
+IF SELECTCOM >= 33 && SELECTCOM <= 38
+	CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE1, ARG
+ELSE
+	CALL PROSTITUTE_SET_NEW_CUSTOMER_TYPE2, ARG
+ENDIF
+;欲望をチェックする。欲望が相手の欲望を上回るかどうか。成功なら欲望レベルの２倍、失敗なら１倍入ります。
+;ソフト売春では、相手の欲望の最大値が低めで、満足させやすいです。
+LOCAL = RAND:4
+IF LOCAL <= ABL:ARG:欲望
+	TFLAG:408 = LOCAL + ABL:ARG:欲望 * 2
+ELSE
+	TFLAG:408 = LOCAL + ABL:ARG:欲望
+ENDIF
+
+;相手からの行動は無いため、露出癖、奉仕精神がそのまま得点に入ります。
+;ただし5でストップします。
+TFLAG:408 += MIN(ABL:ARG:奉仕精神, 5) + MIN(ABL:ARG:露出癖, 5)
+TFLAG:403 = 0
+
+;従順がLV2以上ないと、著しく微妙になります
+SIF ABL:ARG:従順 < 2
+	TFLAG:408 /= 2
+
+;………………………………………………
+;選択された売春コマンドを実行
+;………………………………………………
+;ここからは、プレイ内容の領分に入ってきますので、分岐後に任せます。
+;ここまでの満足度は合計最大60点。
+;プレイ内容の方で20点。
+;結果、最大80ポイント、平均40程度の満足度になります。ランダムが40を占めるので、割と安定しません。
+;ただし、素質的な要因がある場合は80ポイントを突破をしても構いません。割とアバウト。
+TRYCCALLFORM PROSTITUTE_COM{SELECTCOM}, ARG
+	SIF RESULT == 1
+		RETURN 1
+CATCH
+ENDCATCH
+RETURN 0
+
+;=============================================================================
+;ソープ売春(ソープ)の処理
+;=============================================================================
+;2つのパターンのうち、効果が高いものを実行します
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM31, ARG
+#LOCALSIZE 2
+VARSET LOCAL, 0
+
+PRINTL ソープ・Glory Hole -ソープ-
+
+;………………………………………………
+;パターン1 (相手をひたすら性的に挑発)
+;………………………………………………
+;分岐用TFLAG:99に0が入る
+;従順、欲望、技巧、奉仕精神をみる
+LOCAL:0 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)
+
+;[貞操無頓着]、[解放]
+SIF TALENT:ARG:貞操無頓着 || TALENT:ARG:解放
+	LOCAL:0 += 2
+
+IF LOCAL:0 > LOCAL:1
+	TFLAG:408 += LOCAL:0
+	TFLAG:99 = 0
+ELSE
+	TFLAG:408 += LOCAL:1
+	TFLAG:99 = 1
+ENDIF
+
+DOWNBASE:ARG:0 += 25
+DOWNBASE:ARG:1 += 30
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401 * 2
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 30
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM31
+
+
+;=============================================================================
+;ソープ売春(アロマ)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+;設備LV2かつ、Ｖ感覚LV3以上かＡ感覚LV3以上であれば、バイブを使いながらの接待となる。
+;バイブを使った場合、満足度が1つなら+1、両方使ったなら+3される。
+@PROSTITUTE_COM32, ARG
+DOWNBASE:ARG:0 += 25
+DOWNBASE:ARG:1 += 30
+
+PRINTL ソープ・Glory Hole -アロマオイルマッサージ-
+
+TFLAG:99 = 0
+;(技巧、奉仕精神)*2をみる
+TFLAG:408 += (MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5))*2
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 2
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401 * 2
+
+;ビデオ撮影中
+SIF TFLAG:403 & 16
+	TCVAR:ARG:被写経験 = ( RAND:10 < 3 ) ? 2 # 1
+
+TFLAG:405 = 1
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM32
+
+;=============================================================================
+;ソープ売春(GH - 手)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM33, ARG
+DOWNBASE:ARG:0 += 10
+DOWNBASE:ARG:1 += 15
+
+PRINTL ソープ・Glory Hole -Glory Hole 手淫-
+
+
+TFLAG:99 = 0
+;従順、欲望、技巧、奉仕精神
+TFLAG:408 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)
+
+;精液中毒
+SELECTCASE ABL:ARG:精液中毒
+	CASE IS <= 1
+		
+	CASE IS <= 4
+		TIMES TFLAG:408, 1.2
+	CASEELSE
+		TIMES TFLAG:408, 1.5
+ENDSELECT
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 3
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+
+TFLAG:405 = 30
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM33
+
+
+;=============================================================================
+;ソフト売春(GH - フェラ型)の処理
+;=============================================================================
+;相手の性器を責める。ちぎる。なげる。
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM34, ARG
+DOWNBASE:ARG:0 += 20
+DOWNBASE:ARG:1 += 30
+
+PRINTL ソープ・Glory Hole -Glory Hole フェラチオ-
+
+;従順、欲望、技巧、奉仕精神
+TFLAG:408 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)
+
+;精液中毒
+SELECTCASE ABL:ARG:精液中毒
+	CASE IS <= 1
+		
+	CASE IS <= 4
+		TIMES TFLAG:408, 1.2
+	CASEELSE
+		TIMES TFLAG:408, 1.5
+ENDSELECT
+
+;舌使い
+SIF TALENT:ARG:舌使い
+	TIMES TFLAG:408, 2.0
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 3
+SIF TALENT:ARG:精愛味覚
+	TCVAR:ARG:精飲絶頂経験 = TFLAG:401 * 3
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+TCVAR:ARG:フェラ経験 = TFLAG:401
+
+TFLAG:405 = 0
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM34
+
+;=============================================================================
+;ソフト売春(GH - 足コキ型)の処理
+;=============================================================================
+;相手を責める。ちぎる。なげる。攻撃する。
+;2つのパターンのうち、効果が高いものを実行します
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM35, ARG
+#LOCALSIZE 2
+VARSET LOCAL, 0
+
+PRINTL ソープ・Glory Hole -Glory Hole 足コキ-
+
+;………………………………………………
+;パターン1 (真性サド)
+;………………………………………………
+;分岐用TFLAG:99に0が入る
+;従順、欲望、技巧、奉仕精神
+TFLAG:408 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5) + ABL:ARG:サドっ気
+
+;………………………………………………
+;パターン2 (マゾがサド役)
+;………………………………………………
+;分岐用TFLAG:99に0が入る
+;精液中毒
+
+SELECTCASE ABL:ARG:精液中毒
+	CASE IS <= 1
+		
+	CASE IS <= 4
+		TIMES TFLAG:408, 1.2
+	CASEELSE
+		TIMES TFLAG:408, 1.5
+ENDSELECT
+
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 30
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 3
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401 * 2
+
+TFLAG:405 = 0
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM35
+
+;=============================================================================
+;ソフト売春(GH - パイズリ型)の処理
+;=============================================================================
+;縛った状態を眺めるという紳士プレイ。
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM36, ARG
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 20
+
+PRINTL ソープ・Glory Hole -Glory Hole パイズリ-
+
+;従順、欲望、技巧、奉仕精神
+TFLAG:408 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)
+
+;精液中毒
+SELECTCASE ABL:ARG:精液中毒
+	CASE IS <= 1
+		
+	CASE IS <= 4
+		TIMES TFLAG:408, 1.2
+	CASEELSE
+		TIMES TFLAG:408, 1.5
+ENDSELECT
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 3
+TCVAR:ARG:露出快楽経験 = TFLAG:401 / 2
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+TCVAR:ARG:Ｂ快楽経験 = TFLAG:401
+TFLAG:405 = 0
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM36
+
+
+;=============================================================================
+;ソフト売春(GH - 素股型)の処理
+;=============================================================================
+;野外でデート(性的な意味で)
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM37, ARG
+DOWNBASE:ARG:0 += 15
+DOWNBASE:ARG:1 += 20
+
+PRINTL ソープ・Glory Hole -Glory Hole 素股-
+
+;従順、欲望、技巧、奉仕精神
+TFLAG:408 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)
+
+;精液中毒
+SELECTCASE ABL:ARG:精液中毒
+	CASE IS <= 1
+		
+	CASE IS <= 4
+		TIMES TFLAG:408, 1.2
+	CASEELSE
+		TIMES TFLAG:408, 1.5
+ENDSELECT
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 3
+SIF ABL:ARG:Ｃ感覚 > 4
+	TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+
+
+TFLAG:405 = 0
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM37
+
+;=============================================================================
+;ソフト売春(GH - 兜合わせ型)の処理
+;=============================================================================
+;-------------------------------------------------
+;売春コマンド処理
+;-------------------------------------------------
+@PROSTITUTE_COM38, ARG
+DOWNBASE:ARG:0 += 50
+DOWNBASE:ARG:1 += 70
+
+PRINTL ソープ・Glory Hole -Glory Hole 兜合わせ-
+
+;従順、欲望、技巧、奉仕精神
+TFLAG:408 += MIN(ABL:ARG:従順, 5) + MIN(ABL:ARG:欲望, 5) + MIN(ABL:ARG:技巧, 5) + MIN(ABL:ARG:奉仕精神, 5)
+
+;精液中毒
+SELECTCASE ABL:ARG:精液中毒
+	CASE IS <= 1
+		
+	CASE IS <= 4
+		TIMES TFLAG:408, 1.2
+	CASEELSE
+		TIMES TFLAG:408, 1.5
+ENDSELECT
+
+CALL PROSTITUTE_NEW_CUSTOMER_SATISFACTION, ARG
+
+TCVAR:ARG:精液経験 = TFLAG:401 * 3
+SIF ABL:ARG:Ｃ感覚 > 4
+	TCVAR:ARG:精液経験 = TFLAG:401
+TCVAR:ARG:露出快楽経験 = TFLAG:401
+TCVAR:ARG:奉仕快楽経験 = TFLAG:401
+
+TFLAG:405 = 0
+RETURN 1
+
+;-------------------------------------------------
+;売春コマンドの地の文
+;-------------------------------------------------
+@SYSTXT_MESSAGE_PROSTITUTION_COM38
+

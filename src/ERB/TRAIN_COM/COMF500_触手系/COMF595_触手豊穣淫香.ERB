@@ -1,0 +1,202 @@
+﻿;=============================================================================
+;触手豊穣淫香
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE595
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:595 > 0
+	RETURN 0
+;紳士的な触手系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4096) == 0
+	RETURN 0
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURN 0
+;アイテム進化の秘法を持っていないとダメ
+SIF ITEM:進化の秘法 == 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:キャラ触手 & 256
+	RETURN 1
+;他のお香使用中はダメ
+SIF TEQUIP:89 && TEQUIP:89 != 99
+	RETURN 0
+;調教者は触手使役LV3以上必要
+SIF ABL:PLAYER:触手使役 < 3
+	RETURN 0
+;触手が[MINORIKO触手]を得ていないとダメ
+SIF (FLAG:98 & 32768) == 0
+	RETURN 0
+;穣子を触手生贄に捧げていない(=穣子が何らかの形で存在している)とダメ
+SIF (FLAG:97 & 32768) == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 595) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM595
+PRINTL 触手豊穣淫香
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 595
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手豊穣淫香
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 60
+
+DOWNBASE:PLAYER:0 += 25
+DOWNBASE:PLAYER:1 += 40
+
+SOURCE:達成感 = 250
+SOURCE:欲情追加 = 150
+
+;《露出癖》をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:痒み = 50
+	SOURCE:屈従 = 100
+	SOURCE:不潔 = 2000
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:痒み = 100
+	SOURCE:屈従 = 200
+	SOURCE:不潔 = 600
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:痒み = 200
+	SOURCE:屈従 = 400
+	SOURCE:不潔 = 150
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:痒み = 300
+	SOURCE:屈従 = 800
+	SOURCE:不潔 = 30
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:痒み = 400
+	SOURCE:屈従 = 1200
+	SOURCE:不潔 = 0
+ELSE
+	SOURCE:痒み = 500
+	SOURCE:屈従 = 2000
+	SOURCE:不潔 = 0
+ENDIF
+
+LOCAL:1 = 1200
+LOCAL:2 = 400
+LOCAL:3 = 1000
+
+;穣子との相性あるなしで補正が上下
+LOCAL = 38
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:LOCAL < 100
+		LOCAL:2 *= (200-RELATION:LOCAL)
+	ELSE
+		LOCAL:2 *= RELATION:LOCAL
+	ENDIF
+	LOCAL:2 /= 100
+	LOCAL:3 *= 100
+	LOCAL:3 /= RELATION:LOCAL
+ENDIF
+
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:トラウマ += LOCAL:2
+SOURCE:薬物浸潤 += LOCAL:1
+SOURCE:触手汚染 += LOCAL:1
+SOURCE:性技学習 += LOCAL:1
+SOURCE:逸脱 += LOCAL:3
+
+;触手豊穣淫香のON/OFF
+IF TEQUIP:キャラ触手 & 256
+	TEQUIP:キャラ触手 -= 256
+ELSE
+	TEQUIP:キャラ触手 |= 256
+	TEQUIP:89 = 99
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;触手豊穣淫香効果発揮中
+;-------------------------------------------------
+@EQUIP_COM595
+PRINTL ＜触手豊穣淫香効果発揮中＞
+
+TIMES SOURCE:恭順追加 , 1.50
+TIMES SOURCE:欲情追加 , 1.50
+TIMES SOURCE:液体追加 , 1.50
+TIMES SOURCE:酒酔い , 1.50
+TIMES SOURCE:鬼殺し , 1.50
+TIMES SOURCE:媚薬浸潤 , 1.50
+
+LOCAL:1 = 700
+LOCAL:2 = 200
+LOCAL:3 = 500
+
+;穣子との相性あるなしで補正が上下
+LOCAL = 38
+IF RELATION:LOCAL > 0 && RELATION:LOCAL != 100
+	LOCAL:1 *= RELATION:LOCAL
+	LOCAL:1 /= 100
+	;トラウマは強制的に増加
+	IF RELATION:LOCAL < 100
+		LOCAL:2 *= (200-RELATION:LOCAL)
+	ELSE
+		LOCAL:2 *= RELATION:LOCAL
+	ENDIF
+	LOCAL:2 /= 100
+	LOCAL:3 *= 100
+	LOCAL:3 /= RELATION:LOCAL
+ENDIF
+
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:トラウマ += LOCAL:2
+SOURCE:薬物浸潤 += LOCAL:1
+SOURCE:触手汚染 += LOCAL:1
+SOURCE:性技学習 += LOCAL:1
+SOURCE:逸脱 += LOCAL:3
+
+;穣子の性別上、調教対象が♀の時のみレズ経験が入る仕様に
+SIF TALENT:オトコ == 0
+	TCVAR:レズ経験 += 1
+
+;触手経験フラグ
+TFLAG:90 += 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_595
+IF TEQUIP:キャラ触手 & 256
+	PRINTFORML %CALLNAME:PLAYER%の命令に従い、穣子は%CALLNAME:TARGET%の顔へ息を吹きかけるのを止めた
+	PRINTFORML 穣子の責めから解放されたてもなお、%CALLNAME:TARGET%は不思議な香りの影響下に囚われたままである
+	PRINTFORML 穣子はそんな%CALLNAME:TARGET%のゆるんだ頬を舌先で軽く舐め、そのまま肉壁の向こうへと消えて行った……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%の命令に反応し、何処からともなく鮮やかな赤い触手が這いずり出てきた
+	PRINTFORML 触手は%CALLNAME:TARGET%に近づくと先端が開き、中から下半身が肉塊に埋もれさせた穣子が姿を現した
+	PRINTFORML 穣子は%CALLNAME:MASTER%に向かって軽く一礼すると、口に薄い笑みを浮かべたまま%CALLNAME:TARGET%の目の前に来ると、仄かに甘い香りを孕んだ熱い吐息を%CALLNAME:TARGET%の顔へを吹きかけた
+	PRINTFORML 不思議な香りを無理矢理嗅がされたことで%CALLNAME:TARGET%の思考は鈍り、淫行への順応力を引き上げていく……
+ENDIF

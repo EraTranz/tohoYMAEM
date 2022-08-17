@@ -1,0 +1,169 @@
+﻿;=============================================================================
+;ＢＬっ気
+;=============================================================================
+@ABLUP23
+DRAWLINE
+IF TALENT:オトコ == 0
+	RETURN 0
+ELSEIF ABL:ＢＬっ気 >= 5
+	JUMP ABLUP_MAX
+ENDIF
+
+;ＬＶ３から４、４から５に上げるときは異常経験必要
+SIF COST23(4)
+	PRINTFORML %EXPNAME:50%{COST23(4)}以上、かつ
+
+PRINTFORM [0] - %PALAMNAME:13%の珠×{COST23(0)}
+SIF COST23(1) > 0
+	PRINTFORM 、%PALAMNAME:14%の珠×{COST23(1)}
+PRINTFORM 、%EXPNAME:13%{COST23(3)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN23(0)
+
+IF COST23(2) > 0
+	PRINTFORM [1] - %PALAMNAME:0%の珠×{COST23(2)}、%EXPNAME:13%{COST23(3)}以上……
+	CALL SHOW_ISABLUP_COMMON, CAN23(1)
+ENDIF
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT == 0 || RESULT == 1) && CAN23(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:欲情 -= COST23(0)
+	JUEL:屈服 -= COST23(1)
+ELSEIF RESULT == 1
+	JUEL:快Ｃ -= COST23(2)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:ＢＬっ気 += 1
+PRINTFORMW %ABLNAME:23%のレベルが{ABL:ＢＬっ気}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP23
+SIF ABL:ＢＬっ気 >= 5 || TALENT:オトコ == 0
+	RETURN 0
+
+CALLF CALC_COST23, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP23("CHECK")
+
+@COST23(ARG)
+#FUNCTION
+RETURNF CALC_COST23("GET", ARG)
+
+@CALC_COST23(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+
+IF ABL:ＢＬっ気 == 0
+	LOCAL:0 = 200
+	LOCAL:1 = 0
+	LOCAL:2 = 1000
+	LOCAL:3 = 50
+ELSEIF ABL:ＢＬっ気 == 1
+	LOCAL:0 = 1000
+	LOCAL:1 = 0
+	LOCAL:2 = 5000
+	LOCAL:3 = 150
+ELSEIF ABL:ＢＬっ気 == 2
+	LOCAL:0 = 3000
+	LOCAL:1 = 1000
+	LOCAL:2 = 0
+	LOCAL:3 = 300
+ELSEIF ABL:ＢＬっ気 == 3
+	LOCAL:0 = 8000
+	LOCAL:1 = 2000
+	LOCAL:2 = 0
+	LOCAL:3 = 600
+ELSEIF ABL:ＢＬっ気 == 4
+	LOCAL:0 = 20000
+	LOCAL:1 = 5000
+	LOCAL:2 = 0
+	LOCAL:3 = 1200
+ENDIF
+;一線越えない
+IF TALENT:一線越えない && ABL:ＢＬっ気 >= 3
+	LOCAL:0 *= 2
+	LOCAL:1 *= 2
+	LOCAL:3 *= 2
+ENDIF
+
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 0.75
+	TIMES LOCAL:3 , 0.75
+ENDIF
+;両刀
+IF TALENT:両刀
+	TIMES LOCAL:0 , 0.25
+	TIMES LOCAL:1 , 0.25
+	TIMES LOCAL:2 , 0.25
+	TIMES LOCAL:3 , 0.25
+ENDIF
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 4
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+;ＬＶ３から４、４から５に上げるときは異常経験必要（素質：[両刀]なら無視できる）
+SIF ABL:ＢＬっ気 >= 3 && TALENT:両刀 == 0
+	LOCAL:4 = ABL:ＢＬっ気 - 2
+
+RETURNF 0
+
+@CAN23(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP23("GET", ARG)
+
+@CAN_ABLUP23(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;異常経験が必要な場合
+IF EXP:異常経験 < COST23(4)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+ENDIF
+
+;ＢＬ経験が必要
+IF EXP:ＢＬ経験 < COST23(3)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+ENDIF
+
+;欲情の珠で上げる
+SIF JUEL:欲情 < COST23(0)
+	LOCAL:0 |= 1
+;屈服の珠で上げる
+SIF JUEL:屈服 < COST23(1)
+	LOCAL:0 |= 1
+
+IF COST23(2) > 0
+	;快Ｃの珠で上げる
+	SIF JUEL:快Ｃ < COST23(2)
+		LOCAL:1 |= 1
+ELSE
+	LOCAL:1 = 256
+ENDIF
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0)

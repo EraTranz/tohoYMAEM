@@ -1,0 +1,49 @@
+﻿;YM→YMAEコンバータによって作成されました
+;-------------------------------------------------
+;朝騎乗位＋胸揉み
+;TFLAG:99でＶ経験増加量を取得可能
+;-------------------------------------------------
+@KOJO_2008_MESSAGE_SUB_EVENT_SCENE146
+SELECTCASE RAND:3
+	CASE 2
+		PRINTFORML ――腰のあたりに重みを感じるのと、両手に柔らかな感触がする
+		PRINTFORMW 目を開けると、夢美が騎乗位セックスに勤しみながら、あなたの手を使って胸を揉みしだいている
+		PRINTFORML 
+		CALL K2008_COM("快楽")
+		CALL K2008_ORGASM("並")
+		PRINTFORML 
+		PRINTFORML 「はあぁ、気持ちよかったぁ～」
+		PRINTFORMW 「ん？　起こしちゃったみたいね」
+		PRINTFORML 「おはよう、朝から%K2008FS_CALL_MY_V()%セックスって素敵よね」
+		PRINTFORMW 「おっぱい揉んで応援してくれたら、もうちょっと頑張ってあげるのにねぇ」
+		PRINTFORML 
+		PRINTFORML 卑猥な微笑みをこちらに向けながら、優しく腰をグラインドして挑発している
+		PRINTFORMW さて、夢美の腰が抜けるまで揉みしだいてあげようか
+	CASE 1
+		PRINTFORML ――快感とベッドが軋む音で朝を迎えた
+		PRINTFORMW 夢美が澄ました顔で騎乗位セックスに励んでいる
+		PRINTFORML 
+		CALL K2008_COM("快楽")
+		SIF K2008F_CAN_EJAC(MASTER)
+			CALL K2008_EJAC_TO("膣内射精")
+		PRINTFORML 
+		PRINTFORML 「ふぅ～……　あら、おはよう」
+		PRINTFORMW 「目覚ましセックスはどんな感じだったかしら？」
+		PRINTFORML 
+		SIF K2008F_BSIZE() >= 1
+			PRINTFORML 目の前で揺れていた%K2008FS_BSIZE(1)%が脳裏に焼き付いている
+		PRINTFORMW 返事はせずに夢美の乳首を摘まみ、気の向くままに引っ張って弄ってみる
+		PRINTFORML 
+		PRINTFORML 「あらあら、延長戦をご希望なのね？」
+		PRINTFORMW 「朝から元気がよくていいわ、とっても素敵」
+		CALL K2008_COM("快楽")
+	CASEELSE
+		CALL K2008_COM("好感")
+		PRINTFORML ――目を覚ますと、夢美が跨ってセックスをしていた
+		PRINTFORMW どれ、少しちょっかいを出してみよう
+		PRINTFORML 
+		CALL K2008_COM("快楽")
+		PRINTFORML 「あんっ、乳首キュッ、キュッって気持ちいぃ、っていつの間に起きてたの？」
+		PRINTFORML 「まあいいわ、そのままずっと揉んでくれてると嬉しいわ」
+		CALL K2008_COM("快楽")
+ENDSELECT

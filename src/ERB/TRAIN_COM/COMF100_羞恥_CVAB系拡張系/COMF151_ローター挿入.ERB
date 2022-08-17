@@ -1,0 +1,354 @@
+﻿;=============================================================================
+;ローター挿入
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE151
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:151 > 0
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｖ系装着器具 == 3
+	RETURN 1
+;Ｖ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2) == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:ローター == 0
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;小人体型持ちは、双方が調教者と調教対象ならOK
+;それ以外の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && (TALENT:MASTER:禁断の知識 == 0 && TALENT:PLAYER:小人体型 == 0)
+	RETURN 0
+;他のＶ系装着具使用中は不可
+SIF (TEQUIP:Ｖ系装着器具 && TEQUIP:Ｖ系装着器具 != 3) || TEQUIP:クスコ
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 151) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM151
+PRINTL ローター挿入
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 151
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = ローター挿入
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 20
+DOWNBASE:1 += 90
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 30
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 50
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 90
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 160
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 200
+ELSE
+	SOURCE:快Ｖ = 250
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み = 100
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	SOURCE:痛み = 300
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 50
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 10
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.10
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み += 100
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	SOURCE:痛み += 50
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.10
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.10
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.00
+ELSE
+	TIMES SOURCE:快Ｖ , 1.00
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.30
+ENDIF
+
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 1.50
+
+;ローターの着脱
+IF TEQUIP:Ｖ系装着器具 == 3
+	TEQUIP:Ｖ系装着器具 = 0
+ELSE
+	TEQUIP:Ｖ系装着器具 = 3
+ENDIF
+
+;奴隷のＶ⇔調教者の手の汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:手
+STAIN:PLAYER:手 |= STAIN:ヴァギナ
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;-------------------------------------------------
+;ローター挿入中
+;-------------------------------------------------
+@EQUIP_COM151
+PRINTL ＜ローター挿入中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 30
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	LOCAL = 20
+ELSEIF ABL:Ｖ感覚 == 1
+	LOCAL = 40
+ELSEIF ABL:Ｖ感覚 == 2
+	LOCAL = 80
+ELSEIF ABL:Ｖ感覚 == 3
+	LOCAL = 130
+ELSEIF ABL:Ｖ感覚 == 4
+	LOCAL = 170
+ELSE
+	LOCAL = 200
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES LOCAL , 0.60
+	LOCAL:1 = 50
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:1 = 30
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	LOCAL:1 = 20
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	LOCAL:1 = 0
+ELSE
+	TIMES LOCAL , 1.10
+	LOCAL:1 = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES LOCAL , 0.60
+	LOCAL:1 += 50
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:1 += 20
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.20
+ELSE
+	TIMES LOCAL , 1.10
+	TIMES LOCAL:1 , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.60
+	LOCAL:2 = 20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.80
+	LOCAL:2 = 50
+ELSEIF PALAM:欲情 < PALAMLV:3
+	LOCAL:2 = 80
+ELSEIF PALAM:欲情 < PALAMLV:4
+	LOCAL:2 = 100
+ELSE
+	LOCAL:2 = 150
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;貞操観念
+IF TALENT:貞操観念
+	TIMES LOCAL:1, 1.50
+ENDIF
+;処女
+SIF TALENT:処女
+	TIMES LOCAL:1, 1.20
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES LOCAL:1 , 1.20
+
+SOURCE:快Ｖ += LOCAL
+SOURCE:痛み += LOCAL:1
+SOURCE:接触 += LOCAL:2
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_151
+IF TEQUIP:Ｖ系装着器具 == 3
+	PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%から高速で振動するローターをゆっくりと引き抜いた。
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		IF EXP:Ｖ経験 > 200 && TALENT:恋慕
+			PRINTFORM %CALLNAME:TARGET%は淫蕩な表情を浮かべて、すっかりほぐれた肉穴を塞ぐ肉棒を要求し
+		ELSEIF EXP:Ｖ経験 > 150 && TALENT:恋慕
+			PRINTFORM 引き抜く際に淫核に擦れたのか、一瞬身体をビクっと震わせて荒い息をはい
+		ELSEIF EXP:Ｖ経験 > 120 && TALENT:恋慕
+			PRINTFORM 引き抜かれたローターは、%CALLNAME:TARGET%の愛液でテラテラと光っ
+		ELSEIF EXP:Ｖ経験 > 70 && TALENT:恋慕
+			PRINTFORM %CALLNAME:TARGET%はもじもじと股を擦り合わせて%CALLNAME:PLAYER%の方を見
+		ELSEIF EXP:Ｖ経験 > 40 && TALENT:恋慕
+			PRINTFORM %CALLNAME:TARGET%は瞳を潤ませ、熱のこもった吐息を吐い
+		ELSEIF EXP:Ｖ経験 > 20
+			PRINTFORM %CALLNAME:TARGET%はゆるんだ膣口を物欲しそうにヒクつかせ
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%はホッとしたような、でも少し残念そうな表情をし
+		ENDIF
+		PRINTL ている…
+	ELSE
+		PRINTFORML ローターが抜かれた後の%CALLNAME:TARGET%の膣口が物欲しそうに開いている…
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の
+	SIF PALAM:潤滑 >= PALAMLV:5
+		PRINT たっぷりと
+	SIF PALAM:潤滑 >= PALAMLV:3
+		PRINT 粘液をたたえた
+	IF TALENT:小柄体型
+		PRINT 幼いワレメに
+	ELSE
+		PRINT 秘裂に
+	ENDIF
+	PRINTL ローターを押しつけ、愛液を馴染ませていく……
+
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+		PRINTFORM %CALLNAME:TARGET%は
+		IF TALENT:処女 && TALENT:恋慕
+			PRINTFORM 淫らな期待で潤んだ目で%CALLNAME:PLAYER%の股間を見つめ
+		ELSEIF TALENT:処女 && TALENT:淫乱
+			PRINT それでは物足りないと言わんばかりに口をとがらせ
+		ELSEIF TALENT:処女
+			PRINT 目を固くつむってローターから受ける刺激に耐え
+
+		ELSEIF EXP:Ｖ経験 > 200 && TALENT:恋慕
+			PRINT それでは物足りないと言わんばかりに口をとがらせ
+		ELSEIF EXP:Ｖ経験 > 150 && TALENT:恋慕
+			PRINTFORM とろけきった目で%CALLNAME:PLAYER%を見つめ、自分から陰唇を擦りつけ
+		ELSEIF EXP:Ｖ経験 > 120 && TALENT:恋慕
+			PRINT 恍惚とした表情で待ちきれないように秘唇を自ら割り開い
+		ELSEIF EXP:Ｖ経験 > 70 && TALENT:恋慕
+			PRINTFORM もの欲しそうに目を潤ませ%CALLNAME:PLAYER%の方を見
+		ELSEIF EXP:Ｖ経験 > 40 && TALENT:恋慕
+			PRINT 高速で振動するローターを飲み込もうするかのように膣口をひくつかせ
+		ELSEIF EXP:Ｖ経験 > 0 && TALENT:恋慕
+			PRINT ローターの振動で愛液を滴らせ
+		ELSE
+			PRINT ローターの与える刺激に股をモジモジさせ
+		ENDIF
+		PRINTL ている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は、意識がないのにも関わらず下のお口が物欲しそうに蠢きはじめている…
+	ENDIF
+	PRINTFORM 準備ができたと判断した%CALLNAME:PLAYER%は、%CALLNAME:TARGET%の
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 濡れそぼった
+	PRINTL 性器にローターを挿し込んだ…
+ENDIF

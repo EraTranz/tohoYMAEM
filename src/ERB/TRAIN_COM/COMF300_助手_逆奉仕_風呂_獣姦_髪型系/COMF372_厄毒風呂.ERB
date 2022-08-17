@@ -1,0 +1,353 @@
+﻿;=============================================================================
+;厄毒風呂
+;=============================================================================
+;厄が詰まった液体に浸らせているので不快が大量に入る
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE372
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:372 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 4096) == 0
+	RETURN 0
+;一度も厄毒風呂に入ったことが無く、さらに異常経験が5未満の場合
+;異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && (CFLAG:23 & 32) == 0 && EXP:異常経験 < 5
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 2) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 14
+	RETURN 1
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中じゃ無いとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 14
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 372) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM372
+PRINTL 厄毒風呂
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 372
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 厄毒風呂
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 14
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+;薬毒耐性だと消耗が少なめ
+DOWNBASE:0 += (TALENT:薬毒耐性) ? 30 # 60
+DOWNBASE:1 += (TALENT:薬毒耐性) ? 50 # 100
+
+SOURCE:痛み = 900
+SOURCE:液体追加 = 2000
+SOURCE:痒み = 1800
+
+LOCAL:1 = 1200
+LOCAL:2 = 8000
+LOCAL:3 = 1800
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 2.75
+	TIMES LOCAL:3 , 0.60
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 1.80
+	TIMES LOCAL:3 , 0.80
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 1.20
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 1.50
+ELSE
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 0.20
+	TIMES LOCAL:3 , 1.80
+ENDIF
+
+;ABL:自慰中毒、精液中毒、噴乳中毒、触手中毒の合計をみる
+LOCAL:4 = ABL:自慰中毒 + ABL:精液中毒 + ABL:噴乳中毒 + ABL:触手中毒
+IF LOCAL:4 == 0
+	TIMES LOCAL:1 , 0.30
+	TIMES LOCAL:2 , 2.00
+	TIMES LOCAL:3 , 0.20
+ELSEIF LOCAL:4 < 5
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 0.50
+ELSEIF LOCAL:4 < 10
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 1.00
+ELSEIF LOCAL:4 < 15
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.70
+	TIMES LOCAL:3 , 1.20
+ELSEIF LOCAL:4 < 20
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 1.60
+ELSE
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 0.20
+	TIMES LOCAL:3 , 1.80
+ENDIF
+
+;薬毒耐性
+IF TALENT:薬毒耐性
+	TIMES LOCAL:1 , 0.20
+	TIMES LOCAL:2 , 0.40
+	TIMES LOCAL:3 , 0.30
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 1.20
+ENDIF
+;マゾ
+IF TALENT:マゾ
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 1.50
+ENDIF
+
+;EXP:異常経験をみる
+IF EXP:異常経験 < EXPLV:1
+	TIMES LOCAL:3 , 2.50
+	SOURCE:トラウマ += 250
+ELSEIF EXP:異常経験 < EXPLV:2
+	TIMES LOCAL:3 , 1.80
+	SOURCE:トラウマ += 100
+ELSEIF EXP:異常経験 < EXPLV:3
+	TIMES LOCAL:3 , 1.00
+	SOURCE:トラウマ += 50
+ELSEIF EXP:異常経験 < EXPLV:4
+	TIMES LOCAL:3 , 0.50
+ELSEIF EXP:異常経験 < EXPLV:5
+	TIMES LOCAL:3 , 0.30
+ELSE
+	TIMES LOCAL:3 , 0.10
+ENDIF
+TEQUIP:特殊風呂入浴中 = 14
+
+SOURCE:中毒充足 = LOCAL:1
+SOURCE:不潔 = LOCAL:2
+SOURCE:支配 = LOCAL:3
+
+IF (CFLAG:23 & 32) == 0 && EXP:異常経験 < 5
+	TCVAR:異常経験 += 1
+	CFLAG:23 |= 32
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;厄毒漬け込み中
+;--------------------------------------------------
+@EQUIP_COM372
+PRINTL ＜厄毒漬け込み中＞
+
+;薬毒耐性だと消耗が少なめ
+DOWNBASE:0 += (TALENT:薬毒耐性) ? 30 # 60
+DOWNBASE:1 += (TALENT:薬毒耐性) ? 40 # 80
+
+SOURCE:痛み += 400
+SOURCE:液体追加 += 2000
+SOURCE:痒み += 1800
+
+LOCAL:1 = 500
+LOCAL:2 = 2000
+LOCAL:3 = 400
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 2.75
+	TIMES LOCAL:3 , 0.60
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 1.80
+	TIMES LOCAL:3 , 0.80
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 1.20
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 1.50
+ELSE
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 0.20
+	TIMES LOCAL:3 , 1.80
+ENDIF
+
+;ABL:自慰中毒、精液中毒、噴乳中毒、触手中毒の合計をみる
+LOCAL:4 = ABL:自慰中毒 + ABL:精液中毒 + ABL:噴乳中毒 + ABL:触手中毒
+IF LOCAL:4 == 0
+	TIMES LOCAL:1 , 0.30
+	TIMES LOCAL:2 , 2.00
+	TIMES LOCAL:3 , 0.20
+ELSEIF LOCAL:4 < 5
+	TIMES LOCAL:1 , 0.70
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 0.50
+ELSEIF LOCAL:4 < 10
+	TIMES LOCAL:1 , 1.00
+	TIMES LOCAL:2 , 1.00
+	TIMES LOCAL:3 , 1.00
+ELSEIF LOCAL:4 < 15
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 0.70
+	TIMES LOCAL:3 , 1.20
+ELSEIF LOCAL:4 < 20
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 1.60
+ELSE
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 0.20
+	TIMES LOCAL:3 , 1.80
+ENDIF
+
+;薬毒耐性
+IF TALENT:薬毒耐性
+	TIMES LOCAL:1 , 0.20
+	TIMES LOCAL:2 , 0.40
+	TIMES LOCAL:3 , 0.30
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 1.20
+ENDIF
+;マゾ
+IF TALENT:マゾ
+	TIMES LOCAL:1 , 1.30
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 1.50
+ENDIF
+
+;EXP:異常経験をみる
+IF EXP:異常経験 < EXPLV:1
+	TIMES LOCAL:3 , 2.50
+	SOURCE:液体追加 += 250
+ELSEIF EXP:異常経験 < EXPLV:2
+	TIMES LOCAL:3 , 1.80
+	SOURCE:液体追加 += 100
+ELSEIF EXP:異常経験 < EXPLV:3
+	TIMES LOCAL:3 , 1.00
+	SOURCE:液体追加 += 50
+ELSEIF EXP:異常経験 < EXPLV:4
+	TIMES LOCAL:3 , 0.50
+ELSEIF EXP:異常経験 < EXPLV:5
+	TIMES LOCAL:3 , 0.30
+ELSE
+	TIMES LOCAL:3 , 0.10
+ENDIF
+
+SOURCE:中毒充足 += LOCAL:1
+SOURCE:不潔 += LOCAL:2
+SOURCE:支配 += LOCAL:3
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_372
+IF TEQUIP:特殊風呂入浴中 == 14
+	PRINTFORML 浴槽から%CALLNAME:TARGET%を引き上げた
+ELSE
+	PRINTFORML 得体の知れない液体で満たされた浴槽へ%CALLNAME:TARGET%を突き落とした
+	PRINTFORM %CALLNAME:TARGET%は
+	IF EXP:異常経験 < EXPLV:1
+		PRINTL 得体の知れない液体の身体に纏わりつくような感触に恐怖を感じているようだ……
+	ELSEIF EXP:異常経験 < EXPLV:2
+		PRINTL 謎の液体の感触に強い不快感を感じているようだ……
+	ELSEIF EXP:異常経験 < EXPLV:3
+		PRINTL 堅く目を閉じ、何かに耐えているように身を縮めている……
+	ELSEIF EXP:異常経験 < EXPLV:4
+		PRINTL ぎこちない表情を浮かべつつ、ある程度慣れてしまっている自分に諦めているようだ……
+	ELSEIF EXP:異常経験 < EXPLV:5
+		PRINTFORML 顔の半分までを液体の中に沈め、少し不満そうな眼で%CALLNAME:MASTER%を見ている……
+	ELSE
+		PRINTL 完全に慣れているらしく、顔色一つ変えることなく浴槽に浸かっている……
+	ENDIF
+ENDIF

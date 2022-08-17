@@ -1,0 +1,695 @@
+﻿;==================================================================================================
+;体質変化薬の使用処理
+;==================================================================================================
+;-------------------------------------------------
+;鎮静茶(ストレス解消)
+;-------------------------------------------------
+@USE_DRUG_9, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 309, 0
+PRINTFORMW ＜%CALLNAME:ARG%のストレスが低下した＞
+;回復処理へ
+CALL DRUG_HEAL_MENTAL, ARG
+RETURN 1
+
+;-------------------------------------------------
+;栄養剤(体力回復)
+;-------------------------------------------------
+@USE_DRUG_10, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 310, 0
+PRINTFORMW ＜%CALLNAME:ARG%の体力が回復した＞
+;回復処理へ
+CALL DRUG_HEAL_LIFE, ARG
+RETURN 1
+
+;-------------------------------------------------
+;ふたなり薬
+;-------------------------------------------------
+@USE_DRUG_11, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 311, 0
+IF TALENT:ARG:ふたなり
+	PRINTFORMW ＜%CALLNAME:ARG%は[ふたなり]を失った＞
+	TALENT:ARG:ふたなり = 0
+	CFLAG:ARG:509 = 0
+	CALL CHANGE_FUTA_COMMON, ARG
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 311, 1
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%は[ふたなり]を得た＞
+	TALENT:ARG:ふたなり = 1
+	CALL CHANGE_FUTA_COMMON, ARG
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 311, 2
+ENDIF
+;陰核肥大消去処理
+MAXBASE:ARG:7 = BASE:ARG:陰核
+BASE:ARG:陰核 = 0
+TALENT:ARG:肥大陰核 = 0
+SIF CFLAG:ARG:37 & 16
+	CFLAG:ARG:37 -= 16
+RETURN 1
+
+;-------------------------------------------------
+;ふたたま薬
+;-------------------------------------------------
+@USE_DRUG_12, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 312
+IF TALENT:ARG:ふたなり == 2
+	PRINTFORMW ＜%CALLNAME:ARG%は玉ありではなくなった＞
+	TALENT:ARG:ふたなり = 1
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%は玉ありになった＞
+	TALENT:ARG:ふたなり = 2
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;性露錠(陰核成長)
+;-------------------------------------------------
+@USE_DRUG_13, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 313
+PRINTFORMW ＜%CALLNAME:ARG%の陰核がほんの少しだけ膨らんだ気がする……＞
+BASE:ARG:陰核 += (BASE:ARG:陰核 == 0) ? 1 # RAND(1, 10)
+;成長による特殊処理
+SIF BASE:ARG:陰核 >= 150 && TALENT:ARG:肥大陰核 == 0
+	CALL HUGE_CLITORIS, ARG
+SIF BASE:ARG:陰核 > 200 && (CFLAG:ARG:37 & 4) == 0
+	CALL GIGATORIS, ARG
+RETURN 1
+
+;-------------------------------------------------
+;根素勃乳
+;-------------------------------------------------
+@USE_DRUG_14, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 314
+PRINTFORMW ＜%CALLNAME:ARG%の[不思議な根]は機能を取り戻した＞
+;[不思議な根]の機能復活
+TALENT:ARG:不思議な根 = 1
+RETURN 1
+
+;-------------------------------------------------
+;豊胸剤(爆乳化)
+;-------------------------------------------------
+@USE_DRUG_20, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 320
+IF TALENT:ARG:絶壁
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[絶壁]から[貧乳]になった＞
+	TALENT:ARG:絶壁 = 0
+	TALENT:ARG:貧乳 = 1
+ELSEIF TALENT:ARG:貧乳
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[貧乳]から[並乳]になった＞
+	TALENT:ARG:貧乳 = 0
+ELSEIF TALENT:ARG:巨乳
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[巨乳]から[爆乳]になった＞
+	TALENT:ARG:巨乳 = 0
+	TALENT:ARG:爆乳 = 1
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[並乳]から[巨乳]になった＞
+	TALENT:ARG:巨乳 = 1
+ENDIF
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+CALL MAKE_SIZE, 1, ARG
+RETURN 1
+
+;-------------------------------------------------
+;縮胸剤(虚乳化)
+;-------------------------------------------------
+@USE_DRUG_21, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 321
+IF TALENT:ARG:爆乳
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[爆乳]から[巨乳]になった＞
+	TALENT:ARG:爆乳 = 0
+	TALENT:ARG:巨乳 = 1
+ELSEIF TALENT:ARG:巨乳
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[巨乳]から[並乳]になった＞
+	TALENT:ARG:巨乳 = 0
+ELSEIF TALENT:ARG:貧乳
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[貧乳]から[絶壁]になった＞
+	TALENT:ARG:貧乳 = 0
+	TALENT:ARG:絶壁 = 1
+	TALENT:ARG:母乳体質 = 0
+	MAXBASE:ARG:3 = 0
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%の胸は[並乳]から[貧乳]になった＞
+	TALENT:ARG:貧乳 = 1
+ENDIF
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+CALL MAKE_SIZE, 1, ARG
+RETURN 1
+
+;-------------------------------------------------
+;止乳剤(母乳治療)
+;-------------------------------------------------
+@USE_DRUG_22, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 322
+PRINTFORMW ＜%CALLNAME:ARG%は母乳が出なくなった＞
+TALENT:ARG:母乳体質 = 0
+MAXBASE:ARG:3 = 0
+RETURN 1
+
+;-------------------------------------------------
+;尿漏れ改善薬(お漏らし治療)
+;-------------------------------------------------
+@USE_DRUG_23, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 323
+PRINTFORMW ＜%CALLNAME:ARG%のお漏らし癖が治った＞
+TALENT:ARG:おもらし癖 = 0
+CALL CALC_GAUGE4_SLAVE, ARG, 1
+CFLAG:ARG:放尿レベル = 0
+RETURN 1
+
+;-------------------------------------------------
+;記憶消去薬
+;-------------------------------------------------
+@USE_DRUG_24, ARG, ARG:1
+PRINTFORML ＜%CALLNAME:ARG%の記憶を消しますか？＞
+PRINTW ※一度実行すると元に戻せません
+DRAWLINE
+PRINTL [0] - 今はやめておく
+PRINTL [1] - 記憶を消す
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	;専用口上を使用と設定している、かつその口上での特殊初期設定処理があった場合はそちらの処理を優先。それ以外は通常の処理
+	IF CFLAG:ARG:9 == 4
+		TRYCCALLFORM KOJO_{NO:ARG}_EVENT_ERASE_MEMORY, ARG
+		CATCH
+			CALL ERASE_MEMORY, ARG
+		ENDCATCH
+	ELSE
+		CALL ERASE_MEMORY, ARG
+	ENDIF
+ELSEIF RESULT == 0
+	RETURN 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;人魚姫の薬(人魚の人間化)
+;-------------------------------------------------
+@USE_DRUG_26, ARG, ARG:1
+PRINTFORML ＜%CALLNAME:ARG%を人間にしますか？＞
+PRINTW ※二度と戻せなくなります！よく考えて行ってください！
+DRAWLINE
+PRINTL [0] - 今はやめておく
+PRINTFORML [1] - 人間にさせる
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL MERMAID_EVENT, ARG
+ELSEIF RESULT == 0
+	RETURN 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;理性復活薬(理性復活)
+;-------------------------------------------------
+@USE_DRUG_27, ARG, ARG:1
+PRINTFORMW ＜%CALLNAME:ARG%の理性が復活された＞
+MAXBASE:ARG:9 = 5000
+PRINTFORM ＜理性の最大値は
+PRINTV MAXBASE:ARG:9
+PRINTFORMW です＞
+BASE:ARG:理性 = MAXBASE:ARG:9 / 5
+TALENT:ARG:理性 = 1
+RETURN 1
+
+;-------------------------------------------------
+;復活薬(キャラ復活)
+;-------------------------------------------------
+@USE_DRUG_28, ARG, ARG:1
+PRINTFORMW ＜%CALLNAME:ARG%が復活された＞
+MAXBASE:ARG:0 = MIN( CSVBASE(NO:ARG, 0, CFLAG:ARG:0)  , 1000)
+PRINTFORM ＜体力の最大値は
+PRINTV MAXBASE:ARG:0
+PRINTFORMW です＞
+MAXBASE:ARG:1 = LIMIT(MAXBASE:ARG:1 - 500, 1000, CSVBASE(NO:ARG, 1, CFLAG:ARG:0) )
+PRINTFORM ＜気力の最大値は
+PRINTV MAXBASE:ARG:1
+PRINTFORMW です＞
+BASE:ARG:体力 = 250
+BASE:ARG:気力 = 0
+TALENT:ARG:死亡 = 0
+RETURN 1
+
+;-------------------------------------------------
+;赤の飴玉(処女膜再生)
+;-------------------------------------------------
+@USE_DRUG_30, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 330, 0
+PRINTFORMW ＜%CALLNAME:ARG%の処女膜が再生された＞
+TALENT:ARG:処女 = 2
+RETURN 1
+
+;-------------------------------------------------
+;青の飴玉(母乳体質)
+;-------------------------------------------------
+@USE_DRUG_31, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 331, 0
+PRINTFORMW ＜%CALLNAME:ARG%は母乳が出るようになった＞
+TALENT:ARG:母乳体質 = 1
+CALL CALC_GAUGE3_SLAVE, ARG, 1
+RETURN 1
+
+;-------------------------------------------------
+;黄の飴玉(産卵体質)
+;-------------------------------------------------
+@USE_DRUG_32, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 332
+
+;ABL:Ｖ感覚をみる
+LOCAL = 175 * (1 + ABL:ARG:Ｖ感覚)
+
+;EXP:Ｖ経験をみる
+IF EXP:ARG:Ｖ経験 < EXPLV:1
+	TIMES LOCAL , 0.20
+	LOCAL:1 = 3000
+ELSEIF EXP:ARG:Ｖ経験 < EXPLV:2
+	TIMES LOCAL , 0.60
+	LOCAL:1 = 2000
+ELSEIF EXP:ARG:Ｖ経験 < EXPLV:3
+	TIMES LOCAL , 1.00
+	LOCAL:1 = 1500
+ELSEIF EXP:ARG:Ｖ経験 < EXPLV:4
+	TIMES LOCAL , 1.20
+	LOCAL:1 = 1000
+ELSEIF EXP:ARG:Ｖ経験 < EXPLV:5
+	TIMES LOCAL , 1.40
+	LOCAL:1 = 500
+ELSE
+	TIMES LOCAL , 1.60
+	LOCAL:1 = 100
+ENDIF
+
+;EXP:産卵経験をみる
+IF EXP:ARG:産卵経験 < EXPLV:2
+	TIMES LOCAL , 0.80
+	TIMES LOCAL:1 , 1.50
+ELSEIF EXP:ARG:産卵経験 < EXPLV:4
+	TIMES LOCAL , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSEIF EXP:ARG:産卵経験 < EXPLV:5
+	TIMES LOCAL , 1.20
+	TIMES LOCAL:1 , 0.80
+ELSE
+	TIMES LOCAL , 1.50
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+IF TALENT:ARG:処女
+	PRINTL 処女喪失
+	TALENT:ARG:処女 = 0
+	TIMES LOCAL:1 , 2.50
+ENDIF
+;Ｖ経験
+CALL COMMON_UP_EXP, ARG, 40, 5, 0, 1
+;Ｖ拡張経験
+CALL COMMON_UP_EXP, ARG, 32, 1, 0, 1
+;薬物経験
+CALL COMMON_UP_EXP, ARG, 40, 1, 0, 1
+;異常経験
+SIF EXP:ARG:産卵経験 == 0 && (CFLAG:ARG:20 & 1024) == 0
+	CALL COMMON_UP_EXP, ARG, 50, 1, 0, 1
+;産卵経験
+CALL COMMON_UP_EXP, ARG, 51, 1, 0, 1
+
+;元[卵生]かそうでないかを判断
+IF CFLAG:ARG:20 & 1024
+	PRINTFORMW ＜%CALLNAME:ARG%は卵を産む体質に戻った＞
+	TALENT:ARG:卵生 = 1
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%は卵を産む体質になってしまった＞
+	TALENT:ARG:産卵体質 = 1
+ENDIF
+
+;元々[卵生]ではなく、異常経験5以下かつ妄信、親愛、相愛、服従、傀儡、精神崩壊、壊造人格なしだと狂気が付く
+IF (CFLAG:ARG:20 & 1024) == 0 && EXP:ARG:異常経験 < 6 && TALENT:ARG:妄信 == 0 && TALENT:ARG:親愛 == 0 && TALENT:ARG:相愛 == 0 && TALENT:ARG:狂気 == 0 && TALENT:ARG:服従 == 0 && TALENT:ARG:精神崩壊 == 0 && TALENT:ARG:傀儡 == 0 && TALENT:ARG:壊造人格 == 0 && ARG != MASTER
+	PRINTFORMW %CALLNAME:ARG%は自分の体に起きた変化についていけなくなり、とうとう発狂してしまった
+	TALENT:ARG:狂気 = 1
+	CFLAG:ARG:12 |= 1
+	CFLAG:ARG:17 |= 2
+ENDIF
+
+;入手した卵を展示室に
+IF ARG != MASTER
+	TFLAG:128 = 1
+	SIF FLAG:12 & 8
+		CALL GET_EGG, ARG
+ENDIF
+PRINTL 
+PRINTFORML %CALLNAME:ARG%は体力を激しく消耗している
+PRINTFORMW 少し\@(ARG == MASTER) ? 休んだ # 休ませた\@ほうがよさそうだ……
+BASE:ARG:体力 = 100
+TFLAG:128 = 0
+RETURN 1
+
+;-------------------------------------------------
+;緑の飴玉(ロリ化)
+;-------------------------------------------------
+@USE_DRUG_33, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 333
+
+IF TALENT:ARG:巨躯
+	PRINTFORMW ＜%CALLNAME:ARG%は[巨躯]を失った＞
+	TALENT:ARG:巨躯 = 0
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%は[小柄体型]を得た＞
+	TALENT:ARG:小柄体型 = 1
+ENDIF
+
+CALL COMMON_UP_EXP, ARG, 40, 1, 0
+IF (CFLAG:ARG:12 & 8192) == 0
+	CALL COMMON_UP_EXP, ARG, 50, 1, 0
+	CFLAG:ARG:12 |= 8192
+ENDIF
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり || TALENT:ARG:具現
+	CFLAG:ARG:509 = 0
+CALL MAKE_SIZE, 1, ARG
+RETURN 1
+
+;-------------------------------------------------
+;白の飴玉(妖精化)
+;-------------------------------------------------
+@USE_DRUG_34, ARG, ARG:1
+IF ARG == MASTER
+	PRINTFORML ＜%CALLNAME:ARG%が妖精になりますか？＞
+	PRINTFORM ※二度と戻れ
+ELSE
+	PRINTFORML ＜%CALLNAME:ARG%を妖精化させますか？＞
+	PRINTFORM ※二度と戻せ
+ENDIF
+PRINTW なくなります！よく考えて行ってください！
+DRAWLINE
+PRINTL [0] - 今はやめておく
+PRINTFORML [1] - \@(ARG == MASTER) ? 妖精になる # 妖精化させる\@
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL FAIRY_EVENT, ARG
+ELSEIF RESULT == 0
+	RETURN 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;黒の飴玉(ＥＸ化)
+;-------------------------------------------------
+@USE_DRUG_35, ARG, ARG:1
+PRINTFORML ＜%CALLNAME:ARG%をＥＸ化させますか？＞
+PRINTW ※一度実行すると元に戻せません
+DRAWLINE
+PRINTL [0] - 今はやめておく
+PRINTL [1] - ＥＸ化させる
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL EX_EVENT, ARG
+ELSEIF RESULT == 0
+	RETURN 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;灰の飴玉(性格反転)
+;-------------------------------------------------
+@USE_DRUG_36, ARG, ARG:1
+PRINTFORML ＜%CALLNAME:ARG%の性格を反転させますか？＞
+PRINTW ※ただし副作用として体力・気力の最大値が減少します
+DRAWLINE
+PRINTL [0] - 今はやめておく
+PRINTL [1] - 反転させる
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 1
+	CALL REVERSE_CHARACTER, ARG
+ELSEIF RESULT == 0
+	RETURN 0
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;金の飴玉(強制成長)
+;-------------------------------------------------
+@USE_DRUG_37, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 337
+
+IF TALENT:ARG:小人体型
+	PRINTFORMW ＜%CALLNAME:ARG%は[小人体型]を失い、[小柄体型]を得た＞
+	TALENT:ARG:小人体型 = 0
+	TALENT:ARG:小柄体型 = 1
+ELSEIF TALENT:ARG:小柄体型
+	PRINTFORMW ＜%CALLNAME:ARG%は[小柄体型]を失った＞
+	TALENT:ARG:小柄体型 = 0
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%は[巨躯]を得た＞
+	TALENT:ARG:巨躯 = 1
+ENDIF
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり || TALENT:ARG:具現
+	CFLAG:ARG:509 = 0
+CALL MAKE_SIZE, 1, ARG
+CALL COMMON_UP_EXP, ARG, 40, 1, 0
+IF (CFLAG:ARG:20 & 256) == 0
+	CALL COMMON_UP_EXP, ARG, 50, 1, 0
+	CFLAG:ARG:20 |= 256
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;銀の飴玉(産卵体質解除・卵生→胎生へ)
+;-------------------------------------------------
+@USE_DRUG_38, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 338
+
+;卵生・産卵体質別々に削除処理
+;元々卵生のキャラはCFLAG:20の1024を立てることで初回の異常経験入手処理の判別と〔黄の飴玉〕で[卵生]に戻るかどうかを判別するのに使用
+IF TALENT:ARG:卵生
+	TALENT:ARG:卵生 = 0
+	PRINTFORMW ＜%CALLNAME:ARG%は[卵生]を失った＞
+	IF (CFLAG:ARG:20 & 1024) == 0
+		CALL COMMON_UP_EXP, ARG, 50, 1, 0
+		CFLAG:ARG:20 |= 1024
+	ENDIF
+ELSE
+	TALENT:ARG:産卵体質 = 0
+	PRINTFORMW ＜%CALLNAME:ARG%は[産卵体質]を失った＞
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;虹の飴玉(性転換)
+;-------------------------------------------------
+@USE_DRUG_39, ARG, ARG:1
+;性別再反転時（元に戻る時）に必要な情報の保存
+;ここらへんはYM用性別反転コマンドから借用
+;初回時に元の性別をCFLAG:4995に保存
+;処女の情報をCFLAG:4996に保存
+;胸の大きさをCFLAG:4997に保存
+;ふたなりの情報をCFLAG:4998に保存
+;母乳体質の情報をCFLAG:4999に保存
+
+IF CFLAG:ARG:4995 == 0
+	IF TALENT:ARG:オトコ
+		CFLAG:ARG:4995 = 1
+		;男が初めてTSしたら処女に決まってんだろJK
+		CFLAG:ARG:4996 = 1
+		;元が男の場合は胸のサイズをランダムで決定
+		;ただし、小柄・小人体型はそこから1サイズ小さく、巨躯は1サイズ大きくする
+		LOCAL:1 = RAND:100
+		IF LOCAL:1 < 5
+			CFLAG:ARG:4997 = 0
+		ELSEIF LOCAL:1 < 25
+			CFLAG:ARG:4997 = 1
+		ELSEIF LOCAL:1 > 95 - (TALENT:ARG:巨躯 * 20 + (TALENT:ARG:小人体型  + TALENT:ARG:小柄体型) * 5)
+			CFLAG:ARG:4997 = 4
+		ELSEIF LOCAL:1 > 75
+			CFLAG:ARG:4997 = 3
+		ELSE
+			CFLAG:ARG:4997 = 2
+		ENDIF
+		CFLAG:ARG:4997 = LIMIT(CFLAG:ARG:4997 + (TALENT:ARG:巨躯 - TALENT:ARG:小柄体型 - TALENT:ARG:小人体型), 0, 4)
+	ELSE
+		CFLAG:ARG:4995 = 2
+	ENDIF
+ENDIF
+
+IF TFLAG:228 == 0
+	;口上・地の文の表示
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 339
+ELSEIF TFLAG:228 >= 2
+	PRINTFORMW %CALLNAME:MASTER%は身体を変化させようとした……
+ELSEIF TFLAG:228
+	PRINTFORMW %CALLNAME:ARG%は%CALLNAME:MASTER%の前で身体を変化させようとした……
+ENDIF
+IF TALENT:ARG:オトコ
+	PRINTFORMW ＜%CALLNAME:ARG%は女性になった＞
+	;女性化の処理
+	TALENT:ARG:処女 = CFLAG:ARG:4996
+	TALENT:ARG:オトコ = 0
+	TALENT:ARG:ふたなり = CFLAG:ARG:4998
+	;[早漏]、[遅漏]関係の保存
+	CALL CHANGE_SORO_COMMON, ARG
+	IF TALENT:ARG:ふたなり
+		MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+	ELSE
+		MAXBASE:ARG:2 = 0
+	ENDIF
+	TALENT:ARG:母乳体質 = CFLAG:ARG:4999
+	SIF TALENT:ARG:母乳体質
+		CALL CALC_GAUGE3_SLAVE, ARG, 1
+	IF CFLAG:ARG:4997 == 0
+		TALENT:ARG:絶壁 = 1
+	ELSEIF CFLAG:ARG:4997 == 1
+		TALENT:ARG:貧乳 = 1
+	ELSEIF CFLAG:ARG:4997 == 3
+		TALENT:ARG:巨乳 = 1
+	ELSEIF CFLAG:ARG:4997 == 4
+		TALENT:ARG:爆乳 = 1
+	ENDIF
+ELSE
+	PRINTFORMW ＜%CALLNAME:ARG%は男性になった＞
+	;男性化の処理
+	CFLAG:ARG:4996 = TALENT:ARG:処女
+	CFLAG:ARG:4998 = TALENT:ARG:ふたなり
+	CFLAG:ARG:4999 = TALENT:ARG:母乳体質
+	IF TALENT:ARG:絶壁
+		CFLAG:ARG:4997 = 0
+	ELSEIF TALENT:ARG:貧乳
+		CFLAG:ARG:4997 = 1
+	ELSEIF TALENT:ARG:巨乳
+		CFLAG:ARG:4997 = 3
+	ELSEIF TALENT:ARG:爆乳
+		CFLAG:ARG:4997 = 4
+	ELSE
+		CFLAG:ARG:4997 = 2
+	ENDIF
+	TALENT:ARG:処女 = 0
+	TALENT:ARG:絶壁 = 0
+	TALENT:ARG:貧乳 = 0
+	TALENT:ARG:巨乳 = 0
+	TALENT:ARG:爆乳 = 0
+	TALENT:ARG:オトコ = 1
+	TALENT:ARG:ふたなり = 0
+	;[早漏]、[遅漏]関係の再設定
+	CALL CHANGE_SORO_COMMON, ARG
+	MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+	TALENT:ARG:母乳体質 = 0
+	MAXBASE:ARG:3 = 0
+ENDIF
+
+IF TFLAG:228 == 0
+	IF (CFLAG:ARG:20 & 512) == 0
+		;異常経験
+		CALL COMMON_UP_EXP, ARG, 50, 1, 0
+		CFLAG:ARG:20 |= 512
+	ENDIF
+	;薬物経験
+	CALL COMMON_UP_EXP, ARG, 40, 1, 1
+ENDIF
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり || TALENT:ARG:具現
+	CFLAG:ARG:509 = 0
+CALL MAKE_SIZE, 1, ARG
+RETURN 1
+
+;-------------------------------------------------
+;翠の飴玉(陰毛を生やす)
+;-------------------------------------------------
+@USE_DRUG_40, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 340, 0
+PRINTFORMW ＜%CALLNAME:ARG%は陰毛が生えてくるようになった＞
+CFLAG:ARG:36 = 2
+RETURN 1
+
+;-------------------------------------------------
+;紺の飴玉(赤子の成長促進)　※有精卵にも使える
+;-------------------------------------------------
+@USE_DRUG_41, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 341, 0
+PRINTFORMW ＜%CALLNAME:ARG%のお腹の中が少し熱くなったように感じた＞
+;効果量(デフォルトは10日早める。20以上に設定するとバグる可能性大)
+EQUIP:ARG:紺の飴玉 = 10
+RETURN 1
+
+;-------------------------------------------------
+;桃の飴玉(助手引き継ぎ時にＥＸ化解除可能)
+;-------------------------------------------------
+@USE_DRUG_42, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 342, 0
+PRINTFORMW ＜%CALLNAME:ARG%は言葉では表現し難い奇妙な感覚に陥った＞
+;周回を跨ぐ時に効果を発揮
+EQUIP:ARG:桃の飴玉 = 1
+RETURN 1
+
+;-------------------------------------------------
+;鈍の飴玉(ミニ化)
+;-------------------------------------------------
+@USE_DRUG_43, ARG, ARG:1
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ARG, 343
+PRINTFORMW ＜%CALLNAME:ARG%の体が手のひらサイズになりました＞
+
+TALENT:ARG:小人体型 = 1
+;念のため[巨躯]は消去
+TALENT:ARG:巨躯 = 0
+;薬物経験
+CALL COMMON_UP_EXP, ARG, 40, 1, 1
+IF (CFLAG:ARG:20 & 65536) == 0
+	;異常経験
+	CALL COMMON_UP_EXP, ARG, 50, 1, 0
+	CFLAG:ARG:20 |= 65536
+ENDIF
+;体型が変化したので身体測定
+CFLAG:ARG:508 = 0
+SIF TALENT:ARG:オトコ || TALENT:ARG:ふたなり || TALENT:ARG:具現
+	CFLAG:ARG:509 = 0
+CALL MAKE_SIZE, 1, ARG
+RETURN 1

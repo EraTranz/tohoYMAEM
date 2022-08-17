@@ -1,0 +1,216 @@
+﻿;=============================================================================
+;性感槍ぐんぐにる
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@EXCOM_ABLE660
+#FUNCTION
+;キャラ専用コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 16384) == 0
+	RETURNF 0
+;Ｖ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 1
+	RETURNF 0
+;[処女]のときは、異常系調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 4 && TALENT:処女
+	RETURNF 0
+;すでに実行しているとダメ
+SIF TFLAG:140 & 512
+	RETURNF 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURNF 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURNF 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURNF 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURNF 0
+;褌着用中の場合はダメ
+SIF TEQUIP:コスチュームプレイ == 17
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURNF 0
+;調教者がレミリアでないとダメ
+SIF NO:PLAYER != 1010
+	RETURNF 0
+;調教者の技巧が4無いとできない
+SIF ABL:PLAYER:技巧 < 4
+	RETURNF 0
+;アイテムを持っていないとダメ
+SIF ITEM:バイブ == 0
+	RETURNF 0
+;オトコだとダメ
+SIF TALENT:オトコ
+	RETURNF 0
+;調教対象が[小人体型]の場合は主人が[禁断の知識]持ちじゃないとダメ
+SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
+	RETURNF 0
+;対象が[処女]
+IF TALENT:処女 == 1
+	;対象の処女の判定
+	SIF COM_ABLE_VIRGIN(TARGET, PLAYER) == 0
+		RETURNF 0
+ELSE
+	;対象の《潤滑》は大丈夫かチェック
+	SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+		RETURNF 0
+ENDIF
+;Ｖ系装着具使用中は不可
+SIF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ
+	RETURNF 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 660) == 0
+	RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM660
+PRINTL 性感槍ぐんぐにる
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 660
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 性感槍ぐんぐにる
+SELECTCOM = 660
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+
+DOWNBASE:0 += 30
+DOWNBASE:1 += 100
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 80
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 250
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 600
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 1000
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 1300
+ELSE
+	SOURCE:快Ｖ = 1700
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み = 5500
+	SIF TEQUIP:触手調教
+		TCVAR:異常経験 += 1
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み = 300
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 50
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:痛み = 10
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.40
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.60
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.40
+	SOURCE:痛み += 400
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.10
+ELSE
+	TIMES SOURCE:快Ｖ , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.30
+ENDIF
+
+;小柄体型
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;バイブの装着
+TEQUIP:Ｖ系装着器具 = 1
+
+SIF TALENT:処女
+	TCVAR:異常経験 += 1
+TCVAR:Ｖ経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+;ＳＭ教育フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 2
+
+TFLAG:140 |= 512
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_660
+PRINTFORM %CALLNAME:PLAYER%はバイブを大仰に構えると、%CALLNAME:TARGET%の
+SIF PALAM:潤滑 >= PALAMLV:4
+	PRINT 濡れそぼった
+PRINTL 性器にへ一気に挿し込んだ…

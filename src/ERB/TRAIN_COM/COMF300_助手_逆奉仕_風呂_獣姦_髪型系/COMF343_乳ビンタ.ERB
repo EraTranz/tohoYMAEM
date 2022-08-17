@@ -1,0 +1,86 @@
+﻿;=============================================================================
+;乳ビンタ
+;=============================================================================
+;完全趣味コマンドなので実用性０
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE343
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:343 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;恋慕時のみ使用可
+SIF TALENT:恋慕 == 0
+	RETURN 0
+;助手調教の時は助手も恋慕がないとダメ
+SIF ASSIPLAY && TALENT:PLAYER:恋慕 == 0
+	RETURN 0
+;巨乳、爆乳時のみ使用可
+SIF TALENT:巨乳 == 0 && TALENT:爆乳 == 0
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;パニック中は不可
+SIF TFLAG:108 > 0
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;縄使用中は不可
+SIF TEQUIP:緊縛関連
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 11 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 343) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM343
+PRINTL 乳ビンタ
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 343
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 乳ビンタ
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 10
+
+SOURCE:主導権 = 350
+SOURCE:達成感 = 50
+SOURCE:恭順追加 = 50
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_343
+PRINTFORM %CALLNAME:TARGET%は%CALLNAME:PLAYER%の顔を
+IF TALENT:巨乳
+	PRINT その大きな
+ELSEIF TALENT:爆乳
+	PRINT その巨大な
+ENDIF
+PRINTL 胸で思いっきり叩いた…

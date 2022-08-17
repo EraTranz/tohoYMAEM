@@ -1,0 +1,133 @@
+﻿;=============================================================================
+;触手緊縛
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE507
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:507 > 0
+	RETURN 0
+;触手調教中じゃないとダメ
+SIF TEQUIP:触手調教 == 0
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 507) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM507
+PRINTL 触手緊縛
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 507
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 触手緊縛
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 100
+	DOWNBASE:1 += 150
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 80
+	DOWNBASE:1 += 120
+ELSE
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 90
+ENDIF
+
+LOCAL:1 = 250
+SOURCE:痛み = 800
+SOURCE:露出 = 800
+SOURCE:屈従 = 500
+SOURCE:逸脱 = 500
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.40
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:痛み += LOCAL:1
+SOURCE:露出 += LOCAL:1
+SOURCE:屈従 += LOCAL:1
+SOURCE:逸脱 += LOCAL:1
+
+TCVAR:緊縛経験 += 5
+
+;縄の着脱
+IF TEQUIP:緊縛関連 && !GROUPMATCH(TEQUIP:緊縛関連, 8, 9)
+	TEQUIP:緊縛関連 = 0
+ELSE
+	STAIN:手 |= 2
+	STAIN:手 |= 4
+	STAIN:胸 |= 2
+	STAIN:胸 |= 4
+
+	TEQUIP:緊縛関連 = 1
+ENDIF
+
+;コマンド属性：触手
+TFLAG:98 = 8
+
+;触手経験フラグ
+TFLAG:90 = 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_507
+IF TEQUIP:緊縛関連 && !GROUPMATCH(TEQUIP:緊縛関連, 8, 9)
+	PRINTFORML 触手は%CALLNAME:TARGET%の拘束を解いた
+ELSE
+	PRINTFORML 無数の触手が%CALLNAME:TARGET%の体を縛りあげた
+ENDIF

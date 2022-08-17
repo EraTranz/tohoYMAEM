@@ -1,0 +1,383 @@
+﻿;=============================================================================
+;足舐め強制
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE46
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:46 > 0
+	RETURN 0
+;対象が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;対象が[猫舌]だと技巧2必要
+SIF TALENT:猫舌 && ABL:技巧 < 2
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 46) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM46
+IF TALENT:PLAYER:人魚
+	PRINTL ひれ舐め強制
+ELSE
+	PRINTL 足舐め強制
+ENDIF
+
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+;戦闘判定
+CALL COM_TRY_BATTLE, 46
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+IF TFLAG:699 == 0
+	CALL COM_ORDER
+	;実行できない
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+IF TALENT:PLAYER:人魚
+	TSTR:0 = ひれ舐め強制
+ELSE
+	TSTR:0 = 足舐め強制
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 10
+DOWNBASE:1 += 200
+
+SOURCE:屈従 = 1400
+SOURCE:逸脱 = 1000
+
+;上のほうで計算した汚れデータ
+SOURCE:不潔 = TFLAG:242*20 + 300
+
+;ABL:奉仕精神をみる
+IF ABL:奉仕精神 == 0
+	SOURCE:性行動 = 400
+	SOURCE:達成感 = 50
+	TIMES SOURCE:屈従 , 0.80
+	TIMES SOURCE:不潔 , 4.00
+ELSEIF ABL:奉仕精神 == 1
+	SOURCE:性行動 = 480
+	SOURCE:達成感 = 100
+	TIMES SOURCE:屈従 , 0.90
+	TIMES SOURCE:不潔 , 2.50
+ELSEIF ABL:奉仕精神 == 2
+	SOURCE:主導権 = 400
+	SOURCE:性行動 = 550
+	SOURCE:達成感 = 200
+	TIMES SOURCE:屈従 , 1.00
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:奉仕精神 == 3
+	SOURCE:主導権 = 600
+	SOURCE:性行動 = 620
+	SOURCE:達成感 = 300
+	TIMES SOURCE:屈従 , 1.10
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:奉仕精神 == 4
+	SOURCE:主導権 = 800
+	SOURCE:性行動 = 700
+	SOURCE:達成感 = 500
+	TIMES SOURCE:屈従 , 1.20
+	TIMES SOURCE:不潔 , 0.50
+ELSE
+	SOURCE:主導権 = 1000
+	SOURCE:性行動 = 800
+	SOURCE:達成感 = 750
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:不潔 , 0.10
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES SOURCE:屈従 , 0.80
+	TIMES SOURCE:不潔 , 1.50
+ELSEIF ABL:マゾっ気 == 1
+	TIMES SOURCE:屈従 , 0.90
+	TIMES SOURCE:不潔 , 1.20
+ELSEIF ABL:マゾっ気 == 2
+	TIMES SOURCE:屈従 , 1.00
+	TIMES SOURCE:不潔 , 1.00
+ELSEIF ABL:マゾっ気 == 3
+	TIMES SOURCE:屈従 , 1.20
+	TIMES SOURCE:不潔 , 0.80
+ELSEIF ABL:マゾっ気 == 4
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:不潔 , 0.60
+ELSE
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:不潔 , 0.30
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:情愛 = 20
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:情愛 = 50
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:情愛 = 100
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:情愛 = 200
+ELSE
+	SOURCE:情愛 = 400
+ENDIF
+
+;TALENT:献身的を見る
+SIF TALENT:献身的
+	TIMES SOURCE:情愛 , 2.00
+
+;TALENT:倒錯的を見る
+IF TALENT:倒錯的
+	TIMES SOURCE:情愛 , 1.50
+	TIMES SOURCE:屈従 , 2.00
+	TIMES SOURCE:不潔 , 0.70
+	TIMES SOURCE:逸脱 , 0.20
+ENDIF
+
+;TALENT:恋慕/妄信/親愛を見る
+IF (TALENT:恋慕 || TALENT:妄信 || TALENT:親愛) && ASSIPLAY == 0
+	TIMES SOURCE:情愛 , 2.50
+	TIMES SOURCE:屈従 , 1.20
+ENDIF
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	TIMES SOURCE:性行動 , 0.50
+	TIMES SOURCE:達成感 , 0.50
+ELSEIF ABL:技巧 == 1
+	TIMES SOURCE:性行動 , 0.80
+	TIMES SOURCE:達成感 , 0.80
+ELSEIF ABL:技巧 == 2
+	TIMES SOURCE:性行動 , 1.00
+	TIMES SOURCE:達成感 , 1.00
+ELSEIF ABL:技巧 == 3
+	TIMES SOURCE:性行動 , 1.20
+	TIMES SOURCE:達成感 , 1.20
+ELSEIF ABL:技巧 == 4
+	TIMES SOURCE:性行動 , 1.50
+	TIMES SOURCE:達成感 , 1.50
+ELSE
+	TIMES SOURCE:性行動 , 2.00
+	TIMES SOURCE:達成感 , 2.00
+ENDIF
+
+;対象の口の汚れ⇔調教者の足の汚れが相互に移動
+STAIN:口 |= STAIN:PLAYER:足
+STAIN:PLAYER:足 |= STAIN:口
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 7
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 7
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && EXP:フェラ経験 >= EXPLV:3
+	TFLAG:50 += 1
+;奉仕快楽経験入手判定
+TFLAG:100 |= 1
+RETURN 1
+
+;--------------------------------------------------
+;命令拒否のメッセージ
+;--------------------------------------------------
+@SYSTXT_DENIAL_MESSAGE_COM_46
+IF ASSIPLAY
+	PRINTFORML %CALLNAME:TARGET%に%CALLNAME:PLAYER%の足を舐めるように命令してみたが拒否された。
+ELSE
+	PRINTFORML %CALLNAME:TARGET%に自分の足を舐めるように命令してみたが拒否された。
+ENDIF
+PRINTL もう少し調教が必要なようだ。
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_46
+IF TEQUIP:特殊風呂入浴中 == 1
+	PRINTFORML 全身に大量の淫蟲が這いずり回っている状態で、
+ELSEIF TEQUIP:特殊風呂入浴中 == 2
+	SIF TFLAG:135 == 1
+		PRINT 八目
+	SIF TFLAG:135 == 2
+		PRINT 電気
+	PRINTFORML 鰻がひしめく風呂に肩まで浸かりながら、
+ELSEIF TEQUIP:特殊風呂入浴中 == 3
+	PRINTFORML 全身でローションを被った状態で、
+ELSEIF TEQUIP:特殊風呂入浴中 == 4
+	PRINTFORML 全身スライム達に纏わりつかれながら、
+ELSEIF TEQUIP:特殊風呂入浴中 == 5
+	PRINTFORML 全身媚薬に浸かっている状態で、
+ELSEIF TEQUIP:野外プレイ
+	IF TIME == 0
+		PRINT 日差しが眩しい晴天の下で、
+	ELSE
+		PRINT 月の光が優しい深夜の幻想郷の中、
+	ENDIF
+	IF TALENT:臆病 || TALENT:プライド高い || TALENT:恥じらい
+		PRINTL この痴態を誰かに見られていないのかとびくびくしながら
+	ELSE
+		PRINTL 風に撫でられて素肌を僅かに震わせて
+	ENDIF
+ELSEIF TEQUIP:媚薬
+	PRINTL 薬のせいだろうか、どこか呆けたように視線を宙に漂わせつつ
+ENDIF
+PRINTFORM %CALLNAME:TARGET%は差し出された%CALLNAME:PLAYER%の
+IF TALENT:PLAYER:人魚
+	PRINT 尾ひれ
+ELSE
+	PRINT 足
+ENDIF
+PRINTL に舌を這わせている…
+
+;-------------------------------------------------
+;固有の実行判定
+;-------------------------------------------------
+@COM_ORDER_46, ARG
+LOCAL:99 = ARG
+;ABL:欲望
+IF ABL:欲望
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:欲望
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = ABL:奉仕精神
+	TFLAG:240 += LOCAL:99 * 4
+	RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = MARK:快楽刻印
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
+ENDIF
+
+;PALAM:欲情
+GETPALAMLV PALAM:欲情, 5
+LOCAL:2 = RESULT
+IF LOCAL:2
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = LOCAL:2
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %PALAMNAME:13%LV{LOCAL:2}({LOCAL:99})
+ENDIF
+
+;恥じらい
+IF TALENT:恥じらい
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
+ENDIF
+;男嫌い
+IF TALENT:男嫌い && TALENT:PLAYER:オトコ
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
+;女嫌い
+ELSEIF TALENT:女嫌い && TALENT:PLAYER:オトコ == 0
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 12
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
+ENDIF
+;汚臭鈍感
+IF TALENT:汚臭鈍感
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 1
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
+;汚臭敏感
+ELSEIF TALENT:汚臭敏感
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 3
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
+ENDIF
+;献身的
+IF TALENT:献身的
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 6
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
+ENDIF
+;快感の否定
+IF TALENT:快感の否定
+	RESULTS = %RESULTS% - 
+	LOCAL:99 = 1
+	TFLAG:240 -= LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
+ENDIF
+;恋慕
+IF TALENT:恋慕 && ASSIPLAY == 0
+	SIF LOCAL:99
+		RESULTS = %RESULTS% + 
+	LOCAL:99 = 5
+	TFLAG:240 += LOCAL:99
+	RESULTS = %RESULTS% %TALENTNAME:150%({LOCAL:99})
+ENDIF
+
+;調教者の足の汚れ
+TFLAG:242 = COMORDER_STAIN_CALC(6, 0)
+
+;汚れあり
+IF TFLAG:242
+	RESULTS = %RESULTS% - 
+	TFLAG:240 -= TFLAG:242
+	RESULTS = %RESULTS% 汚れあり
+	;汚臭鈍感
+	IF TALENT:汚臭鈍感
+		RESULTS = %RESULTS%、%TALENTNAME:61%
+	ELSEIF TALENT:汚臭敏感
+		RESULTS = %RESULTS%、%TALENTNAME:62%
+	ENDIF
+	RESULTS = %RESULTS%({TFLAG:242})
+	LOCAL:99 = 1
+ENDIF
+
+TFLAG:241 = 39

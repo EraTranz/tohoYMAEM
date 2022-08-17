@@ -1,0 +1,408 @@
+﻿;=============================================================================
+;酒風呂
+;=============================================================================
+;外界のお酒をふんだんに使ったブルジョワなコマンド。
+;調教のソースのデメリットが少ない＋他の風呂との差別化のため、お金消費型に
+;初回に150000圓、効果維持に毎ターン1000圓必要(この値はさり気なくeratohoJのプレゼントを参考にしています)
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE367
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:367 > 0
+	RETURN 0
+;特殊風呂系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 1024) == 0
+	RETURN 0
+;風呂を改装していないとダメ
+SIF (FLAG:74 & 128) == 0
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:特殊風呂入浴中 == 9
+	RETURN 1
+;機械だとダメ
+SIF TALENT:機械
+	RETURN 0
+;貧乏人には扱えないシロモノです
+SIF MONEY < 150000
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:Ｖ系装着器具 == 4 || TEQUIP:Ａ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 4 || TEQUIP:Ｃ系装着器具 == 6 || TEQUIP:Ｕ系装着器具 == 4 || TEQUIP:Ｂ系装着器具 == 4
+	RETURN 0
+;蜘蛛の巣にかけているときはダメ
+SIF TEQUIP:緊縛関連 == 7
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;野外はダメ
+SIF TEQUIP:野外プレイ
+	RETURN 0
+;お風呂場プレイ中じゃ無いとダメ
+SIF TEQUIP:お風呂場プレイ == 0
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;他の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 9
+	RETURN 0
+;お医者さんプレイ中はダメ
+SIF TEQUIP:お医者さんプレイ
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 367) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM367
+IF (NO:TARGET >= 1037 && NO:TARGET <= 1039) || NO:TARGET == 1043 || NO:TARGET == 1044 || NO:TARGET == 2019
+	PRINTL 御神酒風呂
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 367
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 御神酒風呂
+ELSEIF NO:TARGET == 1023 || NO:TARGET == 1060 || NO:TARGET == 3025 || NO:TARGET == 3026
+	PRINTL 鬼殺し
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 367
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 鬼殺し
+ELSEIF NO:TARGET == 1032 || NO:TARGET == 1041 || NO:TARGET == 3018 || NO:TARGET == 3019
+	PRINTL 天狗の行水
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 367
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 天狗の行水
+ELSEIF TALENT:河童
+	PRINTL キューカンバー・リキュール
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 367
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = キューカンバー・リキュール
+ELSE
+	PRINTL 酒風呂
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 367
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 酒風呂
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+IF TEQUIP:特殊風呂入浴中 == 9
+	DOWNBASE:0 += 10
+	DOWNBASE:1 += 20
+	SIF ABL:従順 >= 3
+		SOURCE:反感追加 = 100
+	TEQUIP:特殊風呂入浴中 = 0
+	RETURN 1
+ENDIF
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 40
+
+SOURCE:中毒充足 = 300
+SOURCE:液体追加 = 1000
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:反感追加 = 500
+	SOURCE:恭順追加 = 0
+ELSEIF ABL:従順 == 1
+	SOURCE:反感追加 = 250
+	SOURCE:恭順追加 = 20
+ELSEIF ABL:従順 == 2
+	SOURCE:反感追加 = 100
+	SOURCE:恭順追加 = 100
+ELSEIF ABL:従順 == 3
+	SOURCE:反感追加 = 10
+	SOURCE:恭順追加 = 250
+ELSEIF ABL:従順 == 4
+	SOURCE:反感追加 = 5
+	SOURCE:恭順追加 = 500
+ELSE
+	SOURCE:反感追加 = 0
+	SOURCE:恭順追加 = 800
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 = 20
+	TIMES SOURCE:反感追加 , 2.20
+	TIMES SOURCE:恭順追加 , 0.70
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 = 40
+	TIMES SOURCE:反感追加 , 1.50
+	TIMES SOURCE:恭順追加 , 0.80
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 = 80
+	TIMES SOURCE:反感追加 , 1.00
+	TIMES SOURCE:恭順追加 , 0.90
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 = 140
+	TIMES SOURCE:反感追加 , 0.80
+	TIMES SOURCE:恭順追加 , 1.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 = 280
+	TIMES SOURCE:反感追加 , 0.40
+	TIMES SOURCE:恭順追加 , 1.10
+ELSE
+	SOURCE:露出 = 500
+	TIMES SOURCE:反感追加 , 0.20
+	TIMES SOURCE:恭順追加 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:欲情追加 = 10
+	TIMES SOURCE:中毒充足 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:欲情追加 = 75
+	TIMES SOURCE:中毒充足 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:欲情追加 = 150
+	TIMES SOURCE:中毒充足 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:欲情追加 = 300
+	TIMES SOURCE:中毒充足 , 1.20
+ELSE
+	SOURCE:欲情追加 = 750
+	TIMES SOURCE:中毒充足 , 1.40
+ENDIF
+
+;個々で設定するのが面倒なので大まかに神霊(半神)、鬼(黄昏の怪物)、天狗、河童の4種族のみに効果を付けることに
+;神霊・半神
+IF TALENT:神霊 || TALENT:半神
+	TIMES SOURCE:欲情追加 , 2.25
+	TIMES SOURCE:反感追加 , 0.75
+	TIMES SOURCE:痛み , 1.75
+;鬼・黄昏の怪物
+ELSEIF TALENT:鬼 || TALENT:黄昏の怪物
+	TIMES SOURCE:欲情追加 , 1.80
+	TIMES SOURCE:露出 , 1.20
+	TIMES SOURCE:反感追加 , 0.70
+	TIMES SOURCE:痛み , 1.80
+;天狗
+ELSEIF TALENT:天狗
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:反感追加 , 0.80
+	TIMES SOURCE:痛み , 1.50
+;河童
+ELSEIF TALENT:河童
+	TIMES SOURCE:欲情追加 , 1.30
+	TIMES SOURCE:反感追加 , 0.90
+	TIMES SOURCE:痛み , 1.30
+ENDIF
+
+;ABL:従順をみる（酒酔いソースのみ）　なお助手プレイでなくて服従と使い魔がなく恋慕系素質を持つ対象は別扱い
+IF (TALENT:恋慕 || TALENT:親愛 || TALENT:相愛) && TALENT:服従 == 0 && TALENT:使い魔 == 0 && ASSIPLAY == 0
+	SOURCE:酒酔い = 1200
+ELSEIF ABL:従順 >= 5
+	SOURCE:酒酔い = 1000
+ELSEIF ABL:従順 == 4
+	SOURCE:酒酔い = 500
+ELSEIF ABL:従順 == 3
+	SOURCE:酒酔い = 100
+ELSEIF ABL:従順 == 2
+	SOURCE:酒酔い = 50
+ELSEIF ABL:従順 == 1
+	SOURCE:酒酔い = 10
+ENDIF
+
+MONEY -= 150000
+TEQUIP:特殊風呂入浴中 = 9
+
+RETURN 1
+
+;--------------------------------------------------
+;酒風呂入浴中
+;--------------------------------------------------
+@EQUIP_COM367
+PRINTL ＜酒風呂入浴中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 20
+
+SOURCE:中毒充足 += 90
+SOURCE:液体追加 += 100
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	SOURCE:反感追加 += 600
+	SOURCE:恭順追加 += 5
+ELSEIF ABL:従順 == 1
+	SOURCE:反感追加 += 300
+	SOURCE:恭順追加 += 15
+ELSEIF ABL:従順 == 2
+	SOURCE:反感追加 += 150
+	SOURCE:恭順追加 += 80
+ELSEIF ABL:従順 == 3
+	SOURCE:反感追加 += 30
+	SOURCE:恭順追加 += 150
+ELSEIF ABL:従順 == 4
+	SOURCE:反感追加 += 10
+	SOURCE:恭順追加 += 300
+ELSE
+	SOURCE:反感追加 += 0
+	SOURCE:恭順追加 += 600
+ENDIF
+
+;ABL:露出癖をみる
+IF ABL:露出癖 == 0
+	SOURCE:露出 += 5
+	TIMES SOURCE:反感追加 , 2.20
+	TIMES SOURCE:恭順追加 , 0.70
+ELSEIF ABL:露出癖 == 1
+	SOURCE:露出 += 10
+	TIMES SOURCE:反感追加 , 1.50
+	TIMES SOURCE:恭順追加 , 0.80
+ELSEIF ABL:露出癖 == 2
+	SOURCE:露出 += 30
+	TIMES SOURCE:反感追加 , 1.00
+	TIMES SOURCE:恭順追加 , 0.90
+ELSEIF ABL:露出癖 == 3
+	SOURCE:露出 += 60
+	TIMES SOURCE:反感追加 , 0.80
+	TIMES SOURCE:恭順追加 , 1.00
+ELSEIF ABL:露出癖 == 4
+	SOURCE:露出 += 100
+	TIMES SOURCE:反感追加 , 0.40
+	TIMES SOURCE:恭順追加 , 1.10
+ELSE
+	SOURCE:露出 += 150
+	TIMES SOURCE:反感追加 , 0.20
+	TIMES SOURCE:恭順追加 , 1.20
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	SOURCE:欲情追加 += 5
+	TIMES SOURCE:中毒充足 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	SOURCE:欲情追加 += 25
+	TIMES SOURCE:中毒充足 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	SOURCE:欲情追加 += 50
+	TIMES SOURCE:中毒充足 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	SOURCE:欲情追加 += 75
+	TIMES SOURCE:中毒充足 , 1.20
+ELSE
+	SOURCE:欲情追加 += 100
+	TIMES SOURCE:中毒充足 , 1.40
+ENDIF
+
+;神霊・半神
+IF TALENT:神霊 || TALENT:半神
+	TIMES SOURCE:欲情追加 , 2.25
+	TIMES SOURCE:反感追加 , 0.75
+	TIMES SOURCE:痛み , 1.75
+;鬼・黄昏の怪物
+ELSEIF TALENT:鬼 || TALENT:黄昏の怪物
+	TIMES SOURCE:欲情追加 , 1.80
+	TIMES SOURCE:露出 , 1.20
+	TIMES SOURCE:反感追加 , 0.70
+	TIMES SOURCE:痛み , 1.80
+;天狗
+ELSEIF TALENT:天狗
+	TIMES SOURCE:欲情追加 , 1.50
+	TIMES SOURCE:反感追加 , 0.80
+	TIMES SOURCE:痛み , 1.50
+;河童
+ELSEIF TALENT:河童
+	TIMES SOURCE:欲情追加 , 1.30
+	TIMES SOURCE:反感追加 , 0.90
+	TIMES SOURCE:痛み , 1.30
+ENDIF
+
+;酔いが回る
+SOURCE:酒酔い += 500
+
+;お金を消費
+MONEY -= 1000
+IF MONEY < 1000
+	PRINTL 風呂に酒を満たすためのお金が足りなくなってきた…
+	PRINTFORML %CALLNAME:MASTER%はしかたなく風呂から%CALLNAME:TARGET%を引き揚げた
+	IF ABL:従順 >= 3
+		PRINTFORML 心なしか%CALLNAME:TARGET%は酒が切れたこと残念そうにしている…
+		SOURCE:反感追加 += 500
+		SIF TALENT:鬼 || TALENT:黄昏の怪物
+			SOURCE:反感追加 += 2500
+	ENDIF
+	TEQUIP:特殊風呂入浴中 = 0
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_367
+IF TEQUIP:特殊風呂入浴中 == 9
+	PRINTFORML 酒で満たされた風呂から%CALLNAME:TARGET%を引き揚げた
+	SIF ABL:従順 >= 3
+		PRINTFORML %CALLNAME:TARGET%は少し残念そうな顔をしている…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を酒で満たされた風呂に浸からせた
+	PRINTFORM %CALLNAME:TARGET%は
+	IF (TALENT:恋慕 || TALENT:親愛 || TALENT:相愛) && TALENT:服従 == 0 && TALENT:使い魔 == 0 && ASSIPLAY == 0
+		PRINTFORML %CALLNAME:MASTER%に向かって一緒に浸かって飲もうと誘ってきた
+	ELSEIF ABL:従順 >= 5
+		PRINTL 顔を埋めるまで湯船に浸かり、遠慮なく酒を飲んでいる…
+	ELSEIF ABL:従順 == 4
+		PRINTL 酒の香りを一通り楽しむと我慢できないとばかりゴクゴクと湯船の液体を飲み始めた
+	ELSEIF ABL:従順 == 3
+		PRINTL 酒の魔力に屈したのか、一瞬躊躇ったような仕草をした後おもむろに風呂の酒に手を付け始めた
+	ELSEIF ABL:従順 == 2
+		PRINTL 後ろめたい気持ちが残っているのか、こっそり酒を口に含めつつ
+		PRINTFORML 時折%CALLNAME:PLAYER%の方をチラチラと見ている…
+	ELSEIF ABL:従順 == 1
+		PRINTL 酒の誘惑に勝てなかったのか、
+		PRINTFORML %CALLNAME:PLAYER%が見ていない隙を突いて一口掬いとった
+	ELSE
+		PRINTL 酒の誘惑よりも警戒心が勝るのか油断なくこちらを見据えている…
+	ENDIF
+ENDIF

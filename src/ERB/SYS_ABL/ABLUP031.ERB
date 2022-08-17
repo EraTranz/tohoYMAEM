@@ -1,0 +1,261 @@
+﻿;=============================================================================
+;精液中毒
+;=============================================================================
+@ABLUP31
+DRAWLINE
+SIF ABL:精液中毒 >= 5
+	JUMP ABLUP_MAX
+
+;ＬＶ２から３、ＬＶ３から４、４から５に上げるときは異常経験必要（素質：[汚臭鈍感][中毒しやすい]なら無視できる）
+SIF COST31(6)
+	PRINTFORM %EXPNAME:50%{COST31(6)}以上、かつ
+;奉仕精神が必要
+PRINTFORML %ABLNAME:13%{ABL:精液中毒 + 1}LV以上、かつ
+
+PRINTFORM [0] - %PALAMNAME:13%の珠×{COST31(0)}、%PALAMNAME:14%の珠×{COST31(1)}、%EXPNAME:4%{COST31(2)}以上……
+CALL SHOW_ISABLUP_COMMON, CAN31(0)
+
+PRINTFORM [1] - %PALAMNAME:13%の珠×{COST31(0) * 3}、%PALAMNAME:14%の珠×{COST31(1) * 3}、%EXPNAME:4%{COST31(2) / 2}以上……
+CALL SHOW_ISABLUP_COMMON, CAN31(1)
+
+;精愛味覚でLVをあげる
+IF COST31(5) > 0 && TALENT:精愛味覚
+	PRINTFORM [2] - %PALAMNAME:13%の珠×{COST31(3)}、%PALAMNAME:14%の珠×{COST31(4)}、%EXPNAME:4%{COST31(2)}、%EXPNAME:8%{COST31(5)}以上……
+	CALL SHOW_ISABLUP_COMMON, CAN31(2)
+ENDIF
+
+PRINTL [100] - やめる
+$INPUT_LOOP
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF (RESULT >= 0 && RESULT <= 2) && CAN31(RESULT) != 0
+	CLEARLINE 1
+	REUSELASTLINE 条件を満たしていません。
+	GOTO INPUT_LOOP
+ELSEIF RESULT == 0
+	JUEL:欲情 -= COST31(0)
+	JUEL:屈服 -= COST31(1)
+ELSEIF RESULT == 1
+	JUEL:欲情 -= COST31(0) * 3
+	JUEL:屈服 -= COST31(1) * 3
+ELSEIF RESULT == 2
+	JUEL:欲情 -= COST31(3)
+	JUEL:屈服 -= COST31(4)
+ELSE
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ENDIF
+
+ABL:精液中毒 += 1
+PRINTFORMW %ABLNAME:31%のレベルが{ABL:精液中毒}になりました。
+
+;--------------------------------------------------
+;レベルアップに必要な珠計算、レベルアップ予告処理
+;--------------------------------------------------
+@ISABLUP31
+SIF ABL:精液中毒 >= 5
+	RETURN 0
+
+CALLF CALC_COST31, "CALC"
+
+;条件別にＯＫかダメかを記録する
+RETURN CAN_ABLUP31("CHECK")
+
+@COST31(ARG)
+#FUNCTION
+RETURNF CALC_COST31("GET", ARG)
+
+@CALC_COST31(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+;必要な条件の算出
+VARSET LOCAL, 0
+
+IF ABL:精液中毒 == 0
+	LOCAL:0 = 3000
+	LOCAL:1 = 10000
+	LOCAL:2 = 100
+	LOCAL:3 = 0
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+ELSEIF ABL:精液中毒 == 1
+	LOCAL:0 = 8000
+	LOCAL:1 = 25000
+	LOCAL:2 = 250
+	LOCAL:3 = 0
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+ELSEIF ABL:精液中毒 == 2
+	LOCAL:0 = 15000
+	LOCAL:1 = 50000
+	LOCAL:2 = 450
+	LOCAL:3 = 0
+	LOCAL:4 = 0
+	LOCAL:5 = 0
+ELSEIF ABL:精液中毒 == 3
+	LOCAL:0 = 30000
+	LOCAL:1 = 100000
+	LOCAL:2 = 700
+	LOCAL:3 = 5000
+	LOCAL:4 = 10000
+	LOCAL:5 = 10
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+		TIMES LOCAL:2 , 2.00
+		TIMES LOCAL:3 , 2.00
+		TIMES LOCAL:4 , 2.00
+		TIMES LOCAL:5 , 2.00
+	ENDIF
+ELSEIF ABL:精液中毒 == 4
+	LOCAL:0 = 55000
+	LOCAL:1 = 300000
+	LOCAL:2 = 1000
+	LOCAL:3 = 10000
+	LOCAL:4 = 25000
+	LOCAL:5 = 25
+	;一線越えない
+	IF TALENT:一線越えない
+		TIMES LOCAL:0 , 3.00
+		TIMES LOCAL:1 , 3.00
+		TIMES LOCAL:2 , 3.00
+		TIMES LOCAL:3 , 3.00
+		TIMES LOCAL:4 , 3.00
+		TIMES LOCAL:5 , 3.00
+	ENDIF
+ENDIF
+
+;汚臭鈍感
+IF TALENT:汚臭鈍感
+	TIMES LOCAL:0 , 0.25
+	TIMES LOCAL:1 , 0.25
+	TIMES LOCAL:2 , 0.25
+	TIMES LOCAL:3 , 0.25
+	TIMES LOCAL:4 , 0.25
+	TIMES LOCAL:5 , 0.25
+;汚臭敏感
+ELSEIF TALENT:汚臭敏感
+	TIMES LOCAL:0 , 2.50
+	TIMES LOCAL:1 , 2.50
+	TIMES LOCAL:2 , 2.50
+	TIMES LOCAL:3 , 2.50
+	TIMES LOCAL:4 , 2.50
+	TIMES LOCAL:5 , 2.50
+ENDIF
+;倒錯的
+IF TALENT:倒錯的
+	TIMES LOCAL:0 , 0.75
+	TIMES LOCAL:1 , 0.75
+	TIMES LOCAL:2 , 0.75
+	TIMES LOCAL:3 , 0.75
+	TIMES LOCAL:4 , 0.75
+	TIMES LOCAL:5 , 0.75
+ENDIF
+;中毒しやすい
+IF TALENT:中毒しやすい
+	TIMES LOCAL:0 , 0.50
+	TIMES LOCAL:1 , 0.50
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 0.50
+	TIMES LOCAL:4 , 0.50
+	TIMES LOCAL:5 , 0.50
+;中毒しにくい
+ELSEIF TALENT:中毒しにくい
+	TIMES LOCAL:0 , 1.50
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 1.50
+	TIMES LOCAL:4 , 1.50
+	TIMES LOCAL:5 , 1.50
+ENDIF
+;[中毒扇動]有効
+IF TFLAG:995 == 1
+	TIMES LOCAL:0 , 0.80
+	TIMES LOCAL:1 , 0.80
+	TIMES LOCAL:2 , 0.80
+	TIMES LOCAL:3 , 0.80
+	TIMES LOCAL:4 , 0.80
+	TIMES LOCAL:5 , 0.80
+ENDIF
+
+
+
+;異常経験数により軽減
+IF !MARK:恐怖刻印 && !MARK:反発刻印
+	FOR PC_VAR1, 0, 6
+		LOCAL:PC_VAR1 = LOCAL:PC_VAR1 * (21 - LIMIT(EXP:異常経験/3, 1, 11)) / 20
+	NEXT
+ENDIF
+
+;ＬＶ２から３、ＬＶ３から４、４から５に上げるときは異常経験必要（素質：[汚臭鈍感][中毒しやすい]なら無視できる）
+SIF ABL:精液中毒 >= 2 && TALENT:汚臭鈍感 == 0 && TALENT:中毒しやすい == 0
+	LOCAL:6 = ABL:精液中毒 - 1
+
+RETURNF 0
+
+@CAN31(ARG)
+#FUNCTION
+RETURNF CAN_ABLUP31("GET", ARG)
+
+@CAN_ABLUP31(ARGS, ARG)
+#FUNCTION
+SIF ARGS == "GET"
+	RETURNF LOCAL:ARG
+VARSET LOCAL, 0
+;異常経験が必要な場合
+IF EXP:異常経験 < COST31(6)
+	LOCAL:0 |= 2
+	LOCAL:1 |= 2
+	LOCAL:2 |= 2
+ENDIF
+
+;奉仕精神が必要
+IF ABL:奉仕精神 < ABL:精液中毒 + 1
+	LOCAL:0 |= 4
+	LOCAL:1 |= 4
+	LOCAL:2 |= 4
+ENDIF
+
+;欲情の珠で上げる
+SIF JUEL:欲情 < COST31(0)
+	LOCAL:0 |= 1
+;屈服の珠で上げる
+SIF JUEL:屈服 < COST31(1)
+	LOCAL:0 |= 1
+;精液経験が必要
+SIF EXP:精液経験 < COST31(2)
+	LOCAL:0 |= 2
+
+;欲情の珠で上げる
+SIF JUEL:欲情 < COST31(0) * 3
+	LOCAL:1 |= 1
+;屈服の珠で上げる
+SIF JUEL:屈服 < COST31(1) * 3
+	LOCAL:1 |= 1
+;精液経験が必要
+SIF EXP:精液経験 < COST31(2) / 2
+	LOCAL:1 |= 2
+
+;精愛味覚でLVを上げる場合
+IF COST31(5) > 0 && TALENT:精愛味覚
+	;欲情の珠で上げる
+	SIF JUEL:欲情 < COST31(3)
+		LOCAL:2 |= 1
+	;屈服の珠で上げる
+	SIF JUEL:屈服 < COST31(4)
+		LOCAL:2 |= 1
+	;精液経験が必要
+	SIF EXP:精液経験 < COST31(2)
+		LOCAL:2 |= 2
+	;精飲絶頂経験が必要
+	SIF EXP:精飲絶頂経験 < COST31(5)
+		LOCAL:2 |= 2
+ELSE
+	LOCAL:2 = 256
+ENDIF
+
+RETURNF (LOCAL:0 == 0 || LOCAL:1 == 0 || LOCAL:2 == 0)

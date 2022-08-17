@@ -1,0 +1,1380 @@
+﻿;=============================================================================
+;特別な道具購入処理
+;=============================================================================
+@BUY_SPECIAL_ITEM
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORML 何を購入しますか？(所持金:{MONEY}圓)
+DRAWLINE
+CALL ARRANGE_PRINT_ITEM
+	IF FLAG:9549 & 2 
+		PRINTBUTTON "[70] - 展開", 70
+	ELSE
+		PRINTBUTTON "[70] - 閉合", 70
+	ENDIF
+	PRINTL
+DRAWLINE
+;-----------------------------------------------
+SIF (FLAG:73 & 1) == 0 && FLAG:15 & 16 && (TALENT:MASTER:サド || TALENT:MASTER:狂気 || TALENT:MASTER:ドＳ)
+	PRINTLC [ 0] 秘密の地下室(50萬圓)
+IF FLAG:15 & 16 && FLAG:73 & 1
+	SIF (FLAG:73 & 2) == 0
+		PRINTLC [ 1] 三角木馬(1萬圓)
+	SIF (FLAG:73 & 4) == 0
+		PRINTLC [ 2] 杭(2666圓)
+	SIF (FLAG:73 & 8) == 0
+		PRINTLC [ 3] ナイフ(6000圓)
+	SIF (FLAG:73 & 16) == 0
+		PRINTLC [ 4] 鉈(1萬圓)
+	SIF (FLAG:73 & 32) == 0
+		PRINTLC [ 5] アイアンメイデン(8萬圓)
+	SIF (FLAG:73 & 64) == 0
+		PRINTLC [ 6] じょうご(2萬圓)
+ENDIF
+;(名称が決まらない……)
+;SIF (FLAG:XX & X) == 0 && FLAG:15 & 16 && (TALENT:MASTER:サド || TALENT:MASTER:狂気 || TALENT:MASTER:ドＳ)
+;	PRINTLC [19] 檻(25萬圓)
+;-----------------------------------------------
+IF FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:2 = BRAND_SLAVE_CHECK()
+	SIF LOCAL:2 & 1
+		PRINTLC [20] クリトリスリング(10萬圓)
+	SIF LOCAL:2 & 2
+		PRINTLC [21] 奴隷管理用貞操帯(25萬圓)
+	SIF LOCAL:2 & 4
+		PRINTLC [22] ベリージュエル(30萬圓)
+	SIF LOCAL:2 & 8
+		PRINTLC [23] ボンデージ(25萬圓)
+	SIF LOCAL:2 & 16
+		PRINTLC [24] ラビアピアス(15萬圓)
+	SIF LOCAL:2 & 32
+		PRINTLC [25] ニプルピアス(20萬圓)
+ENDIF
+;-----------------------------------------------
+SIF FLAG:15 & 8192 && (FLAG:72 & 1) == 0
+	PRINTLC [40] 動物小屋(10萬圓)
+IF FLAG:15 & 8192 && FLAG:72 & 1
+	SIF (FLAG:72 & 2) == 0
+		PRINTLC [41] 犬(5萬圓)
+	SIF (FLAG:72 & 4) == 0
+		PRINTLC [42] 豚(20萬圓)
+	SIF (FLAG:72 & 8) == 0
+		PRINTLC [43] 馬(40萬圓)
+ENDIF
+;-----------------------------------------------
+SIF (FLAG:71 & 1) == 0
+	PRINTLC [60] 庭園(40萬圓)
+IF FLAG:71 & 1
+	SIF (FLAG:71 & 2) == 0
+		PRINTLC [61] 石燈籠(1萬圓)
+	SIF (FLAG:71 & 4) == 0
+		PRINTLC [62] 添水(1萬圓)
+	SIF (FLAG:71 & 8) == 0
+		PRINTLC [63] 茶室(15萬圓)
+	SIF (FLAG:71 & 16) == 0
+		PRINTLC [64] 池(20萬圓)
+	SIF (FLAG:71 & 32) == 0 && FLAG:71 & 16
+		PRINTLC [65] 魚(1萬圓)
+	SIF (FLAG:71 & 64) == 0
+		PRINTLC [66] 噴水(10萬圓)
+	SIF (FLAG:71 & 128) == 0
+		PRINTLC [67] 築山(10萬圓)
+	SIF (FLAG:71 & 256) == 0 && FLAG:71 & 128
+		PRINTLC [68] 大樹(2萬圓)
+ENDIF
+;-----------------------------------------------
+SIF (FLAG:79 & 1) == 0
+	PRINTLC [80] ハーブ園(50萬圓)
+IF FLAG:79 & 1
+	SIF (FLAG:79 & 2) == 0
+		PRINTLC [81] ハーブ開発施設(40萬圓)
+	SIF (FLAG:79 & 4) == 0
+		PRINTLC [82] ハーブ生産施設(30萬圓)
+ENDIF
+;-----------------------------------------------
+SIF FLAG:93 < 20
+	PRINTLC [98] 土地(5000圓)
+IF FLAG:90 == 0
+	PRINTLC [99] 豪邸(10萬圓)
+ELSEIF FLAG:90 == 1
+	PRINTLC [99] 小城(450萬圓)
+ELSEIF FLAG:90 == 2
+	PRINTLC [99] 隠れ里(700萬圓)
+ENDIF
+SIF LINEISEMPTY()
+	PRINT 買えるものがありません
+PRINTL 
+PRINTL [100]やめる
+DRAWLINE
+$INPUT_LOOP
+INPUT
+IF RESULT == 70
+    IF FLAG:9549 & 2
+		FLAG:9549 = 0
+	ELSE
+		FLAG:9549 |= 2
+	ENDIF
+ELSEIF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0 && (FLAG:73 & 1) == 0 && FLAG:15 & 16 && (TALENT:MASTER:サド || TALENT:MASTER:狂気 || TALENT:MASTER:ドＳ)
+	LOCAL:1 = 500000
+ELSEIF RESULT == 1 && (FLAG:73 & 2) == 0 && FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:1 = 10000
+ELSEIF RESULT == 2 && (FLAG:73 & 4) == 0 && FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:1 = 2666
+ELSEIF RESULT == 3 && (FLAG:73 & 8) == 0 && FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:1 = 6000
+ELSEIF RESULT == 4 && (FLAG:73 & 16) == 0 && FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:1 = 10000
+ELSEIF RESULT == 5 && (FLAG:73 & 32) == 0 && FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:1 = 80000
+ELSEIF RESULT == 6 && (FLAG:73 & 64) == 0 && FLAG:15 & 16 && FLAG:73 & 1
+	LOCAL:1 = 20000
+
+ELSEIF RESULT == 20 && FLAG:15 & 16 && FLAG:73 & 1 && LOCAL:2 & 1
+	LOCAL:1 = 100000
+ELSEIF RESULT == 21 && FLAG:15 & 16 && FLAG:73 & 1 && LOCAL:2 & 2
+	LOCAL:1 = 250000
+ELSEIF RESULT == 22 && FLAG:15 & 16 && FLAG:73 & 1 && LOCAL:2 & 4
+	LOCAL:1 = 300000
+ELSEIF RESULT == 23 && FLAG:15 & 16 && FLAG:73 & 1 && LOCAL:2 & 8
+	LOCAL:1 = 250000
+ELSEIF RESULT == 24 && FLAG:15 & 16 && FLAG:73 & 1 && LOCAL:2 & 16
+	LOCAL:1 = 150000
+ELSEIF RESULT == 25 && FLAG:15 & 16 && FLAG:73 & 1 && LOCAL:2 & 32
+	LOCAL:1 = 200000
+
+ELSEIF RESULT == 40 && FLAG:15 & 8192 && (FLAG:72 & 1) == 0
+	LOCAL:1 = 100000
+ELSEIF RESULT == 41 && FLAG:15 & 8192 && FLAG:72 & 1 && (FLAG:72 & 2) == 0
+	LOCAL:1 = 50000
+ELSEIF RESULT == 42 && FLAG:15 & 8192 && FLAG:72 & 1 && (FLAG:72 & 4) == 0
+	LOCAL:1 = 200000
+ELSEIF RESULT == 43 && FLAG:15 & 8192 && FLAG:72 & 1 && (FLAG:72 & 8) == 0
+	LOCAL:1 = 400000
+
+ELSEIF RESULT == 60 && (FLAG:71 & 1) == 0
+	LOCAL:1 = 400000
+ELSEIF RESULT == 61 && FLAG:71 & 1 && (FLAG:71 & 2) == 0
+	LOCAL:1 = 10000
+ELSEIF RESULT == 62 && FLAG:71 & 1 && (FLAG:71 & 4) == 0
+	LOCAL:1 = 10000
+ELSEIF RESULT == 63 && FLAG:71 & 1 && (FLAG:71 & 8) == 0
+	LOCAL:1 = 150000
+ELSEIF RESULT == 64 && FLAG:71 & 1 && (FLAG:71 & 16) == 0
+	LOCAL:1 = 200000
+ELSEIF RESULT == 65 && FLAG:71 & 1 && FLAG:71 & 16 && (FLAG:71 & 32) == 0
+	LOCAL:1 = 10000
+ELSEIF RESULT == 66 && FLAG:71 & 1 && (FLAG:71 & 64) == 0
+	LOCAL:1 = 100000
+ELSEIF RESULT == 67 && FLAG:71 & 1 && (FLAG:71 & 128) == 0
+	LOCAL:1 = 100000
+ELSEIF RESULT == 68 && FLAG:71 & 1 && FLAG:71 & 128 && (FLAG:71 & 256) == 0
+	LOCAL:1 = 20000
+
+ELSEIF RESULT == 80 && (FLAG:79 & 1) == 0
+	LOCAL:1 = 500000
+ELSEIF RESULT == 81 && FLAG:79 & 1 && (FLAG:79 & 2) == 0
+	LOCAL:1 = 400000
+ELSEIF RESULT == 82 && FLAG:79 & 1 && (FLAG:79 & 4) == 0
+	LOCAL:1 = 300000
+
+ELSEIF RESULT == 98 && FLAG:93 < 20
+	LOCAL:1 = 5000
+ELSEIF RESULT == 99 && FLAG:90 == 0
+	LOCAL:1 = 100000
+ELSEIF RESULT == 99 && FLAG:90 == 1
+	LOCAL:1 = 4500000
+ELSEIF RESULT == 99 && FLAG:90 == 2
+	LOCAL:1 = 7000000
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+IF MONEY < LOCAL:1
+	PRINTW 必要な資金が不足しています
+	DRAWLINE
+	RESTART
+ENDIF
+
+MONEY -= LOCAL:1
+PRINT ＜
+IF LOCAL == 0
+	PRINT 秘密の地下室
+	FLAG:73 |= 1
+ELSEIF LOCAL == 1
+	PRINT 三角木馬
+	FLAG:73 |= 2
+ELSEIF LOCAL == 2
+	PRINT 杭
+	FLAG:73 |= 4
+ELSEIF LOCAL == 3
+	PRINT ナイフ
+	FLAG:73 |= 8
+ELSEIF LOCAL == 4
+	PRINT 鉈
+	FLAG:73 |= 16
+ELSEIF LOCAL == 5
+	PRINT アイアンメイデン
+	FLAG:73 |= 32
+ELSEIF LOCAL == 6
+	PRINT じょうご
+	FLAG:73 |= 64
+
+ELSEIF LOCAL == 20
+	PRINT クリトリスリング
+ELSEIF LOCAL == 21
+	PRINT 奴隷管理用貞操帯
+ELSEIF LOCAL == 22
+	PRINT ベリージュエル
+ELSEIF LOCAL == 23
+	PRINT ボンデージ
+ELSEIF LOCAL == 24
+	PRINT ラビアピアス
+ELSEIF LOCAL == 25
+	PRINT ニプルピアス
+
+ELSEIF LOCAL == 40
+	PRINT 動物小屋
+	FLAG:72 |= 1
+ELSEIF LOCAL == 41
+	PRINT 犬
+	FLAG:72 |= 2
+ELSEIF LOCAL == 42
+	PRINT 豚
+	FLAG:72 |= 4
+ELSEIF LOCAL == 43
+	PRINT 馬
+	FLAG:72 |= 8
+
+ELSEIF LOCAL == 60
+	PRINT 庭園
+	FLAG:71 |= 1
+ELSEIF LOCAL == 61
+	PRINT 石燈籠
+	FLAG:71 |= 2
+ELSEIF LOCAL == 62
+	PRINT 添水
+	FLAG:71 |= 4
+ELSEIF LOCAL == 63
+	PRINT 茶室
+	FLAG:71 |= 8
+ELSEIF LOCAL == 64
+	PRINT 池
+	FLAG:71 |= 16
+ELSEIF LOCAL == 65
+	PRINT 魚
+	FLAG:71 |= 32
+ELSEIF LOCAL == 66
+	PRINT 噴水
+	FLAG:71 |= 64
+ELSEIF LOCAL == 67
+	PRINT 築山
+	FLAG:71 |= 128
+ELSEIF LOCAL == 68
+	PRINT 大樹
+	FLAG:71 |= 256
+
+ELSEIF LOCAL == 80
+	PRINT ハーブ園
+	FLAG:79 |= 1
+ELSEIF LOCAL == 81
+	PRINT ハーブ開発施設
+	FLAG:79 |= 2
+ELSEIF LOCAL == 82
+	PRINT ハーブ生産施設
+	FLAG:79 |= 4
+
+ELSEIF LOCAL == 98
+	PRINTL 土地を購入しました＞
+	FLAG:93 += 1
+ELSEIF LOCAL == 99
+	IF FLAG:90 == 0
+		PRINTL 豪邸を建てました＞
+		FLAG:92 = 20
+	ELSEIF FLAG:90 == 1
+		PRINTL 豪邸を売却し、小城を建てました＞
+		FLAG:92 = 50
+	ELSE
+		PRINTL 小城を中心にして、隠れ里を造り上げました＞
+		FLAG:92 = 200
+	ENDIF
+	IF FLAG:93
+		MONEY += FLAG:93 * 1000
+		FLAG:93 /= 2
+	ENDIF
+	FLAG:90 += 1
+ENDIF
+IF LOCAL == 0
+	PRINTW を実装しました＞
+ELSEIF LOCAL >= 20 && LOCAL < 30
+	PRINTW を購入しました＞
+	CALL BRAND_SLAVE_EQUIPMENT, LOCAL:1, LOCAL
+ELSEIF LOCAL >= 41 && LOCAL < 50
+	PRINTW を購入し、動物小屋に入れました＞
+ELSEIF LOCAL == 60 || LOCAL == 64 || LOCAL == 67
+	PRINTW を造成しました＞
+ELSEIF LOCAL == 61 || LOCAL == 62 || LOCAL == 66
+	PRINTW を設置しました＞
+ELSEIF LOCAL == 63 || LOCAL == 81 || LOCAL == 82
+	PRINTW を建設しました＞
+ELSEIF LOCAL == 64
+	PRINTW を購入し、池に放ちました＞
+ELSEIF LOCAL == 68
+	PRINTW を植樹しました＞
+ELSEIF LOCAL == 70
+ELSEIF LOCAL == 80
+	PRINTW を開園しました＞
+ELSEIF LOCAL == 98
+	PRINTW ＜奴隷購入可能数が増えました＞
+	SIF FLAG:93 >= 20
+		PRINTW ＜これ以上土地を購入することはできません＞
+ELSEIF LOCAL == 99
+	;主人が家屋敷を購入したときの現在の調教対象のイベント口上
+	SIF TARGET >= 0
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 239
+	PRINTW ＜奴隷購入可能数が大幅に増えました＞
+ELSE
+	PRINTW を購入しました＞
+ENDIF
+DRAWLINE
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+RESTART
+
+;=============================================================================
+;技能系アイテム購入処理
+;=============================================================================
+@BUY_SKILL
+;価格計算のためのローカル変数をリセット
+VARSET LOCAL, 0
+DRAWLINE
+PRINTFORML %CALLNAME:MASTER%にスキルを付与できます
+PRINTFORML 何を購入しますか？(所持金:{MONEY}圓)
+DRAWLINE
+;主人の現在の技巧Lvが5未満なら技巧Lvを習得できる
+IF ABL:MASTER:技巧 < 5
+	LOCAL:10 = BUY_SKILL_MASTER_TECH_PRICE()
+	PRINTFORMLC [10]【技巧Lv{ABL:MASTER:技巧 + 1}】(%SHOW_YEN(LOCAL:10)%)
+ENDIF
+;主人の現在の料理技能Lvが5未満で弁当・ライブＯＮなら料理技能Lvを習得できるかもしれない
+IF ABL:MASTER:料理技能 < 5 && FLAG:12 & 16
+	LOCAL:11 = BUY_SKILL_MASTER_COOKING_PRICE()
+	SIF LOCAL:11 > 0
+		PRINTFORMLC [11]【料理技能Lv{ABL:MASTER:料理技能 + 1}】(%SHOW_YEN(LOCAL:11)%)
+ENDIF
+;主人の現在の撮影技能Lvが5未満でカメラかビデオカメラを所有しており、撮影コマンド拡張ＯＮなら撮影技能Lvを習得できるかもしれない
+IF ABL:MASTER:撮影技能 < 5 && (ITEM:ビデオカメラ || ITEM:カメラ) && FLAG:15 & 128
+	LOCAL:12 = BUY_SKILL_MASTER_CAMERA_PRICE()
+	SIF LOCAL:12 > 0
+		PRINTFORMLC [12]【撮影技能Lv{ABL:MASTER:撮影技能 + 1}】(%SHOW_YEN(LOCAL:12)%)
+ENDIF
+;主人の現在の歌唱技能Lvが5未満でマイクを所有しており、弁当・ライブＯＮなら歌唱技能Lvを習得できるかもしれない
+IF ABL:MASTER:歌唱技能 < 5 && ITEM:マイク && FLAG:12 & 16
+	LOCAL:13 = BUY_SKILL_MASTER_SINGING_PRICE()
+	SIF LOCAL:13 > 0
+		PRINTFORMLC [13]【歌唱技能Lv{ABL:MASTER:歌唱技能 + 1}】(%SHOW_YEN(LOCAL:13)%)
+ENDIF
+;主人の現在の工作技能が5未満なら工作技能を習得できる
+IF ABL:MASTER:工作技能 < 5
+	LOCAL:14 = BUY_SKILL_MASTER_WORKING_PRICE()
+	SIF LOCAL:14 > 0
+		PRINTFORMLC [14]【工作技能Lv{ABL:MASTER:工作技能 + 1}】(%SHOW_YEN(LOCAL:14)%)
+ENDIF
+;主人の現在の調教師Lvが5未満なら調教師Lvを習得できるかもしれない
+IF ABL:MASTER:調教師Lv < 5
+	LOCAL:15 = BUY_SKILL_MASTER_TRAINER_PRICE()
+	SIF LOCAL:15 > 0
+		PRINTFORMLC [15]【調教師Lv{ABL:MASTER:調教師Lv + 1}】(%SHOW_YEN(LOCAL:15)%)
+ENDIF
+;主人が[サド]でないなら[サド]を習得できる
+IF TALENT:MASTER:サド == 0
+	LOCAL:20 = BUY_SKILL_MASTER_SADIST_PRICE()
+	PRINTFORMLC [20]【サド】(%SHOW_YEN(LOCAL:20)%)
+ENDIF
+;主人が[マゾ]でないなら[マゾ]を習得できる
+IF TALENT:MASTER:マゾ == 0
+	LOCAL:21 = BUY_SKILL_MASTER_MASOIST_PRICE()
+	PRINTFORMLC [21]【マゾ】(%SHOW_YEN(LOCAL:21)%)
+ENDIF
+;主人が[汚れ無視]でないなら[汚れ無視]を習得できる
+IF TALENT:MASTER:汚れ無視 == 0
+	LOCAL:22 = BUY_SKILL_DISREGARDSTAIN_PRICE()
+	PRINTFORMLC [22]【汚れ無視】(%SHOW_YEN(LOCAL:22)%)
+ENDIF
+;主人が[オトコ]か[ふたなり]であり、[早漏]でないなら[早漏]を習得できる
+SIF TALENT:MASTER:早漏 == 0 && (TALENT:MASTER:オトコ ||TALENT:MASTER:ふたなり)
+	PRINTFORMLC [23]\@(TALENT:MASTER:遅漏)?【遅漏】消去(1萬圓) # 【早漏】(1萬圓)\@
+;主人が[オトコ]か[ふたなり]であり、[遅漏]でないなら[遅漏]を習得できる
+SIF TALENT:MASTER:遅漏 == 0 && (TALENT:MASTER:オトコ ||TALENT:MASTER:ふたなり)
+	PRINTFORMLC [24]\@(TALENT:MASTER:早漏)?【早漏】消去(1萬圓) # 【遅漏】(1萬圓)\@
+;主人が[触手使役術]を持っていないなら、[触手使役術]を習得できる
+SIF TALENT:MASTER:触手使役術 == 0
+	PRINTLC [25]【触手使役術】(1萬圓)
+;主人が[禁断の知識]を持っていないなら、[禁断の知識]を習得できる
+IF TALENT:MASTER:禁断の知識 == 0
+	LOCAL:26 = BUY_SKILL_MASTER_FORBIDDEN_PRICE()
+	PRINTFORMLC [26]【禁断の知識】(%SHOW_YEN(LOCAL:26)%)
+ENDIF
+;主人の調教師レベルが4以上でが[工作名人]でないなら[工作名人]を習得できる
+IF ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:工作名人 == 0 && ABL:MASTER:工作技能 > 3
+	PRINTFORMLC [28]【工作名人】(200萬圓)
+ENDIF
+;主人の調教師レベルが4以上でが[魔術技能]でないなら[魔術技能]を習得できる
+IF ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:魔術技能 == 0
+	PRINTFORMLC [29]【魔術技能】(200萬圓)
+ENDIF
+;CHALLENGEかEXTRAモードで主人の調教師レベルが5以上でが[舌使い]でないなら[舌使い]を習得できる
+IF (FLAG:4 == 2 || FLAG:4 >= 50 ) && ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:舌使い == 0
+	LOCAL:30 = BUY_SKILL_MASTER_EXTALENT52_PRICE()
+	PRINTFORMLC [30]【舌使い】(%SHOW_YEN(LOCAL:30)%)
+ENDIF
+;CHALLENGEかEXTRAモードで主人の調教師レベルが5以上でが[小悪魔]でないなら[小悪魔]を習得できる
+IF (FLAG:4 == 2 || FLAG:4 >= 50 ) && ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:小悪魔 == 0
+	LOCAL:31 = BUY_SKILL_MASTER_EXTALENT93_PRICE()
+	PRINTFORMLC [31]【小悪魔】(%SHOW_YEN(LOCAL:31)%)
+ENDIF
+;CHALLENGEかEXTRAモードで主人の調教師レベルが5以上でが[魅惑]でないなら[魅惑]を習得できる
+IF (FLAG:4 == 2 || FLAG:4 >= 50 ) && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:魅惑 == 0
+	LOCAL:32 = BUY_SKILL_MASTER_EXTALENT91_PRICE()
+	PRINTFORMLC [32]【魅惑】(%SHOW_YEN(LOCAL:32)%)
+ENDIF
+;CHALLENGEかEXTRAモードで主人の調教師レベルが5以上でが[針さばき]でないなら[針さばき]を習得できる
+IF (FLAG:4 == 2 || FLAG:4 >= 50 ) && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:針さばき == 0
+	LOCAL:33 = BUY_SKILL_MASTER_EXTALENT53_PRICE()
+	PRINTFORMLC [33]【針さばき】(%SHOW_YEN(LOCAL:33)%)
+ENDIF
+;CHALLENGEかEXTRAモードで主人の調教師レベルが5以上でが[つるぺた堕し][大乳導]でないなら[つるぺた堕し]を習得できる
+IF (FLAG:4 == 2 || FLAG:4 >= 50 ) && ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:大乳導 == 0 && TALENT:MASTER:つるぺた堕し == 0
+	LOCAL:34 = BUY_SKILL_MASTER_EXTALENT97_PRICE()
+	PRINTFORMLC [34]【つるぺた堕し】(%SHOW_YEN(LOCAL:34)%)
+ENDIF
+;CHALLENGEかEXTRAモードで主人の調教師レベルが5以上でが[つるぺた堕し][大乳導]でないなら[大乳導]を習得できる
+IF (FLAG:4 == 2 || FLAG:4 >= 50 ) && ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:大乳導 == 0 && TALENT:MASTER:つるぺた堕し == 0
+	LOCAL:35 = BUY_SKILL_MASTER_EXTALENT96_PRICE()
+	PRINTFORMLC [35]【大乳導】(%SHOW_YEN(LOCAL:35)%)
+ENDIF
+;主人の調教師レベルが4以上でが[淫具知識]でないなら[淫具知識]を習得できる
+IF ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:淫具知識 == 0
+	LOCAL:36 = BUY_SKILL_MASTER_EXTALENT58_PRICE()
+	PRINTFORMLC [36]【淫具知識】(%SHOW_YEN(LOCAL:36)%)
+ENDIF
+;主人の調教師レベルが4以上でが[教育者]でないなら[教育者]を習得できる
+IF ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:教育者 == 0
+	LOCAL:37 = BUY_SKILL_MASTER_EXTALENT126_PRICE()
+	PRINTFORMLC [37]【教育者】(%SHOW_YEN(LOCAL:37)%)
+ENDIF
+;主人の調教師レベルが4以上でが[家電使役知識]でないなら[家電使役知識]を習得できる
+IF ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:家電使役知識 == 0
+	LOCAL:38 = BUY_SKILL_MASTER_EXTALENT189_PRICE()
+	PRINTFORMLC [38]【家電使役知識】(%SHOW_YEN(LOCAL:38)%)
+ENDIF
+;主人の調教師レベルが5以上でが[超常目算]でないなら[超常目算]を習得できる
+IF ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:超常目算 == 0
+	LOCAL:39 = BUY_SKILL_MASTER_EXTALENT198_PRICE()
+	PRINTFORMLC [39]【超常目算】(%SHOW_YEN(LOCAL:39)%)
+ENDIF
+;主人の調教師レベルが5以上でが[野菜の錬金術]でないなら[野菜の錬金術]を習得できる
+IF ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:野菜の錬金術師 == 0 && TALENT:MASTER:地獄の勲章
+	PRINTFORMLC [40]【野菜の錬金術】(800萬圓)
+ENDIF
+;SIF TALENT:MASTER: == 0
+;	PRINT [27]【】(圓) 
+SIF LINEISEMPTY()
+	PRINT 習得できる技能はありません
+PRINTL 
+PRINTL [100]戻る
+DRAWLINE
+$INPUT_LOOP_SELECT_SKILL
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 10 && ABL:MASTER:技巧 < 5
+	PRINTFORML 【技巧Lv{ABL:MASTER:技巧 + 1}】：%CALLNAME:MASTER%の技巧Lvが1つ上昇します
+	LOCAL:1 = LOCAL:10
+ELSEIF RESULT == 11 && ABL:MASTER:料理技能 < 5 && LOCAL:11 > 0 && FLAG:12 & 16
+	PRINTFORML 【料理技能Lv{ABL:MASTER:料理技能 + 1}】：%CALLNAME:MASTER%の料理技能Lvが1つ上昇します
+	LOCAL:1 = LOCAL:11
+ELSEIF RESULT == 12 && ABL:MASTER:撮影技能 < 5 && LOCAL:12 > 0 && (ITEM:ビデオカメラ || ITEM:カメラ) && FLAG:15 & 128
+	PRINTFORML 【撮影技能Lv{ABL:MASTER:撮影技能 + 1}】：%CALLNAME:MASTER%の撮影技能Lvが1つ上昇します
+	LOCAL:1 = LOCAL:12
+ELSEIF RESULT == 13 && ABL:MASTER:歌唱技能 < 5 && LOCAL:13 > 0 && ITEM:マイク && FLAG:12 & 16
+	PRINTFORML 【歌唱技能Lv{ABL:MASTER:歌唱技能 + 1}】：%CALLNAME:MASTER%の歌唱技能Lvが1つ上昇します
+	LOCAL:1 = LOCAL:13
+ELSEIF RESULT == 14 && ABL:MASTER:工作技能 < 5 && LOCAL:14 > 0
+	PRINTFORML 【工作技能Lv{ABL:MASTER:工作技能 + 1}】：%CALLNAME:MASTER%の工作技能Lvが1つ上昇します
+	LOCAL:1 = LOCAL:13
+ELSEIF RESULT == 15 && ABL:MASTER:調教師Lv < 5 && LOCAL:15 > 0
+	PRINTFORML 【調教師Lv{ABL:MASTER:調教師Lv + 1}】：%CALLNAME:MASTER%の調教師Lvが1つ上昇します
+	LOCAL:1 = LOCAL:15
+
+ELSEIF RESULT == 20 && TALENT:MASTER:サド == 0
+	PRINTFORML 【サド】：調教中、%CALLNAME:MASTER%が行うSM系調教コマンドの効果が上がります
+	LOCAL:1 = LOCAL:20
+ELSEIF RESULT == 21 && TALENT:MASTER:マゾ == 0
+	PRINTFORML 【マゾ】：調教中、奴隷の「先導」のパラメーターが上昇しやすくなります
+	LOCAL:1 = LOCAL:21
+ELSEIF RESULT == 22 && TALENT:MASTER:汚れ無視 == 0
+	PRINTFORML 【汚れ無視】：調教中、%CALLNAME:MASTER%が汚れを気にしなくなります
+	LOCAL:1 = LOCAL:22
+ELSEIF RESULT == 23 && TALENT:MASTER:早漏 == 0 && (TALENT:MASTER:オトコ ||TALENT:MASTER:ふたなり)
+	PRINTFORML \@(TALENT:MASTER:遅漏) ? 【遅漏】消去 # 【早漏】\@：調教中、%CALLNAME:MASTER%の射精が早くなります
+	LOCAL:1 = 10000
+ELSEIF RESULT == 24 && TALENT:MASTER:遅漏 == 0 && (TALENT:MASTER:オトコ ||TALENT:MASTER:ふたなり)
+	PRINTFORML \@(TALENT:MASTER:早漏) ? 【早漏】消去 # 【遅漏】\@：調教中、%CALLNAME:MASTER%の射精が遅くなります
+	LOCAL:1 = 10000
+ELSEIF RESULT == 25 && TALENT:MASTER:触手使役術 == 0
+	PRINTFORML 【触手使役術】：調教中、触手を召喚することが出来るようになります
+	LOCAL:1 = 10000
+ELSEIF RESULT == 26 && TALENT:MASTER:禁断の知識 == 0
+	PRINTFORML 【禁断の知識】：禁忌とされる数々の恐るべき知識を身につけます
+	LOCAL:1 = LOCAL:26
+ELSEIF RESULT == 28 && ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:工作名人 == 0 && ABL:MASTER:工作技能 > 3
+	PRINTFORML 【工作名人】：工作名人を身につけます
+	LOCAL:1 = 2000000
+ELSEIF RESULT == 29 && ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:魔術技能 == 0
+	PRINTFORML 【魔術技能】：禁忌の魔術技能を身につけます
+	LOCAL:1 = 2000000
+
+ELSEIF RESULT == 30 && (FLAG:4 == 2 || FLAG:4 >= 50) && ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:舌使い == 0
+	PRINTFORML 【舌使い】：調教中、%CALLNAME:MASTER%の舌使いが上手くなります。
+	LOCAL:1 = LOCAL:30
+ELSEIF RESULT == 31 && (FLAG:4 == 2 || FLAG:4 >= 50) && ABL:MASTER:調教師Lv >= 3 && TALENT:MASTER:小悪魔 == 0
+	PRINTFORML 【小悪魔】：%CALLNAME:MASTER%が調教するときにコマンドを実行しやすくなります。
+	LOCAL:1 = LOCAL:31
+ELSEIF RESULT == 32 && (FLAG:4 == 2 || FLAG:4 >= 50) && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:魅惑 == 0
+	PRINTFORML 【魅惑】：%CALLNAME:MASTER%が調教するときにコマンドが実行しやすくなります。
+	LOCAL:1 = LOCAL:32
+ELSEIF RESULT == 33 && (FLAG:4 == 2 || FLAG:4 >= 50) && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:針さばき == 0
+	PRINTFORML 【針さばき】：調教中、%CALLNAME:MASTER%の針さばきが上手くなります。
+	LOCAL:1 = LOCAL:33
+ELSEIF RESULT == 34 && (FLAG:4 == 2 || FLAG:4 >= 50) && ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:大乳導 == 0 && TALENT:MASTER:つるぺた堕し == 0
+	PRINTFORML 【つるぺた堕し】：%CALLNAME:MASTER%が胸の小さい対象を調教しやすくなります。
+	LOCAL:1 = LOCAL:34
+ELSEIF RESULT == 35 && (FLAG:4 == 2 || FLAG:4 >= 50) && ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:大乳導 == 0 && TALENT:MASTER:つるぺた堕し == 0
+	PRINTFORML 【大乳導】：%CALLNAME:MASTER%が胸の大きい対象を調教しやすくなります。
+	LOCAL:1 = LOCAL:35
+ELSEIF RESULT == 36 && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:淫具知識 == 0
+	PRINTFORML 【淫具知識】：%CALLNAME:MASTER%が調教するときに道具を使ったコマンドが実行しやすくなります。
+	LOCAL:1 = LOCAL:36
+ELSEIF RESULT == 37 && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:教育者 == 0
+	PRINTFORML 【教育者】：%CALLNAME:MASTER%が工房作業を主導することができます。
+	LOCAL:1 = LOCAL:37
+ELSEIF RESULT == 38 && ABL:MASTER:調教師Lv >= 4 && TALENT:MASTER:家電使役知識 == 0
+	PRINTFORML 【家電使役知識】：%CALLNAME:MASTER%が家電製品の一般的な使い方を理解しやすくなります。
+	LOCAL:1 = LOCAL:38
+ELSEIF RESULT == 39 && ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:超常目算 == 0
+	PRINTFORML 【超常目算】：%CALLNAME:MASTER%が目分量で様々な計測ができるようになります。
+	LOCAL:1 = LOCAL:39
+ELSEIF RESULT == 40 && ABL:MASTER:調教師Lv >= 5 && TALENT:MASTER:野菜の錬金術師 == 0 && TALENT:MASTER:地獄の勲章
+	PRINTFORML 【野菜の錬金術】：禁忌の野菜錬金術を身につけます
+	LOCAL:1 = 8000000
+
+;ELSEIF RESULT == 27
+;	LOCAL:1 = 0
+ELSE
+	GOTO INPUT_LOOP_SELECT_SKILL
+ENDIF
+LOCAL = RESULT
+
+PRINTL 購入しますか？
+PRINTL [0] はい
+PRINTL [1] いいえ
+$INPUT_LOOP_BUY_SKILL_YN
+INPUT
+IF RESULT == 0 && MONEY < LOCAL:1
+	PRINTW 必要な資金が不足しています
+	RESTART
+ELSEIF RESULT == 0
+	MONEY -= LOCAL:1
+ELSEIF RESULT == 1
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP_BUY_SKILL_YN
+ENDIF
+
+;能力アップアイテム【技巧Lv】(主人専用)
+IF LOCAL == 10
+	ABL:MASTER:技巧 += 1
+	PRINTFORMW ＜%CALLNAME:MASTER%の技巧Lvが1つ上がった　今の技巧Lv：{ABL:MASTER:技巧}＞
+;能力アップアイテム【料理技能Lv】(主人専用)
+ELSEIF LOCAL == 11
+	ABL:MASTER:料理技能 += 1
+	PRINTFORMW ＜%CALLNAME:MASTER%の料理技能Lvが1つ上がった　今の料理技能Lv:{ABL:MASTER:料理技能}＞
+;能力アップアイテム【撮影技能Lv】(主人専用)
+ELSEIF LOCAL == 12
+	ABL:MASTER:撮影技能 += 1
+	PRINTFORMW ＜%CALLNAME:MASTER%の撮影技能Lvが1つ上がった　今の撮影技能Lv:{ABL:MASTER:撮影技能}＞
+;能力アップアイテム【歌唱技能Lv】(主人専用)
+ELSEIF LOCAL == 13
+	ABL:MASTER:歌唱技能 += 1
+	PRINTFORMW ＜%CALLNAME:MASTER%の歌唱技能Lvが1つ上がった　今の歌唱技能Lv:{ABL:MASTER:歌唱技能}＞
+;能力アップアイテム【工作技能Lv】(主人専用)
+ELSEIF LOCAL == 14
+	ABL:MASTER:工作技能 += 1
+	PRINTFORMW ＜%CALLNAME:MASTER%の工作技能Lvが1つ上がった　今の工作技能Lv:{ABL:MASTER:工作技能}＞
+;能力アップアイテム【調教師Lv】(主人専用)
+ELSEIF LOCAL == 15
+	ABL:MASTER:調教師Lv += 1
+	PRINTFORMW ＜%CALLNAME:MASTER%の調教師Lvが1つ上がった　今の調教師Lv:{ABL:MASTER:調教師Lv}＞
+	IF ABL:MASTER:調教師Lv == 5
+		;実績
+		LOADGLOBAL
+		SIF !(GLOBAL:2300 & 2048)
+			GLOBAL:2300 |= 2048
+		SAVEGLOBAL
+	ENDIF
+;素質アイテム【サド】
+ELSEIF LOCAL == 20
+	PRINTFORMW ＜%CALLNAME:MASTER%は[サド]を身につけました＞
+	TALENT:MASTER:サド = 1
+;素質アイテム【マゾ】
+ELSEIF LOCAL == 21
+	PRINTFORMW ＜%CALLNAME:MASTER%は[マゾ]を身につけました＞
+	TALENT:MASTER:マゾ = 1
+;素質アイテム【汚れ無視】
+ELSEIF LOCAL == 22
+	PRINTFORMW ＜%CALLNAME:MASTER%は[汚れ無視]を身につけました＞
+	TALENT:MASTER:汚れ無視 = 1
+;素質アイテム【早漏】
+ELSEIF LOCAL == 23
+	;もし[遅漏]があればそれが消えるだけで[早漏]は習得できない
+	IF TALENT:MASTER:遅漏
+		PRINTFORMW ＜%CALLNAME:MASTER%は[遅漏]を失いました＞
+		TALENT:MASTER:遅漏 = 0
+	ELSE
+		PRINTFORMW ＜%CALLNAME:MASTER%は[早漏]を身につけました＞
+		TALENT:MASTER:早漏 = 1
+	ENDIF
+	MAXBASE:MASTER:2 = CALC_GAUGE2_COMMON(MASTER)
+;素質アイテム【遅漏】
+ELSEIF LOCAL == 24
+	;もし[早漏]があればそれが消えるだけで[遅漏]は習得できない
+	IF TALENT:MASTER:早漏
+		PRINTFORMW ＜%CALLNAME:MASTER%は[早漏]を失いました＞
+		TALENT:MASTER:早漏 = 0
+	ELSE
+		PRINTFORMW ＜%CALLNAME:MASTER%は[遅漏]を身につけました＞
+		TALENT:MASTER:遅漏 = 1
+	ENDIF
+	MAXBASE:MASTER:2 = CALC_GAUGE2_COMMON(MASTER)
+;素質アイテム【触手使役術】
+ELSEIF LOCAL == 25
+	PRINTFORMW ＜%CALLNAME:MASTER%は[触手使役術]を身につけました＞
+	TALENT:MASTER:触手使役術 = 1
+;素質アイテム【禁断の知識】
+ELSEIF LOCAL == 26
+	PRINTFORMW ＜%CALLNAME:MASTER%は[禁断の知識]を身につけました＞
+	TALENT:MASTER:禁断の知識 = 1
+;素質アイテム【工作名人】
+ELSEIF LOCAL == 28
+	PRINTFORMW ＜%CALLNAME:MASTER%は[工作名人]を身につけました＞
+	TALENT:MASTER:工作名人 = 1
+;素質アイテム【魔術技能】
+ELSEIF LOCAL == 29
+	PRINTFORMW ＜%CALLNAME:MASTER%は[魔術技能]を身につけました＞
+	TALENT:MASTER:魔術技能 = 1
+;素質アイテム【舌使い】
+ELSEIF LOCAL == 30
+	PRINTFORMW ＜%CALLNAME:MASTER%は[舌使い]を身につけました＞
+	TALENT:MASTER:舌使い = 1
+;素質アイテム【小悪魔】
+ELSEIF LOCAL == 31
+	PRINTFORMW ＜%CALLNAME:MASTER%は[小悪魔]を身につけました＞
+	TALENT:MASTER:小悪魔 = 1
+;素質アイテム【魅惑】
+ELSEIF LOCAL == 32
+	PRINTFORMW ＜%CALLNAME:MASTER%は[魅惑]を身につけました＞
+	TALENT:MASTER:魅惑 = 1
+;素質アイテム【針さばき】
+ELSEIF LOCAL == 33
+	PRINTFORMW ＜%CALLNAME:MASTER%は[針さばき]を身につけました＞
+	TALENT:MASTER:針さばき = 1
+;素質アイテム【つるぺた堕し】
+ELSEIF LOCAL == 34
+	PRINTFORMW ＜%CALLNAME:MASTER%は[つるぺた堕し]を身につけました＞
+	TALENT:MASTER:つるぺた堕し = 1
+;素質アイテム【大乳導】
+ELSEIF LOCAL == 35
+	PRINTFORMW ＜%CALLNAME:MASTER%は[大乳導]を身につけました＞
+	TALENT:MASTER:大乳導 = 1
+;素質アイテム【淫具知識】
+ELSEIF LOCAL == 36
+	PRINTFORMW ＜%CALLNAME:MASTER%は[淫具知識]を身につけました＞
+	TALENT:MASTER:淫具知識 = 1
+;素質アイテム【教育者】
+ELSEIF LOCAL == 37
+	PRINTFORMW ＜%CALLNAME:MASTER%は[教育者]を身につけました＞
+	TALENT:MASTER:教育者 = 1
+;素質アイテム【家電使役知識】
+ELSEIF LOCAL == 38
+	PRINTFORMW ＜%CALLNAME:MASTER%は[家電使役知識]を身につけました＞
+	TALENT:MASTER:家電使役知識 = 1
+;素質アイテム【超常目算】
+ELSEIF LOCAL == 39
+	PRINTFORMW ＜%CALLNAME:MASTER%は[超常目算]を身につけました＞
+	TALENT:MASTER:超常目算 = 1
+;素質アイテム【野菜の錬金術】
+ELSEIF LOCAL == 40
+	PRINTFORMW ＜%CALLNAME:MASTER%は[野菜の錬金術]を身につけました＞
+	PRINTL 
+	PRINTFORMW ＜%CALLNAME:MASTER%は[畑]を獲得した＞
+	TALENT:MASTER:野菜の錬金術師 = 1
+	FLAG:570 |= 1
+	FLAG:9888 = 1
+ENDIF
+RESTART
+
+;-----------------------------------------------
+;【技巧Lv】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_TECH_PRICE
+#FUNCTION
+#LOCALSIZE 3
+;主人の現在の技巧Lvを価格計算基礎に変換する
+LOCAL = ABL:MASTER:技巧 + 1
+LOCAL:2 = 10000 * LOCAL
+LOCALS:0 = 
+LOCALS:1 = 
+SIF LOCAL:2 >= 10000
+	LOCALS:0 = {(LOCAL:2)/10000}萬
+SIF (LOCAL:2)%10000 > 0
+	LOCALS:1 = {(LOCAL:2)%10000}
+TSTR:0 = % LOCALS:0 + LOCALS:1 %
+RETURNF LOCAL:2
+
+;-----------------------------------------------
+;【料理技能Lv】の価格計算処理
+;-----------------------------------------------
+;LOCAL 料理技能Lvを上昇させるのに必要な調理経験の最低値
+@BUY_SKILL_MASTER_COOKING_PRICE
+#FUNCTION
+#LOCALSIZE 3
+LOCAL:2 = 0
+;主人の現在の料理技能Lvを見る
+IF ABL:MASTER:料理技能 == 0
+	LOCAL = 5
+ELSEIF ABL:MASTER:料理技能 == 1
+	LOCAL = 20
+ELSEIF ABL:MASTER:料理技能 == 2
+	LOCAL = 100
+ELSEIF ABL:MASTER:料理技能 == 3
+	LOCAL = 250
+ELSE
+	LOCAL = 500
+ENDIF
+;主人が料理苦手のときはより経験必要
+SIF TALENT:MASTER:料理苦手
+	TIMES LOCAL , 1.20
+;主人の調理経験不足なら上昇不可
+SIF EXP:MASTER:調理経験 < LOCAL
+	RETURNF 0
+
+LOCAL:1 = ABL:MASTER:料理技能
+LOCAL:2 = 10000 * (1 + LOCAL:1)
+TSTR:0 = {(LOCAL:2)/10000}萬
+RETURNF LOCAL:2
+
+;-----------------------------------------------
+;【撮影技能Lv】の価格計算処理
+;-----------------------------------------------
+;LOCAL 撮影技能Lvを上昇させるのに必要な撮影経験の最低値
+@BUY_SKILL_MASTER_CAMERA_PRICE
+#FUNCTION
+#LOCALSIZE 3
+LOCAL:2 = 0
+;主人の現在の撮影技能Lvを見る
+IF ABL:MASTER:撮影技能 == 0
+	LOCAL = 10
+ELSEIF ABL:MASTER:撮影技能 == 1
+	LOCAL = 30
+ELSEIF ABL:MASTER:撮影技能 == 2
+	LOCAL = 60
+ELSEIF ABL:MASTER:撮影技能 == 3
+	LOCAL = 100
+ELSE
+	LOCAL = 150
+ENDIF
+;主人の撮影経験不足なら上昇不可
+SIF EXP:MASTER:撮影経験 < LOCAL
+	RETURNF 0
+;主人の現在の撮影技能Lvが０以下のときの価格計算基礎
+IF ABL:MASTER:撮影技能 <= 0
+	LOCAL:1 = 2
+ELSE
+	LOCAL:1 = ABL:MASTER:撮影技能
+ENDIF
+LOCAL:2 = 30000 * LOCAL:1
+TSTR:0 = {(LOCAL:2)/10000}萬
+RETURNF LOCAL:2
+
+;-----------------------------------------------
+;【歌唱技能Lv】の価格計算処理
+;-----------------------------------------------
+;LOCAL 歌唱技能Lvを上昇させるのに必要な歌唱経験の最低値
+@BUY_SKILL_MASTER_SINGING_PRICE
+#FUNCTION
+#LOCALSIZE 3
+LOCAL:2 = 0
+;主人の現在の歌唱技能Lvを見る
+IF ABL:MASTER:歌唱技能 == 0
+	LOCAL = 5
+ELSEIF ABL:MASTER:歌唱技能 == 1
+	LOCAL = 20
+ELSEIF ABL:MASTER:歌唱技能 == 2
+	LOCAL = 150
+ELSEIF ABL:MASTER:歌唱技能 == 3
+	LOCAL = 250
+ELSE
+	LOCAL = 500
+ENDIF
+;主人が音痴ならより経験が必要
+SIF TALENT:MASTER:音痴
+	TIMES LOCAL , 1.10
+;主人の歌唱経験不足なら上昇不可
+SIF EXP:MASTER:歌唱経験 < LOCAL
+	RETURNF 0
+
+LOCAL:1 = ABL:MASTER:歌唱技能
+LOCAL:2 = 10000 * (1 + LOCAL:1)
+TSTR:0 = {(LOCAL:2)/10000}萬
+RETURNF LOCAL:2
+
+;-----------------------------------------------
+;【工作技能Lv】の価格計算処理
+;-----------------------------------------------
+;LOCAL 工作技能Lvを上昇させるのに必要な工作経験の最低値
+@BUY_SKILL_MASTER_WORKING_PRICE
+#FUNCTION
+#LOCALSIZE 3
+LOCAL:2 = 0
+;主人の現在の工作技能Lvを見る
+IF ABL:MASTER:工作技能 == 0
+	LOCAL = 5
+ELSEIF ABL:MASTER:工作技能 == 1
+	LOCAL = 20
+ELSEIF ABL:MASTER:工作技能 == 2
+	LOCAL = 150
+ELSEIF ABL:MASTER:工作技能 == 3
+	LOCAL = 250
+ELSE
+	LOCAL = 500
+ENDIF
+;主人が工作名人ならより経験が必要
+SIF TALENT:MASTER:工作名人
+	TIMES LOCAL , 0.80
+;主人の工作経験不足なら上昇不可
+SIF EXP:MASTER:工作経験 < LOCAL
+	RETURNF 0
+
+LOCAL:1 = ABL:MASTER:工作技能
+LOCAL:2 = 10000 * (1 + LOCAL:1)
+TSTR:0 = {(LOCAL:2)/10000}萬
+RETURNF LOCAL:2
+
+;-----------------------------------------------
+;【調教師Lv】の価格計算処理
+;-----------------------------------------------
+;LOCAL   全部の周回を含めた売却した人数の累計
+;LOCAL:1 現在のプレイで恋慕or淫乱をつけた人数
+;……に対応
+@BUY_SKILL_MASTER_TRAINER_PRICE
+#FUNCTION
+#LOCALSIZE 4
+LOCAL:3 = 0
+;主人の現在の調教師Lvを見る
+IF ABL:MASTER:調教師Lv == 0
+	LOCAL = 5
+	LOCAL:1 = 5
+ELSEIF ABL:MASTER:調教師Lv == 1
+	LOCAL = 25
+	LOCAL:1 = 10
+ELSEIF ABL:MASTER:調教師Lv == 2
+	LOCAL = 50
+	LOCAL:1 = 20
+ELSEIF ABL:MASTER:調教師Lv == 3
+	LOCAL = 75
+	LOCAL:1 = 30
+ELSE
+	LOCAL = 100
+	LOCAL:1 = 50
+ENDIF
+;娼館モードでは売却解放できないので、一応お情けとして
+IF FLAG:4 & 4
+	LOCAL:1 += LOCAL
+	LOCAL = 0
+ENDIF
+;売却人数またはに陥落させた人数のどちらかが足りない場合は上昇不可
+;CFLAG:MASTER:98 現在周回中
+SIF FLAG:34 < LOCAL || FLAG:30 < LOCAL:1
+	RETURNF 0
+LOCAL:2 = ABL:MASTER:調教師Lv * ABL:MASTER:調教師Lv
+LOCAL:3 = 10000 * (1 + LOCAL:2)
+SIF ABL:MASTER:調教師Lv == 4
+	LOCAL:3 = 150000
+LOCALS:0 = 
+LOCALS:1 = 
+SIF LOCAL:3 >= 10000
+	LOCALS:0 = {(LOCAL:3)/10000}萬
+SIF (LOCAL:3)%10000 > 0
+	LOCALS:1 = {(LOCAL:3)%10000}
+TSTR:0 = % LOCALS:0 + LOCALS:1 %
+RETURNF LOCAL:3
+
+;-----------------------------------------------
+;【サド】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_SADIST_PRICE
+#FUNCTION
+#LOCALSIZE 1
+;主人がマゾかドＭ
+IF TALENT:MASTER:マゾ || TALENT:MASTER:ドＭ
+	LOCAL = 75000
+;主人のマゾっ気がLv3以上
+ELSEIF ABL:MASTER:マゾっ気 >= 3
+	LOCAL = 60000
+ELSE
+	LOCAL = 50000
+ENDIF
+RETURNF LOCAL
+
+;-----------------------------------------------
+;【マゾ】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_MASOIST_PRICE
+#FUNCTION
+#LOCALSIZE 1
+;主人がサドかドＳ
+IF TALENT:MASTER:サド || TALENT:MASTER:ドＳ
+	LOCAL = 75000
+;主人のサドっ気がLv3以上
+ELSEIF ABL:MASTER:サドっ気 >= 3
+	LOCAL = 60000
+ELSE
+	LOCAL = 50000
+ENDIF
+RETURNF LOCAL
+
+;-----------------------------------------------
+;【汚れ無視】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_DISREGARDSTAIN_PRICE
+#FUNCTION
+#LOCALSIZE 1
+;主人が汚臭敏感
+IF TALENT:MASTER:汚臭敏感
+	LOCAL = 30000
+;主人が汚臭鈍感
+ELSEIF TALENT:MASTER:汚臭鈍感
+	LOCAL = 10000
+ELSE
+	LOCAL = 20000
+ENDIF
+RETURNF LOCAL
+
+;-----------------------------------------------
+;【禁断の知識】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_FORBIDDEN_PRICE
+#FUNCTION
+#LOCALSIZE 1
+;主人の調教師レベルを見る
+IF ABL:MASTER:調教師Lv == 0
+	LOCAL = 1000000
+ELSEIF ABL:MASTER:調教師Lv == 1
+	LOCAL = 500000
+ELSEIF ABL:MASTER:調教師Lv == 2
+	LOCAL = 250000
+ELSE
+	LOCAL = 100000
+ENDIF
+;自制心＋保守的な人はちょっぴり覚えづらい
+SIF TALENT:MASTER:自制心 && TALENT:MASTER:保守的
+	LOCAL += 10000
+RETURNF LOCAL
+
+;-----------------------------------------------
+;【舌使い】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT52_PRICE
+#FUNCTION
+RETURNF 3000000
+
+;-----------------------------------------------
+;【小悪魔】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT93_PRICE
+#FUNCTION
+RETURNF 4000000
+
+;-----------------------------------------------
+;【魅惑】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT91_PRICE
+#FUNCTION
+RETURNF 5000000
+
+;-----------------------------------------------
+;【針さばき】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT53_PRICE
+#FUNCTION
+RETURNF 2000000
+
+;-----------------------------------------------
+;【つるぺた堕し】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT97_PRICE
+#FUNCTION
+RETURNF 8000000
+
+;-----------------------------------------------
+;【大乳導】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT96_PRICE
+#FUNCTION
+RETURNF 8000000
+
+;-----------------------------------------------
+;【淫具知識】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT58_PRICE
+#FUNCTION
+RETURNF 3000000
+
+;-----------------------------------------------
+;【教育者】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT126_PRICE
+#FUNCTION
+RETURNF 2000000
+
+;-----------------------------------------------
+;【家電使役知識】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT189_PRICE
+#FUNCTION
+RETURNF 3000000
+
+;-----------------------------------------------
+;【超常目算】の価格計算処理
+;-----------------------------------------------
+@BUY_SKILL_MASTER_EXTALENT198_PRICE
+#FUNCTION
+RETURNF 4000000
+
+;=============================================================================
+;烙印キャラ用特殊装備購入処理
+;=============================================================================
+;-----------------------------------------------
+;烙印キャラ用特殊装備購入可能かの判定
+;-----------------------------------------------
+@BRAND_SLAVE_CHECK
+#FUNCTION
+LOCAL:1 = 0
+FOR LOCAL, 0, CHARANUM
+	;主人は除外
+	SIF LOCAL == MASTER
+		CONTINUE
+	;その場にいないキャラは排除
+	SIF CFLAG:LOCAL:4
+		CONTINUE
+	;[烙印]必須
+	SIF TALENT:LOCAL:烙印 == 0
+		CONTINUE
+	;クリトリスリング
+	SIF (CFLAG:LOCAL:42 & 1) == 0 && TALENT:LOCAL:オトコ == 0 && TALENT:LOCAL:ふたなり == 0 && EXP:LOCAL:Ｃ調律経験 >= 20
+		LOCAL:1 |= 1
+	;奴隷管理用貞操帯
+	SIF (CFLAG:LOCAL:42 & 2) == 0 && TALENT:LOCAL:処女 == 0
+		LOCAL:1 |= 2
+	;ベリージュエル
+	SIF (CFLAG:LOCAL:42 & 4) == 0 && ABL:LOCAL:露出癖 >= 3 && ABL:LOCAL:サドっ気 >= 3 && ABL:LOCAL:マゾっ気 >= 3
+		LOCAL:1 |= 4
+	;ボンデージ
+	SIF (CFLAG:LOCAL:42 & 8) == 0 && MARK:LOCAL:苦痛刻印 >= 3 && ABL:LOCAL:露出癖 >= 3 && ABL:LOCAL:マゾっ気 >= 3
+		LOCAL:1 |= 8
+	;ラビアピアス
+	SIF (CFLAG:LOCAL:42 & 16) == 0 && TALENT:LOCAL:オトコ == 0 && (EXP:LOCAL:Ｖ拡張経験 >= 20 || EXP:LOCAL:Ｖ調律経験 >= 20)
+		LOCAL:1 |= 16
+	;ニプルピアス
+	SIF (CFLAG:LOCAL:42 & 32) == 0 && ABL:LOCAL:Ｂ感覚 >= 3 && (EXP:LOCAL:Ｂ快楽経験 >= 20 || EXP:LOCAL:乳腺開発経験 >= 20)
+		LOCAL:1 |= 32
+NEXT
+RETURNF LOCAL:1
+
+;-----------------------------------------------
+;烙印キャラ用特殊装備の装着処理
+;-----------------------------------------------
+;ARG   = 付けさせる特殊装備の値段
+;ARG:1 = 付けさせる特殊装備の種類
+@BRAND_SLAVE_EQUIPMENT, ARG, ARG:1
+;表示させるキャラを抽出（LOCAL:2に人数）
+VARSET LOCAL, 0
+CALLF CLEAR_LIST
+REPEAT CHARANUM
+	MARK:COUNT:98 = 0
+	;主人は除外
+	SIF COUNT == 0
+		CONTINUE
+	;その場にいないキャラは排除
+	SIF CFLAG:COUNT:4
+		CONTINUE
+	;[烙印]必須
+	SIF TALENT:COUNT:烙印 == 0
+		CONTINUE
+
+	;クリトリスリング
+	IF ARG:1 == 20
+		;[オトコ]・[ふたなり]は装着不可能
+		SIF TALENT:COUNT:オトコ || TALENT:COUNT:ふたなり
+			CONTINUE
+		;Ｃ調律経験が20未満だとダメ
+		SIF EXP:COUNT:Ｃ調律経験 < 20
+			CONTINUE
+		;既に装着している場合はダメ
+		SIF CFLAG:COUNT:42 & 1
+			CONTINUE
+	;奴隷管理用貞操帯
+	ELSEIF ARG:1 == 21
+		;女性用のはバイブ付きなので[処女]は装着不可能
+		SIF TALENT:COUNT:処女
+			CONTINUE
+		;既に装着している場合はダメ
+		SIF CFLAG:COUNT:42 & 2
+			CONTINUE
+	;ベリージュエル
+	ELSEIF ARG:1 == 22
+		;露出癖・サドっ気・マゾっ気全て3以上必要
+		SIF ABL:COUNT:露出癖 < 3 || ABL:COUNT:サドっ気 < 3 || ABL:COUNT:マゾっ気 < 3
+			CONTINUE
+		;既に装着している場合はダメ
+		SIF CFLAG:COUNT:42 & 4
+			CONTINUE
+	;ボンデージ
+	ELSEIF ARG:1 == 23
+		;苦痛刻印・露出癖・マゾっ気全て3以上必要
+		SIF MARK:COUNT:苦痛刻印 < 3 || ABL:COUNT:露出癖 < 3 || ABL:COUNT:マゾっ気 < 3
+			CONTINUE
+		;既に装着している場合はダメ
+		SIF CFLAG:COUNT:42 & 8
+			CONTINUE
+	;ラビアピアス
+	ELSEIF ARG:1 == 24
+		;[オトコ]は装着不可能
+		SIF TALENT:COUNT:オトコ
+			CONTINUE
+		;Ｖ拡張経験・Ｖ調律経験のどちらかが20未満だとダメ
+		SIF EXP:COUNT:Ｖ拡張経験 < 20 && EXP:COUNT:Ｖ調律経験 < 20
+			CONTINUE
+		;既に装着している場合はダメ
+		SIF CFLAG:COUNT:42 & 16
+			CONTINUE
+	;ニプルピアス
+	ELSEIF ARG:1 == 25
+		;Ｂ感覚3以上必要
+		SIF ABL:COUNT:Ｂ感覚 < 3
+			CONTINUE
+		;Ｂ快楽経験・乳腺開発経験のどちらかが20未満だとダメ
+		SIF EXP:COUNT:Ｂ快楽経験 < 20 && EXP:COUNT:乳腺開発経験 < 20
+			CONTINUE
+		;既に装着している場合はダメ
+		SIF CFLAG:COUNT:42 & 32
+			CONTINUE
+	ENDIF
+
+	CALLF SET_LIST, LOCAL:2, COUNT
+	LOCAL:2 += 1
+	MARK:COUNT:98 = 1
+REND
+LOCAL:1 = (LOCAL:2 - 1) / 20
+
+$PRINT_LIST
+DRAWLINE
+PRINTFORML 誰に付けますか？ ＜page.{LOCAL+1}＞
+CALL USE_ITEM_LIST, LOCAL
+DRAWLINE
+PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000]戻る
+PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+PRINTL 
+$INPUT_LOOP_0
+INPUT
+IF RESULT == 1000
+	;返金処理
+	MONEY += ARG
+	RETURN 0
+ELSEIF RESULT == 1001 && LOCAL > 0
+	LOCAL -= 1
+	GOTO PRINT_LIST
+ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+	LOCAL += 1
+	GOTO PRINT_LIST
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
+	GOTO INPUT_LOOP_0
+ENDIF
+LOCAL:3 = TARGET
+TARGET = RESULT
+PRINTFORM %CALLNAME:TARGET%
+IF ARG:1 == 20
+	PRINTL の陰核にクリトリスリングを装着しますか？
+	PRINTL ※一度装着すると二度と外せなくなります
+	PRINTL ※また装着した者は以後ふたなりにすることができなくなります
+ELSEIF ARG:1 == 21
+	PRINT に奴隷管理用貞操帯
+	SIF TALENT:オトコ == 0
+		PRINT (バイブ付き)
+	PRINTL を着せますか？
+	PRINTL ※一度装着すると調教中以外は外すことが出来なくなります
+	PRINTL ※また装着した者は以後調教以外で自慰をすることができなくなります
+ELSEIF ARG:1 == 22
+	PRINTL のヘソにベリージュエルを装着しますか？
+	PRINTL ※一度装着すると二度と外せなくなります
+	PRINTL ※また装着した者は体力気力の成長が低下します
+ELSEIF ARG:1 == 23
+	PRINTL の下着としてボンデージを着せますか？
+	PRINTL ※一度装着すると調教中以外は外すことが出来なくなります
+	PRINTL ※また装着した者は体力気力の回復が低下します
+ELSEIF ARG:1 == 24
+	PRINTL の秘所にラビアピアスを装着しますか？
+	PRINTL ※一度装着すると二度と外せなくなります
+	PRINTL ※また装着した者はＶ系の快楽が感じにくくなります
+ELSEIF ARG:1 == 25
+	PRINTL の乳首にニプルピアスを装着しますか？
+	PRINTL ※一度装着すると二度と外せなくなります
+	PRINTL ※また装着した者はＢ系の快楽が感じにくくなります
+ENDIF
+PRINTLC [0]はい
+PRINTLC [1]いいえ
+PRINTL 
+$INPUT_LOOP_1
+INPUT
+IF RESULT == 1
+	;返金処理
+	MONEY += ARG
+	TARGET = LOCAL:3
+	RETURN 0
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_1
+ENDIF
+
+TRYCALLFORM BRAND_EQUIPMENT_{ARG:1},ARG
+PRINTL 
+TARGET = LOCAL:3
+
+;-----------------------------------------------
+;クリトリスリング
+;-----------------------------------------------
+@BRAND_EQUIPMENT_20, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 230, ARG
+PRINTL 
+
+;苦痛快楽経験
+CALL COMMON_UP_EXP,TARGET, 30, 5, 0
+;Ｃ調律経験
+CALL COMMON_UP_EXP,TARGET, 41, 1, 0
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%のクリトリスは%CALLNAME:MASTER%の物になりました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%はふたなりに出来なくなりました＞
+CFLAG:42 |= 1
+
+;-----------------------------------------------
+;奴隷管理用貞操帯
+;-----------------------------------------------
+@BRAND_EQUIPMENT_21, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 231, ARG
+PRINTL 
+
+;Ｖ経験
+SIF TALENT:オトコ ==0
+	CALL COMMON_UP_EXP,TARGET, 0, 1, 0
+;Ａ経験
+CALL COMMON_UP_EXP,TARGET, 1, 1, 0
+;放尿経験
+CALL COMMON_UP_EXP,TARGET, 6, 1, 0
+;尿道開発経験
+CALL COMMON_UP_EXP,TARGET, 46, 1, 0
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%は排泄行為を自由にすることが出来なくなりました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%の性行為と排泄行為は%CALLNAME:MASTER%の管理下に置かれました＞
+CFLAG:42 |= 2
+
+;-----------------------------------------------
+;ベリージュエル
+;-----------------------------------------------
+@BRAND_EQUIPMENT_22, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 232, ARG
+PRINTL 
+
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%は宝石の魔力により消耗が抑えられました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%の体調管理は%CALLNAME:MASTER%が掌握しました＞
+CFLAG:42 |= 4
+
+;-----------------------------------------------
+;ボンデージ
+;-----------------------------------------------
+;ボンデージを下着の代わりに日常的に装着して緊縛経験を稼ぐものを思いついてしまった
+;……が、本人はボンデージ属性を持っていないためか、地の文の完成具合は微妙
+@BRAND_EQUIPMENT_23, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 233, ARG
+PRINTL 
+
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%は常時緊縛状態に曝されました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%の精神は%CALLNAME:MASTER%によって拘束されました＞
+CFLAG:42 |= 8
+
+;-----------------------------------------------
+;ラビアピアス
+;-----------------------------------------------
+;ピアスパッチより「ラビアピアス装着」の地の文を一部流用
+@BRAND_EQUIPMENT_24, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 234, ARG
+PRINTL 
+
+;苦痛快楽経験
+CALL COMMON_UP_EXP,TARGET, 30, 10, 0
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%のヴァギナは%CALLNAME:MASTER%の物になりました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%は秘貝開帳に若干の抵抗を感じるようになりました＞
+CFLAG:42 |= 16
+
+;-----------------------------------------------
+;ニプルピアス
+;-----------------------------------------------
+;ピアスパッチより「ニプルピアス装着」の地の文を一部流用
+@BRAND_EQUIPMENT_25, ARG
+;口上・地の文の表示
+CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 235, ARG
+PRINTL 
+
+;苦痛快楽経験
+CALL COMMON_UP_EXP,TARGET, 30, 10, 0
+PRINTW  
+PRINTFORMW ―――%CALLNAME:TARGET%の乳首は%CALLNAME:MASTER%の物になりました―――
+PRINTW ………………
+PRINTW …………
+PRINTW ……
+PRINTFORMW ＜%CALLNAME:TARGET%は一生乳首の飾りを着けることになりました＞
+CFLAG:42 |= 32

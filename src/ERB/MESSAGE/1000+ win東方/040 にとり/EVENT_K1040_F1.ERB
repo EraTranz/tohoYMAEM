@@ -1,0 +1,882 @@
+﻿;YM→YMAEコンバータによって作成されました
+;==============================================================
+;にとり口上
+;小規模な関数はこっちに
+;==============================================================
+@K40_NAMEINPUT
+	PRINTL 名前を入力してください
+		PRINTL 　
+		$INPUT_LOOP_6
+		INPUTS
+		STRLENS RESULTS
+		IF RESULT > 14
+			PRINTFORML 「ん……？　ちょっと長くて、わかんなかった」
+			GOTO INPUT_LOOP_6
+		ELSEIF RESULTS == ""
+			GOTO INPUT_LOOP_6
+		ELSE
+			IF RESULTS == "にとり"
+				PRINTFORML 「珍しいこともあるもんだね、同じ名前だよ」
+			ELSE
+				PRINTFORML 「%RESULTS%？」
+			ENDIF
+			PRINTL [0] はい
+			PRINTL [1] いいえ
+			$INPUT_LOOP_7
+			INPUT
+			IF RESULT == 0
+				MASTERNAME = %RESULTS%
+				PRINTFORMW %CALLNAME:MASTER%は、名前%MASTERNAME%を教えた
+			ELSEIF RESULT == 1
+				GOTO INPUT_LOOP_6
+			ELSE
+				GOTO INPUT_LOOP_7
+			ENDIF
+		ENDIF
+RETURN 0
+
+@K40_NAMEINPUT_2
+	PRINTL 名字を入力してください
+		PRINTL 　
+		$INPUT_LOOP_NAME_3
+		INPUTS
+		STRLENS RESULTS
+		IF RESULT > 14
+			PRINTFORML 「ん……？　ちょっと長くて、わかんなかった」
+			GOTO INPUT_LOOP_NAME_3
+		ELSEIF RESULTS == ""
+			GOTO INPUT_LOOP_NAME_3
+		ELSE
+			IF RESULTS == "河城"
+				PRINTFORML 「珍しいこともあるもんだね、同じ名字だよ」
+			ELSE
+				PRINTFORML 「%RESULTS%？」
+			ENDIF
+			PRINTL [0] はい
+			PRINTL [1] いいえ
+			$INPUT_LOOP_NAME_4
+			INPUT
+			IF RESULT == 0
+				CSTR:90 = %RESULTS%
+				PRINTFORMW %CALLNAME:MASTER%は、名字%CSTR:90%を教えた
+			ELSEIF RESULT == 1
+				GOTO INPUT_LOOP_NAME_3
+			ELSE
+				GOTO INPUT_LOOP_NAME_4
+			ENDIF
+		ENDIF
+RETURN 0
+
+@K40_ANAL_TEQUIP_CHECK
+;直腸や括約筋などの開発回数を加算する為の関数
+;触手アナル
+IF TEQUIP:触手調教 && (TEQUIP:Ａ系装着器具 == 1)
+	SELECTCASE CFLAG:7010
+		;ブラシ　直腸開発
+		CASE 3
+			CFLAG:7051 += 1
+		;吸盤　括約筋開発
+		CASE 4
+			CFLAG:7052 += 1
+		;ブドウ　Ｓ字結腸開発
+		CASE 5
+			CFLAG:7050 += 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+;アナルバイブ
+ELSEIF TEQUIP:Ａ系装着器具 == 1
+	SELECTCASE CFLAG:7001
+		;歪バイブ　直腸開発
+		CASE 3
+			CFLAG:7051 += 1
+		;先端バイブ　Ｓ字結腸開発
+		CASE 4
+			CFLAG:7050 += 1
+		;根元バイブ　括約筋開発
+		CASE 5
+			CFLAG:7052 += 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+;アナルローター
+ELSEIF TEQUIP:Ａ系装着器具 == 3
+	SELECTCASE CFLAG:7005
+		;ピストンローター　Ｓ字結腸開発
+		CASE 3
+			CFLAG:7050 += 1
+		;スクリューローター　直腸開発
+		CASE 4
+			CFLAG:7051 += 1
+		;膨張ローター　括約筋開発
+		CASE 5
+			CFLAG:7052 += 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+;アナル電極
+ELSEIF TEQUIP:Ａ系装着器具 == 4
+	SELECTCASE CFLAG:7004
+		;排泄操作電極　直腸開発
+		CASE 3
+			CFLAG:7051 += 1
+		;Ｓ字電極　Ｓ字結腸開発
+		CASE 4
+			CFLAG:7050 += 1
+		;低周波　括約筋開発
+		CASE 5
+			CFLAG:7052 += 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+;アナルビーズ
+ELSEIF TEQUIP:Ａ系装着器具 == 5
+	SELECTCASE CFLAG:7002
+		;歪　括約筋開発
+		CASE 3
+			CFLAG:7052 += 1
+		;振動　直腸開発
+		CASE 4
+			CFLAG:7051 += 1
+		;長い　Ｓ字結腸開発
+		CASE 5
+			CFLAG:7050 += 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+;浣腸
+ELSEIF TEQUIP:Ａ系装着器具 == 7
+	SELECTCASE CFLAG:7003
+		;シャワ浣　括約筋開発
+		CASE 3
+			CFLAG:7052 += 1
+		;エネマシリンジ　Ｓ字結腸開発
+		CASE 4
+			CFLAG:7050 += 1
+		;イルリガートル　直腸開発
+		CASE 5
+			CFLAG:7051 += 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ELSE
+	RETURN 0
+ENDIF
+
+@K40_NTR_COUNT
+;触手、機械に対する好感度をカウント
+;獣については個別コマンドで対応
+;触手
+IF TEQUIP:触手調教
+	;挿入は２加算
+	IF TEQUIP:Ｖ系装着器具 || TEQUIP:Ａ系装着器具 || TEQUIP:触手催眠 || TEQUIP:触手膣内産卵 || TEQUIP:触手腸内産卵
+		CFLAG:7203 += 2
+	ELSE
+		CFLAG:7203 += 1
+	ENDIF
+	RETURN 0
+;機械挿入
+ELSEIF TEQUIP:Ｖ系装着器具 || TEQUIP:Ａ系装着器具
+	CFLAG:7204 += 2
+ELSEIF TEQUIP:Ｃ系装着器具 || TEQUIP:Ｕ系装着器具 || TEQUIP:Ｂ系装着器具
+	CFLAG:7204 += 1
+ELSE
+	RETURN 0
+ENDIF
+
+@K40_NTR_COUNT_DECREASE, ARG
+;主人による射精時にNTR好感度を減少させる
+;ARG 射精箇所　ＡＶとそれ以外 (1 or 0)
+;LOCAL 好感度減少数
+SELECTCASE ARG
+	;ＡＶ射精
+	CASE 1
+		LOCAL = 3
+	;それ以外
+	CASEELSE
+		LOCAL = 1
+ENDSELECT
+
+FOR COUNT, 7200, 7206
+	CFLAG:COUNT -= LOCAL
+	SIF CFLAG:COUNT < 0
+		CFLAG:COUNT = 0
+NEXT
+
+@K40_AFFAIR_COUNT, ARG, ARG:1, ARG:2, ARG:3
+;夜イベントで使う
+;行為の回数、内容、好感度など管理
+;ビット演算なのは将来的にNTRで乱交とかやりたいから
+;ARG プレイ場所　（bit Ｃ=1,Ｖ=2,Ａ=4,Ｂ=8）
+;ARG:1 プレイ強度　回数などに補正
+;ARG:2 プレイ相手 (bit 犬=1,豚=2,馬=4,触手=8,機械=16,人間=32,モブ=64)
+;ARG:3　プレイ内容　（セックス=1,奉仕=2,浣腸=3,自慰=4,拡張=5,薬物=6）
+;LOCAL 基本プレイ回数
+;LOCAL:1　乱交フラグ（参加人数）
+;LOCAL:2　プレイ場所カウント　経験への補正用
+;LOCAL:3　計算用一時変数
+;LOCAL:4　計算用変数
+;
+;CFLAG:7230 犬NTR用　最大輪姦犬数
+;CFLAG:7231 犬NTR用　延べ経験犬数
+;CFLAG:7232 犬NTR用　最大射精量
+;CFLAG:7233 犬NTR用　延べ射精量
+;CFLAG:7234 豚NTR用　最大精液浣腸量
+;CFLAG:7235 豚NTR用　延べ精液浣腸量
+;CFLAG:7236 豚NTR用　最大浣腸我慢時間
+;CFLAG:7237 豚NTR用　延べ浣腸我慢時間
+;CFLAG:7238 馬NTR用　最大飲精量
+;CFLAG:7239 馬NTR用　延べ飲精量
+;CFLAG:7240 馬NTR用　Ｖサイズ
+;CFLAG:7241 馬NTR用　Ａサイズ
+;CFLAG:7242 触手NTR用　最大産卵数
+;CFLAG:7243 触手NTR用　延べ産卵数
+;CFLAG:7244 触手NTR用　触手戦闘力
+;CFLAG:7245 触手NTR用　触手サイズ
+;CFLAG:7246 機械NTR用　最大生動画閲覧者数
+;CFLAG:7247 機械NTR用　累計動画閲覧者数
+;CFLAG:7248 機械NTR用　最大連続絶頂回数
+;CFLAG:7249 機械NTR用　延べ連続絶頂回数
+;CFLAG:7250 人間NTR用　最大売春単価
+;CFLAG:7251 人間NTR用　売春総額
+;CFLAG:7252 人間NTR用　経験人数
+;CFLAG:7253 人間NTR用　薬物耐性
+;
+
+;初期化
+VARSET LOCAL
+
+;基本プレイ回数を算出
+LOCAL = RAND:(ABL:欲望 + 1) + ARG:1 
+;プレイ相手が増える毎に回数加算
+FOR COUNT, 1, 7
+	GETBIT ARG:2, COUNT
+		IF RESULT == 1
+			LOCAL += ARG:1
+			LOCAL:1 ++
+		ENDIF
+NEXT
+LOCAL /= 2 
+;プレイ内容を見て、それに見合った経験を追加
+;乱交は別に処理
+IF LOCAL:1 >= 2
+
+ELSE
+	;感覚部位別に経験追加
+	FOR COUNT, 0, 4
+		GETBIT ARG, COUNT
+		IF RESULT == 1
+			LOCAL += RAND:5
+			TRYCALLFORM K40_AFFAIR_PRINT_{COUNT}, LOCAL
+			LOCAL:2 ++
+		ENDIF
+	NEXT
+	;プレイ内容に応じて経験追加
+	;獣姦、触手、排泄、自慰、奉仕快楽、フェラ、キス、拡張、苦痛快楽、被写、売春、失神辺りか
+	SELECTCASE ARG:3
+		;奉仕　奉仕快楽、フェラ、キス
+		CASE 2
+			LOCAL:3 = LOCAL / 2 + RAND:5
+			EXP:キス経験 += LOCAL:3
+			PRINTFORML キス経験 + {LOCAL:3}
+			LOCAL:3 = LOCAL / 2 + RAND:10
+			EXP:フェラ経験 += LOCAL:3
+			PRINTFORML フェラ経験 + {LOCAL:3}
+			EXP:奉仕快楽経験 += LOCAL
+			PRINTFORML 奉仕快楽経験 + {LOCAL}
+		;浣腸　排泄
+		CASE 3
+			EXP:調教排泄経験 += LOCAL
+			PRINTFORML 調教排泄経験 + {LOCAL}
+		;自慰　自慰
+		CASE 4
+			EXP:自慰経験 += LOCAL
+			PRINTFORML 自慰経験 + {LOCAL}
+		;拡張　苦痛快楽、拡張
+		CASE 5
+			GETBIT ARG, 1
+			IF RESULT == 1
+				EXP:Ｖ拡張経験 += LOCAL
+				PRINTFORML Ｖ拡張経験 + {LOCAL}
+			ENDIF
+			GETBIT ARG, 2
+			IF RESULT == 1
+				EXP:Ａ拡張経験 += LOCAL
+				PRINTFORML Ａ拡張経験 + {LOCAL}
+			ENDIF
+			EXP:苦痛快楽経験 += LOCAL
+			PRINTFORML 苦痛快楽経験 + {LOCAL}
+		;薬物
+		CASE 6
+			EXP:薬物経験 += LOCAL / 2
+			PRINTFORML 薬物経験 + {LOCAL / 2}
+	ENDSELECT
+	;獣姦、触手、被写、売春はここで 好感度も同時に加算
+	;獣姦？
+	LOCAL:3 = 0
+	IF ARG:2 & 1
+		LOCAL:3 += LOCAL
+		CFLAG:7200 += LOCAL
+	ENDIF
+	IF ARG:2 & 2
+		LOCAL:3 += LOCAL
+		CFLAG:7201 += LOCAL
+	ENDIF
+	IF ARG:2 & 4
+		LOCAL:3 += LOCAL
+		CFLAG:7202 += LOCAL
+	ENDIF
+	IF LOCAL:3 >= 1
+		EXP:動物性愛経験 += LOCAL:3
+		PRINTFORML 動物性愛経験 + {LOCAL:3}
+	ENDIF
+	;触手？
+	IF ARG:2 & 8
+		EXP:触手経験 += LOCAL
+		CFLAG:7203 += LOCAL
+		PRINTFORML 触手経験 + {LOCAL}
+	ENDIF
+	;被写？（機械と人間で）
+	LOCAL:3 = 0
+	IF ARG:2 & 16
+		LOCAL:3 += (LOCAL / 5)
+		CFLAG:7204 += LOCAL
+	ENDIF
+	IF ARG:2 & 32
+		LOCAL:3 += (LOCAL / 2)
+		CFLAG:7205 += LOCAL
+	ENDIF
+	IF LOCAL:3 >= 1
+		EXP:被写経験 += LOCAL:3
+		PRINTFORML 被写経験 + {LOCAL:3}
+	ENDIF
+	;薬物？（人間で）
+	LOCAL:3 = 0
+	IF ARG:2 & 32
+		LOCAL:3 += (LOCAL / 3)
+	ENDIF
+	IF LOCAL:3 >= 1
+		EXP:薬物経験 += LOCAL:3
+		PRINTFORML 薬物経験 + {LOCAL:3}
+	ENDIF
+	;売春？（モブで）
+	LOCAL:3 = 0
+	CFLAG:7231 = 0
+	SIF ARG:2 & 64
+		LOCAL:3 += (RAND:LOCAL)
+	IF LOCAL:3 >= 1
+		EXP:売春経験 += LOCAL:3
+		PRINTFORML 売春経験 + {LOCAL:3}
+		;売春単価
+		CFLAG:7250 = (50 * CFLAG:7221) + (RAND:100) - (EXP:薬物経験 / 10)
+		;今回売春額
+		LOCAL:4 = CFLAG:7250 * LOCAL:3
+		;売春総額に加算
+		CFLAG:7251 += LOCAL:4
+	ENDIF
+	;精液経験、絶頂回数及び失神回数 もしあれば射精回数
+	LOCAL:3 = LOCAL + RAND:10
+	;機械は精液出さない
+	SIF ARG:2 == 16
+		LOCAL:3 = 0
+	;自慰かつふたなりでない場合精液経験なし
+	SIF ARG:2 == 0 && TALENT:ふたなり == 0
+		LOCAL:3 = 0
+	EXP:精液経験 += LOCAL:3
+	SIF LOCAL:3 > 0
+		PRINTFORML 精液経験 + {LOCAL:3}
+	;絶頂経験は常にLOCAL以上
+	MAX LOCAL, RAND:((LOCAL + LOCAL:2 + ARG:1) * 3)
+	;Ａが責められたらもっかい計算
+	SIF ARG & 4
+		MAX RESULT, RAND:((LOCAL + LOCAL:2 + ARG:1) * 3)
+	;責められた箇所一つのみ且つＡの場合ボーナス付きでもっかい計算
+	SIF LOCAL:2 == 1 && (ARG & 4)
+		MAX RESULT, RAND:((LOCAL + ARG:1 + 5) * 3)
+	EXP:絶頂経験 += RESULT
+	SIF RESULT > 0
+		PRINTFORML 絶頂経験 + {RESULT}
+	IF TALENT:ふたなり
+		LOCAL:3 = LOCAL + RAND:3
+		EXP:射精経験 += LOCAL:3
+		PRINTFORML 射精経験 + {LOCAL:3}
+	ENDIF
+	LOCAL:3 = RESULT / 10
+	EXP:調教失神経験 += LOCAL:3
+	SIF LOCAL:3 > 0
+		PRINTFORML 調教失神経験 + {LOCAL:3}
+	IF CFLAG:7221 >= 1 && (ARG:2 & 64)
+		PRINTFORML 
+		;売春単価が正か負か？
+		IF CFLAG:7250 > 0
+			PRINTFORML にとりの身体は一回{CFLAG:7250}円で買われ、{LOCAL:4}円稼ぎ出しました。
+			;借金があるか？
+			IF CFLAG:7251 > 0
+				PRINTFORML 売春によってにとりが貢いだ総額は{CFLAG:7251}円です。
+			ELSE
+				PRINTFORML 返済に充てて残った借金は{CFLAG:7251 * (-1)}円です。
+			ENDIF
+		ELSE
+			PRINTFORML 薬物代を含め、一回{CFLAG:7250 * (-1)}の経費が掛かりました。
+			;貢いだ金が正か負か
+			IF CFLAG:7251 > 0
+				PRINTFORML {LOCAL:4 * (-1)}円の借りが生まれ、貢いだ総額は{CFLAG:7251}円です。
+			ELSE
+				PRINTFORML 新たに{LOCAL:4 * (-1)}円の借りが生まれ、借金は{CFLAG:7251 * (-1)}円です。
+			ENDIF
+		ENDIF
+	ENDIF
+	PRINTFORML 
+	PRINTFORML ………………
+	PRINTFORML …………
+	PRINTFORML ……
+	;人間は外の世界から帰ってくる風に
+	IF ARG:2 & 32
+		PRINTFORMW 意識を失ったにとりは、いつの間にか元の部屋へと戻っていた……
+	ELSE
+		PRINTFORMW にとりは後始末を済ませ、倒れ込むように寝床へ伏せた……
+	ENDIF
+ENDIF
+
+;念のため
+VARSET RESULT
+
+
+@K40_AFFAIR_PRINT_0, ARG
+;Ｃ関係の結果表示
+;ARG　回数
+;41,Ｃ調律経験
+EXP:Ｃ調律経験 += ARG
+PRINTFORML Ｃ調律経験 + {ARG}
+
+@K40_AFFAIR_PRINT_1, ARG
+;Ｖ関係の結果表示
+;ARG　回数
+;0,Ｖ経験
+;42,Ｖ調律経験
+EXP:Ｖ経験 += ARG
+EXP:Ｖ調律経験 += ARG
+IF TALENT:処女
+	TALENT:処女 = 0
+	EXP:異常経験 ++
+	PRINTL 処女喪失
+ENDIF
+PRINTFORML Ｖ経験 + {ARG}
+PRINTFORML Ｖ調律経験 + {ARG}
+
+@K40_AFFAIR_PRINT_2, ARG
+;Ａ関係の結果表示
+;ARG　回数
+;1,Ａ経験
+;43,Ａ快楽経験
+EXP:Ａ経験 += ARG
+EXP:Ａ快楽経験 += ARG
+PRINTFORML Ａ経験 + {ARG}
+PRINTFORML Ａ快楽経験 + {ARG}
+
+@K40_AFFAIR_PRINT_3, ARG
+;Ｂ関係の結果表示
+;ARG 回数
+;44,Ｂ快楽経験
+EXP:Ｂ快楽経験 += ARG
+PRINTFORML Ｂ快楽経験 + {ARG}
+
+@K40_NTR_EVENT_CHECK, ARG, ARG:1
+;NTRイベントを管理
+;ARG　CFLAG:ARGでそれぞれ好感度
+;ARG:1 NTRレベル
+;LOCAL イベントを通過したか
+;LOCAL:1 プレイ場所　（bit Ｃ=1,Ｖ=2,Ａ=4,Ｂ=8）
+;LOCAL:2 プレイ強度　回数や入手珠などに補正
+;LOCAL:3 プレイ相手 (bit 犬=1,豚=2,馬=4,触手=8,機械=16,人間=32,モブ=64)
+;LOCAL:4　プレイ内容　（セックス=1,奉仕=2,浣腸=3,自慰=4,拡張=5,薬物=6）　
+
+VARSET LOCAL
+
+
+SELECTCASE ARG:1
+	;レベル０から１
+	CASE 0
+		SELECTCASE ARG
+			;犬 好感度５０以上　獣姦中毒１以上
+			CASE 7200
+				IF (CFLAG:ARG >= 50) && (ABL:獣姦中毒 >= 1)
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「ううん、どうにも気が重い」
+							PRINTFORML 「そりゃ、何の関係も無い訳じゃないけどさあ」
+							PRINTFORMW にとりは気が進まない様子で犬の散歩へと向かった……
+						;淫乱
+						CASE 3
+							PRINTFORML 「ほらほら、散歩行くぞー！」
+							PRINTFORML 「私も暇じゃないんだ、とっとと終わらせるよ」
+							PRINTFORMW にとりは勢い良くリードを引っ張り、犬を先導している……
+						;服従
+						CASE 4
+							PRINTFORML 「……」
+							PRINTFORML 「よいしょ、よいしょ」
+							PRINTFORMW にとりは犬の体躯に引きずられるようにして、散歩へと向かった……
+						;屈服３
+						CASEELSE
+							PRINTFORML 「……あ、そういえば」
+							PRINTFORML 「%MASTERNAME%に、犬の散歩に行っとけとか言われてたっけ」
+							PRINTFORML 「セ……交尾出来る位に躾けてるんだから、放っといてもよさそうなものなのに」
+							PRINTFORMW  にとりは渋々といった様子でリードを手にし、犬を外へと連れ出した……
+					ENDSELECT
+					PRINTFORML ………………
+					PRINTFORML …………
+					PRINTFORML ……
+					PRINTFORML 
+					PRINTFORMW 犬は薄暗い獣道へと歩を進め、訝るにとりに突如飛び掛った！
+					PRINTFORML 
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「……うわ、悪い予感的中しちゃった」
+							PRINTFORMW 「勘弁してよ、もう……助けて、%MASTERNAME%……」
+							PRINTFORML にとりは犬の巨躯に押し倒され、湿った土の上でもがいていた。
+							PRINTFORML 彼女の服は所々破れ、白い肌がその隙間より覗いている。
+							PRINTFORMW ぶらぶらと揺れる犬の性器を目にして、にとりは思わず息を呑んだ……
+						;淫乱
+						CASE 3
+							PRINTFORML 「はぁ……気質も精力も飼い主に似るもんなんだねえ」
+							PRINTFORML 「怪我させられるのも癪だ、勝手に使えばいいさ」
+							PRINTFORMW にとりは大人しく体を開き、犬の求めるがままにしている……
+						;服従
+						CASE 4
+							PRINTFORML 「ひえっ、%MASTERNAME%っ……」
+							PRINTFORML 「いろんな意味で、食べられてしまいそうに」
+							PRINTFORML 「餌横取りしてごめんなさいー」
+							PRINTFORMW にとりは平身低頭して犬に許しを請っている……
+						;屈服３
+						CASEELSE
+							PRINTFORML 「うげっ、前言撤回」
+							PRINTFORML 「全く躾できてないじゃないか、コイツ……！」
+							PRINTFORMW 「返り討ちにしてや……ッ！」
+							PRINTFORML にとりは戦闘態勢を取ろうとするも、あっけなく犬に抑え込まれてしまった。
+							PRINTFORML 少女の細首は牙を突き立てられ、抵抗しようとする度に振り回される。
+							PRINTFORMW 唇を噛むにとりに向かい、犬は膨れ上がった生殖器を差し出した……
+					ENDSELECT
+					PRINTFORML 
+					CFLAG:7216 = 1
+					SETBIT CFLAG:7215, 1
+					;犬にＡとＶを強度３で犯される
+					LOCAL = 1
+					SETBIT LOCAL:1, 1, 2
+					LOCAL:2 = 3
+					SETBIT LOCAL:3, 0
+					LOCAL:4 = 1
+				ENDIF
+			;豚　好感度５０以上　獣姦中毒１以上
+			CASE 7201
+				IF (CFLAG:ARG >= 50) && (ABL:獣姦中毒 >= 1)
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「新しく掃除機作るべきかなあ」
+							PRINTFORMW 「動物小屋の掃除はまだまだ不慣れでさ」
+						;淫乱
+						CASE 3
+							PRINTFORML 「最近豚達が盛ってるみたいなんだけど、そっちの世話も？」
+							PRINTFORMW 「……好きにしろ、ときたか」
+						;服従
+						CASE 4
+							PRINTFORML 「行ってきまーす」
+							PRINTFORMW 「%MASTERNAME%は大船に乗ったつもりで待ってて下さいよ」
+						;屈服３
+						CASEELSE
+							PRINTFORML 「う……あの豚、どうにも苦手なんだけどなあ」
+							PRINTFORMW 「見る目がやらしいというか、何と言うか」
+					ENDSELECT
+					PRINTFORML にとりは%CALLNAME:MASTER%に命じられた世話の為、豚小屋へと向かった。
+					PRINTFORML 獣臭の立ちこめる暗い部屋の中で、幾匹もの豚が蠢き耳障りな鳴き声を上げている。
+					PRINTFORMW 一際肥えた種豚の傍で、にとりは掃除を開始した……
+					PRINTFORML 
+					PRINTFORML ………………
+					PRINTFORML …………
+					PRINTFORML ……
+					PRINTFORML 
+					PRINTFORMW しきりに鼻を鳴らす種豚は、その巨躯でもってにとりを突き倒した！
+					PRINTFORML 
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「ひょわっ！？」
+							PRINTFORML 「うう、重い……っ」
+							PRINTFORMW 背後からの一撃に、にとりは抗うことすらできなかった……
+						;淫乱
+						CASE 3
+							PRINTFORML 「おうおう、お盛んだねえ」
+							PRINTFORML 「しょうがないなあ、にとりさんがその性欲を処理したげよう」
+							PRINTFORMW にとりは乗駕した種豚による交尾を今か今かと待ちわびている……
+						;服従
+						CASE 4
+							PRINTFORML 「……ううん、下の世話はどうするべきか」
+							PRINTFORML 「出来る奴隷としては、やっちゃうべきなのかなあ」
+							PRINTFORMW にとりはおずおずと尻を突き出して、豚の視姦するがままに任せている……
+						;屈服３
+						CASEELSE
+							PRINTFORML 「うわわわわ、やっぱりー！」
+							PRINTFORML 「ちょ、パンツ、待っ……」
+							PRINTFORMW 下半身を剥き出しにしたにとりに、種豚が圧し掛かった……
+					ENDSELECT
+					PRINTFORML 
+					CFLAG:7217 = 1
+					SETBIT CFLAG:7215, 2
+					LOCAL = 1
+					;豚にＡ浣腸プレイ
+					SETBIT LOCAL:1, 2
+					LOCAL:2 = 3
+					SETBIT LOCAL:3, 1
+					LOCAL:4 = 3
+				ENDIF
+			;馬　好感度５０以上　獣姦中毒１以上
+			CASE 7202
+				IF (CFLAG:ARG >= 50) && (ABL:獣姦中毒 >= 1)
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「ん、む……」
+							PRINTFORML 「ああ、ダメだ、馬のおちんちん、頭から離れないや……」
+						;淫乱
+						CASE 3
+							PRINTFORML 「うぐう、思い付かない」
+							PRINTFORML 「斬新かつ気持ち良さそうなエロ技術、浮かんでこないかなあ……」
+						;服従
+						CASE 4
+							PRINTFORML 「あ、そういえば……」
+							PRINTFORML 「馬小屋の掃除、今日やってたっけ？」
+						;屈服３
+						CASEELSE
+							PRINTFORML 「……なんか悶々する」
+							PRINTFORML 「いや、欲求不満とか、そういうのじゃない筈なんだけど」
+					ENDSELECT
+					PRINTFORML にとりは寝床から抜け出し、馬小屋へと向かう。
+					PRINTFORML 床藁に身体を伏せる馬が、深夜の闖入者に首をもたげた。
+					PRINTFORMW その様子を意にも介さず、にとりは歩を進める……
+					PRINTFORML 
+					PRINTFORML ………………
+					PRINTFORML …………
+					PRINTFORML ……
+					PRINTFORML 
+					PRINTFORMW 横たわる馬の股間へ、にとりの腕が伸びた！
+					PRINTFORML 
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「やっぱり、大きいよねえ……」
+							PRINTFORML 「精液の勢いも凄いし、ほんと……」
+							PRINTFORMW にとりは勃起した馬の性器を擦り、熱い息を吹き掛けた……
+						;淫乱
+						CASE 3
+							PRINTFORML 「お邪魔しますよ、っと」
+							PRINTFORML 「ちょっと参考にさせて欲しくてねえ、悪いようにはしないからさ」
+							PRINTFORMW にとりは笠状に開いた馬の陰茎の先を、舌で何度もなぞる……
+						;服従
+						CASE 4
+							PRINTFORML 「あらららら、溜まってるみたいで」
+							PRINTFORML 「寝る前に、気持ち良くなってくださいな」
+							PRINTFORMW にとりは馬の張り詰めた筋肉を撫で、ゆっくりブラウスをはだけてゆく……
+						;屈服３
+						CASEELSE
+							PRINTFORML 「うう……何でこんなこと」
+							PRINTFORML 「私は悪くない、悪くないんだから……」
+							PRINTFORMW にとりは頬を真っ赤に染め、息を荒げている……
+					ENDSELECT
+					PRINTFORML 
+					CFLAG:7218 = 1
+					SETBIT CFLAG:7215, 3
+					LOCAL = 1
+					;馬に精液プレイ
+					SETBIT LOCAL:1, 3
+					LOCAL:2 = 3
+					SETBIT LOCAL:3, 2
+					LOCAL:4 = 2
+				ENDIF
+			;触手　好感度５０以上　触手中毒１以上　このイベントで禁断の知識習得
+			CASE 7203
+				IF (CFLAG:ARG >= 50) && (ABL:触手中毒 >= 1)
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「%MASTERNAME%は、確かこうやってたっけ」
+							PRINTFORML 「手助けも、したいしね……」
+						;淫乱
+						CASE 3
+							PRINTFORML 「触手、私も欲しいなあ」
+							PRINTFORML 「思うがままに操れて、色々やらしくできる奴」
+						;服従
+						CASE 4
+							PRINTFORML 「%MASTERNAME%みたいになりたいなあ」
+							PRINTFORML 「どうすればいいかなあ」
+						;屈服３
+						CASEELSE
+							PRINTFORML 「ん……何だこりゃ、”今日から始める触手召喚術”？」
+							PRINTFORML 「胡散臭いなあ、と言うか%MASTERNAME%はこんなの読んでたのか」
+					ENDSELECT
+					TALENT:禁断の知識 = 1
+					PRINTFORML 
+					PRINTFORML ………………
+					PRINTFORML …………
+					PRINTFORML ……
+					PRINTFORML 
+					PRINTFORMW 紆余曲折を経て、にとりは[禁断の知識]を習得した！
+					PRINTFORML 
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「うわっ、言うこと、聞いてくれない……」
+							PRINTFORML 「ひゃん、っ！　そこ、敏感だからぁ……」
+							PRINTFORMW 絡みつく触手の粘液で、にとりは艶かしく濡れている……
+						;淫乱
+						CASE 3
+							PRINTFORML 「おやおや、願えば叶うもんだねえ」
+							PRINTFORML 「どんなものか、早速試してみようじゃないか」
+							PRINTFORMW にとりは蠢く触手の群れに、自らの身体を投げ出した……
+						;服従
+						CASE 4
+							PRINTFORML 「これで一歩、近づいた……かな」
+							PRINTFORML 「操作に慣れる為には……やっぱり、実践？」
+							PRINTFORMW 揺らめく触手を眺めるにとりの瞳は、情欲に潤んでいる……
+						;屈服３
+						CASEELSE
+							PRINTFORML 「って、えええー！？　本当に出来ちゃったよ、うへえ」
+							PRINTFORML 「……凄く、不穏な空気が漂ってるけれども」
+							PRINTFORMW 立ちすくむにとりに、無数の触手が群がった……
+					ENDSELECT
+					PRINTFORML 
+					CFLAG:7219 = 1
+					SETBIT CFLAG:7215, 4
+					LOCAL = 1
+					;触手にＣ，Ｂぐちょぐちょ
+					SETBIT LOCAL:1, 0, 3
+					LOCAL:2 = 3
+					SETBIT LOCAL:3, 3
+					LOCAL:4 = 1
+				ENDIF
+			;機械　好感度５０以上　Ａバイブ改造済み　ビデオ、テープ所持
+			CASE 7204
+				IF (CFLAG:ARG >= 50) && CFLAG:7001 >= 2 && ITEM:ビデオカメラ && ITEM:ビデオテープ > 0
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「私、イってるときどんな感じなんだろ……変じゃない、よね？」
+							PRINTFORML 「……確かめてみよっかな」
+						;淫乱
+						CASE 3
+							PRINTFORML 「んんっ……全部、入ったぁ……」
+							PRINTFORML 「後はこれつけて、スイッチを……」
+						;服従
+						CASE 4
+							PRINTFORML 「%MASTERNAME%の調教に耐えられるようにならないと」
+							PRINTFORML 「限界まで、がんばるぞー」
+						;屈服３
+						CASEELSE
+							PRINTFORML 「……バイブ、試してみるだけだから」
+							PRINTFORML 「連続使用で不具合とか、あるかもしれないし……っ」
+					ENDSELECT
+					PRINTFORML にとりは改造したアナルバイブを挿入し、ローターをクリに固定し全身を拘束した。
+					PRINTFORML 自身の悶える姿を録画する為のビデオカメラを前に、彼女は荒い息を吐く。
+					PRINTFORMW 縛った後ろ手に握られたスイッチが、カチリという音と共に床に落ちる……
+					PRINTFORML 
+					PRINTFORML ………………
+					PRINTFORML …………
+					PRINTFORML ……
+					PRINTFORML 
+					PRINTFORMW 空も白む明け方、機械は未だ止まらずにとりの身体を責め立てている……
+					PRINTFORML 
+					;ビデオテープ減
+					ITEM:ビデオテープ --
+					CFLAG:7220 = 1
+					SETBIT CFLAG:7215, 5
+					LOCAL = 1
+					;強度高機械自慰アナルプレイ
+					SETBIT LOCAL:1, 0, 2
+					LOCAL:2 = 5
+					SETBIT LOCAL:3, 4
+					LOCAL:4 = 4
+				ENDIF
+			;人間　禁断の知識を持っている　被写経験２０以上
+			CASE 7205
+				IF TALENT:禁断の知識 && (EXP:被写経験 >= 20)
+					PRINTFORML にとりは自室の隅を訝しげに見つめている。
+					PRINTFORML [禁断の知識]によって認識される歪みが、いつからかそこにあった。
+					PRINTFORMW その、”スキマ”とでも呼ぶべき裂け目を彼女は弄くり回す。
+					PRINTFORML 
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「ん、何だろこの割れ目、住宅瑕疵？」
+							PRINTFORML 「……え！？　もしかして、外に繋がってる……？」
+						;淫乱
+						CASE 3
+							PRINTFORML 「あー、ここの外はこんなになってるのか」
+							PRINTFORML 「随分珍妙な世界だねえ」
+						;服従
+						CASE 4
+							PRINTFORML 「あれは……誰だろ？」
+							PRINTFORML 「%MASTERNAME%の知り合い、とか？」
+						;屈服３
+						CASEELSE
+							PRINTFORML 「見えちゃいけないものが見えてる気がする」
+							PRINTFORML 「いやいや幻覚だって、きっとそうに違いないって……」
+					ENDSELECT
+					PRINTFORML 
+					PRINTFORML 不意に浮遊感がにとりを襲う。
+					PRINTFORML いつしか彼女は何処か別の世界に――きらびやかな夜の街に立っていた。
+					PRINTFORMW にとりは全方位に首を振って周りの様子を窺うが、彼女の知る物はどこにもない。
+					PRINTFORML その目立つ動きに、遠巻きに少女を眺めていた肥った中年の男が話しかける。
+					PRINTFORML 噛み合わぬ会話と外見に何かを察したのか、男は”君の助けになるよ”と肩を抱いた。
+					PRINTFORMW 妙に訳知り顔な男の誘いを断ることが出来ず、にとりは困惑している……
+					PRINTFORML 
+					PRINTFORML ………………
+					PRINTFORML …………
+					PRINTFORML ……
+					PRINTFORML 
+					PRINTFORMW 道中男に差し出されたお茶を飲んで、にとりは意識を失った！
+					PRINTFORML 
+					SELECTCASE CFLAG:7000
+						;恋慕
+						CASE 2
+							PRINTFORML 「ねえ、%MASTERNAME%」
+							PRINTFORML 「声、変わったねえ、あはっ、あははは……うん、好きだよ……？」
+						;淫乱
+						CASE 3
+							PRINTFORML 「ぜんしん、気持ちい……」
+							PRINTFORML 「しあわせ、ふわふわぁ……」
+						;服従
+						CASE 4
+							PRINTFORML 「%MASTERNAME%……」
+							PRINTFORML 「%MASTERNAME%、%MASTERNAME%……」
+						;屈服３
+						CASEELSE
+							PRINTFORML 「んん……ぅ……？」
+							PRINTFORML 「え……？　だぁれ……？」
+					ENDSELECT
+					PRINTFORMW 男は虚ろに笑うにとりを犯している……
+					PRINTFORML 
+					CFLAG:7221 = 1
+					SETBIT CFLAG:7215, 6
+					LOCAL = 1
+					;人間に被写薬物プレイ 人間は素で薬物プレイなのでLOCAL:4は１
+					SETBIT LOCAL:1, 0, 1
+					LOCAL:2 = 3
+					SETBIT LOCAL:3, 5
+					LOCAL:4 = 1
+				ENDIF
+			CASEELSE
+				LOCAL = 0
+		ENDSELECT
+	;レベル１から２以降
+	CASEELSE
+		LOCAL = 0
+ENDSELECT
+RETURN LOCAL, LOCAL:1, LOCAL:2, LOCAL:3, LOCAL:4
+
+ 
+;@K40_BESTIALITY
+;何かできないか　好感度とか
+;FLAG:72
+
+

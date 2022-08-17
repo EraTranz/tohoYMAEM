@@ -1,0 +1,194 @@
+﻿;=============================================================================
+;四肢緊縛
+;=============================================================================
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM622
+PRINTL 四肢緊縛
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 622
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 四肢緊縛
+SELECTCOM = 622
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 100
+	DOWNBASE:1 += 100
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 80
+	DOWNBASE:1 += 80
+ELSE
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 50
+ENDIF
+
+LOCAL:1 = 250
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL:1 , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL:1 , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL:1 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL:1 , 0.40
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL:1 , 0.60
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL:1 , 1.10
+ELSE
+	TIMES LOCAL:1 , 1.20
+ENDIF
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	TIMES LOCAL:1 , 0.80
+ELSEIF ABL:マゾっ気 == 1
+	TIMES LOCAL:1 , 1.00
+ELSEIF ABL:マゾっ気 == 2
+	TIMES LOCAL:1 , 1.30
+ELSEIF ABL:マゾっ気 == 3
+	TIMES LOCAL:1 , 1.60
+ELSEIF ABL:マゾっ気 == 4
+	TIMES LOCAL:1 , 2.00
+ELSE
+	TIMES LOCAL:1 , 3.00
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:1 , 2.00
+
+SOURCE:痛み = 400
+SOURCE:露出 = 1300
+SOURCE:屈従 = 300
+SOURCE:逸脱 = 550 + LOCAL:1
+SOURCE:支配 = 450 + LOCAL:1
+
+TCVAR:緊縛経験 += 3
+
+;縄の着脱
+TEQUIP:緊縛関連 = 2
+;ＳＭ教育経験フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 2
+
+RETURN 1
+
+;-------------------------------------------------
+;四肢緊縛中
+;-------------------------------------------------
+@EQUIP_COM622
+PRINTL ＜四肢緊縛中＞
+;緊縛経験が高いと消費減少
+IF EXP:緊縛経験 < EXPLV:3
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 50
+ELSEIF EXP:緊縛経験 < EXPLV:4
+	DOWNBASE:0 += 40
+	DOWNBASE:1 += 40
+ELSE
+	DOWNBASE:0 += 20
+	DOWNBASE:1 += 20
+ENDIF
+
+;ABL:マゾっ気をみる
+IF ABL:マゾっ気 == 0
+	LOCAL = 60
+ELSEIF ABL:マゾっ気 == 1
+	LOCAL = 180
+ELSEIF ABL:マゾっ気 == 2
+	LOCAL = 300
+ELSEIF ABL:マゾっ気 == 3
+	LOCAL = 480
+ELSEIF ABL:マゾっ気 == 4
+	LOCAL = 700
+ELSE
+	LOCAL = 850
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL , 2.00
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+SOURCE:痛み += 300
+SOURCE:露出 += LOCAL + 500
+SOURCE:屈従 += LOCAL + 100
+SOURCE:逸脱 += LOCAL + 100
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+TCVAR:緊縛経験 += 2
+;触手経験フラグ
+SIF TEQUIP:触手調教
+	TFLAG:90 += 1
+
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_622
+
+IF EQUIP:睡眠薬 || TFLAG:899 > 0
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の四肢を縄で拘束した…
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は、
+	;倒錯的で恐怖刻印が1以下で反発刻印がないとき
+	IF TALENT:倒錯的 && MARK:恐怖刻印 < 2 && MARK:反発刻印 < 1
+		PRINTFORML %CALLNAME:TARGET%の四肢を縄で拘束した。
+		PRINTFORML %CALLNAME:TARGET%は縄の感触を全身に受けて、快感を心行くまで味わっているようだ…
+	;反抗的か抵抗を持ち陥落してない場合
+	ELSEIF (TALENT:反抗的 || TALENT:抵抗) && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+		PRINTFORML 激しく嫌がる%CALLNAME:TARGET%の四肢を強引に縄で拘束した…
+	;臆病持ちか恐怖刻印2以上で気丈と感情乏しいを持たず、陥落していない場合
+	ELSEIF (TALENT:臆病 || MARK:恐怖刻印 >= 2) && TALENT:気丈 == 0 && TALENT:感情乏しい == 0 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+		PRINTFORML 恐怖に怯える%CALLNAME:TARGET%の四肢を縄で丁寧に拘束した…
+	;プライド高いか神霊でなおかつ、屈服刻印と恥辱刻印が1以下で、陥落していない場合
+	ELSEIF (TALENT:プライド高い || TALENT:神霊) && MARK:屈服刻印 < 2 && MARK:恥辱刻印 < 2 && TALENT:恋慕 == 0 && TALENT:服従 == 0 && TALENT:淫乱 == 0
+		PRINTFORML %CALLNAME:TARGET%の四肢を縄で拘束した。
+		PRINTFORML %CALLNAME:TARGET%は拘束されながらも、そのプライドだけは折れてはいないように見えた…
+	;解放か快感に素直か春の人で痛みに弱いがなく、反発刻印がない場合
+	ELSEIF (TALENT:解放 || TALENT:快感に素直 || TALENT:春の人) && TALENT:痛みに弱い == 0 && MARK:反発刻印 <= 0
+		PRINTFORML なんだか楽しそうな%CALLNAME:TARGET%の四肢を縄で丁寧に拘束した…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の四肢を縄で拘束した…
+	ENDIF
+ENDIF

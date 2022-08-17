@@ -1,0 +1,282 @@
+﻿;=============================================================================
+;フリスク挿入
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE184
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:184 > 0
+	RETURN 0
+;Ａ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 4) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:フリスク == 0
+	RETURN 0
+;対象の《潤滑》は大丈夫かチェック
+SIF COM_ABLE_SLICK(TARGET, PLAYER) == 0
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;褌着用中の場合調教者の技巧4以上必須
+SIF TEQUIP:コスチュームプレイ == 17 && ABL:PLAYER:技巧 < 4
+	RETURN 0
+;スク水プレイ中はダメ
+SIF TEQUIP:コスチュームプレイ == 2
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 184) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM184
+IF TEQUIP:坐剤 & 4
+	PRINTL フリスク追加挿入
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 184
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = フリスク追加挿入
+ELSE
+	PRINTL フリスク挿入
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 184
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = フリスク挿入
+ENDIF
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 25
+
+SOURCE:露出 = 350
+SOURCE:逸脱 = 400
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 10
+	SOURCE:屈従 = 50
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 50
+	SOURCE:屈従 = 75
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 100
+	SOURCE:屈従 = 150
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 250
+	SOURCE:屈従 = 300
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 400
+	SOURCE:屈従 = 500
+ELSE
+	SOURCE:快Ａ = 750
+	SOURCE:屈従 = 800
+ENDIF
+
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	SOURCE:痛み = 500
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:屈従 , 0.20
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	SOURCE:痛み = 400
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:屈従 , 0.50
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	SOURCE:痛み = 300
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	SOURCE:痛み = 200
+	TIMES SOURCE:快Ａ , 1.20
+	TIMES SOURCE:屈従 , 1.20
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	SOURCE:痛み = 100
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.60
+ELSE
+	SOURCE:痛み = 50
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:屈従 , 1.80
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	TIMES SOURCE:痛み , 3.00
+	TIMES SOURCE:屈従 , 0.10
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.20
+	TIMES SOURCE:痛み , 2.00
+	TIMES SOURCE:屈従 , 0.20
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:痛み , 1.00
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:痛み , 0.50
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:潤滑 >= PALAMLV:4
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:痛み , 0.10
+	TIMES SOURCE:屈従 , 2.00
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.30
+	TIMES SOURCE:屈従 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.60
+	TIMES SOURCE:屈従 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:屈従 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:屈従 , 1.30
+ELSEIF PALAM:欲情 >= PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:屈従 , 1.60
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ敏感
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF TALENT:Ａ鈍感
+	TIMES SOURCE:屈従 , 0.60
+	TIMES SOURCE:逸脱 , 0.60
+ENDIF
+
+;処女で貞操観念
+SIF TALENT:処女 == 1 && TALENT:貞操観念
+	SOURCE:屈従 /= 3
+
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+TEQUIP:坐剤 |= 4
+
+TCVAR:Ａ経験 += 2
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+
+;フリスク1個消費
+CALL USE_PLURAL_ITEM, 83, 1
+RETURN 1
+
+;-------------------------------------------------
+;フリスク効果発揮中
+;-------------------------------------------------
+@EQUIP_COM184
+PRINTL ＜フリスク効果発揮中＞
+
+DOWNBASE:0 += 10
+DOWNBASE:1 += 25
+
+LOCAL:1 = 200
+LOCAL:2 = 100
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	LOCAL = 5
+ELSEIF ABL:Ａ感覚 == 1
+	LOCAL = 10
+ELSEIF ABL:Ａ感覚 == 2
+	LOCAL = 20
+ELSEIF ABL:Ａ感覚 == 3
+	LOCAL = 50
+ELSEIF ABL:Ａ感覚 == 4
+	LOCAL = 100
+ELSE
+	LOCAL = 180
+ENDIF
+
+;Ａ敏感、鈍感をみる
+;快Ａ自体のチェックは後でまとめてやる
+IF TALENT:Ａ敏感
+	TIMES LOCAL:1 , 1.50
+	TIMES LOCAL:2 , 1.50
+ELSEIF TALENT:Ａ鈍感
+	TIMES LOCAL:1 , 0.60
+	TIMES LOCAL:2 , 0.60
+ENDIF
+
+SOURCE:快Ａ += LOCAL
+SOURCE:欲情追加 += LOCAL/2
+SOURCE:液体追加 += LOCAL/2
+SOURCE:屈従 += LOCAL:1
+SOURCE:逸脱 += LOCAL:2
+SOURCE:中毒充足 += LOCAL+LOCAL:1
+
+TCVAR:Ａ経験 += 1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_184
+IF TEQUIP:坐剤 & 4
+	PRINTFORML フリスクの刺激を受けている%CALLNAME:TARGET%のアナルに%CALLNAME:PLAYER%はさらに新たなフリスクを潜り込ませた
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアヌスにフリスクを捻じ込んだ
+ENDIF
+IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORM %CALLNAME:TARGET%は
+	IF EXP:Ａ経験 < 20
+		PRINTL 恐怖に顔を歪め、無駄と知りつつ
+		PRINTFORM なんとか%CALLNAME:PLAYER%の手から逃れようと暴れて
+	ELSEIF EXP:Ａ経験 < 40
+		PRINT 肛門より侵入してくる異物感に屈辱と嫌悪の表情をして
+	ELSEIF EXP:Ａ経験 < 75
+		PRINTL 嫌がっていたものの、たいした抵抗もせず
+		PRINT おとなしくフリスクを挿入されて
+	ELSEIF EXP:Ａ経験 < 100
+		PRINT 菊門を通ったときの刺激が堪らないのか身体を震わせて
+	ELSEIF EXP:Ａ経験 < 140
+		PRINT フリスクを入れられる感覚が気に入ったのか表情が緩みきって
+	ELSEIF EXP:Ａ経験 < 180
+		PRINT 薬を挿入した後も腰を振ってさらなる快楽を引き出そうとして
+	ELSE
+		PRINTL それだけで満足できないのかフリスクをさらに奥に押し込もうと
+		PRINT 自らの指をお尻の中に突っ込んで
+	ENDIF
+	PRINTL いる…
+ENDIF

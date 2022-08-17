@@ -1,0 +1,243 @@
+﻿;=============================================================================
+;足を舐める
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE271
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:271 > 0
+	RETURN 0
+;調教者奉仕・ウフフ系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 2048) == 0
+	RETURN 0
+;奴隷がサド持ちまたはドＳ持ちまたはサドっ気Lv1以上じゃないとダメ
+SIF TALENT:サド == 0 && TALENT:ドＳ == 0 && ABL:サドっ気 < 1
+	RETURN 0
+;調教者が[猫舌]だと猫フェラパッチ有効でないとダメ
+SIF TALENT:PLAYER:猫舌 && (FLAG:14 & 16) == 0
+	RETURN 0
+;調教者が[猫舌]だと技巧2必要
+SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 2
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;蒸し風呂と岩盤浴以外の○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中 && TEQUIP:特殊風呂入浴中 != 12 && TEQUIP:特殊風呂入浴中 != 15
+	RETURN 0
+;睡眠中は不可
+SIF EQUIP:睡眠薬
+	RETURN 0
+;失神中は不可
+SIF TFLAG:899 > 0
+	RETURN 0
+;ボールギャグ使用中は不可
+SIF TEQUIP:口装着器具
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 271) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM271
+IF TALENT:人魚
+	PRINTL ひれを舐める
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 271
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = ひれを舐める
+ELSE
+	PRINTL 足を舐める
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 271
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 足を舐める
+ENDIF
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 5
+DOWNBASE:1 += 100
+
+SOURCE:主導権 = 350
+SOURCE:達成感 = 70
+SOURCE:恭順追加 = 50
+SOURCE:逸脱 = 100
+
+;ABL:調教者の技巧をみる
+IF ABL:PLAYER:技巧 == 0
+	TIMES SOURCE:主導権 , 0.8
+	TIMES SOURCE:達成感 , 0.8
+	TIMES SOURCE:恭順追加 , 0.8
+ELSEIF ABL:PLAYER:技巧 == 1
+	TIMES SOURCE:主導権 , 1.0
+	TIMES SOURCE:達成感 , 1.0
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:PLAYER:技巧 == 2
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.1
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:PLAYER:技巧 == 3
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.3
+	TIMES SOURCE:恭順追加 , 1.1
+ELSEIF ABL:PLAYER:技巧 == 4
+	TIMES SOURCE:主導権 , 1.8
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.2
+ELSE
+	TIMES SOURCE:主導権 , 2.0
+	TIMES SOURCE:達成感 , 1.8
+	TIMES SOURCE:恭順追加 , 1.5
+ENDIF
+
+;調教者のTALENT:舌使いをみる
+IF TALENT:PLAYER:舌使い
+	TIMES SOURCE:恭順追加 , 1.2
+ENDIF
+;調教者の猫舌をみる
+IF TALENT:PLAYER:猫舌
+	SOURCE:痛み += 50
+	SOURCE:痒み += 10
+ENDIF
+
+;ABL:サドっ気をみる
+IF ABL:サドっ気 <= 1
+	TIMES SOURCE:主導権 , 0.8
+	TIMES SOURCE:達成感 , 0.8
+	TIMES SOURCE:恭順追加 , 0.7
+ELSEIF ABL:サドっ気 == 2
+	TIMES SOURCE:主導権 , 1.0
+	TIMES SOURCE:達成感 , 1.0
+	TIMES SOURCE:恭順追加 , 0.9
+ELSEIF ABL:サドっ気 == 3
+	TIMES SOURCE:主導権 , 1.4
+	TIMES SOURCE:達成感 , 1.2
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:サドっ気 == 4
+	TIMES SOURCE:主導権 , 1.8
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.2
+ELSE
+	TIMES SOURCE:主導権 , 2.2
+	TIMES SOURCE:達成感 , 2.0
+	TIMES SOURCE:恭順追加 , 1.6
+ENDIF
+
+;ABL:調教者のマゾっ気をみる
+IF ABL:PLAYER:マゾっ気 == 0
+	TIMES SOURCE:主導権 , 0.9
+	TIMES SOURCE:達成感 , 0.9
+	TIMES SOURCE:恭順追加 , 0.9
+ELSEIF ABL:PLAYER:マゾっ気 == 1
+	TIMES SOURCE:主導権 , 1.0
+	TIMES SOURCE:達成感 , 1.0
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:PLAYER:マゾっ気 == 2
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.1
+	TIMES SOURCE:恭順追加 , 1.0
+ELSEIF ABL:PLAYER:マゾっ気 == 3
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.3
+	TIMES SOURCE:恭順追加 , 1.1
+ELSEIF ABL:PLAYER:マゾっ気 == 4
+	TIMES SOURCE:主導権 , 1.8
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.2
+ELSE
+	TIMES SOURCE:主導権 , 2.0
+	TIMES SOURCE:達成感 , 1.8
+	TIMES SOURCE:恭順追加 , 1.5
+ENDIF
+
+;調教者がドＭ
+IF TALENT:PLAYER:ドＭ
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.5
+	SOURCE:欲情追加 = 240
+;調教者がマゾ
+ELSEIF TALENT:PLAYER:マゾ
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.2
+	TIMES SOURCE:恭順追加 , 1.2
+	SOURCE:欲情追加 = 120
+ENDIF
+;ドＳ
+IF TALENT:ドＳ
+	TIMES SOURCE:主導権 , 1.5
+	TIMES SOURCE:達成感 , 1.5
+	TIMES SOURCE:恭順追加 , 1.5
+;サド
+ELSEIF TALENT:サド
+	TIMES SOURCE:主導権 , 1.2
+	TIMES SOURCE:達成感 , 1.2
+	TIMES SOURCE:恭順追加 , 1.2
+ENDIF
+
+;相愛
+IF TALENT:相愛
+	SOURCE:情愛 = 500
+	TIMES SOURCE:逸脱 , 0.8
+;親愛
+ELSEIF TALENT:親愛
+	SOURCE:情愛 = 200
+;恋慕
+ELSEIF TALENT:恋慕
+	SOURCE:情愛 = 50
+ENDIF
+
+;調教者の口⇔対象の足の汚れが相互に移動
+STAIN:足 |= STAIN:PLAYER:口
+STAIN:PLAYER:口 |= STAIN:足
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 3
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 3
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_271
+;猫舌
+IF TALENT:PLAYER:猫舌
+	PRINTFORM %CALLNAME:TARGET%の
+	IF TALENT:人魚
+		PRINT 尾ひれ
+	ELSE
+		PRINT 足
+	ENDIF
+	PRINTL を舌先で小刻みにくすぐった…
+ELSE
+	PRINTFORM %CALLNAME:TARGET%の
+	IF TALENT:人魚
+		PRINT 尾ひれ
+	ELSE
+		PRINT 足
+	ENDIF
+	PRINTL を丁寧に舐めた…
+ENDIF

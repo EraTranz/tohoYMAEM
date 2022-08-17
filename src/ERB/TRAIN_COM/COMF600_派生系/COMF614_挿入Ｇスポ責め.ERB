@@ -1,0 +1,578 @@
+﻿;=============================================================================
+;挿入Ｇスポ責め
+;=============================================================================
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM614
+TFLAG:132 = 0
+IF SELECTCOM == 24
+	PRINTL 騎乗Ｇスポ責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 614
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 騎乗Ｇスポ責め
+ELSE
+	PRINTL 挿入Ｇスポ責め
+
+	;戦闘判定
+	CALL COM_TRY_BATTLE, 614
+	;実行できない
+	SIF RESULT == 1
+		RETURN 1
+
+	TSTR:0 = 挿入Ｇスポ責め
+ENDIF
+
+SELECTCOM = 614
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;Ｖ経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:1 = 1
+SIF TALENT:処女 && TALENT:恋慕 && ASSIPLAY == 0
+	TFLAG:2 = TALENT:処女
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 0
+
+;ABL:技巧をみる
+IF ABL:技巧 == 0
+	LOCAL = 500
+ELSEIF ABL:技巧 == 1
+	LOCAL = 600
+ELSEIF ABL:技巧 == 2
+	LOCAL = 700
+ELSEIF ABL:技巧 == 3
+	LOCAL = 900
+ELSEIF ABL:技巧 == 4
+	LOCAL = 1200
+ELSE
+	LOCAL = 1400
+ENDIF
+
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_1(TARGET, LOCAL)
+;従順をみる
+LOCAL = EJACULATIONCHECK_ABL_10_4(TARGET, LOCAL)
+;睡眠薬で寝ているor失神している場合
+SIF EQUIP:睡眠薬 || TFLAG:899 > 0
+	TIMES LOCAL, 0.7
+;潤滑をみる
+LOCAL = EJACULATIONCHECK_PALAM_10_1(TARGET, LOCAL)
+
+;調教者のＣ感覚をみる
+LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
+
+SIF EXIST_PENIS(PLAYER)
+	BASE:PLAYER:射精 += LOCAL
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+IF PREVCOM == 24
+	DOWNBASE:0 += 60
+	DOWNBASE:1 += 150
+	SOURCE:露出 = 1300
+ELSE
+	DOWNBASE:0 += 50
+	DOWNBASE:1 += 100
+	SOURCE:露出 = 900
+ENDIF
+
+;乱れ牡丹直後の派生は効果増強
+SIF PREVCOM == 612
+	SOURCE:露出 += 2500
+
+;ABL:Ｖ感覚をみる
+IF ABL:Ｖ感覚 == 0
+	SOURCE:快Ｖ = 150
+	SOURCE:情愛 = 100
+ELSEIF ABL:Ｖ感覚 == 1
+	SOURCE:快Ｖ = 200
+	SOURCE:情愛 = 180
+ELSEIF ABL:Ｖ感覚 == 2
+	SOURCE:快Ｖ = 600
+	SOURCE:情愛 = 250
+ELSEIF ABL:Ｖ感覚 == 3
+	SOURCE:快Ｖ = 2000
+	SOURCE:情愛 = 380
+ELSEIF ABL:Ｖ感覚 == 4
+	SOURCE:快Ｖ = 2600
+	SOURCE:情愛 = 500
+ELSE
+	SOURCE:快Ｖ = 3400
+	SOURCE:情愛 = 800
+ENDIF
+
+;EXP:Ｖ経験をみる
+IF EXP:Ｖ経験 < EXPLV:1
+	TIMES SOURCE:快Ｖ , 0.20
+	SOURCE:痛み = 300
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	TIMES SOURCE:快Ｖ , 0.60
+	SOURCE:痛み = 100
+ELSEIF EXP:Ｖ経験 < EXPLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	SOURCE:痛み = 10
+ELSEIF EXP:Ｖ経験 < EXPLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	SOURCE:痛み = 0
+ELSEIF EXP:Ｖ経験 < EXPLV:5
+	TIMES SOURCE:快Ｖ , 1.30
+	SOURCE:痛み = 0
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	SOURCE:痛み = 0
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.10
+	SOURCE:痛み += 1000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.40
+	SOURCE:痛み += 300
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ｖ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;対面座位だと効果が低い
+IF PREVCOM == 22 || PREVCOM == 27 || PREVCOM == 617
+	TIMES SOURCE:快Ｖ , 0.70
+	TIMES SOURCE:情愛 , 0.90
+;背面座位だと効果が高い
+ELSEIF PREVCOM == 23 || PREVCOM == 28 || PREVCOM == 612
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:情愛 , 1.10
+ENDIF
+
+;調教者が[オトコ]
+SIF TALENT:PLAYER:オトコ
+	TIMES SOURCE:快Ｖ , 2.50
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;貞操観念
+IF TALENT:貞操観念
+	IF TALENT:処女 == 1
+		TIMES SOURCE:情愛 , 0.60
+		TIMES SOURCE:逸脱, 5.00
+		SOURCE:反感追加 = 2000
+	ELSE
+		TIMES SOURCE:情愛 , 0.60
+		SOURCE:反感追加 = 1000
+	ENDIF
+;貞操無頓着
+ELSEIF TALENT:貞操無頓着
+	IF TALENT:処女 == 1
+		TIMES SOURCE:情愛 , 0.60
+		SOURCE:反感追加 = 300
+	ENDIF
+ELSE
+	SIF TALENT:処女 == 1
+		SOURCE:反感追加 = 3000
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ｖ , 0.60
+	TIMES SOURCE:情愛 , 0.30
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:情愛 , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:情愛 , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ｖ , 1.20
+	TIMES SOURCE:情愛 , 1.50
+ELSE
+	TIMES SOURCE:快Ｖ , 1.50
+	TIMES SOURCE:情愛 , 1.80
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ｖ , 0.50
+	TIMES SOURCE:情愛 , 0.60
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ｖ , 0.80
+	TIMES SOURCE:情愛 , 0.80
+	TIMES SOURCE:反感追加 , 1.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ｖ , 1.00
+	TIMES SOURCE:情愛 , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ｖ , 1.30
+	TIMES SOURCE:情愛 , 1.20
+	TIMES SOURCE:反感追加 , 0.80
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ｖ , 1.60
+	TIMES SOURCE:情愛 , 1.40
+	TIMES SOURCE:反感追加 , 0.60
+ELSE
+	TIMES SOURCE:快Ｖ , 2.00
+	TIMES SOURCE:情愛 , 1.60
+	TIMES SOURCE:反感追加 , 0.30
+ENDIF
+
+IF PREVCOM == 24
+	;ABL:奉仕精神をみる
+	IF ABL:奉仕精神 == 0
+		SOURCE:性行動 = 200
+		SOURCE:達成感 = 50
+		SOURCE:逸脱 = 300
+	ELSEIF ABL:奉仕精神 == 1
+		SOURCE:性行動 = 250
+		SOURCE:達成感 = 200
+		SOURCE:逸脱 = 100
+	ELSEIF ABL:奉仕精神 == 2
+		SOURCE:性行動 = 350
+		SOURCE:達成感 = 550
+		SOURCE:逸脱 = 30
+	ELSEIF ABL:奉仕精神 == 3
+		SOURCE:性行動 = 450
+		SOURCE:達成感 = 900
+		SOURCE:逸脱 = 0
+	ELSEIF ABL:奉仕精神 == 4
+		SOURCE:性行動 = 600
+		SOURCE:達成感 = 1500
+		SOURCE:逸脱 = 0
+	ELSE
+		SOURCE:性行動 = 750
+		SOURCE:達成感 = 2200
+		SOURCE:逸脱 = 0
+	ENDIF
+	;ABL:技巧をみる
+	IF ABL:技巧 == 0
+		TIMES SOURCE:快Ｖ , 0.30
+		TIMES SOURCE:情愛 , 0.30
+	ELSEIF ABL:技巧 == 1
+		TIMES SOURCE:快Ｖ , 0.60
+		TIMES SOURCE:情愛 , 0.60
+	ELSEIF ABL:技巧 == 2
+		TIMES SOURCE:快Ｖ , 1.00
+		TIMES SOURCE:情愛 , 1.00
+	ELSEIF ABL:技巧 == 3
+		TIMES SOURCE:快Ｖ , 1.10
+		TIMES SOURCE:情愛 , 1.10
+	ELSEIF ABL:技巧 == 4
+		TIMES SOURCE:快Ｖ , 1.30
+		TIMES SOURCE:情愛 , 1.20
+	ELSE
+		TIMES SOURCE:快Ｖ , 1.50
+		TIMES SOURCE:情愛 , 1.40
+	ENDIF
+ENDIF
+
+;乱れ牡丹からの派生
+IF PREVCOM == 612
+	;ABL:Ｂ感覚をみる
+	IF ABL:Ｂ感覚 == 0
+		SOURCE:快Ｂ = 50
+		SOURCE:情愛 += 50
+		SOURCE:性行動 += 50
+	ELSEIF ABL:Ｂ感覚 == 1
+		SOURCE:快Ｂ = 200
+		SOURCE:情愛 += 200
+		SOURCE:性行動 += 200
+	ELSEIF ABL:Ｂ感覚 == 2
+		SOURCE:快Ｂ = 500
+		SOURCE:情愛 += 500
+		SOURCE:性行動 += 400
+	ELSEIF ABL:Ｂ感覚 == 3
+		SOURCE:快Ｂ = 1000
+		SOURCE:情愛 += 600
+		SOURCE:性行動 += 600
+	ELSEIF ABL:Ｂ感覚 == 4
+		SOURCE:快Ｂ = 1600
+		SOURCE:情愛 += 1000
+		SOURCE:性行動 += 1000
+	ELSE
+		SOURCE:快Ｂ = 2100
+		SOURCE:情愛 += 1400
+		SOURCE:性行動 += 1400
+	ENDIF
+
+	;ABL:Ｃ感覚をみる
+	IF ABL:Ｃ感覚 == 0
+		SOURCE:快Ｃ += 40
+		SOURCE:性行動 += 50
+	ELSEIF ABL:Ｃ感覚 == 1
+		SOURCE:快Ｃ += 160
+		SOURCE:性行動 += 200
+	ELSEIF ABL:Ｃ感覚 == 2
+		SOURCE:快Ｃ += 700
+		SOURCE:性行動 += 400
+	ELSEIF ABL:Ｃ感覚 == 3
+		SOURCE:快Ｃ += 1500
+		SOURCE:性行動 += 600
+	ELSEIF ABL:Ｃ感覚 == 4
+		SOURCE:快Ｃ += 2400
+		SOURCE:性行動 += 1000
+	ELSE
+		SOURCE:快Ｃ += 3600
+		SOURCE:性行動 += 1400
+	ENDIF
+
+	;プレイヤーのABL:技巧をみる
+	IF ABL:PLAYER:技巧 == 0
+		SOURCE:快Ｃ += 100
+		SOURCE:快Ｖ += 100
+		SOURCE:快Ｂ += 50
+		SOURCE:情愛 += 100
+		SOURCE:性行動 += 50
+		SOURCE:液体追加 += 0
+		SOURCE:欲情追加 += 0
+		LOCAL:1 = 0
+	ELSEIF ABL:PLAYER:技巧 == 1
+		SOURCE:快Ｃ += 200
+		SOURCE:快Ｖ += 200
+		SOURCE:快Ｂ += 150
+		SOURCE:情愛 += 150
+		SOURCE:性行動 += 100
+		SOURCE:液体追加 += 50
+		SOURCE:欲情追加 += 100
+		LOCAL:1 = 0
+	ELSEIF ABL:PLAYER:技巧 == 2
+		SOURCE:快Ｃ += 300
+		SOURCE:快Ｖ += 300
+		SOURCE:快Ｂ += 250
+		SOURCE:情愛 += 200
+		SOURCE:性行動 += 200
+		SOURCE:液体追加 += 100
+		SOURCE:欲情追加 += 200
+		LOCAL:1 = 50
+	ELSEIF ABL:PLAYER:技巧 == 3
+		SOURCE:快Ｃ += 500
+		SOURCE:快Ｖ += 400
+		SOURCE:快Ｂ += 500
+		SOURCE:情愛 += 300
+		SOURCE:性行動 += 300
+		SOURCE:液体追加 += 150
+		SOURCE:欲情追加 += 300
+		LOCAL:1 = 100
+	ELSEIF ABL:PLAYER:技巧 == 4
+		SOURCE:快Ｃ += 800
+		SOURCE:快Ｖ += 500
+		SOURCE:快Ｂ += 800
+		SOURCE:情愛 += 500
+		SOURCE:性行動 += 400
+		SOURCE:液体追加 += 250
+		SOURCE:欲情追加 += 400
+		LOCAL:1 = 300
+	ELSE
+		SOURCE:快Ｃ += 1200
+		SOURCE:快Ｖ += 600
+		SOURCE:快Ｂ += 1200
+		SOURCE:情愛 += 800
+		SOURCE:性行動 += 600
+		SOURCE:液体追加 += 400
+		SOURCE:欲情追加 += 500
+		LOCAL:1 = 500
+	ENDIF
+
+	;ABL:露出癖をみる
+	IF ABL:露出癖 == 0
+		SOURCE:中毒充足 += 100
+		SOURCE:液体追加 += 100
+		TIMES LOCAL:1, 0.60
+	ELSEIF ABL:露出癖 == 1
+		SOURCE:中毒充足 += 200
+		SOURCE:液体追加 += 200
+		TIMES LOCAL:1, 1.00
+	ELSEIF ABL:露出癖 == 2
+		SOURCE:中毒充足 += 400
+		SOURCE:液体追加 += 400
+		TIMES LOCAL:1, 1.50
+	ELSEIF ABL:露出癖 == 3
+		SOURCE:中毒充足 += 700
+		SOURCE:液体追加 += 700
+		TIMES LOCAL:1, 2.40
+	ELSEIF ABL:露出癖 == 4
+		SOURCE:中毒充足 += 1200
+		SOURCE:液体追加 += 1200
+		TIMES LOCAL:1, 3.60
+	ELSE
+		SOURCE:中毒充足 += 2000
+		SOURCE:液体追加 += 2000
+		TIMES LOCAL:1, 5.80
+	ENDIF
+
+	SOURCE:快Ｃ += LOCAL:1
+	SOURCE:快Ｖ += LOCAL:1
+	SOURCE:快Ｂ += LOCAL:1
+
+	SIF EXP:Ｖ経験 >= EXPLV:3
+		SOURCE:快Ｖ += LOCAL:1
+
+	;TALENT:恋慕をみる
+	SIF TALENT:恋慕
+		TIMES SOURCE:情愛 , 2.00
+ENDIF
+
+TCVAR:Ｖ経験 += 1
+IF PLAYER == MASTER
+	TCVAR:Ｖ調律経験 += 2
+	SIF EXIST_BAR(MASTER)
+		CFLAG:主人にＶ捧げ回数 += 1
+ENDIF
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+TFLAG:91 = SAMEN_CHECK(PLAYER)
+
+;射精時の処理
+IF TFLAG:91 >= 1
+	;コマンドごとに固有の処理はこの下に書く
+	IF ABL:従順 >= 3 && ABL:欲望 >= 3 && CFLAG:9 & 2 && FLAG:10 & 1
+		PRINTFORML %CALLNAME:TARGET%の膣壁を抉ったまま、%CALLNAME:PLAYER%は精液を放出した…
+		PRINTL 
+	ENDIF
+
+	;射精した人物を設定
+	TFLAG:92 = PLAYER
+	;射精された人物を設定
+	TFLAG:94 = TARGET
+	;このコマンドのデフォルト射精箇所タイプ、射精箇所選択の可・不可を設定
+	CALL COM_SHOOT_614
+	;汎用的な処理はこの関数で行う
+	;（射精ゲージの再計算や射精経験の上昇と共通部分の表示）
+	CALL SAMEN_SHOOT
+ENDIF
+
+;射精に関係なく行われる処理はここから
+;奴隷のＶ⇔調教者のＰの汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:ヴァギナ
+
+SIF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 4
+
+;主人経験フラグ
+SIF ASSIPLAY == 0
+	TFLAG:50 += (ABL:Ｖ感覚 >= 3) ? 2 # 1
+
+;処女喪失の後でペニスを抜いているか
+TFLAG:101 = (TFLAG:101 == 2) ? 1 # 0
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_614
+;騎乗Ｇスポ責め
+IF PREVCOM == 24 && EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	PRINTFORML %CALLNAME:TARGET%は上体を大きく逸らし、膣内の天井にペニスを擦り付けた…
+	IF EXP:Ｖ経験 <= 30
+		PRINTFORML %CALLNAME:TARGET%は戸惑いながらもその行為を続けている…
+	ELSEIF EXP:Ｖ経験 <= 50
+		PRINTFORML %CALLNAME:TARGET%は掴んだ快感を追って腰をくねらせている…
+	ELSEIF EXP:Ｖ経験 <= 80
+		PRINTFORML %CALLNAME:TARGET%は尻をすぼめ、小刻みに腰をしゃくって\@(TEQUIP:口装着器具) ? # 嬌声を上げて\@いる…
+	ELSEIF EXP:Ｖ経験 <= 120
+		PRINTFORML %CALLNAME:TARGET%は後ろに手を衝いて、腰をガクガク揺らして快楽を貪っている…
+		PRINTFORML 反り返ったペニスの先端が、鋭角にＧスポットを抉っている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は女の急所を、自らの腰の痙攣で思う存分刺激している…
+		PRINTFORML ぐぽんと重い水音がするたび、鼻に抜けただらしのない声が漏れている…
+	ENDIF
+;焦らし挿入Ｇスポ責め
+ELSEIF TEQUIP:焦らしプレイ
+	;正常位
+	IF PREVCOM == 20 || PREVCOM == 27
+		PRINTFORML 腰をしゃくり、%CALLNAME:TARGET%の膣内の天井にぴたりと当てた…
+	;後背位
+	ELSEIF PREVCOM == 21 || PREVCOM == 28
+		PRINTFORML 上体を屈め、%CALLNAME:TARGET%の膣内の天井をゆっくりと抉った…
+	;対面座位
+	ELSEIF PREVCOM == 22
+		PRINTFORML 上体を離し、%CALLNAME:TARGET%の下腹を腹越しに押さえた…
+	;背面座位
+	ELSEIF PREVCOM == 23
+		PRINTFORML %CALLNAME:TARGET%を持ち上げ、上体を手前に傾けさせた…
+	;乱れ牡丹
+	ELSEIF PREVCOM == 612
+		PRINTFORML %CALLNAME:PLAYER%は鏡の前でさらなる%CALLNAME:PLAYER%の痴態を見せ付けるように、
+		PRINTFORML %CALLNAME:TARGET%を持ち上げ、上体を手前に傾けさせた…
+	ENDIF
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	 	IF EXP:Ｖ経験 <= 30
+			PRINTFORML %CALLNAME:TARGET%は落ち着かなさそうにしている…
+		ELSEIF EXP:Ｖ経験 <= 50
+			PRINTFORML %CALLNAME:TARGET%は快感を得ようと腰を動かすが、上手くいかない…
+		ELSEIF EXP:Ｖ経験 <= 80
+			PRINTFORML %CALLNAME:TARGET%の腰が暴れるのを懸命に押さえつける…
+		ELSEIF EXP:Ｖ経験 > 80 && EX:21
+			PRINTFORML %CALLNAME:TARGET%の身体が不自然に痙攣する…
+			PRINTFORML %CALLNAME:PLAYER%に組み伏せられたまま絶頂を求めてもがき暴れている…
+		ENDIF
+	ENDIF
+;挿入Ｇスポ責め
+ELSE
+	;正常位
+	IF PREVCOM == 20 || PREVCOM == 27
+		PRINTFORML 腰をしゃくり、%CALLNAME:TARGET%の膣内の天井を小刻みに擦りあげた…
+	;後背位
+	ELSEIF PREVCOM == 21 || PREVCOM == 28
+		PRINTFORML 上体を屈め、%CALLNAME:TARGET%の膣内の天井を抉るように突き入れた…
+	;対面座位
+	ELSEIF PREVCOM == 22
+		PRINTFORML 上体を離し、%CALLNAME:TARGET%の下腹を押さえて膣内の天井を擦りあげた…
+	;背面座位
+	ELSEIF PREVCOM == 23
+		PRINTFORML %CALLNAME:TARGET%を持ち上げ、揺するように膣内の天井を執拗に刺激した…
+	;乱れ牡丹
+	ELSEIF PREVCOM == 612
+		PRINTFORML %CALLNAME:PLAYER%は鏡の前でさらなる%CALLNAME:PLAYER%の痴態を見せ付けるように、
+		PRINTFORML %CALLNAME:TARGET%を持ち上げ、揺するように膣内の天井を執拗に刺激した…
+	ENDIF
+
+	IF EQUIP:睡眠薬 == 0 && TFLAG:899 == 0
+	 	IF EXP:Ｖ経験 <= 30
+			PRINTFORML %CALLNAME:TARGET%はむずがるように腰を揺すっている…
+		ELSEIF EXP:Ｖ経験 <= 50
+			PRINTFORML %CALLNAME:TARGET%は\@(TEQUIP:口装着器具) ? 身体を揺らされながらも、# 口を結んで\@不慣れな快楽を堪えている…
+		ELSEIF EXP:Ｖ経験 <= 80
+			PRINTFORML %CALLNAME:TARGET%は弱点を責められ、あまりの快感に目をぱちぱちさせている…
+		ELSEIF EXP:Ｖ経験 <= 120
+			PRINTFORML %CALLNAME:PLAYER%は腰に力を入れ、膣内でビクビクと震わせてやった…
+			PRINTFORML %CALLNAME:TARGET%は過敏な天井を擦られる感触に\@(TEQUIP:口装着器具) ? 身体を熱く震わせ # 熱い吐息を漏らし\@ている…
+		ELSEIF TEQUIP:口装着器具
+			PRINTFORML %CALLNAME:TARGET%は膣からの刺激に激しく頭を振って悶えている…
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は喉を鳴らして涎を飲み、足指を丸めて頭を振って悶えている…
+			PRINTFORML まともに呼吸もできず、口をぱくつかせて声にならない喘ぎを繰り返す…
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;このコマンドのデフォルト射精箇所タイプ等の処理
+;-------------------------------------------------
+@COM_SHOOT_614
+;デフォルト射精箇所タイプを設定
+TFLAG:703 = 1
+;射精箇所選択の可・不可
+TFLAG:704 = 0
+

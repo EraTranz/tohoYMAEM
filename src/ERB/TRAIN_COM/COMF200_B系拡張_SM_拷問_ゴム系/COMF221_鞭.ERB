@@ -1,0 +1,88 @@
+﻿;=============================================================================
+;鞭
+;=============================================================================
+;実際には苦痛があるためもっと体力気力をもっていかれる
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE221
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:221 > 0
+	RETURN 0
+;アイテムを持っていないとダメ
+SIF ITEM:鞭 == 0
+	RETURN 0
+;調教者がハードなコマンドをできるかどうか
+SIF COM_ABLE_HARDTRAINING(PLAYER, 0) == 0
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 221) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM221
+PRINTL 鞭
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 221
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 鞭
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 100
+DOWNBASE:1 += 80
+
+SOURCE:逸脱 = 1000
+
+;PALAM:苦痛をみる
+IF PALAM:苦痛 < PALAMLV:1
+	SOURCE:痛み = 1000
+ELSEIF PALAM:苦痛 < PALAMLV:2
+	SOURCE:痛み = 1500
+ELSEIF PALAM:苦痛 < PALAMLV:3
+	SOURCE:痛み = 2200
+ELSEIF PALAM:苦痛 < PALAMLV:4
+	SOURCE:痛み = 3000
+ELSE
+	SOURCE:痛み = 4000
+ENDIF
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 2
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 2
+ENDIF
+;主人経験フラグ
+SIF ASSIPLAY == 0 && ABL:マゾっ気 >= 2
+	TFLAG:50 += 1
+;ＳＭ教育フラグ
+SIF ASSIPLAY
+	TFLAG:55 = 2
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_221
+PRINTFORML 鞭を大きく振り上げ思いっきり振り下ろすと、%CALLNAME:TARGET%の肌に真っ赤な筋が幾本も刻まれていった……

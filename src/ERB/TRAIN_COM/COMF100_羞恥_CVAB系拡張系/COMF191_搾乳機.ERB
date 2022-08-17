@@ -1,0 +1,298 @@
+﻿;=============================================================================
+;搾乳器
+;=============================================================================
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE191
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:191 > 0
+	RETURN 0
+;強力アイテム・コマンド無効時はダメ
+SIF (FLAG:13 & 2) == 0
+	RETURN 0
+;Ｂ系拡張コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8) == 0
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;触手服が先に責めてるときはダメ
+SIF TEQUIP:触手服 & 4
+	RETURN 0
+;解除はいつでも可能
+SIF TEQUIP:Ｂ系装着器具 == 2
+	RETURN 1
+;アイテムを持っていないとダメ
+SIF ITEM:搾乳器 == 0
+	RETURN 0
+;対象の性別が♀限定
+SIF COM_ABLE_CHECK_FEMALE(TARGET) == 0
+	RETURN 0
+;母乳体質でないと使えない
+SIF TALENT:母乳体質 == 0
+	RETURN 0
+;小人体型持ちは、双方が調教者と調教対象ならOK
+;それ以外の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && (TALENT:MASTER:禁断の知識 == 0 && TALENT:PLAYER:小人体型 == 0)
+	RETURN 0
+;Ｂ感度3未満はダメ
+SIF ABL:Ｂ感覚 < 3
+	RETURN 0
+;助手調教の場合、技巧3以上じゃないと使えない
+SIF ASSIPLAY && ABL:PLAYER:技巧 < 3
+	RETURN 0
+;他のＢ系装着具使用中は不可
+SIF (TEQUIP:Ｂ系装着器具 && TEQUIP:Ｂ系装着器具 != 2) || TEQUIP:サラシ
+	RETURN 0
+;褌と裸Ｙシャツ以外のコスプレ中はだめ
+SIF TEQUIP:コスチュームプレイ > 2 && TEQUIP:コスチュームプレイ != 11 && TEQUIP:コスチュームプレイ != 17
+	RETURN 0
+;サラシ装着中はダメ
+SIF TEQUIP:巨大化
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;裸エプロン中はダメ
+SIF TEQUIP:コスチュームプレイ == 1
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 191) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM191
+PRINTL 搾乳器
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 191
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 搾乳器
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+DOWNBASE:0 += 50
+DOWNBASE:1 += 100
+
+SOURCE:露出 = 100
+SOURCE:性行動 = 100
+SOURCE:達成感 = 100
+SOURCE:恭順追加 = 100
+SOURCE:痛み = 100
+SOURCE:屈従 = 100
+SOURCE:中毒充足 = 100
+SOURCE:逸脱 = 200
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL:1 = 200
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL:1 = 400
+ELSEIF ABL:Ｂ感覚 == 2
+	LOCAL:1 = 900
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL:1 = 1600
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL:1 = 2400
+ELSE
+	LOCAL:1 = 3000
+ENDIF
+
+;ABL:噴乳中毒をみる
+IF ABL:噴乳中毒 == 0
+	SOURCE:中毒充足 += 0
+	TIMES LOCAL:1 , 1.00
+	TIMES SOURCE:逸脱 , 1.00
+ELSEIF ABL:噴乳中毒 == 1
+	SOURCE:中毒充足 += 60
+	TIMES LOCAL:1 , 1.10
+	TIMES SOURCE:逸脱 , 1.10
+ELSEIF ABL:噴乳中毒 == 2
+	SOURCE:中毒充足 += 120
+	TIMES LOCAL:1 , 1.15
+	TIMES SOURCE:逸脱 , 1.25
+ELSEIF ABL:噴乳中毒 == 3
+	SOURCE:中毒充足 += 240
+	TIMES LOCAL:1 , 1.25
+	TIMES SOURCE:逸脱 , 1.50
+ELSEIF ABL:噴乳中毒 == 4
+	SOURCE:中毒充足 += 480
+	TIMES LOCAL:1 , 1.30
+	TIMES SOURCE:逸脱 , 1.75
+ELSE
+	SOURCE:中毒充足 += 960
+	TIMES LOCAL:1 , 1.50
+	TIMES SOURCE:逸脱 , 2.00
+ENDIF
+
+;淫乳
+SIF TALENT:淫乳
+	TIMES LOCAL:1 , 1.20
+
+;Ｂ鈍感とＢ敏感
+IF TALENT:Ｂ敏感
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL:1 , 0.60
+ENDIF
+
+;巨乳と爆乳、貧乳と絶壁
+IF TALENT:絶壁
+	TIMES SOURCE:痛み , 1.75
+ELSEIF TALENT:貧乳
+	TIMES SOURCE:痛み , 1.50
+ELSEIF TALENT:巨乳
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:爆乳
+	TIMES LOCAL:1 , 1.75
+ENDIF
+
+SOURCE:快Ｂ += LOCAL:1
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+
+;搾乳器の着脱
+IF TEQUIP:Ｂ系装着器具 == 2
+	TEQUIP:Ｂ系装着器具 = 0
+ELSE
+	TEQUIP:Ｂ系装着器具 = 2
+ENDIF
+
+;コマンド属性：道具(調教者)
+TFLAG:98 = 1
+RETURN 1
+
+;-------------------------------------------------
+;搾乳器装備中
+;-------------------------------------------------
+@EQUIP_COM191
+IF TEQUIP:触手調教 || TEQUIP:触手服 & 4
+	PRINTL ＜触手搾乳中＞
+ELSE
+	PRINTL ＜搾乳器装備中＞
+ENDIF
+
+DOWNBASE:0 += 15
+DOWNBASE:1 += 15
+
+LOCAL:1 = 100
+
+;ABL:Ｂ感覚をみる
+IF ABL:Ｂ感覚 == 0
+	LOCAL = 40
+ELSEIF ABL:Ｂ感覚 == 1
+	LOCAL = 120
+ELSEIF ABL:Ｂ感覚 == 2
+	LOCAL = 250
+ELSEIF ABL:Ｂ感覚 == 3
+	LOCAL = 450
+ELSEIF ABL:Ｂ感覚 == 4
+	LOCAL = 600
+ELSE
+	LOCAL = 750
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES LOCAL , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES LOCAL , 0.90
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES LOCAL , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES LOCAL , 1.10
+ELSE
+	TIMES LOCAL , 1.20
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES LOCAL , 0.80
+ELSEIF ABL:従順 == 1
+	TIMES LOCAL , 0.90
+ELSEIF ABL:従順 == 2
+	TIMES LOCAL , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES LOCAL , 1.10
+ELSEIF ABL:従順 == 4
+	TIMES LOCAL , 1.20
+ELSE
+	TIMES LOCAL , 1.30
+ENDIF
+
+;EXP:墳乳経験をみる
+IF EXP:噴乳経験 <= EXPLV:0
+	TIMES LOCAL , 1.00
+ELSEIF EXP:噴乳経験 <= EXPLV:1
+	TIMES LOCAL , 1.20
+ELSEIF EXP:噴乳経験 <= EXPLV:2
+	TIMES LOCAL , 1.40
+ELSEIF EXP:噴乳経験 <= EXPLV:3
+	TIMES LOCAL , 1.80
+ELSEIF EXP:噴乳経験 <= EXPLV:4
+	TIMES LOCAL , 2.25
+ELSE
+	TIMES LOCAL , 4.00
+ENDIF
+
+;Ｂ鈍感とＢ敏感
+IF TALENT:Ｂ敏感
+	TIMES LOCAL , 1.40
+ELSEIF TALENT:Ｂ鈍感
+	TIMES LOCAL , 0.60
+ENDIF
+
+;巨乳と爆乳、貧乳と絶壁
+IF TALENT:絶壁
+	TIMES LOCAL:1 , 1.75
+ELSEIF TALENT:貧乳
+	TIMES LOCAL:1 , 1.50
+ELSEIF TALENT:巨乳
+	TIMES LOCAL , 1.30
+ELSEIF TALENT:爆乳
+	TIMES LOCAL , 1.50
+ENDIF
+
+SOURCE:快Ｂ += LOCAL
+SOURCE:露出 += 50
+SOURCE:性行動 += 150
+SOURCE:恭順追加 += 50
+SOURCE:欲情追加 += 50
+SOURCE:痛み += LOCAL:1
+SOURCE:屈従 += 50
+SOURCE:中毒充足 += 100
+SOURCE:逸脱 += 50
+
+IF TALENT:オトコ == 0 && TALENT:PLAYER:オトコ == 0
+	TCVAR:レズ経験 += 1
+ELSEIF TALENT:オトコ && TALENT:PLAYER:オトコ
+	TCVAR:ＢＬ経験 += 1
+ENDIF
+;触手経験フラグ
+IF TEQUIP:触手調教
+	TFLAG:90 += 1
+	CALL SYOKUSYU_MILK
+ELSEIF TEQUIP:触手服
+	CALL SYOKUSYU_MILK
+ENDIF
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_191
+IF TEQUIP:Ｂ系装着器具 == 2
+	PRINTFORML %CALLNAME:TARGET%から搾乳器を取り外した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%に搾乳器を取り付けた
+ENDIF

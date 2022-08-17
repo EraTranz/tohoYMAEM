@@ -1,0 +1,1396 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ぱんくしょんより機能移転した関数群
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;ぱんくしょんより機能を移転
+;=============================================================================
+;自動喘ぎ関数及びその子供関数
+;=============================================================================
+;簡易喘ぎ声をある程度シチュに応じて自動生成
+;現在、調整不足のためネタ機能の域を出ないと思います
+;口上未実装のキャラに自動で喘ぎ声を付けるようにしてもいいですが
+;その場合素質を見て性格分岐させたいところ。
+;--------------------------------------------------
+;自動喘ぎ関数
+;--------------------------------------------------
+;喘ぎの種類判別処理
+@KOJO_X_TRAINVOICE
+;口枷中は喋らない
+SIF KX_MOUSE_CHECK(TARGET) && SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506
+	RETURN 0
+;眠ってる・時止め中・気絶中
+SIF EQUIP:睡眠薬 || TEQUIP:時間止め || TFLAG:899 >= 1
+	RETURN 0
+;[オトコ]もしくはしゃべることができない[人形]
+SIF TALENT:オトコ || TALENT:人形 == 1
+	RETURN 0
+
+;「人格設定」
+CALL DEFINE_JINKAKU_SELECT, TARGET
+
+;LOCALに喘ぎ回数を入れる処理
+;LOCAL:1に行為レベルをとりあえず0～3で規定
+
+LOCAL = 0
+LOCAL:1 = 0
+LOCAL:2 = 0
+
+;コマンドごとの喘ぎ数・基本行為レベル(激しさ数値)を設定
+;………………………………………………
+;愛撫・性交系
+;………………………………………………
+;最も軽い　愛撫、胸愛撫、アナル愛撫、アナル舐め、素股、母乳飲み、ダブル素股、玉愛撫、玉を舐める、角愛撫、尻愛撫、乳合わせ
+IF GROUPMATCH(SELECTCOM, 0, 2, 3, 43, 180, 183, 186, 187, 188, 204, 210, 306, 329, 330, 339, 434, 447, 514, 606)
+	LOCAL = 1
+	LOCAL:1 = 0
+;軽め　クンニ・ローター・指挿入れ・フェラする・泡踊り・たわし洗い・泡踊りする・岩清水・自慰、アナニー、乳首ローター、搾乳機、胸揉み、乳首攻め、乳首なめ、乳首吸い、胸自慰、乳ファック、貝合わせ、手淫する、パイズリする、首筋耳裏舐め、乳の揉みあい、豆責め、小陰唇指愛撫
+ELSEIF GROUPMATCH(SELECTCOM, 1, 4, 5, 7, 10, 122, 126, 132, 152, 182, 190, 191, 200, 201, 202, 203, 205, 207, 301, 321, 322, 328, 331, 335, 337, 344, 352, 353, 354, 380, 410, 411, 417, 435, 436, 503, 504, 505, 525, 605, 611, 613, 616, 617, 618, 619, 626, 627)
+	LOCAL = 2
+	LOCAL:1 = 1
+;ちょい重め　Ｇスポット刺激・電気按摩・アナル電極・アナルビーズ解除、乳腺開発、ローター自慰、電マ自慰
+ELSEIF GROUPMATCH(SELECTCOM, 11, 124, 125, 133, 192, 441, 442, 515, 526, 600, 654) || (SELECTCOM == 172 && TEQUIP:Ａ系装着器具 == 0) 
+	LOCAL = 3
+	LOCAL:1 = 2
+;本番　セックス系全部
+ELSEIF (SELECTCOM > 19 && SELECTCOM < 40) || GROUPMATCH(SELECTCOM, 146, 307, 308, 323, 324, 325, 326, 332, 333, 334, 338, 381, 382, 383, 384, 386, 389, 390, 391, 402, 430, 431, 440, 501, 502, 520, 521, 523, 610, 612, 614, 615, 616, 617, 618, 619, 630, 632, 633, 651, 652, 655, 656, 657, 658)
+	LOCAL = 3
+	LOCAL:1 = 3
+ENDIF
+
+;どれくらい感じてるかチェック
+IF LOCAL
+	;欲情が大きいと喘ぎ数は最大で＋3まで増えます
+	IF PALAM:欲情 > PALAMLV:4
+		LOCAL += 3
+	ELSEIF PALAM:欲情 > PALAMLV:2
+		LOCAL += 2
+	ELSEIF PALAM:欲情 > PALAMLV:1
+		LOCAL += 1
+	ENDIF
+
+	;ソースに対応した感覚が2以上なら1、4以上なら2。高い方を優先
+	IF (SOURCE:快Ｃ && ABL:Ｃ感覚 >= 4) || (SOURCE:快Ｖ && ABL:Ｖ感覚 >= 4) || (SOURCE:快Ａ && ABL:Ａ感覚 >= 4) || (SOURCE:快Ｂ && ABL:Ｂ感覚 >= 4)
+		LOCAL:2 = 2
+	ELSEIF (SOURCE:快Ｃ && ABL:Ｃ感覚 >= 2) || (SOURCE:快Ｖ && ABL:Ｖ感覚 >= 2) || (SOURCE:快Ａ && ABL:Ａ感覚 >= 2) || (SOURCE:快Ｂ && ABL:Ｂ感覚 >= 2)
+		LOCAL:2 = 1
+	;首筋耳裏舐め、角愛撫
+	ELSEIF GROUPMATCH(SELECTCOM, 328, 434) && ABL:欲望 >= 2
+		LOCAL:2 = 1
+	ENDIF
+	;感じていない口上へ
+	IF LOCAL:2 == 0
+		TRYCALL KOJO_X_TRAINVOICE_TYPE_B, LOCAL, LOCAL:1
+	;感覚4以上だと激しさ+1
+	ELSE
+		SIF LOCAL:2 == 2
+			LOCAL:1 += 1
+		TRYCALL KOJO_X_TRAINVOICE_TYPE_A, LOCAL, LOCAL:1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;………………………………………………
+;玩具装備・解除系
+;………………………………………………
+;軽め系　クリキャップ・ニプルキャップ・アナルビーズ装着、クスコ、座薬、フリスク
+IF GROUPMATCH(SELECTCOM, 14, 15, 63, 64, 150, 184) || (SELECTCOM == 172 && TEQUIP:Ａ系装着器具)
+	LOCAL = 1
+	LOCAL:1 = 1
+;重め系　搾乳機・アナルビーズ解除・オナホール・電極オナホール・陰核電極・アナル電極・ヴァギナ電極・胸電極
+ELSEIF GROUPMATCH(SELECTCOM, 16, 17, 131, 155, 171, 191, 193) || (SELECTCOM == 172 && TEQUIP:Ａ系装着器具 == 0)
+	LOCAL = 2
+	LOCAL:1 = 3
+;挿入系　バイブ・アナルバイブ
+ELSEIF GROUPMATCH(SELECTCOM, 12, 13, 151, 170, 403, 404, 432, 437, 438, 439)
+	LOCAL = 1
+	LOCAL:1 = 2
+ENDIF
+
+;どれくらい感じてるかチェック
+IF LOCAL
+	;ソースに対応した感覚が2以上なら1、4以上なら2。高い方を優先
+	IF (SOURCE:快Ｃ && ABL:Ｃ感覚 >= 4) || (SOURCE:快Ｖ && ABL:Ｖ感覚 >= 4) || (SOURCE:快Ａ && ABL:Ａ感覚 >= 4) || (SOURCE:快Ｂ && ABL:Ｂ感覚 >= 4)
+		LOCAL:2 = 2
+	ELSEIF (SOURCE:快Ｃ && ABL:Ｃ感覚 >= 2) || (SOURCE:快Ｖ && ABL:Ｖ感覚 >= 2) || (SOURCE:快Ａ && ABL:Ａ感覚 >= 2) || (SOURCE:快Ｂ && ABL:Ｂ感覚 >= 2)
+		LOCAL:2 = 1
+	ENDIF
+	;感じていない口上へ
+	IF LOCAL:2 == 0
+		TRYCALL KOJO_X_TRAINVOICE_TYPE_B, LOCAL, LOCAL:1
+	ELSE
+		;感覚4以上だと激しさ+1
+		SIF LOCAL:2 == 2
+			LOCAL:1 += 1
+		TRYCALL KOJO_X_TRAINVOICE_TYPE_A, LOCAL, LOCAL:1
+	ENDIF
+	RETURN 0
+ENDIF
+
+;………………………………………………
+;奉仕系
+;………………………………………………
+;キスする、アナル舐め強制、足舐め強制、指チュパ、玉舐め強制、クンニ強制
+IF GROUPMATCH(SELECTCOM, 6, 44, 46, 54, 300, 327, 387, 388, 506)
+	LOCAL = 6
+	LOCAL:1 = 3
+;アナル愛撫強制、玉揉み強制、
+ELSEIF GROUPMATCH(SELECTCOM, 53, 55)
+	LOCAL = 4
+	LOCAL:1 = 4
+;手淫、足こき、髪こき、全身こき、尻こき、竿こき
+ELSEIF GROUPMATCH(SELECTCOM, 40, 47, 48, 49, 50, 51, 52)
+	LOCAL = 3
+	LOCAL:1 = 0
+;パイズリ
+ELSEIF GROUPMATCH(SELECTCOM, 42, 208, 305, 513, 603)
+	LOCAL = 4
+	LOCAL:1 = 1
+;フェラ・シックスナイン・Ｗフェラ
+ELSEIF GROUPMATCH(SELECTCOM, 41, 209, 303, 304, 385, 601, 602, 604)
+	LOCAL = 6
+	LOCAL:1 = 2
+ENDIF
+
+;奉仕系口上へ
+IF LOCAL
+	TRYCALL KOJO_X_TRAINVOICE_TYPE_C, LOCAL, LOCAL:1
+	RETURN 0
+ENDIF
+
+;………………………………………………
+;苦痛系
+;………………………………………………
+;痛いの
+IF GROUPMATCH(SELECTCOM, 80, 81, 82, 83, 84, 85, 86, 88, 123, 220, 221, 222, 243, 244, 245, 252, 310, 311, 400, 551, 552, 554)
+	LOCAL = 3
+	LOCAL:1 = 1
+	SIF GROUPMATCH(SELECTCOM, 222, 243, 244, 245, 252, 552)
+		LOCAL:1 += 1
+;苦しいの
+ELSEIF GROUPMATCH(SELECTCOM, 173, 174, 175, 230, 238, 241, 386, 509, 510, 522, 524, 530, 531, 532, 553, 760)
+	LOCAL = 2
+	LOCAL:1 = 3
+ENDIF
+
+;苦痛系口上へ
+SIF LOCAL
+	TRYCALL KOJO_X_TRAINVOICE_TYPE_D, LOCAL, LOCAL:1
+
+;--------------------------------------------------
+;連続禁止用処理
+;--------------------------------------------------
+@KOJO_X_TRAINVOICE_TYPE_RENZOKU, ARG, ARG:1
+#FUNCTION
+$RETRY
+LOCAL = RAND:ARG
+SIF ARG:1 >= 0 && LOCAL == ARG:1
+	GOTO RETRY
+RETURNF LOCAL
+
+;--------------------------------------------------
+;各種喘ぎ声生成関数
+;--------------------------------------------------
+;………………………………………………
+;開発されている子
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_A, ARG, ARG:1
+PRINT 「
+
+LOCAL = -1
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;お尻判定
+	IF SOURCE:快Ａ && SELECTCOM != 7
+		PRINTDATA
+			DATA そっちは…
+			DATA 後ろ？　
+			DATA う…
+		ENDDATA
+	ENDIF
+
+	IF ARG:1 < 2
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT あっ、
+				CASE 2
+					PRINT あ……
+				CASE 3
+					PRINT ん、
+				CASE 4
+					PRINT んっ、
+				CASE 5
+					PRINT ん……
+				CASE 6
+					PRINT んん、
+				CASE 7
+					PRINT あ、
+				CASE 8
+					PRINT ぅん……
+				CASE 9
+					PRINT くぅっ、
+			ENDSELECT
+		REND
+		SIF LOCAL == 0
+			PRINT ん、
+	ELSEIF ARG:1 > 1
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ああッ、
+				CASE 1
+					PRINT んぅっ、
+				CASE 2
+					PRINT は、
+				CASE 3
+					PRINT くうッ、
+				CASE 4
+					PRINT はあっ、
+				CASE 5
+					PRINT んっ！　
+				CASE 6
+					PRINT いっ、
+				CASE 7
+					PRINT それ、
+				CASE 8
+					PRINT っそこ、
+				CASE 9
+					PRINT あ、
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	IF ARG:1 < 2
+		PRINTDATA
+			DATA はあぁん♪
+			DATA 気持ちいい……
+			DATA っ！
+			DATA ふぁ♪
+			DATA は……
+			DATA んん
+			DATA んふ……
+			DATA ふふ……
+			DATA ぁ……
+			DATA んぅん♪
+		ENDDATA
+	ELSE
+		PRINTDATA
+			DATA くぅッ!
+			DATA あ、それっ！
+			DATA あああっ！！
+			DATA んんん……っ！！
+			DATA っ！　くッ……
+			DATA ……はあ、はあ
+			DATA っくひぃ♪
+			DATA い、っ！！
+			DATA ああっあ、あ……！
+			DATA く、くああっ！
+		ENDDATA
+	ENDIF
+ELSE
+	;お尻判定
+	IF SOURCE:快Ａ && SELECTCOM != 7
+		PRINTDATA
+			DATA 後ろ……？　
+			DATA そ、そっちは、
+			DATA お、お尻っ、
+		ENDDATA
+	ENDIF
+
+	IF ARG:1 < 2
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT あっ、
+				CASE 2
+					PRINT あ……
+				CASE 3
+					PRINT ん、
+				CASE 4
+					PRINT んっ、
+				CASE 5
+					PRINT ん……
+				CASE 6
+					PRINT ふあ、
+				CASE 7
+					PRINT あぁっ、
+				CASE 8
+					PRINT ひっ……
+				CASE 9
+					PRINT くぅっ、
+			ENDSELECT
+		REND
+		SIF LOCAL == 0
+			PRINT ん、
+	ELSEIF ARG:1 > 1
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(10, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ああッ、
+				CASE 1
+					PRINT んぅっ、
+				CASE 2
+					PRINT は、
+				CASE 3
+					PRINT き、きもち、
+				CASE 4
+					PRINT いいっ、
+				CASE 5
+					PRINT んっ！　
+				CASE 6
+					PRINT いっ、
+				CASE 7
+					PRINT いいの、
+				CASE 8
+					PRINT っくうん、
+				CASE 9
+					PRINT あっあ、
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	IF ARG:1 < 2
+		PRINTDATA
+			DATA ふあぁ……♪
+			DATA ん……
+			DATA っ！
+			DATA ふぁっ♪
+			DATA は……
+			DATA んん
+			DATA んふぅ……
+			DATA やあ……
+			DATA ぁ……ん
+			DATA んぅ……？
+		ENDDATA
+	ELSE
+		PRINTDATA
+			DATA くぅッ!
+			DATA い、いいのっ！
+			DATA あああっ！！
+			DATA んんん……っ！！
+			DATA っ！　くぅ……
+			DATA はあ……はぁ……♪
+			DATA っくうん！
+			DATA い、っ！！
+			DATA ああっあ、あぁっ♪
+			DATA く、くぅぅんっ♪
+		ENDDATA
+	ENDIF
+ENDIF
+PRINTW 」
+
+;………………………………………………
+;開発されていない子
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_B, ARG, ARG:1
+LOCAL = -1
+PRINT 「
+
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;お尻判定
+	IF SOURCE:快Ａ && SELECTCOM != 7
+		PRINTDATA
+			DATA なっ、
+			DATA く、そっちは……
+			DATA くうっ、
+		ENDDATA
+	ENDIF
+	ARG = (ARG > 2) ? ARG - 2 # 1
+	REPEAT ARG
+		LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+		SELECTCASE LOCAL
+			CASE 0
+				PRINT ……
+			CASE 1
+				PRINT く、
+			CASE 2
+				PRINT うう……
+			CASE 3
+				PRINT ふう……
+			CASE 4 
+				PRINTFORM \@(SOURCE:痛み) ? いたッ、 # ひ……\@
+		ENDSELECT
+		SIF LOCAL == 0
+			PRINT っ、
+	REND
+	;セリフの締め
+	PRINTDATA
+		DATA こんな……
+		DATA どうして……
+		DATA く……
+		DATAFORM \@(ARG > 2) ? く、う…… # ひっ\@
+		DATAFORM \@(SOURCE:痛み) ? これ、痛い…… # んくぅ……\@
+	ENDDATA
+ELSE
+	;お尻判定
+	IF SOURCE:快Ａ && SELECTCOM != 7
+		PRINTDATA
+			DATA そ、そっちは違っ、
+			DATA 嘘、お尻！？　
+			DATA い、嫌っ、
+		ENDDATA
+	ENDIF
+	ARG = (ARG > 2) ? ARG - 2 # 1
+	REPEAT ARG
+		LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+		SELECTCASE LOCAL
+			CASE 0
+				PRINT ……
+			CASE 1
+				PRINT く、
+			CASE 2
+				PRINT あ……
+			CASE 3
+				PRINT ん……
+			CASE 4
+				PRINTFORM \@(SOURCE:痛み) ? 痛っ…… # ひ……\@
+		ENDSELECT
+	REND
+	SIF LOCAL == 0
+		PRINT ん、
+	;セリフの締め
+	PRINTDATA
+		DATA うう……
+		DATA 嫌よ……
+		DATA んぅ……？
+		DATAFORM \@(ARG > 2) ? まだ……？ # んっ\@
+		DATAFORM \@(SOURCE:痛み) ? ん、あ、痛っ # やめて……\@
+	ENDDATA
+ENDIF
+PRINTW 」
+
+;………………………………………………
+;奉仕系
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_C, ARG, ARG:1
+PRINT 「
+
+LOCAL = -1
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;手でする
+	IF ARG:1 == 0
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT ほら、
+				CASE 2
+					PRINT ふふ、
+				CASE 3
+					PRINT ここ？　
+				CASE 4
+					PRINT 硬い……
+			ENDSELECT
+		REND
+	;愛撫する
+	ELSEIF ARG:1 == 4
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT これ、
+				CASE 2
+					PRINT くにくに……
+				CASE 3
+					PRINT ふふっ、
+				CASE 4
+					PRINT ほぉら、
+			ENDSELECT
+		REND
+	;胸でする
+	ELSEIF ARG:1 == 1
+		PRINT 胸ね。
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT これ、
+				CASE 2
+					PRINT しゅっしゅ……
+				CASE 3
+					PRINT ふふっ、
+				CASE 4
+					PRINT いい？　
+			ENDSELECT
+		REND
+	;口でする
+	ELSEIF ARG:1 > 1
+		PRINTFORM \@(ARG:1 == 2) ? はむ、れろぉ、 # ちゅっ、\@
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT ちゅぷ、
+				CASE 2
+					PRINT れろ……
+				CASE 3
+					PRINT ぢゅる、
+				CASE 4
+					PRINT んん……
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	SIF LOCAL == 0
+		PRINT ん、
+		;手
+	IF ARG:1 == 0
+		PRINTDATA
+			DATA 可愛い……♪
+			DATA ほら、きゅっ
+			DATA たまらない？
+			DATA はしたないこと……
+			DATA イイのね？
+		ENDDATA
+	;愛撫
+	ELSEIF ARG:1 == 4
+		PRINTDATA
+			DATA ヒクヒクしてる……
+			DATA こんなのが、いいのね
+			DATA 不思議ね……
+		ENDDATA
+	;キス
+	ELSEIF ARG:1 == 3
+		PRINTDATA
+			DATA ……ぷぁ
+			DATA ……ふふっ
+		ENDDATA
+	;胸・フェラ
+	ELSEIF ARG:1 > 0
+		PRINTDATA
+			DATA 可愛いこと……♪
+			DATA れろぉ……っ♪
+			DATA ……出したい？
+			DATA ほら、言ってごらん
+			DATA 熱いわ……
+		ENDDATA
+	ENDIF
+ELSE
+	;手でする
+	IF ARG:1 == 0
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT くりゅ、
+				CASE 2
+					PRINT こう？　
+				CASE 3
+					PRINT しゅ、しゅ……
+				CASE 4
+					PRINT しゅしゅっ、
+			ENDSELECT
+		REND
+	;愛撫する
+	ELSEIF ARG:1 == 4
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT くにゅくにゅ、
+				CASE 2
+					PRINT こう？　
+				CASE 3
+					PRINT どうかな……
+				CASE 4
+					PRINT さすさす……
+			ENDSELECT
+		REND
+	;胸でする
+	ELSEIF ARG:1 == 1
+		PRINT 挟むね……
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT あ、
+				CASE 2
+					PRINT んぅ……
+				CASE 3
+					PRINT むにっ、
+				CASE 4
+					PRINT ふぁっ、
+			ENDSELECT
+		REND
+	;口でする
+	ELSEIF ARG:1 > 1
+		PRINTFORM \@(ARG:1 == 2) ? あむっ、ん、 # ん、ちゅう……\@
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ……
+				CASE 1
+					PRINT ちゅぷ、
+				CASE 2
+					PRINT れろ……
+				CASE 3
+					PRINT ぢゅる、
+				CASE 4
+					PRINT んん……
+			ENDSELECT
+		REND
+	ENDIF
+	SIF LOCAL == 0
+		PRINT ん、
+	;セリフの締め
+	;手
+	IF ARG:1 == 0
+		PRINTDATA
+			DATA ひっ、びくってした……
+			DATA かちかち……
+			DATA どう、気持ちいい……？
+			DATA ぬるぬる出てる……
+			DATA あ、ここね？
+		ENDDATA
+	;愛撫
+	ELSEIF ARG:1 == 4
+		PRINTDATA
+			DATA あったかい……
+			DATA いい、の？
+			DATA ヘンなの……
+		ENDDATA
+	;キス
+	ELSEIF ARG:1 == 3
+		PRINTDATA
+			DATA ……ぷぁ
+			DATA ……はふ
+		ENDDATA
+	;胸・フェラ
+	ELSEIF ARG:1 >= 1
+		PRINTDATA
+			DATA ……はぁ……♪
+			DATA ふふ、可愛い
+			DATA ……ちゅっ
+			DATA 気持ちいい？
+			DATA かちかち……
+		ENDDATA
+	ENDIF
+ENDIF
+PRINTW 」
+
+;………………………………………………
+;苦痛系
+;………………………………………………
+@KOJO_X_TRAINVOICE_TYPE_D, ARG, ARG:1
+PRINT 「
+
+LOCAL = -1
+IF TALENT:プライド高い || TFLAG:197 == 2 || TFLAG:197 == 3
+	;痛いの
+	IF ARG:1 < 3
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT く、
+				CASE 1
+					PRINT やめ、
+				CASE 2
+					PRINT ゆ、許さ、
+				CASE 3
+					PRINT ぐぅッ！　
+				CASE 4
+					PRINT ひっ
+			ENDSELECT
+		REND
+	;苦しいの
+	ELSEIF ARG:1 == 3
+		PRINT ん、
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(3, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ぐぅ……
+				CASE 1
+					PRINT うう……
+				CASE 2
+					PRINT んぐ……
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	;痛い
+	IF ARG:1 == 1
+		PRINTDATA
+			DATA ひぎッ！
+			DATA っ、痛！！
+			DATA やめなさい……！
+			DATA どうして……
+			DATA ぐっう……
+		ENDDATA
+	;針
+	ELSEIF ARG:1 == 2
+		PRINTDATA
+			DATA く……！
+			DATA こ、こんなことで……
+		ENDDATA
+	ENDIF
+ELSE
+	;痛いの
+	IF ARG:1 < 3
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(5, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT いたっ！　
+				CASE 1
+					PRINT 痛い、
+				CASE 2
+					PRINT や、やだ、
+				CASE 3
+					PRINT くううッ！　
+				CASE 4
+					PRINT ひっ
+			ENDSELECT
+		REND
+	;苦しいの
+	ELSEIF ARG:1 == 3
+		PRINT ん、
+		REPEAT ARG
+			LOCAL = KOJO_X_TRAINVOICE_TYPE_RENZOKU(3, LOCAL)
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT ぐぅ……
+				CASE 1
+					PRINT うう……
+				CASE 2
+					PRINT んぐ……
+			ENDSELECT
+		REND
+	ENDIF
+	;セリフの締め
+	;痛い
+	IF ARG:1 == 1
+		PRINTDATA
+			DATA ひいぃっ！！
+			DATA 痛ぁっ！！
+			DATA ……酷い……
+			DATA ぐすっ……
+			DATA ぐっう……
+		ENDDATA
+	;針
+	ELSEIF ARG:1 == 2
+		PRINTDATA
+			DATA ち、血が……
+			DATA ひぎッ、も、もう……
+		ENDDATA
+	ENDIF
+ENDIF
+PRINTW 」
+
+;=============================================================================
+;装備品口上補完関数
+;=============================================================================
+;装備品に応じた補完メッセージを口上の後に表示して、臨場感を心持ち高めます。
+;--------------------------------------------------
+;装備品口上補完処理
+;--------------------------------------------------
+@KOJO_X_TRAIN_MESSAGE_EQUIPTEXT
+#DIM MESSAGE_EQUIP_VA_ON
+#DIM MESSAGE_EQUIP_BC_ON
+#DIM MESSAGE_EQUIP_US_ON
+;………………………………………………
+;薬類(媚薬・利尿剤・昆虫採集セットの薬)
+;………………………………………………
+SIF (TEQUIP:媚薬 && SELECTCOM != 61 && (SELECTCOM < 511 || SELECTCOM > 514)) || (TEQUIP:昆虫採集セットの薬 && SELECTCOM != 421)
+	PRINTFORM 薬物による欲情\@(TEQUIP:利尿剤 && SELECTCOM != 62) ? と # \@
+SIF TEQUIP:利尿剤 && SELECTCOM != 62
+	PRINTFORM 抗い難い尿意
+SIF (TEQUIP:媚薬 && SELECTCOM != 61 && (SELECTCOM < 511 || SELECTCOM > 514)) || (TEQUIP:昆虫採集セットの薬 && SELECTCOM != 421) || (TEQUIP:利尿剤 && SELECTCOM != 62)
+	PRINTFORM に苛まれる
+
+;………………………………………………
+;挿入物なし
+;………………………………………………
+IF ((TEQUIP:媚薬 && SELECTCOM != 61 && (SELECTCOM < 511 || SELECTCOM > 514)) || (TEQUIP:昆虫採集セットの薬 && SELECTCOM != 421) || (TEQUIP:利尿剤 && SELECTCOM != 62)) && ((TEQUIP:Ａ系装着器具 == 1 && (SELECTCOM == 13 || SELECTCOM == 502)) || (TEQUIP:Ｖ系装着器具 == 1 && (SELECTCOM == 12 || SELECTCOM == 501)) || (TEQUIP:Ｖ系装着器具 == 2 && (SELECTCOM == 437 || SELECTCOM == 520)) || (TEQUIP:Ｖ系装着器具 == 3 && (SELECTCOM == 151 || SELECTCOM == 521)) || (TEQUIP:Ｖ系装着器具 == 4 && SELECTCOM == 155) || (TEQUIP:Ｖ系装着器具 == 5 && SELECTCOM == 156) || (TEQUIP:Ｖ系装着器具 == 6 && SELECTCOM == 157) || (TEQUIP:Ｖ系装着器具 == 7 && (SELECTCOM == 153 || SELECTCOM == 535)) || (TEQUIP:Ｖ系装着器具 == 9 && SELECTCOM == 403) || (TEQUIP:クスコ && (SELECTCOM == 150 || SELECTCOM == 582)) || (TEQUIP:Ａ系装着器具 == 2 && (SELECTCOM == 438 || SELECTCOM == 523)) || (TEQUIP:Ａ系装着器具 == 3 && SELECTCOM == 170) || (TEQUIP:Ａ系装着器具 == 4 && (SELECTCOM == 171 || SELECTCOM == 586)) || (TEQUIP:Ａ系装着器具 == 5 && SELECTCOM == 172) || (TEQUIP:Ａ系装着器具 == 6 && SELECTCOM == 173) || (TEQUIP:Ａ系装着器具 == 7 && (SELECTCOM == 174 || SELECTCOM == 522)) || (TEQUIP:Ａ系装着器具 == 8 && SELECTCOM == 175) || (TEQUIP:Ａ系装着器具 == 9 && SELECTCOM == 404) || (TEQUIP:Ａ系装着器具 == 10 && SELECTCOM == 179) || (TEQUIP:氷柱 && SELECTCOM == 432) || (TEQUIP:Ｖ系装着器具 == 0 && TEQUIP:クスコ == 0 && TEQUIP:Ｖ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:Ａ系装着器具 == 0 && TEQUIP:氷柱 == 0))
+	PRINTFORM %CALLNAME:TARGET%は、
+	SIF TEQUIP:利尿剤 && SELECTCOM != 62
+		PRINTFORM 身体を小刻みに震わせ
+	SIF ((TEQUIP:媚薬 && SELECTCOM != 61 && (SELECTCOM < 511 || SELECTCOM > 514)) || (TEQUIP:昆虫採集セットの薬 && SELECTCOM != 421)) && (TEQUIP:利尿剤 && SELECTCOM != 62)
+		PRINTFORM 、
+	SIF (TEQUIP:媚薬 && SELECTCOM != 61 && (SELECTCOM < 511 || SELECTCOM > 514)) || (TEQUIP:昆虫採集セットの薬 && SELECTCOM != 421)
+		PRINTFORM 潤んだ瞳で情欲を堪え
+	PRINTFORMW ている……。
+ENDIF
+
+;………………………………………………
+;挿入物系
+;………………………………………………
+;SIF ((TEQUIP:Ｖ系装着器具 == 1 || TEQUIP:Ｖ系装着器具 == 21) && SELECTCOM != 12 && SELECTCOM != 501) || ((TEQUIP:Ｖ系装着器具 == 2 || TEQUIP:Ｖ系装着器具 == 22) && SELECTCOM != 437 && SELECTCOM != 520) || ((TEQUIP:Ｖ系装着器具 == 3 || TEQUIP:Ｖ系装着器具 == 23) && SELECTCOM != 151 && SELECTCOM != 521) || (TEQUIP:Ｖ系装着器具 == 4 && SELECTCOM != 155) || (TEQUIP:Ｖ系装着器具 == 5 && SELECTCOM != 156) || (TEQUIP:Ｖ系装着器具 == 6 && SELECTCOM != 157) || ((TEQUIP:Ｖ系装着器具 == 7 || TEQUIP:Ｖ系装着器具 == 27) && SELECTCOM != 153 && SELECTCOM != 535) || (TEQUIP:Ｖ系装着器具 == 9 && SELECTCOM != 403) || (TEQUIP:クスコ && SELECTCOM != 150 && SELECTCOM != 582) || (TEQUIP:Ａ系装着器具 == 1 && SELECTCOM != 13 && SELECTCOM != 502) || (TEQUIP:Ａ系装着器具 == 2 && SELECTCOM != 438 && SELECTCOM != 523) || (TEQUIP:Ａ系装着器具 == 3 && SELECTCOM != 170) || (TEQUIP:Ａ系装着器具 == 4 && SELECTCOM != 171 && SELECTCOM != 586)  || (TEQUIP:Ａ系装着器具 == 5 && SELECTCOM != 172) || (TEQUIP:Ａ系装着器具 == 6 && SELECTCOM != 173) || (TEQUIP:Ａ系装着器具 == 7 && SELECTCOM != 174 && SELECTCOM != 522) || (TEQUIP:Ａ系装着器具 == 8 && SELECTCOM != 175) || (TEQUIP:Ａ系装着器具 == 9 && SELECTCOM != 404) || (TEQUIP:Ａ系装着器具 == 10 && SELECTCOM != 179) || (TEQUIP:氷柱 && SELECTCOM != 432)
+;	PRINTFORM %CALLNAME:TARGET%の
+
+MESSAGE_EQUIP_VA_ON = 0
+MESSAGE_EQUIP_BC_ON = 0
+MESSAGE_EQUIP_US_ON = 0
+
+IF TEQUIP:Ｖ系装着器具 || TEQUIP:クスコ || TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	SELECTCASE TEQUIP:Ｖ系装着器具
+	CASE 1, 21
+		SIF SELECTCOM != 12 && SELECTCOM != 501
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 2, 22
+		SIF SELECTCOM != 437 && SELECTCOM != 520
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 3, 23
+		SIF SELECTCOM != 151 && SELECTCOM != 521
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 4
+		SIF SELECTCOM != 155 && SELECTCOM != 155
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 5
+		SIF SELECTCOM != 156 && SELECTCOM != 156
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 6
+		SIF SELECTCOM != 157 && SELECTCOM != 157
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 7, 27
+		SIF SELECTCOM != 153 && SELECTCOM != 535
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	CASE 9
+		SIF SELECTCOM != 403 && SELECTCOM != 403
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	ENDSELECT
+	SELECTCASE TEQUIP:クスコ
+	CASE 1
+		SIF SELECTCOM != 150 && SELECTCOM != 582
+			MESSAGE_EQUIP_VA_ON |= 1p0
+	ENDSELECT
+	SELECTCASE TEQUIP:Ａ系装着器具
+	CASE 1, 21
+		SIF SELECTCOM != 13 && SELECTCOM != 502
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 2, 22
+		SIF SELECTCOM != 438 && SELECTCOM != 523
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 3, 23
+		SIF SELECTCOM != 170 && SELECTCOM != 524
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 4
+		SIF SELECTCOM != 171 && SELECTCOM != 586
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 5
+		SIF SELECTCOM != 172 && SELECTCOM != 172
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 6
+		SIF SELECTCOM != 173 && SELECTCOM != 173
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 7, 27
+		SIF SELECTCOM != 174 && SELECTCOM != 522
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 8
+		SIF SELECTCOM != 175 && SELECTCOM != 175
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 9
+		SIF SELECTCOM != 404 && SELECTCOM != 404
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	CASE 10
+		SIF SELECTCOM != 179 && SELECTCOM != 179
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	ENDSELECT
+	SELECTCASE TEQUIP:氷柱
+	CASE 1
+		SIF SELECTCOM != 432 && SELECTCOM != 432
+			MESSAGE_EQUIP_VA_ON |= 1p1
+	ENDSELECT
+ENDIF
+IF TEQUIP:Ｃ系装着器具 || TEQUIP:Ｂ系装着器具 || TEQUIP:サラシ || TEQUIP:シャワープレイ || TEQUIP:コスチュームプレイ
+	SELECTCASE TEQUIP:Ｃ系装着器具
+	CASE 1, 21
+		SIF SELECTCOM != 14 && SELECTCOM != 503
+			MESSAGE_EQUIP_BC_ON |= 1p2
+	CASE 2, 22
+		SIF SELECTCOM != 16 && SELECTCOM != 505
+			MESSAGE_EQUIP_BC_ON |= 1p2
+	CASE 4
+		SIF SELECTCOM != 131 && SELECTCOM != 131
+			MESSAGE_EQUIP_BC_ON |= 1p2
+	CASE 5
+		SIF SELECTCOM != 130 && SELECTCOM != 130
+			MESSAGE_EQUIP_BC_ON |= 1p2
+	CASE 6, 26
+		SIF SELECTCOM != 17 && SELECTCOM != 515
+			MESSAGE_EQUIP_BC_ON |= 1p2
+	ENDSELECT
+	SELECTCASE TEQUIP:シャワープレイ
+	CASE 1 TO 3
+		SIF SELECTCOM != 351 && SELECTCOM != 351
+			MESSAGE_EQUIP_BC_ON |= 1p2
+	ENDSELECT
+	SELECTCASE TEQUIP:Ｂ系装着器具
+	CASE 1, 21
+		SIF SELECTCOM != 15 && SELECTCOM != 504
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	CASE 2, 22
+		SIF SELECTCOM != 191 && SELECTCOM != 525
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	CASE 3, 23
+		SIF SELECTCOM != 526 && SELECTCOM != 526
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	CASE 4
+		SIF SELECTCOM != 193 && SELECTCOM != 193
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	CASE 5
+		SIF SELECTCOM != 195 && SELECTCOM != 195
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	;存在しないのに定義されてたので一応残しておく
+	CASE 6
+		SIF SELECTCOM != 196 && SELECTCOM != 196
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	ENDSELECT
+	SELECTCASE TEQUIP:サラシ
+	CASE 1
+		SIF SELECTCOM != 194 && SELECTCOM != 194
+			MESSAGE_EQUIP_BC_ON |= 1p0
+	ENDSELECT
+	SELECTCASE TEQUIP:コスチュームプレイ
+	CASE 1
+		SIF SELECTCOM != 90 && SELECTCOM != 90
+			MESSAGE_EQUIP_BC_ON |= 1p1
+	CASE 2
+		SIF SELECTCOM != 194 && SELECTCOM != 194
+			MESSAGE_EQUIP_BC_ON |= 1p1
+	CASE 3 TO 22
+		SIF SELECTCOM != 93 && SELECTCOM != 93
+			MESSAGE_EQUIP_BC_ON |= 1p1
+	ENDSELECT
+ENDIF
+IF TEQUIP:Ｕ系装着器具 || TEQUIP:ビデオ撮影 || TEQUIP:羞恥プレイ
+	SELECTCASE TEQUIP:Ｕ系装着器具
+	CASE 1, 21
+		SIF SELECTCOM != 141 && SELECTCOM != 527
+			MESSAGE_EQUIP_US_ON |= 1p0
+	CASE 2, 22
+		SIF SELECTCOM != 142 && SELECTCOM != 528
+			MESSAGE_EQUIP_US_ON |= 1p0
+	CASE 3
+		SIF SELECTCOM != 143 && SELECTCOM != 143
+			MESSAGE_EQUIP_US_ON |= 1p0
+	CASE 4
+		SIF SELECTCOM != 144 && SELECTCOM != 144
+			MESSAGE_EQUIP_US_ON |= 1p0
+	CASE 9
+		SIF SELECTCOM != 405 && SELECTCOM != 405
+			MESSAGE_EQUIP_US_ON |= 1p0
+	ENDSELECT
+	SELECTCASE TEQUIP:ビデオ撮影
+	CASE 0
+	CASEELSE
+		SIF SELECTCOM != 100 && SELECTCOM != 100
+			MESSAGE_EQUIP_US_ON |= 1p1
+	ENDSELECT
+	SELECTCASE TEQUIP:羞恥プレイ
+	CASE 1
+		SIF SELECTCOM != 103 && SELECTCOM != 103
+			MESSAGE_EQUIP_US_ON |= 1p2
+	CASE 2
+		SIF SELECTCOM != 650 && SELECTCOM != 650
+			MESSAGE_EQUIP_US_ON |= 1p2
+	ENDSELECT
+ENDIF
+
+SIF MESSAGE_EQUIP_VA_ON
+	PRINTFORM %CALLNAME:TARGET%の
+
+;………………………………………………
+;Ｖ系(バイブ・ヴァギナ要石・触手挿入・ヴァギナ電極・焼芋・クスコなど)
+;………………………………………………
+IF MESSAGE_EQUIP_VA_ON & 0b01
+	PRINTFORM ヴァギナでは、
+	SELECTCASE TEQUIP:Ｖ系装着器具
+	CASE 1, 21
+		;バイブ
+		IF TEQUIP:Ｖ系装着器具 == 1 && !TEQUIP:触手調教
+			PRINTFORM バイブが膣壁をえぐって
+		;触手挿入
+		ELSE
+			PRINTFORM ぬめる触手がうねって
+		ENDIF
+	CASE 2, 22
+		;ヴァギナ要石
+		IF TEQUIP:Ｖ系装着器具 == 2 && !TEQUIP:触手調教
+			PRINTFORM 要石が疼く身体を鎮めて
+		;触手Ｇスポ責め
+		ELSE
+			PRINTFORM 触手が執拗にＧスポットを弄って
+		ENDIF
+	CASE 3, 23
+		;ヴァギナローター
+		IF TEQUIP:Ｖ系装着器具 == 3 && !TEQUIP:触手調教
+			PRINTFORM ローターの唸りが膣から響いて
+		;触手子宮責め
+		ELSE
+			PRINTFORM 触手が執拗に子宮をえぐって
+		ENDIF
+	CASE 4
+		;ヴァギナ電極
+		PRINTFORM 電流による人外の快感が暴れ狂って
+	CASE 5
+		;ヴァギナバーベル
+		PRINTFORM バーベルが膣内を押し続けて
+	CASE 6
+		;ヴァギナバルーン
+		PRINTFORM 風船が膣を押し広げて
+	CASE 7, 27
+		;愛液採集器
+		IF TEQUIP:Ｖ系装着器具 == 7 && !TEQUIP:触手調教
+			PRINTFORM 無機質な器具が愛液を貪り搾って
+		;触手愛液採集
+		ELSE
+			PRINTFORM 触手がヴァギナから愛液を貪りとって
+		ENDIF
+	CASE 9
+		;焼芋
+		PRINTFORM 焼芋が膣壁を炙って
+	ENDSELECT
+	SELECTCASE TEQUIP:クスコ
+	CASE 1
+		;クスコ
+		IF TEQUIP:クスコ && !TEQUIP:触手調教
+			PRINTFORM 金属の器具が奥まで赤い媚肉を覗かせて
+		;触手幽霊膣鏡
+		ELSE
+			PRINTFORM 太い触手に膣内を細かく映されて
+		ENDIF
+	ENDSELECT
+ENDIF
+IF MESSAGE_EQUIP_VA_ON == 0b01
+	PRINTFORMW いる……。
+ELSEIF MESSAGE_EQUIP_VA_ON == 0b11
+	PRINTFORML おり、
+ENDIF
+
+;………………………………………………
+;Ａ系(アナルバイブ・アナル要石・アナル触手・アナルビーズ・浣腸プラグ・触手浣腸・空気浣腸・拡張バルーン・アナル電極・巨峰攻め・氷柱攻め)
+;………………………………………………
+IF MESSAGE_EQUIP_VA_ON & 0b10
+	PRINTFORM アナルでは、
+	SELECTCASE TEQUIP:Ａ系装着器具
+	CASE 1, 21
+		;アナルバイブ
+		IF TEQUIP:Ａ系装着器具 == 1 && !TEQUIP:触手調教
+			PRINTFORM アナルバイブが低音で唸って
+		;アナル触手
+		ELSE
+		PRINTFORM 細身の触手が小菊を貪って
+		ENDIF
+	CASE 2, 22
+		;アナル要石
+		IF TEQUIP:Ａ系装着器具 == 2 && !TEQUIP:触手調教
+			PRINTFORM 要石が不気味に埋められて
+		;触手小腸挿入中
+		ELSE
+			PRINTFORM 触手が小腸の中で暴れまくって
+		ENDIF
+	CASE 3, 23
+		;アナルローター
+		IF TEQUIP:Ａ系装着器具 == 3 && !TEQUIP:触手調教
+		PRINTFORM ローターの唸りが肛門から響いて
+		;触手貫通
+		ELSE
+		PRINTFORM 口までせり上がった触手が体の中で暴れまくって
+		ENDIF
+	CASE 4
+		;アナル電極
+		IF TEQUIP:Ａ系装着器具 == 4 && !TEQUIP:触手調教
+			PRINTFORM 電流による人外の快感が暴れ狂って
+		;触手腸内撮影
+		ELSE
+			PRINTFORM 腸内を触手によりくまなく撮影されて
+		ENDIF
+	CASE 5
+		;アナルビーズ
+		PRINTFORM ビーズがキチキチと軋み合って
+	CASE 6
+		;拡張バルーン
+		PRINTFORM 風船が菊穴をあり得ない大きさへと拡張して
+	CASE 7, 27
+		;浣腸プラグ
+		IF TEQUIP:Ａ系装着器具 == 7 && !TEQUIP:触手調教
+			PRINTFORM 堪え難い排泄の欲求が渦を巻いて
+		;触手浣腸
+		ELSE
+			PRINTFORM 排泄の欲求を煽る触手が蠢いて
+		ENDIF
+	CASE 8
+		;空気浣腸
+		PRINTFORM 空気の圧迫が焦燥をもたらして
+	CASE 9
+		;巨峰
+		PRINTFORM 大粒の葡萄が甘い汁を滲ませて
+	CASE 10
+		;アナルバーベル
+		PRINTFORM バーベルが腸壁を押し続けて
+	ENDSELECT
+	SELECTCASE TEQUIP:氷柱
+	CASE 1
+		;氷柱
+		PRINTFORM あまりの冷感に菊穴の感覚が麻痺して	
+	ENDSELECT
+	PRINTFORMW いる……。
+ENDIF
+
+;………………………………………………
+;着衣・Ｂ系(ニプルキャップ・触手乳首責め・搾乳器・触手搾乳・乳房電極・新妻プレイ・サラシ・スク水プレイ)
+;………………………………………………
+IF MESSAGE_EQUIP_VA_ON && MESSAGE_EQUIP_BC_ON
+	PRINTFORM 加えて、
+ELSEIF MESSAGE_EQUIP_BC_ON
+	PRINTFORM %CALLNAME:TARGET%は
+ENDIF
+IF MESSAGE_EQUIP_BC_ON & 0b001 || MESSAGE_EQUIP_BC_ON & 0b010
+	SELECTCASE TEQUIP:Ｂ系装着器具
+	CASE 1, 21
+		IF EQUIP:35 == 1 && !TEQUIP:触手調教
+			;ニプルキャップ
+			PRINTFORM 乳首にローターをぶら下げ
+		ELSE
+			;触手乳首責め
+			PRINTFORM 触手の口に乳首を嬲られ
+		ENDIF
+	CASE 2, 22
+		IF EQUIP:35 == 2 && !TEQUIP:触手調教
+			;搾乳器
+			PRINTFORM 吸われるまま母乳を搾られ
+		ELSE
+			;触手搾乳
+			PRINTFORM 糸のような触手に乳を搾られ
+		ENDIF
+	CASE 3, 23
+		;触手乳腺挿入
+		PRINTFORM 針のような触手に乳腺を侵され
+	CASE 4
+		;乳房電極
+		PRINTFORM 電流による人外の快感が乳を激しく揺らして
+	CASE 5
+		;乳首クリップ
+		PRINTFORM 乳首を洗濯バサミで挟まれ
+	;存在しないのに定義されてたので一応残しておく
+	CASE 6
+		PRINTFORM 存在しないはずなのにどうしてここに来たの、なにを着けさせるつもりだったのと問うて
+	ENDSELECT
+	SIF TEQUIP:サラシ || TEQUIP:コスチュームプレイ
+		PRINTFORM 、
+	SELECTCASE TEQUIP:サラシ
+	CASE 1
+		;サラシ
+		PRINTFORM 胸をサラシで圧迫されて
+	ENDSELECT
+	SIF TEQUIP:コスチュームプレイ
+		PRINTFORM 、
+	SELECTCASE TEQUIP:コスチュームプレイ
+	CASE 1
+		;新妻プレイ
+		PRINTFORM 気恥ずかしげに素肌にエプロンを着て
+	CASE 2
+		;スク水
+		PRINTFORM 幼いデザインの水着に身を包んで
+	CASE 3
+		;女教師
+		PRINTFORM 凛々しい女性教師の衣装に身を包んで
+	CASE 4
+		;和服
+		PRINTFORM 清楚な和服に身を包んで
+	CASE 5
+		;メイド服
+		PRINTFORM かわいらしいメイド服に身を包んで
+	CASE 6
+		;体操服＋ブルマー
+		PRINTFORM 元気よさげに体操服を着込んで
+	CASE 7
+		;ナース服
+		PRINTFORM 博愛精神溢れそうなナース服に身を包んで
+	CASE 8
+		;チャイナ服
+		PRINTFORM 大胆なスリットが魅力的なチャイナドレスに身を包んで
+	CASE 9
+		;セーラー服
+		PRINTFORM 凛々しいセーラー服に身を包んで
+	CASE 10
+		;ネグリジェ
+		PRINTFORM 扇情的なネグリジェを着込んで
+	CASE 11
+		;裸Ｙシャツ
+		PRINTFORM 素肌の上にＹシャツだけを着て
+	CASE 12
+		;ビキニ
+		PRINTFORM 大胆に胸を強調したビキニの水着を着て
+	CASE 13
+		;危ないレオタード
+		PRINTFORM 具が見えそうなぐらい危ないレオタードを着て
+	CASE 14
+		;バニースーツ
+		PRINTFORM 紳士の社交場にいそうなうさぎさんの衣装を着て
+	CASE 15
+		;ボンデージ
+		PRINTFORM 卑猥だが凛々しい女王様的な衣装に身を包んで
+	CASE 16
+		;園児服
+		PRINTFORM かわいらしい園児の着るようなスモックに身を包んで
+	CASE 17
+		;褌だけ
+		PRINTFORM 素っ裸に褌だけという大胆な身なりで
+	CASE 18
+		;軍服
+		PRINTFORM キリッと引き締まった軍服姿で
+	CASE 19
+		;ウェディングドレス
+		PRINTFORM 美しくそしてあでやかなウェディングドレスに身を包んで
+	CASE 20
+		;ゴスロリ衣装
+		PRINTFORM まるで西洋人形のように美麗な衣装に身を包んで
+	CASE 21
+		;裸にサスペンダーだけ
+		PRINTFORM 素肌に胸の先端だけサスペンダーで隠した姿で
+	CASE 22
+		;巫女衣装
+		PRINTFORM 神に仕える巫女が着るような衣装に身を包んで
+	ENDSELECT
+	IF !(MESSAGE_EQUIP_BC_ON & 0b100)
+		SIF TEQUIP:Ｂ系装着器具 && TEQUIP:サラシ || TEQUIP:サラシ && TEQUIP:コスチュームプレイ || TEQUIP:Ｂ系装着器具 && TEQUIP:コスチュームプレイ
+			PRINTFORMW 、
+		PRINTFORMW 色気を増している……。
+	ENDIF
+	SIF MESSAGE_EQUIP_BC_ON & 0b100
+		PRINTFORMW 、
+ENDIF
+
+;………………………………………………
+;Ｃ・Ｐ系(クリキャップ・触手クリ責め・オナホール・触手ペニス責め・シャワー・Ｃ電極)
+;………………………………………………
+IF MESSAGE_EQUIP_BC_ON & 0b100
+	SELECTCASE TEQUIP:Ｃ系装着器具
+	CASE 1, 21
+		IF TEQUIP:Ｃ系装着器具 == 1 && !TEQUIP:触手調教
+			;クリキャップ
+			PRINTFORM 陰核を玩具で膨張させ
+		ELSE
+			;触手クリ責め
+			PRINTFORM 触手の先に執拗に陰核を嬲られ
+		ENDIF
+	CASE 2, 22
+		IF TEQUIP:Ｃ系装着器具 == 2 && !TEQUIP:触手調教
+			;オナホール
+			PRINTFORM ぬめる筒にペニスを包まれ
+		ELSE
+			;触手ペニス責め
+			PRINTFORM 触手にペニスを扱き上げられ
+		ENDIF
+	CASE 4
+		;陰核電極
+		PRINTFORM 電流による人外の快感で陰核が刺激され
+	CASE 5
+		;陰核クリップ
+		PRINTFORM 陰核を洗濯バサミで挟まれ
+	CASE 6, 26
+		IF TEQUIP:Ｃ系装着器具 == 6 && !TEQUIP:触手調教
+			;電極オナホール
+			PRINTFORM ぬめる筒にペニスを包まれ、電流による快感で刺激され
+		ELSE
+			;触手放電ペニス責め
+			PRINTFORM 触手にペニスを扱き上げられつつ、放電による快感で刺激され
+		ENDIF
+	ENDSELECT
+	SELECTCASE TEQUIP:シャワープレイ
+	CASE 1
+		;シャワー
+		PRINTFORM 静かに汚れを湯で濯がれ
+	CASE 2
+		;冷水シャワー
+		PRINTFORM 静かに汚れを冷水で濯がれ
+	CASE 3
+		;熱湯シャワー
+		PRINTFORM 汚れを熱湯で濯がれ
+	ENDSELECT
+	SIF !(MESSAGE_EQUIP_BC_ON & 0b001) && !(MESSAGE_EQUIP_BC_ON & 0b010)
+		PRINTFORM 、快楽に震え
+	PRINTFORMW ている……。
+ENDIF
+
+;………………………………………………
+;Ｕ系(カテーテル・触手尿道挿入・採尿器・触手採尿・風船カテーテル・尿道電極・石勺粕)
+;………………………………………………
+IF (MESSAGE_EQUIP_VA_ON || MESSAGE_EQUIP_BC_ON) && MESSAGE_EQUIP_US_ON
+	PRINTFORM さらに、
+ELSEIF MESSAGE_EQUIP_US_ON
+	PRINTFORM %CALLNAME:TARGET%は
+ENDIF
+IF MESSAGE_EQUIP_US_ON & 0b001
+	SELECTCASE TEQUIP:Ｕ系装着器具
+	CASE 1, 21
+		IF TEQUIP:Ｕ系装着器具 == 1 && !TEQUIP:触手調教
+			;カテーテル
+			PRINTFORM 尿道にカテーテルを挿し込まれ
+		ELSE
+			;触手尿道挿入
+			PRINTFORM 異形の触手に尿道を蹂躙され
+		ENDIF
+	CASE 2, 22
+		IF TEQUIP:Ｕ系装着器具 == 2 && !TEQUIP:触手調教
+			;採尿器
+			PRINTFORM 尿を強制的に採取され
+		ELSE
+			;触手採尿
+			PRINTFORM 異形の触手に尿を貪られ
+		ENDIF
+	CASE 3
+		;バルーンカテーテル
+		PRINTFORM 膀胱内にバルーンカテーテルを留置され
+	CASE 4
+		;尿道電極
+		PRINTFORM およそ常識では考えられないような場所である尿道からの電撃に耐え
+	CASE 9
+		;石勺柏
+		PRINTFORM 尿道にアスパラガスを挿し込まれ
+	ENDSELECT
+	IF !(MESSAGE_EQUIP_US_ON & 0b010 || MESSAGE_EQUIP_US_ON & 0b100)
+		PRINTFORMW ている……。
+	ELSEIF MESSAGE_EQUIP_US_ON & 0b010 || MESSAGE_EQUIP_US_ON & 0b100
+		PRINTFORM 、
+	ENDIF
+ENDIF
+
+;………………………………………………
+;シチュ系(羞恥プレイ、ビデオ撮影)
+;………………………………………………
+IF MESSAGE_EQUIP_US_ON & 0b010 || MESSAGE_EQUIP_US_ON & 0b100
+	PRINTFORM その姿は
+	SELECTCASE TEQUIP:羞恥プレイ
+	;羞恥プレイ
+	CASE 1
+		PRINTFORM 鏡に映り、%CALLNAME:TARGET%を惑わし
+	CASE 2
+		PRINTFORM 浄玻璃の鏡に映り、%CALLNAME:TARGET%を惑わし
+	ENDSELECT
+	SIF MESSAGE_EQUIP_US_ON & 0b010
+		PRINTFORM つつ
+	SELECTCASE TEQUIP:ビデオ撮影
+	CASE 0
+	CASEELSE
+		;ビデオ
+		PRINTFORM 淡々とテープに録画され
+	ENDSELECT
+	SIF ABL:露出癖 >= 4
+		PRINTFORM 羞恥の快楽に酔いしれ
+	PRINTFORMW ている……。
+ENDIF

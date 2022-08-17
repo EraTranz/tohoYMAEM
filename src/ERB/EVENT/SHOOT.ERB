@@ -1,0 +1,1424 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;射精関係の処理
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;=============================================================================
+;射精箇所選択機能周りの処理
+;=============================================================================
+;---------------------------------------------------------
+;射精箇所選択設定
+;---------------------------------------------------------
+@CHANGE_SAMEN_PLACE
+;変数のリセット
+VARSET LOCAL, 0
+VARSET LOCALS
+CALLF CLEAR_LIST
+LOCALS:1 = (Ｖ)
+LOCALS:2 = (Ａ)
+LOCALS:3 = (髪)
+LOCALS:4 = (顔)
+LOCALS:5 = (口)
+LOCALS:6 = (胸)
+LOCALS:7 = (腹)
+LOCALS:8 = (腋)
+LOCALS:9 = (手)
+LOCALS:10 = (秘)
+LOCALS:11 = (竿)
+LOCALS:12 = (尻)
+LOCALS:13 = (太)
+LOCALS:14 = (足)
+LOCALS:19 = (毎)
+
+REPEAT 700
+	;コマンドが存在しているかどうか
+	STRLENS TRAINNAME:COUNT
+	SIF RESULT < 1
+		CONTINUE
+	;射精箇所が選択不可能なコマンド・そもそも射精チェックが無いコマンドは表示しない
+	TRYCALLFORM COM_SHOOT_{COUNT}
+	SIF TFLAG:704 == 0
+		CONTINUE
+	;次のコマンドに備えてリセット
+	TFLAG:703 = 0
+	TFLAG:704 = 0
+	;射精箇所が選択可能ならリストに加える
+	CALLF SET_LIST, COUNT, 1
+	;ページ数処理
+	LOCAL:3 += 1
+	SIF (LOCAL:3%60) == 1 && LOCAL:3 > 60
+		LOCAL:1 += 1
+REND
+
+;ページをめくったときなどはここから
+$PRINT_LIST_PAGE
+LOCAL:2 = 0
+LOCAL:4 = 0
+LOCAL:5 = 0
+LOCAL:6 = 0
+LOCAL:7 = 0
+
+DRAWLINE
+PRINTFORML 射精箇所を変更したいコマンドを選択してください ＜page.{LOCAL + 1}/{LOCAL:1 + 1}＞
+DRAWLINE
+REPEAT 700
+	;(表示可否)が0の場合は除外
+	SIF GET_LIST(COUNT) == 0
+		CONTINUE
+	;どこからどこまでを陳列するか
+	LOCAL:2 += 1
+	SIF LOCAL:2 <= (LOCAL * 60) || LOCAL:2 > ((LOCAL + 1) * 60)
+		CONTINUE
+	;DITEMTYPE:998:コマンド番号が初期状態ならば、コマンドのデフォルト射精箇所タイプを表示する
+	IF DITEMTYPE:998:COUNT == 0
+		TRYCALLFORM COM_SHOOT_{COUNT}
+		LOCALS:0 = %LOCALS:(TFLAG:703)%
+		PRINTFORMLC %LOCALS:0%[{COUNT,3}]%TRAINNAME:COUNT%
+		;次のコマンドに備えてリセット
+		TFLAG:703 = 0
+		TFLAG:704 = 0
+		LOCALS:0 = 
+	;DITEMTYPE:998:コマンド番号を設定済みなら、その射精箇所タイプを表示する
+	ELSE
+		PRINTFORMLC %LOCALS:(DITEMTYPE:998:COUNT)%[{COUNT,3}]%TRAINNAME:COUNT%
+	ENDIF
+REND
+
+PRINTL 
+DRAWLINE
+PRINTFORML 同系統のコマンドの射精箇所を一括設定できます
+PRINTLC 　[980] Ｖセックス系
+PRINTLC 　[981] Ａセックス系
+PRINTLC 　[982] フェラチオ系
+PRINTLC 　[983] パイズリ系
+PRINTL 
+DRAWLINE
+;PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001]前のページ\@
+PRINTLC [1000] 戻る
+;PRINTFORMLC \@(LOCAL >= LOCAL:1) ? %" " * 16% # [1009]次のページ\@
+;PRINTL 
+PRINTL [1011] 全て初期化
+
+$INPUT_LOOP_1
+INPUT
+
+;戻る
+IF RESULT == 1000
+	RETURN 0
+;ELSEIF RESULT == 1001 && LOCAL > 0
+;	LOCAL -= 1
+;ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
+;	LOCAL += 1
+;全て初期化
+ELSEIF RESULT == 1011
+	PRINTFORMW 全ての調教コマンドの射精箇所を初期化しました
+	REPEAT 700
+		DITEMTYPE:998:COUNT = 0
+	REND
+;同系統の感度の射精箇所を一括設定
+ELSEIF RESULT >= 980 && RESULT <= 983
+	IF RESULT == 980
+		LOCAL:4 = 1
+	ELSEIF RESULT == 981
+		LOCAL:4 = 2
+	ELSEIF RESULT == 982
+		LOCAL:4 = 5
+	ELSEIF RESULT == 983
+		LOCAL:4 = 6
+	ENDIF
+	PRINTFORML 射精箇所タイプを選択してください
+	PRINTLC [ 0] 髪
+	PRINTLC [ 1] 顔
+	PRINTLC [ 2] 口
+	PRINTLC [ 3] 胸
+	PRINTLC [ 4] 腹
+	PRINTLC [ 5] 腋
+	PRINTLC [ 6] 手
+	PRINTLC [ 7] 秘裂
+	PRINTLC [ 8] 竿
+	PRINTLC [ 9] 尻
+	PRINTLC [10] 太腿
+	PRINTLC [11] 足
+	PRINTL
+	DRAWLINE
+	PRINTLC [19] 毎回選択
+	PRINTLC [99] 初期化する
+	PRINTLC [100] 戻る
+	PRINTL
+	$INPUT_LOOP_2
+	INPUT
+	LOCAL:5 = RESULT + 3
+	SELECTCASE RESULT
+		;髪～足に設定
+		CASE 0 TO 11
+			REPEAT 700
+				;(表示可否)が0の場合は除外
+				SIF GET_LIST(COUNT) == 0
+					CONTINUE
+				;デフォルト射精箇所がＶ／Ａ／口／胸のコマンドを検索し一括設定
+				TRYCALLFORM COM_SHOOT_{COUNT}
+				SIF TFLAG:703 == LOCAL:4
+					DITEMTYPE:998:COUNT = LOCAL:5
+				;選択結果がコマンドのデフォルト射精箇所と一致する場合は、DITEMTYPE:998:Yの値を0にする
+				;この処理により、IF DITEMTYPE:998:SELECTCOM != 0で『元々は○に射精するコマンドでないが、射精箇所選択機能によって○に設定している場合』を見ることが出来る
+				;口上で参照する際に使いやすくなると思う
+				SIF LOCAL:5 == TFLAG:703
+					DITEMTYPE:998:COUNT = 0
+				;次のコマンドに備えてリセット
+				TFLAG:703 = 0
+				TFLAG:704 = 0
+			REND
+			IF LOCAL:4 == 1
+				PRINTFORMW Ｖセックス系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました
+			ELSEIF LOCAL:4 == 2
+				PRINTFORMW Ａセックス系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました
+			ELSEIF LOCAL:4 == 5
+				PRINTFORMW フェラチオ系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました
+			ELSEIF LOCAL:4 == 6
+				PRINTFORMW パイズリ系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました
+			ENDIF
+		;毎回選択に設定
+		CASE 19
+			REPEAT 700
+				;(表示可否)が0の場合は除外
+				SIF GET_LIST(COUNT) == 0
+					CONTINUE
+				;デフォルト射精箇所がＶ／Ａ／口／胸のコマンドを検索し一括設定
+				TRYCALLFORM COM_SHOOT_{COUNT}
+				SIF TFLAG:703 == LOCAL:4
+					DITEMTYPE:998:COUNT = 19
+				;次のコマンドに備えてリセット
+				TFLAG:703 = 0
+				TFLAG:704 = 0
+			REND
+			IF LOCAL:4 == 1
+				PRINTFORMW Ｖセックス系コマンドの射精箇所を毎回選択に一括設定しました
+			ELSEIF LOCAL:4 == 2
+				PRINTFORMW Ａセックス系コマンドの射精箇所を毎回選択に一括設定しました
+			ELSEIF LOCAL:4 == 5
+				PRINTFORMW フェラチオ系コマンドの射精箇所を毎回選択に一括設定しました
+			ELSEIF LOCAL:4 == 6
+				PRINTFORMW パイズリ系コマンドの射精箇所を毎回選択に一括設定しました
+			ENDIF
+		;初期化
+		CASE 99
+			;デフォルト射精箇所がＶ／Ａ／口のコマンドについて一括設定
+			REPEAT 700
+				;(表示可否)が0の場合は除外
+				SIF GET_LIST(COUNT) == 0
+					CONTINUE
+				TRYCALLFORM COM_SHOOT_{COUNT}
+				SIF TFLAG:703 == LOCAL:4
+					DITEMTYPE:998:COUNT = 0
+				TFLAG:703 = 0
+				TFLAG:704 = 0
+			REND
+			IF LOCAL:4 == 1
+				PRINTFORMW Ｖセックス系コマンドの射精箇所を初期化しました
+			ELSEIF LOCAL:4 == 2
+				PRINTFORMW Ａセックス系コマンドの射精箇所を初期化しました
+			ELSEIF LOCAL:4 == 5
+				PRINTFORMW フェラチオ系コマンドの射精箇所を初期化しました
+			ELSEIF LOCAL:4 == 6
+				PRINTFORMW パイズリ系コマンドの射精箇所を初期化しました
+			ENDIF
+		;戻る
+		CASE 100
+			GOTO PRINT_LIST_PAGE
+		CASEELSE
+			CLEARLINE 1
+			REUSELASTLINE
+			GOTO INPUT_LOOP_2
+	ENDSELECT
+;無効な数字を入力
+ELSEIF RESULT < 0 || RESULT > 700 || GET_LIST(RESULT) == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP_1
+;有効なコマンド番号を入力
+ELSE
+	LOCAL:6 = RESULT
+	PRINTFORML %TRAINNAME:(LOCAL:6)%の射精箇所タイプを選択してください
+	PRINTLC [ 0] 髪
+	PRINTLC [ 1] 顔
+	PRINTLC [ 2] 口
+	PRINTLC [ 3] 胸
+	PRINTLC [ 4] 腹
+	PRINTLC [ 5] 腋
+	PRINTLC [ 6] 手
+	PRINTLC [ 7] 秘裂
+	PRINTLC [ 8] 竿
+	PRINTLC [ 9] 尻
+	PRINTLC [10] 太腿
+	PRINTLC [11] 足
+	PRINTL
+	DRAWLINE
+	PRINTLC [19] 毎回選択
+	PRINTLC [99] 初期化する
+	PRINTLC [100] 戻る
+	PRINTL
+	$INPUT_LOOP_3
+	INPUT
+	LOCAL:7 = RESULT + 3
+	SELECTCASE RESULT
+		;髪～足に設定
+		CASE 0 TO 11
+			DITEMTYPE:998:(LOCAL:6) = LOCAL:7
+			PRINTFORMW 「%TRAINNAME:(LOCAL:6)%」の射精箇所を%LOCALS:(LOCAL:7)%に設定しました
+			;選択結果がコマンドのデフォルト射精箇所と一致する場合は、DITEMTYPE:998:Yの値を0にする
+			;この処理により、IF DITEMTYPE:998:SELECTCOM != 0で『元々は○に射精するコマンドでないが、射精箇所選択機能によって○に設定している場合』を見ることが出来る
+			;口上で参照する際に使いやすくなると思う
+			TRYCALLFORM COM_SHOOT_{LOCAL:6}
+			SIF LOCAL:7 == TFLAG:703
+				DITEMTYPE:998:COUNT = 0
+			TFLAG:703 = 0
+			TFLAG:704 = 0
+		;毎回選択に設定
+		CASE 19
+			DITEMTYPE:998:(LOCAL:6) = 19
+			PRINTFORMW 「%TRAINNAME:(LOCAL:6)%」の射精箇所を毎回選択に設定しました
+		;初期化
+		CASE 99
+			DITEMTYPE:998:(LOCAL:6) = 0
+			PRINTFORMW 「%TRAINNAME:(LOCAL:6)%」の射精箇所を初期化しました
+		;戻る
+		CASE 100
+			GOTO PRINT_LIST_PAGE
+		CASEELSE
+			CLEARLINE 1
+			REUSELASTLINE
+			GOTO INPUT_LOOP_3
+	ENDSELECT
+ENDIF
+GOTO PRINT_LIST_PAGE
+
+;=============================================================================
+;射精処理
+;=============================================================================
+;---------------------------------------------------------
+;射精するかのチェック
+;---------------------------------------------------------
+@SAMEN_CHECK(ARG)
+#LOCALSIZE 1
+#FUNCTION
+LOCAL = 0
+SIF EXIST_PENIS(ARG) == 0
+	RETURNF 0
+SIF MAXBASE:ARG:2 <= 0
+	MAXBASE:ARG:2 = CALC_GAUGE2_COMMON(ARG)
+EJAC = MAXBASE:ARG:2
+LOCAL = MIN((BASE:ARG:射精 / EJAC), 2)
+RETURNF LOCAL
+
+;---------------------------------------------------------
+;射精
+;---------------------------------------------------------
+@SAMEN_SHOOT
+;射精したのが調教対象の場合
+IF TFLAG:92 == TARGET
+	;Ｃ系拡張コマンド有効の場合、Ｃ刺激かＧスポット（前立腺ぽく）責めでないと射精できない
+	IF TFLAG:91 >= 1 && FLAG:15 & 1 && SOURCE:快Ｃ == 0 && UP:0 == 0 && NOWEX:20 == 0 && SELECTCOM != 520 && SELECTCOM != 600 && SELECTCOM != 614 && TEQUIP:Ｖ系装着器具 != 2
+		SOURCE:欲情追加 += ((BASE:射精 * 30) / MAXBASE:2)
+		SOURCE:痛み += ((BASE:射精 * 15) / MAXBASE:2)
+		TIMES SOURCE:欲情追加 , 1.10
+		TIMES SOURCE:痛み , 1.10
+		SETCOLOR COLOR("P-RED")
+		PRINTL ＜射精渇望中＞
+		RESETCOLOR
+		BASE:射精 = EJAC-1
+		TFLAG:960 = 0
+		;射精渇望中におけるイベント口上呼び出し
+		CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, TARGET, 20
+		;ここで戻る
+		RETURN 0
+	;大量射精寸止め（焦らしプレイ）
+	ELSEIF TFLAG:91 == 2 && TEQUIP:焦らしプレイ
+		SOURCE:痛み += 800
+		SOURCE:屈従 += 1000
+		PRINTFORML %SHOW_CALLNAME(TARGET)%:大量射精寸止め
+		BASE:射精 = EJAC-1
+		TSTR:90 = 大量射精寸止め
+		NOWEX:30 += 2
+		EX:30 += 2
+		;ここで戻る
+		RETURN 0
+	;通常の射精寸止め（焦らしプレイ）
+	ELSEIF TFLAG:91 == 1 && TEQUIP:焦らしプレイ
+		SOURCE:痛み += 300
+		SOURCE:屈従 += 500
+		PRINTFORML %SHOW_CALLNAME(TARGET)%:射精寸止め
+		BASE:射精 = EJAC-1
+		TSTR:90 = 射精寸止め
+		NOWEX:30 += 1
+		EX:30 += 1
+		;ここで戻る
+		RETURN 0
+	;強空射精（リボンで射精止めor亀頭責め）
+	ELSEIF TFLAG:91 == 2 && (TEQUIP:射精止め || SELECTCOM == 128)
+		SOURCE:欲情追加 += ((BASE:射精 * 60) / MAXBASE:2)
+		SOURCE:痛み += ((BASE:射精 * 30) / MAXBASE:2)
+		TIMES SOURCE:欲情追加 , 1.20
+		TIMES SOURCE:痛み , 1.20
+		PRINTFORML %SHOW_CALLNAME(TARGET)%:強空射精
+		BASE:射精 -= EJAC*2
+		TSTR:90 = 強空射精
+		NOWEX:40 += 2
+		EX:40 += 2
+		;ここで戻る
+		RETURN 0
+	;空射精（リボンで射精止めor亀頭責め）
+	ELSEIF TFLAG:91 == 1 && (TEQUIP:射精止め || SELECTCOM == 128)
+		SOURCE:欲情追加 += ((BASE:射精 * 30) / MAXBASE:2)
+		SOURCE:痛み += ((BASE:射精 * 15) / MAXBASE:2)
+		TIMES SOURCE:欲情追加 , 1.10
+		TIMES SOURCE:痛み , 1.10
+		PRINTFORML %SHOW_CALLNAME(TARGET)%:空射精
+		BASE:射精 -= EJAC
+		TSTR:90 = 空射精
+		NOWEX:40 += 1
+		EX:40 += 1
+		;ここで戻る
+		RETURN 0
+	;大量射精
+	ELSEIF TFLAG:91 == 2
+		LOCAL:1 = 20 - (2 * ABL:射精中毒)
+		LOCAL:2 = 100 - (10 * ABL:射精中毒)
+		DOWNBASE:0 += LOCAL:1
+		DOWNBASE:1 += LOCAL:2
+
+		;対象の射精経験を見る
+		SELECTCASE EXP:射精経験
+			CASE IS < EXPLV:1
+				SOURCE:露出 += 20000
+				SOURCE:屈従 += 10000
+			CASE IS < EXPLV:2
+				SOURCE:露出 += 10000
+				SOURCE:屈従 += 8000
+			CASE IS < EXPLV:3
+				SOURCE:露出 += 7000
+				SOURCE:屈従 += 6000
+			CASE IS < EXPLV:4
+				SOURCE:露出 += 5000
+				SOURCE:屈従 += 4000
+			CASE IS < EXPLV:5
+				SOURCE:露出 += 3000
+				SOURCE:屈従 += 2000
+			CASEELSE
+				SOURCE:露出 += 1800
+				SOURCE:屈従 += 1200
+		ENDSELECT
+
+		SOURCE:欲情追加 += ABL:射精中毒 * 2500
+		
+		TSTR:90 = 大量射精
+		
+		;射精時の共通処理
+		CALL SAMEN_SHOOT_COMMON
+	;通常の射精
+	ELSEIF TFLAG:91 == 1
+		LOCAL:2 = 40 - (4 * ABL:射精中毒)
+		DOWNBASE:1 += LOCAL:2
+
+		;対象の射精経験を見る
+		SELECTCASE EXP:射精経験
+			CASE IS < EXPLV:1
+				SOURCE:露出 += 10000
+				SOURCE:屈従 += 5000
+			CASE IS < EXPLV:2
+				SOURCE:露出 += 5000
+				SOURCE:屈従 += 4000
+			CASE IS < EXPLV:3
+				SOURCE:露出 += 2500
+				SOURCE:屈従 += 2000
+			CASE IS < EXPLV:4
+				SOURCE:露出 += 1600
+				SOURCE:屈従 += 1400
+			CASE IS < EXPLV:5
+				SOURCE:露出 += 800
+				SOURCE:屈従 += 500
+			CASEELSE
+				SOURCE:露出 += 200
+				SOURCE:屈従 += 250
+		ENDSELECT
+
+		SOURCE:欲情追加 += ABL:射精中毒 * 750
+		
+		TSTR:90 = 射精
+		
+		;射精時の共通処理
+		CALL SAMEN_SHOOT_COMMON
+	ENDIF
+;調教したのが主人または助手の場合
+ELSE
+	;射精箇所選択機能がオン＆射精箇所が選択可能なコマンドである
+	IF (FLAG:11 & 1) && TFLAG:704 == 1 && TFLAG:92 != TARGET
+		;射精箇所を髪～足に設定している場合
+		IF DITEMTYPE:998:SELECTCOM >= 3 && DITEMTYPE:998:SELECTCOM <= 14
+			;秘裂に射精に設定しているが相手がオトコの場合は自動的に竿に射精に変更
+			IF DITEMTYPE:998:SELECTCOM == 10 && TALENT:(TFLAG:94):120
+				TFLAG:703 = 11
+			;竿に射精に設定しているが相手にペニスがない場合は自動的に秘裂に射精に変更
+			ELSEIF DITEMTYPE:998:SELECTCOM == 11 && EXIST_PENIS(TFLAG:94) == 0
+				TFLAG:703 = 10
+			;それ以外の場合は設定した箇所に射精する
+			ELSE
+				TFLAG:703 = DITEMTYPE:998:SELECTCOM
+			ENDIF
+		;射精箇所を毎回選択にしている場合
+		ELSEIF DITEMTYPE:998:SELECTCOM == 19
+			PRINTFORMW %SHOW_CALLNAME(TFLAG:92)%のペニスは限界まで膨張し、もう射精寸前だ……
+			PRINTW  
+			PRINTFORMW %SHOW_CALLNAME(TFLAG:94)%のどこに射精しますか？
+			PRINTLC [ 0] 髪
+			PRINTLC [ 1] 顔
+			PRINTLC [ 2] 口
+			PRINTLC [ 3] 胸
+			PRINTLC [ 4] 腹
+			PRINTLC [ 5] 腋
+			PRINTLC [ 6] 手
+			SIF !TALENT:(TFLAG:94):120
+				PRINTLC [ 7] 秘裂
+			SIF EXIST_PENIS(TFLAG:94)
+				PRINTLC [ 8] 竿
+			PRINTLC [ 9] 尻
+			PRINTLC [10] 太腿
+			PRINTLC [11] 足
+			PRINTFORML [12] 「\@(TEQUIP:(TFLAG:92):31) ? コンドームに # そのまま\@射精する」
+			$INPUT_LOOP
+			INPUT
+			IF (RESULT >= 0 && RESULT <= 6) || (RESULT >= 9 && RESULT <= 11)
+				TFLAG:703 = RESULT + 3
+			ELSEIF RESULT == 7 && !TALENT:(TFLAG:94):120
+				TFLAG:703 = RESULT + 3
+			ELSEIF RESULT == 8 && EXIST_PENIS(TFLAG:94)
+				TFLAG:703 = RESULT + 3
+			ELSEIF RESULT != 12
+				CLEARLINE 1
+				REUSELASTLINE
+				GOTO INPUT_LOOP
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	;IF TFLAG:92 == MASTER
+	;	IF TFLAG:91 == 2
+	;		TSTR:90 = 大量射精(主人)
+	;	ELSEIF TFLAG:91 == 1
+	;		TSTR:90 = 射精(主人)
+	;	ENDIF
+	;ELSEIF TFLAG:92 == ASSI
+	;	IF TFLAG:91 == 2
+	;		TSTR:90 = 大量射精(助手)
+	;	ELSEIF TFLAG:91 == 1
+	;		TSTR:90 = 射精(助手)
+	;	ENDIF
+	;ELSEIF TFLAG:92 != TARGET
+	;	IF TFLAG:91 == 2
+	;		TSTR:90 = 大量射精(他)
+	;	ELSEIF TFLAG:91 == 1
+	;		TSTR:90 = 射精(他)
+	;	ENDIF
+	;ENDIF
+	
+	;射精時の共通処理
+	CALL SAMEN_SHOOT_COMMON
+ENDIF
+
+;コンドーム射精の場合
+IF TEQUIP:(TFLAG:92):31 == 1
+	;コンドームに主人／助手／調教対象の精液溜まる。コンドーム精飲に使用。ビット演算
+	IF TFLAG:92 == MASTER
+		CFLAG:75 |= 1
+	ELSEIF TFLAG:92 == ASSI
+		CFLAG:75 |= 2
+	ELSEIF TFLAG:92 == TARGET
+		CFLAG:75 |= 4
+	ENDIF
+	;射精された人物が調教対象ならTFLAG:28を立てる
+	IF TFLAG:94 == TARGET
+		TFLAG:28 = TFLAG:91
+		TSTR:90 = コンドーム%TSTR:90%
+	ENDIF
+;コンドーム射精以外の射精の場合、射精箇所に応じて個別の関数を呼び出す
+ELSE
+	CALL SAMEN_SHOOT_COMMAND_CHECK
+ENDIF
+
+;---------------------------------------------------------
+;射精時の共通処理
+;---------------------------------------------------------
+;獣姦逆レイプや半霊を犯すなどTFLAG:94が空のコマンドから直接呼んでいたりもするので、この関数内でTFLAG:94は使用禁止
+@SAMEN_SHOOT_COMMON
+;射精した人物のペニスに精液汚れをつける
+STAIN:(TFLAG:92):2 |= 4
+
+PRINTFORM %SHOW_CALLNAME(TFLAG:92)%:
+SETCOLOR COLOR("AQUA2")
+PRINTFORML \@(TEQUIP:(TFLAG:92):31 == 1) ? コンドーム # \@\@(TFLAG:91 == 2) ? 大量射精 # 射精\@
+RESETCOLOR
+;射精した人物がオトコではなく、初めての射精の場合異常経験＋１
+SIF TALENT:(TFLAG:92):120 == 0 && EXP:(TFLAG:92):3 == 0
+	CALL COMMON_UP_EXP,TFLAG:92, 50, 1, 0
+
+;フォーオブアカインド派生は、分身がそれぞれ口とＡに射精するので一時的に射精量アップ
+SIF SELECTCOM == 652
+	TIMES TFLAG:91, 2.00
+;射精ゲージ再計算
+BASE:(TFLAG:92):2 = LIMIT(BASE:(TFLAG:92):2 - EJAC*(TFLAG:91), 0, EJAC-1)
+;射精経験加算
+TCVAR:(TFLAG:92):3 += TFLAG:91
+;LUNATIC以上は射精するたびに体力が減少
+CALL EXHAUST_EJAC, TFLAG:92, TFLAG:91
+;フォーオブアカインド派生の射精量を戻す
+SIF SELECTCOM == 652
+	TIMES TFLAG:91, 0.50
+
+;調教対象が大量射精した場合、対象の快Ｃと中毒充足のソースが増加（逆レイプ系のコマンド内の処理をここに移動。フェラするなどでもソースが増加するように）
+IF TFLAG:92 == TARGET && TFLAG:91 == 2
+	TIMES SOURCE:快Ｃ , 1.50
+	TIMES SOURCE:中毒充足 , 2.00
+ENDIF
+
+;射精した人物が対象／助手／主人ならば、対象／助手／主人が射精したフラグを立てる
+IF TFLAG:92 == TARGET
+	TFLAG:30 = TFLAG:91
+	;奴隷射精判定済みフラグ
+	TFLAG:705 = 1
+	;EX:射精とNOWEX:射精を立てる
+	NOWEX:11 += TFLAG:91
+	EX:11 += TFLAG:91
+ELSEIF TFLAG:92 == ASSI
+	TFLAG:36 = TFLAG:91
+ELSEIF TFLAG:92 == MASTER
+	TFLAG:35 = TFLAG:91
+ENDIF
+
+;---------------------------------------------------------
+;コンドーム射精以外の射精箇所に応じて個別の関数を呼び出す
+;---------------------------------------------------------
+@SAMEN_SHOOT_COMMAND_CHECK
+;射精箇所に応じた処理を呼び出す
+SELECTCASE TFLAG:703
+	;膣内射精
+	CASE 1
+		CALL SAMEN_SHOOT_VAGINA_SEX
+	;アナル射精
+	CASE 2
+		CALL SAMEN_SHOOT_ANAL_SEX
+	;髪に射精
+	CASE 3
+		CALL SAMEN_SHOOT_HAIR
+	;顔に射精
+	CASE 4
+		CALL SAMEN_SHOOT_FACE
+	;口に射精
+	CASE 5
+		CALL SAMEN_SHOOT_ORAL
+	;胸に射精
+	CASE 6
+		CALL SAMEN_SHOOT_BUST
+	;腹に射精
+	CASE 7
+		CALL SAMEN_SHOOT_BELLY
+	;腋に射精
+	CASE 8
+		CALL SAMEN_SHOOT_ARMPIT
+	;手に射精
+	CASE 9
+		CALL SAMEN_SHOOT_HAND
+	;秘裂に射精
+	CASE 10
+		CALL SAMEN_SHOOT_CREVASSE
+	;竿に射精
+	CASE 11
+		CALL SAMEN_SHOOT_BAR
+	;尻に射精
+	CASE 12
+		CALL SAMEN_SHOOT_HIP
+	;太腿に射精
+	CASE 13
+		CALL SAMEN_SHOOT_THIGH
+	;足に射精
+	CASE 14
+		CALL SAMEN_SHOOT_SOLE
+	;その他の射精
+	CASE 15
+		CALL SAMEN_SHOOT_OTHER
+ENDSELECT
+
+;---------------------------------------------------------
+;各射精箇所タイプごとの処理関数
+;---------------------------------------------------------
+;今後はCOMF内では処理せず、必要に応じてここから呼び出す。
+;汚れ移動等の処理は各COMF内でやってくれるので移動の必要無し
+;………………………………………………
+;膣内射精
+;………………………………………………
+@SAMEN_SHOOT_VAGINA_SEX
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL += 3
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL += 1
+ENDIF
+SIF SELECTCOM == 24
+	LOCAL += 1
+
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+CFLAG:(TFLAG:94):3666 += 1
+SIF TFLAG:91 == 2
+	CFLAG:(TFLAG:94):3666 += 1
+SIF CFLAG:(TFLAG:94):3666 > 7
+	CALL CALCULATE_LIMIT, TFLAG:94
+
+;射精した人物が調教対象（逆レイプ系や正常位させる系、助手を犯させるなどのコマンド）
+IF TFLAG:92 == TARGET
+	;妊娠出産機能がオンで射精された人物が助手の場合は中田氏カウントを行う
+	;@CHECK_COM_KINDを参照
+	IF FLAG:11 & 2 && TFLAG:94 == ASSI && TFLAG:9 == 19
+		PRINTFORML 奴隷精液(助手)＋{TFLAG:91}
+		CFLAG:ASSI:73 += TFLAG:91
+	ENDIF
+;射精した人物が主人または助手
+ELSE
+	;射精された人物が調教対象（正常位などのコマンド）
+	IF TFLAG:94 == TARGET
+		;調教対象の膣内に射精フラグ
+		TFLAG:11 = TFLAG:91
+		;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+		SIF TFLAG:899 >= 1
+			TFLAG:851 += TFLAG:91
+		;射精量に応じて液体追加のソースを追加
+		IF TFLAG:91 == 2
+			SOURCE:液体追加 += 1000
+		ELSEIF TFLAG:91 == 1
+			SOURCE:液体追加 += 500
+		ENDIF
+		;妊娠出産機能がオンの場合
+		IF FLAG:11 & 2
+			;中田氏カウント
+			IF TFLAG:92 == ASSI
+				PRINTFORML 助手精液＋{TFLAG:91}
+				CFLAG:TARGET:72 += TFLAG:91
+			ELSE
+				PRINTFORML 膣射精液＋{TFLAG:91}
+				CFLAG:TARGET:71 += TFLAG:91
+			ENDIF
+			;妊娠していない場合、中出しによる不潔・逸脱のソースと恐怖の珠を追加
+			SIF TALENT:TARGET:妊娠 == 0
+				CALL SAMEN_SHOOT_SOURCE
+		ENDIF
+	;射精された人物が助手（助手を犯す・蓑虫プレイ）
+	ELSEIF TFLAG:94 == ASSI
+		;主人が助手を犯すで射精フラグ
+		TFLAG:27 = TFLAG:91
+		;妊娠出産機能がオンの場合は中田氏カウントを行う
+		IF FLAG:11 & 2
+			PRINTFORML 膣射精液(助手)＋{TFLAG:91}
+			CFLAG:ASSI:71 += TFLAG:91
+		ENDIF
+	ENDIF
+ENDIF
+
+;………………………………………………
+;アナル射精
+;………………………………………………
+@SAMEN_SHOOT_ANAL_SEX
+#LOCALSIZE 1
+LOCAL = 1
+;大量射精
+SIF TFLAG:91 == 2
+	LOCAL += 1
+SIF SELECTCOM == 34
+	LOCAL += 1
+
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;アナルで射精させたフラグ立てる
+	TFLAG:12 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:852 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;髪に射精
+;………………………………………………
+@SAMEN_SHOOT_HAIR
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 3
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;髪で射精させたフラグ立てる
+	TFLAG:13 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所に射精したかを記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:853 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;顔に射精
+;………………………………………………
+@SAMEN_SHOOT_FACE
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 4
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;顔に射精されたフラグ立てる
+	TFLAG:14 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所に射精したかを記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:854 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;口に射精
+;………………………………………………
+@SAMEN_SHOOT_ORAL
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	;二本フェラチオで主人も助手も射精した場合は、助手の射精による精液経験加算は控えめにする
+	IF SELECTCOM == 304 && TFLAG:35 && TFLAG:92 == ASSI
+		LOCAL = 3
+	ELSE
+		LOCAL = 7
+	ENDIF
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	;二本フェラチオで主人も助手も射精した場合は、助手の射精による精液経験加算は控えめにする
+	IF SELECTCOM == 304 && TFLAG:35 && TFLAG:92 == ASSI
+		LOCAL = 1
+	ELSE
+		LOCAL = 3
+	ENDIF
+ENDIF
+;精液経験加算
+;二人でフェラするの場合は主人と助手の両方に加算
+IF SELECTCOM == 331
+	TCVAR:MASTER:精液経験 += LOCAL
+	TCVAR:ASSI:精液経験 += LOCAL
+ELSE
+	TCVAR:(TFLAG:94):4 += LOCAL
+ENDIF
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;口で射精させたフラグ立てる
+	TFLAG:15 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所に射精したかを記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:855 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;胸で射精
+;………………………………………………
+@SAMEN_SHOOT_BUST
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 8
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 4
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;胸で射精させたフラグ立てる
+	TFLAG:16 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:856 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;腹で射精
+;………………………………………………
+@SAMEN_SHOOT_BELLY
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 3
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;腹で射精させたフラグ立てる
+	TFLAG:17 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:857 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;腋に射精
+;………………………………………………
+@SAMEN_SHOOT_ARMPIT
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 3
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;腋で射精させたフラグ立てる
+	TFLAG:18 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:858 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;手に射精
+;………………………………………………
+@SAMEN_SHOOT_HAND
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 3
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;手で射精させたフラグ立てる
+	TFLAG:19 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:859 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;秘裂に射精
+;………………………………………………
+@SAMEN_SHOOT_CREVASSE
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 2
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.20
+		TIMES SOURCE:中毒充足 , 1.50
+	ENDIF
+	;秘裂で射精させたフラグ立てる
+	TFLAG:20 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:860 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;竿に射精
+;………………………………………………
+@SAMEN_SHOOT_BAR
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 2
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;竿で射精させたフラグ立てる
+	TFLAG:21 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:861 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;尻に射精
+;………………………………………………
+@SAMEN_SHOOT_HIP
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 2
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;尻で射精させたフラグ立てる
+	TFLAG:22 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:862 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;太腿に射精
+;………………………………………………
+@SAMEN_SHOOT_THIGH
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 2
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;太腿で射精させたフラグ立てる
+	TFLAG:23 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:863 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;足に射精
+;………………………………………………
+@SAMEN_SHOOT_SOLE
+#LOCALSIZE 1
+LOCAL = 0
+;大量射精
+IF TFLAG:91 == 2
+	LOCAL = 2
+;通常の射精
+ELSEIF TFLAG:91 == 1
+	LOCAL = 1
+ENDIF
+;精液経験加算
+TCVAR:(TFLAG:94):4 += LOCAL
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;大量射精時は達成感・中毒充足のソース追加
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+	ENDIF
+	;足で射精させたフラグ立てる
+	TFLAG:24 = TFLAG:91
+	;失神中の場合、TFLAGにこの場所への射精量を記録。失神回復時の地の文表示やパラメータ補正に使用
+	SIF TFLAG:899 >= 1
+		TFLAG:864 += TFLAG:91
+ENDIF
+
+;………………………………………………
+;その他の射精
+;キスする・助手とキスする・口移し・アナル舐め強制・アナル愛撫強制・尿道挿入・クンニ強制・フォーオブアカインド(ふたなり)・全身扱き
+;………………………………………………
+@SAMEN_SHOOT_OTHER
+#LOCALSIZE 1
+;キスする・助手とキスする・口移し
+IF SELECTCOM == 6 || SELECTCOM == 309 || SELECTCOM == 621
+	;大量射精で精液経験加算
+	SIF TFLAG:91 == 2
+		TCVAR:(TFLAG:94):4 += 1
+	;調教対象が調教者を射精させた場合
+	IF TFLAG:94 == TARGET
+		;大量射精時は達成感・中毒充足のソース追加
+		IF TFLAG:91 == 2
+			TIMES SOURCE:達成感 , 1.50
+			TIMES SOURCE:中毒充足 , 2.00
+		ENDIF
+		;キスで射精フラグ立てる
+		TFLAG:26 = TFLAG:91
+	ENDIF
+;フォーオブアカインド派生
+ELSEIF SELECTCOM == 652
+	;大量射精
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.25
+		TIMES SOURCE:中毒充足 , 1.50
+		;精液経験加算
+		TCVAR:(TFLAG:94):4 += 7
+	;通常の射精
+	ELSEIF TFLAG:91 == 1
+		;精液経験加算
+		TCVAR:(TFLAG:94):4 += 3
+	ENDIF
+	;アナルセックスで射精フラグ
+	;TFLAG:12 = TFLAG:91
+	;口で射精させたフラグ
+	;TFLAG:15 = TFLAG:91
+;全身扱きの場合
+ELSEIF SELECTCOM == 50
+	;大量射精
+	IF TFLAG:91 == 2
+		TIMES SOURCE:達成感 , 1.50
+		TIMES SOURCE:中毒充足 , 2.00
+		;精液経験加算。全身に精液がかかるのだからもっと精液経験が増えてもいいと思ったので勝手に水増し
+		TCVAR:(TFLAG:94):4 += 10
+	;通常の射精
+	ELSEIF TFLAG:91 == 1
+		;精液経験加算
+		TCVAR:(TFLAG:94):4 += 5
+	ENDIF
+;尿道挿入・クンニ強制の場合
+ELSEIF SELECTCOM == 146 || SELECTCOM == 300
+	;大量射精
+	IF TFLAG:91 == 2
+		;精液経験加算
+		TCVAR:(TFLAG:94):4 += 1
+	ENDIF
+ENDIF
+
+;調教対象が調教者を射精させた場合
+IF TFLAG:94 == TARGET
+	;キスで射精フラグが立っていなければ、その他の射精フラグ立てる
+	SIF TFLAG:26 == 0
+		TFLAG:25 = TFLAG:91
+ENDIF
+
+;-------------------------------------------------
+;中出し時の恐怖判定等
+;-------------------------------------------------
+@SAMEN_SHOOT_SOURCE
+#LOCALSIZE 4
+;ソースの計算
+;LOCAL:1は不潔のソースに追加
+;LOCAL:2は逸脱のソースに追加
+;LOCAL:3は恐怖に追加
+LOCAL:1 = 200
+LOCAL:2 = 5000
+LOCAL:3 = 1250
+
+;大量射精時
+IF TFLAG:91 == 2
+	TIMES LOCAL:1 , 2.00
+	TIMES LOCAL:2 , 1.50
+	TIMES LOCAL:3 , 1.50
+ENDIF
+
+;相愛,隷属,壊造人格,淫魔で射精したのが主人の場合
+IF TFLAG:92 == MASTER && (TALENT:相愛 || TALENT:隷属 || TALENT:壊造人格 || TALENT:淫魔)
+	LOCAL:1 = 0
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+	GOTO ADDING
+ENDIF
+
+;恋慕,妄信,服従,使い魔,淫乱がある場合
+IF TALENT:恋慕 || TALENT:妄信 || TALENT:服従 || TALENT:使い魔 || TALENT:淫乱
+	LOCAL:2 = 0
+	LOCAL:3 = 0
+	GOTO ADDING
+ENDIF
+
+;臆病
+SIF TALENT:臆病
+	TIMES LOCAL:3 , 1.30
+
+;反抗的
+SIF TALENT:反抗的
+	TIMES LOCAL:2 , 1.75
+
+;プライド高い
+IF TALENT:プライド高い
+	TIMES LOCAL:2 , 3.00
+	TIMES LOCAL:3 , 1.40
+ENDIF
+
+;無関心
+IF TALENT:無関心
+	TIMES LOCAL:2 , 0.20
+	TIMES LOCAL:3 , 0.20
+ENDIF
+
+;好奇心
+IF TALENT:好奇心
+	TIMES LOCAL:2 , 0.60
+	TIMES LOCAL:3 , 0.50
+ENDIF
+
+;保守的
+IF TALENT:保守的
+	TIMES LOCAL:2 , 1.80
+	TIMES LOCAL:3 , 1.20
+ENDIF
+
+;一線越えない
+IF TALENT:一線越えない
+	TIMES LOCAL:2 , 3.50
+	TIMES LOCAL:3 , 1.25
+ENDIF
+
+;貞操観念、貞操無頓着
+IF TALENT:貞操観念
+	TIMES LOCAL:2 , 2.50
+	TIMES LOCAL:3 , 1.50
+ELSEIF TALENT:貞操無頓着
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 0.50
+ENDIF
+
+;常時発情
+IF TALENT:常時発情
+	TIMES LOCAL:2 , 0.50
+	TIMES LOCAL:3 , 0.50
+ENDIF
+
+;発情＆危險期
+IF TALENT:排卵 && TALENT:発情可
+	TIMES LOCAL:2 , 2
+	TIMES LOCAL:3 , 1.5
+ELSEIF TALENT:危険日 && TALENT:発情可
+	TIMES LOCAL:2 , 1.75
+	TIMES LOCAL:3 , 1.5
+ELSEIF TALENT:排卵
+	TIMES LOCAL:2 , 2.75
+	TIMES LOCAL:3 , 2.25
+ELSEIF TALENT:危険日
+	TIMES LOCAL:2 , 2.25
+	TIMES LOCAL:3 , 1.75
+ENDIF
+
+;抵抗
+IF TALENT:抵抗
+	TIMES LOCAL:2 , 2.00
+	TIMES LOCAL:3 , 1.20
+ENDIF
+
+;男嫌い・女嫌い
+IF TALENT:男嫌い && TALENT:(TFLAG:92):120
+	TIMES LOCAL:2 , 3.50
+	TIMES LOCAL:3 , 1.50
+ELSEIF TALENT:女嫌い && TALENT:(TFLAG:92):120 != 0
+	TIMES LOCAL:2 , 3.50
+	TIMES LOCAL:3 , 1.50
+ENDIF
+
+;快感に素直・快感の否定
+IF TALENT:快感に素直
+	TIMES LOCAL:2 , 0.25
+	TIMES LOCAL:3 , 0.20
+ELSEIF TALENT:快感の否定
+	TIMES LOCAL:2 , 3.00
+	TIMES LOCAL:3 , 1.25
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES LOCAL:2 , 0.30
+
+;魅力・魅惑・謎の魅力
+IF TALENT:(TFLAG:92):90 || TALENT:(TFLAG:92):91 || TALENT:(TFLAG:92):92
+	TIMES LOCAL:2 , 0.70
+	TIMES LOCAL:3 , 0.80
+ENDIF
+
+;Ｖ敏感・鈍感
+IF TALENT:Ｖ敏感
+	TIMES LOCAL:2 , 0.90
+	TIMES LOCAL:3 , 0.85
+ELSEIF TALENT:Ｖ鈍感
+	TIMES LOCAL:2 , 1.20
+ENDIF
+
+;ABL:従順をみる
+SELECTCASE ABL:従順
+	CASE 1
+		TIMES LOCAL:2 , 0.90
+		TIMES LOCAL:3 , 0.95
+	CASE 2
+		TIMES LOCAL:2 , 0.75
+		TIMES LOCAL:3 , 0.90
+	CASE 3
+		TIMES LOCAL:2 , 0.60
+		TIMES LOCAL:3 , 0.80
+	CASE 4
+		TIMES LOCAL:2 , 0.20
+		TIMES LOCAL:3 , 0.40
+	CASE IS >= 5
+		TIMES LOCAL:2 , 0.10
+		TIMES LOCAL:3 , 0.20
+ENDSELECT
+
+;ABL:欲望をみる
+SELECTCASE ABL:欲望
+	CASE 1
+		TIMES LOCAL:2 , 0.95
+		TIMES LOCAL:3 , 0.95
+	CASE 2
+		TIMES LOCAL:2 , 0.85
+		TIMES LOCAL:3 , 0.85
+	CASE 3
+		TIMES LOCAL:2 , 0.70
+		TIMES LOCAL:3 , 0.70
+	CASE 4
+		TIMES LOCAL:2 , 0.55
+		TIMES LOCAL:3 , 0.55
+	CASE IS >= 5
+		TIMES LOCAL:2 , 0.35
+		TIMES LOCAL:3 , 0.35
+ENDSELECT
+
+$ADDING
+SOURCE:不潔 += LOCAL:1
+SOURCE:逸脱 += LOCAL:2
+UP:17 += LOCAL:3
+
+LOCAL:0 = LOCAL:3 / 25
+LOCAL:0 = TABLE_CALC(LOCAL:0, 200, 2)
+LOCAL:0 = TABLE_CALC(LOCAL:0, 400, 2)
+LOCAL:0 = TABLE_CALC(LOCAL:0, 600, 2)
+LOCAL:0 = TABLE_CALC(LOCAL:0, 800, 2)
+LOCAL:0 = TABLE_CALC(LOCAL:0, 1000, 2)
+DOWNBASE:9 += LOCAL:0
+
+;=============================================================================
+;射精時の体力低下処理
+;=============================================================================
+;難易度がLUNATIC以上のときキャラが射精するたびに体力が減少する処理を追加、ここで一括管理している。
+;ARG=射精した人物, ARG:1=射精量(TFLAG:91)
+;大量射精した場合は調教者の体力が100減少、通常射精すると調教者の体力が50減少するようになっている。
+;(実装されるかは不明だが)大量射精を超える射精が設定された時は体力が250減少するようになっている。
+
+;TFLAG:999に入っている値が1の時は調教中であることを示し、変数DOWNBASEが増加され、
+;それ以外の時は直接体力が低下される処理になっている。
+@EXHAUST_EJAC, ARG, ARG:1
+;難易度LUNATIC以上でない場合は処理しない
+;調教中の場合
+IF TFLAG:999 == 1
+	DOWNBASE:ARG:0 += LIMIT( (FLAG:3 < 4) ? 25 * ARG:1 # 50 * (2 * ARG:1 - 1) , 0, 250)
+	DOWNBASE:ARG:1 += LIMIT( (FLAG:3 < 4) ? 25 * ARG:1 # 50 * (2 * ARG:1 - 1) , 0, 250)
+	DOWNBASE:ARG:9 += LIMIT(100 * (2 * ARG:1 - 1) , 0, 500)
+;それ以外の場合
+ELSE
+	BASE:ARG:体力 = (FLAG:3 < 4) ? BASE:ARG:体力 # LIMIT(BASE:ARG:体力 - LIMIT( 50 * (2 * ARG:1 - 1) , 0, 250), 0, MAXBASE:ARG:0)
+ENDIF
+
+;=============================================================================
+;膣出し、挿しっぱなしの判定処理
+;=============================================================================
+@TRAIN_CHECK_SHOOT
+;膣出し判定(うまく機能できるか微妙)
+SIF GROUPMATCH(SELECTCOM, 20, 21, 22, 23, 24, 27, 28, 430, 610, 612, 613, 614, 615, 616, 617, 630, 655) && TFLAG:11 > 0
+	TFLAG:103 |= 1
+
+;挿しっぱなし判定
+TFLAG:102 = 0
+SIF GROUPMATCH(SELECTCOM, 20, 21, 22, 23, 24, 25, 26, 27, 28, 307, 323, 324, 325, 430, 610, 612, 613, 614, 615, 616, 617, 630, 651, 655, 657) && (TFLAG:11 == 0 || PALAM:欲情 >= PALAMLV:4)
+	TFLAG:102 = 1
+SIF GROUPMATCH(SELECTCOM, 30, 31, 32, 33, 34, 35, 36, 37, 38, 308, 332, 333, 334, 610, 618, 619, 656) && (TFLAG:12 == 0 || PALAM:欲情 >= PALAMLV:4)
+	TFLAG:102 = 1
+
+;助手が射精した場合
+SIF ASSI >= 0 && TFLAG:11 && TFLAG:36
+	CALL DISPLAY_KOJO_MESSAGE_SUB_EVENT, ASSI, 10

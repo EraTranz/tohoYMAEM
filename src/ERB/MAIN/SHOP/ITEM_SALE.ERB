@@ -1,0 +1,206 @@
+﻿;=============================================================================
+;アイテム関連の処理
+;=============================================================================
+;--------------------------------------------------
+;アイテム売却処理
+;--------------------------------------------------
+@TOOL_SALE_MAIN
+;売られているアイテムを確認
+CALL SALE_ITEM_CHECK
+ライン数:0 = LINECOUNT
+DRAWLINE
+PRINTFORML 調教道具を売却できます。何を売りますか？(所持金:{MONEY}圓)
+DRAWLINE
+CALL ARRANGE_PRINT_ITEM
+	IF FLAG:9549 & 2 
+		PRINTBUTTON "[998] - 展開", 998
+	ELSE
+		PRINTBUTTON "[998] - 閉合", 998
+	ENDIF
+	PRINTL
+DRAWLINE
+;売り物表示
+REPEAT 100
+	;売却費用が足りないアイテムを非表示にしたい場合は右のカッコ内の構文を直下の行の右端に追加してください。「 && ITEMPRICE:COUNT <= MONEY」
+	IF ITEMPRICE:COUNT > 0
+		SIF ITEMSALES:COUNT == 1
+			CALL PRINT_SALE_SHOPITEM, COUNT
+	ENDIF
+REND
+;売り物表示
+REPEAT 20
+	;売却費用が足りないアイテムを非表示にしたい場合は右のカッコ内の構文を直下の行の右端に追加してください。「 && ITEMPRICE:COUNT <= MONEY」
+	IF ITEMPRICE:(600 + COUNT) > 0
+		SIF ITEMSALES:(600 + COUNT) == 1
+			CALL PRINT_SALE_SHOPITEM, (600 + COUNT)
+	ENDIF
+REND
+IF LINEISEMPTY()
+	PRINTL 売るものがありません
+ELSE
+	PRINTL 
+ENDIF
+DRAWLINE
+PRINTLC [999] 戻る
+$INPUT_LOOP
+INPUT
+IF RESULT == 999
+	VARSET ITEMSALES, 0
+	RETURN 0
+ELSEIF RESULT == 998
+    IF FLAG:9549 & 2
+		FLAG:9549 = 0
+	ELSE
+		FLAG:9549 |= 2
+	ENDIF
+	ライン数:1 = LINECOUNT
+	CLEARLINE ライン数:1 - ライン数:0
+	RESTART
+ELSEIF RESULT < 0 || RESULT > 999 || ITEMSALES:RESULT == 0
+	CLEARLINE 1
+	REUSELASTLINE
+	GOTO INPUT_LOOP
+ELSEIF ITEM:RESULT <= 0
+	CLEARLINE 1
+	REUSELASTLINE 在庫が足りません
+	GOTO INPUT_LOOP
+ENDIF
+LOCAL = RESULT
+;消耗品
+IF (LOCAL >= 60 && LOCAL < 90) || (LOCAL >= 600 && LOCAL < 700)
+	CALL SALE_PLURAL, LOCAL
+ELSE
+	PRINTFORMW ＜%ITEMNAME:LOCAL%を売却しました＞
+	MONEY += ITEMPRICE:LOCAL / 5
+	ITEM:LOCAL -= 1
+ENDIF
+ライン数:1 = LINECOUNT
+CLEARLINE ライン数:1 - ライン数:0
+RESTART
+
+;--------------------------------------------------
+;売り物表示
+;--------------------------------------------------
+@PRINT_SALE_SHOPITEM, ARG
+PRINTFORMLC [{ARG, 3}] %ITEMNAME:ARG%(%SHOW_YEN(ITEMPRICE:ARG / 5)%)
+
+;--------------------------------------------------
+;売られているアイテムを確認
+;--------------------------------------------------
+@ITEM_NUM
+#FUNCTION
+LOCAL = 0
+REPEAT 999
+	SIF ITEM:COUNT > 0
+		LOCAL += ITEM:COUNT
+REND
+RETURNF LOCAL
+
+;--------------------------------------------------
+;アイテム出現条件
+;--------------------------------------------------
+@SALE_ITEM_CHECK
+;アイテム・奴隷陳列フラグの削除
+VARSET ITEMSALES, 0
+
+;拡張コマンド用アイテム
+FOR LOCAL, 0, 60
+	ITEMSALES:LOCAL = 1
+	;未実装アイテム
+	SIF ITEMPRICE:LOCAL == 0
+		ITEMSALES:LOCAL = 0
+	;既に売却済みのアイテムは販売されない
+	SIF ITEM:LOCAL <= 0
+		ITEMSALES:LOCAL = 0
+NEXT
+
+;進化の秘法
+ITEMSALES:59 = 0
+
+;ローション、媚薬、ビデオテープはとりあえず99個まで
+FOR LOCAL, 60, 90
+	ITEMSALES:LOCAL = 1
+	;未実装アイテム
+	SIF ITEMPRICE:LOCAL == 0
+		ITEMSALES:LOCAL = 0
+	;既に99個持っているアイテムは販売されない
+	SIF ITEM:LOCAL <= 0
+		ITEMSALES:LOCAL = 0
+NEXT
+
+;カルーア、ビール、ワインはとりあえず99個まで
+FOR LOCAL, 600, 620
+	ITEMSALES:LOCAL = 1
+	;未実装アイテム
+	SIF ITEMPRICE:LOCAL == 0
+		ITEMSALES:LOCAL = 0
+	;既に99個持っているアイテムは販売されない
+	SIF ITEM:LOCAL <= 0
+		ITEMSALES:LOCAL = 0
+NEXT
+
+;娼館
+ITEMSALES:90 = 0
+;空晶石の首輪
+ITEMSALES:95 = 0
+;青珊瑚の指輪
+ITEMSALES:96 = 0
+;隷属の証
+ITEMSALES:97 = 0
+;赤い首輪（奴隷エンド条件はここで処理）
+ITEMSALES:98 = 0
+;エンゲージリング（単体エンド条件はここで処理）
+ITEMSALES:99 = 0
+
+;--------------------------------------------------
+;複数個所持可能なアイテム売却処理
+;--------------------------------------------------
+;複数個所持可能なアイテムについて、同時売却個数を選択
+;LOCALは売却可能個数を示す
+@SALE_PLURAL, ARG
+LOCAL = ITEM:ARG
+DRAWLINE
+PRINTFORML %ITEMNAME:ARG%をいくつ売りますか？
+PRINTFORML {LOCAL}個まで売却できます
+PRINTLC [0] やめる
+PRINTLC [1] 1個
+SIF LOCAL >= 5
+	PRINTLC [5] 5個
+SIF LOCAL >= 10
+	PRINTLC [10] 10個
+SIF LOCAL != 1 && LOCAL != 5 && LOCAL != 10
+	PRINTFORMLC [{LOCAL}] 売れるだけ
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+	RETURN 0
+ELSEIF RESULT < 0
+	CLEARLINE 1
+	REUSELASTLINE  
+	GOTO INPUT_LOOP
+ELSEIF ITEM:ARG < RESULT
+	CLEARLINE 1
+	REUSELASTLINE 在庫が足りません
+	GOTO INPUT_LOOP
+ELSEIF RESULT > LOCAL
+	ライン数:2 = LINECOUNT
+	PRINTL そんなに持てませんが、持てるまで売りますか？
+	PRINTLC [0] はい
+	PRINTLC [1] いいえ
+	INPUT
+	IF RESULT == 0
+		RESULT = LOCAL
+	ELSEIF RESULT != 0
+		RETURN 0
+	ELSE
+		CLEARLINE 1
+		REUSELASTLINE 
+	ENDIF
+ELSEIF RESULT > LOCAL
+	CLEARLINE 1
+	REUSELASTLINE そんなに持てません
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORMW ＜%ITEMNAME:ARG%を{RESULT}個売却しました＞
+ITEM:ARG -= RESULT
+MONEY += ITEMPRICE:ARG / 5 * RESULT

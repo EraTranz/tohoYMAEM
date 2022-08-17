@@ -1,0 +1,269 @@
+﻿;=============================================================================
+;犬にＡ犯させる
+;=============================================================================
+;犬に犯させるを改変
+;
+;--------------------------------------------------
+;実行判定
+;--------------------------------------------------
+@COM_ABLE389
+;個別設定コマンドフィルタ
+SIF DITEMTYPE:999:389 > 0
+	RETURN 0
+;獣姦系コマンドを有効にしてないとダメ
+SIF (FLAG:15 & 8192) == 0
+	RETURN 0
+;Ａ調教フィルタがオフになってないとダメ
+SIF FLAG:2 & 2
+	RETURN 0
+;一定のＡ経験が必要
+SIF EXP:Ａ経験 < EXPLV:3
+	RETURN 0
+;動物小屋と犬が必要
+SIF (FLAG:72 & 1) == 0 || (FLAG:72 & 2) == 0
+	RETURN 0
+;主人じゃないとダメ
+SIF ASSIPLAY
+	RETURN 0
+;主人に禁断の知識か狂気がないとダメ
+SIF TALENT:MASTER:禁断の知識 == 0 && TALENT:MASTER:狂気 == 0
+	RETURN 0
+;小人体型だとダメ
+SIF TALENT:小人体型
+	RETURN 0
+;Ａ系装着具使用中は不可
+SIF TEQUIP:Ａ系装着器具 || TEQUIP:氷柱
+	RETURN 0
+;乗馬中はダメ
+SIF TEQUIP:三角木馬乗馬中
+	RETURN 0
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場プレイ
+	RETURN 0
+;シャワー中はダメ
+SIF TEQUIP:シャワープレイ
+	RETURN 0
+;○○風呂入浴中はダメ
+SIF TEQUIP:特殊風呂入浴中
+	RETURN 0
+;オムツプレイ中はダメ
+SIF TEQUIP:オムツプレイ
+	RETURN 0
+;コスプレ中はダメ
+SIF TEQUIP:コスチュームプレイ > 2
+	RETURN 0
+;時止め中は無理
+SIF TEQUIP:時間止め
+	RETURN 0
+;触手調教中はダメ
+SIF TEQUIP:触手調教
+	RETURN 0
+;距離のチェック
+SIF EQUIP:戦闘中 && COM_ABLE_BATTLE(TARGET, PLAYER, 389) == 0
+	RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;コマンド本体
+;--------------------------------------------------
+@COM389
+PRINTL 犬にＡ犯させる
+
+;戦闘判定
+CALL COM_TRY_BATTLE, 389
+;実行できない
+SIF RESULT == 1
+	RETURN 1
+
+TSTR:0 = 犬にＡ犯させる
+CALL DISPLAY_KOJO_TRAIN_MESSAGE_F_COM
+
+;-------------------------------------------------
+;ソースの計算
+;-------------------------------------------------
+DOWNBASE:0 += 100
+DOWNBASE:1 += 250
+
+SOURCE:露出 = 800
+SOURCE:液体追加 = 800
+SOURCE:痒み = 350
+SOURCE:不潔 = 15000
+SOURCE:逸脱 = 42000
+
+;ABL:Ａ感覚をみる
+IF ABL:Ａ感覚 == 0
+	SOURCE:快Ａ = 200
+	SOURCE:屈従 = 750
+ELSEIF ABL:Ａ感覚 == 1
+	SOURCE:快Ａ = 750
+	SOURCE:屈従 = 1750
+ELSEIF ABL:Ａ感覚 == 2
+	SOURCE:快Ａ = 2000
+	SOURCE:屈従 = 2750
+ELSEIF ABL:Ａ感覚 == 3
+	SOURCE:快Ａ = 5000
+	SOURCE:屈従 = 3750
+ELSEIF ABL:Ａ感覚 == 4
+	SOURCE:快Ａ = 8500
+	SOURCE:屈従 = 6500
+ELSE
+	SOURCE:快Ａ = 11000
+	SOURCE:屈従 = 10000
+ENDIF
+;ABL:獣姦中毒をみる
+IF ABL:獣姦中毒 == 0
+	SOURCE:中毒充足 = 1500
+ELSEIF ABL:獣姦中毒 == 1
+	TIMES DOWNBASE:0 , 0.95
+	TIMES DOWNBASE:1 , 0.90
+	SOURCE:中毒充足 = 1700
+	TIMES SOURCE:不潔 , 0.90
+ELSEIF ABL:獣姦中毒 == 2
+	TIMES DOWNBASE:0 , 0.90
+	TIMES DOWNBASE:1 , 0.80
+	SOURCE:中毒充足 = 2000
+	TIMES SOURCE:不潔 , 0.80
+ELSEIF ABL:獣姦中毒 == 3
+	TIMES DOWNBASE:0 , 0.85
+	TIMES DOWNBASE:1 , 0.70
+	SOURCE:中毒充足 = 2500
+	TIMES SOURCE:不潔 , 0.70
+ELSEIF ABL:獣姦中毒 == 4
+	TIMES DOWNBASE:0 , 0.80
+	TIMES DOWNBASE:1 , 0.60
+	SOURCE:中毒充足 = 3300
+	TIMES SOURCE:不潔 , 0.60
+ELSE
+	TIMES DOWNBASE:0 , 0.75
+	TIMES DOWNBASE:1 , 0.50
+	SOURCE:中毒充足 = 4200
+	TIMES SOURCE:不潔 , 0.50
+ENDIF
+;EXP:Ａ経験をみる
+IF EXP:Ａ経験 < EXPLV:1
+	TIMES SOURCE:快Ａ , 0.20
+	SOURCE:痛み = 10000
+ELSEIF EXP:Ａ経験 < EXPLV:2
+	TIMES SOURCE:快Ａ , 0.60
+	SOURCE:痛み = 6500
+ELSEIF EXP:Ａ経験 < EXPLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	SOURCE:痛み = 3000
+ELSEIF EXP:Ａ経験 < EXPLV:4
+	TIMES SOURCE:快Ａ , 1.20
+	SOURCE:痛み = 1500
+ELSEIF EXP:Ａ経験 < EXPLV:5
+	TIMES SOURCE:快Ａ , 1.30
+	SOURCE:痛み = 500
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	SOURCE:痛み = 50
+ENDIF
+
+;PALAM:潤滑をみる
+IF PALAM:潤滑 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.10
+	SOURCE:痛み += 9000
+	TIMES SOURCE:痛み , 3.00
+ELSEIF PALAM:潤滑 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.40
+	SOURCE:痛み += 2500
+	TIMES SOURCE:痛み , 1.00
+ELSEIF PALAM:潤滑 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:痛み , 0.50
+ELSEIF PALAM:潤滑 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.40
+	TIMES SOURCE:痛み , 0.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.80
+	TIMES SOURCE:痛み , 0.10
+ENDIF
+
+;小柄体形
+SIF TALENT:小柄体型
+	TIMES SOURCE:痛み , 2.00
+
+;貞操観念
+IF TALENT:貞操観念
+	IF TALENT:処女 == 1
+		SOURCE:反感追加 = 5000
+	ELSE
+		SOURCE:反感追加 = 3000
+	ENDIF
+;貞操無頓着
+ELSEIF TALENT:貞操無頓着
+	IF TALENT:処女 == 1
+		SOURCE:反感追加 = 300
+	ENDIF
+ELSE
+	SIF TALENT:処女 == 1
+		SOURCE:反感追加 = 1500
+ENDIF
+
+;PALAM:欲情をみる
+IF PALAM:欲情 < PALAMLV:1
+	TIMES SOURCE:快Ａ , 0.60
+ELSEIF PALAM:欲情 < PALAMLV:2
+	TIMES SOURCE:快Ａ , 0.80
+ELSEIF PALAM:欲情 < PALAMLV:3
+	TIMES SOURCE:快Ａ , 1.00
+ELSEIF PALAM:欲情 < PALAMLV:4
+	TIMES SOURCE:快Ａ , 1.20
+ELSE
+	TIMES SOURCE:快Ａ , 1.50
+ENDIF
+
+;ABL:従順をみる
+IF ABL:従順 == 0
+	TIMES SOURCE:快Ａ , 0.50
+	TIMES SOURCE:反感追加 , 2.00
+ELSEIF ABL:従順 == 1
+	TIMES SOURCE:快Ａ , 0.80
+	TIMES SOURCE:反感追加 , 1.50
+ELSEIF ABL:従順 == 2
+	TIMES SOURCE:快Ａ , 1.00
+	TIMES SOURCE:反感追加 , 1.00
+ELSEIF ABL:従順 == 3
+	TIMES SOURCE:快Ａ , 1.30
+	TIMES SOURCE:反感追加 , 0.80
+ELSEIF ABL:従順 == 4
+	TIMES SOURCE:快Ａ , 1.60
+	TIMES SOURCE:反感追加 , 0.60
+ELSE
+	TIMES SOURCE:快Ａ , 2.00
+	TIMES SOURCE:反感追加 , 0.30
+ENDIF
+
+;猫舌持ちはトラウマと逸脱増加
+IF TALENT:猫舌
+	TIMES SOURCE:逸脱 , 2.0
+	SOURCE:トラウマ = 2000
+ENDIF
+
+;奴隷のＡに精液とＰの汚れがつく
+STAIN:アナル |= 2
+STAIN:アナル |= 4
+
+TCVAR:Ａ経験 += 10
+TCVAR:動物性愛経験 += 2
+
+;コマンド属性：獣姦
+TFLAG:98 = 9
+RETURN 1
+
+;--------------------------------------------------
+;調教時メッセージ
+;--------------------------------------------------
+@SYSTXT_TRAIN_MESSAGE_F_COM_389
+PRINTFORML %CALLNAME:MASTER%にけしかけられて、雄犬は息を荒げて
+PRINTFORM 後ろから%CALLNAME:TARGET%の
+IF ABL:Ａ感覚 >= 3
+	PRINT 柔らかく口を開いた
+ELSE
+	PRINT しっかりと閉ざされた
+ENDIF
+SIF EX:22
+	PRINT 切なくひくつく
+PRINTFORML \@(TALENT:小柄体型) ? 幼い肛門 # 排泄器官\@の最奥まで生殖器を突き入れた
+PRINTFORML そのまま器用に腰を抱え込み激しく抽挿を繰り返し、%CALLNAME:TARGET%の中に精を放ち続ける…
