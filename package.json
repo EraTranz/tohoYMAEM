@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "engines": {
+    "node": "16"
+  },
+  "scripts": {
+    "generate": "node -r esbuild-register generate.js"
+  },
+  "dependencies": {
+    "esbuild": "^0.15.5",
+    "esbuild-register": "^3.3.3",
+    "globby": "^13.1.2"
+  }
+}
