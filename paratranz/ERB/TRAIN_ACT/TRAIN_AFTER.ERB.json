@@ -1,0 +1,117 @@
+[
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L16",
+    "original": "（%CALLNAME:TARGET%の体力が限界に来ています。戦闘に勝利した）",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L16"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L19",
+    "original": "%CALLNAME:TARGET%がぴくりとも動かなくなった",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L19"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L20",
+    "original": "何をやっても反応がない……",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L20"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L66",
+    "original": "戦闘を終了しました。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L66"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L68",
+    "original": "調教を終了しました。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L68"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L213",
+    "original": "今回の調教で%CALLNAME:TARGET%の好感度は",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L213"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L215",
+    "original": "変化しませんでした。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L215"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L217",
+    "original": "合計\\@(TFLAG:238 >= 0) ? ＋{TFLAG:238} # －{-TFLAG:238}\\@変動しました。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L217"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L236",
+    "original": "戦いを続けるか？（あと{EQUIP:戦闘中}回）",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L236"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L237",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L237"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L238",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L238"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L307",
+    "original": "調教の結果:いずれの珠も得られませんでした。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L307"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L320",
+    "original": "1",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L320"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L322",
+    "original": "10",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L322"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L324",
+    "original": "100",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L324"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L343",
+    "original": "調教の結果:",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L343"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L368",
+    "original": "%PALAMNAME:LOCAL%の珠×({BEFORE_JUEL, 7} \\@(GOTJUEL:LOCAL >= 0) ? ＋ # －\\@ {ABS(GOTJUEL:LOCAL), 7} -> {JUEL:LOCAL, 7})",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L368"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L370",
+    "original": "……以上の珠を得ました。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L370"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L437",
+    "original": "否定の珠と他の珠の打ち消しが発生しています。その結果、",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L437"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L447",
+    "original": "%PALAMNAME:LOCAL%の珠×({LOCAL:1, 7} \\@(GOTJUEL:LOCAL >= 0) ? － # ＋\\@ {ABS(GOTJUEL:LOCAL), 7} -> {JUEL:LOCAL, 7})",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L447"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L449",
+    "original": "……以上のように変化しました。",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L449"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L601",
+    "original": "ストレス＋{LOCAL:1}",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L601"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB_L610",
+    "original": "%CALLNAME:TARGET%の調教中の絶頂回数等(調教後行為は含まない)",
+    "context": "文件名: src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/TRAIN_AFTER.ERB#L610"
+  }
+]

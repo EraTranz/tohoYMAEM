@@ -1,0 +1,452 @@
+[
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L60",
+    "original": "射精箇所を変更したいコマンドを選択してください ＜page.{LOCAL + 1}/{LOCAL:1 + 1}＞",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L60"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L74",
+    "original": "%LOCALS:0%[{COUNT,3}]%TRAINNAME:COUNT%",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L74"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L81",
+    "original": "%LOCALS:(DITEMTYPE:998:COUNT)%[{COUNT,3}]%TRAINNAME:COUNT%",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L81"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L87",
+    "original": "同系統のコマンドの射精箇所を一括設定できます",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L87"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L88",
+    "original": "[980] Ｖセックス系",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L88"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L89",
+    "original": "[981] Ａセックス系",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L89"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L90",
+    "original": "[982] フェラチオ系",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L90"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L91",
+    "original": "[983] パイズリ系",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L91"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L95",
+    "original": "[1000] 戻る",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L95"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L98",
+    "original": "[1011] 全て初期化",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L98"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L112",
+    "original": "全ての調教コマンドの射精箇所を初期化しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L112"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L127",
+    "original": "射精箇所タイプを選択してください",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L127"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L128",
+    "original": "[ 0] 髪",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L128"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L129",
+    "original": "[ 1] 顔",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L129"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L130",
+    "original": "[ 2] 口",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L130"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L131",
+    "original": "[ 3] 胸",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L131"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L132",
+    "original": "[ 4] 腹",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L132"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L133",
+    "original": "[ 5] 腋",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L133"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L134",
+    "original": "[ 6] 手",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L134"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L135",
+    "original": "[ 7] 秘裂",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L135"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L136",
+    "original": "[ 8] 竿",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L136"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L137",
+    "original": "[ 9] 尻",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L137"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L138",
+    "original": "[10] 太腿",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L138"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L139",
+    "original": "[11] 足",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L139"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L142",
+    "original": "[19] 毎回選択",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L142"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L143",
+    "original": "[99] 初期化する",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L143"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L144",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L144"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L170",
+    "original": "Ｖセックス系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L170"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L172",
+    "original": "Ａセックス系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L172"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L174",
+    "original": "フェラチオ系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L174"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L176",
+    "original": "パイズリ系コマンドの射精箇所を%LOCALS:(LOCAL:5)%に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L176"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L193",
+    "original": "Ｖセックス系コマンドの射精箇所を毎回選択に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L193"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L195",
+    "original": "Ａセックス系コマンドの射精箇所を毎回選択に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L195"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L197",
+    "original": "フェラチオ系コマンドの射精箇所を毎回選択に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L197"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L199",
+    "original": "パイズリ系コマンドの射精箇所を毎回選択に一括設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L199"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L215",
+    "original": "Ｖセックス系コマンドの射精箇所を初期化しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L215"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L217",
+    "original": "Ａセックス系コマンドの射精箇所を初期化しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L217"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L219",
+    "original": "フェラチオ系コマンドの射精箇所を初期化しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L219"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L221",
+    "original": "パイズリ系コマンドの射精箇所を初期化しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L221"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L239",
+    "original": "%TRAINNAME:(LOCAL:6)%の射精箇所タイプを選択してください",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L239"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L240",
+    "original": "[ 0] 髪",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L240"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L241",
+    "original": "[ 1] 顔",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L241"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L242",
+    "original": "[ 2] 口",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L242"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L243",
+    "original": "[ 3] 胸",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L243"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L244",
+    "original": "[ 4] 腹",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L244"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L245",
+    "original": "[ 5] 腋",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L245"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L246",
+    "original": "[ 6] 手",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L246"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L247",
+    "original": "[ 7] 秘裂",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L247"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L248",
+    "original": "[ 8] 竿",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L248"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L249",
+    "original": "[ 9] 尻",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L249"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L250",
+    "original": "[10] 太腿",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L250"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L251",
+    "original": "[11] 足",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L251"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L254",
+    "original": "[19] 毎回選択",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L254"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L255",
+    "original": "[99] 初期化する",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L255"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L256",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L256"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L265",
+    "original": "「%TRAINNAME:(LOCAL:6)%」の射精箇所を%LOCALS:(LOCAL:7)%に設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L265"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L277",
+    "original": "「%TRAINNAME:(LOCAL:6)%」の射精箇所を毎回選択に設定しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L277"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L281",
+    "original": "「%TRAINNAME:(LOCAL:6)%」の射精箇所を初期化しました",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L281"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L324",
+    "original": "＜射精渇望中＞",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L324"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L336",
+    "original": "%SHOW_CALLNAME(TARGET)%:大量射精寸止め",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L336"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L347",
+    "original": "%SHOW_CALLNAME(TARGET)%:射精寸止め",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L347"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L360",
+    "original": "%SHOW_CALLNAME(TARGET)%:強空射精",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L360"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L373",
+    "original": "%SHOW_CALLNAME(TARGET)%:空射精",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L373"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L467",
+    "original": "%SHOW_CALLNAME(TFLAG:92)%のペニスは限界まで膨張し、もう射精寸前だ……",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L467"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L468",
+    "original": " ",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L468"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L469",
+    "original": "%SHOW_CALLNAME(TFLAG:94)%のどこに射精しますか？",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L469"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L470",
+    "original": "[ 0] 髪",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L470"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L471",
+    "original": "[ 1] 顔",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L471"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L472",
+    "original": "[ 2] 口",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L472"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L473",
+    "original": "[ 3] 胸",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L473"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L474",
+    "original": "[ 4] 腹",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L474"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L475",
+    "original": "[ 5] 腋",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L475"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L476",
+    "original": "[ 6] 手",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L476"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L478",
+    "original": "[ 7] 秘裂",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L478"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L480",
+    "original": "[ 8] 竿",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L480"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L481",
+    "original": "[ 9] 尻",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L481"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L482",
+    "original": "[10] 太腿",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L482"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L483",
+    "original": "[11] 足",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L483"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L484",
+    "original": "[12] 「\\@(TEQUIP:(TFLAG:92):31) ? コンドームに # そのまま\\@射精する」",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L484"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L553",
+    "original": "%SHOW_CALLNAME(TFLAG:92)%:",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L553"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L555",
+    "original": "\\@(TEQUIP:(TFLAG:92):31 == 1) ? コンドーム # \\@\\@(TFLAG:91 == 2) ? 大量射精 # 射精\\@",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L555"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L660",
+    "original": "3",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L660"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L663",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L663"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L666",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L666"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L682",
+    "original": "奴隷精液(助手)＋{TFLAG:91}",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L682"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L704",
+    "original": "助手精液＋{TFLAG:91}",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L704"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L707",
+    "original": "膣射精液＋{TFLAG:91}",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L707"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L720",
+    "original": "膣射精液(助手)＋{TFLAG:91}",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L720"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L734",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L734"
+  },
+  {
+    "key": "src/ERB/EVENT/SHOOT.ERB_L736",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/SHOOT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/SHOOT.ERB#L736"
+  }
+]

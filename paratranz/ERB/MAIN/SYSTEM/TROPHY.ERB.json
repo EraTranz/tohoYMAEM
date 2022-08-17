@@ -1,0 +1,277 @@
+[
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L10",
+    "original": "実績表示   ＜page.{LOCAL+1}/{LOCAL:1+1}＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L10"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L37",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 18% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L37"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L38",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L38"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L39",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 18% # [1009]後ろのページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L48",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L79",
+    "original": "未実装……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L79"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L83",
+    "original": "恩恵を受け取りますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L85",
+    "original": "特典プレイを開始しますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L85"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L87",
+    "original": "(現在所持しているポイント:{ARG}pt)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L87"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L88",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L88"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L89",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L89"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L110",
+    "original": "～～実績特典～～",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L111",
+    "original": "所持ポイント:{LOCAL:1, 2}/{ARG, 2}pt",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L111"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L112",
+    "original": "どの恩恵を受け取りますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L112"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L116",
+    "original": "[{LOCAL:2, 2}]%BONUS_NAME(LOCAL:2), 40, LEFT%　　必要ポイント:{NEED_BONUSPOINT(LOCAL:2), 2, RIGHT}pt",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L119",
+    "original": "選択済み",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L125",
+    "original": "[99]決定",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L125"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L134",
+    "original": "○選択した恩恵",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L134"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L138",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L139",
+    "original": "%BONUS_NAME(LOCAL:2)%",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L144",
+    "original": "なし",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L144"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L148",
+    "original": "恩恵を受け取らず終了してよろしいですか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L148"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L150",
+    "original": "上記選択を受け取ってよろしいですか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L150"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L152",
+    "original": "[0] - はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L152"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L153",
+    "original": "[1] - いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L153"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L161",
+    "original": "恩恵を受け取った！",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L161"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L167",
+    "original": "納金の期限は2日延期となった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L167"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L170",
+    "original": "納金の期限は3日延期となった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L173",
+    "original": "納金の期限は4日延期となった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L173"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L176",
+    "original": "納金の期限は5日延期となった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L176"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L179",
+    "original": "納金の期限は6日延期となった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L179"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L182",
+    "original": "5000圓を手に入れた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L182"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L185",
+    "original": "7500圓を手に入れた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L185"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L188",
+    "original": "10000圓を手に入れた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L188"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L191",
+    "original": "12500圓を手に入れた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L191"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L194",
+    "original": "15000圓を手に入れた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L194"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L210",
+    "original": "生きているキャラ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L210"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L212",
+    "original": "全員",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L212"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L214",
+    "original": "の嫉妬・狂気を解除しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L214"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L223",
+    "original": "生きているキャラ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L223"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L225",
+    "original": "全員",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L225"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L227",
+    "original": "の体力・気力が回復しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L227"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L230",
+    "original": "納金の期限は5日延期となった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L230"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L233",
+    "original": "%CALLNAME:TARGET%は反発刻印を失いました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L233"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L236",
+    "original": "%CALLNAME:TARGET%は恐怖履歴を失いました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L236"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L251",
+    "original": "ポイントが足りません",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L251"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L365",
+    "original": "%ARGS:1, 28, LEFT%",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L365"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L368",
+    "original": "ポイント:",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L368"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L370",
+    "original": "{ARG:1, 2}pt",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L370"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L375",
+    "original": "獲得済み：",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L375"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L378",
+    "original": "%ARGS, 28, LEFT%",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L378"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L380",
+    "original": "獲得条件：",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L380"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L383",
+    "original": "ARGS:3",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L383"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L385",
+    "original": "ARGS:2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L385"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TROPHY.ERB_L401",
+    "original": "3",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TROPHY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TROPHY.ERB#L401"
+  }
+]

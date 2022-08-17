@@ -1,0 +1,862 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L11",
+    "original": "どの部屋に行きますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L11"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L14",
+    "original": "[0] 拷問矯正施設",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L14"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L16",
+    "original": "[1] 種族改造施設",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L16"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L18",
+    "original": "[2] 魔術儀式用地下室",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L18"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L20",
+    "original": "[100]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L20"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L26",
+    "original": "拷問矯正施設に足を運びました",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L26"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L29",
+    "original": "種族改造施設に足を運びました",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L29"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L32",
+    "original": "魔術儀式用地下室に足を運びました",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L32"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L46",
+    "original": "何をしますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L46"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L48",
+    "original": "[0] 収監する",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L49",
+    "original": "[1] 解放する",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L49"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L50",
+    "original": "[2] 矯正する",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L50"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L53",
+    "original": "[100]やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L53"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L134",
+    "original": "誰に対して実行しますか？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L134"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L137",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L138",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L139",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L149",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L158",
+    "original": "＜",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L158"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L159",
+    "original": "%SHOW_CALLNAME(TARGET)%",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L159"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L161",
+    "original": "を地下牢に閉じ込めて反省させますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L161"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L163",
+    "original": "を地下牢から解放しますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L163"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L165",
+    "original": "に矯正のための特別指導を実施しますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L165"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L167",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L167"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L168",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L168"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L205",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L205"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L206",
+    "original": "%SHOW_CALLNAME(TARGET)%は地下牢に収監された―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L206"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L207",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L207"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L208",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L208"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L209",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L209"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L227",
+    "original": "＜収監されたことにより",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L227"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L228",
+    "original": "%SHOW_CALLNAME(TARGET)%の好感度がさがった＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L228"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L240",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L240"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L241",
+    "original": "%SHOW_CALLNAME(TARGET)%は地下牢から解放された―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L241"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L242",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L242"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L243",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L243"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L244",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L244"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L258",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L258"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L259",
+    "original": "%SHOW_CALLNAME(TARGET)%は地下牢で",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L259"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L260",
+    "original": "%SHOW_CALLNAME(MASTER)%に拷問を受けた―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L260"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L261",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L261"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L262",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L262"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L263",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L263"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L311",
+    "original": "%SHOW_CALLNAME(TARGET)%の体力が{LOCAL}、気力が{LOCAL:1}",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L311"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L313",
+    "original": "、理性が{LOCAL:9}",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L313"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L314",
+    "original": "減少した。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L314"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L326",
+    "original": "＜矯正指導されたことにより",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L326"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L327",
+    "original": "%SHOW_CALLNAME(TARGET)%の好感度がさがった＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L327"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L335",
+    "original": "矯正指導後の%CALLNAME:TARGET%の様子がおかしい…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L335"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L336",
+    "original": "どうやら、やりすぎてしまったようだ…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L336"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L341",
+    "original": "%CALLNAME:TARGET%の虚ろな視線は天上を見たまま、微動だにしていない。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L341"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L342",
+    "original": "あなたは得難い原石が輝く前に、その光を吹き消してしまったのだ。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L342"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L344",
+    "original": "%CALLNAME:TARGET%は逝ってしまった……",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L344"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L347",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L347"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L348",
+    "original": "%SHOW_CALLNAME(TARGET)%は地下牢から解放された―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L348"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L349",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L349"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L350",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L350"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L351",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L351"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L359",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:500%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L359"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L395",
+    "original": "%CALLNAME:ARG%は[狂気]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L395"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L404",
+    "original": "地下牢に収監されている",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L404"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L405",
+    "original": "%SHOW_CALLNAME(ARG)%の様子がおかしい…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L405"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L406",
+    "original": "どうやら、病気に掛かってしまっていて、どうも手遅れのようだ。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L406"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L427",
+    "original": "何をしますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L427"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L437",
+    "original": "[{PC_VAR1}] %LOCALS:(PC_VAR1)%",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L437"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L443",
+    "original": "現在使用できるコマンドはありません",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L443"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L445",
+    "original": "[100]やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L445"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L461",
+    "original": "実行可能な者がいません。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L461"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L472",
+    "original": "対象にできる者がいません。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L472"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L480",
+    "original": "＜本当に、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L480"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L481",
+    "original": "%SHOW_CALLNAME(TARGET)%",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L481"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L483",
+    "original": "に暗示をかけてゾンビフェアリーに転生させますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L483"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L485",
+    "original": "を吸血鬼にして眷族の一員に加えますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L485"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L487",
+    "original": "に改造手術をほどこし機械の身体にしますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L487"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L489",
+    "original": "の魂魄を昇華させ肉体から解き放ちますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L489"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L491",
+    "original": "の生命を人形に吹き込んで人形の身体にしますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L491"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L493",
+    "original": "から魂のみを取り去りキョンシーにしますか？＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L493"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L495",
+    "original": "※一度実行すると元に戻せません",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L495"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L496",
+    "original": "※強い副作用を示すことがあります",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L496"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L497",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L497"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L498",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L498"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L553",
+    "original": "\\@(ARG:1 == -1) ? 実行するのは誰ですか # 誰に処置しますか\\@？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L553"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L558",
+    "original": "[{LOCAL:1}]",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L558"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L562",
+    "original": "(未経験)",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L562"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L564",
+    "original": "(経験済)",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L564"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L567",
+    "original": "%NAME:(LOCAL:1)%",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L567"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L570",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L570"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L571",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L571"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L572",
+    "original": "\\@(LOCAL< ((LOCAL:2 / 20) + 1)) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L572"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L582",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L582"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L743",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L743"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L744",
+    "original": "%SHOW_CALLNAME(TARGET)%はゾンビフェアリーになった―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L744"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L747",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L747"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L748",
+    "original": "%SHOW_CALLNAME(TARGET)%は吸血鬼になった―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L748"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L751",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L751"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L752",
+    "original": "%SHOW_CALLNAME(TARGET)%はロボットになった―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L752"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L755",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L755"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L756",
+    "original": "%SHOW_CALLNAME(TARGET)%は肉体から解き放たれ幽霊になった―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L756"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L759",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L759"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L760",
+    "original": "%SHOW_CALLNAME(TARGET)%は人形になった―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L760"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L763",
+    "original": "―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L763"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L764",
+    "original": "%SHOW_CALLNAME(TARGET)%はキョンシーになった―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L764"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L766",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L766"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L767",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L767"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L768",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L768"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L777",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L777"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L785",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L785"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L796",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L796"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L810",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L810"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L832",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L832"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L847",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L847"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L853",
+    "original": "を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L853"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L857",
+    "original": "加えて、肉体から解き放たれて",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L857"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L859",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L859"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L861",
+    "original": "を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L861"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L865",
+    "original": "加えて、肉体から解き放たれたことで",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L865"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L868",
+    "original": "を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L868"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L887",
+    "original": "を失い、",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L887"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L895",
+    "original": "を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L895"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L902",
+    "original": "……暗示が解けた後、%CALLNAME:TARGET%の心には明白な欠落が生じていた",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L902"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L906",
+    "original": "……直後、%CALLNAME:TARGET%は絶叫をあげて暴れ始めた",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L906"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L910",
+    "original": "……まぁ、些細な失敗はあったが気にする事もない",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L910"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L914",
+    "original": "……だが、%CALLNAME:TARGET%の表情からは生気が失われていた",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L914"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L918",
+    "original": "……だが、“これ”は本当に%CALLNAME:TARGET%なのか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L918"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L922",
+    "original": "……だが、儀式が不完全だったのか%CALLNAME:TARGET%の反応が薄い",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L922"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L937",
+    "original": "JUEL:TARGET:COUNT",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L937"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L952",
+    "original": "CFLAG:PC_VAR1 / 2",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L952"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L988",
+    "original": "%SHOW_CALLNAME(MASTER)%は吸血鬼の詳しい生態を理解した…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L988"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L995",
+    "original": "%SHOW_CALLNAME(MASTER)%は機械化の手法を直感的に理解した…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L995"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1002",
+    "original": "%SHOW_CALLNAME(MASTER)%は亡霊となる方法を直感的に理解した…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1002"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1009",
+    "original": "%SHOW_CALLNAME(MASTER)%は人形製作の手法を直感的に理解した…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1009"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1016",
+    "original": "%SHOW_CALLNAME(MASTER)%はキョンシーとなる手法を直感的に理解した…",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1016"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1022",
+    "original": "※強くてニューゲーム開始時に",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1022"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1023",
+    "original": "%SHOW_CALLNAME(MASTER)%の種族を[%TALENTNAME:(LOCAL)%]に変更できます",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1023"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1034",
+    "original": "[1] 人形製作",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1034"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1036",
+    "original": "[2] 小悪魔召喚",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1036"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1038",
+    "original": "[3] 身体強化",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1038"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1040",
+    "original": "[100]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1040"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1084",
+    "original": "人形を1体製作します。(必要経費：100圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1084"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1085",
+    "original": "よろしいですか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1085"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1086",
+    "original": "[ 0] - はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1086"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1087",
+    "original": "[ 1] - いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1087"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1097",
+    "original": "＜%CSVNAME(3016, 0)%を作成しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1097"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1112",
+    "original": "小悪魔を1体召喚します。(必要経費：100圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1112"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1113",
+    "original": "よろしいですか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1113"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1114",
+    "original": "[ 0] - はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1114"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1115",
+    "original": "[ 1] - いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1115"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1125",
+    "original": "＜%CSVNAME(1007, 0)%を召喚しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1125"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1146",
+    "original": "自分自身の身体を強化します。(必要経費：100圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1146"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1147",
+    "original": "どうしますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1147"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1148",
+    "original": "[ 0] - 日光浴\\@(TALENT:MASTER:日光浴) ? 削除 # 付与\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1148"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1149",
+    "original": "[ 1] - 月光浴\\@(TALENT:MASTER:月光浴) ? 削除 # 付与\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1149"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1150",
+    "original": "[ 2] - \\@(TALENT:MASTER:動物耳) ? 動物耳削除 # かわいい(重要!)動物耳付与\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1150"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1151",
+    "original": "[ 3] - \\@(TALENT:MASTER:猫舌) ? 猫舌削除 # かわいい(重要!)猫舌付与\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1151"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1152",
+    "original": "[100] - なんとなくやめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1152"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1163",
+    "original": "%SHOW_CALLNAME(MASTER)%は得意の身体強化呪文を使いました",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1163"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1166",
+    "original": "＜お日様が似合う素敵な身体になりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1166"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1167",
+    "original": "[日光浴]を取得した。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1167"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1171",
+    "original": "＜お日様に頼らない強靭な身体になりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1171"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1172",
+    "original": "[日光浴]を失った。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1172"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1178",
+    "original": "＜月の光が似合う素敵な身体になりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1178"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1179",
+    "original": "[月光浴]を取得した。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1179"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1183",
+    "original": "＜月の光を浴びなくて済むような強靭な身体になりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1183"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1184",
+    "original": "[月光浴]を失った。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1184"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1190",
+    "original": "＜とてもかわいくみえる素敵な動物耳がつきました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1190"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1191",
+    "original": "[動物耳]を取得した。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1191"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1195",
+    "original": "＜へんてこな動物耳を外しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1195"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1196",
+    "original": "[動物耳]を失った。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1196"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1202",
+    "original": "＜ちょっとお茶目だけど素敵な猫舌になりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1202"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1203",
+    "original": "[猫舌]を取得した。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1203"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1207",
+    "original": "＜なんだか不便な猫舌を外しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1207"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/BASEMENT.ERB_L1208",
+    "original": "[猫舌]を失った。",
+    "context": "文件名: src/ERB/MAIN/SHOP/BASEMENT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/BASEMENT.ERB#L1208"
+  }
+]

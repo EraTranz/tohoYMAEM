@@ -1,0 +1,157 @@
+[
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L15",
+    "original": "%SHOW_CALLNAME(ARG)%\\@(NO:ARG >= 3000 && NO:ARG < 4000 && CALLNAME:ARG != NAME:ARG) ? (%ITEMNAME:(NO:ARG)%) # \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L15"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L19",
+    "original": "[1001]\\@(ARG == MASTER) ? 助手 # 主人 \\@を表示",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L19"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L21",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L21"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L23",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L23"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L24",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L24"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L37",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L37"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L64",
+    "original": "□ 絶頂",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L64"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L76",
+    "original": "%EXNAME:LOCAL, 6%:{EX:LOCAL}回　",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L76"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L81",
+    "original": "前回の絶頂回数",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L81"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L84",
+    "original": "%EXNAME:COUNT%:{TFLAG:(180+COUNT)}回　",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L84"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L104",
+    "original": "現在の宝珠取得予定数",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L106",
+    "original": "対象パラメータ             現在の宝珠  取得予定     調教後宝珠",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L106"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L133",
+    "original": "%PALAMNAME:(LOCAL:101)% {LOCAL:102, 10} %PALAMNAME:(LOCAL:101)%の珠×({JUEL:(LOCAL:101), 10}＋{LOCAL:(LOCAL:101), 10})＝{LOCAL:103, 10}",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L133"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L136",
+    "original": "※否定の珠は欲情・恭順・屈服の珠を優先的に相殺します。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L137",
+    "original": "※否定の珠が残った場合、恥情・苦痛・恐怖の珠を相殺します。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L153",
+    "original": "この調教中における%CALLNAME:TARGET%の細かい状況を表示します",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L153"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L156",
+    "original": "この調教中に%CALLNAME:TARGET%の処女を頂きました。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L156"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L158",
+    "original": "挿しっぱなしのまま次の調教が実行される可能性があります。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L158"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L160",
+    "original": "この調教中に%CALLNAME:TARGET%の膣内に主人\\@(ASSI >= 0) ? か助手 # \\@が射精しました。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L162",
+    "original": "この調教中にはもう「何もしない」は実行できません。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L162"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L166",
+    "original": "この調教中にはもう「吸血」は実行できません。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L166"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L168",
+    "original": "この調教中にはもう「尻子玉抜き」は実行できません。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L168"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L170",
+    "original": "この調教中にはもう「時間停止」は実行できません。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L174",
+    "original": "この調教中にはもう「触手吸血」は実行できません。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L174"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L176",
+    "original": "この調教中の人形愛撫使用回数：{TFLAG:141}回",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L176"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L178",
+    "original": "現在の蜘蛛の糸の強度(0になると破れます)：{TFLAG:142}",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L178"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L180",
+    "original": "この調教中のふぉーゅーっ！・フィーバー使用回数：{TFLAG:143}回",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L180"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L182",
+    "original": "%CALLNAME:TARGET%の膣を鰻が堪能しています。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L182"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L184",
+    "original": "%CALLNAME:TARGET%のあなうを鰻が堪能しています。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L184"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L186",
+    "original": "%CALLNAME:TARGET%の尿道を鰻が堪能しています。",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L186"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_TRAIN.ERB_L188",
+    "original": "%CALLNAME:TARGET%のこの調教中の氷柱挿入回数：{TFLAG:171}回",
+    "context": "文件名: src/ERB/MAIN/PRINT_TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_TRAIN.ERB#L188"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP198.ERB_L12",
+    "original": "%ABLNAME:12%{ABL:MASTER:触手使役 + 1}LV以上(現在:{ABL:MASTER:技巧}LV)、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP198.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP198.ERB#L12"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP198.ERB_L14",
+    "original": "[0] - %PALAMNAME:198%の珠×{COST198(0)}、触手エネルギー{COST198(1)}τ、触手生贄人数{COST198(2)}以上(現在:{FLAG:33}人)、資金{COST198(3)}圓以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP198.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP198.ERB#L14"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP198.ERB_L17",
+    "original": "[1] - %PALAMNAME:198%の珠×{COST198(0)}、触手エネルギー{COST198(1)}τ、触手生贄人数累計{COST198(2) * 4}以上(現在:{FLAG:99}人)、資金{COST198(3)}圓以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP198.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP198.ERB#L17"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP198.ERB_L20",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP198.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP198.ERB#L20"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP198.ERB_L40",
+    "original": "%CALLNAME:MASTER%の%ABLNAME:98%のレベルが{ABL:MASTER:触手使役}になりました。",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP198.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP198.ERB#L40"
+  }
+]

@@ -1,0 +1,362 @@
+[
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L240",
+    "original": "%CALLNAME:TARGET%の積極値：{GET_AGG(TARGET)}",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L240"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L427",
+    "original": "その夜、突然%CALLNAME:TARGET%が%CALLNAME:MASTER%の部屋へやってきた。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L427"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L430",
+    "original": "%CALLNAME:TARGET%が言うには、%CALLNAME:MASTER%に気持ち良くなって貰うために色々勉強してきたらしい。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L430"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L431",
+    "original": "その甲斐があって、%CALLNAME:TARGET%は[%TALENTNAME:56%]を習得した。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L431"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L433",
+    "original": "%CALLNAME:TARGET%が言うには、今日は%CALLNAME:MASTER%に気持ち良くなって貰うために色々奉仕してくれるらしい。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L433"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L442",
+    "original": "3",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L442"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L448",
+    "original": "さて、どうしようか。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L448"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L451",
+    "original": "[0] \\@(LOCAL) ? %CALLNAME:TARGET%に気持ち良くして貰おう # 嫌な予感がするけれど、折角そう言ってくれている事だし…\\@",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L451"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L452",
+    "original": "[1] 今日は気乗りしないので帰って貰おう",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L452"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L462",
+    "original": "%CALLNAME:TARGET%はどこか不満げに帰って行った…。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L462"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L487",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L487"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L491",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L491"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L494",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L494"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L499",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L499"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L505",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L505"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L544",
+    "original": "ABL:(LOCAL:3):20",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L544"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L547",
+    "original": "3",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L547"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L550",
+    "original": "5",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L550"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L602",
+    "original": "その夜、突然%CALLNAME:(GET_CHARA_G(0))%と%CALLNAME:(GET_CHARA_G(1))%と%CALLNAME:(GET_CHARA_G(2))%と%CALLNAME:(GET_CHARA_G(3))%が部屋へとやってきた",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L602"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L606",
+    "original": "夜遅くに扉がノックされると、そこには",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L606"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L608",
+    "original": "%CALLNAME:(GET_CHARA_M())%と%CALLNAME:TARGET%がいた",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L608"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L609",
+    "original": "%CALLNAME:TARGET%と%CALLNAME:(GET_CHARA_M())%がいた",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L609"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L616",
+    "original": "さて、どうしようか。折角来てくれた事だし……",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L616"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L619",
+    "original": "[0] \\@(ARG:3 == 1) ? 乱交する # ベットへ誘う\\@",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L619"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L622",
+    "original": "[1] 宴会する",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L622"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L674",
+    "original": "その日の調教を終え、",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L674"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L676",
+    "original": "\\@(ABL:MASTER:料理技能 > ABL:ASSI:料理技能 || (RAND:2 == 0 && ABL:MASTER:料理技能 == ABL:ASSI:料理技能)) ? %CALLNAME:MASTER% # %CALLNAME:ASSI%\\@",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L676"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L677",
+    "original": "の作った夕餉を食べ終えて一息つくと",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L677"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L690",
+    "original": "%CALLNAME:ASSI%は挨拶をして、%CALLNAME:MASTER%の部屋を去ろうとした。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L690"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L695",
+    "original": "[0] 呼び止める",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L695"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L696",
+    "original": "[1] 見送る",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L696"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L705",
+    "original": "%CALLNAME:MASTER%が、退出しようとする%CALLNAME:ASSI%を呼び止めると",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L705"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L707",
+    "original": "%CALLNAME:ASSI%は何故か頬を上気させながら%CALLNAME:MASTER%の元へ駆け寄ってきた",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L707"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L709",
+    "original": "%CALLNAME:ASSI%は何やら警戒するような様子で%CALLNAME:MASTER%の表情を伺った",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L709"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L711",
+    "original": "%CALLNAME:ASSI%はどこか期待に満ちた瞳で見つめてきた",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L711"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L714",
+    "original": "%CALLNAME:MASTER%が、退出しようとする%CALLNAME:ASSI%に労いの言葉をかけ見送ると",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L714"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L716",
+    "original": "%CALLNAME:ASSI%は名残惜しそうに部屋を出て行った…",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L716"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L718",
+    "original": "%CALLNAME:ASSI%は一礼して部屋を出て行った…",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L718"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L720",
+    "original": "%CALLNAME:ASSI%はどこか残念そうに部屋を出て行った…",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L720"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L740",
+    "original": "さてどうしようか。",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L740"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L744",
+    "original": "[0] 情熱的な夜を過す",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L744"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L746",
+    "original": "[0] 奉仕してもらう",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L746"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L748",
+    "original": "[0] 欲情をぶつける",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L748"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L750",
+    "original": "[0] 一夜を過す",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L750"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L753",
+    "original": "[1] 酒を飲む",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L753"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L755",
+    "original": "[2] 鞭打ちさせる",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L755"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L757",
+    "original": "[3] \\@(ITEM:鞭 || NOITEM) ? 鞭打ちする # スパンキング\\@",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L757"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L759",
+    "original": "[9] 里へ悦しみに行く",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L759"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L829",
+    "original": "8",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L829"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L832",
+    "original": "4",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L832"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L835",
+    "original": "2",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L835"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L838",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L838"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L858",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L858"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L861",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L861"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L867",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L867"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L884",
+    "original": "3",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L884"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L887",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L887"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L890",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L890"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L893",
+    "original": "2",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L893"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L925",
+    "original": "10",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L925"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L928",
+    "original": "10",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L928"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L930",
+    "original": "(ABL:従順*ABL:従順)",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L930"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L933",
+    "original": "15",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L933"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L936",
+    "original": "5",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L936"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L939",
+    "original": "10",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L939"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L941",
+    "original": "(ABL:欲望*ABL:欲望)",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L941"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L944",
+    "original": "15",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L944"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L947",
+    "original": "10",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L947"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L950",
+    "original": "15",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L950"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L1100",
+    "original": "(ABL:COUNT:従順*ABL:COUNT:従順)",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L1100"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L1102",
+    "original": "(ABL:COUNT:欲望*ABL:COUNT:欲望)",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L1102"
+  },
+  {
+    "key": "src/ERB/EVENT/NIGHT0.ERB_L1211",
+    "original": "%CALLNAME:COUNT%が行動を起こす確率：{LOCAL}％",
+    "context": "文件名: src/ERB/EVENT/NIGHT0.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/NIGHT0.ERB#L1211"
+  }
+]

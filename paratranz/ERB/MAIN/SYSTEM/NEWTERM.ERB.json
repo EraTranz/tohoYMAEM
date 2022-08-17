@@ -1,0 +1,792 @@
+[
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L395",
+    "original": "今いるキャラの内誰かを助手として引き継ぐことができます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L395"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L396",
+    "original": "助手として引き継ぎますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L396"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L397",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L397"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L398",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L398"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L489",
+    "original": "蒐集品を引き継ぎますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L489"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L490",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L490"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L491",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L491"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L496",
+    "original": "蒐集品を引き継ぎました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L496"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L509",
+    "original": "触手の能力は引き継ぎますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L509"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L510",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L510"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L511",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L511"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L516",
+    "original": "触手の能力を引き継ぎました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L516"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L597",
+    "original": "追加機能はどうしますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L597"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L598",
+    "original": "[0]今の設定を引き継ぐ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L598"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L599",
+    "original": "[1]もう一度設定し直す",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L599"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L600",
+    "original": "[2]後で一から設定する",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L600"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L605",
+    "original": "設定を継承します",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L605"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L612",
+    "original": "設定を変更します",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L612"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L625",
+    "original": "主人の性別・体格等の設定は今のまま引き継ぎますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L625"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L626",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L626"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L627",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L627"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L632",
+    "original": "主人の性別・体格等の設定を引き継ぎました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L632"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L634",
+    "original": "これから主人の性別・体格等の設定を行います",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L634"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L653",
+    "original": "強くてニューゲームを始めます　({FLAG:6}周目)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L653"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L665",
+    "original": "難易度はどうしますか？\\@(TALENT:MASTER:998) ? # (※後からの変更は効きません！)\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L665"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L667",
+    "original": "[1]%DISPLAY_DIFFICULTY(1), 9, LEFT%({SET_DEADLINE(1), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L667"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L669",
+    "original": "[2]%DISPLAY_DIFFICULTY(2), 9, LEFT%({SET_DEADLINE(2), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L669"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L671",
+    "original": "[3]%DISPLAY_DIFFICULTY(3), 9, LEFT%({SET_DEADLINE(3), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L671"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L673",
+    "original": "[4]%DISPLAY_DIFFICULTY(4), 9, LEFT%({SET_DEADLINE(4), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L673"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L675",
+    "original": "[5]%DISPLAY_DIFFICULTY(5), 9, LEFT%({SET_DEADLINE(5), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L675"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L677",
+    "original": "[6]%DISPLAY_DIFFICULTY(6), 9, LEFT%({SET_DEADLINE(6), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L677"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L679",
+    "original": "[7]%DISPLAY_DIFFICULTY(7), 9, LEFT%({SET_DEADLINE(7), 3}日期限　目標金額%SHOW_YEN(MONEY:100)%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L679"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L681",
+    "original": "[10]HELP    (各難易度の簡単な説明）",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L681"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L688",
+    "original": "EASY     ：初心者or練習したい人向け    一部機能制限有り",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L688"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L690",
+    "original": "NORMAL   ：普通にプレイをする人向け    一部機能制限有り",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L690"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L692",
+    "original": "HARD     ：難しめのプレイもOKな人向け",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L692"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L694",
+    "original": "LUNATIC  ：かなりマゾなプレイヤー向け  特別機能有り",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L694"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L696",
+    "original": "PHANTASM ：超弩級なマゾプレイヤー向け  特別機能有り",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L696"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L698",
+    "original": "ULTRA    ：刻符で悪足掻きたい人向け    特別機能有り",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L698"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L700",
+    "original": "OVERDRIVE：理不尽な世界を見たい人向け  特別機能有り",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L700"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L709",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L709"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L711",
+    "original": "EASY",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L711"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L713",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L713"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L715",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L715"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L717",
+    "original": "NORMAL",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L717"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L719",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L719"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L721",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L721"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L723",
+    "original": "HARD",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L723"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L725",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L725"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L727",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L727"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L729",
+    "original": "LUNATIC",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L729"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L731",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L731"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L733",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L733"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L735",
+    "original": "PHANTASM",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L735"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L737",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L737"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L743",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L743"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L745",
+    "original": "ULTRA",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L745"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L747",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L747"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L756",
+    "original": "“Welcome to Special Round”",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L756"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L763",
+    "original": "難易度:“",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L763"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L765",
+    "original": "OVERDRIVE",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L765"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L767",
+    "original": "”を選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L767"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L776",
+    "original": "“地獄へようこそ”",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L776"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L800",
+    "original": "[%TALENTNAME:ARG%]を習得することができます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L800"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L801",
+    "original": "習得しますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L801"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L802",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L802"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L803",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L803"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L808",
+    "original": "%CALLNAME:MASTER%は[%TALENTNAME:ARG%]を身につけた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L808"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L821",
+    "original": "主人の種族を変更することができます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L821"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L822",
+    "original": "変更しますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L822"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L823",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L823"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L824",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L824"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L829",
+    "original": "主人の種族を変更します",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L829"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L832",
+    "original": "主人の種族を変更しません",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L832"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L844",
+    "original": "主人の種族を選択してください",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L844"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L847",
+    "original": "[00] 元に戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L847"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L849",
+    "original": "※最悪元に戻れなくなる可能性があります",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L849"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L852",
+    "original": "[01] 妖精",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L852"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L854",
+    "original": "[02] 吸血鬼",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L854"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L856",
+    "original": "[03] 機械",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L856"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L858",
+    "original": "[04] 亡霊",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L858"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L860",
+    "original": "[05] 人形",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L860"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L862",
+    "original": "[06] 悪魔",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L862"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L864",
+    "original": "[07] 河童",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L864"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L866",
+    "original": "[08] 妖狐",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L866"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L868",
+    "original": "[09] ワーハクタク",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L868"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L870",
+    "original": "[10] ゾンビフェアリー",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L870"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L872",
+    "original": "[11] キョンシー",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L872"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L873",
+    "original": "[100]やめる",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L873"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L879",
+    "original": "主人の種族を変更しません",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L879"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L882",
+    "original": "主人の種族を元に戻しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L882"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L955",
+    "original": "%CALLNAME:MASTER%の種族を[%TALENTNAME:LOCAL%]に変更しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L955"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L962",
+    "original": "素質[%TALENTNAME:ARG%]を引き継ぐことができます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L962"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L963",
+    "original": "[%TALENTNAME:ARG%]になりますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L963"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L964",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L964"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L965",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L965"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L970",
+    "original": "%CALLNAME:MASTER%は永遠の命を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L970"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L973",
+    "original": "%CALLNAME:MASTER%は限りある生を楽しむことにした",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L973"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L989",
+    "original": "CHARATENTACLE_CHECK()",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L989"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L991",
+    "original": "SPECIALBATH_CHECK()",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L991"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1054",
+    "original": "後{ARG-LOCAL:1}人引き継ぐことができます ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1054"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1058",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1058"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1059",
+    "original": "[1000]おわり",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1059"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1060",
+    "original": "\\@(LOCAL >= LOCAL:3) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1060"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1070",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1070"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1078",
+    "original": "%CALLNAME:RESULT%を引き継ぎの対象から外しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1078"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1082",
+    "original": "これ以上引き継ぎ対象を選択することができません",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1082"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1084",
+    "original": "%CALLNAME:RESULT%を引き継ぎの対象に選択しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1084"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1092",
+    "original": "誰も引き継ぎ対象に選択していません",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1092"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1093",
+    "original": "よろしいですか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1093"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1097",
+    "original": "[%CALLNAME:COUNT%] ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1097"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1100",
+    "original": "以上を助手として引き継ぎますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1100"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1102",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1102"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1103",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1103"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1201",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1201"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1203",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1203"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1209",
+    "original": "★：助手として引き継ぐ予定のキャラを表しています",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1209"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1372",
+    "original": "＜桃の飴玉の効果で%CALLNAME:ASSI%のＥＸ化状態を解除することができます＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1372"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1373",
+    "original": "＜%CALLNAME:ASSI%のＥＸ化状態を解除しますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1373"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1374",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1374"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1375",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1375"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1381",
+    "original": "%CALLNAME:ASSI%のＥＸ化状態を解除しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1381"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1383",
+    "original": "%CALLNAME:ASSI%のＥＸ化状態を解除することを見送りました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1383"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1398",
+    "original": "%CALLNAME:ASSI%のこちらを見る目がおかしい…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1398"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1399",
+    "original": "幾度となく調教を施された%CALLNAME:ASSI%の身体は、完全に%CALLNAME:MASTER%の手に堕ちてしまったようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1399"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1400",
+    "original": "＜%CALLNAME:MASTER%の手によってより感じやすい体に変えることができます＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1400"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1401",
+    "original": "＜%CALLNAME:ASSI%に[即落ち]を覚えさせますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1401"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1403",
+    "original": "(※いいえを選んでも即落ちを『覚えさせたことがある』と判定されます)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1403"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1404",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1404"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1405",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1405"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1410",
+    "original": "%CALLNAME:ASSI%は[即落ち]を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1410"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1414",
+    "original": "%CALLNAME:ASSI%に[即落ち]を覚えさせることを見送りました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1414"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1429",
+    "original": "%CALLNAME:ASSI%は濁ったガラス玉のような瞳でこちらを見つめている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1429"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1430",
+    "original": "幾度となく過酷な調教を施された%CALLNAME:ASSI%の人格は、跡形もなく破壊されてしまったようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1430"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1431",
+    "original": "＜%CALLNAME:MASTER%の手によって新しい人格を植え付けることができます＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1431"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1432",
+    "original": "＜%CALLNAME:ASSI%に[壊造人格]を覚えさせますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1432"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1434",
+    "original": "(※いいえを選んでも壊造人格を『覚えさせたことがある』と判定されます)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1434"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1435",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1435"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1436",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1436"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1441",
+    "original": "%CALLNAME:ASSI%は%CALLNAME:MASTER%によって新しい人格を上書きされました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1441"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1442",
+    "original": "%CALLNAME:ASSI%は[壊造人格]を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1442"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1449",
+    "original": "%CALLNAME:ASSI%の魂は永遠に%CALLNAME:MASTER%の手から逃れることができなくなりました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1449"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1457",
+    "original": "%CALLNAME:ASSI%に[壊造人格]を覚えさせることを見送りました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1457"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1473",
+    "original": "%CALLNAME:ASSI%の手にはいつの間にか美しくも儚げに輝く宝珠が握られていた…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1473"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1474",
+    "original": "これは%CALLNAME:ASSI%へ深い愛情を注いだことによる奇跡なのだろうなのか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1474"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1475",
+    "original": "それとも――",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1475"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1476",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1476"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1477",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1477"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1478",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1478"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1479",
+    "original": "＜宝珠の力を解放することで%CALLNAME:ASSI%を[生娘]に戻すことができます＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1479"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1480",
+    "original": "＜%CALLNAME:ASSI%を[生娘]にしますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1480"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1482",
+    "original": "(※はいを選ぶと[処女]を得る代わりに関連するＶ経験は全てリセットされます)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1482"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1483",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1483"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1484",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1484"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1489",
+    "original": "%CALLNAME:ASSI%の身体は宝珠の力によって生娘に戻りました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1489"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1490",
+    "original": "%CALLNAME:ASSI%は[処女]を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1490"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1494",
+    "original": "宝珠の力で%CALLNAME:ASSI%の膣は[生娘]のそれに変化した",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1494"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/NEWTERM.ERB_L1508",
+    "original": "%CALLNAME:ASSI%を[生娘]に戻すことを見送りました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/NEWTERM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/NEWTERM.ERB#L1508"
+  }
+]

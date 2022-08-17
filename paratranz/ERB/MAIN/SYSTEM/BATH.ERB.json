@@ -1,0 +1,332 @@
+[
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L15",
+    "original": "現在の風呂場の機能：",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L15"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L19",
+    "original": "風呂場のどの機能を開発しますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L19"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L20",
+    "original": "所持金:{MONEY}圓",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L20"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L23",
+    "original": "[{COUNT, 2}] %STR:(500+COUNT),16,LEFT%(%SHOW_YEN(SPECIAL_BATH_PRICE(COUNT))%)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L23"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L25",
+    "original": "[100]やめる",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L25"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L36",
+    "original": "必要な資金が不足しています",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L36"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L41",
+    "original": "風呂場の機能を拡張した",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L41"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L42",
+    "original": "コマンド\\@(RESULT == 13) ? 《%STR:513%》 # ＜%STR:(500+RESULT)%＞\\@が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L42"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L111",
+    "original": "＊無改造＊",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L111"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L117",
+    "original": "[けだマックス] ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L119",
+    "original": "[ドーピングヤゴコロバス] ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L121",
+    "original": "[%STR:(500+COUNT)%] ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L121"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L238",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L238"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L241",
+    "original": "%CALLNAME:MASTER%は大きな空の浴槽を用意すると妖精達を呼び、中にぎっしりと詰め込んだ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L241"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L242",
+    "original": "浴槽の中には",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L242"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L244",
+    "original": "数え切れない程の",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L244"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L246",
+    "original": "ものすごい数の",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L246"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L248",
+    "original": "たくさんの",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L248"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L250",
+    "original": "妖精達がひしめき合い、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L250"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L252",
+    "original": "%CALLNAME:MASTER%を期待のこもった瞳で見つめている……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L252"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L254",
+    "original": "何をするのだろうかと%CALLNAME:MASTER%を見つめている……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L254"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L256",
+    "original": "窮屈そうな顔をしている……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L256"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L258",
+    "original": "%CALLNAME:MASTER%はその中へ飛び込んだ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L258"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L259",
+    "original": "%CALLNAME:MASTER%が中へ入った途端、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L259"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L261",
+    "original": "数え切れない程の",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L261"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L263",
+    "original": "ものすごい数の",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L263"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L265",
+    "original": "たくさんの",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L265"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L267",
+    "original": "妖精達が",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L267"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L272",
+    "original": "我先にと%CALLNAME:MASTER%の取り合いを始めた……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L272"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L275",
+    "original": "一斉に%CALLNAME:MASTER%に群がって来た……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L275"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L277",
+    "original": "%CALLNAME:MASTER%に興味を持ったのか、まわりに集まって来た……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L277"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L280",
+    "original": "%CALLNAME:MASTER%は多くの妖精に包まれながら、大量の精液をあたりにまき散らした……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L280"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L281",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L281"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L282",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L282"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L283",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L283"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L285",
+    "original": "%CALLNAME:MASTER%は{LOCAL:3/64}回射精をした",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L285"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L289",
+    "original": "%EXPNAME:2%＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L289"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L290",
+    "original": "%EXPNAME:3%＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L290"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L291",
+    "original": "%EXPNAME:4%＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L291"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L292",
+    "original": "%EXPNAME:5%＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L292"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L293",
+    "original": "%EXPNAME:20%＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L293"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L294",
+    "original": "%EXPNAME:50%＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L294"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L295",
+    "original": "%PALAMNAME:0%の珠＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L295"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L296",
+    "original": "%PALAMNAME:3%の珠＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L296"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L297",
+    "original": "%PALAMNAME:12%の珠＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L297"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L298",
+    "original": "%PALAMNAME:13%の珠＋?",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L298"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L299",
+    "original": "(ただし0の場合もある)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L299"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L401",
+    "original": "%CALLNAME:MASTER%達は疲れ果ててその場で眠ってしまった…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L401"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L406",
+    "original": "はしゃぎすぎたせいか妖精風呂は壊れて使用不能になってしまった……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L406"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L509",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L509"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L514",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L514"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L519",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L519"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L524",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L524"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L529",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L529"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L534",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L534"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L539",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L539"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L544",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L544"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L549",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L549"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L554",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L554"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L559",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L559"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L564",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L564"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L569",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L569"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L574",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L574"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L579",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L579"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L587",
+    "original": "LOCAL = {LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L587"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/BATH.ERB_L611",
+    "original": "LOCAL:200 = {LOCAL:200}",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/BATH.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/BATH.ERB#L611"
+  }
+]

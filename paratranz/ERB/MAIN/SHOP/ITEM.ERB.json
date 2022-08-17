@@ -1,0 +1,487 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L16",
+    "original": "調教道具を購入できます。何を買いますか？(残り{MONEY}圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L16"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L30",
+    "original": "買えるものがありません",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L30"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L35",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L35"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L62",
+    "original": "＜%ITEMNAME:LOCAL%を購入しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L62"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L83",
+    "original": "[{ARG, 2}] %ITEMNAME:ARG%(%SHOW_YEN(ITEMPRICE:ARG)%)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L93",
+    "original": "[{ARG, 2}] %ITEMNAME:ARG%(%SHOW_YEN(ITEMPRICE:ARG + LOCAL)%)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L93"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L417",
+    "original": "%ITEMNAME:ARG%をいくつ買いますか？(残り{MONEY}圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L417"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L418",
+    "original": "{LOCAL}個まで購入できます(現在{ITEM:ARG}個所持)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L418"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L419",
+    "original": "[0] やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L419"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L420",
+    "original": "[1] 1個",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L420"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L422",
+    "original": "[5] 5個",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L422"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L424",
+    "original": "[10] 10個",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L424"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L426",
+    "original": "[{LOCAL}] 買えるだけ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L426"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L441",
+    "original": "そんなに持てませんが、持てるまで買いますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L441"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L442",
+    "original": "[0] はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L442"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L443",
+    "original": "[1] いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L443"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L458",
+    "original": "＜%ITEMNAME:ARG%を{RESULT}個購入しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L458"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L525",
+    "original": "%ITEMNAME:ARG%：",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L525"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L528",
+    "original": "性なる契約を結びます",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L528"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L530",
+    "original": "愛の誓いを立てます",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L530"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L532",
+    "original": "奴隷に烙印を押します",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L532"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L534",
+    "original": "最高の奴隷である証を与えます",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L534"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L536",
+    "original": "自分の気持ちを伝えます",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L536"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L537",
+    "original": "誰に\\@(ARG == 95 || ARG == 97 || ARG == 98) ? 与え # 渡し\\@ますか？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L537"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L541",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L541"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L542",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L542"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L543",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L543"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L553",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L553"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L586",
+    "original": "[ 0]",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L586"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L587",
+    "original": "%SHOW_CALLNAME(MASTER)%(主人)　体力({BASE:MASTER:体力, 4}/{MAXBASE:MASTER:0, 4})",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L587"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L597",
+    "original": "☆",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L597"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L599",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L599"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L601",
+    "original": "◆",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L601"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L604",
+    "original": "▼",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L604"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L606",
+    "original": "▽",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L606"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L608",
+    "original": "●",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L608"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L610",
+    "original": "○",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L610"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L612",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L612"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L617",
+    "original": "助手可",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L617"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L716",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:27%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L716"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L722",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:153%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L722"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L728",
+    "original": "%CALLNAME:TARGET%は[旦那あり]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L728"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L737",
+    "original": "%CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L737"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L753",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L753"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L761",
+    "original": "―――単体エンド条件達成―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L761"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L762",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L762"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L763",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L763"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L764",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L764"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L787",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:27%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L787"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L793",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:30%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L793"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L799",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:160%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L799"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L805",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:162%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L805"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L813",
+    "original": "%CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L813"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L830",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L830"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L838",
+    "original": "―――奴隷エンド条件達成―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L838"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L839",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L839"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L840",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L840"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L841",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L841"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L856",
+    "original": "※注意！　%CALLNAME:TARGET%に烙印を押すと二度と売却できなくなります。",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L856"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L857",
+    "original": "それでもいいですか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L857"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L859",
+    "original": "[0] - %CALLNAME:TARGET%に烙印を押す",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L859"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L862",
+    "original": "[1] - %CALLNAME:TARGET%の体にマジックの烙印をつける",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L862"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L863",
+    "original": "[2] - %CALLNAME:TARGET%に焼印を施す",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L863"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L864",
+    "original": "[3] - %CALLNAME:TARGET%の体に%CALLNAME:MASTER%の印を彫る",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L864"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L865",
+    "original": "[4] - %CALLNAME:TARGET%に奴隷用の黒いチョーカーを与える",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L865"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L867",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L867"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L886",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:27%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L886"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L892",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:160%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L892"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L898",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:161%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L898"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L920",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L920"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L921",
+    "original": "―――%CALLNAME:TARGET%は身も心も%CALLNAME:MASTER%の支配下になりました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L921"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L922",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L922"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L923",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L923"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L924",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L924"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L925",
+    "original": "＜%CALLNAME:TARGET%は売却できなくなりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L925"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L938",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:27%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L938"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L944",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:153%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L944"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L949",
+    "original": "%CALLNAME:TARGET%は[旦那あり]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L949"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L958",
+    "original": "%CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L958"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L964",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L964"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L965",
+    "original": "―――%CALLNAME:MASTER%は%CALLNAME:TARGET%と共に幸せの誓いを立てました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L965"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L966",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L966"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L967",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L967"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L968",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L968"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L969",
+    "original": "＜%ITEMNAME:99%は売り切れました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L969"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L998",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:27%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L998"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1004",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:30%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1004"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1010",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:160%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1010"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1016",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:162%]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1016"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1025",
+    "original": "%CALLNAME:TARGET%と%CALLNAME:MASTER%はより深い絆で結ばれた",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1025"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1031",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1031"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1032",
+    "original": "―――%CALLNAME:TARGET%は永遠に%CALLNAME:MASTER%の奴隷になりました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1032"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1033",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1033"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1034",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1034"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1035",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1035"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1036",
+    "original": "＜%CALLNAME:TARGET%は売却できなくなりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1036"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM.ERB_L1037",
+    "original": "＜%ITEMNAME:98%は売り切れました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM.ERB#L1037"
+  }
+]

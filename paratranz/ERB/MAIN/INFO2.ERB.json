@@ -1,0 +1,302 @@
+[
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L6",
+    "original": "□ 能力",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L6"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L13",
+    "original": "%ABLNAME:LOCAL, 8%:LV{ABL:ARG:LOCAL}",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L13"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L20",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L20"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L33",
+    "original": "□ 素質",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L33"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L47",
+    "original": "[%TALENTNAME:501%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L47"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L51",
+    "original": "[%TALENTNAME:502%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L51"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L56",
+    "original": "[%TALENTNAME:500%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L56"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L62",
+    "original": "[%TALENTNAME:(250+COUNT)%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L62"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L82",
+    "original": "[%GET_EYE_COLOR_STR(ARG)%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L82"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L89",
+    "original": "[%GET_CLOTH_COLOR_STR(ARG)%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L89"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L106",
+    "original": "[%TALENTNAME:(830+COUNT)%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L106"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L112",
+    "original": "[%TALENTNAME:998%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L112"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L117",
+    "original": "[\\@(EQUIP:ARG:桃の飴玉 == 1) ? ｅｘ # ＥＸ\\@] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L131",
+    "original": "□ 素質",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L131"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L138",
+    "original": "性  別：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L140",
+    "original": "[ふたなり\\@(TALENT:ARG:ふたなり == 2) ? (玉あり) # \\@] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L142",
+    "original": "[男] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L142"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L144",
+    "original": "[女] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L144"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L151",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L162",
+    "original": "性  格：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L162"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L167",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L167"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L178",
+    "original": "体  質：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L178"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L183",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L183"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L193",
+    "original": "体  質：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L193"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L198",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L198"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L209",
+    "original": "技  術：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L209"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L214",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L214"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L225",
+    "original": "性  癖：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L225"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L230",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L230"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L240",
+    "original": "性  癖：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L240"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L245",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L245"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L259",
+    "original": "特  徴：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L259"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L264",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L264"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L274",
+    "original": "特  徴：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L274"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L279",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L279"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L295",
+    "original": "特  徴：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L295"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L300",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L300"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L302",
+    "original": "[%GET_EYE_COLOR_STR(ARG)%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L302"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L310",
+    "original": "特  徴：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L310"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L315",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L315"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L317",
+    "original": "[%GET_CLOTH_COLOR_STR(ARG)%] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L317"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L326",
+    "original": "特  徴：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L326"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L331",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L331"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L343",
+    "original": "その他：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L343"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L348",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L348"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L350",
+    "original": "[調教師の誇り] ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L350"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L357",
+    "original": "その他：",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L357"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L362",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L362"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L377",
+    "original": "□ 刻印",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L377"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L384",
+    "original": "%MARKNAME:COUNT%:LV{MARK:ARG:COUNT} ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L384"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L389",
+    "original": "%MARKNAME:COUNT%:LV{MARK:ARG:COUNT} ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L389"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L394",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L394"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L399",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L399"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L406",
+    "original": "\\@(PC_VAR1 == 96) ? 恐怖履歴 # 反発履歴\\@:LV{MARK:ARG:PC_VAR1} ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L406"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L410",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L410"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L415",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L415"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L430",
+    "original": "□ 経験",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L430"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L444",
+    "original": "□ 珠",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L444"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L449",
+    "original": "%PALAMNAME:LOCAL%の珠:{JUEL:ARG:LOCAL, 7}",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L449"
+  },
+  {
+    "key": "src/ERB/MAIN/INFO2.ERB_L455",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/INFO2.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/INFO2.ERB#L455"
+  }
+]

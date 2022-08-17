@@ -1,0 +1,87 @@
+[
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L7",
+    "original": "まず奴隷がいません。",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L7"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L27",
+    "original": "指導可能な奴隷がいません。",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L27"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L37",
+    "original": "誰を『%LOCALS:(ARG:1)%』の指導者にさせますか？ ＜page.{PL_VAR_X:2+1}＞",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L37"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L40",
+    "original": "\\@(PL_VAR_X:2 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L40"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L41",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L41"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L42",
+    "original": "\\@(PL_VAR_X:2 >= PL_VAR_X:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L42"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L59",
+    "original": "%CALLNAME:RESULT%を指導者にさせます。",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L59"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L60",
+    "original": "よろしいですか？",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L60"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L62",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L62"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L63",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L63"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L72",
+    "original": "%CALLNAME:(PL_VAR_X:3)%を指導者にさせました。",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L72"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L73",
+    "original": "次に、指導を受ける奴隷を選択します。",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L73"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L98",
+    "original": "指導される奴隷がいません。",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L98"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L104",
+    "original": "誰に『%LOCALS:(ARG:1)%』の指導を受けさせますか？ ＜page.{PL_VAR_X:2+1}＞",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L104"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L107",
+    "original": "\\@(PL_VAR_X:2 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L107"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L108",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L108"
+  },
+  {
+    "key": "src/ERB/BROTHEL/BRO_METHOD.ERB_L109",
+    "original": "\\@(PL_VAR_X:2 >= PL_VAR_X:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/BROTHEL/BRO_METHOD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/BROTHEL/BRO_METHOD.ERB#L109"
+  }
+]

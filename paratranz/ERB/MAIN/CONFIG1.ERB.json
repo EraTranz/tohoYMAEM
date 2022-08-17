@@ -1,0 +1,602 @@
+[
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L5",
+    "original": "現在、テキスト表示の設定は以下のようになっています。",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L5"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L7",
+    "original": "変更したい内容を選択してください",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L7"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L9",
+    "original": "\\@(FLAG:10 & 1) ? ○ # ×\\@[ 0] テキスト表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L9"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L11",
+    "original": "\\@(FLAG:10 & 2) ? ○ # ×\\@[ 1] 所持アイテム表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L11"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L13",
+    "original": "\\@(FLAG:10 & 4) ? ○ # ×\\@[ 2] 一言口上表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L13"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L15",
+    "original": "\\@(FLAG:10 & 8) ? ○ # ×\\@[ 3] 変動ステータス強調",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L15"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L17",
+    "original": "\\@(FLAG:10 & 64) ? ○ # ×\\@[ 4] 喘ぎ常に表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L17"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L19",
+    "original": "\\@(FLAG:10 & 16) ? ○ # ×\\@[ 5] キャラ色表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L19"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L21",
+    "original": "\\@(FLAG:10 & 32) ? ○ # ×\\@[ 6] 素質分類表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L21"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L23",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L23"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L29",
+    "original": "テキスト表示を\\@(FLAG:10 & 1) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L29"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L32",
+    "original": "所持アイテムの表示を\\@(FLAG:10 & 2) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L32"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L35",
+    "original": "一言口上の表示を\\@(FLAG:10 & 4) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L35"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L38",
+    "original": "変動ステータスの強調を\\@(FLAG:10 & 8) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L38"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L41",
+    "original": "喘ぎ常に表示を\\@(FLAG:10 & 64) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L41"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L44",
+    "original": "キャラ色表示を\\@(FLAG:10 & 16) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L44"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L47",
+    "original": "素質分類表示を\\@(FLAG:10 & 32) ? OFF # ON\\@にします",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L47"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L54",
+    "original": "他に",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L67",
+    "original": "射精箇所選択・妊娠出産関係機能の設定は以下のようになっています。",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L67"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L69",
+    "original": "変更したい内容を選択してください",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L69"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L71",
+    "original": "\\@(FLAG:11 & 1) ? ○ # ×\\@[ 0] 射精箇所選択機能",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L71"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L73",
+    "original": "\\@(FLAG:11 & 2) ? ○ # ×\\@[ 1] 妊娠出産育児機能",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L73"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L75",
+    "original": "\\@(FLAG:11 & 4) ? ○ # ×\\@[ 2] 卵育て機能",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L75"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L77",
+    "original": "\\@(FLAG:11 & 8) ? ○ # ×\\@[ 3] 子供調教可能化モード",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L77"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L79",
+    "original": "\\@(FLAG:11 & 16) ? ○ # ×\\@[ 4] 息子も調教する",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L79"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L81",
+    "original": "\\@(FLAG:11 & 32) ? ○ # ×\\@[ 5] 子供成長機能",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L81"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L84",
+    "original": "\\@(FLAG:11 & 64) ? ○ # ×\\@[ 6] 子供が徐々に成長する機能",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L84"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L87",
+    "original": "[10] 射精箇所自動選択設定",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L87"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L89",
+    "original": "[100]戻る",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L89"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L95",
+    "original": "射精箇所選択機能を\\@(FLAG:11 & 1) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L95"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L101",
+    "original": "妊娠出産育児機能を\\@(FLAG:11 & 2) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L101"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L104",
+    "original": "卵育て機能を\\@(FLAG:11 & 4) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L107",
+    "original": "子供調教を\\@(FLAG:11 & 8) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L107"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L110",
+    "original": "息子\\@(FLAG:11 & 16) ? は調教しない # も調教する\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L113",
+    "original": "子供成長機能を\\@(FLAG:11 & 32) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L113"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L116",
+    "original": "それに伴い、子供が徐々に成長する機能も\\@(FLAG:11 & 64) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L120",
+    "original": "子供が徐々に成長する機能を\\@(FLAG:11 & 64) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L120"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L130",
+    "original": "他に",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L130"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L140",
+    "original": "現在、ＳＨＯＰ・イベント拡張機能の設定は以下のようになっています。",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L142",
+    "original": "変更したい内容を選択してください",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L142"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L145",
+    "original": "\\@(FLAG:12 & 1) ? ○ # ×\\@[ 0] 強くてニューゲーム",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L145"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L147",
+    "original": "\\@(FLAG:12 & 2) ? 弐 # 壱\\@[ 1] 表示形式変更",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L147"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L149",
+    "original": "\\@(FLAG:12 & 4) ? ○ # ×\\@[ 2] 調教度・好感度の表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L151",
+    "original": "\\@(FLAG:12 & 8) ? ○ # ×\\@[ 3] 展示室",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L153",
+    "original": "\\@(FLAG:12 & 16) ? ○ # ×\\@[ 4] 弁当・ライブ",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L153"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L155",
+    "original": "\\@(FLAG:12 & 32) ? ○ # ×\\@[ 5] 純愛モード",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L155"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L157",
+    "original": "\\@(FLAG:12 & 64) ? ○ # ×\\@[ 6] 日常生活イベント",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L157"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L160",
+    "original": "\\@(FLAG:12 & 16384) ? ○ # ×\\@[16] 日常生活イベント増量化",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L163",
+    "original": "\\@(FLAG:22 & 1) ? ○ # ×\\@[26] 日常生活イベント強化",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L163"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L165",
+    "original": "\\@(FLAG:12 & 32768) ? ○ # ×\\@[17] 夜イベント強化",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L165"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L168",
+    "original": "\\@(FLAG:12 & 65536) ? ○ # ×\\@[18] 夜這い相手ランダム",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L168"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L171",
+    "original": "\\@(FLAG:12 & 131072) ? ○ # ×\\@[19] 反発刻印持ちの夜這い",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L171"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L173",
+    "original": "\\@(FLAG:12 & 128) ? ○ # ×\\@[ 7] 専用口上による夜イベント",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L173"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L175",
+    "original": "\\@(FLAG:12 & 256) ? ○ # ×\\@[ 8] 朝イベント",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L175"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L177",
+    "original": "\\@(FLAG:12 & 512) ? ○ # ×\\@[ 9] 調教後行為",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L177"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L179",
+    "original": "\\@(FLAG:12 & 1024) ? ○ # ×\\@[10] 食後の素敵な運動",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L179"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L181",
+    "original": "\\@(FLAG:12 & 2048) ? ○ # ×\\@[11] 名無しキャラ性別ランダム",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L181"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L183",
+    "original": "\\@(FLAG:12 & 4096) ? ○ # ×\\@[12] 技能訓練士",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L183"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L185",
+    "original": "\\@(FLAG:12 & 8192) ? ○ # ×\\@[13] 売却時口上表示",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L185"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L187",
+    "original": "\\@(FLAG:12 & 262144) ? ○ # ×\\@[14] 自動定義(髮型・髮色・瞳色・服色)",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L187"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L190",
+    "original": "[98] 全部有効",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L190"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L192",
+    "original": "[99] 全部無効",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L192"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L193",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L193"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L199",
+    "original": "ＳＨＯＰ・イベント拡張機能を全て使えるように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L199"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L203",
+    "original": "ＳＨＯＰ・イベント拡張機能を全て使えないように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L203"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L207",
+    "original": "エンディング後、強くてニューゲームを選択\\@(FLAG:12 & 1) ? できない # できる\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L207"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L210",
+    "original": "パラメータを\\@(FLAG:12 & 2) ? 壱 # 弐\\@型形式で表示するように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L210"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L213",
+    "original": "調教度・好感度\\@(FLAG:12 & 4) ? を非表示 # が表示されるよう\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L213"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L216",
+    "original": "展示室関係のイベントが発生\\@(FLAG:12 & 8) ? しない # する\\@ように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L216"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L219",
+    "original": "ショップメニューで「弁当を作る」、「ライブを開く」が\\@(FLAG:12 & 16) ? 出来ない # 出来る\\@ように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L219"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L222",
+    "original": "純愛モードを\\@(FLAG:12 & 32) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L222"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L225",
+    "original": "休憩選択時、奴隷たちの日常生活を\\@(FLAG:12 & 64) ? 見ない # 覗いて見る\\@ことにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L225"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L227",
+    "original": "それに伴い、日常生活イベントも\\@(FLAG:12 & 16384) ? 標準のものに設定 # 増量\\@しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L227"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L230",
+    "original": "それに伴い、増量化日常生活にて経験や珠などは増加\\@(FLAG:22 & 1) ? しない # する\\@ことにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L230"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L237",
+    "original": "日常イベントを標準のものに設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L237"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L239",
+    "original": "それに伴い、増量化日常生活にて経験や珠などは増加\\@(FLAG:22 & 1) ? しない # する\\@ことにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L239"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L243",
+    "original": "日常イベントを増量しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L243"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L244",
+    "original": "※ただし、コレだけでは経験や珠などは増加しません",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L244"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L245",
+    "original": "後に現れる「[26] 日常生活イベント強化」にて設定してください",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L245"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L246",
+    "original": "※ただし、標準であったイベントでは経験や珠などは増加します",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L246"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L250",
+    "original": "増量化日常生活にて経験や珠などは増加\\@(FLAG:22 & 1) ? しない # する\\@ことにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L250"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L253",
+    "original": "夜イベントを\\@(FLAG:12 & 32768) ? 標準のものに設定 # 強化\\@しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L253"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L255",
+    "original": "※コレを設定するとゲームバランスが崩れます。ご注意ください。",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L255"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L257",
+    "original": "それに伴い、夜這い相手が調教対象になります",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L257"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L261",
+    "original": "それに伴い、反発刻印持ちの夜這いは来ません",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L261"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L267",
+    "original": "夜這い相手が調教対象になります",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L267"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L269",
+    "original": "夜這い相手がランダムになります",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L269"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L270",
+    "original": "※ただし、ソート順（上から）100人までしか対応していません",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L270"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L274",
+    "original": "反発刻印持ちの夜這いは\\@(FLAG:12 & 131072) ? 来ません！ # 来ます！\\@やったぁ！？",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L274"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L277",
+    "original": "口上利用時における夜のイベントを\\@(FLAG:12 & 128) ? 抑制します # 解禁しました\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L277"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L280",
+    "original": "朝のイベントを\\@(FLAG:12 & 256) ? 抑制します # 解禁しました\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L280"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L283",
+    "original": "調教後行為を\\@(FLAG:12 & 512) ? 抑制します # 解禁しました\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L283"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L286",
+    "original": "食後の素敵な運動を\\@(FLAG:12 & 1024) ? 抑制します # 解禁しました\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L286"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L289",
+    "original": "購入・追加される名無しキャラの性別を\\@(FLAG:12 & 2048) ? 全て♀のみに戻 # ランダムに設定\\@しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L289"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L292",
+    "original": "技能訓練士を利用\\@(FLAG:12 & 4096) ? できないよう # できるよう\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L292"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L295",
+    "original": "売却口上\\@(FLAG:12 & 8192) ? を非表示 # が表示されるよう\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L295"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L298",
+    "original": "自動定義(髮型・髮色・瞳色・服色)を\\@(FLAG:12 & 262144) ? 抑制します # 解禁しました\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L298"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L306",
+    "original": "他に",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L306"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L316",
+    "original": "現在、アイテム拡張機能の設定は以下のようになっています。",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L316"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L318",
+    "original": "変更したい内容を選択してください",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L318"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L320",
+    "original": "\\@(FLAG:13 & 1) ? ○ # ×\\@[ 0] 特殊な薬（要禁断の知識or調合知識）",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L320"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L322",
+    "original": "\\@(FLAG:13 & 2) ? ○ # ×\\@[ 1] 強力アイテム・コマンド",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L322"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L324",
+    "original": "\\@(FLAG:13 & 4) ? ○ # ×\\@[ 2] 一般的な薬品アイテムの自動補充",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L324"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L326",
+    "original": "\\@(FLAG:13 & 8) ? ○ # ×\\@[ 3] 特殊な薬品アイテムの自動補充",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L326"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L328",
+    "original": "\\@(FLAG:13 & 16) ? ○ # ×\\@[ 4] 消耗品アイテムの自動補充",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L328"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L330",
+    "original": "\\@(FLAG:13 & 32) ? ○ # ×\\@[ 5] 鎮静茶の自動使用",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L330"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L332",
+    "original": "\\@(FLAG:13 & 64) ? ○ # ×\\@[ 6] 栄養剤の自動使用",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L332"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L335",
+    "original": "[98] 全部有効",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L335"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L337",
+    "original": "[99] 全部無効",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L337"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L338",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L338"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L344",
+    "original": "アイテム拡張機能を全て使えるように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L344"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L347",
+    "original": "アイテム拡張機能を全て使えないように設定しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L347"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L350",
+    "original": "特殊な薬系アイテムを\\@(FLAG:13 & 1) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L350"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L353",
+    "original": "強力アイテム・コマンドを\\@(FLAG:13 & 2) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L353"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L356",
+    "original": "一般的な薬品アイテムの自動補充を\\@(FLAG:13 & 4) ? 行なわない # 行なう\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L356"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L359",
+    "original": "特殊な薬品アイテムの自動補充を\\@(FLAG:13 & 8) ? 行なわない # 行なう\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L359"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L362",
+    "original": "消耗品アイテムの自動補充を\\@(FLAG:13 & 16) ? 行なわない # 行なう\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L362"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L365",
+    "original": "鎮静茶の自動使用を\\@(FLAG:13 & 32) ? 行なわない # 行なう\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L365"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L368",
+    "original": "栄養剤の自動使用を\\@(FLAG:13 & 64) ? 行なわない # 行なう\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L368"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG1.ERB_L376",
+    "original": "他に",
+    "context": "文件名: src/ERB/MAIN/CONFIG1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG1.ERB#L376"
+  }
+]

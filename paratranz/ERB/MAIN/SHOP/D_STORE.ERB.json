@@ -1,0 +1,577 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L14",
+    "original": "どの薬を購入しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L14"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L15",
+    "original": "所持金:{MONEY}圓",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L15"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L17",
+    "original": "[ 9]〔鎮静茶〕(100圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L17"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L18",
+    "original": "[10]〔栄養剤〕(1000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L18"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L19",
+    "original": "[11]〔ふたなり薬〕(2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L19"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L23",
+    "original": "[12]〔ふたたま薬〕(3萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L23"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L25",
+    "original": "[13]〔性露錠〕(1萬5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L25"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L26",
+    "original": "[14]〔根素勃乳〕(2000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L26"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L27",
+    "original": "[20]〔豊胸剤〕(2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L27"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L28",
+    "original": "[21]〔縮胸剤〕(1萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L28"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L29",
+    "original": "[22]〔止乳剤〕(5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L29"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L30",
+    "original": "[23]〔尿漏れ改善薬〕(5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L30"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L31",
+    "original": "[24]〔記憶消去薬〕(10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L31"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L33",
+    "original": "[25]〔睡眠薬〕(2000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L33"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L35",
+    "original": "[26]〔人魚姫の薬〕(10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L35"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L38",
+    "original": "[27]〔理性復活薬〕(7萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L38"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L40",
+    "original": "[28]〔復活薬〕(14萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L40"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L41",
+    "original": "[30]〔赤の飴玉〕(2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L41"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L42",
+    "original": "[31]〔青の飴玉〕(2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L42"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L44",
+    "original": "[32]〔黄の飴玉〕(2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L44"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L45",
+    "original": "[33]〔緑の飴玉〕(18萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L45"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L46",
+    "original": "[34]〔白の飴玉〕(10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L46"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L47",
+    "original": "[35]〔黒の飴玉〕(5萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L47"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L49",
+    "original": "[36]〔灰の飴玉〕(5萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L49"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L51",
+    "original": "[37]〔金の飴玉〕(15萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L51"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L52",
+    "original": "[38]〔銀の飴玉〕(12萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L52"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L54",
+    "original": "[39]〔虹の飴玉〕(50萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L55",
+    "original": "[40]〔翠の飴玉〕(10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L55"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L57",
+    "original": "[41]〔紺の飴玉〕(20萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L57"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L58",
+    "original": "[42]〔桃の飴玉〕(10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L58"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L60",
+    "original": "[43]〔鈍の飴玉〕(10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L60"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L64",
+    "original": "[100]やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L64"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L71",
+    "original": "〔鎮静茶〕：ストレスを低下させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L71"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L72",
+    "original": "飲めば心が落ち着き、ストレスを解消してくれる。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L72"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L73",
+    "original": "数種類のハーブと【花の妖怪の唾液】が使われているらしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L73"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L76",
+    "original": "〔栄養剤〕：体力を回復します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L76"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L77",
+    "original": "飲めばたちまち元気になる甘い液剤。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L77"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L78",
+    "original": "【巫女の脇汗】で淹れた緑茶に蜜を加えたものと言われている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L78"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L81",
+    "original": "〔ふたなり薬〕：生えたり縮んだりします",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L81"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L82",
+    "original": "微妙な臭いを放つ萌葱色の丸薬。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L82"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L83",
+    "original": "【厄草】を磨り潰したものに【イカ臭い乳】を混ぜたものがベースとされている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L86",
+    "original": "〔ふたたま薬〕：付いたり消えたりします",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L86"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L90",
+    "original": "〔性露錠〕：陰核を少しずつ肥大化させる効果があります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L90"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L91",
+    "original": "【テストステロン改】が主成分。味はかなり苦い。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L91"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L92",
+    "original": "元はただの精力剤だったが、近年は誤った使い方が主流になっているようである。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L92"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L95",
+    "original": "〔根素勃乳〕：[不思議な根]の機能を復活させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L95"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L96",
+    "original": "読みは『こんすたっち』らしい。乳白色をした謎の液体である。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L96"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L97",
+    "original": "薬効…もとい厄効は中に含まれている【姦狂ホルモン】によるものだとか……",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L97"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L100",
+    "original": "〔豊胸剤〕：胸が大きくなります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L100"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L101",
+    "original": "ミラクル成分が胸に爆発的な成長を促す。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L101"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L102",
+    "original": "【奇跡の果実】から取った果汁が原料らしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L102"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L105",
+    "original": "〔縮胸剤〕：胸が小さくなります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L105"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L106",
+    "original": "禁忌の成分が虚乳化の作用をもたらしている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L106"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L107",
+    "original": "【禁断の果実】から抽出されたエキスを濃縮させたものだとか。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L107"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L110",
+    "original": "〔止乳剤〕：母乳が出なくなります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L111",
+    "original": "抑プロラクチン薬と呼ばれる薬の一種。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L111"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L112",
+    "original": "【人形の卵】(無精卵)から作られたメレンゲで味を調えている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L112"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L115",
+    "original": "〔尿漏れ改善薬〕：[お漏らし癖]が治ります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L116",
+    "original": "夜尿病の治療などにも使われる三環系抗鬱薬の一種。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L117",
+    "original": "人妖問わず服薬できるように【少女臭】でコーティングされているらしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L120",
+    "original": "〔記憶消去薬〕：調教の記憶を消去します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L120"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L121",
+    "original": "飲めば最近起きたことの記憶が消し飛ぶ危険な薬。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L121"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L122",
+    "original": "【厄の結晶】が材料だとまことしやかに言われている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L122"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L128",
+    "original": "〔人魚姫の薬〕：＜人魚＞が＜人間＞に転生します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L128"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L129",
+    "original": "飲むと[音痴]になってしまう副作用がある薬。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L129"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L130",
+    "original": "おとぎ話では【人魚の声】が代償だと語られている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L130"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L133",
+    "original": "〔理性復活薬〕：[理性]が再生します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L133"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L136",
+    "original": "〔復活薬〕：[死亡]でなくなります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L139",
+    "original": "〔赤の飴玉〕：＜処女膜＞が再生します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L140",
+    "original": "体が少しだけ若返る赤色の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L141",
+    "original": "見た目からかいつの間にか【少女の破瓜血】が原材料という噂が立つようになった。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L141"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L144",
+    "original": "〔青の飴玉〕：[母乳体質]になります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L144"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L145",
+    "original": "体が少しだけ成長する青色の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L145"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L146",
+    "original": "【蒼色壱號】と呼ばれている着色料が使われているとか。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L146"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L149",
+    "original": "〔黄の飴玉〕：[産卵体質]になります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L150",
+    "original": "ホルモンの分泌をかき乱し、卵を産む体に変えてしまう黄色い飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L150"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L151",
+    "original": "【吸血鬼(少女)の小水】を凝縮したものが使われているらしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L154",
+    "original": "〔緑の飴玉〕：[小柄体型]になります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L154"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L155",
+    "original": "体が一気に若返る緑色の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L155"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L156",
+    "original": "緑黄色野菜が原料らしい。見た目に反して味は甘め。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L156"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L159",
+    "original": "〔白の飴玉〕：あの娘が＜妖精＞に転生します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L159"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L160",
+    "original": "真珠のような輝きを持っている飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L161",
+    "original": "噂によると原料に【妖精の母乳】や【妖精の鱗粉】、【妖精の唾液】が使われているとか。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L161"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L164",
+    "original": "〔黒の飴玉〕：あの娘が＜ＥＸ化＞します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L164"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L165",
+    "original": "夜の色に染まった艶のない飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L165"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L166",
+    "original": "【妖怪の愛液】を結晶化させたものが主原料らしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L166"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L169",
+    "original": "〔灰の飴玉〕：あの娘の性格が反転します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L169"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L170",
+    "original": "精神に強い影響を及ぼす濁った色の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L171",
+    "original": "[調合知識]を持っていない者は取り扱えないGEKI物指定。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L171"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L174",
+    "original": "〔金の飴玉〕：体の大きさを1段階成長させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L174"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L175",
+    "original": "生物をはぐくむ太陽をイメージした飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L175"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L176",
+    "original": "その材料については未だに謎につつまれているという……",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L176"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L179",
+    "original": "〔銀の飴玉〕：[卵生][産卵体質]でなくなります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L179"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L180",
+    "original": "生物を見守る満月をイメージした飴玉。どんな人妖でも胎生にしてしまう。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L180"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L181",
+    "original": "【ＵＦＯ】の出汁を何十回も蒸留して作られたと言われている。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L181"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L184",
+    "original": "〔虹の飴玉〕：性別が反転します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L184"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L185",
+    "original": "全ての光の要素が個々に見える虹をモチーフにした模様の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L185"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L186",
+    "original": "材料にはホルモンだとか、何かのエキスとか諸説がある。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L186"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L189",
+    "original": "〔翠の飴玉〕：小柄体型や小人体型の者に陰毛が生えるようになります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L189"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L190",
+    "original": "若菜が芽吹くがごとく髪が生えるのをイメージしての少し青に近い緑色の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L190"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L191",
+    "original": "材料に植物由来の樹液と妖精たちの愛液が使われているという噂があるらしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L191"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L194",
+    "original": "〔紺の飴玉〕：妊娠中の赤子もしくは卵が生まれたあとの成長が加速します。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L194"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L195",
+    "original": "子供たちがすくすく育っていくために必要となるであろう、",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L195"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L196",
+    "original": "爽やかな青空のさまをイメージしての少し紫に近い青色の飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L196"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L197",
+    "original": "材料に子煩悩だった【魔女の愛液】が使われているという噂があるらしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L197"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L200",
+    "original": "〔桃の飴玉〕：あの娘の＜ＥＸ化＞を擬似的に解除します",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L200"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L201",
+    "original": "鮮やかな桃色が特徴的で、【人面魚の卵巣】が材料だとまことしやかに囁かれる一品。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L201"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L204",
+    "original": "〔鈍の飴玉〕：[小人体型]になります",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L204"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L205",
+    "original": "銀とも灰色ともつかない不思議な色を顕す飴玉。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L205"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L206",
+    "original": "材料には【生きた人形の魂の欠片】が使われているという噂があるらしい。",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L206"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L218",
+    "original": "必要な資金が不足しています",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L218"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L430",
+    "original": "誰に使いますか？ ＜page.{LOCAL:1+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L430"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L433",
+    "original": "\\@(LOCAL:1 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L433"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L434",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L434"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/D_STORE.ERB_L435",
+    "original": "\\@(LOCAL:1 >= LOCAL:3) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/D_STORE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/D_STORE.ERB#L435"
+  }
+]

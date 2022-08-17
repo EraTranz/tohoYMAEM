@@ -1,0 +1,392 @@
+[
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L9",
+    "original": "何を行いますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L9"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L12",
+    "original": "[0] ハーブ開発指示",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L12"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L14",
+    "original": "[1] ハーブ生産指示",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L14"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L16",
+    "original": "[100]戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L16"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L22",
+    "original": "ハーブの開発を指示します。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L22"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L27",
+    "original": "ハーブの生産を指示します",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L27"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L42",
+    "original": "全てのハーブの開発は完了しています。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L42"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L45",
+    "original": "現在開発中のハーブがあります。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L45"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L50",
+    "original": "[0] シダーウッド",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L50"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L52",
+    "original": "[1] ペパーミント",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L52"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L54",
+    "original": "[2] ジャスミン",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L56",
+    "original": "[3] ラヴェンダー",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L56"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L58",
+    "original": "[4] ムスク",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L58"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L60",
+    "original": "[5] フランキンセンス",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L60"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L63",
+    "original": "どのハーブを開発しますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L63"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L64",
+    "original": "一度に研究できるハーブは一種類のみです。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L64"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L66",
+    "original": "[100]選択せずに戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L66"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L72",
+    "original": "%ITEMNAME:(610+RESULT)%の開発をさせます。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L72"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L77",
+    "original": "フランキンセンスの開発をさせます。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L77"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L99",
+    "original": "開発を担当させられる奴隷がいません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L99"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L118",
+    "original": "誰に%ITEMNAME:(610+ARG)%の開発を命令しますか？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L118"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L121",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L121"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L122",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L122"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L123",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L123"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L133",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L133"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L140",
+    "original": "＜%CALLNAME:TARGET%に%ITEMNAME:(610+ARG)%の開発を担当させますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L141",
+    "original": "一旦開発を始めると、開発中止するか完了するまで担当からは外せません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L141"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L142",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L142"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L143",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L153",
+    "original": "%CALLNAME:TARGET%は、ハーブ園の開発施設で%ITEMNAME:(610+ARG)%の開発に着手します。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L153"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L154",
+    "original": "開発中は、開発中止もしくは完了まで調教対象もしくは助手に任命できませんし、収監や売春もできません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L154"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L168",
+    "original": "現在、%CALLNAME:(LOCAL:1)%が%ITEMNAME:(609+FLAG:81)%を開発しています。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L168"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L169",
+    "original": "開発を中止しますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L169"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L170",
+    "original": "開発を中止した場合、今までの開発の成果は喪失します。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L171",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L171"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L172",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L172"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L184",
+    "original": "%ITEMNAME:(609+FLAG:81)%の開発を中止しました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L184"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L185",
+    "original": "%CALLNAME:(LOCAL:1)%は調教対象に選べるようになりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L185"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L194",
+    "original": "どのハーブも開発されていないので生産することはできません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L194"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L197",
+    "original": "どのハーブも在庫は一杯あるのでこれ以上生産する必要はありません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L197"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L201",
+    "original": "[0] シダーウッド",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L201"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L203",
+    "original": "[1] ペパーミント",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L203"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L205",
+    "original": "[2] ジャスミン",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L205"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L207",
+    "original": "[3] ラヴェンダー",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L207"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L209",
+    "original": "[4] ムスク",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L209"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L211",
+    "original": "[5] フランキンセンス",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L211"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L214",
+    "original": "どのハーブを生産させますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L214"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L215",
+    "original": "一度に生産できるハーブは一種類のみです。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L215"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L217",
+    "original": "[100]選択せずに戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L217"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L223",
+    "original": "%ITEMNAME:(610+RESULT)%の生産をさせます。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L223"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L245",
+    "original": "生産を担当させられる奴隷がいません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L245"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L264",
+    "original": "誰に%ITEMNAME:(610+ARG)%の生産を命令しますか？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L264"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L266",
+    "original": "なお、現生産担当を選択した場合には解任だけします。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L266"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L269",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L269"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L270",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L270"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L271",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L271"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L281",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L281"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L289",
+    "original": "＜%CALLNAME:TARGET%を生産担当から解任しますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L289"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L290",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L290"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L291",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L291"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L301",
+    "original": "%CALLNAME:TARGET%を、生産担当から外しました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L301"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L307",
+    "original": "＜%CALLNAME:TARGET%に%ITEMNAME:(610+ARG)%の生産を担当させますか？＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L307"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L309",
+    "original": "なお、生産担当は一人ですので、別の生産担当を選んだときは",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L309"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L310",
+    "original": "以前の生産担当は解任されます。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L310"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L312",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L312"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L313",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L313"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L326",
+    "original": "%CALLNAME:COUNT%を、生産担当から外しました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L326"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L329",
+    "original": "%CALLNAME:TARGET%は、ハーブ園の生産施設で%ITEMNAME:(610+ARG)%の生産に着手します。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L329"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L330",
+    "original": "生産中は、調教対象もしくは助手に任命できませんし、収監や売春もできません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L330"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L419",
+    "original": "ハーブ研究施設において、%CALLNAME:TARGET%は黙々と%ITEMNAME:(609+FLAG:81)%の開発を続けている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L419"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L420",
+    "original": "現在の開発度はおよそ{FLAG:83*1}％ぐらいという報告があった。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L420"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L427",
+    "original": "ついに、%ITEMNAME:(609+FLAG:81)%の開発が完了しました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L427"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L428",
+    "original": "今後、生産担当者がおれば%ITEMNAME:(609+FLAG:81)%の生産が可能になります。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L428"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L429",
+    "original": "%CALLNAME:TARGET%は開発担当者から離れ、調教対象に選べるようになります。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L429"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L453",
+    "original": "ABL:工作技能 * (2+RAND:3)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L453"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L466",
+    "original": "ハーブ生産施設において、%CALLNAME:TARGET%は黙々と%ITEMNAME:(609+FLAG:82)%の生産を続けている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L466"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L470",
+    "original": "%ITEMNAME:(609+FLAG:82)%の在庫が一杯になったために、生産を終了します。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L470"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/HARB.ERB_L471",
+    "original": "%CALLNAME:TARGET%は生産担当者から離れ、調教対象に選べるようになります。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/HARB.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/HARB.ERB#L471"
+  }
+]

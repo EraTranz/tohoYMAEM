@@ -1,0 +1,137 @@
+[
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L167",
+    "original": "%UNICODE(0x2588)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L167"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L169",
+    "original": "\\@ARG % (ARG:1 * 8) % 8 ? %UNICODE(0x2588 + 8 - (ARG % (ARG:1 * 8) % 8))%# %\" \"%\\@",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L169"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L171",
+    "original": " ",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L171"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L192",
+    "original": "ARGS",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L192"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L300",
+    "original": "LOCALS:LCOUNT",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L300"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L302",
+    "original": "LOCALS:LCOUNT",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L302"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L306",
+    "original": "LOCALS:LCOUNT",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L306"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L310",
+    "original": "LOCALS:LCOUNT",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L310"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L399",
+    "original": "ARGS:1",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L399"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L439",
+    "original": "ARGS:1",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L439"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L529",
+    "original": "ARGS",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L529"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L674",
+    "original": "%SUBSTRING(ARGS , LOCAL)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L674"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L676",
+    "original": "%SUBSTRING(ARGS , (ARG:2 - 2) - LOCAL)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L676"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L690",
+    "original": "%LOCALS%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L690"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L692",
+    "original": "%ARGS%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L692"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L703",
+    "original": "%SUBSTRING(ARGS , ARG:2 - LOCAL:1)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L703"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L705",
+    "original": "%SUBSTRING(ARGS , LOCAL:1)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L705"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L717",
+    "original": "%SUBSTRING(ARGS , ARG:2 - LOCAL:1 + LOCAL:2)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L717"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L719",
+    "original": "%SUBSTRING(ARGS , LOCAL:1 - LOCAL:2)%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L719"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L734",
+    "original": "%LOCALS%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L734"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L736",
+    "original": "%ARGS%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L736"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L842",
+    "original": "ARGS:LOCAL",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L842"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L855",
+    "original": "ARGS:LOCAL",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L855"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L863",
+    "original": "ARGS:LOCAL",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L863"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L871",
+    "original": "ARGS:LOCAL",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L871"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L974",
+    "original": "ARGS:LOCAL",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L974"
+  },
+  {
+    "key": "src/ERB/STATE/PANIMATION.ERB_L976",
+    "original": "%\" \"*ARG+ARGS:LOCAL%",
+    "context": "文件名: src/ERB/STATE/PANIMATION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/STATE/PANIMATION.ERB#L976"
+  }
+]

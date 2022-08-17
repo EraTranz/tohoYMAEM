@@ -1,0 +1,42 @@
+[
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L11",
+    "original": "%MARKNAME:4%{COST14(2)}LV以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L11"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L14",
+    "original": "%EXPNAME:50%{COST14(3)}以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L14"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L16",
+    "original": "\\@(ABL:露出癖 < 2) ? %EXPNAME:2% # %EXPNAME:11%\\@1以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L16"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L18",
+    "original": "[0] - %PALAMNAME:15%の珠×{COST14(0)}",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L18"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L20",
+    "original": "、%EXPNAME:14%{COST14(1)}以上",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L20"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L21",
+    "original": "……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L21"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L24",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L24"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP014.ERB_L42",
+    "original": "%ABLNAME:14%のレベルが{ABL:露出癖}になりました。",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP014.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP014.ERB#L42"
+  }
+]

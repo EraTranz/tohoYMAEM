@@ -1,0 +1,952 @@
+[
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L260",
+    "original": "近距離攻撃",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L260"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L266",
+    "original": "%CALLNAME:(ARG:1)%は%CALLNAME:ARG%の攻撃を回避した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L266"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L269",
+    "original": "さらに、%CALLNAME:ARG%の次の行動を見抜いた！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L269"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L278",
+    "original": "%CALLNAME:ARG%は足を上げて%CALLNAME:(ARG:1)%を蹴った！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L278"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L280",
+    "original": "%CALLNAME:ARG%はパンチで%CALLNAME:(ARG:1)%を殴った！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L280"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L282",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%に肘打ちをした！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L282"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L284",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%に膝蹴りを叩き込む！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L284"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L313",
+    "original": "◇",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L313"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L314",
+    "original": "%SHOW_CALLNAME(ARG:1)%◇",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L314"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L317",
+    "original": "体力 －250　気力 －250",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L317"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L319",
+    "original": "体力 －500　気力 －500",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L319"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L323",
+    "original": "体力 －125　気力 －125",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L323"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L325",
+    "original": "体力 －250　気力 －250",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L325"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L329",
+    "original": "★瀕死★",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L329"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L331",
+    "original": "★気力０★",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L331"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L360",
+    "original": "チャージ",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L360"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L366",
+    "original": "%CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L366"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L373",
+    "original": "%CALLNAME:ARG%は力を溜めている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L373"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L388",
+    "original": "近寄る",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L388"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L400",
+    "original": "なぜか",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L400"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L402",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%に近づこうとする…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L402"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L417",
+    "original": "距離をとる",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L417"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L423",
+    "original": "%CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L423"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L429",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%と距離を保とうとする…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L429"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L444",
+    "original": "背後に回る",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L444"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L456",
+    "original": "なぜか",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L456"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L458",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%の背後に回り込む機会を狙っている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L458"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L473",
+    "original": "見切り",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L473"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L479",
+    "original": "%CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L479"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L486",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%の動きを見切ろうとしている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L486"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L502",
+    "original": "防御",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L502"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L508",
+    "original": "%CALLNAME:ARG%は何か動き出そうとしたが、%CALLNAME:(ARG:1)%に邪魔された。",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L508"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L517",
+    "original": "%CALLNAME:ARG%は怯えながらも自分の身を守っている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L517"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L519",
+    "original": "%CALLNAME:ARG%は身を守っている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L519"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L537",
+    "original": "なすがまま",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L537"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L539",
+    "original": "何もしない",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L539"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L550",
+    "original": "眠っている%CALLNAME:ARG%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L550"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L554",
+    "original": "は触手の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L554"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L556",
+    "original": "は%CALLNAME:(ARG:1)%の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L556"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L559",
+    "original": "は床に横たわっている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L559"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L563",
+    "original": "意識を失った%CALLNAME:ARG%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L563"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L567",
+    "original": "は触手の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L567"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L569",
+    "original": "は%CALLNAME:(ARG:1)%の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L569"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L572",
+    "original": "は床に横たわっている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L572"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L576",
+    "original": "時間の止まった%CALLNAME:ARG%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L576"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L580",
+    "original": "は触手の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L580"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L582",
+    "original": "は%CALLNAME:(ARG:1)%の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L582"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L585",
+    "original": "は立ち尽くしている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L585"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L589",
+    "original": "%CALLNAME:ARG%は不意にこれまでに与えられた恐怖を思い出してしまい",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L589"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L590",
+    "original": "体が竦んでしまった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L590"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L594",
+    "original": "%CALLNAME:ARG%は不意にこれまでに与えられた恥辱を思い出してしまい",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L594"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L595",
+    "original": "体が竦んでしまった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L595"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L599",
+    "original": "%CALLNAME:ARG%は不意にこれまでに与えられた屈辱を思い出してしまい",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L599"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L600",
+    "original": "体が竦んでしまった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L600"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L604",
+    "original": "%CALLNAME:ARG%は不意にこれまでに与えられた快楽を思い出してしまい",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L604"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L605",
+    "original": "体が竦んでしまった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L605"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L609",
+    "original": "%CALLNAME:ARG%は不意にこれまでに与えられた苦痛を思い出してしまい",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L609"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L610",
+    "original": "体が竦んでしまった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L610"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L614",
+    "original": "パニックに陥った%CALLNAME:ARG%は床に崩れ落ちた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L614"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L619",
+    "original": "%CALLNAME:ARG%は急に全裸になったので恥ずかしくて動けなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L619"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L621",
+    "original": "自分が全裸であることを改めて認識した%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L621"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L622",
+    "original": "思わず手で胸や秘所を隠してしまった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L622"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L627",
+    "original": "強烈な快感に耐えきれず、%CALLNAME:ARG%は床に崩れ落ちた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L627"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L629",
+    "original": "強烈な媚毒に耐えきれず、%CALLNAME:ARG%は床に崩れ落ちた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L629"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L634",
+    "original": "%CALLNAME:ARG%は行動を起こそうとしていたが、結局何もしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L634"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L639",
+    "original": "%CALLNAME:ARG%は脱力したかのような虚ろな目でどこかを見ている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L639"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L641",
+    "original": "%CALLNAME:ARG%は愛おしそうに触手を撫でている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L641"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L643",
+    "original": "%CALLNAME:ARG%は秘部から体液を漏らしながら立ち尽くしている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L643"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L647",
+    "original": "%CALLNAME:ARG%は何もしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L647"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L668",
+    "original": "引き剥がす",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L668"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L670",
+    "original": "振り解く",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L670"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L677",
+    "original": "%CALLNAME:ARG%は拘束されて身動きが取れない…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L677"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L683",
+    "original": "%CALLNAME:ARG%は三角木馬から降りようと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L683"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L686",
+    "original": "悪戦苦闘の末、%CALLNAME:ARG%は三角木馬から降りた！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L686"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L689",
+    "original": "しかし、激痛で一瞬%CALLNAME:ARG%の動きが鈍り、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L689"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L690",
+    "original": "股の肉に鋭利な角が食い込んだ…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L690"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L696",
+    "original": "%CALLNAME:ARG%は手足に絡みついた触手を振り解こうと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L696"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L698",
+    "original": "%CALLNAME:ARG%は縄を振り解こうと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L698"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L703",
+    "original": "すると一瞬触手の拘束が緩み、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L703"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L705",
+    "original": "すると一瞬縄の拘束が緩み、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L705"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L707",
+    "original": "その隙を突いた%CALLNAME:ARG%は辛くも窮地を脱することに成功した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L707"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L713",
+    "original": "しかし触手の拘束はびくともしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L713"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L715",
+    "original": "しかし縄の拘束はびくともしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L715"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L719",
+    "original": "しかし触手の拘束はびくともせず、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L719"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L721",
+    "original": "しかし縄の拘束はびくともせず、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L721"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L723",
+    "original": "%CALLNAME:ARG%は苦渋に眉を顰めた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L723"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L727",
+    "original": "%CALLNAME:ARG%は荊を振り解こうと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L727"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L730",
+    "original": "すると一瞬荊の拘束が緩み、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L730"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L731",
+    "original": "その隙を突いた%CALLNAME:ARG%は辛くも窮地を脱することに成功した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L731"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L736",
+    "original": "しかし荊の拘束はびくともしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L736"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L738",
+    "original": "しかし荊の拘束はびくともせず、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L738"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L739",
+    "original": "%CALLNAME:ARG%は苦渋に眉を顰めた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L739"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L743",
+    "original": "%CALLNAME:ARG%は蜘蛛の糸を振り解こうと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L743"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L751",
+    "original": "しかし糸の拘束はびくともしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L751"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L753",
+    "original": "しかし糸の拘束はびくともせず、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L753"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L754",
+    "original": "%CALLNAME:ARG%は苦渋に眉を顰めた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L754"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L759",
+    "original": "%CALLNAME:ARG%は手足に絡みついた触手を振り解こうと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L759"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L761",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%の拘束を振り解こうと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L761"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L766",
+    "original": "すると一瞬触手の拘束が緩み、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L766"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L768",
+    "original": "すると一瞬%CALLNAME:(ARG:1)%の拘束が緩み、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L768"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L770",
+    "original": "その隙を突いた%CALLNAME:ARG%は辛くも窮地を脱することに成功した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L770"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L776",
+    "original": "しかし触手の拘束はびくともしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L776"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L778",
+    "original": "しかし%CALLNAME:(ARG:1)%の拘束はびくともしなかった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L778"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L782",
+    "original": "しかし触手の拘束はびくともせず、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L782"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L784",
+    "original": "しかし%CALLNAME:(ARG:1)%の拘束はびくともせず、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L784"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L786",
+    "original": "%CALLNAME:ARG%は苦渋に眉を顰めた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L786"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L808",
+    "original": "暴れる",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L808"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L814",
+    "original": "%CALLNAME:ARG%は拘束されて身動きが取れない…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L814"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L820",
+    "original": "%CALLNAME:ARG%は三角木馬から降りようと全力で暴れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L820"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L823",
+    "original": "悪戦苦闘の末、%CALLNAME:ARG%は三角木馬から降りた！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L823"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L826",
+    "original": "しかし、激痛で一瞬%CALLNAME:ARG%の動きが鈍り、",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L826"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L827",
+    "original": "股の肉に鋭利な角が食い込んだ…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L827"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L840",
+    "original": "%CALLNAME:ARG%は触手に絡まれた状態からでも",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L840"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L842",
+    "original": "%CALLNAME:ARG%は縄に拘束された状態からでも",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L842"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L844",
+    "original": "なんとかダメージを与えようと苦し紛れにもがいた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L844"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L846",
+    "original": "%CALLNAME:ARG%は荊に拘束された状態からでも",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L846"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L847",
+    "original": "なんとかダメージを与えようと苦し紛れにもがいた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L847"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L849",
+    "original": "%CALLNAME:ARG%は蜘蛛の糸に拘束された状態からでも",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L849"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L850",
+    "original": "なんとかダメージを与えようと苦し紛れにもがいた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L850"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L858",
+    "original": "%CALLNAME:ARG%は触手に絡まれた状態からでも",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L858"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L860",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%に拘束された状態からでも",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L860"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L862",
+    "original": "なんとかダメージを与えようと苦し紛れにもがいた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L862"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L891",
+    "original": "◇",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L891"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L892",
+    "original": "%SHOW_CALLNAME(ARG:1)%◇",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L892"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L895",
+    "original": "体力 －100　気力 －100",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L895"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L897",
+    "original": "体力 －200　気力 －200",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L897"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L901",
+    "original": "体力 －50 　気力 －50",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L901"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L903",
+    "original": "体力 －100　気力 －100",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L903"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L907",
+    "original": "★瀕死★",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L907"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L909",
+    "original": "★気力０★",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L909"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L925",
+    "original": "耐える",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L925"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L931",
+    "original": "%CALLNAME:ARG%は拘束されて身動きが取れない…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L931"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L935",
+    "original": "%CALLNAME:ARG%はぐっと唇を噛んで",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L935"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L939",
+    "original": "触手の陵辱に耐えている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L939"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L941",
+    "original": "縄に拘束されることで感じる嫌悪感に耐えている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L941"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L944",
+    "original": "荊に拘束されることで感じる嫌悪感に耐えている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L944"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L946",
+    "original": "蜘蛛の糸に拘束されることで感じる嫌悪感に耐えている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L946"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L949",
+    "original": "触手の陵辱に耐えている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L949"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L951",
+    "original": "%CALLNAME:(ARG:1)%の陵辱に耐えている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L951"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L972",
+    "original": "ギブアップ",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L972"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L974",
+    "original": "なすがまま",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L974"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L985",
+    "original": "%CALLNAME:ARG%は精根尽き果てて動けなくなった…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L985"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L988",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L988"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L990",
+    "original": "愛おしそうに触手を撫でている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L990"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L992",
+    "original": "脱力したかのような虚ろな目でどこかを見ているだけだ…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L992"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L996",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L996"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L998",
+    "original": "触手の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L998"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1000",
+    "original": "%CALLNAME:(ARG:1)%の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1000"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1003",
+    "original": "%CALLNAME:ARG%は身を竦ませ",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1003"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1005",
+    "original": "触手の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1005"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1007",
+    "original": "%CALLNAME:(ARG:1)%の陵辱になすがままにされている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1007"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1024",
+    "original": "受け入れる",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1024"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1032",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1032"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1034",
+    "original": "触手の与える快楽をすすんで受け入れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1034"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1036",
+    "original": "%CALLNAME:(ARG:1)%の与える快楽をすすんで受け入れた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1036"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1055",
+    "original": "奉仕する",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1055"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1063",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1063"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1065",
+    "original": "近くにあった触手を手に取り熱心な奉仕を始めた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1065"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1067",
+    "original": "自分から%CALLNAME:(ARG:1)%への熱心な奉仕を始めた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1067"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1089",
+    "original": "Ｖ挿入防御",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1089"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1095",
+    "original": "%CALLNAME:ARG%は拘束されて身動きが取れない…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1095"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1099",
+    "original": "%CALLNAME:ARG%はせめて膣への挿入だけでも防ごうと身構えた…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1099"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1117",
+    "original": "睨みつける",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1117"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1132",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1132"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1135",
+    "original": "精液で全身を汚されながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1135"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1139",
+    "original": "口を犯されながらも%LOCALS:1%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1139"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1141",
+    "original": "口元から精液と唾液の混合物を垂れ流しながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1141"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1146",
+    "original": "為すすべなく犯されながらも戦意を失わずに%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1146"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1148",
+    "original": "前後の穴に精液を注ぎこまれながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1148"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1150",
+    "original": "無残に中出しされ精液を垂れ流しながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1150"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1152",
+    "original": "アナルに精液を注ぎこまれながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1152"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1156",
+    "original": "手も足も出ない悔しさを堪えながら%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1156"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1159",
+    "original": "苦痛を伴う責めに息を荒げながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1159"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1162",
+    "original": "激しい凌辱に悶え乱れながらも%LOCALS%",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1162"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1164",
+    "original": "自分を鼓舞し奮い立たせるかのように",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1164"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1166",
+    "original": "%CALLNAME:(ARG:1)%を睨みつけた！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1166"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1187",
+    "original": "罵倒する",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1187"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1197",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%を罵ったが言葉に勢いがなく",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1197"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1198",
+    "original": "虚勢を張っているだけなのは誰の目にも明らかだ…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1198"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1201",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%を口汚く罵倒したが",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1201"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1202",
+    "original": "快楽に蕩けさせられ呂律が回っていないため強がりが筒抜けだ…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1202"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1205",
+    "original": "%CALLNAME:ARG%は負けないという意志を込めて%CALLNAME:(ARG:1)%を口汚く罵った！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1205"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1207",
+    "original": "%CALLNAME:ARG%は%CALLNAME:(ARG:1)%を口汚く罵り何とか戦意を奮い起した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1207"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1229",
+    "original": "反抗する",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1229"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1239",
+    "original": "心を折られた%CALLNAME:ARG%はもはや形だけの抵抗をしている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1239"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1242",
+    "original": "快楽漬けにされた%CALLNAME:ARG%はもはや形だけの抵抗をしている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1242"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1245",
+    "original": "%CALLNAME:ARG%はまだ諦めていないことを態度で示した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1245"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1247",
+    "original": "%CALLNAME:ARG%はまだ凌辱に屈していないことを態度で示した！",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1247"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1266",
+    "original": "説得する",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1266"
+  },
+  {
+    "key": "src/ERB/RPG/SELECT_BATTLE_ACTION.ERB_L1274",
+    "original": "%CALLNAME:ARG%はこんなことを止めるように説得しようとしている…",
+    "context": "文件名: src/ERB/RPG/SELECT_BATTLE_ACTION.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RPG/SELECT_BATTLE_ACTION.ERB#L1274"
+  }
+]

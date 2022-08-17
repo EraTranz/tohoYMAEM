@@ -1,0 +1,272 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L10",
+    "original": "現在の借金は{FLAG:575}圓で、所持金は{MONEY}圓です",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L10"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L13",
+    "original": "追加で借金をしますか？(一日一回だけ)",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L13"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L14",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L14"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L15",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L15"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L21",
+    "original": "幾ら借金をしますか？(0-{LOCAL})",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L21"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L28",
+    "original": "追加で借金をしました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L28"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L35",
+    "original": "借金を返済しますか？(一日一回だけ)",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L35"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L36",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L36"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L37",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L37"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L39",
+    "original": "[2]毎日設定(現状:行なわない)",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L41",
+    "original": "[2]毎日設定(現状:一日{FLAG:579}圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L41"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L49",
+    "original": "今日はもう債務を返済しました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L49"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L51",
+    "original": "金が足りません。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L51"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L53",
+    "original": "幾ら借金を返済しますか？(0-{LOCAL})",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L53"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L60",
+    "original": "返済で借金をしました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L60"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L65",
+    "original": "毎日借金をいくら返済しますか？(自動で行う)",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L65"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L68",
+    "original": "設定が完了しました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L68"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L80",
+    "original": "一日に一度の精算です。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L80"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L81",
+    "original": "現在の借金は{FLAG:575}圓",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L81"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L87",
+    "original": "返済金が{LOCAL}圓付いて、",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L87"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L98",
+    "original": "利子が{LOCAL}圓付いて、新たな借金は{FLAG:575}圓になります。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L98"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L100",
+    "original": "借金を全部返済しました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L100"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L136",
+    "original": "【{LOCAL}】　《【{ARG}】 - 【{ARG:1}】》",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L137",
+    "original": "\"[7]\", \"７\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L138",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L139",
+    "original": "\"[8]\", \"８\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L140",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L141",
+    "original": "\"[9]\", \"９\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L141"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L142",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L142"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L143",
+    "original": "\"[ AC]\", \"AC\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L146",
+    "original": "\"[4]\", \"４\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L146"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L147",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L147"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L148",
+    "original": "\"[5]\", \"５\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L148"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L149",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L150",
+    "original": "\"[6]\", \"６\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L150"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L151",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L152",
+    "original": "\"[Max]\", \"MAX\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L152"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L155",
+    "original": "\"[1]\", \"１\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L155"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L156",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L156"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L157",
+    "original": "\"[2]\", \"２\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L157"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L158",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L158"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L159",
+    "original": "\"[3]\", \"３\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L159"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L160",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L161",
+    "original": "\"[Min]\", \"MIN\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L161"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L164",
+    "original": "\"[0]\", \"０\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L164"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L165",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L165"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L167",
+    "original": "\"[+]\", \"+\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L167"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L169",
+    "original": "\"[-]\", \"-\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L169"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L171",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L171"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L172",
+    "original": "\"[ENTER]\", \"ENTER\"",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L172"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L174",
+    "original": "※キーボードから、直接数値を入力することもできます",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L174"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L198",
+    "original": "桁数が多すぎます！",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L198"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L209",
+    "original": "入力が異常です。入力しなおしてください",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L209"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/DEBT.ERB_L218",
+    "original": "数値が範囲外です。入力しなおしてください",
+    "context": "文件名: src/ERB/MAIN/SHOP/DEBT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/DEBT.ERB#L218"
+  }
+]

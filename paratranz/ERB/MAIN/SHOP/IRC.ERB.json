@@ -1,0 +1,67 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L16",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L16"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L35",
+    "original": "[{COUNT}] 霊夢様（{GET_LIST(COUNT)}圓）",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L35"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L37",
+    "original": "[{COUNT}] %ITEMNAME:(COUNT+5000)%（{GET_LIST(COUNT)}圓）",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L37"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L39",
+    "original": "※この奴隷を購入後時間が経過します",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L41",
+    "original": "※この奴隷を購入すると、奴隷が助手になるまで%CALLNAME:MASTER%は【触手使役術】を失います",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L41"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L43",
+    "original": "※この奴隷を購入すると、奴隷が助手になるまで奴隷の購入及び売却に制限がつきます",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L43"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L47",
+    "original": "※奴隷商人がいないため、奴隷を購入後時間が経過します",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L47"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L48",
+    "original": "[100] キャンセル",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L59",
+    "original": "金額が足りません",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L59"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L71",
+    "original": "＜%CSVNAME(LOCAL, 0)%を購入しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L71"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L178",
+    "original": "＜パチュリーを%ARGS%、",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L178"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L180",
+    "original": "さらに%NAME:TARGET%を手に入れました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L180"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/IRC.ERB_L182",
+    "original": "さらに%NAME:TARGET%を購入しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/IRC.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/IRC.ERB#L182"
+  }
+]

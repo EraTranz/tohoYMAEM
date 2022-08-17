@@ -1,0 +1,437 @@
+[
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L13",
+    "original": "更新内容   ＜page.{LOCAL+1}/{LOCAL:1+1}＞",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L13"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L18",
+    "original": "◆ver,4.267 ← ver,4.266◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L18"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L20",
+    "original": "・細かい変更などいくつか",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L20"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L21",
+    "original": "・テキストの誤字脱字を修正（汎用口上、野外ライブ、御所車ＴＹＰＥ－Ｒ）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L21"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L22",
+    "original": "・賢者の血の判定エラーを修正（反動処理）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L22"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L23",
+    "original": "・精飲絶頂の判定エラーを修正（触手召喚）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L23"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L24",
+    "original": "・精飲開発度の減少処理の判定エラーを修正（精液中毒）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L24"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L25",
+    "original": "・主人の呼び方の判定エラーを修正（自分で決める）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L25"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L26",
+    "original": "・キャラ解放処理の判定エラーを修正（奴隷市場）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L26"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L29",
+    "original": "◆ver,4.266 ← ver,4.265◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L29"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L31",
+    "original": "・細かい変更などいくつか",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L31"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L32",
+    "original": "・使い魔の判定エラーを修正（調教対象）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L32"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L33",
+    "original": "・ゲージ計算の判定エラーを修正（噴乳、放尿）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L33"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L34",
+    "original": "・壊造人格の判定エラーを修正（人数カウント）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L34"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L35",
+    "original": "・宝珠変動汎用処理の判定エラーを修正（変動後の珠の数）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L35"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L36",
+    "original": "・ローグライクモードの判定エラーを修正（タイトルに戻る）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L36"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L37",
+    "original": "・ＢＦシステムの判定エラーを修正（キャラカード）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L37"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L38",
+    "original": "・奴隷市場の判定エラーを修正（裏売却判定）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L38"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L39",
+    "original": "・実績特典の判定エラーを修正（延期）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L39"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L40",
+    "original": "・口上の判定エラーを修正（番号）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L40"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L41",
+    "original": "# リリカ、衣玖、青娥",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L41"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L44",
+    "original": "◆ver,4.265 ← ver,4.264◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L44"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L46",
+    "original": "・細かい変更などいくつか",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L46"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L47",
+    "original": "・口、手、足、ペニスの汚れを拭く機能を追加（汚れ表示[811]）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L47"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L48",
+    "original": "・テキストの誤字脱字を修正（汎用口上、装備品に応じた補完メッセージ）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L48"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L49",
+    "original": "・コマンドの判定エラーを修正（昆虫採集セットの薬）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L49"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L50",
+    "original": "・パラメーターチェックの判定エラーを修正（連動パラメーター）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L50"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L51",
+    "original": "・エンディングの判定エラーを修正（死亡）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L51"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L54",
+    "original": "◆ver,4.264 ← ver,4.263◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L54"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L56",
+    "original": "・eraTx1818 触手服修正パッチを取り込み",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L56"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L57",
+    "original": "・eraTx1812 メディスン口上加筆＆触手服＆誤字修正＆デバッグ強化パッチを取り込み",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L57"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L58",
+    "original": "・細かい変更などいくつか",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L58"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L59",
+    "original": "・テキストの改行を修正（日常イベント、調教後自慰）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L59"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L60",
+    "original": "・汎用口上の判定エラーを修正（恋慕、自動喘ぎ）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L60"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L61",
+    "original": "・奴隷市場の判定エラーを修正（反発刻印、恐怖刻印）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L61"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L62",
+    "original": "・背面座位アナル胸愛撫の判定エラーを修正（Ｖ系装着具）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L62"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L65",
+    "original": "◆ver,4.263 ← ver,4.262◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L65"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L67",
+    "original": "・細かい変更などいくつか",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L67"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L68",
+    "original": "・テキストの改行を修正（奴隷市場）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L68"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L69",
+    "original": "・奴隷市場の判定エラーを修正（キャラカード）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L69"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L70",
+    "original": "・汎用口上の判定エラーを修正（人格設定）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L70"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L73",
+    "original": "◆ver,4.262 ← ver,4.261◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L73"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L75",
+    "original": "・小陰唇指愛撫にＣ調律経験＋1を追加（COMF152.ERB）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L75"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L76",
+    "original": "・不必要なWAITを削除（日常イベント）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L76"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L77",
+    "original": "・テキストの改行を修正（奴隷市場）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L77"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L78",
+    "original": "・使い魔の判定エラーを修正（契約条件）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L78"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L79",
+    "original": "・超常目算の判定エラーを修正（素質確認）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L79"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L80",
+    "original": "・コマンドの判定エラーを修正（@SHOP_COM_101）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L80"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L81",
+    "original": "・汎用口上の判定エラーを修正（愛撫）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L81"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L84",
+    "original": "◆ver,4.261 ← ver,4.260◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L84"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L86",
+    "original": "・夢美口上を追加",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L86"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L87",
+    "original": "・身体測定の初期化設定を追加",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L87"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L88",
+    "original": "・ＢＦシステムを調整",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L88"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L89",
+    "original": "# 先攻・後攻を実装",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L89"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L90",
+    "original": "# 運動による影響を若干弱めた",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L90"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L91",
+    "original": "# 幻想少女の攻撃力をわずかに下げた",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L91"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L92",
+    "original": "# PREVCOMの判定を調整",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L92"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L93",
+    "original": "・テキストの誤字脱字を修正（夢美口上）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L93"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L96",
+    "original": "◆ver,4.260 ← ver,4.259◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L96"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L98",
+    "original": "・実績特典を追加（初期資金ボーナス、反発刻印リセット、恐怖刻印取得履歴リセット）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L98"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L99",
+    "original": "・バトルルール説明を追加（購入確認処理）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L99"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L100",
+    "original": "・可変画像表示システムを少しだけ強化（スク水プレイ、コスプレ）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L100"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L101",
+    "original": "・テキストの誤字脱字を修正（借金返済、外見選択の処理）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L101"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L102",
+    "original": "・娘に遺伝しない素質消去処理の判定エラーを修正（理性、死亡、月経周期、常時発情）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L102"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L103",
+    "original": "・妊娠の判定エラーを修正（修正されているかどうかは不明だが）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L103"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L104",
+    "original": "・口上の判定エラーを修正（面識検索関数）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L104"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L105",
+    "original": "# ヤマメ、パルスィ、さどり",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L105"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L108",
+    "original": "◆ver,4.259 ← ver,4.258◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L108"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L110",
+    "original": "・自動喘ぎ関数の判定を調整（首筋耳裏舐め、角愛撫）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L110"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L111",
+    "original": "・らぶらぶ口上の表示判定を調整（妄信 → 恋慕）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L111"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L112",
+    "original": "・不必要なWAITを削除（膣内洗浄、能力上昇、夜イベント）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L112"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L113",
+    "original": "・テキストの誤字脱字を修正（背面座位アナル胸愛撫）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L113"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L114",
+    "original": "・コマンドの判定エラーを修正（角愛撫）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L114"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L115",
+    "original": "・ＢＦシステムの判定エラーを修正（距離）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L115"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L116",
+    "original": "・一括レベルアップの判定エラーを修正（欲望の上昇による[抑圧][抵抗]の消滅）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L116"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L117",
+    "original": "・調教終了時の珠入手処理の判定エラーを修正（否定の珠による打ち消し処理）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L117"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L118",
+    "original": "・口上の判定エラーを修正（睡眠、口枷、時止め、気絶）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L118"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L119",
+    "original": "# 霊夢、小悪魔、橙、リリカ、メルラン、妖夢、幽々子、藍、紫、萃香、慧音、",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L119"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L120",
+    "original": "# 永琳、輝夜、小町、映姫、にとり、早苗、蓮子、メリー、響子、芳香、布都、",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L120"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L121",
+    "original": "# 影狼、雷鼓、サグメ、口上テンプレート",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L121"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L124",
+    "original": "◆ver,4.258 ← ver,4.257◆",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L124"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L126",
+    "original": "・奴隷市場の判定エラーを修正（月経周期）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L126"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L127",
+    "original": "・犯されモードの判定エラーを修正（調教対象が勝手にコマンドを実行した場合の処理）",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L127"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L130",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 18% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L130"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L131",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L131"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L132",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 18% # [1009]後ろのページ\\@",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L132"
+  },
+  {
+    "key": "src/ERB/RELEASE_NOTE.ERB_L141",
+    "original": "1",
+    "context": "文件名: src/ERB/RELEASE_NOTE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/RELEASE_NOTE.ERB#L141"
+  }
+]

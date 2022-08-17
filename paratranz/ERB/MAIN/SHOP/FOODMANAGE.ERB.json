@@ -1,0 +1,232 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L30",
+    "original": "食べる量を変えるキャラを選んでください　＜page.{TFLAG:600+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L30"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L36",
+    "original": "\\@(TFLAG:600 <= 0) ? 　 # [1111]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L36"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L37",
+    "original": "[5555]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L37"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L38",
+    "original": "\\@(TFLAG:600 >= LOCAL:1) ? 　 # [9999]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L38"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L83",
+    "original": "☆",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L85",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L85"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L87",
+    "original": "◆",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L87"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L90",
+    "original": "▲",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L90"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L93",
+    "original": "■",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L93"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L99",
+    "original": "▽",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L99"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L102",
+    "original": "●",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L102"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L104",
+    "original": "○",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L106",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L106"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L116",
+    "original": "☆:調教中 ★:助手 ○:助手可 ●:元助手",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L118",
+    "original": "◆:触手幽閉中",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L118"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L120",
+    "original": "■:牢収監中",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L120"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L122",
+    "original": "▲:檻幽閉中",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L122"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L124",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L124"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L126",
+    "original": ":売春中",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L126"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L129",
+    "original": "▽:ハーブ作業中",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L129"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L130",
+    "original": "を表しています",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L130"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L136",
+    "original": "マシマシ　",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L138",
+    "original": "大盛　",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L140",
+    "original": "小盛　",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L142",
+    "original": "極小盛　",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L142"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L144",
+    "original": "並盛　",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L144"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L149",
+    "original": "ぽっちゃり",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L151",
+    "original": "ムチムチ",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L153",
+    "original": "スレンダー",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L153"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L155",
+    "original": "がりがり",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L155"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L157",
+    "original": "ふつう",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L157"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L162",
+    "original": "{TFLAG:1}",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L162"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L166",
+    "original": "%CALLNAME:ARG%の食事の量を決めてください",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L166"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L167",
+    "original": "今現在:",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L167"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L173",
+    "original": "[2] - マシマシ",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L173"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L174",
+    "original": "[1] - 大盛",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L174"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L175",
+    "original": "[0] - 並盛",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L175"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L176",
+    "original": "[-1] - 小盛",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L176"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L177",
+    "original": "[-2] - 極小盛",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L177"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L178",
+    "original": "[10] - 変えない",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L178"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L183",
+    "original": "飯をマシマシにします",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L183"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L186",
+    "original": "飯を大盛りにします",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L186"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L189",
+    "original": "飯の量を普通にします",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L189"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L192",
+    "original": "飯を小盛にします",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L192"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L195",
+    "original": "飯を極小盛にします",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L195"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/FOODMANAGE.ERB_L197",
+    "original": "量を変えません",
+    "context": "文件名: src/ERB/MAIN/SHOP/FOODMANAGE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/FOODMANAGE.ERB#L197"
+  }
+]

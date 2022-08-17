@@ -1,0 +1,3447 @@
+[
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L8",
+    "original": "所持アイテム:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L8"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L39",
+    "original": "略 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L42",
+    "original": "なし ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L42"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L44",
+    "original": "%LOCALS%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L44"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L99",
+    "original": "住まい：",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L99"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L102",
+    "original": "\\@(STRLENS(CSTR:MASTER:1) > 0) ? %CSTR:MASTER:1% # 隠れ家\\@ ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L102"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L104",
+    "original": "豪邸",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L106",
+    "original": "小城",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L106"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L108",
+    "original": "隠れ里",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L108"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L110",
+    "original": "SAVESTR:1",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L113",
+    "original": "別館：娼館",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L113"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L115",
+    "original": "野菜畑：Lv \\@(FLAG:573 < 20) ? {FLAG:573} # MAX\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L119",
+    "original": "\\@(LOCAL > 0) ? (後{LOCAL}人の奴隷を購入できます) #  (奴隷の数が限界です) \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L127",
+    "original": "種族:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L127"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L129",
+    "original": "チーター",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L129"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L131",
+    "original": "STR:145",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L131"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L133",
+    "original": "STR:103",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L133"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L135",
+    "original": "STR:106",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L135"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L137",
+    "original": "STR:146",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L139",
+    "original": "STR:143",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L141",
+    "original": "STR:121",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L141"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L143",
+    "original": "STR:104",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L145",
+    "original": "STR:127",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L145"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L147",
+    "original": "STR:112",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L147"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L149",
+    "original": "STR:116",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L151",
+    "original": "CSTR:ARG:33",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L154",
+    "original": "キャラ番号:{NO:ARG}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L154"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L155",
+    "original": "体力:({BASE:ARG:体力, 4}/{MAXBASE:ARG:0, 4})　気力:({BASE:ARG:気力, 4}/{MAXBASE:ARG:1, 4})",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L155"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L169",
+    "original": "堕した奴隷の総数　　　　　:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L169"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L175",
+    "original": "[萬 姦 全 籍]",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L175"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L177",
+    "original": "[ミレニアム]",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L177"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L179",
+    "original": "[百人斬り]",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L179"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L181",
+    "original": "{FLAG:30, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L181"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L183",
+    "original": "(今回堕した人数:{CFLAG:ARG:98, 5}人)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L183"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L185",
+    "original": "今まで売却した奴隷の総数　:{FLAG:34, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L185"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L187",
+    "original": "今回烙印を押した奴隷の人数:{FLAG:31, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L187"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L189",
+    "original": "今回生贄に捧げた奴隷の人数:{FLAG:33, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L189"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L194",
+    "original": "最後に調教したのは",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L194"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L195",
+    "original": "%SHOW_CALLNAME(LOCAL)%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L195"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L196",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L196"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L203",
+    "original": "最後に調教で助手を担当したのは",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L203"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L204",
+    "original": "%SHOW_CALLNAME(LOCAL)%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L204"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L205",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L205"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L223",
+    "original": "称号:%NICKNAME:MASTER% ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L223"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L227",
+    "original": "＞ ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L227"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L230",
+    "original": "Ｇ ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L230"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L233",
+    "original": "Ｋ ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L233"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L236",
+    "original": "＊ ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L236"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L239",
+    "original": "α ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L239"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L242",
+    "original": "Α ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L242"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L245",
+    "original": "S ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L245"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L248",
+    "original": "EX ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L248"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L251",
+    "original": "† ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L251"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L253",
+    "original": "‡ ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L253"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L255",
+    "original": "無敵 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L255"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L257",
+    "original": "鬼才 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L257"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L259",
+    "original": "天才 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L259"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L261",
+    "original": "秀才 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L261"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L264",
+    "original": "おにちく ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L264"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L271",
+    "original": "(主人調教経験:{EXP:ARG:主人調教経験} 調教度:{CFLAG:ARG:3668 / 10}.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L271"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L273",
+    "original": "{CFLAG:ARG:3668 % 10}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L273"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L275",
+    "original": "{CFLAG:ARG:3668 % 10 * -1}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L275"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L277",
+    "original": "％",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L277"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L278",
+    "original": "好感度:{CFLAG:ARG:好感度} ストレス:{CFLAG:ARG:ストレス} 異常経験:{EXP:ARG:異常経験} 娼婦人気度:{CFLAG:ARG:66})",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L278"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L280",
+    "original": "寄生触手成長LV",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L280"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L282",
+    "original": "({BASE:ARG:触手, 4}/{MAXBASE:ARG:6, 4})",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L282"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L287",
+    "original": "称号:%NICKNAME:ARG% ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L287"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L290",
+    "original": "主人のことを「%MASTERNAME:ARG%」と呼ぶように命じられている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L290"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L293",
+    "original": "スペルカード使用者：%ITEMNAME:(100+TALENT:ARG:スペルカード)%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L293"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L296",
+    "original": "調教を\\@((DAY - CFLAG:ARG:46) <= 0) ? 受けたばっかりです # 受けてから{DAY - CFLAG:ARG:46}日ほど経過しています\\@。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L296"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L299",
+    "original": "助手を解任\\@((DAY - CFLAG:ARG:47) <= 0) ? されたばっかりです # されてから{DAY - CFLAG:ARG:47}日ほど経過しています\\@。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L299"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L302",
+    "original": "現在ハーブ開発施設にて、新種のハーブを開発中です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L302"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L304",
+    "original": "現在ハーブ生産施設にて、ハーブを生産中です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L304"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L307",
+    "original": "睡眠薬の影響を受け\\@(EQUIP:ARG:睡眠薬 >= 10000) ? 、熟睡し # て、眠っ \\@ている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L307"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L310",
+    "original": "不思議な桃色の飴玉の影響を受けている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L310"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L313",
+    "original": "不思議な紺色の飴玉の影響を受けている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L313"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L328",
+    "original": "\\@(FLAG:70 & 1) ? ○ # %\" \" * 2%\\@妖精を堕した数　　　　　: %PRINT_FAIRY_NUMBER()%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L328"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L330",
+    "original": "\\@(FLAG:70 & 16) ? ○ # %\" \" * 2%\\@人形に変えた人数の合計　: {FLAG:401, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L330"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L332",
+    "original": "\\@(FLAG:70 & 2) ? ○ # %\" \" * 2%\\@吸血鬼化させた人数の合計: {FLAG:402, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L332"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L334",
+    "original": "\\@(FLAG:70 & 4) ? ○ # %\" \" * 2%\\@機械に改造した人数の合計: {FLAG:403, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L334"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L336",
+    "original": "\\@(FLAG:70 & 8) ? ○ # %\" \" * 2%\\@亡霊化させた人数の合計　: {FLAG:404, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L336"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L338",
+    "original": "\\@(FLAG:70 & 1024) ? ○ # %\" \" * 2%\\@僵尸化させた人数の合計　: {FLAG:411, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L338"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L340",
+    "original": "\\@(FLAG:70 & 32) ? ○ # %\" \" * 2%\\@傀儡にした人数の合計　　: {FLAG:405, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L340"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L342",
+    "original": "\\@(FLAG:70 & 64) ? ○ # %\" \" * 2%\\@食した尻子玉の合計　　　: {FLAG:406, 5}個",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L342"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L344",
+    "original": "\\@(FLAG:70 & 256) ? ○ # %\" \" * 2%\\@ハクタク化を見た回数　　: {FLAG:408, 5}回",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L344"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L346",
+    "original": "\\@(FLAG:70 & 512) ? ○ # %\" \" * 2%\\@同化刻印を捺した回数　　: {FLAG:409, 5}回",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L346"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L348",
+    "original": "\\@(FLAG:400 > 99) ? ○ # %\" \" * 2%\\@恋慕処女を頂いた人数　　: {FLAG:400, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L348"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L350",
+    "original": "仕送りしてくれる人数　　: {PRINT_REMITTANCE_NUMBER(), 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L350"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L382",
+    "original": "CFLAG:COUNT:3002",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L382"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L390",
+    "original": "\\@(FLAG:12 & 2) ? □ 触手関連 # 触手関連:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L390"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L392",
+    "original": "%ABLNAME:98%Lv:{ABL:ARG:触手使役}　%PALAMNAME:198%の珠:{JUEL:ARG:触手, 7}　触手エネルギー:{BASE:ARG:触手, 5}τ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L392"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L393",
+    "original": "触手の生贄:{FLAG:33, 3}人(累計:{FLAG:99, 3}人)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L393"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L394",
+    "original": "触手の能力:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L394"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L402",
+    "original": "\\@(FLAG:12 & 2) ? □ 記念日 # 記念日:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L402"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L405",
+    "original": "誕生日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L405"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L407",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L407"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L411",
+    "original": "購入された日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L411"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L413",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L413"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L417",
+    "original": "連れてこられた日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L417"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L419",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L419"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L423",
+    "original": "陥落した日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L423"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L425",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L425"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L429",
+    "original": "結婚記念日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L429"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L431",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L431"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L435",
+    "original": "契約記念日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L435"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L437",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L437"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L441",
+    "original": "初めて妊娠した日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L441"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L443",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L443"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L447",
+    "original": "初めて助手になった日は",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L447"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L449",
+    "original": "です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L449"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L465",
+    "original": "\\@(FLAG:12 & 2) ? □ 親子関係 # 親子関係:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L465"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L473",
+    "original": "父：%CSTR:ARG:5%(第{LOCAL:2}子) 母：%CSTR:ARG:6%(第{LOCAL:3}子)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L473"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L475",
+    "original": "父：%ITEMNAME:(LOCAL:0)%(第{LOCAL:2}子) 母：%ITEMNAME:(LOCAL:1)%(第{LOCAL:3}子)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L475"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L481",
+    "original": "育ての親は%CSTR:ARG:7%です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L481"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L483",
+    "original": "育ての親は%ITEMNAME:(LOCAL:4)%です。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L483"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L493",
+    "original": "\\@(FLAG:12 & 2) ? □ 子供の兄弟・姉妹関係 # 子供の兄弟・姉妹関係:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L493"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L525",
+    "original": "{PL_VAR_X:6}人の兄弟・姉妹がいる。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L525"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L527",
+    "original": "現在、兄弟・姉妹がいない。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L527"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L530",
+    "original": "\\@(PL_VAR_L:0 > 0) ? [4]前の兄弟姉妹リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L530"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L531",
+    "original": "\\@(PL_VAR_L:0 < PL_VAR_L:1) ? [6]次の兄弟姉妹リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L531"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L548",
+    "original": "%SHOW_CALLNAME3(PL_VAR_X:0, 12, 0)%　　(父:%CSTR:(PL_VAR_X:0):5, 12,LEFT%　母:%CSTR:(PL_VAR_X:0):6, 12,LEFT%)　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L548"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L551",
+    "original": "(異母",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L551"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L554",
+    "original": "(異父",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L554"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L557",
+    "original": "(",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L557"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L560",
+    "original": "(異母逆転",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L560"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L563",
+    "original": "(異父逆転",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L563"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L566",
+    "original": "(逆転",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L566"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L572",
+    "original": "\\@(TALENT:ARG:オトコ) ? 兄 # 姉\\@\\@(TALENT:(PL_VAR_X:0):120) ? 弟 # 妹\\@で\\@(TALENT:ARG:オトコ) ? 兄 # 姉\\@)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L572"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L574",
+    "original": "\\@(TALENT:(PL_VAR_X:0):120) ? 兄 # 姉\\@\\@(TALENT:ARG:オトコ) ? 弟 # 妹\\@で\\@(TALENT:ARG:オトコ) ? 弟 # 妹\\@)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L574"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L578",
+    "original": "\\@(TALENT:ARG:オトコ) ? 兄 # 姉\\@\\@(TALENT:(PL_VAR_X:0):120) ? 弟 # 妹\\@で\\@(TALENT:ARG:オトコ) ? 兄 # 姉\\@)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L578"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L581",
+    "original": "\\@(TALENT:(PL_VAR_X:0):120) ? 兄 # 姉\\@\\@(TALENT:ARG:オトコ) ? 弟 # 妹\\@で\\@(TALENT:ARG:オトコ) ? 弟 # 妹\\@)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L581"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L586",
+    "original": "\\@(TALENT:ARG:オトコ) ? 兄 # 姉\\@\\@(TALENT:(PL_VAR_X:0):120) ? 弟 # 妹\\@で\\@(TALENT:ARG:オトコ) ? 兄 # 姉\\@)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L586"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L588",
+    "original": "\\@(TALENT:(PL_VAR_X:0):120) ? 兄 # 姉\\@\\@(TALENT:ARG:オトコ) ? 弟 # 妹\\@で\\@(TALENT:ARG:オトコ) ? 弟 # 妹\\@)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L588"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L603",
+    "original": "\\@(FLAG:12 & 2) ? □ 子供関係 # 子供関係:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L603"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L637",
+    "original": "今までに、",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L637"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L639",
+    "original": "{CFLAG:ARG:3001}人の子供が出来た。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L639"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L642",
+    "original": "{PL_VAR_X:0}人の子供が出来\\@(PL_VAR_X:1 > 0) ? て、 # た。\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L642"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L644",
+    "original": "{PL_VAR_X:1}人の子供を産んだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L644"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L648",
+    "original": "\\@(PL_VAR_L:2 > 0) ? [44]前の子供リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L648"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L649",
+    "original": "\\@(PL_VAR_L:2 < PL_VAR_L:3) ? [66]次の子供リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L649"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L665",
+    "original": "\\@TALENT:(PL_VAR_X:3):120 ? 　息子　 # 　 娘 　\\@:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L665"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L666",
+    "original": "%SHOW_CALLNAME3(PL_VAR_X:3, 12, 0)%　第{CFLAG:(PL_VAR_X:3):3108}世代　(父:%CSTR:(PL_VAR_X:3):5, 12,LEFT%　母:%CSTR:(PL_VAR_X:3):6, 12,LEFT%)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L666"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L673",
+    "original": "\\@(FLAG:12 & 2) ? □ 相性 # 相性:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L673"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L692",
+    "original": "特になし",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L692"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L702",
+    "original": "\\@(PL_VAR_L:4 > 0) ? [444]前の相性リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L702"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L703",
+    "original": "\\@(PL_VAR_L:4 < PL_VAR_L:5) ? [666]次の相性リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L703"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L723",
+    "original": "%SHOW_CALLNAME2(PL_VAR_X:3, 18)%×{LOCAL:1, 3}％",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L723"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L728",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L728"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L741",
+    "original": "\\@(FLAG:12 & 2) ? □ 現在の難易度 # 現在の難易度:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L741"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L742",
+    "original": "%DISPLAY_DIFFICULTY(FLAG:3)%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L742"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L749",
+    "original": "\\@(FLAG:12 & 2) ? □ この周に迎えたエンディング # この周に迎えたエンディング:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L749"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L753",
+    "original": "“Ending No.{FLAG:598, 2}\\@(FLAG:599 & 1) ? +# \\@ (%STR:0%)”",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L753"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L755",
+    "original": "“Ending No.{FLAG:598} (%ITEMNAME:(FLAG:598 - 10000)%単体エンド)”",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L755"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L757",
+    "original": "“Ending No.{FLAG:598 - 10000} (%ITEMNAME:(FLAG:598 - 20000)%奴隷エンド)”",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L757"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L768",
+    "original": "\\@(FLAG:12 & 2) ? □ 種族知識 # 種族知識:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L768"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L771",
+    "original": "[妖精] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L771"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L773",
+    "original": "[吸血鬼] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L773"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L775",
+    "original": "[機械] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L775"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L777",
+    "original": "[亡霊] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L777"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L779",
+    "original": "[人形] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L779"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L781",
+    "original": "[悪魔] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L781"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L783",
+    "original": "[河童] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L783"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L785",
+    "original": "[妖狐] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L785"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L787",
+    "original": "[ワーハクタク] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L787"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L789",
+    "original": "[ゾンビフェアリー] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L789"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L791",
+    "original": "[ヒト] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L791"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L807",
+    "original": "\\@(FLAG:12 & 2) ? □ 助手引継ぎ可能人数増加状況 # 助手引継ぎ可能人数増加状況:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L807"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L809",
+    "original": "大甲斐性持ち",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L809"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L812",
+    "original": "OVERDRIVEクリア",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L812"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L814",
+    "original": "ULTRAクリア",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L814"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L816",
+    "original": "PHANTASMクリア",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L816"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L820",
+    "original": "調教師Lv5到達",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L820"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L822",
+    "original": "処女百人斬り達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L822"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L824",
+    "original": "奴隷売却累計2500萬圓達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L824"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L826",
+    "original": "高級奴隷売却累計1000萬圓達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L826"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L828",
+    "original": "奴隷売却最高金額40萬圓達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L828"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L830",
+    "original": "主人の種族転生資格全種取得",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L830"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L832",
+    "original": "風呂改装＆特殊触手付加45種以上達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L832"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L834",
+    "original": "幻想郷秘宝館開館！",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L834"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L836",
+    "original": "ノーマルハーレムエンド20達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L836"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L838",
+    "original": "幻想郷入手経験あり",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L838"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L840",
+    "original": "触手姫エンド到達",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L840"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L842",
+    "original": "10種以上ハーレム同時条件達成",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L842"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L844",
+    "original": "妖精を統べる者となった",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L844"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L846",
+    "original": "[地獄の勲章]を入手",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L846"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L855",
+    "original": "\\@(FLAG:12 & 2) ? □ 各収入の最高額一覧 # 各収入の最高額一覧:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L855"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L857",
+    "original": "奴隷売却で稼いだ最高金額　　　:{MONEY:997}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L857"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L859",
+    "original": "ビデオで稼いだ最高金額　　　　:{MONEY:970}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L859"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L861",
+    "original": "写真で稼いだ最高金額　　　　　:{MONEY:971}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L861"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L863",
+    "original": "野外ライブで稼いだ最高金額　　:{MONEY:972}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L863"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L865",
+    "original": "工作(主人)で稼いだ最高金額　　:{MONEY:976}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L865"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L867",
+    "original": "工作(奴隷)で稼いだ最高金額　　:{MONEY:974}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L867"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L869",
+    "original": "奴隷売春で稼いだ最高金額　　　:{MONEY:973}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L869"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L871",
+    "original": "触手錬金で稼いだ最高金額　　　:{MONEY:975}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L871"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L874",
+    "original": "搾乳器で稼いだ最高金額　　　　:{MONEY:980}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L874"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L876",
+    "original": "採尿器で稼いだ最高金額　　　　:{MONEY:981}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L876"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L878",
+    "original": "愛液で稼いだ最高金額　　　　　:{MONEY:984}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L878"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L880",
+    "original": "産卵で稼いだ最高金額　　　　　:{MONEY:982}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L880"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L882",
+    "original": "陰毛お守りで稼いだ最高金額　　:{MONEY:983}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L882"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L885",
+    "original": "スイートポテトで稼いだ最高金額:{MONEY:985}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L885"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L887",
+    "original": "ワインで稼いだ最高金額　　　　:{MONEY:986}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L887"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L889",
+    "original": "アスパラで稼いだ最高金額　　　:{MONEY:987}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L889"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L892",
+    "original": "弁当(主人)で稼いだ最高金額　　:{MONEY:995}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L892"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L894",
+    "original": "弁当(奴隷)で稼いだ最高金額　　:{MONEY:996}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L894"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L897",
+    "original": "全部の収入の中の最高金額　　　:{MONEY:998}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L897"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L904",
+    "original": "\\@(FLAG:12 & 2) ? □ 酔い具合 # 酔い具合:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L904"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L913",
+    "original": "\\@(FLAG:12 & 2) ? □ 取得済み陥落系素質 # 取得済み陥落系素質:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L913"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L916",
+    "original": "[恋慕] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L916"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L918",
+    "original": "[妄信] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L918"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L920",
+    "original": "[親愛] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L920"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L922",
+    "original": "[相愛] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L922"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L924",
+    "original": "[服従] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L924"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L926",
+    "original": "[烙印] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L926"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L928",
+    "original": "[隷属] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L928"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L930",
+    "original": "[\\@(NO:MASTER == 1021 || NO:MASTER == 1022) ? 式 # 使い魔\\@] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L930"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L932",
+    "original": "[淫乱] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L932"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L934",
+    "original": "[淫核] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L934"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L936",
+    "original": "[淫壷] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L936"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L938",
+    "original": "[淫尻] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L938"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L940",
+    "original": "[淫乳] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L940"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L942",
+    "original": "[尿道狂] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L942"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L944",
+    "original": "[キス魔] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L944"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L948",
+    "original": "[ドＳ] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L948"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L950",
+    "original": "[ドＭ] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L950"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L952",
+    "original": "[即落ち] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L952"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L954",
+    "original": "[淫魔] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L954"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L956",
+    "original": "[幼児退行] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L956"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L958",
+    "original": "[狂気] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L958"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L960",
+    "original": "[精神崩壊] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L960"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L962",
+    "original": "[傀儡] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L962"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L964",
+    "original": "[記憶消去] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L964"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L966",
+    "original": "[壊造人格] ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L966"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L979",
+    "original": "\\@(FLAG:12 & 2) ? □  # %CALLNAME:ARG%から入手した蒐集品:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L979"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L980",
+    "original": "\\@(FLAG:12 & 2) ? %CALLNAME:ARG%から入手した蒐集品 # \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L980"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L987",
+    "original": "[%LOCALS:LOCAL%:\\@(DA:(LOCAL:2):(1+LOCAL) > 0) ? 済 # 未 \\@］",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L987"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L994",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L994"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1007",
+    "original": "\\@(FLAG:12 & 2) ? □ 陰核成長具合 # 陰核成長具合:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1007"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1009",
+    "original": "\\@(BASE:ARG:陰核 >= 250) ? 《Lv.MAX》 # 《Lv.{BASE:ARG:陰核 / 50}》 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1009"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1017",
+    "original": "\\@(FLAG:12 & 2) ? □ 陰毛状態 # 陰毛状態:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1017"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1021",
+    "original": "陰毛は生えてません。\\@(CFLAG:ARG:36 == 1) ? 脱毛処理をされているので、 # そして、\\@生える気配もありません。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1021"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1024",
+    "original": "陰毛が綺麗に生え揃っています。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1024"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1027",
+    "original": "恥丘からアナルまで密生した陰毛に覆われています。\\@(CFLAG:ARG:36 == 1) ? 脱毛処理はされているので今後さらに伸びることはないでしょう。 # \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1027"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1029",
+    "original": "陰毛が鬱葱と生い繁っています。\\@(CFLAG:ARG:36 == 1) ? 脱毛処理はされているので今後さらに伸びることはないでしょう。 # \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1029"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1031",
+    "original": "陰毛が綺麗に生え揃っています。\\@(CFLAG:ARG:36 == 1) ? 脱毛処理はされているので今後さらに伸びることはないでしょう。 # \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1031"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1033",
+    "original": "陰毛がだいぶ生え揃いつつあるようで\\@(CFLAG:ARG:36 == 1) ? すが、脱毛処理がされているので今後さらに伸びることはないでしょう。 # す。\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1033"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1035",
+    "original": "陰毛が所々に生えつつあるようで\\@(CFLAG:ARG:36 == 1) ? すが、脱毛処理がされているので今後さらに伸びることはないでしょう。 # す。\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1035"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1037",
+    "original": "陰毛は生えてません。\\@(CFLAG:ARG:36 == 1) ? 脱毛処理がされているので今後生えることはないでしょう。 # 今後生えてくることになるでしょう。\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1037"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1046",
+    "original": "\\@(FLAG:12 & 2) ? □ 特殊装着具 # 特殊装着具:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1046"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1049",
+    "original": "《クリトリスリング》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1049"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1051",
+    "original": "《奴隷管理用貞操帯》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1051"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1053",
+    "original": "《ベリージュエル》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1053"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1055",
+    "original": "《ボンデージ》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1055"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1057",
+    "original": "《ラビアピアス》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1057"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1059",
+    "original": "《ニプルピアス》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1059"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1068",
+    "original": "\\@(FLAG:12 & 2) ? □ 触手インプラント # 触手インプラント箇所:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1068"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1071",
+    "original": "《クリトリス》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1071"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1073",
+    "original": "《子宮》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1073"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1075",
+    "original": "《直腸》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1075"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1077",
+    "original": "《乳房》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1077"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1079",
+    "original": "《ヘソ》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1079"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1081",
+    "original": "《舌根》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1081"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1083",
+    "original": "《膀胱》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1083"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1085",
+    "original": "《心臓》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1085"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1087",
+    "original": "《脊椎》 ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1087"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1089",
+    "original": "《額》",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1089"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1098",
+    "original": "\\@(FLAG:12 & 2) ? □ 各種開発度 # 各種開発度:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1098"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1106",
+    "original": "Ｃ開発度:{CFLAG:ARG:Ｃ開発度, 4}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1106"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1112",
+    "original": "Ｖ開発度:{CFLAG:ARG:Ｖ開発度, 4}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1112"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1118",
+    "original": "Ａ開発度:{CFLAG:ARG:Ａ開発度, 4}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1118"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1124",
+    "original": "Ｂ開発度:{CFLAG:ARG:Ｂ開発度, 4}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1124"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1130",
+    "original": "精飲開発度:{CFLAG:ARG:精飲開発度, 4}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1130"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1136",
+    "original": "放尿レベル:{CFLAG:ARG:放尿レベル, 4}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1136"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1145",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1145"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1158",
+    "original": "\\@(FLAG:12 & 2) ? □ 奴隷調教の進行状況 # 奴隷調教の進行状況:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1158"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1162",
+    "original": "\\@(RESULT) ? %CSTR:ARG:3% # 何らかの方法で連れてきた。\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1162"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1167",
+    "original": "まだ調教したことがない。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1167"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1169",
+    "original": "調教による命が失われた。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1169"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1171",
+    "original": "調教の結果、理性を失う、恋慕を抱き、服従を誓い、色欲に溺れているようだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1171"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1173",
+    "original": "調教の結果、恋慕を抱き、服従を誓い、色欲に溺れているようだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1173"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1175",
+    "original": "調教により服従を誓いつつも、そこに愛があると信じているようだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1175"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1177",
+    "original": "調教による快楽を愛だと信じているようだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1177"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1179",
+    "original": "調教により与えられる肉欲の前に、服従を誓わされている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1179"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1181",
+    "original": "調教の中に、恋愛的な繋がりを見出しているようだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1181"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1183",
+    "original": "調教により、服従を誓うまでになっている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1183"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1185",
+    "original": "調教により、淫乱の花が麗しく咲き始めている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1185"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1187",
+    "original": "調教による理性が尽きた。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1187"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1189",
+    "original": "調教をだいぶ受け入れるようになってきた。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1189"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1191",
+    "original": "調教による快楽に夢中になっている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1191"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1193",
+    "original": "調教による恥辱にもだいぶ慣れてきたようだ。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1193"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1195",
+    "original": "調教による苦痛に反応をするようになった。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1195"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1197",
+    "original": "現在調教を続けているところである。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1197"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1203",
+    "original": "%CALLNAME:MASTER%と永遠の時を歩むために、蓬莱の罪をその身と心に背負って生きていくことになる。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1203"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1205",
+    "original": "\\@(CFLAG:ARG:3) ? 助手にすることは可能であるが、売却は不可能 # 売却すること及び助手にすることがいずれも可能\\@である。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1205"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1207",
+    "original": "\\@(CFLAG:ARG:3) ? 売却条件は満たしているが、売却そのものは不可能 # 売却することが可能\\@である。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1207"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1209",
+    "original": "売却することも助手にすることも不可能である。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1209"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1213",
+    "original": "\\@(CFLAG:ARG:18 == 1) ? 前の周回から引き継いでいる # 引継ぎキャラではない\\@。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1213"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1236",
+    "original": "□ サイズ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1236"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1238",
+    "original": "成長済みなら1:{MARK:ARG:81}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1238"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1240",
+    "original": "身長:{BASE:ARG:10 / 10}.{BASE:ARG:10 % 10}cm",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1240"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1245",
+    "original": "体重:{LOCAL:11 / 10}.{LOCAL:11 % 10}kg",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1245"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1246",
+    "original": "ボテ腹前({BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1246"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1250",
+    "original": "体重:{LOCAL:11 / 10}.{LOCAL:11 % 10}kg",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1250"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1251",
+    "original": "妊娠前({BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1251"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1253",
+    "original": "体重:{BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1253"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1257",
+    "original": "Ｂ:{BASE:ARG:12 / 10}.{BASE:ARG:12 % 10}cm ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1257"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1263",
+    "original": "/ Ｗ:{LOCAL:13 / 10}.{LOCAL:13 % 10}cm",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1263"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1264",
+    "original": "ボテ腹前({BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm) /",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1264"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1268",
+    "original": "/ Ｗ:{LOCAL:13 / 10}.{LOCAL:13 % 10}cm",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1268"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1269",
+    "original": "妊娠前({BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm) /",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1269"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1271",
+    "original": "/ Ｗ:{BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm /",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1271"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1273",
+    "original": "Ｈ:{BASE:ARG:14 / 10}.{BASE:ARG:14 % 10}cm",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1273"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1278",
+    "original": "Ｐ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1278"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1280",
+    "original": "(具現)",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1280"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1281",
+    "original": ":{BASE:ARG:15 / 10}.{BASE:ARG:15 % 10}cm …",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1281"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1285",
+    "original": "%LOCALS%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1285"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1292",
+    "original": "ｸﾘ:{LOCAL / 10}.{LOCAL % 10}cm",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1292"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1305",
+    "original": "%LOCALS:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1305"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1311",
+    "original": "\\@(FLAG:12 & 2) ? □ 今まで集めた蒐集品 # 今まで集めた蒐集品:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1311"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1338",
+    "original": "%LOCALS:COUNT%{FLAG:(501 + COUNT),3}%STR:0,8,LEFT%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1338"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1339",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1339"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1348",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1348"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1355",
+    "original": "特になし",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1355"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1365",
+    "original": "全蒐集品　{LOCAL}種類　{LOCAL:3}品種　蒐集済",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1365"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1377",
+    "original": "□ \\@(ARG == MASTER) ? 奴隷からの逆相性 # 主人および奴隷からの逆相性\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1377"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1379",
+    "original": "\\@(ARG == MASTER) ? 奴隷からの逆相性 # 主人および奴隷からの逆相性\\@:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1379"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1398",
+    "original": "特になし",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1398"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1408",
+    "original": "\\@(PL_VAR_L:4 > 0) ? [444]前の相性リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1408"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1409",
+    "original": "\\@(PL_VAR_L:4 < PL_VAR_L:5) ? [666]次の相性リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1409"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1430",
+    "original": "%SHOW_CALLNAME2(PL_VAR_X:3, 18)%×{LOCAL:1, 3}％",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1430"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1435",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1435"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1447",
+    "original": "□ 奴隷ごとの各収入の最高額一覧",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1447"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1449",
+    "original": "奴隷ごとの各収入の最高額一覧:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1449"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1452",
+    "original": "娼館で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_売春}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1452"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1454",
+    "original": "ビデオで稼いだ最高金額　　　　　:{CFLAG:ARG:最高金額_ビデオ}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1454"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1456",
+    "original": "写真で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_写真}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1456"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1458",
+    "original": "野外ライブで稼いだ最高金額　　　:{CFLAG:ARG:最高金額_工作}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1458"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1460",
+    "original": "工作で稼いだ最高金額　　　　　　:{CFLAG:ARG:85}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1460"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1463",
+    "original": "母乳で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_母乳}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1463"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1465",
+    "original": "聖水で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_聖水}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1465"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1467",
+    "original": "愛液で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_愛液}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1467"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1469",
+    "original": "産卵で稼いだ最高金額　　　　　　:{CFLAG:ARG:最高金額_卵}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1469"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1471",
+    "original": "陰毛お守りで稼いだ最高金額　　　:{CFLAG:ARG:最高金額_陰毛}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1471"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1474",
+    "original": "スイートポテトで稼いだ最高金額　:{CFLAG:ARG:最高金額_焼芋}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1474"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1476",
+    "original": "ワインで稼いだ最高金額　　　　　:{CFLAG:ARG:最高金額_ワイン}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1476"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1478",
+    "original": "アスパラで稼いだ最高金額　　　　:{CFLAG:ARG:最高金額_アスパラ}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1478"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1481",
+    "original": "弁当(奴隷)で稼いだ最高金額　　　:{CFLAG:ARG:最高金額_弁当}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1481"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1484",
+    "original": "全部の収入の中の最高金額　　　　:{CFLAG:ARG:最高金額_全収入}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1484"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1486",
+    "original": "奴隷が今まで売春で稼いだ圓の総額:{CFLAG:ARG:最高金額_集団売春}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1486"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1487",
+    "original": "奴隷が今まで稼いだ圓の総額　　　:{CFLAG:ARG:稼ぎの総額}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1487"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1499",
+    "original": "□ 現在の全奴隷の種類別の収入総金額一覧",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1499"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1501",
+    "original": "現在の全奴隷の種類別の収入総金額一覧:",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1501"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1506",
+    "original": "ビデオで稼いだ総金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_ビデオ,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1506"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1508",
+    "original": "写真で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_写真,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1508"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1510",
+    "original": "野外ライブで稼いだ最高金額　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_工作,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1510"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1512",
+    "original": "工作で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:85,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1512"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1515",
+    "original": "母乳で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_母乳,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1515"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1517",
+    "original": "聖水で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_聖水,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1517"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1519",
+    "original": "愛液で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_愛液,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1519"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1521",
+    "original": "産卵で稼いだ最高金額　　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_卵,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1521"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1523",
+    "original": "陰毛お守りで稼いだ最高金額　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_陰毛,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1523"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1526",
+    "original": "スイートポテトで稼いだ最高金額　　:{SUMCARRAY(CFLAG:ARG:最高金額_焼芋,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1526"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1528",
+    "original": "ワインで稼いだ最高金額　　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_ワイン,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1528"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1530",
+    "original": "アスパラで稼いだ最高金額　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_アスパラ,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1530"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1533",
+    "original": "弁当(奴隷)で稼いだ総金額　　　　　:{SUMCARRAY(CFLAG:ARG:最高金額_弁当,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1533"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1537",
+    "original": "現奴隷が今まで売春で稼いだ圓の総額:{SUMCARRAY(CFLAG:ARG:最高金額_集団売春,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1537"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1538",
+    "original": "現奴隷が今まで稼いだ圓の総金額　　:{SUMCARRAY(CFLAG:ARG:稼ぎの総額,1,CHARANUM)}圓",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1538"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1545",
+    "original": "\\@(FLAG:12 & 2) ? □ その他主人に関する情報 # その他主人に関する情報:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1545"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1548",
+    "original": "キャラクター固有番号:{CFLAG:ARG:3109}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1548"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1550",
+    "original": "奴隷売却による収入の累計　　:\\@(MONEY:990 > 100000000) ? 1億圓以上 # {MONEY:990}圓\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1550"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1552",
+    "original": "高級奴隷売却による収入の累計:\\@(MONEY:991 > 100000000) ? 1億圓以上 # {MONEY:991}圓\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1552"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1554",
+    "original": "売春による収入の累計　　　　:\\@(MONEY:977 > 100000000) ? 1億圓以上 # {MONEY:977}圓\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1554"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1556",
+    "original": "現有全奴隷の好感度総合計　　:{SUMCARRAY(CFLAG:ARG:好感度,1,CHARANUM)}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1556"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1558",
+    "original": "現有全奴隷のストレス総合計　:{SUMCARRAY(CFLAG:ARG:ストレス,1,CHARANUM)}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1558"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1560",
+    "original": "今まで購入した奴隷の総数　　:{FLAG:39, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1560"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1562",
+    "original": "今まで相愛となった奴隷の総数:{FLAG:35, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1562"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1564",
+    "original": "今まで隷属させた奴隷の総数　:{FLAG:36, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1564"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1566",
+    "original": "今まで人格壊造した奴隷の総数:{FLAG:37, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1566"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1568",
+    "original": "今まで淫魔にした奴隷の総数　:{FLAG:38, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1568"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1570",
+    "original": "娼館累計来客数　　　　　　　:{FLAG:3006, 5}人",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1570"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1572",
+    "original": "今までに{FLAG:30, 5}人もの大量の奴隷を堕として得意満面である。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1572"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1574",
+    "original": "今までに{FLAG:32, 5}匹もの大量の妖精を堕として有頂天である。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1574"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1576",
+    "original": "今までに{CFLAG:ARG:コスプレ実行回数, 5}回ほど、コスプレをしたことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1576"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1578",
+    "original": "今までに{CFLAG:ARG:調教説教薀蓄受講数, 5}回ほど、調教中に説教か薀蓄を受講したことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1578"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1580",
+    "original": "今までに{CFLAG:ARG:パイズリした回数, 5}回ほど、パイズリをしてあげたことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1580"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1582",
+    "original": "今までに{CFLAG:ARG:パイズリされた回数, 5}回ほど、パイズリを堪能したことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1582"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1584",
+    "original": "奴隷に処女を散らされたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1584"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1586",
+    "original": "奴隷に夜這いされ処女を捧げられたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1586"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1588",
+    "original": "奴隷に暴行されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1588"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1590",
+    "original": "奴隷に触手により襲撃されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1590"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1592",
+    "original": "寝取られ現場を目撃したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1592"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1594",
+    "original": "奴隷に弁当を食べさせたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1594"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1596",
+    "original": "奴隷に毒を盛られて、ダメージを受けたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1596"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1598",
+    "original": "奴隷が毒を盛ったのを見破ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1598"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1600",
+    "original": "奴隷が愛を込めて作ったチョコを食べてあげたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1600"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1602",
+    "original": "奴隷が愛を込めて作ったチョコを叩き売ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1602"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1604",
+    "original": "奴隷をゾンビフェアリーにしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1604"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1606",
+    "original": "奴隷を吸血鬼にしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1606"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1608",
+    "original": "奴隷を機械に改造したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1608"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1610",
+    "original": "奴隷を亡霊にしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1610"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1612",
+    "original": "奴隷の精神を人形に封じたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1612"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1614",
+    "original": "奴隷をキョンシーに変えたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1614"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1616",
+    "original": "人形を製作したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1616"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1618",
+    "original": "小悪魔を召喚したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1618"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1620",
+    "original": "身体強化の魔法により強化されている",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1620"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1622",
+    "original": "性転換の経験がある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1622"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1624",
+    "original": "調教中にcaved!!!!されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1624"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1626",
+    "original": "思いっきり酔っ払ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1626"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1628",
+    "original": "ストレスを溜め込んだことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1628"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1630",
+    "original": "一日のはじまりをセックスからスタートさせたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1630"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1632",
+    "original": "一日のはじまりを足コキからスタートさせたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1632"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1635",
+    "original": "触手に特殊な能力をつけて楽しんでいる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1635"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1638",
+    "original": "現在eratohoYMに潜むバグと戦っている",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1638"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1646",
+    "original": "\\@(FLAG:12 & 2) ? □  # その他%CALLNAME:ARG%に関する情報:\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1646"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1647",
+    "original": "\\@(FLAG:12 & 2) ? その他%CALLNAME:ARG%に関する情報 # \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1647"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1652",
+    "original": "ARG:{ARG}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1652"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1655",
+    "original": "キャラクター固有番号:{CFLAG:ARG:3109}",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1655"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1657",
+    "original": "今までに{CFLAG:ARG:コスプレ実行回数, 5}回ほど、コスプレをしたことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1657"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1659",
+    "original": "今までに{CFLAG:ARG:調教説教薀蓄受講数, 5}回ほど、調教中に説教か薀蓄を受講したことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1659"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1661",
+    "original": "今までに{CFLAG:ARG:パイズリした回数, 5}回ほど、パイズリをしてあげたことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1661"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1663",
+    "original": "今までに{CFLAG:ARG:パイズリされた回数, 5}回ほど、パイズリを堪能したことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1663"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1665",
+    "original": "密かに{CFLAG:ARG:161, 7}本ほど、盗撮したえっちビデオを保管している。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1665"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1667",
+    "original": "今までに{CFLAG:ARG:主人と調教キス数, 5}回ほど、調教中に主人と口付けを交わした。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1667"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1669",
+    "original": "今までに{CFLAG:ARG:主人にＶ捧げ回数, 5}回ほど、調教中に主人の肉棒を膣で受け止めた。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1669"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1671",
+    "original": "今までに{CFLAG:ARG:主人にＡ捧げ回数, 5}回ほど、調教中に主人の肉棒をアナルで受け止めた。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1671"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1673",
+    "original": "今までに{CFLAG:ARG:主人のＶ犯し回数, 5}回ほど、調教中に主人の膣を肉棒で味わった。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1673"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1675",
+    "original": "今までに{CFLAG:ARG:主人のＡ犯し回数, 5}回ほど、調教中に主人のアナルを肉棒で味わった。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1675"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1677",
+    "original": "今までに{CFLAG:ARG:408, 5}回ほど、売春で規定外のサービスを行った。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1677"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1679",
+    "original": "思いっきり酔っ払ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1679"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1681",
+    "original": "ストレスを溜め込んだことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1681"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1683",
+    "original": "主人の処女を強姦して奪ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1683"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1685",
+    "original": "主人を暴行したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1685"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1687",
+    "original": "主人を触手で襲撃したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1687"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1689",
+    "original": "主人に夜這いして処女を捧げた",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1689"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1691",
+    "original": "別の奴隷に寝取られたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1691"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1693",
+    "original": "別の奴隷を主人から寝取ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1693"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1695",
+    "original": "浣腸された経験あり",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1695"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1697",
+    "original": "一旦解放されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1697"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1699",
+    "original": "他の奴隷を連れてきたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1699"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1701",
+    "original": "産卵した経験あり",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1701"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1703",
+    "original": "割礼された経験あり",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1703"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1705",
+    "original": "強制成長させられた経験あり",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1705"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1707",
+    "original": "性転換させられたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1707"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1709",
+    "original": "[卵生]を消去されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1709"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1711",
+    "original": "どこからともなく媚薬を調達したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1711"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1713",
+    "original": "調教中にcaved!!!!されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1713"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1715",
+    "original": "調教中に爆発したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1715"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1717",
+    "original": "公開オナニーの経験がある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1717"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1719",
+    "original": "排卵誘発剤を飲まされたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1719"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1721",
+    "original": "人形達に拘束され、処女を散らされる程∇れた",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1721"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1723",
+    "original": "なんらかのハードな暴力調教を受けたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1723"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1725",
+    "original": "なんらかの不思議な風呂に叩き込まれたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1725"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1727",
+    "original": "なんらかの紳士的かつ特殊な触手体験をしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1727"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1729",
+    "original": "獣による性行為の経験がある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1729"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1731",
+    "original": "鈴蘭の毒を使ったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1731"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1733",
+    "original": "触手を{CFLAG:ARG:触手出産数}体、出産したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1733"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1735",
+    "original": "仕送りをしてくれる子どもが{CFLAG:ARG:3002}人いる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1735"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1737",
+    "original": "得意料理を披露したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1737"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1739",
+    "original": "主人の弁当を食べたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1739"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1741",
+    "original": "主人に毒を盛ったことがありダメージを与えた",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1741"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1743",
+    "original": "主人に毒を盛ったものの見破られたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1743"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1745",
+    "original": "他人の毒弁当を食わされダメージを受けたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1745"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1747",
+    "original": "愛を込めて贈ったチョコを食べてもらえたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1747"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1749",
+    "original": "愛を込めて贈ったチョコを叩き売られてしまったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1749"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1751",
+    "original": "ライブで失敗したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1751"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1753",
+    "original": "ライブで持ち歌を披露したことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1753"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1755",
+    "original": "ライブ後にファンからプレゼントをもらったことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1755"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1757",
+    "original": "トリオでライブしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1757"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1759",
+    "original": "朝から騎乗位でハッスルしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1759"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1761",
+    "original": "朝から３Ｐでハッスルしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1761"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1763",
+    "original": "朝の新妻プレイをしたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1763"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1765",
+    "original": "朝、主人を足コキしながら起こしたことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1765"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1767",
+    "original": "今までにいっぱい稼いできている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1767"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1771",
+    "original": "\\@(LOCAL >= 321) ?  %LOCALS:(LOCAL - 321)%に助手として # %LOCALS:(LOCAL - 301)%に奴隷として\\@野外調教に連れていかれたことが{CFLAG:ARG:LOCAL,5}回ほどある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1771"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1775",
+    "original": "触手部屋に幽閉されたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1775"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1777",
+    "original": "触手に催眠術をかけられたことがある",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1777"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1781",
+    "original": "%CSTR:ARG:PC_VAR1%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1781"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1789",
+    "original": "\\@(FLAG:12 & 2) ? □ # \\@助手としての",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1789"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1790",
+    "original": "%CALLNAME:ARG%による他の奴隷への調教経験",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1790"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1814",
+    "original": "\\@(PL_VAR_L:4 > 0) ? [444]前の奴隷リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1814"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1815",
+    "original": "\\@(PL_VAR_L:4 < PL_VAR_L:5) ? [666]次の奴隷リスト # 　 \\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1815"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1841",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1841"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1842",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%のことを主人より気にしてるかもしれない。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1842"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1844",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1844"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1845",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%の性癖を知り尽くしている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1845"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1848",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1848"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1850",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1850"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1851",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%のことを凄く気に入っている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1851"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1854",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1854"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1856",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1856"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1857",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%と確かな絆を感じている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1857"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1860",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1860"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1862",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1862"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1863",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%と一緒にいるとえっちなことをしたくなる。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1863"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1865",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1865"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1866",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%への調教のコツを掴みはじめている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1866"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1869",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1869"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1871",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1871"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1872",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%への調教を少し楽しみにしている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1872"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1875",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1875"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1877",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1877"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1878",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%のことが少々気になっている。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1878"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1881",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1881"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1883",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1883"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1884",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%の喘ぎ声を聞いていたりする。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1884"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1887",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1887"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1889",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1889"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1890",
+    "original": "%SHOW_CALLNAME(PC_VAR4)%の調教に立ち会ったことがある。",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1890"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1893",
+    "original": "%PL_STR_X:0%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1893"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1898",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1898"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1902",
+    "original": "特になし",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1902"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1909",
+    "original": "□ 肉体情報",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1909"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1913",
+    "original": "【口",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1913"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1915",
+    "original": "猫舌",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1915"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1916",
+    "original": "】",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1916"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1918",
+    "original": "まだ誰にも唇を許していない",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1918"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1920",
+    "original": "今まで{EXP:ARG:キス経験}回の口づけを経験、{EXP:ARG:フェラ経験}回のフェラを経験した",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1920"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1922",
+    "original": "今まで{EXP:ARG:キス経験}回の口づけを経験した",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1922"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1924",
+    "original": "今まで{EXP:ARG:フェラ経験}回のフェラを経験した",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1924"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1927",
+    "original": "精液の味を認識する度に快楽を思い出してしまい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1927"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1929",
+    "original": "精液を抵抗なく飲むことが出来る",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1929"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1932",
+    "original": "【胸",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1932"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1934",
+    "original": "絶壁",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1934"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1936",
+    "original": "貧乳",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1936"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1938",
+    "original": "巨乳",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1938"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1940",
+    "original": "爆乳",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1940"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1942",
+    "original": "並乳",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1942"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1945",
+    "original": "ニプルピアス",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1945"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1946",
+    "original": "】",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1946"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1954",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1954"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1957",
+    "original": "極端に敏感　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1957"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1959",
+    "original": "感度抜群　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1959"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1961",
+    "original": "感度良好　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1961"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1964",
+    "original": "母乳体質",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1964"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1969",
+    "original": "バストへの刺激にかなり敏感",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1969"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1971",
+    "original": "【肌",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1971"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1973",
+    "original": "動物耳",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1973"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1975",
+    "original": "クリトリスリング",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1975"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1977",
+    "original": "ボンデージ装着中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1977"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1978",
+    "original": "】",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1978"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1986",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1986"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1989",
+    "original": "極端に敏感　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1989"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1991",
+    "original": "感度抜群　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1991"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1993",
+    "original": "感度良好　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1993"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L1997",
+    "original": "ペニス",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L1997"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2000",
+    "original": "ぷっくりと膨れ上がった",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2000"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2001",
+    "original": "クリトリス",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2001"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2003",
+    "original": "とペニス",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2003"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2005",
+    "original": "が常に疼いている",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2005"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2008",
+    "original": "【アナル",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2008"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2010",
+    "original": "アナルバイブ装着中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2010"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2011",
+    "original": "】",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2011"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2019",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2019"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2022",
+    "original": "感度最高　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2022"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2024",
+    "original": "感度抜群　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2024"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2026",
+    "original": "感度良好　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2026"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2029",
+    "original": "極上名器",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2029"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2031",
+    "original": "菊門への刺激に対して幸福感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2031"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2032",
+    "original": "完全に%CALLNAME:MASTER%のカタチに作り替えられたアナルは肉ヒダを蠢かせて絡みついてくる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2032"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2034",
+    "original": "名器",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2034"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2036",
+    "original": "菊門への刺激に対して幸福感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2036"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2037",
+    "original": "使い込んだ甲斐あって大変具合のいい穴になった",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2037"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2042",
+    "original": "菊門への刺激に対して幸福感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2042"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2043",
+    "original": "%CALLNAME:MASTER%を受け入れることに慣れきっている",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2043"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2048",
+    "original": "菊門への刺激に対して幸福感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2048"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2049",
+    "original": "ほぐれ始めて具合が良くなってきた",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2049"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2055",
+    "original": "菊門への刺激に対して幸福感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2055"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2056",
+    "original": "まだ異物を受け入れることに慣れていない",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2056"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2059",
+    "original": "菊門への刺激に対して幸福感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2059"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2060",
+    "original": "未開通",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2060"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2064",
+    "original": "アナル内射精されると多幸感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2064"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2066",
+    "original": "アナル内射精されると腸内が疼いてしまう",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2066"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2070",
+    "original": "【膣",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2070"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2072",
+    "original": "ラビアピアス",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2072"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2074",
+    "original": "バイブ装着中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2074"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2075",
+    "original": "】",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2075"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2077",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2077"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2080",
+    "original": "残留精液",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2080"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2092",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2092"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2095",
+    "original": "感度最高　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2095"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2097",
+    "original": "感度抜群　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2097"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2099",
+    "original": "感度良好　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2099"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2103",
+    "original": "未通女　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2103"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2104",
+    "original": "濡れやすい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2104"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2106",
+    "original": "未通女　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2106"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2107",
+    "original": "濡れにくい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2107"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2109",
+    "original": "未通女",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2109"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2112",
+    "original": "男を知らないまっさらの生娘だ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2112"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2115",
+    "original": "極上名器　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2115"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2117",
+    "original": "濡れやすい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2117"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2119",
+    "original": "濡れにくい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2119"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2124",
+    "original": "ヴァギナが主人のモノに順応し",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2124"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2125",
+    "original": "完全に%CALLNAME:MASTER%のカタチに作り替えられた膣内は肉ヒダを蠢かせて絡みついてくる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2125"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2127",
+    "original": "名器　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2127"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2129",
+    "original": "濡れやすい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2129"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2131",
+    "original": "濡れにくい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2131"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2136",
+    "original": "ヴァギナが主人のモノに順応し",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2136"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2137",
+    "original": "使い込んだ甲斐あって大変具合のいい穴になった",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2137"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2140",
+    "original": "濡れやすい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2140"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2142",
+    "original": "濡れにくい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2142"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2147",
+    "original": "ヴァギナが主人のモノに順応し",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2147"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2148",
+    "original": "%CALLNAME:MASTER%を受け入れることに慣れきっている",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2148"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2151",
+    "original": "濡れやすい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2151"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2153",
+    "original": "濡れにくい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2153"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2158",
+    "original": "ヴァギナが主人のモノに順応し",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2158"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2159",
+    "original": "ほぐれ始めて具合が良くなってきた",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2159"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2162",
+    "original": "濡れやすい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2162"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2164",
+    "original": "濡れにくい",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2164"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2169",
+    "original": "ヴァギナが主人のモノに順応し",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2169"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2171",
+    "original": "未使用に近い膣はまだ硬さを残している",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2171"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2176",
+    "original": "膣内射精されると多幸感を感じる",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2176"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2178",
+    "original": "膣内射精されると子宮が疼いてしまう",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2178"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2181",
+    "original": "子宮内では%CSTR:ARG:8%との子供がすくすくと育っている",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2181"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2308",
+    "original": "[\\@(FLAG:90 >= 3 && FLAG:4 < 50) ? {ARG, 3} # {ARG, 2}\\@]",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2308"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2309",
+    "original": "%SHOW_CALLNAME3(ARG, 18, 0)%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2309"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2312",
+    "original": "[\\@(FLAG:90 >= 3 && FLAG:4 < 50) ? {ARG, 3} # {ARG, 2}\\@]",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2312"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2313",
+    "original": "\\@(STRLENS(SUBSTRING(CALLNAME:ARG,0,16)) == 16) ? %SHOW_CALLNAME4(ARG, 0, 16)%.. # %SHOW_CALLNAME4(ARG, 0, 15)%...\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2313"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2328",
+    "original": "所持金%LOCALS%圓増加",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2328"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2335",
+    "original": "体力({BASE:ARG:体力, 4}/{MAXBASE:ARG:0, 4}) 気力({BASE:ARG:気力, 4}/{MAXBASE:ARG:1, 4}) 理性:\\@(TALENT:ARG:理性) ? {MIN(BASE:ARG:理性 / 100, 100), 3} # 無い\\@",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2335"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2337",
+    "original": "%",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2337"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2338",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2338"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2356",
+    "original": "☆",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2356"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2358",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2358"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2360",
+    "original": "◆",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2360"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2363",
+    "original": "▲",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2363"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2366",
+    "original": "■",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2366"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2372",
+    "original": "▽",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2372"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2375",
+    "original": "●",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2375"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2377",
+    "original": "○",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2377"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2379",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2379"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2390",
+    "original": "☆:調教中 ★:助手 ○:助手可 ●:元助手",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2390"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2392",
+    "original": "◆:触手幽閉中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2392"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2394",
+    "original": "■:牢収監中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2394"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2396",
+    "original": "▲:檻幽閉中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2396"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2398",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2398"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2400",
+    "original": ":売春中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2400"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2403",
+    "original": "▽:ハーブ作業中",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2403"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2404",
+    "original": "を表しています",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2404"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2412",
+    "original": "死.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2412"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2415",
+    "original": "男.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2415"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2418",
+    "original": "処.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2418"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2420",
+    "original": "乙.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2420"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2423",
+    "original": "双.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2423"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2425",
+    "original": "陰.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2425"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2430",
+    "original": "相.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2430"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2432",
+    "original": "親.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2432"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2434",
+    "original": "恋.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2434"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2438",
+    "original": "傷.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2438"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2440",
+    "original": "隷.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2440"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2442",
+    "original": "烙.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2442"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2444",
+    "original": "服.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2444"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2448",
+    "original": "使.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2448"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2451",
+    "original": "壊.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2451"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2453",
+    "original": "儡.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2453"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2455",
+    "original": "崩.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2455"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2457",
+    "original": "狂.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2457"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2459",
+    "original": "退.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2459"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2463",
+    "original": "淫.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2463"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2466",
+    "original": "魔.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2466"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2468",
+    "original": "乱.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2468"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2470",
+    "original": "豆.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2470"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2472",
+    "original": "膣.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2472"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2474",
+    "original": "尻.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2474"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2476",
+    "original": "胸.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2476"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2478",
+    "original": "尿.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2478"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2480",
+    "original": "ｷｽ.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2480"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2482",
+    "original": "Ｓ.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2482"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2484",
+    "original": "Ｍ.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2484"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2488",
+    "original": "即.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2488"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2493",
+    "original": "爆.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2493"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2495",
+    "original": "巨.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2495"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2497",
+    "original": "貧.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2497"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2499",
+    "original": "壁.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2499"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2501",
+    "original": "並.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2501"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2505",
+    "original": "乳.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2505"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2508",
+    "original": "妊.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2508"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2510",
+    "original": "抱.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2510"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2512",
+    "original": "卵.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2512"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2516",
+    "original": "育.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2516"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2519",
+    "original": "母.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2519"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2522",
+    "original": "寄.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2522"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2525",
+    "original": "種.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2525"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2528",
+    "original": "EX.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2528"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2531",
+    "original": "Ｎ.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2531"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2534",
+    "original": "娼.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2534"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2537",
+    "original": "求.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2537"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2540",
+    "original": "春.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2540"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2543",
+    "original": "看.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2543"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2546",
+    "original": "{TALENT:ARG:常連客, 2}.",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2546"
+  },
+  {
+    "key": "src/ERB/MAIN/PRINT_STATE.ERB_L2551",
+    "original": "売",
+    "context": "文件名: src/ERB/MAIN/PRINT_STATE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PRINT_STATE.ERB#L2551"
+  }
+]

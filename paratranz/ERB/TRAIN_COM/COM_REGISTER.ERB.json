@@ -1,0 +1,82 @@
+[
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L26",
+    "original": "調教メニュー登録",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L26"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L33",
+    "original": "[998] リセットする",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L33"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L35",
+    "original": "[999] 繰り返し",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L35"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L37",
+    "original": "[1000] 変更しないで戻る",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L37"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L39",
+    "original": "[1000] 登録しないで戻る",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L39"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L41",
+    "original": "[1000] 登録する",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L41"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L46",
+    "original": "メニュー {LOCAL:0+1} ",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L46"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L103",
+    "original": "調教メニューを登録しました",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L103"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L114",
+    "original": "現在登録されている調教メニューを表示します",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L114"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L117",
+    "original": "%TRAINNAME:(FLAG:LOCAL)%",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L117"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L131",
+    "original": "×{LOCAL:1}",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L131"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L133",
+    "original": "→ ",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L133"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L135",
+    "original": " ",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L135"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L147",
+    "original": "[{LOCAL, 3}] %TRAINNAME:LOCAL%",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L147"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L186",
+    "original": "調教メニューを実行します",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L186"
+  },
+  {
+    "key": "src/ERB/TRAIN_COM/COM_REGISTER.ERB_L212",
+    "original": "実行できないコマンドがあったので実行をしませんでした。",
+    "context": "文件名: src/ERB/TRAIN_COM/COM_REGISTER.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_COM/COM_REGISTER.ERB#L212"
+  }
+]

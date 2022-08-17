@@ -1,0 +1,172 @@
+[
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L509",
+    "original": "1",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L509"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L512",
+    "original": "2",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L512"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L516",
+    "original": "%CALLNAME:(TFLAG:900), 14, LEFT%　体力上限－75   気力上限－100 ",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L516"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L518",
+    "original": "%CALLNAME:(TFLAG:900), 14, LEFT%　体力上限－75  ",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L518"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L520",
+    "original": "%CALLNAME:(TFLAG:900), 14, LEFT%　気力上限－100 ",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L520"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L525",
+    "original": "%CALLNAME:(TFLAG:900)%復活できません……",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L525"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L530",
+    "original": "%CALLNAME:(TFLAG:900), 14, LEFT%　体力＋{LOSEBASE:0, 4, LEFT} 気力＋{LOSEBASE:1, 4, LEFT} 理性＋{LOSEBASE:9, 4, LEFT}",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L530"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L619",
+    "original": "[妖狐]の効果で媚薬を手に入れました。",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L619"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L626",
+    "original": "[化け狸]の効果で媚薬を手に入れました。",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L626"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L648",
+    "original": "一日が終わった……",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L648"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L654",
+    "original": "夜になった……",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L654"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L666",
+    "original": "%CALLNAME:TARGET%が行方不明になった……",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L666"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L667",
+    "original": "前回の調教で体力が落ちていたので、脱走する元気があるとも思えないのだが……",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L667"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L720",
+    "original": "%CALLNAME:TARGET%が売却可能になりました",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L720"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L726",
+    "original": "%CALLNAME:TARGET%が助手可能になりました",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L726"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L861",
+    "original": "%CALLNAME:ARG%は[%TALENTNAME:33%]を失った",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L861"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L871",
+    "original": "%CALLNAME:TARGET%の下の毛はきれいさっぱりに抜け落ちました",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L871"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L872",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:65%]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L872"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1062",
+    "original": "%CALLNAME:ARG%は日ごろの生活が祟って横に大分大きくなってしまったようだ…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1062"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1063",
+    "original": "%CALLNAME:ARG%の体型は[ぽっちゃり]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1063"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1069",
+    "original": "%CALLNAME:ARG%は健康的な体になったようだ…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1069"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1070",
+    "original": "%CALLNAME:ARG%の体型は普通になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1070"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1075",
+    "original": "%CALLNAME:ARG%の体はだいぶ健康的な見た目になってきた…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1075"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1076",
+    "original": "%CALLNAME:ARG%の体型は[スレンダー]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1076"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1081",
+    "original": "%CALLNAME:ARG%は駄肉が付いてきたようだ…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1081"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1082",
+    "original": "%CALLNAME:ARG%の体型は[ムチムチ]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1082"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1095",
+    "original": "%CALLNAME:ARG%の肉がだいぶ削ぎ落とされたようだ…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1095"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1096",
+    "original": "%CALLNAME:ARG%の体型は[ムチムチ]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1096"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1102",
+    "original": "%CALLNAME:ARG%は普通な肉付きに絞れたようだ…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1102"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1103",
+    "original": "%CALLNAME:ARG%の体型は普通になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1103"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1108",
+    "original": "%CALLNAME:ARG%の体は病人のように痩せこけてしまっている…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1108"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1109",
+    "original": "%CALLNAME:ARG%の体型は[がりがり]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1109"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1115",
+    "original": "%CALLNAME:ARG%は体を絞ってモデルのような体型になったようだ…",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1115"
+  },
+  {
+    "key": "src/ERB/EVENT/TURNEND.ERB_L1116",
+    "original": "%CALLNAME:ARG%の体型は[スレンダー]になった",
+    "context": "文件名: src/ERB/EVENT/TURNEND.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TURNEND.ERB#L1116"
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "key": "src/ERB/SUPPORT.ERB_L15",
+    "original": "{DAY}日目",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L15"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L19",
+    "original": "(昼)",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L19"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L23",
+    "original": "(夜)",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L23"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L29",
+    "original": "＊Debug＊",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L29"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L33",
+    "original": "＊Roguelike＊",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L33"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L36",
+    "original": "({FLAG:6}周目)",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L36"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L38",
+    "original": "%SHOW_CALLNAME(MASTER)%\\@(NO:MASTER >= 3000 && NO:MASTER < 4000 && CALLNAME:MASTER != NAME:MASTER) ? (%ITEMNAME:(NO:MASTER)%) # \\@ 種族：%STR:2%",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L38"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L56",
+    "original": "このデータはRoguelikeモードであるため、ゲームを続行することはできない",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L56"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L57",
+    "original": "[0] ロード",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L57"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L58",
+    "original": "[1] タイトルに戻る",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L58"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L59",
+    "original": "[2] ゲームを終了します",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L59"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L159",
+    "original": "セーブデータを現行バージョンのものに修正する作業を実行しました",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L159"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L160",
+    "original": "SHOPメニューが表示されたら「[200] - セーブ」を選択してください",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L160"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L502",
+    "original": "%CALLNAME:MASTER%は[大甲斐性]を身につけた",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L502"
+  },
+  {
+    "key": "src/ERB/SUPPORT.ERB_L507",
+    "original": "%CALLNAME:MASTER%は[妖精知識]を身につけた",
+    "context": "文件名: src/ERB/SUPPORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SUPPORT.ERB#L507"
+  }
+]

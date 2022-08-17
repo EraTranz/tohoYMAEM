@@ -1,0 +1,192 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L47",
+    "original": "{DAY}日目\\@(TIME == 0) ? (昼) # (夜)\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L47"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L49",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L49"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L50",
+    "original": "%SHOW_CALLNAME(TARGET)%調教中",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L50"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L53",
+    "original": "(助手：",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L53"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L54",
+    "original": "%SHOW_CALLNAME(ASSI)%)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L58",
+    "original": "これ以上奴隷を購入することはできません",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L58"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L61",
+    "original": "誰を購入しますか？(残り{MONEY}圓) ＜page.{LOCAL:10 + 1}/{LOCAL:11+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L61"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L79",
+    "original": "[{1000 * LOCAL:50 + PC_VAR1}] %LOCALS, 24, LEFT%　　",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L79"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L93",
+    "original": "[52] 厄袋(時価)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L93"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L94",
+    "original": "[54] なんでもいい(時価)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L94"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L96",
+    "original": "[56] 今日のオススメ(2000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L96"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L97",
+    "original": "[58] 無名ランダム(5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L97"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L100",
+    "original": "[55] 名無しキャラ大人買い(現在:\\@(LOCAL:5 & 1) ? 有効 # 無効\\@)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L100"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L103",
+    "original": "\\@(LOCAL:10 <= 0) ? %\" \" * 16% # [444]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L103"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L104",
+    "original": "[555]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L105",
+    "original": "\\@(LOCAL:10 >= LOCAL:11) ? %\" \" * 16% # [666]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L105"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L125",
+    "original": "名無しキャラを大人買い\\@(LOCAL:5 & 1) ? できない # できる\\@ようにしました",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L125"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L170",
+    "original": "金額が足りません",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L185",
+    "original": "厄袋を開けると、中には%CSVNAME(LOCAL:2,0)%が入っていました",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L185"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L187",
+    "original": "%LOCALS%",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L187"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L238",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L238"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L240",
+    "original": "＜パチュリーを%LOCALS%、彼女のSpell Cardが買えるようになりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L240"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L242",
+    "original": "＜アリスを%LOCALS%、上海・蓬莱・大江戸・ゴリアテ人形が買えるようになりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L242"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L244",
+    "original": "＜妖夢を%LOCALS%、妖夢の半霊が買えるようになりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L244"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L246",
+    "original": "＜妖忌を%LOCALS%、妖忌の半霊が買えるようになりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L246"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L248",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L248"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L262",
+    "original": "最初から「魔梨沙」にすることができます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L262"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L263",
+    "original": "[0] 魔梨沙にする",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L263"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L266",
+    "original": "最初から「ロリス」にすることができます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L266"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L267",
+    "original": "[0] ロリスにする",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L267"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L270",
+    "original": "最初から「比良乃(新Ver.)」にすることができます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L270"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L271",
+    "original": "[0] 比良乃(新Ver.)にする",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L271"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L273",
+    "original": "[1] %ITEMNAME:ARG%のままでいい",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L273"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L315",
+    "original": "%ITEMNAME:ARG%を何人買いますか？（1-{LOCAL:2}人）",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L315"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L316",
+    "original": "[1] 1人",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L316"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L318",
+    "original": "[5] 5人",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L318"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L320",
+    "original": "[10] 10人",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L320"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_BUY.ERB_L322",
+    "original": "[{LOCAL:2}] 買えるだけ",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_BUY.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_BUY.ERB#L322"
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L11",
+    "original": "%EXPNAME:50%{COST93(3)}以上かつ、",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L11"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L13",
+    "original": "%MARKNAME:1%{MARK:薬物刻印 + 1}LV以上（現在{MARK:快楽刻印}）かつ、",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L13"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L15",
+    "original": "[0] - %PALAMNAME:13%の珠×{COST93(0)}、%PALAMNAME:30%の珠×{COST93(1)}、%EXPNAME:40%{COST93(2)}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L15"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L18",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L18"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L226",
+    "original": "余った%PALAMNAME:30%の珠({JUEL:薬毒}個)はどうしますか？",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L226"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L227",
+    "original": "[0]全て破棄する",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L227"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L228",
+    "original": "[1]%PALAMNAME:100%の珠に変換({JUEL:薬毒}個)",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L228"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L230",
+    "original": "[2]%PALAMNAME:13%の珠に変換({JUEL:薬毒 / 2}個)",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L230"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L232",
+    "original": "[3]%PALAMNAME:11%の珠に変換({JUEL:薬毒 / 5}個)",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L232"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L234",
+    "original": "[4]%PALAMNAME:31%の珠に変換({JUEL:薬毒 / 10}個)",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L234"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L238",
+    "original": "余った%PALAMNAME:30%の珠は全て破棄しました",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L238"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L240",
+    "original": "余った%PALAMNAME:30%の珠は%PALAMNAME:100%の珠に変換しました",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L240"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L243",
+    "original": "余った%PALAMNAME:30%の珠は%PALAMNAME:13%の珠に変換しました",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L243"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L246",
+    "original": "余った%PALAMNAME:30%の珠は%PALAMNAME:11%の珠に変換しました",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L246"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP093.ERB_L249",
+    "original": "余った%PALAMNAME:30%の珠は%PALAMNAME:31%の珠に変換しました",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP093.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP093.ERB#L249"
+  }
+]

@@ -1,0 +1,2192 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L24",
+    "original": "現在の触手エネルギー({BASE:MASTER:触手}τ)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L24"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L25",
+    "original": "現在の主人の%PALAMNAME:198%の珠:{JUEL:MASTER:触手, 7}",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L25"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L27",
+    "original": "何をしますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L27"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L28",
+    "original": "[0] 寄生触手",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L28"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L30",
+    "original": "[1] 触手開発",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L30"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L32",
+    "original": "[2] 触手錬金",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L32"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L34",
+    "original": "[3] 触手漬け",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L34"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L36",
+    "original": "[4] 触手幽閉",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L36"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L38",
+    "original": "[5] 触手養殖",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L38"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L40",
+    "original": "[97] 錬金転化",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L40"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L45",
+    "original": "[98] 触手使役 %LOCALS:RESULT%",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L45"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L48",
+    "original": "[99] 触手生贄",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L49",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L49"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L50",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L50"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L104",
+    "original": "現在の触手エネルギー({BASE:MASTER:触手}τ)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L105",
+    "original": "何をしますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L105"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L107",
+    "original": "[ 0]触手摘出",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L107"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L109",
+    "original": "[ 1]体力強化",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L109"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L111",
+    "original": "[ 2]気力強化",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L111"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L113",
+    "original": "[ 3]体質変化",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L113"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L114",
+    "original": "[99]触手を処分する",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L114"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L115",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L116",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L174",
+    "original": "%LOCALS:LOCAL%を実行します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L174"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L175",
+    "original": "誰を対象にしますか？ ＜page.{LOCAL:3 + 1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L175"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L179",
+    "original": "\\@(LOCAL:3 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L179"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L180",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L180"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L181",
+    "original": "\\@(LOCAL:3 >= LOCAL:5) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L181"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L183",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L183"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L184",
+    "original": "[1111]メニューへ戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L184"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L211",
+    "original": "%CALLNAME:TARGET%に",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L211"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L213",
+    "original": "寄生している触手を摘出し、触手を成長させるエネルギーに変換します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L213"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L215",
+    "original": "寄生している触手の栄養を全て放出し、体力の最大値を底上げします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L215"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L217",
+    "original": "寄生している触手の栄養を全て放出し、気力の最大値を底上げします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L217"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L219",
+    "original": "寄生している触手から特殊なホルモンを分泌し、体質を強制的に変化させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L219"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L224",
+    "original": "寄生している触手を処分します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L224"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L226",
+    "original": "実行しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L226"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L227",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L227"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L228",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L228"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L243",
+    "original": "%CALLNAME:TARGET%に",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L243"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L248",
+    "original": "寄生している触手を摘出し、エネルギーに変換しました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L248"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L249",
+    "original": "触手エネルギー＋{LOCAL:2}τ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L249"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L250",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:146%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L250"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L255",
+    "original": "寄生していた触手は蓄えていた栄養を全て放出した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L255"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L288",
+    "original": "栄養が%CALLNAME:TARGET%の体内に行き渡り、身体をより丈夫に鍛えた",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L288"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L289",
+    "original": "%CALLNAME:TARGET%：体力最大値＋{LOCAL:3}",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L289"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L294",
+    "original": "栄養が%CALLNAME:TARGET%の体内に行き渡り、心をより丈夫に鍛えた",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L294"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L295",
+    "original": "%CALLNAME:TARGET%：気力最大値＋{LOCAL:3}",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L295"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L298",
+    "original": "残念ながら%CALLNAME:TARGET%を成長させるための栄養が足りなかったようだ……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L298"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L302",
+    "original": "寄生している触手を処分しました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L302"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L303",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:146%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L303"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L330",
+    "original": "☆",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L330"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L332",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L332"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L334",
+    "original": "●",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L334"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L336",
+    "original": "○",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L336"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L338",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L338"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L342",
+    "original": "寄生触手成長LV({BASE:LOCAL:触手, 4}/{MAXBASE:LOCAL:6, 4})",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L342"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L344",
+    "original": "[懐卵]",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L344"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L356",
+    "original": "%CALLNAME:TARGET%の体質をどのように変えますか？(寄生触手成長LV:{BASE:触手})",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L356"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L366",
+    "original": "[ 0]母乳体質にする　　(必要寄生触手成長LV:1200)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L366"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L368",
+    "original": "[ 1]母乳体質を改善　　(必要寄生触手成長LV:1500)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L368"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L370",
+    "original": "[ 2]胸のサイズを大きく(必要寄生触手成長LV: 200)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L370"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L372",
+    "original": "[ 3]胸のサイズを小さく(必要寄生触手成長LV: 200)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L372"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L374",
+    "original": "[ 4]愛液分泌量を増強　(必要寄生触手成長LV:1000)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L374"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L376",
+    "original": "[ 5]愛液分泌量を低下　(必要寄生触手成長LV:1000)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L376"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L378",
+    "original": "[ 6]ペニスを生成する　(必要寄生触手成長LV: 500)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L378"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L380",
+    "original": "[ 7]ペニスを消去する　(必要寄生触手成長LV: 100)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L380"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L384",
+    "original": "[ 8]早漏体質にする　　(必要寄生触手成長LV: 750)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L384"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L386",
+    "original": "[ 9]遅漏体質にする　　(必要寄生触手成長LV: 750)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L386"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L389",
+    "original": "[10]動物耳をつける　　(必要寄生触手成長LV:2000)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L389"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L391",
+    "original": "[11]薬毒耐性を除去　　(必要寄生触手成長LV:5000＋α)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L391"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L393",
+    "original": "[12]触手の種を除去　　(必要寄生触手成長LV: 500)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L393"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L395",
+    "original": "[99]同化刻印LV3取得 　(必要寄生触手成長LV:7000＋α)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L395"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L397",
+    "original": "[99]同化刻印LV2取得 　(必要寄生触手成長LV:5000＋α)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L397"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L399",
+    "original": "[99]同化刻印LV1取得 　(必要寄生触手成長LV:3000＋α)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L399"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L401",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L401"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L402",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L402"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L408",
+    "original": "%CALLNAME:TARGET%を母乳体質にします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L408"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L411",
+    "original": "%CALLNAME:TARGET%の母乳体質を治します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L411"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L414",
+    "original": "%CALLNAME:TARGET%の胸のサイズを1ランク大きくします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L414"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L417",
+    "original": "%CALLNAME:TARGET%の胸のサイズを1ランク小さくします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L417"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L420",
+    "original": "%CALLNAME:TARGET%の愛液分泌量を増強させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L420"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L423",
+    "original": "%CALLNAME:TARGET%の愛液分泌量を低下させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L423"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L426",
+    "original": "%CALLNAME:TARGET%をふたなりにします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L426"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L429",
+    "original": "%CALLNAME:TARGET%のふたなりを消去します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L429"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L432",
+    "original": "%CALLNAME:TARGET%を早漏体質にします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L432"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L435",
+    "original": "%CALLNAME:TARGET%を遅漏体質にします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L435"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L438",
+    "original": "%CALLNAME:TARGET%に動物耳を生やします",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L438"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L441",
+    "original": "%CALLNAME:TARGET%の薬毒に対する耐性を低下させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L441"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L443",
+    "original": "※副作用として%CALLNAME:TARGET%の[寄生]・触手中毒・触手経験を全て失い、回復能力も低下します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L443"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L444",
+    "original": "それでも",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L444"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L447",
+    "original": "%CALLNAME:TARGET%に植え付けられた『種』を除去します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L447"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L449",
+    "original": "※副作用として%CALLNAME:TARGET%の体力も低下します",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L449"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L450",
+    "original": "それでも",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L450"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L453",
+    "original": "%CALLNAME:TARGET%に不滅の命を与え、%CALLNAME:MASTER%の玩具として仕えさせます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L453"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L455",
+    "original": "※実行するにはこの他に%CALLNAME:TARGET%の子供(触手)10匹と100萬圓が別途必要です",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L455"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L458",
+    "original": "%CALLNAME:TARGET%に刻まれた印の力を強め、より死に難い体へと変化させます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L458"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L460",
+    "original": "※実行するにはこの他に%CALLNAME:TARGET%の子供(触手)5匹と50萬圓が別途必要です",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L460"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L463",
+    "original": "%CALLNAME:TARGET%の体内に不死の刻印を刻み込み、触手によって死ぬことがない体に変えます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L463"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L465",
+    "original": "※実行するにはこの他に%CALLNAME:TARGET%の子供(触手)1匹と10萬圓が別途必要です",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L465"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L473",
+    "original": "実行しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L473"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L474",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L474"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L475",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L475"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L489",
+    "original": "必要な寄生触手成長LVに達していません",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L489"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L497",
+    "original": "%CALLNAME:TARGET%の体内に寄生していた触手は",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L497"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L498",
+    "original": "溜めこんでいた栄養を使って特殊なホルモンを分泌し始めた",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L498"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L502",
+    "original": "%CALLNAME:TARGET%は母乳が出るようになった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L502"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L505",
+    "original": "%CALLNAME:TARGET%から母乳が出なくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L505"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L509",
+    "original": "%CALLNAME:TARGET%の胸がほんの少しだけ膨らんだ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L509"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L513",
+    "original": "%CALLNAME:TARGET%の胸が大きくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L513"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L516",
+    "original": "%CALLNAME:TARGET%の胸が体に不釣合いなまでに大きくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L516"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L520",
+    "original": "%CALLNAME:TARGET%の胸がはち切れんばかりの大きさになった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L520"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L526",
+    "original": "%CALLNAME:TARGET%の豊かすぎる胸が一回り小さくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L526"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L527",
+    "original": "%CALLNAME:TARGET%は少しだけ寂しそうな顔をしている",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L527"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L531",
+    "original": "%CALLNAME:TARGET%の胸が人並みに小さくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L531"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L532",
+    "original": "%CALLNAME:TARGET%は少々ショックを受けているようだ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L532"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L535",
+    "original": "%CALLNAME:TARGET%の胸が極端に薄くなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L535"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L536",
+    "original": "%CALLNAME:TARGET%は愕然としている",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L536"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L540",
+    "original": "%CALLNAME:TARGET%の胸が小さくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L540"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L541",
+    "original": "%CALLNAME:TARGET%はショックを受けているようだ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L541"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L547",
+    "original": "%CALLNAME:TARGET%は性感帯への刺激に対する感度が普通になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L547"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L550",
+    "original": "%CALLNAME:TARGET%は性感帯への刺激に対して敏感になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L550"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L555",
+    "original": "%CALLNAME:TARGET%は性感帯への刺激に対する感度が普通になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L555"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L558",
+    "original": "%CALLNAME:TARGET%は性感帯への刺激に対して鈍感になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L558"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L562",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:121%]になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L562"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L566",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:121%]ではなくなった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L566"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L571",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:133%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L571"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L574",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:132%]になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L574"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L579",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:132%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L579"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L582",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:133%]になった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L582"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L586",
+    "original": "%CALLNAME:TARGET%に[%TALENTNAME:116%]が生えた",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L586"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L589",
+    "original": "%CALLNAME:TARGET%は毒物・薬物に対する抵抗力が低下した…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L589"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L590",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:44%]を失った",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L590"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L591",
+    "original": "%CALLNAME:TARGET%の体は触手に対する適応能力が低下している…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L591"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L592",
+    "original": "%CALLNAME:TARGET%に寄生していた触手は力尽きて消滅した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L592"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L593",
+    "original": "%CALLNAME:TARGET%の[%EXPNAME:53%]と[%ABLNAME:35%]は0に戻った",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L593"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L595",
+    "original": "%CALLNAME:TARGET%の回復能力が低下した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L595"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L598",
+    "original": "%CALLNAME:TARGET%の回復能力がかなり低下した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L598"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L601",
+    "original": "%CALLNAME:TARGET%は一気に疲労した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L601"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L609",
+    "original": "%CALLNAME:TARGET%に植え付けられた『種』は消滅した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L609"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L610",
+    "original": "%CALLNAME:TARGET%は疲労した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L610"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L629",
+    "original": "現在の触手の能力:",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L629"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L632",
+    "original": "現在の触手エネルギー:{BASE:MASTER:触手}τ　　所持金:{MONEY}圓",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L632"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L633",
+    "original": "どの能力を開発しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L633"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L634",
+    "original": "(なお、主人の触手使役Lvが足りなくて開発できない触手能力は表示されていません)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L634"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L638",
+    "original": "[ 0] 鞭触手　　　　　　 (100τ/200圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L638"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L640",
+    "original": "[ 1] 針触手　　　　　　 (150τ/350圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L640"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L642",
+    "original": "[ 2] 放電触手　　　　　 (500τ/5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L642"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L644",
+    "original": "[ 3] 催眠触手　　　　　(2500τ/2萬5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L644"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L646",
+    "original": "[ 4] 極細触手　　　　　(1500τ/5萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L646"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L648",
+    "original": "[ 5] 養分注入触手　　　(3000τ/2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L648"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L650",
+    "original": "[ 6] 抗菌触手　　　　　(1200τ/1萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L650"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L652",
+    "original": "[ 7] ゴーヤ型触手　　　(1800τ/2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L652"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L654",
+    "original": "[ 8] 磯巾着型触手　　　(2000τ/2萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L654"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L656",
+    "original": "[ 9] 触手遠隔精密制御　(1200τ/1萬2000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L656"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L658",
+    "original": "[10] 特殊ホルモン分泌　(5000τ/5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L658"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L660",
+    "original": "[11] 触手賢者の石　　　 (1萬τ/5萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L660"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L662",
+    "original": "[12] 奴隷懲罰用触手部屋(25萬τ/10萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L662"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L664",
+    "original": "[13] 体内適応力強化　　(4500τ/1300圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L664"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L666",
+    "original": "[14] 精液放出量強化　　 (2萬τ/5000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L666"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L668",
+    "original": "[15] 精子と触手の部屋　 (5萬τ/30萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L668"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L670",
+    "original": "[16] 吸血触手　　　　　(1200τ/7000圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L670"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L672",
+    "original": "[17] 保育施設・分娩台 (75000τ/15萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L672"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L674",
+    "original": "[50] SATORI触手　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L674"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L676",
+    "original": "[51] NITORI触手　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L676"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L678",
+    "original": "[52] YUYUKO触手　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L678"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L680",
+    "original": "[53] SUIKA触手 　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L680"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L682",
+    "original": "[54] ALICE触手　　　　　(5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L682"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L684",
+    "original": "[55] HINA触手　　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L684"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L686",
+    "original": "[56] AYA触手　　　　　　(5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L686"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L688",
+    "original": "[57] PARSEE触手　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L688"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L690",
+    "original": "[58] MEDICINE触手　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L690"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L692",
+    "original": "[59] PATCHOULI触手　　　(5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L692"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L694",
+    "original": "[60] HIGH-FAIRY触手　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L694"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L696",
+    "original": "[61] CIRNO触手　　　　　(5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L696"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L698",
+    "original": "[62] NAZRIN触手　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L698"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L700",
+    "original": "[63] EIKI触手　　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L700"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L702",
+    "original": "[64] SHIZUHA触手　　　　(5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L702"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L704",
+    "original": "[65] MINORIKO触手　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L704"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L706",
+    "original": "[66] SUWAKO触手　　　　 (5萬τ/25萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L706"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L710",
+    "original": "[99] 現し身触手　　　 (100萬τ/100萬圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L710"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L712",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L712"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L713",
+    "original": "[1000]やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L713"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L872",
+    "original": "必要なエネルギーと資金",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L872"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L874",
+    "original": "必要なエネルギー",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L874"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L876",
+    "original": "必要な資金",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L876"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L878",
+    "original": "が不足しています。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L878"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L898",
+    "original": "触手は[鞭触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L898"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L899",
+    "original": "コマンド＜触手鞭打ち＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L899"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L901",
+    "original": "触手は[針状触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L901"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L902",
+    "original": "コマンド＜触手針＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L902"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L904",
+    "original": "触手は[放電触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L904"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L905",
+    "original": "コマンド＜触手放電＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L905"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L907",
+    "original": "触手は[催眠触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L907"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L908",
+    "original": "コマンド＜触手催眠＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L908"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L910",
+    "original": "触手は[極細触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L910"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L911",
+    "original": "コマンド＜触手乳腺挿入＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L911"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L913",
+    "original": "触手は[養分注入触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L913"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L914",
+    "original": "コマンド＜触手強制回復＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L914"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L916",
+    "original": "触手は[抗菌触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L916"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L917",
+    "original": "尿道調教関連のコマンドが使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L917"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L919",
+    "original": "触手は[ゴーヤ型触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L919"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L920",
+    "original": "拡張関連のコマンドが使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L920"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L922",
+    "original": "触手は[磯巾着型触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L922"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L923",
+    "original": "コマンド＜触手くすぐり＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L923"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L925",
+    "original": "触手は[遠隔精密制御]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L925"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L926",
+    "original": "コマンド＜触手貫通＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L926"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L928",
+    "original": "触手は[特殊ホルモン分泌]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L928"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L929",
+    "original": "薬品関連のコマンドが使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L929"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L931",
+    "original": "触手は[触手賢者の石]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L931"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L932",
+    "original": "＜触手錬金＞が解禁されました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L932"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L934",
+    "original": "触手は[奴隷懲罰用触手部屋]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L934"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L935",
+    "original": "＜触手漬け＞が解禁されました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L935"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L937",
+    "original": "触手は[体内適応力強化]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L937"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L938",
+    "original": "触手の寄生能力が強化されました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L938"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L940",
+    "original": "触手は[精液放出量強化]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L940"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L941",
+    "original": "触手の射精能力が強化されました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L941"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L943",
+    "original": "触手は[精子と触手の部屋]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L943"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L944",
+    "original": "＜触手幽閉＞が解禁されました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L944"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L946",
+    "original": "触手は[吸血触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L946"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L947",
+    "original": "コマンド＜触手吸血＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L947"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L949",
+    "original": "触手は[触手保育施設]と[触手分娩台]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L949"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L950",
+    "original": "＜触手養殖＞が解禁されました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L950"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L952",
+    "original": "触手は[SATORI触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L952"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L953",
+    "original": "コマンド＜触手読心責め＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L953"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L955",
+    "original": "触手は[NITORI触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L955"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L956",
+    "original": "コマンド＜触手潮干狩り＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L956"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L958",
+    "original": "触手は[YUYUKO触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L958"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L959",
+    "original": "コマンド＜触手幽霊膣鏡＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L959"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L961",
+    "original": "触手は[SUIKA触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L961"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L962",
+    "original": "コマンド＜触手強制飲酒＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L962"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L964",
+    "original": "触手は[ALICE触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L964"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L965",
+    "original": "コマンド＜触手精神制御＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L965"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L967",
+    "original": "触手は[HINA触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L967"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L968",
+    "original": "コマンド＜触手厄落とし＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L968"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L970",
+    "original": "触手は[AYA触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L970"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L971",
+    "original": "コマンド＜触手腸内撮影＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L971"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L973",
+    "original": "触手は[PARSEE触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L973"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L974",
+    "original": "コマンド＜触手言葉責め＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L974"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L976",
+    "original": "触手は[MEDICINE触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L976"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L977",
+    "original": "コマンド＜触手鈴蘭媚薬＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L977"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L979",
+    "original": "触手は[PATCHOULI触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L979"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L980",
+    "original": "コマンド＜触手官能図書＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L980"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L982",
+    "original": "触手は[HIGH-FAIRY触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L982"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L983",
+    "original": "コマンド＜触手妖精按摩＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L983"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L985",
+    "original": "触手は[CIRNO触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L985"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L986",
+    "original": "コマンド＜触手氷精手淫＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L986"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L988",
+    "original": "触手は[NAZRIN触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L988"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L989",
+    "original": "コマンド＜触手淫脈探査＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L989"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L991",
+    "original": "触手は[EIKI触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L991"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L992",
+    "original": "コマンド＜触手最終審判＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L992"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L994",
+    "original": "触手は[SHIZUHA触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L994"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L995",
+    "original": "コマンド＜触手百裂紅葉＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L995"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L997",
+    "original": "触手は[MINORIKO触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L997"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L998",
+    "original": "コマンド＜触手豊穣淫香＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L998"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1000",
+    "original": "触手は[SUWAKO触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1000"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1001",
+    "original": "コマンド＜触手○○○○＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1001"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1003",
+    "original": "触手は[現し身触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1003"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1004",
+    "original": "触手は現し身の力を得ることで、生贄を用意することなく",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1004"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1005",
+    "original": "一度取得したキャラ触手を使用できるようになりました",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1005"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1019",
+    "original": "現在の触手の能力:",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1019"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1035",
+    "original": "触手が貯めたエネルギーを消費して金貨を作ることが出来ます(換金効率:1τ分の金貨＝{LOCAL}圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1035"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1036",
+    "original": "現在の触手エネルギー:{BASE:MASTER:触手}τ　　所持金:{MONEY}圓",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1036"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1037",
+    "original": "いくらエネルギーを使いますか？ (1-{BASE:MASTER:触手}枚、無効な値で戻る)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1037"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1039",
+    "original": "[0] 戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1039"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1040",
+    "original": "[1] 1枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1040"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1042",
+    "original": "[100] 100枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1042"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1044",
+    "original": "[500] 500枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1044"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1046",
+    "original": "[1000] 1000枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1046"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1048",
+    "original": "[5000] 5000枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1048"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1050",
+    "original": "[{BASE:MASTER:触手}] 可能な限り",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1050"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1054",
+    "original": "エネルギーが足りません。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1054"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1062",
+    "original": "錬成を実行した場合、合計{LOCAL:1 * LOCAL}圓分の収入が見込めます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1062"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1063",
+    "original": "錬成しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1063"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1064",
+    "original": "[0] はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1064"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1065",
+    "original": "[1] いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1065"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1081",
+    "original": "＜%CALLNAME:MASTER%は触手錬金で作りだした金貨を売った＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1081"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1082",
+    "original": "＜資金が{MONEY:1}圓増えました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1082"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1100",
+    "original": "現在の触手の能力:",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1100"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1116",
+    "original": "主人の%PALAMNAME:198%の珠を消費してエネルギーを作ることが出来ます(転化効率:10枚分のエネルギー＝{LOCAL}τ)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1116"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1117",
+    "original": "現在の主人の%PALAMNAME:198%の珠:{JUEL:MASTER:触手}枚　　現在の触手エネルギー:{BASE:MASTER:触手}τ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1117"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1118",
+    "original": "いくら%PALAMNAME:198%の珠を使いますか？ (1-{JUEL:MASTER:触手 / 10}、無効な値で戻る)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1118"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1120",
+    "original": "[0] 戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1120"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1122",
+    "original": "[1] 10枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1122"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1124",
+    "original": "[5] 50枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1124"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1126",
+    "original": "[10] 100枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1126"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1128",
+    "original": "[50] 500枚",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1128"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1130",
+    "original": "[{JUEL:MASTER:触手 / 10}] 可能な限り",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1130"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1134",
+    "original": "%PALAMNAME:198%の珠が足りません。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1134"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1142",
+    "original": "転化を実行した場合、合計{LOCAL:1 * LOCAL}τ分のエネルギーが見込めます",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1142"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1143",
+    "original": "転化しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1143"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1144",
+    "original": "[0] はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1144"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1145",
+    "original": "[1] いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1145"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1161",
+    "original": "＜%CALLNAME:MASTER%は錬金転化で作りだしたエネルギーを得った＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1161"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1162",
+    "original": "＜触手エネルギーが{LOCAL:2}τ増えました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1162"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1225",
+    "original": "反抗的な奴隷を地下室に閉じ込め、一晩かけて触手の魅力を教え込みます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1225"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1226",
+    "original": "誰を対象にしますか？ ＜page.{LOCAL:3+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1226"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1229",
+    "original": "\\@(LOCAL:3 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1229"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1230",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1230"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1231",
+    "original": "\\@(LOCAL:3 >= LOCAL:5) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1231"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1233",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1233"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1234",
+    "original": "[1111]メニューへ戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1234"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1334",
+    "original": "%CALLNAME:TARGET%に一晩かけて触手の魅力を教え込みますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1334"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1335",
+    "original": "現在の触手エネルギー:{BASE:MASTER:触手}τ　　({LOCAL:1}τ必要)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1335"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1337",
+    "original": "(※はいを選ぶと%CALLNAME:TARGET%は処女を失うことになります)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1337"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1338",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1338"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1339",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1339"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1352",
+    "original": "触手エネルギーが不足しています。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1352"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1368",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1368"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1369",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1369"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1370",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1370"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1374",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1374"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1375",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1375"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1376",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1376"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1379",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1379"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1380",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1380"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1381",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1381"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1400",
+    "original": "%CALLNAME:TARGET%の瞳から反抗の意志が消えている…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1400"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1401",
+    "original": "%CALLNAME:TARGET%の反発刻印がLV{MARK:反発刻印}に下がった",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1401"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1403",
+    "original": "%CALLNAME:TARGET%は今回の体験がトラウマになったようだ…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1403"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1404",
+    "original": "%CALLNAME:TARGET%は[弱味]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1404"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1412",
+    "original": "ストレス＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1412"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1422",
+    "original": "%CALLNAME:TARGET%は激しく消耗している…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1422"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1427",
+    "original": "%CALLNAME:TARGET%の気力と体力と理性は激減した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1427"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1429",
+    "original": "%CALLNAME:TARGET%の気力と体力は激減した",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1429"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1500",
+    "original": "奴隷を地下室に閉じ込め、じっくり時間をかけて触手の魅力を教え込みます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1500"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1501",
+    "original": "誰を対象にしますか？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1501"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1504",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1504"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1505",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1505"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1506",
+    "original": "\\@(LOCAL >= LOCAL:5) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1506"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1508",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1508"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1509",
+    "original": "[1111]メニューへ戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1509"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1524",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1524"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1535",
+    "original": "%CALLNAME:LOCAL%はたった今幽閉したばかりです。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1535"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1640",
+    "original": "%CALLNAME:TARGET%に時間をかけて触手の魅力を教え込みますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1640"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1641",
+    "original": "現在の触手エネルギー:{BASE:MASTER:触手}τ　　({LOCAL:1}τ必要)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1641"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1643",
+    "original": "（※はいを選ぶと%CALLNAME:TARGET%は処女を失うことになります）",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1643"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1644",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1644"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1645",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1645"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1656",
+    "original": "触手エネルギーが不足しています",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1656"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1670",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1670"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1671",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1671"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1672",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1672"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1692",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1692"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1693",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1693"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1694",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1694"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1696",
+    "original": "%CALLNAME:TARGET%はこれ以上にないくらい消耗している…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1696"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1698",
+    "original": "%CALLNAME:TARGET%は激しく消耗している…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1698"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1700",
+    "original": "%CALLNAME:TARGET%はかなり消耗している…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1700"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1702",
+    "original": "%CALLNAME:TARGET%は消耗している…",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1702"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1704",
+    "original": "しばらくは休ませたほうが良いかも知れない",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1704"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1724",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1724"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1725",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1725"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1726",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1726"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1727",
+    "original": "―――%CALLNAME:TARGET%は触手達に取り込まれました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1727"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1728",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1728"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1729",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1729"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1730",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1730"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1731",
+    "original": "＜%CALLNAME:TARGET%からエネルギーを作りだした＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1731"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1732",
+    "original": "＜触手エネルギー＋{LOCAL:2}τ＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1732"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1733",
+    "original": "＜触手の珠＋{LOCAL:3}個(主人)＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1733"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1734",
+    "original": "＜%CALLNAME:TARGET%は二度と調教対象に選択できなくなりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1734"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1813",
+    "original": "エネルギーと引き換えに奴隷を触手の生贄に捧げます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1813"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1814",
+    "original": "誰を対象にしますか？ ＜page.{LOCAL:6+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1814"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1817",
+    "original": "\\@(LOCAL:6 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1817"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1818",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1818"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1819",
+    "original": "\\@(LOCAL:6 >= LOCAL:5) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1819"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1821",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1821"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1822",
+    "original": "[1111]メニューへ戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1822"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1847",
+    "original": "※触手の生贄に捧げると二度と%CALLNAME:LOCAL%に会うことができません。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1847"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1848",
+    "original": "それでも実行しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1848"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1849",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1849"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1850",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1850"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1871",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1871"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1872",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1872"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1873",
+    "original": "・",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1873"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1877",
+    "original": "%CALLNAME:TARGET%はこれから一生触手の糧となる運命に……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1877"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1878",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1878"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1879",
+    "original": "―――%CALLNAME:TARGET%は触手達の生贄に捧げられました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1879"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1881",
+    "original": "%CALLNAME:TARGET%は触手を楽しませるだけの存在になるだろう……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1881"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1882",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1882"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1883",
+    "original": "―――%CALLNAME:TARGET%は触手達のオモチャにされました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1883"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1885",
+    "original": "%CALLNAME:TARGET%は二度と日の光も、月の明かりも目にすることはないだろう……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1885"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1886",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1886"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1887",
+    "original": "―――%CALLNAME:TARGET%は触手達の繭に取り込まれました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1887"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1892",
+    "original": "%CALLNAME:TARGET%はこれから一生触手の糧となる運命に……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1892"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1893",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1893"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1894",
+    "original": "―――%CALLNAME:TARGET%は触手達の生贄に捧げられました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1894"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1896",
+    "original": "%CALLNAME:TARGET%は触手を楽しませるだけの存在になるだろう……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1896"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1897",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1897"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1898",
+    "original": "―――%CALLNAME:TARGET%は触手達のオモチャにされました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1898"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1900",
+    "original": "%CALLNAME:TARGET%は二度と日の光も、月の明かりも目にすることはないだろう……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1900"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1901",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1901"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1902",
+    "original": "―――%CALLNAME:TARGET%は触手達の繭に取り込まれました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1902"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1904",
+    "original": "%CALLNAME:TARGET%は逃げることも拒むことも許されず、ただひたすら凌辱され続けることになるだろう……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1904"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1905",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1905"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1906",
+    "original": "―――%CALLNAME:TARGET%は触手達に徹底的に犯されました―――",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1906"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1909",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1909"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1910",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1910"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1911",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1911"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1912",
+    "original": "＜触手達は%CALLNAME:TARGET%からエネルギーを搾り取った＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1912"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1913",
+    "original": "＜触手エネルギー＋{TFLAG:233}τ＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1913"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1914",
+    "original": "＜触手の珠＋{TFLAG:234}個(主人)＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1914"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1915",
+    "original": "＜%CALLNAME:TARGET%は二度と調教対象に選択できなくなりました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1915"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1949",
+    "original": "現在の触手エネルギー({BASE:MASTER:触手}τ)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1949"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1950",
+    "original": "何をしますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1950"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1952",
+    "original": "[0] 触手種付",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1952"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L1953",
+    "original": "[100]やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L1953"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2054",
+    "original": "エネルギーを消費して奴隷に触手の子供を孕ませます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2054"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2055",
+    "original": "誰を対象にしますか？ ＜page.{LOCAL+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2055"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2058",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2058"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2059",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2059"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2060",
+    "original": "\\@(LOCAL >= LOCAL:5) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2060"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2062",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2062"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2063",
+    "original": "[1111]メニューへ戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2063"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2076",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2076"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2180",
+    "original": "※%CALLNAME:LOCAL%に触手の幼体を孕ませます。",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2180"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2181",
+    "original": "現在の触手エネルギー:{BASE:MASTER:触手}τ　　({LOCAL:1}τ必要)",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2181"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2182",
+    "original": "実行しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2182"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2183",
+    "original": "[0]はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2183"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2184",
+    "original": "[1]いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2184"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2194",
+    "original": "触手エネルギーが不足しています",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2194"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2433",
+    "original": "%CALLNAME:TARGET%は",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2433"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2435",
+    "original": "%LOCALS:0%\\@(TFLAG:141 & 2) ? を失い、 # を失った\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2435"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2437",
+    "original": "%LOCALS:1%を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2437"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2438",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2438"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2443",
+    "original": "ストレス＋{LOCAL:96}",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2443"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2455",
+    "original": "%CALLNAME:TARGET%は疲れ果てているようだ……休ませた方が良いだろう",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2455"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2456",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2456"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2481",
+    "original": "☆",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2481"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2483",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2483"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2485",
+    "original": "◆",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2485"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2487",
+    "original": "●",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2487"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2489",
+    "original": "○",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2489"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2491",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2491"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2496",
+    "original": "[寄生]",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2496"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2498",
+    "original": "[懐卵]",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2498"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/LABO.ERB_L2500",
+    "original": "＜幽閉{CFLAG:LOCAL:39}日目＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/LABO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/LABO.ERB#L2500"
+  }
+]

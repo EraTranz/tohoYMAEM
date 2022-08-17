@@ -1,0 +1,507 @@
+[
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L68",
+    "original": "現在の触手エネルギー({BASE:MASTER:触手}τ)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L68"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L70",
+    "original": "寄生触手成長LV(%CALLNAME:TARGET%)%BARSTR(BASE:触手,MAXBASE:6,10)%({BASE:触手, 4}/{MAXBASE:6, 4})",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L70"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L72",
+    "original": "寄生触手成長LV(%CALLNAME:ASSI%)%BARSTR(BASE:ASSI:触手,MAXBASE:ASSI:6,10)%({BASE:ASSI:触手, 4}/{MAXBASE:ASSI:6, 4})",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L72"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L89",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L89"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L91",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L91"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L95",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L95"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L98",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L98"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L101",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L101"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L104",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L107",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L107"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L110",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L113",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L113"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L116",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L119",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L122",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L122"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L125",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L125"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L128",
+    "original": "3",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L128"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L131",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L131"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L134",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L134"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L137",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L140",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L140"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L143",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L148",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L148"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L151",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L154",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L154"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L157",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L157"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L160",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L163",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L163"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L166",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L166"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L232",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L232"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L373",
+    "original": "＊特殊能力なし＊",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L373"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L401",
+    "original": "[%STR:(GET_LIST(PC_VAR1))%]　",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L401"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L405",
+    "original": "%PL_STR_I:0%",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L405"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L410",
+    "original": "[%STR:(GET_LIST(PL_VAR_X:0 + 20))%]　",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L410"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L414",
+    "original": "%PL_STR_I:0%",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L414"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L427",
+    "original": "[現し身触手]",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L427"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L605",
+    "original": "%CALLNAME:TARGET%を吸収した触手は[%LOCALS%触手]を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L605"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L606",
+    "original": "コマンド＜%LOCALS:1%＞が使えるようになりました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L606"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L608",
+    "original": "%CALLNAME:TARGET%を吸収したことで触手は新たな能力を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L608"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L609",
+    "original": "[%LOCALS%触手]が開発可能になりました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L609"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L668",
+    "original": "%CALLNAME:MASTER%は不死化の知識の深淵を知った…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L668"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L669",
+    "original": "※強くてニューゲーム開始時に%CALLNAME:MASTER%の種族を[呪精]に選択することができます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L669"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L692",
+    "original": "＜リザレクション＞",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L692"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L693",
+    "original": "%CALLNAME:TARGET%は同化刻印の力によって無理やり蘇生させられた",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L693"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L702",
+    "original": "%CALLNAME:TARGET%の体力の最大値が{MAXBASE:0}に下がった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L702"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L710",
+    "original": "%CALLNAME:TARGET%の%ABLNAME:10%が{ABL:従順}に下がった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L710"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L715",
+    "original": "%CALLNAME:TARGET%の体力の最大値が{MAXBASE:0}に下がった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L715"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L723",
+    "original": "%CALLNAME:TARGET%の%ABLNAME:10%が{ABL:従順}に下がった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L723"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L728",
+    "original": "%CALLNAME:TARGET%の体力の最大値が{MAXBASE:0}に下がった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L728"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L736",
+    "original": "%CALLNAME:TARGET%に寄生した触手は消滅してしまった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L736"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L750",
+    "original": "0",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L750"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L752",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L752"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L754",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L754"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L756",
+    "original": "3",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L756"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L758",
+    "original": "4",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L758"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L766",
+    "original": "%CALLNAME:TARGET%に寄生していた触手は全ての栄養を放出した",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L766"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L801",
+    "original": "処女喪失",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L801"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1033",
+    "original": "触手達は%CALLNAME:ARG%の",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1033"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1035",
+    "original": "体に卵を産み着けながら、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1035"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1037",
+    "original": "意思を催眠術で削ぎ、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1037"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1040",
+    "original": "\\@(LOCAL:14 & 2) ? アナルとヴァギナ # アナル\\@を犯し",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1040"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1042",
+    "original": "ヴァギナを犯し",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1042"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1045",
+    "original": "つつ、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1045"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1047",
+    "original": "続けている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1047"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1052",
+    "original": "乳首と\\@(TALENT:ARG:オトコ || TALENT:ARG:ふたなり) ? ペニス # クリトリス\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1052"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1054",
+    "original": "乳首",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1054"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1056",
+    "original": "を責め続けている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1056"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1058",
+    "original": "\\@(TALENT:ARG:オトコ || TALENT:ARG:ふたなり) ? ペニス # クリトリス\\@を責め続けている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1058"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1061",
+    "original": "%CALLNAME:ARG%の体は触手に打たれた痕が、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1061"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1063",
+    "original": "%CALLNAME:ARG%の",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1063"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1065",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1065"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1068",
+    "original": "\\@(LOCAL:14 & 128) ? 口と尿道 # 口\\@には深々と触手が咥えこまれている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1068"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1070",
+    "original": "尿道には深々と触手が咥えこまれている…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1070"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1072",
+    "original": "四肢をがっちりと拘束されているため、あらゆる責めから逃れることができず、",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1072"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1074",
+    "original": "%CALLNAME:ARG%は",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1074"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1075",
+    "original": "悶え続けていた……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1075"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1080",
+    "original": "処女喪失",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1080"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1246",
+    "original": "ストレス＋{(LOCAL:4) / 5}",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1246"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1290",
+    "original": "触手達はすっかり",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1290"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1291",
+    "original": "%SHOW_CALLNAME(ARG)%のことを気に入ってしまったようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1291"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1296",
+    "original": "触手達は",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1296"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1297",
+    "original": "%SHOW_CALLNAME(ARG)%のことを気に入ったようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1297"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1299",
+    "original": "%SHOW_CALLNAME(ARG)%の体は大分触手に慣れてきたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1299"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1301",
+    "original": "触手達は",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1301"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1302",
+    "original": "%SHOW_CALLNAME(ARG)%の体の開発をさらに進めている……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1302"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1315",
+    "original": "%SHOW_CALLNAME(ARG)%はクリトリスに何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1315"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1320",
+    "original": "%SHOW_CALLNAME(ARG)%は子宮の奥深くに何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1320"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1325",
+    "original": "%SHOW_CALLNAME(ARG)%はお尻の穴に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1325"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1330",
+    "original": "%SHOW_CALLNAME(ARG)%は乳腺を通し、乳房の奥底に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1330"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1335",
+    "original": "%SHOW_CALLNAME(ARG)%はヘソに何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1335"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1340",
+    "original": "%SHOW_CALLNAME(ARG)%は舌の付け根に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1340"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1345",
+    "original": "%SHOW_CALLNAME(ARG)%は膀胱壁に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1345"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1350",
+    "original": "%SHOW_CALLNAME(ARG)%の心臓に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1350"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1355",
+    "original": "%SHOW_CALLNAME(ARG)%は脊椎の中に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1355"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1360",
+    "original": "%SHOW_CALLNAME(ARG)%は額の中心に何かを植え付けられたようだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1360"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1745",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:145%]を得た",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1745"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1885",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:145%]を失った",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1885"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1888",
+    "original": "ストレス＋{LOCAL / 5}",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1888"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1924",
+    "original": "%CALLNAME:TARGET%は発狂してしまった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1924"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1938",
+    "original": "%SHOW_CALLNAME(TARGET)%は体力を激しく消耗している",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1938"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/TENTACLE.ERB_L1939",
+    "original": "少し休ませたほうがよさそうだ……",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/TENTACLE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/TENTACLE.ERB#L1939"
+  }
+]

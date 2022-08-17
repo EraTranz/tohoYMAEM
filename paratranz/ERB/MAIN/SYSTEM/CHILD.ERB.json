@@ -1,0 +1,237 @@
+[
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L23",
+    "original": "なんと生まれたのは３つ子だった。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L23"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L26",
+    "original": "なんと生まれたのは双子だった。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L26"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L39",
+    "original": "%CALLNAME:ARG%\\@(ARG:1 == 2 || ARG:1 == 3) ? が育てる # の産んだ\\@\\@(CFLAG:ARG:3011 > 1) ? {LOCAL+1}人目の # \\@子供は\\@(LOCAL:1 == 0) ? 女の子 # 男の子\\@です。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L43",
+    "original": "%CALLNAME:ARG%に名前を付けてもらいますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L43"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L44",
+    "original": "[0] 和風の名前で",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L44"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L45",
+    "original": "[1] 洋風の名前で",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L45"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L46",
+    "original": "[2] 任せます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L46"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L47",
+    "original": "[3] 自分で付けます",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L47"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L54",
+    "original": "%CALLNAME:ARG%はこの\\@(CFLAG:ARG:(3012+LOCAL) == 0) ? 娘 # 息子\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L55",
+    "original": "に%RESULTS%という名前を付けました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L55"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L59",
+    "original": "名前を入力してください",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L59"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L64",
+    "original": "%CALLNAME:MASTER%はこの\\@(CFLAG:ARG:(3012+LOCAL) == 0) ? 娘 # 息子\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L64"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L65",
+    "original": "に%RESULTS%という名前を付けました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L65"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L69",
+    "original": "正しい値を入力してください",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L69"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L73",
+    "original": "この子を命名します。　名前を入力してください",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L73"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L78",
+    "original": "%CALLNAME:MASTER%はこの\\@(CFLAG:ARG:(3012+LOCAL) == 0) ? 娘 # 息子\\@",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L78"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L79",
+    "original": "に%RESULTS%という名前を付けました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L79"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L85",
+    "original": "%CSTR:ARG:(21+LOCAL)%には、継承すべきものがあるのでニックネームは付けられません。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L85"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L87",
+    "original": "%CSTR:ARG:(21+LOCAL)%に、ニックネームを付けますか？",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L87"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L88",
+    "original": "[0] はい",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L88"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L89",
+    "original": "[1] いいえ",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L89"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L93",
+    "original": "ニックネームを入力してください(空白の場合、ニックネームも空白になります)",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L93"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L96",
+    "original": "ニックネームを登録しました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L96"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L98",
+    "original": "正しい値を入力してください",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L98"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L131",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+LOCAL)%は急激に成長し、大人になりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L131"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L132",
+    "original": "子供を酷い環境に置きたくなかった%CALLNAME:MASTER%は、子供を養子に出しました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L132"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L136",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+LOCAL)%は急激に成長し、大人になりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L137",
+    "original": "子供を酷い環境に置きたくなかった%CALLNAME:MASTER%は、子供を養子に出しました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L175",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%が急激に成長し、大人になりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L175"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L177",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%は親を追いかけ出て行きました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L177"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L179",
+    "original": "%CSTR:ARG:(21+ARG:1)%は自分を育ててくれたことに感謝し、一人暮らしを始めた・・・",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L179"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L191",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%が急激に成長し、調教できる程度になりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L191"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L192",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%は親を追いかけ出て行きました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L192"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L246",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%が急激に成長し、調教できる程度になりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L246"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L247",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%が調教可能になりました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L247"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L252",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%に%TALENTNAME:218%が継承されました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L252"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L261",
+    "original": "%CALLNAME:ARG%の育てていた%CSTR:ARG:(21+ARG:1)%に%TALENTNAME:219%が継承されました。",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L261"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L316",
+    "original": "\\@(TFLAG:654 == 1) ? 息子 # 娘\\@は%CALLNAME:ARG%と離れるのを嫌がり、初めて会う%CALLNAME:MASTER%に不審と反感を抱いているようだ…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L316"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L320",
+    "original": "\\@(TFLAG:654 == 1) ? 息子 # 娘\\@は自分に会いに来てくれていた%CALLNAME:MASTER%を慕っているようだ…",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L320"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L343",
+    "original": "あなたの\\@(LOCAL > 1) ? 息子達 # 息子\\@から仕送りとして{ARG*5000}圓届きました",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L343"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1486",
+    "original": "%CALLNAME:ARG%が生まれてからしばらくの時が経った………",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1486"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1487",
+    "original": "%CALLNAME:ARG%は成長し、[幼児]",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1487"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1492",
+    "original": "と[小柄体型]",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1492"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1498",
+    "original": "と[幼稚]",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1498"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1500",
+    "original": "を失った",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1500"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1503",
+    "original": "胸も成長して",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1503"
+  },
+  {
+    "key": "src/ERB/MAIN/SYSTEM/CHILD.ERB_L1519",
+    "original": "[\\@(LOCAL == 0) ? 普乳 # %TALENTNAME:LOCAL%\\@]になった",
+    "context": "文件名: src/ERB/MAIN/SYSTEM/CHILD.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SYSTEM/CHILD.ERB#L1519"
+  }
+]

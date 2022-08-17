@@ -1,0 +1,37 @@
+[
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L11",
+    "original": "%EXPNAME:50%{COST31(6)}以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L11"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L13",
+    "original": "%ABLNAME:13%{ABL:精液中毒 + 1}LV以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L13"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L15",
+    "original": "[0] - %PALAMNAME:13%の珠×{COST31(0)}、%PALAMNAME:14%の珠×{COST31(1)}、%EXPNAME:4%{COST31(2)}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L15"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L18",
+    "original": "[1] - %PALAMNAME:13%の珠×{COST31(0) * 3}、%PALAMNAME:14%の珠×{COST31(1) * 3}、%EXPNAME:4%{COST31(2) / 2}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L18"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L23",
+    "original": "[2] - %PALAMNAME:13%の珠×{COST31(3)}、%PALAMNAME:14%の珠×{COST31(4)}、%EXPNAME:4%{COST31(2)}、%EXPNAME:8%{COST31(5)}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L23"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L27",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L27"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP031.ERB_L52",
+    "original": "%ABLNAME:31%のレベルが{ABL:精液中毒}になりました。",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP031.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP031.ERB#L52"
+  }
+]

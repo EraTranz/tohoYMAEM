@@ -1,0 +1,3942 @@
+[
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L29",
+    "original": "「素質」に関する大まかな説明です。 ＜page.{LOCAL+1}/{LOCAL:1+1}＞",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L29"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L40",
+    "original": "[{COUNT, 3}] %TALENTNAME:COUNT%",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L40"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L44",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L44"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L45",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L45"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L46",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L46"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L55",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L55"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L61",
+    "original": "【%TALENTNAME:RESULT%】",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L61"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L71",
+    "original": "男性経験がない生娘である、あるいは処女膜を持っていることを示しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L71"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L72",
+    "original": "生娘である場合は性に関する経験が皆無なため抵抗は激しいですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L72"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L73",
+    "original": "奴隷としての価値は大きく跳ね上がります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L73"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L74",
+    "original": "生娘の中には[性経験無]と表示される者もいますが違いはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L74"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L75",
+    "original": "また、再生させるなどで処女膜持ちの場合も生娘よりは幾分か抵抗が減りますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L75"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L76",
+    "original": "全く無いわけではありません。再生の場合には[乙女]と表示される場合もあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L76"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L77",
+    "original": "また奴隷としての価値も上がりますが、生娘よりは若干低くなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L77"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L78",
+    "original": "当然ながら♂がこれを持っていることはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L78"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L82",
+    "original": "文字通り陰核が肥大化し、ペニスみたいになった状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L82"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L83",
+    "original": "オトコ、ふたなりでなくてもSEX系調教が可能。ただし射精は出来ません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L84",
+    "original": "当然ながら♂がこれを持っていることはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L84"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L85",
+    "original": "[137]射精機能開発により射精できるようにできる可能性がありますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L85"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L86",
+    "original": "その場合、この素質は消失して[ふたなり]となります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L86"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L90",
+    "original": "自分の性別を自由に変化させることできる能力を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L90"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L91",
+    "original": "非常にレアかつ有用な能力で、これを活用すれば様々なことができるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L91"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L92",
+    "original": "なお、ゲームの都合上、[オトコ]でも女でもないというようなことはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L92"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L97",
+    "original": "文字通り怖がりな性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L97"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L98",
+    "original": "恐怖に対する耐性がかなり低いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L98"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L99",
+    "original": "パラメータ「反感」は伸びにくく、「恐怖」は伸びやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L99"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L100",
+    "original": "また恐怖によって心が折れやすいためか、能力「従順」を上げやすいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L100"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L104",
+    "original": "文字通り反抗的な性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L105",
+    "original": "自分を誘拐し、監禁、挙句の果てに性的な調教を施そうとする主人に対し、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L105"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L106",
+    "original": "露骨に反抗的な意思を見せます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L106"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L107",
+    "original": "反抗心が強いため、主人が命令するタイプのコマンドは中々実行しようとしない他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L107"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L108",
+    "original": "パラメータ「恭順」と「欲情」が伸びにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L108"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L109",
+    "original": "また中々性奴隷として振る舞ってくれないため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L109"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L110",
+    "original": "能力「従順」を4以上に上げないと売却できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L114",
+    "original": "文字通り気丈な性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L114"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L115",
+    "original": "自分を誘拐し、監禁、さらには調教を施される逆境の中でも毅然と立ち向かってきます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L116",
+    "original": "芯が強いため、主人が命令するタイプのコマンドは中々実行しようとしませんが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L117",
+    "original": "同時に時間経過による気力の回復量は多めです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L118",
+    "original": "簡単に性奴隷になることを認めようとしないため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L118"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L119",
+    "original": "能力「従順」を4以上に上げないと売却できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L123",
+    "original": "文字通り素直な性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L123"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L124",
+    "original": "何に対してあまり反抗することなく順応するため、主人の命令に従いやすく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L124"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L125",
+    "original": "パラメータ「恭順」も伸びやすい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L125"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L126",
+    "original": "その天性の性格からか、能力「従順」や「奉仕精神」を上げやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L126"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L130",
+    "original": "穏やかで従順な性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L130"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L131",
+    "original": "精神的に落ち着いており、イれこむ事があまりありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L131"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L132",
+    "original": "パラメータ「反感」が伸びにくくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L132"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L136",
+    "original": "その名の通り何に対しても反発しようとする性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L137",
+    "original": "精神的に未熟なキャラに多く見られるタイプでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L137"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L138",
+    "original": "パラメータ「反感」が伸びやすく、能力「従順」と「奉仕精神」が上げにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L139",
+    "original": "さらに反発刻印の解除に必要な「屈服の珠」も増えます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L143",
+    "original": "誇り高く、常に優位に立とうとする性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L144",
+    "original": "プライドを傷つけるような命令を中々実行しようとはしません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L144"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L145",
+    "original": "自尊心が強いため、パラメータ「反感」が伸びやすく、「屈服」が伸びにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L145"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L146",
+    "original": "能力「技巧」と「奉仕精神」も上げにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L146"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L150",
+    "original": "誇りというものを特に持っていないため、簡単に優位に立つことが可能です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L150"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L151",
+    "original": "コマンドを実行しやすく、パラメータ「屈服」も伸びやすい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L152",
+    "original": "他に能力「奉仕精神」も上げやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L152"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L156",
+    "original": "ツンツンしている側面と、デレデレしている側面を持っている性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L156"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L157",
+    "original": "[反抗的]と[ツンデレ]を同時に持っている場合、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L157"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L158",
+    "original": "従順が4以上になった時に性格が[素直]に変わり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L158"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L159",
+    "original": "逆に[素直]と[ツンデレ]を同時に持っている場合は",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L159"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L160",
+    "original": "従順が3以下になった時に性格が[反抗的]に変わる特性を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L164",
+    "original": "通常の人よりも嫉妬心に駆られやすい性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L164"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L165",
+    "original": "好感度と嫉妬度に応じてパラメータ「恭順」と「反感」の上がりやすさが変動します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L165"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L170",
+    "original": "その名の通り自らの欲望を制御することが可能であることを示しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L171",
+    "original": "そのため能力「欲望」を4以上に上げないと性奴隷として売却できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L171"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L172",
+    "original": "さらに、能力「奉仕精神」や快楽系のパラメータも上がりにくくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L172"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L176",
+    "original": "「%NAME:MASTER%」や性的なことに対してあまり関心が無い状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L176"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L177",
+    "original": "パラメータ「恭順」「欲情」「屈服」「恐怖」「反感」が総じて伸びにくく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L177"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L178",
+    "original": "さらに能力「奉仕精神」も上げにくくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L178"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L182",
+    "original": "感情というものが希薄で、何に対しても情動が感じられない状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L182"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L183",
+    "original": "パラメータが全体的に伸びにくく、能力「奉仕精神」も上げにくくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L183"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L187",
+    "original": "色々な事に関心を持ち、積極的に動こうとする性分です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L187"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L188",
+    "original": "性的な事柄に対しても興味を示し、理解しようとするため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L188"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L189",
+    "original": "コマンドを実行しやすい他、パラメータ「習得」も伸びやすい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L189"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L193",
+    "original": "古風な考えを持ち、真面目で性的な事をあまり知ろうとしない性分です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L193"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L194",
+    "original": "快楽のためだけの性的な事柄に対する拒否感が強いため、主人の命令を拒否しがち。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L194"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L195",
+    "original": "パラメータ「習得」が伸びにくく、能力「奉仕精神」も上げにくい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L195"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L199",
+    "original": "とても明るく、どんなことでも前向きに考えがちなポジティブな性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L199"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L200",
+    "original": "性的な調教を受けても塞ぎ込むことが無いため、パラメータ「抑鬱」が伸びにくい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L200"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L201",
+    "original": "また、能力「奉仕精神」を上げやすい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L201"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L205",
+    "original": "とても沈みやすく、どんなことも後ろ向きに考えがちなネガティブな性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L205"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L206",
+    "original": "性的な調教によって自虐的な思考に陥るためか、パラメータ「抑鬱」が伸びやすい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L206"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L207",
+    "original": "また、能力「奉仕精神」を上げやすい。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L207"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L211",
+    "original": "「%NAME:MASTER%」との間に明確な線を引き、手を出されることを拒みます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L211"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L212",
+    "original": "能力をLv4にする際に2倍、Lv5にする際に3倍の珠が必要になる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L212"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L213",
+    "original": "能力強化に必要な経験回数も通常よりかなり多くなることも。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L213"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L214",
+    "original": "エンゲージリングを送ったり、[親愛]を得ると心が吹っ切れることもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L214"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L218",
+    "original": "その名の通り、人より目立つのが好きな性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L218"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L219",
+    "original": "どんな状況下でも他者に構ってもらいたいがため、主人の命令も受け入れがち。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L219"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L220",
+    "original": "能力「奉仕精神」や「露出癖」を上げやすい傾向にあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L220"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L225",
+    "original": "文字通り、操を守ろうとする貞淑な考えを持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L225"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L226",
+    "original": "性的な調教には否定的なスタンスであるため、情愛系調教の効果が低く、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L226"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L227",
+    "original": "パラメータ「反感」は上がりやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L227"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L228",
+    "original": "同時に[処女]を持っている場合、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L228"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L229",
+    "original": "貞操を守れるお尻は攻められても良いと思う傾向にあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L229"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L233",
+    "original": "文字通り、操を守ることにあまり関心の無い考えを持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L233"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L234",
+    "original": "関心が薄い故情愛系調教の効果が低くなりますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L234"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L235",
+    "original": "パラメータ「反感」は上がりにくくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L235"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L239",
+    "original": "精神的に自分の心を押し込めている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L239"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L240",
+    "original": "心の壁を作りって主人の命令に中々従おうとしない他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L240"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L241",
+    "original": "能力「欲望」を4以上に上げないと売却できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L241"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L242",
+    "original": "心を押さえつけているため、パラメータ「欲情」は伸びにくく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L242"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L243",
+    "original": "「反感」や「抑鬱」は非常に伸びやすいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L243"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L244",
+    "original": "快楽を感じれば感じるほどより強く自分を押さえつけようとします。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L244"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L245",
+    "original": "Ｃ感覚・Ｖ感覚・Ａ感覚・Ｂ感覚の合計が10以上の時に欲望をLv3以上、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L245"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L246",
+    "original": "または欲望をLv5まで上昇させると心が吹っ切れて消滅させることができます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L246"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L250",
+    "original": "その名の通り、自らの精神を完全に解き放った状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L250"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L251",
+    "original": "心を押さえつけるようなことをしないため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L251"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L252",
+    "original": "パラメータ「欲情」や「屈服」は伸びやすくなり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L252"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L253",
+    "original": "能力「マゾっ気」も上げやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L253"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L257",
+    "original": "捕らえられてなお非常に強い調子で抵抗を試みている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L257"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L258",
+    "original": "可能な時は全力で抵抗するため、主人の命令に中々従おうとしない他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L258"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L259",
+    "original": "パラメータ「欲情」は伸びにくく、「反感」は伸びやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L259"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L260",
+    "original": "性奴隷になることを嫌がっているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L260"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L261",
+    "original": "能力「欲望」を4以上に上げないと売却できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L261"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L262",
+    "original": "また、Ｃ感覚・Ｖ感覚・Ａ感覚・Ｂ感覚の合計が10以上の時に欲望をLv3以上、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L262"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L263",
+    "original": "または欲望をLv5まで上昇させると心が吹っ切れて消滅させることができます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L263"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L267",
+    "original": "性的な行為や、肌の露出を恥ずかしいと感じる性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L267"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L268",
+    "original": "恥ずかしいことをさせようとすると抵抗するため命令を拒否することがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L268"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L269",
+    "original": "その反面、恥ずかしいことをさせる露出系の調教の効果が高くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L269"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L273",
+    "original": "性的な行為や、肌の露出をしてもあまり恥ずかしいと感じない性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L273"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L274",
+    "original": "露出系調教の効果が低いです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L274"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L278",
+    "original": "♂を嫌っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L278"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L279",
+    "original": "[オトコ]持ちのキャラに調教された場合、コマンドが実行しにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L279"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L283",
+    "original": "♀を嫌っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L283"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L284",
+    "original": "[オトコ]でないキャラに調教された場合、コマンドが実行しにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L284"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L288",
+    "original": "そのキャラにとって知られたくない情報を%NAME:MASTER%が持っている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L288"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L289",
+    "original": "精神的に%NAME:MASTER%に対して強く出れなくなっているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L289"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L290",
+    "original": "コマンドをかなり実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L290"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L295",
+    "original": "痛みに敏感な体質をしています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L295"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L296",
+    "original": "その体質上、パラメータ「恐怖」や「反感」は伸びやすくなりますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L296"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L297",
+    "original": "能力「マゾっ気」があるとSM系調教で「欲情」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L297"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L298",
+    "original": "ただし《苦痛》から来る消耗も大きくなるので注意が必要です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L298"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L302",
+    "original": "痛みに鈍感な体質をしています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L302"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L303",
+    "original": "その体質上、パラメータ「恐怖」や「反感」は伸びにくくなりますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L303"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L304",
+    "original": "《苦痛》から来る消耗も普通のキャラよりも軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L304"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L308",
+    "original": "刺激を受けると愛液を分泌しやすい体質をしています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L308"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L309",
+    "original": "その名の通り、パラメータ「潤滑」が伸びやすいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L309"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L313",
+    "original": "刺激を受けると愛液を分泌しにくい体質をしています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L313"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L314",
+    "original": "その名の通り、パラメータ「潤滑」が伸びにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L314"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L318",
+    "original": "薬に対する耐性がある体質を示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L318"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L319",
+    "original": "薬品系の効果が減衰したり、薬そのものが使用できなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L319"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L323",
+    "original": "おもししやすい体質を示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L323"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L324",
+    "original": "これを持つキャラは放尿コマンドが使えるようになる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L324"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L325",
+    "original": "刺激を受ける度に尿意が上がり、限界を超えるとおもらしするようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L325"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L329",
+    "original": "媚薬を投与され過ぎて中毒になってしまっていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L329"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L330",
+    "original": "媚薬使用による消耗が軽減され、さらに効果も増大しますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L330"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L331",
+    "original": "定期的に媚薬を与えないと禁断症状を引き起こすことがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L331"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L335",
+    "original": "喘息の持病を持つことを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L335"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L336",
+    "original": "息が切れやすいため体力の消耗が通常よりも大きくなり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L336"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L337",
+    "original": "歌うことに対してもやや低めの評価を受けます。さらに歌の練習がし辛いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L337"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L338",
+    "original": "能力「歌唱技能」の上昇に必要な『経験』や『珠』が多くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L338"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L339",
+    "original": "また環境の影響を受けやすいためか、パラメータ「薬毒」が上昇しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L339"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L343",
+    "original": "異常な回復力を誇る「ゾンビフェアリー」の体質を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L343"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L344",
+    "original": "調教により体力が0以下になって死亡してしまった時、即座に蘇生します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L344"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L345",
+    "original": "そのため体力0によってゲームオーバーになりません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L345"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L346",
+    "original": "ただし蘇生によるリスクは後述の[蓬莱人]以上ですので注意してください。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L346"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L347",
+    "original": "異常とも言える回復力を持っているため、休息時の体力の回復量はやや多めです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L347"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L348",
+    "original": "ある種の不死性を備えているため、奴隷として価値は跳ね上がります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L348"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L352",
+    "original": "蓬莱の薬を飲むなどで不死の体質を得ていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L352"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L353",
+    "original": "調教により体力が0以下になって死亡してしまった時、即座に蘇生します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L353"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L354",
+    "original": "そのため体力0によってゲームオーバーになりません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L354"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L355",
+    "original": "ただし死亡させたことに反感を持つため、蘇生する度に能力「従順」が1低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L355"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L356",
+    "original": "異常とも言える回復力を誇るため、休息時の体力の回復量は多めになっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L356"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L357",
+    "original": "その希少性と不死性のため、奴隷として価値は大きく跳ね上がります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L357"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L362",
+    "original": "何事にも器用で、物覚えが良いことを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L362"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L363",
+    "original": "要領が良いのでパラメータ「習得」が伸びやすく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L363"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L364",
+    "original": "飲み込みも早いので能力「奉仕精神」が上げやすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L364"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L368",
+    "original": "何事も不器用で、物覚えが悪いです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L368"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L369",
+    "original": "子供っぽいキャラが持っていることが多い傾向にあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L369"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L370",
+    "original": "要領が悪いのでパラメータ「習得」が伸びにくく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L370"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L371",
+    "original": "飲み込みも遅いので能力「奉仕精神」が上げにくくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L371"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L375",
+    "original": "天性の素質の一つで、とても器用に舌を動かす事が出来ることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L375"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L376",
+    "original": "巧みな舌の動きにより、フェラ系調教の効果が高くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L376"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L377",
+    "original": "調教者の時も舌を使って効果的に責めることができるため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L377"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L378",
+    "original": "フェラやクンニ等のコマンドで与えることが出来る快楽が2倍になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L378"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L382",
+    "original": "後天的な才能の一つで、良く針を使うキャラが身につけている技です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L382"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L383",
+    "original": "流麗な針の使い方で調教者の時、コマンド「針」の効果が高くなり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L383"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L384",
+    "original": "あまり消耗させずに苦痛だけ与えられます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L384"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L385",
+    "original": "また、注射系のコマンドの効果も上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L385"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L386",
+    "original": "「針」で苦痛刻印Lv3をつけた時、異常経験が＋1されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L386"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L390",
+    "original": "文字通りの舌が猫の舌のようになっていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L390"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L391",
+    "original": "表面がヤスリの様にザラザラしているので、舐められると非常に痛いです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L391"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L392",
+    "original": "そのためこの素質を持っていると原則的にフェラ系調教を実行できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L392"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L396",
+    "original": "その名の通り、薬を調合するための知識です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L396"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L397",
+    "original": "薬に精通しているため、これを持つキャラが主人か助手にいる場合は",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L397"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L398",
+    "original": "特殊な薬を購入したり使用できるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L398"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L399",
+    "original": "また効果的な用量を把握しているため、主人か助手のどちらかがこれを持っていると、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L399"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L400",
+    "original": "薬を使用した時の体力や気力の消耗を軽減させることができるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L400"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L404",
+    "original": "禁忌とされる数々の恐るべき知識を身につけていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L404"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L405",
+    "original": "その名から想像できる通り、人々からは忌み嫌われるような技術を用いることで",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L405"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L406",
+    "original": "特殊なアイテムやコマンドを実行できるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L406"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L407",
+    "original": "技能訓練士の下で取得することも出来ますが、アイテムとしては高額で、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L407"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L408",
+    "original": "よほどの者でない限り易々とこの危険な知識を授けてはくれないでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L408"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L412",
+    "original": "妖精の身体を知り尽くしていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L412"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L413",
+    "original": "調教者の時かつ相手が[妖精]の場合、効果的に責めることが出来るため。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L413"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L414",
+    "original": "パラメータが色々上がりやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L414"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L415",
+    "original": "ただし身につけるにはそれなりの数の妖精を調教する必要があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L415"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L419",
+    "original": "大人のオモチャの扱いを熟知している。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L419"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L420",
+    "original": "習得者が道具を使ったコマンドを実行すると奴隷に与える快感や苦痛が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L420"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L421",
+    "original": "習得者が奴隷で道具を使って自慰した場合は自分に与える快感や苦痛が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L421"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L425",
+    "original": "他者を治療する術を身につけていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L425"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L426",
+    "original": "主人か助手がこれを持っていると奴隷の体力の回復量が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L426"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L431",
+    "original": "オナニーを我慢することが出来ない欲望に忠実な性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L431"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L432",
+    "original": "オナニーを行うことに抵抗を感じにくいため、自慰関連が実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L432"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L433",
+    "original": "効果的な自慰方法を会得しているのか能力「自慰中毒」が上げやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L433"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L434",
+    "original": "また、調教後自慰の回数も通常よりも増えます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L434"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L438",
+    "original": "くさい臭いに対して鈍感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L438"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L439",
+    "original": "精液の臭いにも抵抗を感じないため、フェラ系調教を実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L439"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L440",
+    "original": "また、能力「精液中毒」も上げやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L440"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L444",
+    "original": "くさい臭いに対して敏感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L444"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L445",
+    "original": "精液の臭いにも抵抗を感じるため、フェラ系調教を実行しにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L445"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L446",
+    "original": "また、能力「精液中毒」も上げにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L446"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L450",
+    "original": "誰かのために尽くしたいと考える性分です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L450"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L451",
+    "original": "奉仕系調教を実行しやすくなる他、パラメータ「屈服」が伸びやすいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L451"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L452",
+    "original": "また、能力「奉仕精神」も上げやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L452"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L456",
+    "original": "愛液や精液等の汚れが身体に付いても気にしない性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L456"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L457",
+    "original": "どんな汚れに対して躊躇しなくなるため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L457"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L458",
+    "original": "調教者の時は汚れを無視してコマンドを実行できるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L458"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L459",
+    "original": "また被調教者の時も、奉仕系コマンドが実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L459"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L460",
+    "original": "素質としては珍しく、技能訓練士の下で取得できます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L460"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L464",
+    "original": "陰毛を完全に剃られたもしくは最初から生えてない状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L464"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L465",
+    "original": "陰部が丸見えで周囲の肌もつるつるになるため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L465"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L466",
+    "original": "パラメータ「恥情」や「屈服」や「抑鬱」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L466"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L467",
+    "original": "また生えかけの状態になるとチクチクするため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L467"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L468",
+    "original": "常時パラメータ「苦痛」や「不快」が僅かですが入るようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L468"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L472",
+    "original": "精液を飲むだけで絶頂してしまう体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L472"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L473",
+    "original": "精液を飲ませると同時に強い快感を与え続けることで、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L473"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L474",
+    "original": "精液の味を認識する度に快楽を思い出してしまい、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L474"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L475",
+    "original": "性的な刺激無しで絶頂に達してしまいます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L475"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L476",
+    "original": "取得していると違う条件で能力「精液中毒」を上げることが出来るようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L476"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L481",
+    "original": "気持ち良い事に対して、素直にそれを受け入れる事が出来る性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L481"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L482",
+    "original": "快楽を受け入れることに抵抗がないのでコマンドを実行しやすくなる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L482"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L483",
+    "original": "パラメータ「欲情」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L483"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L484",
+    "original": "また、能力「欲望」と「奉仕精神」も上げやすいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L484"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L488",
+    "original": "快楽というものを真っ向から拒否、否定してかかる性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L488"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L489",
+    "original": "特に性的なものに由来するものは嫌悪しているため、命令を拒否しがちな他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L489"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L490",
+    "original": "パラメータ「欲情」が非常に伸びにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L490"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L491",
+    "original": "また快楽に屈することに強い抵抗感を持っているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L491"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L492",
+    "original": "快楽系調教時にはパラメータ「抑鬱」が上昇しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L492"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L493",
+    "original": "調教する側にとって非常に厄介な素質と言えるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L493"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L498",
+    "original": "普通ありえないような行為に対して性的・精神的高揚を覚える性癖です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L498"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L499",
+    "original": "特にアブノーマルとも言われているSM系調教の効果が高くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L499"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L500",
+    "original": "調教という異常な行為でも魅力を感じるのか、能力が全体的に上がりやすいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L500"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L504",
+    "original": "相手に苦痛を与えることに悦びを感じる性癖です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L504"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L505",
+    "original": "能力「奉仕精神」が上げにくいというデメリットはありますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L505"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L506",
+    "original": "能力「サドっ気」が上昇しやすくなる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L506"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L507",
+    "original": "攻めの時は強気になるため、調教者の時にコマンドを実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L507"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L508",
+    "original": "また、調教対象に苦痛刻印Lv3をつけたときに異常経験が＋1されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L508"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L509",
+    "original": "技能訓練士の下で取得できる素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L509"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L510",
+    "original": "……が、どのように付けているのか詳細は不明。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L510"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L514",
+    "original": "苦痛を受けたり強く責められることに悦びを感じる性癖です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L514"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L515",
+    "original": "SM系コマンドの効果アップし、パラメータ「欲情」等の伸びもいいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L515"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L516",
+    "original": "また、能力「露出癖」や「マゾっ気」が上がりやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L516"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L517",
+    "original": "痛めつけられることに耐性があるのか、《苦痛》による気力体力の消費も軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L517"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L518",
+    "original": "技能訓練士の下で取得できる素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L518"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L519",
+    "original": "取得方法については以下の通――",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L519"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L520",
+    "original": "……………………………………………………………………………………",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L520"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L521",
+    "original": "……………………………………………………………………………………",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L521"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L522",
+    "original": "……………………………………………………………………………………",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L522"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L523",
+    "original": "……………………………………………………………………………………。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L523"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L524",
+    "original": "…………何故かページが破れている……",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L524"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L528",
+    "original": "相手が男でも女でも構わないという性癖です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L528"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L529",
+    "original": "『りょうとう』、『バイ』と表現されることもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L529"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L530",
+    "original": "その性癖故、同性同士の性的な関係にも抵抗が低く、同性調教を実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L530"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L531",
+    "original": "また、能力「レズっ気」や「レズ中毒」を上昇させやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L531"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L532",
+    "original": "※[オトコ]の場合は「ＢＬっ気」、「ＢＬ中毒」を上昇させやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L532"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L536",
+    "original": "読んで字のごとく、中毒性のあるものに非常にハマりやすい性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L536"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L537",
+    "original": "「○○中毒」と名のつく能力を上げやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L537"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L538",
+    "original": "ただし、[媚薬中毒]に陥りやすいので注意が必要です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L538"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L542",
+    "original": "読んで字のごとく、中毒性のあるものに非常にハマりにくい性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L542"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L543",
+    "original": "「○○中毒」と名のつく能力を上げにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L543"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L544",
+    "original": "また、[媚薬中毒]にも陥りにくいので狙って付ける際は注意が必要です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L544"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L545",
+    "original": "売却補正にもマイナスは付きますが、その分中毒しきった時の基礎価格は上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L545"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L549",
+    "original": "助手のとき、相手を中毒性のあるものにハマるのを誘導する素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L549"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L550",
+    "original": "助手は奴隷に近い立場のため、つい気を許してしまい、付け入る隙を与えてしまう……",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L550"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L551",
+    "original": "ある意味ダークな素質でもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L551"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L552",
+    "original": "「○○中毒」と名のつく能力を上げやすくなりますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L552"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L553",
+    "original": "その調教中ある程度コマンドを実行し、かつ欲情も一定数値以上の時、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L553"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L554",
+    "original": "調教終了直後の時のみ……と、有効にするための条件は少し特殊です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L554"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L555",
+    "original": "また、主人は主人という観念が無意識的に奴隷の中で固定化されているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L555"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L556",
+    "original": "主人が持っていても効果は発揮しません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L556"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L561",
+    "original": "存在自体がとても魅力的である事を表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L561"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L562",
+    "original": "調教中は特に効果を発揮ませんが、売却時は売値が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L562"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L566",
+    "original": "外見や挙動が蠱惑的な人物であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L566"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L567",
+    "original": "調教者に見とれてしまうため、自覚しない内につい言うことを聞いてしまうようになり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L567"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L568",
+    "original": "パラメータが全体的に伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L568"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L569",
+    "original": "調教者が持っているなら最大限使って行きたい素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L569"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L573",
+    "original": "他者を惹きつける、不思議な魅力がある事を表します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L573"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L574",
+    "original": "調教者の時、相手はその不思議なオーラに引きずられてしまい、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L574"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L575",
+    "original": "命令を受け入れてしまうことが多くなり、パラメータも全体的に伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L575"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L576",
+    "original": "主人が調教中の時にこの素質を持っていると好感度が1だけ上がりやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L576"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L577",
+    "original": "また、[オトコ]がこれを持っている場合、売却額が跳ね上がります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L577"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L578",
+    "original": "「%NAME:MASTER%」が奴隷を5人以上籠絡させたとき、イベントで取得することが出来ます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L578"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L582",
+    "original": "相手を性的な事で弄ぶような性格です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L582"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L583",
+    "original": "調教者の時は相手を巧みに翻弄させることで、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L583"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L584",
+    "original": "命令に従わせるように仕向けることが出来ます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L584"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L588",
+    "original": "そのキャラの人気が高いということを表します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L588"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L589",
+    "original": "調教中は特に効果を発揮ませんが、売却時等では売値が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L589"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L590",
+    "original": "なお、有名キャラで最初から[人気]を持っている場合、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L590"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L591",
+    "original": "[人気]の効果は後から付加された者のそれよりも強くなる傾向があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L591"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L595",
+    "original": "持ち前の明るさ、奉仕的・献身的な見た目が奴隷をハッスルさせます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L595"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L596",
+    "original": "その特性故、調教者の時にはコマンドを実行しやすくなる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L596"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L597",
+    "original": "時間経過における気力回復量も増加します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L597"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L598",
+    "original": "助手がこれを持っていると奴隷の劣情を煽りたてるのか、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L598"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L599",
+    "original": "調教終了後の自慰回数が増加します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L599"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L603",
+    "original": "大きめの乳を持つ者に対して超絶的なテクを発揮できることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L603"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L604",
+    "original": "調教対象が巨乳・爆乳のとき調教の効果が強化されるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L604"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L605",
+    "original": "反面、調教対象が貧乳や絶壁のように乳が小さいと調教の効果が若干低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L605"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L606",
+    "original": "ちなみに読みは『おおにゅうどう』。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L606"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L610",
+    "original": "小さめの乳を持つ者に対して効果的に攻めるテクを持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L610"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L611",
+    "original": "調教対象が貧乳・絶壁のとき調教の効果が強化されるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L611"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L612",
+    "original": "反面、調教対象が巨乳や爆乳のように乳が大きいと調教の効果が若干低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L612"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L613",
+    "original": "ちなみに読みは『つるぺたおとし』。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L613"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L617",
+    "original": "素晴らしいまでの甲斐性の持ち主であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L617"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L618",
+    "original": "周りから嫉妬心を受けにくくなるなど細かい点で調教が有利になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L618"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L619",
+    "original": "より多くの人物を籠絡することで取得できるかもしれません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L619"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L620",
+    "original": "ちなみに読みは『だいかいしょう』。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L620"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L621",
+    "original": "残念ながら『さんごのゆびわ』を持っていても防ぐことはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L621"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L626",
+    "original": "クリトリスまたはペニスへの刺激に敏感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L626"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L627",
+    "original": "快Ｃが上がりやすいため、Ｃ責め調教でイキやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L627"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L631",
+    "original": "クリトリスへまたはペニスへの刺激に鈍感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L631"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L632",
+    "original": "快Ｃが上がりにくいため、Ｃ責め調教でイキにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L632"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L636",
+    "original": "膣(ヴァギナ)への刺激に敏感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L636"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L637",
+    "original": "快Ｖが上がりやすいため、Ｖ責め調教でイキやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L637"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L638",
+    "original": "通常、[オトコ]がこれを持つことはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L638"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L642",
+    "original": "膣(ヴァギナ)への刺激に鈍感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L642"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L643",
+    "original": "快Ｖが上がりにくいため、Ｖ責め調教でイキにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L643"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L644",
+    "original": "通常、[オトコ]がこれを持つことはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L644"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L648",
+    "original": "肛門(アヌス)への刺激に敏感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L648"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L649",
+    "original": "快Ａが上がりやすいため、Ａ責め調教でイキやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L649"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L653",
+    "original": "肛門(アヌス)への刺激に鈍感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L653"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L654",
+    "original": "快Ａが上がりにくいため、Ａ責め調教でイキにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L654"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L658",
+    "original": "胸(バスト)への刺激に敏感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L658"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L659",
+    "original": "快Ｂが上がりやすいため、Ｂ責め調教でイキやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L659"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L663",
+    "original": "胸(バスト)への刺激に鈍感な体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L663"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L664",
+    "original": "快Ｂが上がりにくいため、Ｂ責め調教でイキにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L664"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L668",
+    "original": "乳房のサイズが絶壁のごとく無い事を表しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L668"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L669",
+    "original": "胸への刺激に敏感になるため、能力「Ｂ感覚」がかなり上げやすい反面、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L669"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L670",
+    "original": "他の胸関連の項目に大きな制約があり、パイズリは実行出来ません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L670"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L671",
+    "original": "また、この体型では母乳体質にならなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L671"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L675",
+    "original": "乳房のサイズが小さい事を表しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L675"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L676",
+    "original": "胸への刺激にやや敏感になるため、能力「Ｂ感覚」が上げやすい反面、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L676"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L677",
+    "original": "他の胸関連の項目に制約があり、パイズリを行うのに必要な技巧が",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L677"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L678",
+    "original": "普通の時よりも高くなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L678"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L682",
+    "original": "乳房のサイズが大きい事を表しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L682"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L683",
+    "original": "胸への刺激にやや鈍感になるため、能力「Ｂ感覚」が上げにくい反面、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L683"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L684",
+    "original": "他の胸関連の項目の制約が緩く、パイズリを行うのに必要な技巧が",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L684"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L685",
+    "original": "普通の時よりもやや低くなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L685"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L689",
+    "original": "乳房のサイズがとても大きい事を表しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L689"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L690",
+    "original": "胸への刺激に鈍感になるため、能力「Ｂ感覚」がかなり上げにくい反面、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L690"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L691",
+    "original": "他の胸関連の項目の制約が非常に緩く、パイズリを行うのに必要な技巧が",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L691"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L692",
+    "original": "普通の時よりも低くなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L692"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L696",
+    "original": "日の光に当たることで元気になる体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L696"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L697",
+    "original": "昼間の休憩時に体力や気力の回復量が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L697"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L701",
+    "original": "月の光に当たることで元気になる体質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L701"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L702",
+    "original": "夜間の休憩時に体力や気力の回復量が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L702"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L706",
+    "original": "普通の人間の耳の代わりに動物の耳が生えていることを示しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L706"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L707",
+    "original": "調教中は特に効果を発揮ませんが、人気があるので売却時は売値が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L707"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L711",
+    "original": "俗に言う「アルケニー体型」であるかを示しています。実質ヤマメ専用。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L711"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L712",
+    "original": "二次設定でヤマメの足が通常の足かそれとも蜘蛛のような六本脚かをこれの有無で判別します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L712"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L713",
+    "original": "一部の調教コマンドが使えるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L713"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L718",
+    "original": "性別が♂であることを示します。その絶倫ぶりは天下一品の一言。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L718"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L719",
+    "original": "当然ながら調教者の時はSEX系調教は可能ですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L719"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L720",
+    "original": "調教対象の時はＶ系調教を実行できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L720"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L721",
+    "original": "♂の性奴隷は需要がやや少ないものの、魅力的なキャラなら値段は跳ね上がります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L721"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L722",
+    "original": "調教者の場合、[女嫌い]の影響は受けませんが、[男嫌い]の影響は受けるので注意。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L722"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L726",
+    "original": "両性具有の状態を示しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L726"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L727",
+    "original": "股間にペニスが生えているため、SEX系調教が可能で射精もします。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L727"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L728",
+    "original": "希少価値が高く、その手の嗜好を持つ人が多いからか、奴隷としての価値は高めです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L728"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L729",
+    "original": "[ふたなり]を持たない♀キャラと比較し、使用できるコマンドが一部変化します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L729"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L733",
+    "original": "中性的な外見のキャラについているといわれる素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L733"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L734",
+    "original": "条件を満たせば助手化の際に[ふたなり]になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L734"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L735",
+    "original": "この状態の時(〔ふたなり薬〕を使用することで)[ふたなり]を解除した場合、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L735"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L736",
+    "original": "〔根素勃乳〕を使わない限り助手化の際、[ふたなり]に変化しなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L736"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L740",
+    "original": "力を行使して自由にペニスを具現化させることができることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L740"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L741",
+    "original": "一定条件を満たすと助手の時、意のままに[ふたなり]になることができます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L741"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L742",
+    "original": "基本的にかなり高位のキャラにしかついていない珍しい素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L742"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L743",
+    "original": "なお、薬剤や注射を使うことにより肥大陰核にすることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L743"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L747",
+    "original": "不思議な根または具現でペニスが顕在化したことを示しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L747"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L748",
+    "original": "この状態でペニスを失うと通常は元の素質([不思議な根]、[具現])に戻ります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L748"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L752",
+    "original": "見つめていると狂気へと誘う不思議な眼を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L752"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L753",
+    "original": "調教者の時、特殊なコマンド「狂気の目」を使えるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L753"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L754",
+    "original": "また奴隷時にも調教を阻害する特殊な効果を発揮することがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L754"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L755",
+    "original": "基本的にうどんげ専用の素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L755"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L759",
+    "original": "超教師とも言われているらしい？",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L759"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L760",
+    "original": "(現段階ではYMに実装されていません)",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L760"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L764",
+    "original": "[小柄体型]よりさらに小さい体つきであることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L764"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L765",
+    "original": "体がかなり小さいので通常は挿入出来ず、バイブ等の道具も使えなくなるので、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L765"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L766",
+    "original": "主にＶ、Ａ系調教を中心に著しい制約が課されることになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L766"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L767",
+    "original": "調教を行ううえで非常に厄介な素質の一つですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L767"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L768",
+    "original": "主人が[小人体型]か[禁断の知識]を持っている場合はこの制約を有る程度回避できます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L768"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L772",
+    "original": "背が低く、子供のような体格をしていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L772"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L773",
+    "original": "基本的に子供なキャラや[妖精]に多く見られる素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L773"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L774",
+    "original": "パラメータ「苦痛」や「恐怖」が伸びやすい傾向にあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L774"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L778",
+    "original": "背丈が他者よりも大きく、がっちりしていることを示しています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L778"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L779",
+    "original": "体つきが大きい分、肉体への負担が軽減されるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L779"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L780",
+    "original": "また、○拡張のような一部のハードな調教を実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L780"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L784",
+    "original": "子供であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L784"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L785",
+    "original": "胸に執着を持つためか、調教者のときは胸関連の調教の効果が高まります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L785"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L786",
+    "original": "また調教者のときに相手の胸を吸うこともあり、「Ｂ感覚」が高い場合、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L786"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L787",
+    "original": "その刺激によって相手を[母乳体質]になることもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L787"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L791",
+    "original": "子供特有の幼さ、未熟さを持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L791"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L792",
+    "original": "胸に執着を持つためか、調教者のときは胸関連の調教の効果が高まります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L792"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L793",
+    "original": "また調教者のときに相手の胸を吸うこともあり、「Ｂ感覚」が高い場合、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L793"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L794",
+    "original": "その刺激によって相手を[母乳体質]になることもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L794"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L798",
+    "original": "すぐ射精してしまう体質であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L798"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L799",
+    "original": "現実ではマイナスなイメージをいだいてしまいがちですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L799"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L800",
+    "original": "打ち止めのないEASYやNORMALでは特にデメリットはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L800"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L801",
+    "original": "持っていると射精ゲージが半分になり、連動して1回ごとの射精量も上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L801"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L802",
+    "original": "技能訓練士の下で身に付けられる素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L802"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L806",
+    "original": "射精しにくくなる素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L806"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L807",
+    "original": "現実ではマイナスなイメージをいだいてしまいがちですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L807"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L808",
+    "original": "射精する度に消耗するHARD以上の難易度では重宝するかもしれません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L808"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L809",
+    "original": "持っていると射精ゲージが倍になり、連動して1回ごとの射精量も減少します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L809"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L810",
+    "original": "技能訓練士の下で身に付けられる素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L810"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L814",
+    "original": "母乳が出る体質であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L814"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L815",
+    "original": "調教行為中に胸への刺激を与え続けると噴乳することがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L815"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L816",
+    "original": "この時搾乳機、触手搾乳等で母乳を搾り取ることもできるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L816"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L818",
+    "original": "体力・気力の減りが早くなるので、計画的に付与しましょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L818"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L822",
+    "original": "卵を産んで繁殖する種族であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L822"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L823",
+    "original": "産卵促進剤を飲ませたり、膣内射精を行うと産卵判定が入る他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L823"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L824",
+    "original": "妊娠させた場合は[抱卵中]になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L824"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L828",
+    "original": "卵生でないのに薬などによって卵を産んでしまう体質になったことを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L828"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L829",
+    "original": "[卵生]同様、産卵促進剤を飲ませたり、膣内射精を行うと産卵判定が入り、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L829"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L830",
+    "original": "妊娠させた場合も[妊娠]ではなく、[抱卵中]になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L830"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L834",
+    "original": "高い回復能力を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L834"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L835",
+    "original": "休息を取った際の体力の回復量が多くなるので、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L835"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L836",
+    "original": "多少ハードな調教をしてもすぐに復帰することが可能です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L836"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L840",
+    "original": "低い回復能力を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L840"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L841",
+    "original": "休息を取った際の体力の回復量が少なくなるので、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L841"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L842",
+    "original": "長めの休息や薬などのフォローが必要になることが多くなるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L842"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L846",
+    "original": "自分の体格を自由に変化させることできる能力を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L846"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L847",
+    "original": "効果は調教中に限定されますが、体格を変更させることで消耗を軽減したり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L847"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L848",
+    "original": "[小人体型]の相手をすることが可能になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L848"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L849",
+    "original": "有効に使えるかはあなた次第と言えるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L849"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L855",
+    "original": "その名の通り、にんっしんっしていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L855"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L856",
+    "original": "妊娠した場合、通常は胸のサイズが1ランク大きくなり、[母乳体質]になる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L856"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L857",
+    "original": "いくつかの素質も変化することがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L857"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L858",
+    "original": "ただし[恋慕]がついていないキャラを妊娠させてしまうと心が壊れてしまい、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L858"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L859",
+    "original": "[無関心][感情乏しい][狂気]等が付加されてしまうので注意してください。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L859"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L860",
+    "original": "売却価格に大きなペナルティの付く素質ですが、出産等で消滅します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L860"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L864",
+    "original": "文字通り子育て中です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L864"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L865",
+    "original": "妊娠出産パッチの機能を有効にしており、[恋慕]が付いている状態で、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L865"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L866",
+    "original": "妊娠後一定期間経過すると無事出産してこの状態になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L866"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L867",
+    "original": "[恋慕]が無い場合や他の手段で解除した場合は取得しません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L867"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L868",
+    "original": "この状態で更に一定期間経過すると親離れイベントが起き、この素質は消滅します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L868"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L872",
+    "original": "[育児中]と同時に獲得する素質で、子を慈しむ心を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L872"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L873",
+    "original": "非[恋慕]出産で育児放棄した母親に代わって育児を行うこともあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L873"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L874",
+    "original": "[育児中]とは違い、こちらは親離れイベント後も消滅せず残ります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L874"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L878",
+    "original": "[卵生]や[産卵体質]のキャラが妊娠するとこれに変化します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L878"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L879",
+    "original": "妊娠同様、通常は胸のサイズが1ランク大きくなり、[母乳体質]になる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L879"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L880",
+    "original": "いくつかの素質も変化することがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L880"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L881",
+    "original": "ただし[恋慕]がついていないキャラを妊娠させてしまうと心が壊れてしまい、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L881"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L882",
+    "original": "[無関心][感情乏しい][狂気]等が付加されてしまうので注意してください。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L882"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L883",
+    "original": "売却価格に大きなペナルティの付く素質ですが、産卵等で消滅します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L883"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L884",
+    "original": "[妊娠]と競合するため、共存させることは不可能です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L884"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L888",
+    "original": "触手の卵を体内に宿した状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L888"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L889",
+    "original": "妊娠した時と近い挙動をとり、触手に対する精神的な抵抗を取り除くことで",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L889"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L890",
+    "original": "能力「触手中毒」が上がりやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L890"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L891",
+    "original": "ただし客の受けが悪くなるので売却額は大きく減少します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L891"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L892",
+    "original": "これも[妊娠]と競合します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L892"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L896",
+    "original": "触手を体内に寄生された状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L896"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L897",
+    "original": "寄生した触手は自分にとって都合のよい環境を作ろうと特殊な物質を分泌し、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L897"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L898",
+    "original": "結果「触手中毒」を上げやすくなったり、触手調教中の消耗が軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L898"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L899",
+    "original": "ただし栄養を横取りするため普段の消耗は大きくなり、体力回復量も低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L899"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L900",
+    "original": "また、客の受けが悪くなるので売却額は大きく減少します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L900"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L904",
+    "original": "異形の魔物である触手を操る術を身に付けていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L904"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L905",
+    "original": "取得していると触手調教が可能になります。触手スキー必須の能力でしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L905"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L906",
+    "original": "技能訓練士の下で身に付けられる素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L906"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L911",
+    "original": "主人との調教を悦びを感じている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L911"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L912",
+    "original": "主人に対して微かな恋心をいだいているので、命令を受け入れやすく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L912"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L913",
+    "original": "パラメータ「屈服」等も伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L913"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L914",
+    "original": "恋愛感情なのか、ストックホルム症候群と受け止めるかはあなた次第です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L914"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L918",
+    "original": "主人のことを盲目的に信じている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L918"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L919",
+    "original": "主人に対して崇拝に似た感情を持っているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L919"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L920",
+    "original": "主人からの命令であれば悦んで受け入れるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L920"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L921",
+    "original": "また、パラメータ「屈服」等も伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L921"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L925",
+    "original": "主人に対して心からの愛情を感じている状態を示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L925"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L926",
+    "original": "お互いが[恋慕]よりさらに深い絆で繋がっているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L926"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L927",
+    "original": "得られる効果は一回り強化したようなものになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L927"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L931",
+    "original": "互いが強く惹かれあっていることを確信している状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L931"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L932",
+    "original": "お互いが[親愛]よりさらに深い絆で繋がっているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L932"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L933",
+    "original": "得られる効果は[親愛]以上に強力なものになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L933"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L934",
+    "original": "主人も相手に魅了されているので、通常は手放すことができなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L934"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L938",
+    "original": "他の奴隷に嫉妬している状態です。長い間構ってあげないと付くことがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L938"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L939",
+    "original": "助手調教中、自分と調教対象が共に主人と仲が良い場合は嫉妬心により、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L939"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L940",
+    "original": "パラメータ「苦痛」や「屈服」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L940"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L941",
+    "original": "ヤンデレパッチを有効にすると色々イベントが起こります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L941"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L942",
+    "original": "この状態のまま放置するとロクなことが起きませんので、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L942"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L943",
+    "original": "時々相手するなり甲斐性を身につけるなりで対処したほうがよいでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L943"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L947",
+    "original": "心のタガが外れ、精神的に病んでしまった状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L947"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L948",
+    "original": "客の受けが悪くなるので売却額はかなり低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L948"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L949",
+    "original": "逆に良心の呵責を感じにくくなるのか調教者が持っている場合は、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L949"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L950",
+    "original": "[サド]が無くても非常にハードな内容の調教を実行することができます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L950"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L951",
+    "original": "ヤンデレパッチを有効にしていると色々と嫌なイベントが発生します。ご注意を。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L951"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L955",
+    "original": "過酷な調教に耐え切れず、自己防衛のために精神が子供に退行した状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L955"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L956",
+    "original": "調教に対するトラウマが強く、精神レベルは子供そのものに戻っているので",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L956"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L957",
+    "original": "パラメータ「恭順」や「苦痛」、「恐怖」や「反感」が伸びやすく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L957"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L958",
+    "original": "「習得」や「欲情」、「恥情」や「抑鬱」は伸びにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L958"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L959",
+    "original": "その他に[幼児]や[幼稚]と同じような挙動をとります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L959"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L960",
+    "original": "心に負荷をかけ過ぎない限り目にすることはないでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L960"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L964",
+    "original": "完全に陥落し、身も心も奴隷になった状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L964"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L965",
+    "original": "主人に対して反抗する意思もなくなり、その命令は絶対であると考えています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L965"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L966",
+    "original": "主人に関連することはどんなことでも受け入れるようになるため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L966"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L967",
+    "original": "パラメータ「反感」等は伸びにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L967"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L971",
+    "original": "主人の所有物として体のどこかに主の印を付けられた状態。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L971"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L972",
+    "original": "物としての扱いを受けることに悦びを感じているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L972"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L973",
+    "original": "主人に対して命令を拒否することも反感を抱くこともほとんど無くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L973"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L974",
+    "original": "ただし業界内ではキズモノ扱いとされるため、売却することはできなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L974"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L975",
+    "original": "(印自体は何なのか各人の想像にお任せします)",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L975"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L979",
+    "original": "主人に対して服従の誓いを述べ、最高の奴隷として認められている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L979"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L980",
+    "original": "奴隷としてのプライドが芽生えており、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L980"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L981",
+    "original": "一生主人のために尽くそうと常に考えるようになってます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L981"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L982",
+    "original": "ここまで来ると主人に反感を抱くことはほとんどないと言ってもよいでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L982"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L986",
+    "original": "過去に一度烙印を押されたことがある証です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L986"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L987",
+    "original": "ある方法で強制的に除去するとこの素質へと変化します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L987"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L988",
+    "original": "心に傷を負い、自虐的、悲観的な思考に陥りやすくなるため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L988"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L989",
+    "original": "パラメータ「恐怖」や「抑鬱」、「反感」が伸びやすくなる一方、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L989"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L990",
+    "original": "パラメータ「恭順」や「苦痛」は伸びにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L990"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L991",
+    "original": "一応売却可能になりますが買い手の心証が悪くなるので売却額は大きく低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L991"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L995",
+    "original": "契約により、主人の忠実な僕となっていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L995"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L996",
+    "original": "主人と使い魔の間には特別な絆で結ばれているため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L996"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L997",
+    "original": "調教者の時や休息中のときは主人の能力によって効果が増減します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L997"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L998",
+    "original": "契約を結んでいる間は離れることが出来ないため、売却できなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L998"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L999",
+    "original": "なお、主人が藍か紫の場合には[式]となりますが効果は同様です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L999"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1003",
+    "original": "調教に耐えることが出来ず、心が完全に壊れた状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1003"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1004",
+    "original": "心の動きが完全に停滞するため、気力の回復量がかなり低く、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1004"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1005",
+    "original": "主人に対する好感度が変化しなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1005"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1006",
+    "original": "快楽や感情を理解できなくなるため、パラメータは全体的に伸びにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1006"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1007",
+    "original": "性奴隷としては使い物にならないので、売却額はかなり低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1007"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1008",
+    "original": "よほど非道なことをしない限り付くことはありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1008"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1012",
+    "original": "調教に耐えることが出来ず、自我を失ってロボット化した状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1012"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1013",
+    "original": "心の動きが殆ど無くなるため、気力の回復量がかなり低く、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1013"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1014",
+    "original": "主人に対する好感度も非常に変化しにくくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1014"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1015",
+    "original": "ロボット化しているため、感情関連のパラメータは全体的に伸びにくいです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1015"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1016",
+    "original": "性奴隷としてはあまり使い物にならないので、売却額は低下します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1016"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1017",
+    "original": "ただし主人の命令はよく聞くようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1017"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1021",
+    "original": "自我を壊された揚句、主人にとって都合のよい人格を上書きされた状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1021"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1022",
+    "original": "人格を改造されているので、主人の命令に逆らうことはまずありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1022"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1023",
+    "original": "また、不利なパラメータがほとんど上昇しなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1023"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1024",
+    "original": "ただし性奴隷として扱いにくいため、売却することは出来なくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1024"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1025",
+    "original": "ここまで来た方はもれなく『鬼畜』の称号を受けることになるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1025"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1030",
+    "original": "常に淫らな事をしないと収まらくなった状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1030"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1031",
+    "original": "淫らなことは積極的に行おうとする心理が働くため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1031"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1032",
+    "original": "主人の命令には従う意思を示すようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1032"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1033",
+    "original": "性的な事柄を積極的に学習しようとするので能力も全体的に上がりやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1033"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1034",
+    "original": "性奴隷には必須といえる程重要な素質でしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1034"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1038",
+    "original": "クリトリスやペニスに対する刺激が忘れられなくなっている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1038"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1039",
+    "original": "クリトリスやペニスが常に疼いているため、Ｃ系コマンドの効果が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1039"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1040",
+    "original": "原則的に[淫壷]や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1040"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1044",
+    "original": "膣による快楽へ溺れきっている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1044"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1045",
+    "original": "ヴァギナが主人のモノに順応しているため、Ｖ系コマンドの効果が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1045"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1046",
+    "original": "原則的に[淫核]([淫茎])や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1046"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1050",
+    "original": "アヌスで快楽を感じる行為にすっかり夢中になっている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1050"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1051",
+    "original": "菊門への刺激に対して幸福感を感じるため、Ａ系コマンドの効果が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1051"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1052",
+    "original": "原則的に[淫核]([淫茎])や[淫壷]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1052"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1056",
+    "original": "胸を責められることが何よりも勝る快楽だと感じている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1056"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1057",
+    "original": "バストへの刺激にかなり敏感なので、Ｂ系コマンドの効果が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1057"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1058",
+    "original": "原則的に[淫壷]や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1058"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1062",
+    "original": "尿道を弄られることに強い快感を覚えてしまった状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1062"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1063",
+    "original": "尿道調教に病み付きとなっているため、尿道系コマンド効果が上昇します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1063"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1064",
+    "original": "原則的に[淫壷]や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1064"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1068",
+    "original": "調教を通じてキスで感じる身体になってしまった状態を示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1068"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1069",
+    "original": "行為を行ううちに感情が昂るので、キス系のコマンドが強化されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1069"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1070",
+    "original": "原則的に[淫壷]や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1070"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1074",
+    "original": "調教を通じて加虐嗜好に目覚めてしまった状態を示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1074"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1075",
+    "original": "基本的な挙動はサドに近いです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1075"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1076",
+    "original": "原則的に[淫壷]や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1076"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1080",
+    "original": "調教を通じて被虐嗜好に目覚めてしまった状態を示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1080"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1081",
+    "original": "基本的な挙動はマゾに近いです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1081"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1082",
+    "original": "原則的に[淫壷]や[淫尻]等の淫乱系素質と共存させることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1082"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1086",
+    "original": "快楽を受けるとスイッチが入る状態で、奴隷としての素質そのものです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1086"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1087",
+    "original": "スイッチが入っているのでコマンドを実行しやすく、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1087"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1088",
+    "original": "快感系のパラメータや「欲情」が良く伸びるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1088"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1092",
+    "original": "身も心も堕落しきった状態を示します。淫乱系の最上位素質。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1092"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1093",
+    "original": "精神が淫魔と化しているとも言え、その性欲の大きさは測り知れません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1093"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1094",
+    "original": "体力や気力の消耗が軽減され、気力が0の時のデメリットも消失します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1094"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1095",
+    "original": "色欲に溺れきっているため、淫乱系素質の取得制限も解除されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1095"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1100",
+    "original": "ちょっとした電気製品を扱える程度の能力を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1100"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1101",
+    "original": "所持者はビデオカメラやカメラを使うための条件が軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1101"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1102",
+    "original": "また主人が所持している場合に限り、床置きによる手ブレを回避できます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1102"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1106",
+    "original": "音痴であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1106"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1107",
+    "original": "歌わせたときの評価が少し低くなる他、歌の腕前が上達し難いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1107"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1108",
+    "original": "能力「歌唱技能」の上昇に必要な『経験』や『珠』が少し多くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1108"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1112",
+    "original": "音感を持つことを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1112"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1113",
+    "original": "歌わせたときの評価が少し高くなる他、歌の腕前が上達し易いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1113"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1114",
+    "original": "能力「歌唱技能」の上昇に必要な『経験』や『珠』が少なくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1114"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1118",
+    "original": "料理が苦手であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1118"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1119",
+    "original": "作られる料理の評価が少し低くなる他、料理の腕前が上達し難いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1119"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1120",
+    "original": "能力「料理技能」の上昇に必要な『経験』や『珠』が少し多くなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1120"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1124",
+    "original": "料理が得意であることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1124"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1125",
+    "original": "作られる料理の評価が少し高くなる他、料理の腕前が上達し易いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1125"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1126",
+    "original": "能力「料理技能」の上昇に必要な『経験』や『珠』が少なくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1126"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1130",
+    "original": "天性の才能からか、料理の腕前が非常に高いことを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1130"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1131",
+    "original": "作られる料理の評価が高くなる他、料理の腕前が非常に上達し易いため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1131"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1132",
+    "original": "能力「料理技能」の上昇に必要な『経験』や『珠』がかなり少なくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1132"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1136",
+    "original": "モノづくりにセンスと知識とスキルと自信があることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1136"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1137",
+    "original": "もちろん機械操作にも有用ですので写真やビデオ操作にも有利になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1137"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1141",
+    "original": "報道者としての心得と経験があることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1141"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1142",
+    "original": "写真やビデオの操作に有利になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1142"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1143",
+    "original": "能力「撮影技能」の上昇に必要な『経験』や『珠』が少なくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1143"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1147",
+    "original": "魔術を扱う能力を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1147"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1148",
+    "original": "地下室において一部の特殊なコマンドが使用できるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1148"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1152",
+    "original": "超人的な目分量計算能力を持っていることを示します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1152"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1153",
+    "original": "一部隠されている数値(各部開発度や陰毛ゲージや精飲絶頂ゲージなど）",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1153"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1154",
+    "original": "が見えるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1154"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1155",
+    "original": "また、LUNATIC以上であっても奴隷の素質を確認することができるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1155"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1156",
+    "original": "技能訓練士の下で身に付けられる素質の一つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1156"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1161",
+    "original": "妖精であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1161"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1162",
+    "original": "これ自体特別な効果は有りませんが、妖精を対象としたものがいくつか存在します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1162"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1163",
+    "original": "また、やや酔い易い体質ですのでお酒は弱めのを与えたほうが良いでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1163"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1167",
+    "original": "吸血鬼であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1167"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1168",
+    "original": "専用コマンド「吸血」を使用できる他、夜間の体力回復量は上昇しますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1168"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1169",
+    "original": "日光に弱いので昼間は野外に出られなくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1169"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1173",
+    "original": "ロボットやサイボーグの類であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1173"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1174",
+    "original": "薬、浣腸のほとんどに制限が付き、体質の変化も原則不可能です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1174"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1175",
+    "original": "ただし酔いによる消耗の増加はありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1175"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1179",
+    "original": "幽霊や亡霊など、身体が霊体であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1179"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1180",
+    "original": "人の肉体のような確固たる実体を持たず、精神が剥き出しの状態であるため、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1180"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1181",
+    "original": "体力が減りにくい代わりに、気力が減りやすいという特性を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1181"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1185",
+    "original": "人形であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1185"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1186",
+    "original": "本来は人工物である以上、パラメータ「欲情」や「潤滑」は伸びにくいですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1186"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1187",
+    "original": "《苦痛》からくる体力、気力の消耗は軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1187"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1188",
+    "original": "また、酔いにくい体質ですので多少のお酒は大丈夫でしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1188"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1189",
+    "original": "『人形』という名から想像できる通り、能力「従順」の上昇に必要な珠は減少します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1189"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1193",
+    "original": "悪魔であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1193"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1194",
+    "original": "欲望に忠実なのでパラメータ「欲情」が伸びやすい傾向にあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1194"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1195",
+    "original": "『悪魔』という名から想像できる通り、調教者のときも効力を発揮し、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1195"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1196",
+    "original": "調教対象のパラメータ「欲情」や「苦痛」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1196"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1197",
+    "original": "また、能力「欲望」の上昇に必要な珠は減少します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1197"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1201",
+    "original": "河童であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1201"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1202",
+    "original": "学習して実践する能力が高いので、調教者・被調教者問わず、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1202"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1203",
+    "original": "パラメータ「習得」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1203"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1204",
+    "original": "またお酒にも強く、酔いによる消耗が軽減されるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1204"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1208",
+    "original": "妖狐であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1208"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1209",
+    "original": "煽情的な容貌を持つ事からか、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1209"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1210",
+    "original": "調教者の時はパラメータ「恥情」伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1210"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1211",
+    "original": "また、助手の時はいつの間にか「媚薬」を調達する事があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1211"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1215",
+    "original": "ワーハクタクであることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1215"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1216",
+    "original": "時間が夜の時は1/3の確率で変身し、朝になると戻ります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1216"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1217",
+    "original": "変身した後の特性は変身前の性格と大きく異なることもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1217"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1221",
+    "original": "心を読む能力を持つ妖怪、さとりであることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1221"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1222",
+    "original": "主人の思考を読みとったり、能力を封印されたことに対する不安から、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1222"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1223",
+    "original": "パラメータ「恐怖」や「反感」が伸び、気力の消耗も増大します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1223"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1224",
+    "original": "調教者の時に真価を発揮し、相手の心理を巧みに突くことで、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1224"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1225",
+    "original": "パラメータ「屈服」や「恥情」、「恐怖」が伸びやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1225"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1226",
+    "original": "また、相手の思考が読むコマンド「読心」も使えるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1226"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1227",
+    "original": "※心の目を閉じているため、通常こいしに関してはこの素質の影響を受けません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1227"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1231",
+    "original": "鬼であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1231"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1232",
+    "original": "お酒に対してかなり強く、酔いによる消耗が増加しません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1232"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1233",
+    "original": "ただし中には鬼に対してのみ非常に強い効果を発揮するお酒も存在します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1233"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1237",
+    "original": "天狗であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1237"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1238",
+    "original": "お酒に対して強く、酔いによる消耗が軽減されるようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1238"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1242",
+    "original": "求聞持という能力を持つことを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1242"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1243",
+    "original": "一度聞いたことは忘れないため、能力「技巧」を上昇させやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1243"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1244",
+    "original": "また転生しても記憶を一部受け継ぐことができる反面、体質的に弱く短命です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1244"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1245",
+    "original": "そのため激しい行為では体力を消耗しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1245"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1249",
+    "original": "鵺であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1249"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1250",
+    "original": "非常に珍しい種族なので奴隷売却の時は高値が付きます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1250"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1251",
+    "original": "ときどき体の感度が変化し、正体をつかみにくくさせる特徴を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1251"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1255",
+    "original": "博麗の巫女であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1255"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1256",
+    "original": "この素質自体に特に特殊能力はありませんが、売却するときにボーナスがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1256"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1257",
+    "original": "なお、この素質は一番最初に生まれて調教可能になった娘に継承され消失します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1257"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1261",
+    "original": "風祝であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1261"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1262",
+    "original": "この素質自体に特に特殊能力はありませんが、売却するときにボーナスがあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1262"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1263",
+    "original": "なお、この素質は一番最初に生まれて調教可能になった娘に継承され消失します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1263"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1267",
+    "original": "調教中に特定の条件を満たした場合、引火して爆発します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1267"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1268",
+    "original": "爆発すると体力・気力の消耗が大きくなる他、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1268"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1269",
+    "original": "その場に居合わせた者全員が巻き添えを食らいます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1269"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1270",
+    "original": "その際、爆発した本人は異常経験が付くので注意。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1270"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1271",
+    "original": "最悪の場合、体力が尽きて消滅することもあり得るので、優しく接し、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1271"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1272",
+    "original": "下準備は怠らない、あるいは調教を製作者に任せてみるなどの対策をとりましょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1272"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1276",
+    "original": "酒に対する耐性が鬼に匹敵するほどの体質を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1276"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1277",
+    "original": "相当飲まない限り潰れることは無いでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1277"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1281",
+    "original": "神あるいは仏であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1281"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1282",
+    "original": "体力や気力の消耗が若干少なく、時間経過で回復する量も増えます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1282"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1283",
+    "original": "また、お酒が好きなだけあってそれなりの耐性を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1283"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1284",
+    "original": "ただし、神と名乗るだけあって特定の個人になびきにくい傾向があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1284"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1285",
+    "original": "振り向かせるには特殊な魅力を獲得する必要があるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1285"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1286",
+    "original": "これを好む者が存在するらしいが……",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1286"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1290",
+    "original": "素質[神霊]を持つキャラの血をひいていることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1290"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1291",
+    "original": "[神霊]程の力は無いので、体力や気力の消耗の軽減はないものの、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1291"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1292",
+    "original": "体力や気力が回復しやすく、お酒に対してもそれなりの耐性を持っています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1292"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1293",
+    "original": "同時に特定の個人に大して若干なびきにくい傾向があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1293"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1294",
+    "original": "振り向かせるには同様に何らかの手段を獲得する必要があるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1294"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1295",
+    "original": "[神霊]を血を引いているためか、これを好んでいる者が存在するとか……",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1295"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1299",
+    "original": "死神であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1299"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1300",
+    "original": "そのイメージのおかげで調教者の時、相手の恐怖心を煽りやすい傾向があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1300"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1301",
+    "original": "また[霊体]持ちが相手だとさらに強く出れるため、屈服させやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1301"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1302",
+    "original": "ただし相手が[神霊]の場合、これらの効果は発揮されません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1302"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1303",
+    "original": "[神霊]同様、これを好む者が存在するらしいが……",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1303"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1307",
+    "original": "仙人であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1307"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1308",
+    "original": "基本的にはお人よしですが、変わり者ばかりでもあります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1308"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1309",
+    "original": "なお、定期的に[死神]とやりあうため、互いの相性は最悪です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1309"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1310",
+    "original": "また、ほとんどの人間や妖怪にとって徳の高い高潔な仙人を食らうことは、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1310"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1311",
+    "original": "その格をおおいに高めるということもあって、求める者は多く存在します。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1311"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1315",
+    "original": "キョンシーであることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1315"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1316",
+    "original": "痛覚に対する反応が極めて鈍く、苦痛による体力喪失ペナルティを受けません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1316"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1317",
+    "original": "反面、性感や精神面の反応も鈍い為調教には時間がかかるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1317"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1318",
+    "original": "その頑丈さを求めて止まない好事家達に人気があるようです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1318"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1322",
+    "original": "化け狸の妖怪であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1322"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1323",
+    "original": "変化を得意とし、人を誑かす事を楽しむ狡猾さ故助手として有能で、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1323"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1324",
+    "original": "調教者の時に奴隷に強い屈服感を与える事を得意とします。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1324"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1325",
+    "original": "また、助手の時どこからか媚薬を調達してくる事があるようです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1325"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1329",
+    "original": "人魚であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1329"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1330",
+    "original": "下半身が魚であるため、足を利用するコマンドが使用できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1330"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1331",
+    "original": "特殊な薬品を使えば[人間]に転生させることも可能ですが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1331"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1332",
+    "original": "対象があなたに好意を持っていなければ、深い反発心を抱くことでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1332"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1333",
+    "original": "人魚の肉は不老不死の薬と言われており、人間の富裕層に需要があります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1333"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1337",
+    "original": "人狼であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1337"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1338",
+    "original": "満月の夜は毛深くなるため、剃毛などで[パイパン]になっている時に、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1338"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1339",
+    "original": "時間が夜なら1/3の確率で発毛し、[パイパン]を失います。 ",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1339"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1343",
+    "original": "ぽっちゃり体型であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1343"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1344",
+    "original": "…なかなか痩せません",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1344"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1348",
+    "original": "むちむちな体型であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1348"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1352",
+    "original": "スレンダーな体型であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1352"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1356",
+    "original": "がりがりな体型であることを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1356"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1357",
+    "original": "…食べさせてやってください",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1357"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1362",
+    "original": "売春婦としての心構えや技術を持つことを表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1362"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1363",
+    "original": "お客の満足度が増えやすく、売春による否定の珠の増加が軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1363"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1364",
+    "original": "一定の能力値と売春経験とにより取得可能となります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1364"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1368",
+    "original": "娼婦として愛される快感に依存しきっている状態です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1368"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1369",
+    "original": "[売春中毒]を得る条件の１つです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1369"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1370",
+    "original": "[娼婦]のほぼ上位素質で、[恋慕]があると取得できません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1370"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1374",
+    "original": "売春に執着してしまった状態で、一種の精神的な病気みたいなものです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1374"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1375",
+    "original": "中毒とありますが、技能ではないので注意してください。レベルもありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1375"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1376",
+    "original": "[娼婦]を持ち、娼館にいる時間の方がそうでない時間より長いと取得してしまいます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1376"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1377",
+    "original": "取得してしまうと、売春により恭順の珠を大量に稼ぐことができますが、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1377"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1378",
+    "original": "売春状態を解除すると否定の珠を得るようになります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1378"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1382",
+    "original": "春を売ることに抵抗がない状態を表す素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1382"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1383",
+    "original": "売春による否定の珠の増加や体力・気力の消耗が軽減されます。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1383"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1384",
+    "original": "先天的な素質としてこれを持っていると娼婦として有利になるでしょう。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1384"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1388",
+    "original": "保有の理性を証明している。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1388"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1389",
+    "original": "キャラの理性が4000以上でなければ探索させることは出来ない。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1389"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1390",
+    "original": "しかし、キャラの理性が低ければ低いほど、調教やすくなっています。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1390"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1391",
+    "original": "理性が高いほど、売却時は売値を高くなる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1391"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1395",
+    "original": "今のところYASAIモード専用。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1395"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1396",
+    "original": "調教行為に対する強い拒絶心で壁を築き、調教の効果を低下させる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1396"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1397",
+    "original": "その結果どんなに高くても調教中の相性補正は強制的に50％として扱われるようになる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1397"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1398",
+    "original": "それ以外は効果なし。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1398"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1402",
+    "original": "YASAIモード専用。特殊なコマンドが使用可能になります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1402"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1403",
+    "original": "超が付くほどの内輪ネタにつき、用量・用法は正しくお使いください。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1403"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1404",
+    "original": "残念ながら[マサイの錬金術師]はありません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1404"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1408",
+    "original": "魔才族の立派な体と永遠の若さを得たことを示している",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1408"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1409",
+    "original": "…………と見せかけて単なる枠確保。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1409"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1410",
+    "original": "実装されるかも不透明。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1410"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1414",
+    "original": "今のところYASAIモード専用。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1414"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1415",
+    "original": "スペルカードであることを示す。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1415"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1416",
+    "original": "スペルカードの使用主か共通の主人を持つ[スペルカード]持ち以外の相性が極端に悪くなる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1416"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1417",
+    "original": "それ以外は効果なし。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1417"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1421",
+    "original": "よくぞ彼女を攻略してくれた。褒美としてＩＲＣキャラを購入する権利をやろう！",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1421"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1423",
+    "original": "YASAIモードにおいて、とあるキャラを陥落させた際に入手できる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1423"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1424",
+    "original": "また、初回周回を難易度PHANTASMで挑むと、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1424"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1425",
+    "original": "クリア後引き継ぎを実行した際に取得するかを選択できる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1425"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1426",
+    "original": "後者の場合、クリア時に取得できる素質とは別に取得可能。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1426"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1427",
+    "original": "ただし、取り逃すと2度と取るチャンスは来ないので注意。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1427"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1429",
+    "original": "持っていると他のモードでもＩＲＣキャラが奴隷購入から購入できるようになる。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1429"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1430",
+    "original": "また、地味に引き継ぎ可能な助手の数を1人分だけ上昇させる作用もある。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1430"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1431",
+    "original": "内輪ネタ全開なＩＲＣネタに興味が無いなら無縁の素質と言える。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1431"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1435",
+    "original": "今のところYASAIモード専用。その名の通り、一部素質が変化する。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1435"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1436",
+    "original": "変化するタイミングは調教終了時または記憶消去薬を使用した時である。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1436"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1441",
+    "original": "文字通りデバッグ用の素質です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1441"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1442",
+    "original": "動作確認を行うため、コマンドを実行しやすくなります。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1442"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1443",
+    "original": "調教対象に付けていた場合は調教時に能力が上がる事があり、",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1443"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1444",
+    "original": "体力が0になっても自動的に全回復します。他色々。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1444"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1445",
+    "original": "有効に使ってくだされば幸いです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1445"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1460",
+    "original": "特定の「素質」を持ったキャラクターを表示します。 ＜page.{LOCAL:2+1}/{LOCAL:3+1}＞",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1460"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1462",
+    "original": "注意：現在page.6～13に記述されるべき素質がないので、そのページは表示されません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1462"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1463",
+    "original": "なお、表示されるのは初期(購入)段階のみで、EX化した場合等は考慮しません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1463"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1464",
+    "original": "また、サーチできるのは、ＷＩＮ東方、旧作、西方、黄昏、二次創作",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1464"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1466",
+    "original": "、ＩＲＣ",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1466"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1467",
+    "original": "のキャラだけです。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1467"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1475",
+    "original": "[{LOCAL, 3}]%TALENTNAME:LOCAL%",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1475"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1479",
+    "original": "\\@(LOCAL:2 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1479"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1480",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1480"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1481",
+    "original": "\\@(LOCAL:2 >= LOCAL:3) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1481"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1509",
+    "original": "【%TALENTNAME:ARG%】を持つキャラ",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1509"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1533",
+    "original": "%LOCALS, 18, LEFT%",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1533"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1534",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1534"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1538",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1538"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1545",
+    "original": "\\@(LOCAL) ? 以上の{LOCAL}人が初期段階で[%TALENTNAME:ARG%]を保有しています # 初期段階ではいない\\@",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1545"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1547",
+    "original": "(会話)とあるのは、喋ることができる人形です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1547"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1548",
+    "original": "それ以外の人形は喋ることはできません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1548"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1550",
+    "original": "(自閉)とあるのは、心を閉ざした覚です。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1550"
+  },
+  {
+    "key": "src/ERB/MAIN/HELP/1.ERB_L1551",
+    "original": "心を閉ざした覚は、覚特有のコマンドなどは使えません。",
+    "context": "文件名: src/ERB/MAIN/HELP/1.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/HELP/1.ERB#L1551"
+  }
+]

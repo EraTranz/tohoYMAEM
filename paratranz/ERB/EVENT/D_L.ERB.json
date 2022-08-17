@@ -1,0 +1,17 @@
+[
+  {
+    "key": "src/ERB/EVENT/D_L.ERB_L117",
+    "original": "%CALLNAME:ARG%の現在体力/最大体力:({BASE:ARG:体力}/{MAXBASE:ARG:0})",
+    "context": "文件名: src/ERB/EVENT/D_L.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/D_L.ERB#L117"
+  },
+  {
+    "key": "src/ERB/EVENT/D_L.ERB_L326",
+    "original": "%CALLNAME:ARG%の%ITEMNAME:(NO:(ARG:1))%に対する相性が、{RELATION:ARG:(NO:(ARG:1))}％になりました。",
+    "context": "文件名: src/ERB/EVENT/D_L.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/D_L.ERB#L326"
+  },
+  {
+    "key": "src/ERB/EVENT/D_L.ERB_L352",
+    "original": "%CALLNAME:ARG%の最大%BASENAME:LOCAL%+{LOCAL:1}",
+    "context": "文件名: src/ERB/EVENT/D_L.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/D_L.ERB#L352"
+  }
+]

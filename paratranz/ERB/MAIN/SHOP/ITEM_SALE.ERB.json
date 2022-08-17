@@ -1,0 +1,97 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L12",
+    "original": "調教道具を売却できます。何を売りますか？(所持金:{MONEY}圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L12"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L16",
+    "original": "\"[998] - 展開\", 998",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L16"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L18",
+    "original": "\"[998] - 閉合\", 998",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L18"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L39",
+    "original": "売るものがありません",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L44",
+    "original": "[999] 戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L44"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L73",
+    "original": "＜%ITEMNAME:LOCAL%を売却しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L73"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L85",
+    "original": "[{ARG, 3}] %ITEMNAME:ARG%(%SHOW_YEN(ITEMPRICE:ARG / 5)%)",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L85"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L95",
+    "original": "ITEM:COUNT",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L95"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L163",
+    "original": "%ITEMNAME:ARG%をいくつ売りますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L163"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L164",
+    "original": "{LOCAL}個まで売却できます",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L164"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L165",
+    "original": "[0] やめる",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L165"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L166",
+    "original": "[1] 1個",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L166"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L168",
+    "original": "[5] 5個",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L168"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L170",
+    "original": "[10] 10個",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L170"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L172",
+    "original": "[{LOCAL}] 売れるだけ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L172"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L187",
+    "original": "そんなに持てませんが、持てるまで売りますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L187"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L188",
+    "original": "[0] はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L188"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L189",
+    "original": "[1] いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L189"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/ITEM_SALE.ERB_L204",
+    "original": "＜%ITEMNAME:ARG%を{RESULT}個売却しました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/ITEM_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/ITEM_SALE.ERB#L204"
+  }
+]

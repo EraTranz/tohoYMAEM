@@ -1,0 +1,347 @@
+[
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L12",
+    "original": "期日とかの説明が付く(かは微妙な)eratohoYMのプロローグを見ますか？",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L12"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L13",
+    "original": "[0]自分で妄想したいから結構",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L13"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L14",
+    "original": "[1]しかたがない、見てやるか",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L14"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L48",
+    "original": "プロローグを選択して下さい\\@(LOCAL:1 == 0) ? 。 # 。 ＜page.{LOCAL+1}/{LOCAL:1+1}＞\\@",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L61",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L61"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L62",
+    "original": "[1000]やめる",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L62"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L63",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L63"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L73",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L73"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L99",
+    "original": "[000] プロローグNo.000 -東方調教典-",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L99"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L108",
+    "original": "―――プロローグ―――",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L108"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L109",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L109"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L110",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L110"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L111",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L111"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L112",
+    "original": "……………………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L112"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L113",
+    "original": "いつからここにいたのか分からない",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L113"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L114",
+    "original": "どうやってここにたどり着いたのかも分からない",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L114"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L115",
+    "original": "気が付けば持っていたのは1冊の怪しげな書物",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L116",
+    "original": "元は美しい黒だったかもしれない装訂はボロボロになり、",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L116"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L117",
+    "original": "中の紙も端は黄ばみ、書かれている文字もところどころ擦れているが、",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L118",
+    "original": "ずっしりと重いそれはまるで邪悪な意思を宿しているように感じられる",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L118"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L119",
+    "original": "文字の金箔は剥がれていたが、辛うじてタイトルだけは読み取ることができた",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L121",
+    "original": "――――《東方調教典》と",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L121"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L123",
+    "original": "…………今、目の前には古びた館が姿を現している",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L123"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L124",
+    "original": "何かに誘われる様に中に入ってみたが、廃屋らしく人の気配はまるで感じられない",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L124"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L125",
+    "original": "だけどつい先程まで人がいたようにも思えるほど館全体は小奇麗だった",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L125"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L126",
+    "original": "とりあえずしばらくの間生活する位はできそうだ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L126"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L127",
+    "original": "……と少し安堵し、何気なく手にした書物を開いてみる",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L127"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L128",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L128"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L129",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L129"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L130",
+    "original": "……分かったことは2つ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L130"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L131",
+    "original": "・この《東方調教典》は何らかの力(おそらくは魔術的なもの)を以って、",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L131"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L132",
+    "original": "『持ち主』が『奴隷』を『調教』しやすい環境を作り出すことが可能である",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L132"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L133",
+    "original": "・代償として『持ち主』は何らかの呪いを受け、一定の期限までに解呪する必要がある",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L133"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L134",
+    "original": "もっとも確実な方法は期日までに『所持金が100万圓以上になること』らしい",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L134"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L135",
+    "original": "……得体の知れない本から得た知識で不安はあるが、ひとまず行動を起こすことにしよう",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L135"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L136",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L143",
+    "original": "GOOD LUCK",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L147",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L147"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L159",
+    "original": "なぜこうなったかとかの説明が付く(かは微妙な)EXTRAのプロローグを見ますか？",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L159"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L160",
+    "original": "[0]自分で妄想したいから結構",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L160"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L161",
+    "original": "[1]しかたがない、見てやるか",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L161"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L164",
+    "original": "[2]%CALLNAME:MASTER%が調教師となった経緯を知る",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L164"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L192",
+    "original": "―――プロローグ―――",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L192"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L193",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L193"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L194",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L194"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L195",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L195"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L196",
+    "original": "……………………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L196"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L197",
+    "original": "%CALLNAME:MASTER%は退屈な日々に心底うんざりしながら生きていた…",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L197"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L198",
+    "original": "そんな\\@(TALENT:MASTER:オトコ) ? 彼 # 彼女\\@の前に突然大きな書物が落ちてきたのである",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L198"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L199",
+    "original": "元は美しい黒だったかもしれない装訂はボロボロになり、",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L199"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L200",
+    "original": "中の紙も端は黄ばみ、書かれている文字もところどころ擦れているが、",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L200"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L201",
+    "original": "ずっしりと重いそれはまるで邪悪な意思を宿しているように感じられる",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L201"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L202",
+    "original": "文字の金箔は剥がれていたが、辛うじてタイトルだけは読み取ることができた",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L202"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L204",
+    "original": "――――《東方調教典》と",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L204"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L206",
+    "original": "…………本から目を離した%CALLNAME:MASTER%はなんだか軽い眩暈をしつつも、%LOCALS%に入っていった。",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L206"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L207",
+    "original": "そして、そこが今までの%LOCALS%などではないということをすぐに思い知ることになるのであった",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L207"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L208",
+    "original": "なんだこれは？　と思いつつもいつの間にか手に取っていたその書物を何気なく開いてみる",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L208"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L209",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L209"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L210",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L210"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L211",
+    "original": "……分かったことは2つ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L211"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L212",
+    "original": "・この《東方調教典》は何らかの力(おそらくは魔術的なもの)を以って、",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L212"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L213",
+    "original": "『持ち主』が『奴隷』を『調教』しやすい環境を作り出すことが可能である",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L213"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L214",
+    "original": "・代償として『持ち主』は何らかの呪いを受け、もはや今までの自分でいられなくなると",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L214"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L215",
+    "original": "そしてその呪いは永久に解けないという…",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L215"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L216",
+    "original": "……得体の知れない本から得た知識で不安はあるが、なんとなく『調教』というものに",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L216"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L217",
+    "original": "興味を抱いていた%CALLNAME:MASTER%は、とりあえず『調教師』としての生活を始めることにした",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L217"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L218",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L218"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L225",
+    "original": "LET’S ENJOY",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L225"
+  },
+  {
+    "key": "src/ERB/MAIN/PROLOGUE.ERB_L229",
+    "original": " ",
+    "context": "文件名: src/ERB/MAIN/PROLOGUE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/PROLOGUE.ERB#L229"
+  }
+]

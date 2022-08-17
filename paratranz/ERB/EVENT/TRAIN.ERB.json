@@ -1,0 +1,207 @@
+[
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L123",
+    "original": "\\@(BASE:体力 <= 0) ? ささやき　－　えいしょう　－　いのり　－　ねんじろ！ # 「ハ・ン・ド・パ・ワ・－！！」\\@",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L123"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L222",
+    "original": "（体調不良のため%CALLNAME:TARGET%との戦闘に勝利した）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L222"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L224",
+    "original": "（体調不良のため%CALLNAME:TARGET%の調教を終了します）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L224"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L233",
+    "original": "%CALLNAME:TARGET%が延々長々薀蓄を語ったため、%CALLNAME:PLAYER%は時間の経過を忘れてしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L233"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L235",
+    "original": "%CALLNAME:PLAYER%が延々長々薀蓄を語ったため、%CALLNAME:TARGET%は逃げてしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L235"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L238",
+    "original": "\\@(NO:TARGET == 1069) ? %CALLNAME:TARGET% # %CALLNAME:PLAYER%\\@が延々長々薀蓄を語ったため、調教時間が終了してしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L238"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L246",
+    "original": "%CALLNAME:TARGET%のありがたい説教が続いたため、%CALLNAME:PLAYER%は時間の経過を忘れてしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L246"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L248",
+    "original": "%CALLNAME:PLAYER%のありがたい説教が続いたため、%CALLNAME:TARGET%は逃げてしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L248"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L251",
+    "original": "\\@(NO:TARGET == 1036) ? %CALLNAME:TARGET% # %CALLNAME:PLAYER%\\@のありがたい説教が続いたため、調教時間が終了してしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L251"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L261",
+    "original": "%CALLNAME:TARGET%をアイアンメイデンに閉じ込めることにより、お仕置きの時間が始まった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L261"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L264",
+    "original": "%CALLNAME:TARGET%がアイアンメイデンに閉じ込められたことにより、調教時間が終了してしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L264"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L291",
+    "original": "%CALLNAME:TARGET%の＜狂気の目＞発動",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L291"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L309",
+    "original": "（%CALLNAME:ARG%の体力が限界に来ています。戦闘に勝利した）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L309"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L311",
+    "original": "（%CALLNAME:ARG%の体力が限界に来ています。調教を終了します）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L311"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L320",
+    "original": "（%CALLNAME:ARG%の気力が限界に来ています。戦闘を終了します）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L320"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L322",
+    "original": "（%CALLNAME:ARG%の気力が限界に来ています。調教を終了します）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L322"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L331",
+    "original": "(時間切れになりました。戦闘を終了します）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L331"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L333",
+    "original": "(時間切れになりました。調教を終了します）",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L333"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L347",
+    "original": "%CALLNAME:TARGET%は[%TALENTNAME:134%]を得た",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L347"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L361",
+    "original": "%CALLNAME:ASSI%は[ふたなり]となった。",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L361"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L396",
+    "original": "＜リザレクション＞",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L396"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L406",
+    "original": "＜その場のノリで復活！＞",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L406"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L415",
+    "original": "%CALLNAME:ARG%の\\@(COUNT == 0) ? 体力 # 気力\\@の最大値が{MAXBASE:ARG:COUNT}に下がった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L415"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L439",
+    "original": "%CALLNAME:ARG%は、",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L439"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L441",
+    "original": "%MARKNAME:9%LV{MARK:ARG:反発刻印}",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L441"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L443",
+    "original": "を取得した",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L443"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L447",
+    "original": "%CALLNAME:ARG%の%ABLNAME:10%が{ABL:ARG:従順}に下がった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L447"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L458",
+    "original": "%CALLNAME:ARG%に寄生した触手は消滅してしまった",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L458"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L475",
+    "original": "%CALLNAME:ARG%の虚ろな視線は天上を見たまま、微動だにしていない。",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L475"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L476",
+    "original": "あなたは得難い原石が輝く前に、その光を吹き消してしまったのだ。",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L476"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L479",
+    "original": "%CALLNAME:ARG%は逝ってしまった……",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L479"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L483",
+    "original": "―――%CALLNAME:ARG%の体力が尽きました―――",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L483"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L486",
+    "original": " ",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L486"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L501",
+    "original": "を失った",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L501"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L523",
+    "original": " ",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L523"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L524",
+    "original": " ",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L524"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L526",
+    "original": "------------------------------------GAMEOVER-----------------------------------",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L526"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L540",
+    "original": "次からはくれぐれも気を付けてくださいね？",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L540"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L542",
+    "original": "[0] ロード",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L542"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L543",
+    "original": "[1] タイトルに戻る",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L543"
+  },
+  {
+    "key": "src/ERB/EVENT/TRAIN.ERB_L544",
+    "original": "[2] ゲームを終了します",
+    "context": "文件名: src/ERB/EVENT/TRAIN.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/EVENT/TRAIN.ERB#L544"
+  }
+]

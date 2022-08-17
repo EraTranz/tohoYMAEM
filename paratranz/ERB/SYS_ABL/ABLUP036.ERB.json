@@ -1,0 +1,32 @@
+[
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP036.ERB_L13",
+    "original": "%EXPNAME:50%{COST36(6)}以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP036.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP036.ERB#L13"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP036.ERB_L16",
+    "original": "%EXPNAME:1%50以上、%EXPNAME:11%20以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP036.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP036.ERB#L16"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP036.ERB_L18",
+    "original": "%ABLNAME:14%{ABL:排泄中毒 + 1}LV以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP036.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP036.ERB#L18"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP036.ERB_L20",
+    "original": "[0] - %PALAMNAME:2%の珠×{COST36(0)}、%PALAMNAME:13%の珠×{COST36(1)}、%PALAMNAME:14%の珠×{COST36(2)}、%PALAMNAME:15%の珠×{COST36(3)}、%EXPNAME:7%{COST36(4)}以上、%EXPNAME:43%{COST36(5)}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP036.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP036.ERB#L20"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP036.ERB_L23",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP036.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP036.ERB#L23"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP036.ERB_L44",
+    "original": "%ABLNAME:36%のレベルが{ABL:排泄中毒}になりました。",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP036.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP036.ERB#L44"
+  }
+]

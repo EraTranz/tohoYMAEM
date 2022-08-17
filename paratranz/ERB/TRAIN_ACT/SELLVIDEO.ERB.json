@@ -1,0 +1,582 @@
+[
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L42",
+    "original": "録画したビデオは使い物になりませんでした。",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L42"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L51",
+    "original": "調教時に録画したビデオ『%TSTR:0%』を売って、{LOCAL}圓手に入れた。",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L51"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L73",
+    "original": "主人撮影経験＋\\@(ITEM:編集機材) ? 2 # 1\\@",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L73"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L74",
+    "original": "助手被写経験＋1",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L74"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L79",
+    "original": "助手撮影経験＋\\@(ITEM:編集機材) ? 2 # 1\\@",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L79"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L80",
+    "original": "主人被写経験＋1",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L80"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L85",
+    "original": "主人撮影経験＋\\@(ITEM:編集機材) ? 2 # 1\\@",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L85"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L86",
+    "original": "主人被写経験＋1",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L86"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L89",
+    "original": "奴隷被写経験＋1",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L89"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L93",
+    "original": "%SHOW_CALLNAME(MASTER)%は撮影の技能をもっと磨けるような気がしてきた",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L93"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L97",
+    "original": "調教時に録画したビデオを売って、{LOCAL}圓手に入れた。",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L97"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L133",
+    "original": "出演者　　　：",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L133"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L134",
+    "original": "%SHOW_CALLNAME3(TARGET, 28, 0)%　＋{MIN(ITEMPRICE:(LOCAL:1) / 20, 1000), 7}圓",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L134"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L139",
+    "original": "助演者　　　：",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L139"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L140",
+    "original": "%SHOW_CALLNAME3(ASSI, 28, 0)%　＋{MIN(ITEMPRICE:(LOCAL:2) / 40, 500), 7}圓",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L140"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2107",
+    "original": "撮影シーン{COUNT-39, 2}：%VIDEO_COMF(FLAG:COUNT), 28, LEFT%　\\@SIGN(LOCAL:3 - COUNT:1) == 1 ? ＋ # －\\@{ABS(LOCAL:3 - COUNT:1), 7}圓",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2107"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2142",
+    "original": "ビデオには",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2142"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2143",
+    "original": "%SHOW_CALLNAME(TARGET)%の処女喪失シーンが記録されている",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2143"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2144",
+    "original": "%EXPNAME:50%＋1",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2144"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2308",
+    "original": "%SHOW_CALLNAME(TARGET)%との乱行を録画したビデオを…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2308"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2309",
+    "original": "[0] - 売る",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2309"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2310",
+    "original": "[1] - %CALLNAME:TARGET%と一緒に鑑賞する",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2310"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2312",
+    "original": "[2] - ビデオを展示室に保管する",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2312"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2313",
+    "original": "\\@(CFLAG:10 & 128) ? (既に%CALLNAME:TARGET%のビデオは保管されています) # (手元にまだ%CALLNAME:TARGET%のビデオはありません)\\@",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2313"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2315",
+    "original": "[2] - ビデオを保管する（最大１本まで）",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2315"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2346",
+    "original": "%CALLNAME:TARGET%の処女喪失シーンが収められたビデオレターを%CALLNAME:TARGET%の%LOCALS:0%へと送った……",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2346"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2347",
+    "original": "・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2347"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2348",
+    "original": "・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2348"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2349",
+    "original": "・・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2349"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2350",
+    "original": "【%CALLNAME:TARGET%の%LOCALS:0%視点】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2350"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2351",
+    "original": "%CALLNAME:TARGET%を探して数ヶ月の月日が経った…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2351"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2352",
+    "original": "どこを探しても見つからない",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2352"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2353",
+    "original": "そんな中一通の手紙が彼の元へと届いた",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2353"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2354",
+    "original": "差出人は…不明",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2354"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2355",
+    "original": "一緒に入っていたカラクリ…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2355"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2356",
+    "original": "どうやら映像を映し出すものらしい…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2356"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2357",
+    "original": "興味本位だった",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2357"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2358",
+    "original": "背表紙に%CALLNAME:TARGET%と名前が書いてあった事も理由の一つだが",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2358"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2359",
+    "original": "実際は誰かの悪戯だろうと思っていた…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2359"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2360",
+    "original": "ああ、知っていたら恐らく見ようとは思わなかっただろう",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2360"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2362",
+    "original": "映像を再生する……どうやら男女の営みを映したものらしい",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2362"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2364",
+    "original": "【ねえねえ、%CSTR:11%の中って気持ちいいのかな？　気に入ってもらえると嬉しいのだがな…】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2364"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2366",
+    "original": "被写体はウェディングドレス姿の%HAIR_CHECK(TARGET)%%STR:2%だ…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2366"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2367",
+    "original": "その顔は……見間違える事はない……%CALLNAME:TARGET%",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2367"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2368",
+    "original": "映像の中で%CALLNAME:TARGET%は%CALLNAME:MASTER%の上で腰を振ってながら、彼が聞いた事の無い声をあげ…喘いでいた",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2368"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2369",
+    "original": "（これは…誰だ？）",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2369"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2370",
+    "original": "彼女などと信じたくない…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2370"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2372",
+    "original": "【ああん♪　もう…、\\@CHECK_PARENT(TARGET) != \"\" ? %CHECK_PARENT(TARGET)% # %CALLNAME:MASTER%\\@たら、激しすぎます♪】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2372"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2374",
+    "original": "彼女などと……信じたくない！",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2374"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2375",
+    "original": "画面の顔を必死で見つめ%CALLNAME:TARGET%ではないという証拠を探す…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2375"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2377",
+    "original": "【あん♪　そんなにがっつかなくても、%CSTR:11%のおまんこは\\@CHECK_PARENT(TARGET) != \"\" ? %CHECK_PARENT(TARGET)% # %CALLNAME:MASTER%\\@のものだから♪】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2377"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2379",
+    "original": "こんなのは%CALLNAME:TARGET%ではないっ！！",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2379"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2380",
+    "original": "勿論画面に映っているのは%CALLNAME:TARGET%以外の何者でもない…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2380"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2381",
+    "original": "映像の中の彼女は愛しい人を見る目で抱かれ",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2381"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2382",
+    "original": "そして自分が聞いた事のない喜びの声をあげている…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2382"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2383",
+    "original": "コレは…夢……悪夢か……",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2383"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2385",
+    "original": "【ねえ、見てる？%CSTR:11%の『元』%LOCALS:0%……】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2385"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2387",
+    "original": "映像の中の彼女に話しかけられる…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2387"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2388",
+    "original": "心臓が飛び跳ねそうなほどの衝撃だった",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2388"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2389",
+    "original": "「%CALLNAME:TARGET%…？」",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2389"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2391",
+    "original": "【%CSTR:11%、この人の物になったの…君にあげるはずだった%CSTR:11%の処女、旦那様に捧げちゃった%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2391"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2393",
+    "original": "めくれ上がったスカートから覗く内股に視線を落とすと、先程は気付かなかったが生娘の証だった純血と精液が丸見えの結合部から混ざり垂れていた…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2393"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2394",
+    "original": "「そ、そんな……馬鹿な…正気に戻してやる……今助けに」",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2394"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2396",
+    "original": "【助けなんて要らないからね……%CSTR:11%、愛しい旦那様に女にされてっ、女の悦びを教えられて、この上ない幸せですからっ…%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2396"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2398",
+    "original": "「え？」",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2398"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2400",
+    "original": "【本気よ…%CSTR:11%に触れていいのは、旦那様だけよ%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2400"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2402",
+    "original": "「嘘…だ」",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2402"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2404",
+    "original": "【じゃあもう探さないでね……これから旦那様にたっぷり種付けセックスをしてもらいます%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2404"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2405",
+    "original": "【あっ%UNICODE(0x2661)%受精したいっ…孕まされたいっ%UNICODE(0x2661)%旦那様の赤ちゃん産みたいんですのぉっ…%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2405"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2407",
+    "original": "淫らな言葉を吐きながら一心不乱に腰をふる%CALLNAME:TARGET%の顔は彼が見たこともないほど幸せそうな表情をしていた",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2407"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2409",
+    "original": "【んっ…はぁ…♪　こんなに奥まで出されたら…妊娠してしまいますわね…♪】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2409"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2411",
+    "original": "自らの最も大事な場所に子種を受け入れる、%CALLNAME:TARGET%は背を仰け反らせてひくひくと絶頂に震え、やがて、くたりと男の腹の上に脱力する…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2411"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2412",
+    "original": "%CALLNAME:MASTER%は膣内射精の余韻に浸る%CALLNAME:TARGET%の顎をつかんで上を向かせると、",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2412"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2413",
+    "original": "ねっとりと唇を交わす…勝ち誇ったような笑みをカメラへと向けて。",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2413"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2415",
+    "original": "【また%CSTR:11%と旦那様が愛し合うところ、見せてあげる…♪君はこれをオカズに、自慰でもしてればいいの、それがお似合いよ♪】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2415"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2417",
+    "original": "ビデオは終わりのようだ…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2417"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2418",
+    "original": "腕に力が入らない……",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2418"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2419",
+    "original": "恋人を失った%CALLNAME:TARGET%の%LOCALS:0%はそのまま床へと倒れこんだ",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2419"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2420",
+    "original": "恐らく彼はさまよい続けるのだろう",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2420"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2421",
+    "original": "自分が失った彼女を探して",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2421"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2422",
+    "original": "何人もの……夢の中を…………",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2422"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2423",
+    "original": "・・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2423"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2424",
+    "original": "・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2424"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2425",
+    "original": "・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2425"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2428",
+    "original": "%CALLNAME:TARGET%のボテ腹ハメ撮りが収められたビデオレターを%CALLNAME:TARGET%の%LOCALS:0%へと送った……",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2428"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2429",
+    "original": "・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2429"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2430",
+    "original": "・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2430"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2431",
+    "original": "・・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2431"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2432",
+    "original": "【%CALLNAME:TARGET%の%LOCALS:0%視点】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2432"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2433",
+    "original": "彼は%CALLNAME:TARGET%の居場所を必死で探したが、入ってくる情報は全てガセばかりで、やがてその嘘の情報すらも入ってこなくなった",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2433"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2434",
+    "original": "彼女を探し続けた日々を忙しく送り、ある日彼の元へ一本のビデオが送られてきた…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2434"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2435",
+    "original": "タイトルも差出人も書かれていないビデオテープ…彼はその内容を確かめるべく再生してみることにした…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2435"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2438",
+    "original": "【旦那様%UNICODE(0x2661)%お嫁さんの妊婦おまんこに旦那様の精液くださぁ～い%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2438"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2440",
+    "original": "ベッドの上でウェディングドレス姿の%CALLNAME:TARGET%が%CALLNAME:MASTER%の上で腰を振っている姿が映っている",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2440"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2441",
+    "original": "ウェディングドレスのお腹の部分が大きく膨らんでおり、%CALLNAME:MASTER%の子供を宿していることがうかがえる",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2441"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2442",
+    "original": "妊娠したせいで大きくなった乳房がドレスからこぼれおち、ぷるぷるとゆれながら母乳を撒き散らしている",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2442"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2443",
+    "original": "%CALLNAME:TARGET%はカメラに向かって",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2443"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2445",
+    "original": "【ほぅら、%CSTR:11%の『元』%LOCALS:0%、見える…？　お腹、こんなにも大きくなったのよ…？】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2445"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2447",
+    "original": "と言い",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2447"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2448",
+    "original": "すっかり膨らんお腹を愛しそうに撫でをしている",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2448"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2450",
+    "original": "【毎日子宮に旦那様の愛をたっぷり注がれて、愛の結晶出来ちゃった%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2450"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2451",
+    "original": "【今日も母子ともども、旦那様に可愛がられちゃいます%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2451"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2453",
+    "original": "%CALLNAME:TARGET%はそう言うと%CALLNAME:MASTER%の方に向き直り、胸板に舌を這わせながら中出しを求めて膣内のペニスをきゅうきゅうと締め付けている",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2453"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2454",
+    "original": "精液を搾りとるかのような腰使いに%CALLNAME:MASTER%がうめき声をあげながら射精すると%CALLNAME:TARGET%は子を宿しお腹に手をあて表情をしながら",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2454"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2456",
+    "original": "【あはぁぁ…%UNICODE(0x2661)%、出し過ぎぃ%UNICODE(0x2661)%…お腹の赤ちゃんが溺れちゃいますよ%UNICODE(0x2661)%】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2456"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2458",
+    "original": "と画面の向こうへ語りかけるかのようにいやらしい言葉を吐いた",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2458"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2461",
+    "original": "【ふふ、じゃあね、可哀想『元』%LOCALS:0%…またビデオ送ってあげるから…旦那様と%CSTR:11%の赤ちゃんが育っていくところ、ちゃぁんと見てて♪】",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2461"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2463",
+    "original": "%CALLNAME:TARGET%の%LOCALS:0%は呆然とした面持ちをしている、中で何かが壊れてしまったようだ",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2463"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2464",
+    "original": "ビデオをそのままにして、ペニスをズボンから取り出し、動画が終わるまでこれをオカズにオナニーを続けた…",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2464"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2465",
+    "original": "・・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2465"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2466",
+    "original": "・・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2466"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2467",
+    "original": "・",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2467"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2478",
+    "original": "あなたは先ほど撮ったビデオをデッキにセットした",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2478"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2485",
+    "original": "{COUNT}/{TFLAG:121 - 1}回目の内容:",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2485"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2486",
+    "original": "[%VIDEO_COMF(FLAG:(COUNT + 39))%]",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2486"
+  },
+  {
+    "key": "src/ERB/TRAIN_ACT/SELLVIDEO.ERB_L2504",
+    "original": "あなたは録画ビデオを持ち帰った",
+    "context": "文件名: src/ERB/TRAIN_ACT/SELLVIDEO.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/TRAIN_ACT/SELLVIDEO.ERB#L2504"
+  }
+]

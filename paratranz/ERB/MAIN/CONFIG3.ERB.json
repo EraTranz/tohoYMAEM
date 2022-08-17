@@ -1,0 +1,307 @@
+[
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L6",
+    "original": "現在、画像設定は以下のようになっています。",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L6"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L8",
+    "original": "変更したい内容を選択してください",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L8"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L10",
+    "original": "[ 0]\\@(FLAG:画像設定 & 1) ? ┬ # %\" \"%- \\@ 画像表示： \\@(FLAG:画像設定 & 1) ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L10"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L12",
+    "original": "[ 1]├ 男性の表示： \\@(FLAG:画像設定 & 2) ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L12"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L13",
+    "original": "[ 2]├ モブの表示： \\@(FLAG:画像設定 & 4) ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L13"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L14",
+    "original": "[ 3]├ 固有キャラの表示： \\@(FLAG:画像設定 & 8) ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L14"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L15",
+    "original": "[ 4]└ 可変画像の使用： \\@(FLAG:画像設定 & 16) ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L15"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L16",
+    "original": "[10]\\@FLAG:通常画面画像：表示 ? ┬ # %\" \"%- \\@ 通常画面の画像表示: \\@FLAG:通常画面画像：表示 ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L16"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L18",
+    "original": "[11]├ X座標: {FLAG:通常画面画像：X座標}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L18"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L19",
+    "original": "[12]├ Y座標: {FLAG:通常画面画像：Y座標}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L19"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L20",
+    "original": "[13]└ 画像サイズ(10の場合に1.0倍表示): {FLAG:通常画面画像：画像サイズ/10}.{FLAG:通常画面画像：画像サイズ%10}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L20"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L22",
+    "original": "[20]\\@FLAG:調教画面画像：表示 ? ┬ # %\" \"%- \\@ 調教/購入画面の画像表示: \\@FLAG:調教画面画像：表示 ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L22"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L24",
+    "original": "[21]├ X座標: {FLAG:調教画面画像：X座標}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L24"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L25",
+    "original": "[22]├ Y座標: {FLAG:調教画面画像：Y座標}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L25"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L26",
+    "original": "[23]└ 画像サイズ(10の場合に1.0倍表示): {FLAG:調教画面画像：画像サイズ/10}.{FLAG:調教画面画像：画像サイズ%10}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L26"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L28",
+    "original": "[30]\\@FLAG:能力画面画像：表示 ? ┬ # %\" \"%- \\@ 能力画面の画像表示: \\@FLAG:能力画面画像：表示 ? ○ # ×\\@",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L28"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L30",
+    "original": "[31]├ X座標: {FLAG:能力画面画像：X座標}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L30"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L31",
+    "original": "[32]├ Y座標: {FLAG:能力画面画像：Y座標}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L31"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L32",
+    "original": "[33]└ 画像サイズ(10の場合に1.0倍表示): {FLAG:能力画面画像：画像サイズ/10}.{FLAG:能力画面画像：画像サイズ%10}",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L32"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L35",
+    "original": "[50] 全設定をデフォルトに戻す",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L35"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L36",
+    "original": "[100] やめる",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L36"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L42",
+    "original": "「画像表示」を\\@(FLAG:画像設定 & 1) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L42"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L45",
+    "original": "「男性の表示」を\\@(FLAG:画像設定 & 2) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L45"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L48",
+    "original": "「モブの表示」を\\@(FLAG:画像設定 & 4) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L51",
+    "original": "「固有キャラの表示」を\\@(FLAG:画像設定 & 8) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L51"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L54",
+    "original": "「可変画像の使用」を\\@(FLAG:画像設定 & 16) ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L57",
+    "original": "「通常画面画像」を\\@FLAG:通常画面画像：表示 ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L57"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L60",
+    "original": "画像を表示するX座標を指定してください(0~5000) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L60"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L61",
+    "original": "\"[デフォルト(3000)]\", 3000",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L61"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L65",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L65"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L70",
+    "original": "画像を表示するY座標を指定してください(-5000~5000) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L70"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L71",
+    "original": "\"[デフォルト(0)]\", 0",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L71"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L75",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L75"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L80",
+    "original": "画像サイズを指定してください(5~30) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L80"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L81",
+    "original": "\"[デフォルト(10)]\", 10",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L81"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L83",
+    "original": "(10を指定した場合、1.0倍表示)",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L86",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L86"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L91",
+    "original": "「調教/購入画面画像」を\\@FLAG:調教画面画像：表示 ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L91"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L94",
+    "original": "画像を表示するX座標を指定してください(0~5000) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L94"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L95",
+    "original": "\"[デフォルト(3500)]\", 3500",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L95"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L99",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L99"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L104",
+    "original": "画像を表示するY座標を指定してください(-5000~5000) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L104"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L105",
+    "original": "\"[デフォルト(-50)]\", -50",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L105"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L109",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L109"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L114",
+    "original": "画像サイズを指定してください(5~30) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L114"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L115",
+    "original": "\"[デフォルト(10)]\", 10",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L117",
+    "original": "(10を指定した場合、1.0倍表示)",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L120",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L120"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L125",
+    "original": "「能力画面画像」を\\@FLAG:能力画面画像：表示 ? 無効 # 有効\\@にしました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L125"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L128",
+    "original": "画像を表示するX座標を指定してください(0~5000) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L128"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L129",
+    "original": "\"[デフォルト(2000)]\", 2000",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L129"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L133",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L133"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L138",
+    "original": "画像を表示するY座標を指定してください(-5000~5000) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L139",
+    "original": "\"[デフォルト(50)]\", 50",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L139"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L143",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L143"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L148",
+    "original": "画像サイズを指定してください(5~30) ",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L148"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L149",
+    "original": "\"[デフォルト(10)]\", 10",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L149"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L151",
+    "original": "(10を指定した場合、1.0倍表示)",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L151"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L154",
+    "original": "無効な数値です",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L154"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L159",
+    "original": "全ての設定をデフォルトに戻しました",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L159"
+  },
+  {
+    "key": "src/ERB/MAIN/CONFIG3.ERB_L167",
+    "original": "他に",
+    "context": "文件名: src/ERB/MAIN/CONFIG3.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CONFIG3.ERB#L167"
+  }
+]

@@ -1,0 +1,242 @@
+[
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L43",
+    "original": "並び替えのできる奴隷がいません",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L43"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L46",
+    "original": "順番を並べ変えます",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L46"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L53",
+    "original": "誰を入れ替えますか？ ＜page.{LOCAL + 1}＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L53"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L57",
+    "original": "下の項目でオートソートする",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L57"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L58",
+    "original": "[1102]キャラ番号　　[1103]能力　　　[1104]経験",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L58"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L59",
+    "original": "[1105]刻印　　　　　[1106]珠　　　　[1107]記念日",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L59"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L60",
+    "original": "[1108]体力気力理性\\@(FLAG:16 & 16) ? および体格 #\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L60"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L61",
+    "original": "[1109]好感度稼ぎストレスなど",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L61"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L63",
+    "original": "\\@(LOCAL == 0) ? %\" \" * 13% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L63"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L64",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L64"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L65",
+    "original": "\\@(LOCAL >= LOCAL:5) ? %\" \" * 13% # [1009]後のページ\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L65"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L94",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L94"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L111",
+    "original": "誰を入れ替えますか？(現在 {LOCAL:1}.%CALLNAME:(LOCAL:1)% を選択中) ＜page.{LOCAL + 1}＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L111"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L115",
+    "original": "☆:調教中 ★:助手 ○:助手可 ●:元助手を表しています",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L115"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L117",
+    "original": "\\@(LOCAL == 0) ? %\" \" * 13% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L118",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L118"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L119",
+    "original": "\\@(LOCAL >= LOCAL:5) ? %\" \" * 13% # [1009]後のページ\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L129",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L129"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L138",
+    "original": "%CALLNAME:(LOCAL:1)%と%CALLNAME:(LOCAL:2)%を入れ替えました",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L163",
+    "original": "ソート基準の%TSTR:99%を選択してください。 ＜page.{LOCAL:1}＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L163"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L168",
+    "original": "[{COUNT, 3}] %TSTR:0, 12, LEFT%",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L168"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L216",
+    "original": "[{COUNT, 3}] %TSTR:0, 12, LEFT%",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L216"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L223",
+    "original": "\\@(LOCAL:1 <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L223"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L224",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L224"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L225",
+    "original": "\\@(LOCAL:1 >= LOCAL:2 / 30) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L225"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L289",
+    "original": "どう並べますか？",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L289"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L291",
+    "original": "[1]昇順（小さいものから大きいものへ）",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L291"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L292",
+    "original": "[2]降順（大きいものから小さいものへ）",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L292"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L294",
+    "original": "[100]戻る",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L294"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L312",
+    "original": "＜キャラ番号昇順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L312"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L315",
+    "original": "＜キャラ番号降順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L315"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L320",
+    "original": "＜%TSTR:0%の低い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L320"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L323",
+    "original": "＜%TSTR:0%の高い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L323"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L328",
+    "original": "＜%TSTR:0%の低い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L328"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L331",
+    "original": "＜%TSTR:0%の高い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L331"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L336",
+    "original": "＜%TSTR:0%の低い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L336"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L339",
+    "original": "＜%TSTR:0%の高い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L339"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L344",
+    "original": "＜%TSTR:0%の低い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L344"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L347",
+    "original": "＜%TSTR:0%の高い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L347"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L352",
+    "original": "＜%TSTR:0%の低い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L352"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L355",
+    "original": "＜%TSTR:0%の高い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L355"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L360",
+    "original": "＜%TSTR:0%の低い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L360"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L363",
+    "original": "＜%TSTR:0%の高い順にソートしました＞",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L363"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L382",
+    "original": "☆",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L382"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L384",
+    "original": "★",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L384"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L386",
+    "original": "●",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L386"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L388",
+    "original": "○",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L388"
+  },
+  {
+    "key": "src/ERB/MAIN/CHARA_SORT.ERB_L390",
+    "original": "　",
+    "context": "文件名: src/ERB/MAIN/CHARA_SORT.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/CHARA_SORT.ERB#L390"
+  }
+]

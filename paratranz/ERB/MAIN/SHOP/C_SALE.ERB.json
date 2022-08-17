@@ -1,0 +1,1157 @@
+[
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L39",
+    "original": "\\@(FLAG:12 & 32) ? 誰を売却・解放し # 誰を売り\\@ますか？ ＜page.{LOCAL+1}/{LOCAL:1+1}＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L39"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L46",
+    "original": "※市場キャラクター数が上限に達しています。登録せずに選択されます　　",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L46"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L48",
+    "original": "[1005] 市場登録(現在:\\@(FLAG:17 & 8) ? 有効 # 無効\\@)　　",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L48"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L53",
+    "original": "\\@(LOCAL <= 0) ? %\" \" * 16% # [1001]前のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L53"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L54",
+    "original": "[1000]戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L54"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L55",
+    "original": "\\@(LOCAL >= LOCAL:1) ? %\" \" * 16% # [1009]次のページ\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L55"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L68",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L68"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L78",
+    "original": "※この奴隷を売却、または解放すると、%CALLNAME:MASTER%は【触手使役術】を失います",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L78"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L80",
+    "original": "※この奴隷を売却、または解放すると、%CALLNAME:MASTER%の触手使役Lvが{FLAG:572}に下がります",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L80"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L83",
+    "original": "※この奴隷を売却、または解放すると、奴隷の購入及び売却に制限がつくようになります",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L83"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L88",
+    "original": "※この奴隷を売却すると、%CALLNAME:MASTER%は【触手使役術】を失います",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L88"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L90",
+    "original": "※この奴隷を売却すると、%CALLNAME:MASTER%の触手使役Lvが{FLAG:572}に下がります",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L90"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L93",
+    "original": "※この奴隷を売却すると、奴隷の購入及び売却に制限がつくようになります",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L93"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L117",
+    "original": "(助手)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L117"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L119",
+    "original": "(元助手)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L119"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L121",
+    "original": "(助手可)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L121"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L132",
+    "original": "[0]売却する",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L132"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L134",
+    "original": "[1]見捨てる",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L134"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L136",
+    "original": "[1]解放する",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L136"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L138",
+    "original": "[100] 戻る",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L138"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L161",
+    "original": "………………",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L161"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L162",
+    "original": "…………",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L162"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L163",
+    "original": "……",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L163"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L174",
+    "original": "＜%CALLNAME:ARG%は反発刻印を失いました＞",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L174"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L187",
+    "original": "%CALLNAME:ARG%は[弱味]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L187"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L233",
+    "original": "%CALLNAME:ARG%は%CSVNAME((LOCAL:3), 0)%を連れてきた",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L233"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L259",
+    "original": "%CALLNAME:ARG%はどこからか1萬圓の資金を調達してきた",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L259"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L331",
+    "original": "%CALLNAME:ARG%は{LOCAL}圓で売れそうです。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L331"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L334",
+    "original": "※{RESULT:1}圓(奴隷の売値の基礎値) × {(RESULT:2)/10000}\\@((RESULT:2)%10000/10 < 100) ? .0 # .\\@{((RESULT:2)%10000/10)}(基礎Buy率補正) × α(その他の補正)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L334"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L336",
+    "original": "※奴隷商人がいないため、売却後時間が経過します",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L336"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L339",
+    "original": "※売却後時間が経過します",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L339"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L341",
+    "original": "売却しますか？",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L341"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L342",
+    "original": "[0] はい",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L342"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L343",
+    "original": "[1] いいえ",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L343"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L349",
+    "original": "\\@(TFLAG:207) ? %CALLNAME:ARG%は輸送時に破壊暴走して失踪しました # 輸送時に破壊暴走し失踪 ×0.10\\@",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L349"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L378",
+    "original": "結果、%CALLNAME:ARG%は{LOCAL}圓で売れました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L378"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L544",
+    "original": "%CALLNAME:ARG%は、売却されることに激しく狼狽した。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L544"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L555",
+    "original": "そして従順が{ABL:従順}に下がった",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L555"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L563",
+    "original": "%CALLNAME:ARG%は明後日の方向を向き、薄ら笑いを浮かべながらブツブツと呟いている…",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L563"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L564",
+    "original": "%CALLNAME:ARG%は既に正気を失ったようだ…",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L564"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L565",
+    "original": "%CALLNAME:ARG%は[狂気]を得た",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L565"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L577",
+    "original": "%ITEMNAME:(NO:ARG)%({LOCAL}圓)",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L577"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L595",
+    "original": "%ABLNAME:0, 13, RIGHT%LV{ABL:ARG:Ｃ感覚} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L595"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L615",
+    "original": "%ABLNAME:1, 13, RIGHT%LV{ABL:ARG:Ｖ感覚} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L615"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L635",
+    "original": "%ABLNAME:2, 13, RIGHT%LV{ABL:ARG:Ａ感覚} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L635"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L653",
+    "original": "%ABLNAME:3, 13, RIGHT%LV{ABL:ARG:Ｂ感覚} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L653"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L673",
+    "original": "%ABLNAME:10, 13, RIGHT%LV{ABL:ARG:従順} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L673"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L695",
+    "original": "%ABLNAME:11, 13, RIGHT%LV{ABL:ARG:欲望} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L695"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L714",
+    "original": "%ABLNAME:12, 13, RIGHT%LV{ABL:ARG:技巧} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L714"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L733",
+    "original": "%ABLNAME:13, 13, RIGHT%LV{ABL:ARG:奉仕精神} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L733"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L755",
+    "original": "%ABLNAME:14, 13, RIGHT%LV{ABL:ARG:露出癖} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L755"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L775",
+    "original": "%ABLNAME:20, 13, RIGHT%LV{ABL:ARG:サドっ気} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L775"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L794",
+    "original": "%ABLNAME:21, 13, RIGHT%LV{ABL:ARG:マゾっ気} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L794"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L811",
+    "original": "%ABLNAME:(22 + TALENT:ARG:オトコ), 13, RIGHT%LV{ABL:ARG:(22 + TALENT:ARG:オトコ)} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L811"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L834",
+    "original": "%ABLNAME:30, 13, RIGHT%LV{ABL:ARG:自慰中毒} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L834"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L856",
+    "original": "%ABLNAME:31, 13, RIGHT%LV{ABL:ARG:精液中毒} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L856"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L878",
+    "original": "%ABLNAME:(32 + TALENT:ARG:オトコ), 13, RIGHT%LV{ABL:ARG:(32 + TALENT:ARG:オトコ)} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L878"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L900",
+    "original": "%ABLNAME:34, 13, RIGHT%LV{ABL:ARG:噴乳中毒} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L900"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L931",
+    "original": "%ABLNAME:36, 13, RIGHT%LV{ABL:ARG:排泄中毒} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L931"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L954",
+    "original": "%ABLNAME:35, 13, RIGHT%LV{ABL:ARG:触手中毒} －{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L954"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L977",
+    "original": "%ABLNAME:38, 13, RIGHT%LV{ABL:ARG:獣姦中毒} －{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L977"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L997",
+    "original": "%ABLNAME:70, 13, RIGHT%LV{ABL:ARG:料理技能} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L997"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1016",
+    "original": "%ABLNAME:71, 13, RIGHT%LV{ABL:ARG:撮影技能} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1016"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1035",
+    "original": "%ABLNAME:72, 13, RIGHT%LV{ABL:ARG:歌唱技能} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1035"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1054",
+    "original": "%ABLNAME:73, 13, RIGHT%LV{ABL:ARG:工作技能} ＋{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1054"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1064",
+    "original": "%MARKNAME:10, 13, RIGHT%LV{MARK:ARG:同化刻印} －{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1064"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1079",
+    "original": "%TALENTNAME:0, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1079"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1087",
+    "original": "%TALENTNAME:1, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1087"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1095",
+    "original": "%TALENTNAME:11, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1095"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1103",
+    "original": "%TALENTNAME:12, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1103"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1111",
+    "original": "%TALENTNAME:13, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1111"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1119",
+    "original": "%TALENTNAME:14, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1119"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1133",
+    "original": "%TALENTNAME:16, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1133"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1140",
+    "original": "%TALENTNAME:17, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1140"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1154",
+    "original": "%TALENTNAME:20, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1154"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1162",
+    "original": "%TALENTNAME:21, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1162"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1170",
+    "original": "%TALENTNAME:22, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1170"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1184",
+    "original": "%TALENTNAME:23, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1184"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1198",
+    "original": "%TALENTNAME:24, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1198"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1214",
+    "original": "%TALENTNAME:27, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1214"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1230",
+    "original": "%TALENTNAME:30, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1230"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1245",
+    "original": "%TALENTNAME:31, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1245"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1265",
+    "original": "%TALENTNAME:33, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1265"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1279",
+    "original": "%TALENTNAME:34, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1279"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1285",
+    "original": "%TALENTNAME:34, 12, RIGHT%消失 ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1285"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1293",
+    "original": "%TALENTNAME:40, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1293"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1300",
+    "original": "%TALENTNAME:41, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1300"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1308",
+    "original": "%TALENTNAME:42, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1308"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1315",
+    "original": "%TALENTNAME:43, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1315"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1329",
+    "original": "%TALENTNAME:46, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1329"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1337",
+    "original": "%TALENTNAME:47, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1337"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1346",
+    "original": "%TALENTNAME:52, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1346"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1362",
+    "original": "%TALENTNAME:53, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1362"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1370",
+    "original": "%TALENTNAME:55, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1370"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1378",
+    "original": "%TALENTNAME:56, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1378"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1386",
+    "original": "%TALENTNAME:59, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1386"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1395",
+    "original": "%TALENTNAME:63, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1395"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1403",
+    "original": "%TALENTNAME:65, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1403"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1411",
+    "original": "%TALENTNAME:66, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1411"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1419",
+    "original": "%TALENTNAME:70, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1419"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1432",
+    "original": "%TALENTNAME:71, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1432"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1440",
+    "original": "%TALENTNAME:80, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1440"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1448",
+    "original": "%TALENTNAME:83, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1448"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1465",
+    "original": "%TALENTNAME:85, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1465"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1473",
+    "original": "%TALENTNAME:90, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1473"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1481",
+    "original": "%TALENTNAME:91, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1481"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1489",
+    "original": "%TALENTNAME:92, 16, RIGHT% ×2.00",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1489"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1497",
+    "original": "%TALENTNAME:93, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1497"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1505",
+    "original": "%TALENTNAME:94, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1505"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1514",
+    "original": "%TALENTNAME:101, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1514"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1521",
+    "original": "Ｃ過敏 ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1521"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1528",
+    "original": "%TALENTNAME:100, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1528"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1536",
+    "original": "%TALENTNAME:103, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1536"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1543",
+    "original": "Ｖ過敏 ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1543"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1550",
+    "original": "%TALENTNAME:102, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1550"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1558",
+    "original": "%TALENTNAME:105, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1558"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1565",
+    "original": "Ａ過敏 ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1565"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1572",
+    "original": "%TALENTNAME:104, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1572"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1580",
+    "original": "%TALENTNAME:107, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1580"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1587",
+    "original": "Ｂ過敏 ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1587"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1594",
+    "original": "%TALENTNAME:106, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1594"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1602",
+    "original": "%TALENTNAME:116, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1602"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1630",
+    "original": "%LOCALS, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1630"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1632",
+    "original": "0",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1632"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1642",
+    "original": "%TALENTNAME:121, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1642"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1649",
+    "original": "%TALENTNAME:123, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1649"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1660",
+    "original": "%LOCALS, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1660"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1667",
+    "original": "%LOCALS, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1667"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1674",
+    "original": "%LOCALS, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1674"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1681",
+    "original": "%LOCALS, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1681"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1691",
+    "original": "%TALENTNAME:125, 16, RIGHT% ×2.00",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1691"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1699",
+    "original": "%TALENTNAME:134, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1699"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1707",
+    "original": "%TALENTNAME:135, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1707"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1714",
+    "original": "%TALENTNAME:136, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1714"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1722",
+    "original": "%TALENTNAME:137, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1722"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1729",
+    "original": "%TALENTNAME:138, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1729"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1738",
+    "original": "%TALENTNAME:190, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1738"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1745",
+    "original": "%TALENTNAME:191, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1745"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1753",
+    "original": "%TALENTNAME:192, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1753"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1760",
+    "original": "%TALENTNAME:193, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1760"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1767",
+    "original": "%TALENTNAME:194, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1767"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1775",
+    "original": "%TALENTNAME:197, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1775"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1784",
+    "original": "%TALENTNAME:49, 16, RIGHT% ×3.00",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1784"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1791",
+    "original": "%TALENTNAME:48, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1791"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1799",
+    "original": "%TALENTNAME:205, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1799"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1807",
+    "original": "%TALENTNAME:208, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1807"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1815",
+    "original": "%TALENTNAME:210, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1815"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1823",
+    "original": "%TALENTNAME:211, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1823"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1837",
+    "original": "%TALENTNAME:213, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1837"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1845",
+    "original": "%TALENTNAME:214, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1845"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1853",
+    "original": "%TALENTNAME:215, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1853"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1861",
+    "original": "%TALENTNAME:217, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1861"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1869",
+    "original": "%TALENTNAME:218, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1869"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1877",
+    "original": "%TALENTNAME:219, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1877"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1885",
+    "original": "%TALENTNAME:220, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1885"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1899",
+    "original": "%TALENTNAME:225, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1899"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1907",
+    "original": "%TALENTNAME:226, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1907"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1915",
+    "original": "%TALENTNAME:227, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1915"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1924",
+    "original": "%TALENTNAME:260, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1924"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1933",
+    "original": "%TALENTNAME:180, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1933"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1940",
+    "original": "%TALENTNAME:170, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1940"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1948",
+    "original": "%TALENTNAME:179, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1948"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1957",
+    "original": "%TALENTNAME:153, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1957"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1964",
+    "original": "%TALENTNAME:152, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1964"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1973",
+    "original": "%TALENTNAME:167, 16, RIGHT% ×0.25",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1973"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1980",
+    "original": "%TALENTNAME:158, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1980"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1988",
+    "original": "%TALENTNAME:163, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1988"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L1996",
+    "original": "%TALENTNAME:168, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L1996"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2006",
+    "original": "%TALENTNAME:500, 16, RIGHT% ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2006"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2008",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2008"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2010",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2010"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2023",
+    "original": "調教度 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2023"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2025",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2025"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2027",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2027"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2038",
+    "original": "%TALENTNAME:800, 16, RIGHT% ×0.25",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2038"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2047",
+    "original": "クリトリスリング ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2047"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2055",
+    "original": "ニプルピアス ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2055"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2063",
+    "original": "ラビアピアス ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2063"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2071",
+    "original": "%TALENTNAME:140, 16, RIGHT% ×0.25",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2071"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2077",
+    "original": "%TALENTNAME:145, 16, RIGHT% ×0.25",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2077"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2118",
+    "original": "敏感体質 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2118"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2120",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2120"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2122",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2122"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2124",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2124"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2135",
+    "original": "お坊ちゃん気質 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2135"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2137",
+    "original": "お嬢様気質 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2137"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2140",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2140"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2142",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2142"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2144",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2144"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2154",
+    "original": "薄倖なる鳥篭 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2154"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2156",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2156"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2158",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2158"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2160",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2160"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2170",
+    "original": "愛玩用動物 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2170"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2172",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2172"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2174",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2174"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2176",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2176"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2186",
+    "original": "廃棄用特殊検体 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2186"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2188",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2188"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2190",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2190"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2192",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2192"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2202",
+    "original": "低年齢特殊性向 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2202"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2204",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2204"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2206",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2206"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2208",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2208"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2219",
+    "original": "淫乱男娼 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2219"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2221",
+    "original": "淫乱娼婦 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2221"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2224",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2224"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2226",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2226"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2228",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2228"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2239",
+    "original": "ＮＴＲ特殊性向 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2239"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2241",
+    "original": "ＮＴＬ特殊性向 ×{LOCAL/100}.",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2241"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2244",
+    "original": "0{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2244"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2246",
+    "original": "{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2246"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2248",
+    "original": "☆複合補正",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2248"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2257",
+    "original": "元助手 ×0.50",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2257"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2265",
+    "original": "中古品 ×0.50",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2265"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2270",
+    "original": "%TALENTNAME:830, 16, RIGHT% ×1.00",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2270"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2302",
+    "original": "主人の%ABLNAME:99%{ABL:MASTER:調教師Lv} ×{LOCAL/100}.{LOCAL%100}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2302"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2304",
+    "original": "0",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2304"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2312",
+    "original": "仲介人不在 ×0.50",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2312"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2342",
+    "original": "5",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2342"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2363",
+    "original": "%LOCALS:0, 16, RIGHT%：Counter Stop! {LOCAL:1}圓",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2363"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2390",
+    "original": "日数ボーナス ×%LOCALS:1%",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2390"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2418",
+    "original": "%LOCALS%キャラ －{LOCAL}",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2418"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2433",
+    "original": "2",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2433"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2435",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2435"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2446",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2446"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2451",
+    "original": "1",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2451"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2455",
+    "original": "LOCAL:3",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2455"
+  },
+  {
+    "key": "src/ERB/MAIN/SHOP/C_SALE.ERB_L2459",
+    "original": "結果、{LOCAL}枚の刻符を得ました。",
+    "context": "文件名: src/ERB/MAIN/SHOP/C_SALE.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/MAIN/SHOP/C_SALE.ERB#L2459"
+  }
+]

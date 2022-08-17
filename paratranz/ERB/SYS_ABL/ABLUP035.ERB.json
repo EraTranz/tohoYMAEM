@@ -1,0 +1,32 @@
+[
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP035.ERB_L11",
+    "original": "%EXPNAME:50%{COST35(4)}以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP035.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP035.ERB#L11"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP035.ERB_L13",
+    "original": "%ABLNAME:11%{ABL:触手中毒 + 1}LV以上、かつ",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP035.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP035.ERB#L13"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP035.ERB_L15",
+    "original": "[0] - %PALAMNAME:31%の珠×{COST35(0)}、%PALAMNAME:13%の珠×{COST35(1)}、%EXPNAME:53%{COST35(2)}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP035.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP035.ERB#L15"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP035.ERB_L18",
+    "original": "[1] - %PALAMNAME:31%の珠×{COST35(0)}、%PALAMNAME:17%の珠×{COST35(3)}、%EXPNAME:53%{COST35(2)}以上……",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP035.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP035.ERB#L18"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP035.ERB_L21",
+    "original": "[100] - やめる",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP035.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP035.ERB#L21"
+  },
+  {
+    "key": "src/ERB/SYS_ABL/ABLUP035.ERB_L43",
+    "original": "%ABLNAME:35%のレベルが{ABL:触手中毒}になりました。",
+    "context": "文件名: src/ERB/SYS_ABL/ABLUP035.ERB\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/src/ERB/SYS_ABL/ABLUP035.ERB#L43"
+  }
+]
