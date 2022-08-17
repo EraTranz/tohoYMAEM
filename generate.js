@@ -12,12 +12,15 @@ for (let file of globbySync('src/**/*.erb', { caseSensitiveMatch: false })) {
   let result = []
   for (let [i, line] of content.entries()) {
     let match
-    if (regex.text.some(regex => !!(match = line.match(regex))))
+    if (regex.text.some(regex => !!(match = line.match(regex)))) {
+      if (match[1].trim().length === 0)
+        continue
       result.push({
         key: `${file}_L${i + 1}`,
         original: match[1],
         context: `文件名: ${file}\n代码: https://github.com/EraTranz/tohoYMAEM/blob/origin/${encodeURI(file)}#L${i + 1}`,
       })
+    }
   }
   if (!result.length)
     continue
